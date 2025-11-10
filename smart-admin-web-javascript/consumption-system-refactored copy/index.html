@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>消费管理系统 - 主页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/menu.js" defer></script>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/main.js" defer></script>
+
+    <style>
+        /* 主页特定样式 */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+            padding: var(--space-3xl) 0;
+            margin: calc(var(--space-2xl) * -1);
+            margin-bottom: var(--space-2xl);
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-lg);
+        }
+
+        .hero-subtitle {
+            font-size: var(--text-lg);
+            color: var(--gray-600);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .stat-card-title {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            color: white;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card-value {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-sm);
+        }
+
+        .stat-card-change {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .stat-card-change.positive {
+            color: var(--success);
+        }
+
+        .stat-card-change.negative {
+            color: var(--error);
+        }
+
+        .quick-actions {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .quick-actions h2 {
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-xl);
+            color: var(--gray-900);
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .quick-action-card {
+            padding: var(--space-xl);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+            color: inherit;
+            background: var(--gray-50);
+        }
+
+        .quick-action-card:hover {
+            background: var(--primary-100);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-300);
+        }
+
+        .quick-action-icon {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--space-lg);
+            color: var(--primary-600);
+        }
+
+        .quick-action-title {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            color: var(--gray-900);
+        }
+
+        .quick-action-desc {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+
+        .system-notice {
+            background: var(--warning-light);
+            border: 1px solid var(--warning);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .system-notice i {
+            font-size: var(--text-xl);
+            color: var(--warning);
+        }
+
+        .system-notice-content {
+            flex: 1;
+        }
+
+        .system-notice-title {
+            font-weight: 600;
+            color: var(--warning);
+            margin-bottom: var(--space-xs);
+        }
+
+        .system-notice-text {
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+        }
+
+        .activity-feed {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .activity-item {
+            padding: var(--space-lg) var(--space-2xl);
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            transition: background var(--transition);
+        }
+
+        .activity-item:hover {
+            background: var(--gray-50);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-base);
+            flex-shrink: 0;
+        }
+
+        .activity-icon.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .activity-icon.info {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .activity-icon.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-xs);
+        }
+
+        .activity-description {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+        }
+
+        .activity-time {
+            color: var(--gray-500);
+            font-size: var(--text-xs);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .activity-item {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: center;
+            }
+
+            .activity-time {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-utensils fa-lg"></i>
+                <div>
+                    <div class="sidebar-title">消费管理系统</div>
+                    <div class="sidebar-subtitle">Consumption Hub</div>
+                </div>
+            </div>
+            <!-- 侧边栏菜单将由 menu.js 自动生成 -->
+            <div class="sidebar-menu">
+                <!-- 菜单加载中... -->
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 顶部导航栏 -->
+            <header class="header">
+                <h1>数据总览</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-bell"></i>
+                        通知
+                    </button>
+                    <div class="user-info">
+                        <div>
+                            <div style="font-weight: 600;">系统管理员</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">在线</div>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 主要内容 -->
+            <div class="content">
+                <!-- Hero Section -->
+                <section class="hero-section">
+                    <h1 class="hero-title">欢迎使用消费管理系统</h1>
+                    <p class="hero-subtitle">专业的企业消费管理解决方案，让数据化管理更简单高效</p>
+                </section>
+
+                <!-- 系统状态提示 -->
+                <div class="system-notice fade-in">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="system-notice-content">
+                        <div class="system-notice-title">系统当前状态</div>
+                        <div class="system-notice-text">系统运行正常，当前已配置 8 个基础模块。更多功能模块正在开发中...</div>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="dashboard-grid fade-in">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-title">今日营业额</div>
+                            <div class="stat-card-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-value">¥12,580.00</div>
+                        <div class="stat-card-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +12.5% 较昨日
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-title">今日订单数</div>
+                            <div class="stat-card-icon" style="background: linear-gradient(135deg, var(--success), #16a34a);">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-value">856</div>
+                        <div class="stat-card-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +8.3% 较昨日
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-title">活跃用户</div>
+                            <div class="stat-card-icon" style="background: linear-gradient(135deg, var(--warning), #d97706);">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-value">425</div>
+                        <div class="stat-card-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +15.2% 较昨日
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-title">平均客单价</div>
+                            <div class="stat-card-icon" style="background: linear-gradient(135deg, var(--info), #2563eb);">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-value">¥14.70</div>
+                        <div class="stat-card-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            -2.1% 较昨日
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速操作 -->
+                <div class="quick-actions fade-in" style="animation-delay: 0.2s;">
+                    <h2>快速操作</h2>
+                    <div class="quick-actions-grid">
+                        <a href="pages/accounts.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-tags"></i>
+                            </div>
+                            <div class="quick-action-title">账户类别管理</div>
+                            <div class="quick-action-desc">配置账户类别和权限</div>
+                        </a>
+
+                        <a href="pages/account-management.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-user-cog"></i>
+                            </div>
+                            <div class="quick-action-title">账户管理</div>
+                            <div class="quick-action-desc">管理用户账户信息</div>
+                        </a>
+
+                        <a href="pages/regions.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="quick-action-title">区域管理</div>
+                            <div class="quick-action-desc">配置消费区域信息</div>
+                        </a>
+
+                        <a href="pages/meals.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="quick-action-title">餐别资料</div>
+                            <div class="quick-action-desc">管理餐别和时段设置</div>
+                        </a>
+
+                        <a href="pages/parameters.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="quick-action-title">参数设置</div>
+                            <div class="quick-action-desc">配置系统参数和规则</div>
+                        </a>
+
+                        <a href="pages/devices.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-desktop"></i>
+                            </div>
+                            <div class="quick-action-title">设备管理</div>
+                            <div class="quick-action-desc">管理终端设备状态</div>
+                        </a>
+
+                        <a href="pages/products.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="quick-action-title">商品资料</div>
+                            <div class="quick-action-desc">管理商品信息库存</div>
+                        </a>
+
+                        <a href="pages/subsidy.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="quick-action-title">补贴管理</div>
+                            <div class="quick-action-desc">管理补贴计划发放</div>
+                        </a>
+
+                        <a href="pages/reports.html" class="quick-action-card">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="quick-action-title">报表中心</div>
+                            <div class="quick-action-desc">查看业务数据报表</div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 最近活动 -->
+                <div class="activity-feed fade-in" style="animation-delay: 0.4s;">
+                    <div class="card-header">
+                        <h3 class="card-title">最近活动</h3>
+                        <p class="card-description">系统最新动态和重要事件</p>
+                    </div>
+                    <div style="padding: var(--space-xl) 0;">
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">新用户注册</div>
+                                <div class="activity-description">张三 (工号: EMP001) 完成账户注册并审核通过</div>
+                            </div>
+                            <div class="activity-time">2分钟前</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon info">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">批量补贴发放</div>
+                                <div class="activity-description">向员工账户批量发放本月补贴 ¥125,000</div>
+                            </div>
+                            <div class="activity-time">15分钟前</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">设备离线提醒</div>
+                                <div class="activity-description">第二食堂3号消费机连接异常，已发送维修通知</div>
+                            </div>
+                            <div class="activity-time">1小时前</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-sync"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">数据同步完成</div>
+                                <div class="activity-description">所有分店数据已同步至中央服务器，同步记录2,847条</div>
+                            </div>
+                            <div class="activity-time">2小时前</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加页面加载动画
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // 模拟实时数据更新
+            updateRealTimeData();
+            setInterval(updateRealTimeData, 30000); // 每30秒更新一次
+        });
+
+        // 更新实时数据
+        function updateRealTimeData() {
+            console.log('更新实时数据...');
+            // 这里可以添加实际的数据获取逻辑
+        }
+
+        // 响应式侧边栏切换
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>

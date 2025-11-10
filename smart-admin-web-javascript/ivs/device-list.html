@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备列表 - 智能视频监控系统</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../page-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div style="padding: 24px;">
+        <!-- 顶部工具栏 -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <!-- 搜索条件 -->
+                <div class="search-item">
+                    <label>设备名称:</label>
+                    <input type="text" placeholder="请输入设备名称" class="form-control" style="width: 200px;">
+                </div>
+
+                <div class="search-item">
+                    <label>状态:</label>
+                    <select class="form-control" style="width: 120px;">
+                        <option value="">全部</option>
+                        <option value="online">在线</option>
+                        <option value="offline">离线</option>
+                    </select>
+                </div>
+
+                <div class="search-item">
+                    <label>设备类型:</label>
+                    <select class="form-control" style="width: 160px;">
+                        <option value="">全部类型</option>
+                        <option value="ipc">网络摄像机</option>
+                        <option value="nvr">NVR</option>
+                        <option value="dvr">DVR</option>
+                        <option value="decoder">解码器</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary">
+                    <i class="fas fa-search"></i>查询
+                </button>
+            </div>
+
+            <div class="toolbar-right">
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus"></i>新增设备
+                </button>
+                <button class="btn btn-danger">
+                    <i class="fas fa-trash"></i>删除
+                </button>
+                <button class="btn btn-info">
+                    <i class="fas fa-search"></i>搜索设备
+                </button>
+                <button class="btn btn-info">
+                    <i class="fas fa-sync-alt"></i>同步设备
+                </button>
+            </div>
+        </div>
+
+        <!-- 更多操作按钮 -->
+        <div class="toolbar" style="margin-top: 16px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <span style="font-size: 14px; color: var(--text-secondary);">更多操作:</span>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-sm">
+                        <i class="fas fa-bell"></i>订阅
+                    </button>
+                    <button class="btn btn-sm">
+                        <i class="fas fa-bell-slash"></i>取消订阅
+                    </button>
+                    <button class="btn btn-sm">
+                        <i class="fas fa-clock"></i>同步时间
+                    </button>
+                    <button class="btn btn-sm">
+                        <i class="fas fa-tools"></i>维护管理
+                    </button>
+                    <button class="btn btn-sm">
+                        <i class="fas fa-info-circle"></i>查看信息
+                    </button>
+                    <button class="btn btn-sm">
+                        <i class="fas fa-list"></i>目标名单库
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设备列表表格 -->
+        <div class="table-container" style="margin-top: 16px;">
+            <div class="table-header">
+                <div class="table-title">
+                    <input type="checkbox" id="selectAll">
+                    <span>设备列表</span>
+                </div>
+                <div class="table-actions">
+                    <button class="btn btn-sm">
+                        <i class="fas fa-download"></i>导出
+                    </button>
+                    <button class="btn btn-sm">
+                        <i class="fas fa-print"></i>打印
+                    </button>
+                </div>
+            </div>
+            <div class="table-content">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">选择</th>
+                            <th style="width: 80px;">序号</th>
+                            <th style="width: 180px;">设备名称</th>
+                            <th style="width: 150px;">设备类型</th>
+                            <th style="width: 120px;">IP地址</th>
+                            <th style="width: 100px;">端口</th>
+                            <th style="width: 100px;">状态</th>
+                            <th style="width: 120px;">注册时间</th>
+                            <th style="width: 160px;">最后心跳</th>
+                            <th style="width: 200px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>1</td>
+                            <td>前门摄像头-001</td>
+                            <td>网络摄像机</td>
+                            <td>192.168.1.101</td>
+                            <td>8000</td>
+                            <td><span class="status-badge status-success">在线</span></td>
+                            <td>2024-01-15 10:30</td>
+                            <td>2024-01-30 14:35</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info">编辑</button>
+                                    <button class="btn btn-sm btn-warning">配置</button>
+                                    <button class="btn btn-sm btn-danger">删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>2</td>
+                            <td>大厅摄像头-002</td>
+                            <td>网络摄像机</td>
+                            <td>192.168.1.102</td>
+                            <td>8000</td>
+                            <td><span class="status-badge status-success">在线</span></td>
+                            <td>2024-01-15 10:32</td>
+                            <td>2024-01-30 14:35</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info">编辑</button>
+                                    <button class="btn btn-sm btn-warning">配置</button>
+                                    <button class="btn btn-sm btn-danger">删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>3</td>
+                            <td>走廊摄像头-003</td>
+                            <td>网络摄像机</td>
+                            <td>192.168.1.103</td>
+                            <td>8000</td>
+                            <td><span class="status-badge status-error">离线</span></td>
+                            <td>2024-01-15 10:35</td>
+                            <td>2024-01-30 12:20</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info">编辑</button>
+                                    <button class="btn btn-sm btn-warning">配置</button>
+                                    <button class="btn btn-sm btn-danger">删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>4</td>
+                            <td>NVR存储设备-01</td>
+                            <td>NVR</td>
+                            <td>192.168.1.200</td>
+                            <td>8000</td>
+                            <td><span class="status-badge status-success">在线</span></td>
+                            <td>2024-01-14 16:20</td>
+                            <td>2024-01-30 14:35</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info">编辑</button>
+                                    <button class="btn btn-sm btn-warning">配置</button>
+                                    <button class="btn btn-sm btn-danger">删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>5</td>
+                            <td>停车场摄像头-01</td>
+                            <td>网络摄像机</td>
+                            <td>192.168.1.104</td>
+                            <td>8000</td>
+                            <td><span class="status-badge status-success">在线</span></td>
+                            <td>2024-01-15 11:00</td>
+                            <td>2024-01-30 14:35</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-info">编辑</button>
+                                    <button class="btn btn-sm btn-warning">配置</button>
+                                    <button class="btn btn-sm btn-danger">删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <div class="table-info">
+                    第 1-5 条/共 160 条
+                </div>
+                <div class="pagination">
+                    <button class="btn btn-sm">上一页</button>
+                    <button class="btn btn-sm btn-primary">1</button>
+                    <button class="btn btn-sm">2</button>
+                    <button class="btn btn-sm">3</button>
+                    <span class="pagination-ellipsis">...</span>
+                    <button class="btn btn-sm">32</button>
+                    <button class="btn btn-sm">下一页</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('✅ 设备列表页面已加载');
+
+        // 全选功能
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = this.checked);
+        });
+
+        // 查询设备
+        function searchDevices() {
+            console.log('查询设备...');
+            alert('查询功能开发中...');
+        }
+
+        // 新增设备
+        function openAddDeviceModal() {
+            alert('新增设备功能开发中...');
+        }
+
+        // 删除选中设备
+        function deleteSelectedDevices() {
+            if (confirm('确定要删除选中的设备吗？')) {
+                alert('删除功能开发中...');
+            }
+        }
+
+        // 搜索设备
+        function searchOnlineDevices() {
+            console.log('搜索在线设备...');
+            alert('搜索功能开发中...');
+        }
+
+        // 同步设备
+        function syncDevices() {
+            console.log('同步设备...');
+            alert('同步功能开发中...');
+        }
+    </script>
+</body>
+</html>
