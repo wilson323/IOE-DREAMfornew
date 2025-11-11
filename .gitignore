@@ -23,3 +23,8 @@ target/
 **/node_modules
 **/.vscode
 
+### Claude Code ###
+# 包含数据库密码等敏感信息，不应提交到版本控制
+.claude/mcp.json
+.claude/settings.local.json
+
