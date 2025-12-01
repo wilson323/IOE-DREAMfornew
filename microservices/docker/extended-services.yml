@@ -1,0 +1,494 @@
+# IOE-DREAM 扩展微服务部署配置
+# 包含新发现的所有缺失服务
+version: '3.8'
+
+# 继承基础配置
+extends:
+  file: infrastructure.yml
+  service: mysql-master
+
+services:
+  # ==================== 扩展业务服务 ====================
+
+  # 人力资源服务 (端口: 8093)
+  ioedream-hr-service:
+    image: ioedream/hr-service:latest
+    container_name: ioedream-hr-service
+    ports:
+      - "8093:8093"
+      - "8094:8094"  # 管理端点
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - DB_HOST=mysql-master
+      - DB_PORT=3306
+      - DB_NAME=ioedream_hr
+      - DB_USERNAME=app_user
+      - DB_PASSWORD=secure_password
+      - REDIS_HOST=redis-master
+      - REDIS_PORT=6379
+    volumes:
+      - hr_logs:/var/log/ioedream/hr
+      - hr_config:/app/config
+    networks:
+      - ioedream-network
+    depends_on:
+      - mysql-master
+      - redis-master
+      - nacos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8094/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 企业资源服务 (端口: 8095)
+  ioedream-erp-service:
+    image: ioedream/erp-service:latest
+    container_name: ioedream-erp-service
+    ports:
+      - "8095:8095"
+      - "8096:8096"  # 管理端点
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - DB_HOST=mysql-master
+      - DB_PORT=3306
+      - DB_NAME=ioedream_erp
+      - DB_USERNAME=app_user
+      - DB_PASSWORD=secure_password
+      - REDIS_HOST=redis-master
+      - REDIS_PORT=6379
+    volumes:
+      - erp_logs:/var/log/ioedream/erp
+      - erp_config:/app/config
+      - erp_uploads:/app/uploads
+    networks:
+      - ioedream-network
+    depends_on:
+      - mysql-master
+      - redis-master
+      - nacos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 监控服务 (端口: 8097)
+  ioedream-monitor-service:
+    image: ioedream/monitor-service:latest
+    container_name: ioedream-monitor-service
+    ports:
+      - "8097:8097"
+      - "8098:8098"  # 管理端点
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - DB_HOST=mysql-master
+      - DB_PORT=3306
+      - DB_NAME=ioedream_monitor
+      - DB_USERNAME=app_user
+      - DB_PASSWORD=secure_password
+      - REDIS_HOST=redis-master
+      - REDIS_PORT=6379
+      - WEBSOCKET_PORT=8099
+    volumes:
+      - monitor_logs:/var/log/ioedream/monitor
+      - monitor_config:/app/config
+      - monitor_data:/app/data
+    networks:
+      - ioedream-network
+    depends_on:
+      - mysql-master
+      - redis-master
+      - nacos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8098/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 办公自动化服务 (端口: 8099)
+  # ⚠️ 已废弃: OA功能已合并到 enterprise-service
+  # OA功能由 enterprise-service 提供，路由: /api/oa/**
+  # ioedream-oa-service:
+  #   image: ioedream/oa-service:latest
+  #   container_name: ioedream-oa-service
+  #   ports:
+  #     - "8099:8099"
+  #     - "8100:8100"  # 管理端点
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=prod
+  #     - NACOS_SERVER_ADDR=nacos:8848
+  #     - DB_HOST=mysql-master
+  #     - DB_PORT=3306
+  #     - DB_NAME=ioedream_oa
+  #     - DB_USERNAME=app_user
+  #     - DB_PASSWORD=secure_password
+  #     - REDIS_HOST=redis-master
+  #     - REDIS_PORT=6379
+  #     - FILE_SERVER_URL=http://ioedream-file-service:8091
+  #   volumes:
+  #     - oa_logs:/var/log/ioedream/oa
+  #     - oa_config:/app/config
+  #     - oa_documents:/app/documents
+  #     - oa_templates:/app/templates
+  #   networks:
+  #     - ioedream-network
+  #   depends_on:
+  #     - mysql-master
+  #     - redis-master
+  #     - nacos
+  #     - ioedream-file-service
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8100/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 60s
+  #   <<: *common-variables
+  #   <<: *common-labels
+  #   <<: *common-restart
+
+  # 生物特征服务 (端口: 8101)
+  ioedream-biometric-service:
+    image: ioedream/biometric-service:latest
+    container_name: ioedream-biometric-service
+    ports:
+      - "8101:8101"
+      - "8102:8102"  # 管理端点
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - DB_HOST=mysql-master
+      - DB_PORT=3306
+      - DB_NAME=ioedream_biometric
+      - DB_USERNAME=app_user
+      - DB_PASSWORD=secure_password
+      - REDIS_HOST=redis-master
+      - REDIS_PORT=6379
+      - GPU_ENABLED=true
+      - MODEL_PATH=/app/models
+    volumes:
+      - biometric_logs:/var/log/ioedream/biometric
+      - biometric_config:/app/config
+      - biometric_models:/app/models
+      - biometric_data:/app/data
+    networks:
+      - ioedream-network
+    depends_on:
+      - mysql-master
+      - redis-master
+      - nacos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8102/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+  # 系统管理服务 (端口: 8103)
+  ioedream-system-service:
+    image: ioedream/system-service:latest
+    container_name: ioedream-system-service
+    ports:
+      - "8103:8103"
+      - "8104:8104"  # 管理端点
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - DB_HOST=mysql-master
+      - DB_PORT=3306
+      - DB_NAME=ioedream_system
+      - DB_USERNAME=app_user
+      - DB_PASSWORD=secure_password
+      - REDIS_HOST=redis-master
+      - REDIS_PORT=6379
+      - ADMIN_EMAIL=admin@ioedream.com
+    volumes:
+      - system_logs:/var/log/ioedream/system
+      - system_config:/app/config
+      - system_backups:/app/backups
+    networks:
+      - ioedream-network
+    depends_on:
+      - mysql-master
+      - redis-master
+      - nacos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8104/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ==================== 前端微服务 ====================
+
+  # 主前端应用 (端口: 3000)
+  ioedream-web-main:
+    image: ioedream/web-main:latest
+    container_name: ioedream-web-main
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+      - API_GATEWAY_URL=http://smart-gateway:8080
+    volumes:
+      - web_main_logs:/var/log/nginx
+      - web_main_config:/etc/nginx/conf.d
+    networks:
+      - ioedream-network
+    depends_on:
+      - smart-gateway
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # 管理控制台 (端口: 3001)
+  ioedream-admin-console:
+    image: ioedream/admin-console:latest
+    container_name: ioedream-admin-console
+    ports:
+      - "3001:80"
+    environment:
+      - NODE_ENV=production
+      - API_GATEWAY_URL=http://smart-gateway:8080
+      - CONSOLE_TYPE=admin
+    volumes:
+      - admin_console_logs:/var/log/nginx
+      - admin_console_config:/etc/nginx/conf.d
+    networks:
+      - ioedream-network
+    depends_on:
+      - smart-gateway
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # 业务门户 (端口: 3002)
+  ioedream-business-portal:
+    image: ioedream/business-portal:latest
+    container_name: ioedream-business-portal
+    ports:
+      - "3002:80"
+    environment:
+      - NODE_ENV=production
+      - API_GATEWAY_URL=http://smart-gateway:8080
+      - PORTAL_TYPE=business
+    volumes:
+      - business_portal_logs:/var/log/nginx
+      - business_portal_config:/etc/nginx/conf.d
+    networks:
+      - ioedream-network
+    depends_on:
+      - smart-gateway
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ==================== 移动端架构 ====================
+
+  # 移动端API网关 (端口: 8105)
+  ioedream-mobile-gateway:
+    image: ioedream/mobile-gateway:latest
+    container_name: ioedream-mobile-gateway
+    ports:
+      - "8105:8080"
+      - "8106:8081"  # 管理端点
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - BACKEND_GATEWAY_URL=http://smart-gateway:8080
+      - RATE_LIMIT_ENABLED=true
+      - RATE_LIMIT_PER_MINUTE=100
+    volumes:
+      - mobile_gateway_logs:/var/log/ioedream/mobile-gateway
+      - mobile_gateway_config:/app/config
+    networks:
+      - ioedream-network
+    depends_on:
+      - smart-gateway
+      - nacos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 移动端文件服务 (端口: 8107)
+  ioedream-mobile-file-server:
+    image: nginx:alpine
+    container_name: ioedream-mobile-file-server
+    ports:
+      - "8107:80"
+    volumes:
+      - ./config/mobile-nginx.conf:/etc/nginx/nginx.conf:ro
+      - mobile_app_dist:/usr/share/nginx/html:ro
+    networks:
+      - ioedream-network
+    depends_on:
+      - ioedream-mobile-gateway
+    restart: unless-stopped
+
+  # ==================== 数据卷定义 ====================
+
+volumes:
+  # HR服务数据卷
+  hr_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/hr
+  hr_config:
+    driver: local
+
+  # ERP服务数据卷
+  erp_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/erp
+  erp_config:
+    driver: local
+  erp_uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/erp/uploads
+
+  # 监控服务数据卷
+  monitor_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/monitor
+  monitor_config:
+    driver: local
+  monitor_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/monitor
+
+  # OA服务数据卷
+  oa_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/oa
+  oa_config:
+    driver: local
+  oa_documents:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/oa/documents
+  oa_templates:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/oa/templates
+
+  # 生物特征服务数据卷
+  biometric_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/biometric
+  biometric_config:
+    driver: local
+  biometric_models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/biometric/models
+  biometric_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/biometric/data
+
+  # 系统管理服务数据卷
+  system_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/system
+  system_config:
+    driver: local
+  system_backups:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./backup/system
+
+  # 前端微服务数据卷
+  web_main_logs:
+    driver: local
+  web_main_config:
+    driver: local
+  admin_console_logs:
+    driver: local
+  admin_console_config:
+    driver: local
+  business_portal_logs:
+    driver: local
+  business_portal_config:
+    driver: local
+
+  # 移动端数据卷
+  mobile_gateway_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/mobile-gateway
+  mobile_gateway_config:
+    driver: local
+  mobile_app_dist:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./mobile/uni-app-mobile/dist
+
+networks:
+  ioedream-network:
+    external: true

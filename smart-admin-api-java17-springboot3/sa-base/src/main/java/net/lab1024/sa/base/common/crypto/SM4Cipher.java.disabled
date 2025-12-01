@@ -1,0 +1,174 @@
+package net.lab1024.sa.base.common.crypto;
+
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Base64;
+
+import lombok.extern.slf4j.Slf4j;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+/**
+ * SM4閸ヨ棄鐦戠粻妤佺《閸旂姴鐦戝銉ュ徔缁? *
+ * @author SmartAdmin Team
+ * @date 2025-01-15
+ */
+@Slf4j
+public class SM4Cipher {
+
+    private static final String ALGORITHM_NAME = "SM4";
+    private static final String ALGORITHM_NAME_ECB_PADDING = "SM4/ECB/PKCS5Padding";
+    private static final String ALGORITHM_NAME_CBC_PADDING = "SM4/CBC/PKCS5Padding";
+    private static final int KEY_SIZE = 128;
+    private static final int BLOCK_SIZE = 128;
+
+    /**
+     * SM4 ECB濡€崇础閸旂姴鐦?     *
+     * @param key       鐎靛棝鎸?     * @param plaintext 閺勫孩鏋?     * @return 閸旂姴鐦戦崥搴ｆ畱Base64鐎涙顑佹稉?     */
+    public static String encryptECB(byte[] key, byte[] plaintext) {
+        try {
+            SecretKeySpec keySpec = new SecretKeySpec(key, ALGORITHM_NAME);
+            Cipher cipher = Cipher.getInstance(ALGORITHM_NAME_ECB_PADDING);
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+            byte[] encrypted = cipher.doFinal(plaintext);
+            return Base64.getEncoder().encodeToString(encrypted);
+        } catch (Exception e) {
+            log.error("SM4 ECB encryption failed", e);
+            throw new RuntimeException("SM4 ECB閸旂姴鐦戞径杈Е", e);
+        }
+    }
+
+    /**
+     * SM4 ECB濡€崇础鐟欙絽鐦?     *
+     * @param key        鐎靛棝鎸?     * @param ciphertext Base64閺嶇厧绱￠惃鍕槕閺?     * @return 鐟欙絽鐦戦崥搴ｆ畱閺勫孩鏋?     */
+    public static byte[] decryptECB(byte[] key, String ciphertext) {
+        try {
+            SecretKeySpec keySpec = new SecretKeySpec(key, ALGORITHM_NAME);
+            Cipher cipher = Cipher.getInstance(ALGORITHM_NAME_ECB_PADDING);
+            cipher.init(Cipher.DECRYPT_MODE, keySpec);
+            byte[] encrypted = Base64.getDecoder().decode(ciphertext);
+            return cipher.doFinal(encrypted);
+        } catch (Exception e) {
+            log.error("SM4 ECB decryption failed", e);
+            throw new RuntimeException("SM4 ECB鐟欙絽鐦戞径杈Е", e);
+        }
+    }
+
+    /**
+     * SM4 CBC濡€崇础閸旂姴鐦?     *
+     * @param key       鐎靛棝鎸?     * @param iv        閸掓繂顫愰崠鏍ф倻闁?     * @param plaintext 閺勫孩鏋?     * @return 閸旂姴鐦戦崥搴ｆ畱Base64鐎涙顑佹稉?     */
+    public static String encryptCBC(byte[] key, byte[] iv, byte[] plaintext) {
+        try {
+            SecretKeySpec keySpec = new SecretKeySpec(key, ALGORITHM_NAME);
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            Cipher cipher = Cipher.getInstance(ALGORITHM_NAME_CBC_PADDING);
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+            byte[] encrypted = cipher.doFinal(plaintext);
+            return Base64.getEncoder().encodeToString(encrypted);
+        } catch (Exception e) {
+            log.error("SM4 CBC encryption failed", e);
+            throw new RuntimeException("SM4 CBC閸旂姴鐦戞径杈Е", e);
+        }
+    }
+
+    /**
+     * SM4 CBC濡€崇础鐟欙絽鐦?     *
+     * @param key        鐎靛棝鎸?     * @param iv         閸掓繂顫愰崠鏍ф倻闁?     * @param ciphertext Base64閺嶇厧绱￠惃鍕槕閺?     * @return 鐟欙絽鐦戦崥搴ｆ畱閺勫孩鏋?     */
+    public static byte[] decryptCBC(byte[] key, byte[] iv, String ciphertext) {
+        try {
+            SecretKeySpec keySpec = new SecretKeySpec(key, ALGORITHM_NAME);
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            Cipher cipher = Cipher.getInstance(ALGORITHM_NAME_CBC_PADDING);
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+            byte[] encrypted = Base64.getDecoder().decode(ciphertext);
+            return cipher.doFinal(encrypted);
+        } catch (Exception e) {
+            log.error("SM4 CBC decryption failed", e);
+            throw new RuntimeException("SM4 CBC鐟欙絽鐦戞径杈Е", e);
+        }
+    }
+
+    /**
+     * 閻㈢喐鍨氶梾蹇旀簚IV
+     *
+     * @return 16鐎涙濡惃鍑
+     */
+    public static byte[] generateIV() {
+        byte[] iv = new byte[16];
+        new SecureRandom().nextBytes(iv);
+        return iv;
+    }
+
+    /**
+     * 閻㈢喐鍨氶梾蹇旀簚鐎靛棝鎸?     *
+     * @return 16鐎涙濡惃鍑稭4鐎靛棝鎸?     */
+    public static byte[] generateKey() {
+        byte[] key = new byte[16];
+        new SecureRandom().nextBytes(key);
+        return key;
+    }
+
+    /**
+     * 鐎涙顑佹稉鑼舵祮鐎涙濡弫鎵矋
+     *
+     * @param str 鐎涙顑佹稉?     * @return 鐎涙濡弫鎵矋
+     */
+    public static byte[] stringToBytes(String str) {
+        return str.getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 鐎涙濡弫鎵矋鏉烆剙鐡х粭锔胯
+     *
+     * @param bytes 鐎涙濡弫鎵矋
+     * @return 鐎涙顑佹稉?     */
+    public static String bytesToString(byte[] bytes) {
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 閸椾礁鍙氭潻娑樺煑鐎涙顑佹稉鑼舵祮鐎涙濡弫鎵矋
+     *
+     * @param hex 閸椾礁鍙氭潻娑樺煑鐎涙顑佹稉?     * @return 鐎涙濡弫鎵矋
+     */
+    public static byte[] hexToBytes(String hex) {
+        if (hex == null || hex.length() % 2 != 0) {
+            throw new IllegalArgumentException("Invalid hex string");
+        }
+
+        byte[] bytes = new byte[hex.length() / 2];
+        for (int i = 0; i < hex.length(); i += 2) {
+            bytes[i / 2] = (byte) Integer.parseInt(hex.substring(i, i + 2), 16);
+        }
+        return bytes;
+    }
+
+    /**
+     * 鐎涙濡弫鎵矋鏉烆剙宕勯崗顓＄箻閸掕泛鐡х粭锔胯
+     *
+     * @param bytes 鐎涙濡弫鎵矋
+     * @return 閸椾礁鍙氭潻娑樺煑鐎涙顑佹稉?     */
+    public static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 缁犳纭剁敮鎼佸櫤
+     */
+    public static class Constants {
+        public static final String ALGORITHM = "SM4";
+        public static final int KEY_LENGTH = 16;
+        public static final int BLOCK_LENGTH = 16;
+        public static final String MODE_ECB = "ECB";
+        public static final String MODE_CBC = "CBC";
+        public static final String PADDING_PKCS5 = "PKCS5Padding";
+        public static final String PADDING_NO_PADDING = "NoPadding";
+    }
+}
+

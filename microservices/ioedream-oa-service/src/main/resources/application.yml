@@ -1,0 +1,104 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /oa-service
+
+spring:
+  application:
+    name: ioedream-oa-service
+
+  profiles:
+    active: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ioedream_oa?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+
+  redis:
+    host: localhost
+    port: 6379
+    database: 4
+    timeout: 6000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: dev
+        group: IOE-DREAM
+      config:
+        server-addr: localhost:8848
+        namespace: dev
+        group: IOE-DREAM
+        file-extension: yml
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  type-aliases-package: net.lab1024.sa.oa.**.domain.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+logging:
+  level:
+    net.lab1024.sa: DEBUG
+    org.springframework: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+
+# 服务配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# 业务配置
+oa:
+  service:
+    name: IOE-DREAM OA办公服务
+    version: 1.0.0
+    description: 基于微服务架构的OA办公系统
+  document:
+    upload-path: /data/oa/documents
+    max-file-size: 52428800  # 50MB (字节)
+    base-url: http://localhost:8084/oa-service/files
+    allowed-types: doc,docx,xls,xlsx,ppt,pptx,pdf,txt,md,jpg,jpeg,png,gif,bmp
+  workflow:
+    engine: activiti
+    max-instances: 10000
+    task-priority-levels: 5

@@ -1,0 +1,115 @@
+{
+  "name": "IOE-DREAM Mobile",
+  "appid": "__UNI__IOEDREAM",
+  "description": "IOE-DREAM智能管理系统移动端",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "app-plus": {
+    "usingComponents": true,
+    "nvueStyleCompiler": "uni-app",
+    "compilerVersion": 3,
+    "splashscreen": {
+      "alwaysShowBeforeRender": true,
+      "waiting": true,
+      "autoclose": true,
+      "delay": 0
+    },
+    "modules": {
+      "Camera": {},
+      "Geolocation": {},
+      "Payment": {},
+      "Push": {},
+      "Share": {},
+      "Speech": {},
+      "VideoPlayer": {},
+      "WebView": {}
+    },
+    "distribute": {
+      "android": {
+        "permissions": [
+          "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+          "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+          "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
+          "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+          "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+          "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
+          "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+          "<uses-permission android:name=\"android.permission.CALL_PHONE\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_LOCATION_EXTRA_COMMANDS\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_MOCK_LOCATION\"/>",
+          "<uses-permission android:name=\"android.permission.CAMERA\"/>",
+          "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
+          "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
+          "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
+          "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
+          "<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
+          "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>"
+        ]
+      },
+      "ios": {
+        "capabilities": {
+          "entitlements": {
+            "com.apple.developer.associated-domains": []
+          }
+        },
+        "plistcmds": [
+          "Set: NSAppTransportSecurity -dict-add NSAllowsArbitraryLoads -bool true"
+        ]
+      },
+      "sdkConfigs": {
+        "payment": {
+          "weixin": {
+            "appid": "your_weixin_appid"
+          },
+          "alipay": {
+            "scheme": "your_alipay_scheme"
+          }
+        },
+        "oauth": {
+          "weixin": {
+            "appid": "your_weixin_appid",
+            "appsecret": "your_weixin_secret"
+          },
+          "apple": {}
+        },
+        "push": {
+          "unipush": {
+            "offline": true,
+            "appid": "your_unipush_appid",
+            "appkey": "your_unipush_appkey",
+            "appsecret": "your_unipush_secret"
+          }
+        },
+        "ad": {},
+        "statistics": {}
+      }
+    }
+  },
+  "quickapp": {},
+  "mp-weixin": {
+    "appid": "your_weixin_mp_appid",
+    "setting": {
+      "urlCheck": false
+    },
+    "usingComponents": true
+  },
+  "mp-alipay": {
+    "usingComponents": true
+  },
+  "mp-baidu": {
+    "usingComponents": true
+  },
+  "mp-toutiao": {
+    "usingComponents": true
+  },
+  "uniStatistics": {
+    "enable": false
+  },
+  "vueVersion": "3"
+}

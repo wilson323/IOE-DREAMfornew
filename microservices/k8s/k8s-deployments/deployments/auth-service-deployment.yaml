@@ -1,0 +1,393 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-auth-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-auth-service
+    component: deployment
+    environment: production
+    project: ioedream
+    version: v1.0.0
+  annotations:
+    description: "IOE-DREAM认证授权服务部署"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: ioedream-auth-service
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: ioedream-auth-service
+        environment: production
+        component: pod
+        project: ioedream
+        version: v1.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8081"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+
+      serviceAccountName: ioedream-service-account
+
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        kubernetes.io/os: linux
+        node-type: application
+
+      tolerations:
+        - key: "node-type"
+          operator: "Equal"
+          value: "application"
+          effect: "NoSchedule"
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - ioedream-auth-service
+                topologyKey: kubernetes.io/hostname
+
+      initContainers:
+        - name: wait-for-dependencies
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              echo "等待依赖服务启动..."
+              until nc -z redis-cluster-ioedream-prod 6379; do
+                echo "等待Redis启动..."
+                sleep 2
+              done
+              until nc -z mysql-cluster-ioedream-prod 3306; do
+                echo "等待MySQL启动..."
+                sleep 2
+              done
+              until nc -z nacos-cluster-ioedream-prod 8848; do
+                echo "等待Nacos启动..."
+                sleep 2
+              done
+              echo "所有依赖服务已就绪"
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "50m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+
+      containers:
+        - name: ioedream-auth-service
+          image: registry.ioedream.com/ioedream/auth-service:v1.0.0
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: SPRING_APPLICATION_NAME
+              value: "ioedream-auth-service"
+            - name: SERVER_PORT
+              value: "8081"
+            - name: APP_VERSION
+              value: "v1.0.0"
+            - name: TZ
+              value: "Asia/Shanghai"
+            - name: JAVA_OPTS
+              value: "-Xms512m -Xmx1024m -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+
+            # 数据库配置
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-cluster-ioedream-prod:3306/ioedream_prod?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: mysql-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: mysql-password
+
+            # Redis配置
+            - name: SPRING_DATA_REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secrets
+                  key: redis-host
+            - name: SPRING_DATA_REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secrets
+                  key: redis-port
+            - name: SPRING_DATA_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secrets
+                  key: redis-password
+
+            # JWT配置
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secrets
+                  key: jwt-secret
+            - name: JWT_EXPIRATION
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secrets
+                  key: jwt-expiration
+            - name: JWT_REFRESH_EXPIRATION
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secrets
+                  key: jwt-refresh-expiration
+
+            # Nacos配置
+            - name: NACOS_SERVER_ADDR
+              value: "nacos-cluster-ioedream-prod:8848"
+            - name: NACOS_NAMESPACE
+              value: "prod"
+
+            # 等待依赖服务
+            - name: WAIT_FOR_SERVICES
+              value: "redis-cluster-ioedream-prod:6379,mysql-cluster-ioedream-prod:3306,nacos-cluster-ioedream-prod:8848"
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 30
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1000
+
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+            - name: logs-volume
+              mountPath: /app/logs
+
+        - name: log-collector
+          image: fluent/fluent-bit:2.2.0
+          volumeMounts:
+            - name: logs-volume
+              mountPath: /app/logs
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc
+              readOnly: true
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: microservices-common-config
+
+        - name: logs-volume
+          emptyDir: {}
+
+        - name: fluent-bit-config
+          configMap:
+            name: fluent-bit-config
+
+      imagePullSecrets:
+        - name: ioedream-registry-secret
+
+      terminationGracePeriodSeconds: 120
+
+---
+# 预发布环境
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-auth-service
+  namespace: ioedream-staging
+  labels:
+    app: ioedream-auth-service
+    component: deployment
+    environment: staging
+    project: ioedream
+    version: v1.0.0
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: ioedream-auth-service
+      environment: staging
+  template:
+    metadata:
+      labels:
+        app: ioedream-auth-service
+        environment: staging
+        component: pod
+        project: ioedream
+        version: v1.0.0
+    spec:
+      serviceAccountName: ioedream-service-account
+      nodeSelector:
+        node-type: application
+
+      containers:
+        - name: ioedream-auth-service
+          image: registry.ioedream.com/ioedream/auth-service:v1.0.0
+          imagePullPolicy: Always
+
+          ports:
+            - name: http
+              containerPort: 8081
+
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "staging"
+            - name: SPRING_APPLICATION_NAME
+              value: "ioedream-auth-service"
+            - name: SERVER_PORT
+              value: "8081"
+            - name: JAVA_OPTS
+              value: "-Xms256m -Xmx512m -XX:+UseG1GC"
+
+            # 数据库配置
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-cluster-ioedream-staging:3306/ioedream_staging?useSSL=false&serverTimezone=Asia/Shanghai"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: mysql-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: mysql-password
+
+            # Redis配置
+            - name: SPRING_DATA_REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secrets
+                  key: redis-host
+            - name: SPRING_DATA_REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secrets
+                  key: redis-port
+
+            # Nacos配置
+            - name: NACOS_SERVER_ADDR
+              value: "nacos-cluster-ioedream-staging:8848"
+            - name: NACOS_NAMESPACE
+              value: "staging"
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 30
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: microservices-common-config
+
+      imagePullSecrets:
+        - name: ioedream-registry-secret

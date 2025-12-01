@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.attendance.dao.ExceptionApplicationsDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.attendance.domain.entity.ExceptionApplicationsEntity">
+        <id column="application_id" property="applicationId" jdbcType="BIGINT"/>
+        <result column="application_code" property="applicationCode" jdbcType="VARCHAR"/>
+        <result column="employee_id" property="employeeId" jdbcType="BIGINT"/>
+        <result column="employee_name" property="employeeName" jdbcType="VARCHAR"/>
+        <result column="employee_code" property="employeeCode" jdbcType="VARCHAR"/>
+        <result column="exception_type" property="exceptionType" jdbcType="VARCHAR"/>
+        <result column="exception_date" property="exceptionDate" jdbcType="DATE"/>
+        <result column="start_time" property="startTime" jdbcType="TIME"/>
+        <result column="end_time" property="endTime" jdbcType="TIME"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
+        <result column="attachment" property="attachment" jdbcType="VARCHAR"/>
+        <result column="application_status" property="applicationStatus" jdbcType="VARCHAR"/>
+        <result column="workflow_instance_id" property="workflowInstanceId" jdbcType="VARCHAR"/>
+        <result column="approver_id" property="approverId" jdbcType="BIGINT"/>
+        <result column="approver_name" property="approverName" jdbcType="VARCHAR"/>
+        <result column="approval_comments" property="approvalComments" jdbcType="VARCHAR"/>
+        <result column="approval_time" property="approvalTime" jdbcType="TIMESTAMP"/>
+        <!-- BaseEntity 字段 -->
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        application_id, application_code, employee_id, employee_name, employee_code,
+        exception_type, exception_date, start_time, end_time, reason, attachment,
+        application_status, workflow_instance_id, approver_id, approver_name,
+        approval_comments, approval_time,
+        create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+    </sql>
+
+    <!-- 根据条件分页查询异常申请 -->
+    <select id="selectPageByCondition" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        <if test="query.employeeId != null">
+            AND employee_id = #{query.employeeId}
+        </if>
+        <if test="query.applicationStatus != null and query.applicationStatus != ''">
+            AND application_status = #{query.applicationStatus}
+        </if>
+        <if test="query.exceptionType != null and query.exceptionType != ''">
+            AND exception_type = #{query.exceptionType}
+        </if>
+        <if test="query.startDate != null">
+            AND exception_date >= #{query.startDate}
+        </if>
+        <if test="query.endDate != null">
+            AND exception_date <= #{query.endDate}
+        </if>
+        <if test="query.employeeName != null and query.employeeName != ''">
+            AND employee_name LIKE CONCAT('%', #{query.employeeName}, '%')
+        </if>
+        <if test="query.approverId != null">
+            AND approver_id = #{query.approverId}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据员工ID查询异常申请 -->
+    <select id="selectByEmployeeId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        AND employee_id = #{employeeId}
+        ORDER BY create_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 根据状态查询异常申请 -->
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        AND application_status = #{status}
+        ORDER BY create_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 根据员工ID和日期范围查询异常申请 -->
+    <select id="selectByEmployeeIdAndDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        AND employee_id = #{employeeId}
+        <if test="startDate != null">
+            AND exception_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND exception_date <= #{endDate}
+        </if>
+        ORDER BY exception_date ASC, create_time DESC
+    </select>
+
+    <!-- 根据异常类型和日期范围查询异常申请 -->
+    <select id="selectByExceptionTypeAndDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        AND exception_type = #{exceptionType}
+        <if test="startDate != null">
+            AND exception_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND exception_date <= #{endDate}
+        </if>
+        ORDER BY exception_date DESC, create_time DESC
+    </select>
+
+    <!-- 查询待审批的异常申请数量 -->
+    <select id="selectPendingCount" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        AND application_status = 'PENDING'
+        <if test="approverId != null">
+            AND approver_id = #{approverId}
+        </if>
+    </select>
+
+    <!-- 更新申请状态 -->
+    <update id="updateStatus">
+        UPDATE t_exception_applications
+        SET application_status = #{status},
+            update_time = #{updateTime},
+            version = version + 1
+        WHERE application_id = #{applicationId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 批量更新申请状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE t_exception_applications
+        SET application_status = #{status},
+            update_time = #{updateTime},
+            version = version + 1
+        WHERE application_id IN
+        <foreach collection="applicationIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 根据工作流实例ID查询异常申请 -->
+    <select id="selectByWorkflowInstanceId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        AND workflow_instance_id = #{workflowInstanceId}
+        LIMIT 1
+    </select>
+
+    <!-- 查询指定时间范围内的申请统计 -->
+    <select id="selectStatisticsByDateRange" resultType="map">
+        SELECT
+            COUNT(*) as total_count,
+            COUNT(CASE WHEN application_status = 'PENDING' THEN 1 END) as pending_count,
+            COUNT(CASE WHEN application_status = 'APPROVED' THEN 1 END) as approved_count,
+            COUNT(CASE WHEN application_status = 'REJECTED' THEN 1 END) as rejected_count,
+            COUNT(CASE WHEN exception_type = 'OVERTIME' THEN 1 END) as overtime_count,
+            COUNT(CASE WHEN exception_type = 'LEAVE' THEN 1 END) as leave_count,
+            COUNT(CASE WHEN exception_type = 'LATE' THEN 1 END) as late_count,
+            COUNT(CASE WHEN exception_type = 'EARLY_LEAVE' THEN 1 END) as early_leave_count
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        <if test="startDate != null">
+            AND exception_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND exception_date <= #{endDate}
+        </if>
+    </select>
+
+    <!-- 查询员工的申请统计 -->
+    <select id="selectEmployeeStatistics" resultType="map">
+        SELECT
+            COUNT(*) as total_count,
+            COUNT(CASE WHEN application_status = 'PENDING' THEN 1 END) as pending_count,
+            COUNT(CASE WHEN application_status = 'APPROVED' THEN 1 END) as approved_count,
+            COUNT(CASE WHEN application_status = 'REJECTED' THEN 1 END) as rejected_count,
+            COUNT(CASE WHEN exception_type = 'OVERTIME' THEN 1 END) as overtime_count,
+            COUNT(CASE WHEN exception_type = 'LEAVE' THEN 1 END) as leave_count
+        FROM t_exception_applications
+        WHERE deleted_flag = 0
+        AND employee_id = #{employeeId}
+        <if test="startDate != null">
+            AND exception_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND exception_date <= #{endDate}
+        </if>
+    </select>
+
+</mapper>

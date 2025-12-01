@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户类别管理 - 消费管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../js/menu.js" defer></script>
+    <link rel="stylesheet" href="../css/main.css">
+
+    <style>
+        /* 页面特定样式 */
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .account-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+        }
+
+        .account-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: var(--text-lg);
+            flex-shrink: 0;
+        }
+
+        .account-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+        }
+
+        .account-code {
+            color: var(--gray-500);
+            font-size: var(--text-xs);
+        }
+
+        .account-stat {
+            text-align: center;
+            padding: var(--space-md);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .account-stat-value {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--primary-600);
+        }
+
+        .account-stat-label {
+            color: var(--gray-600);
+            font-size: var(--text-xs);
+            margin-top: var(--space-xs);
+        }
+
+        .account-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .btn-sm {
+            padding: var(--space-xs) var(--space-sm);
+            font-size: var(--text-xs);
+            flex: 1;
+        }
+
+        /* 抽屉样式 */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .drawer-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -600px;
+            width: 600px;
+            max-width: 90vw;
+            height: 100vh;
+            background: white;
+            box-shadow: var(--shadow-xl);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.3s ease;
+        }
+
+        .drawer.show {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-xl);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .drawer-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .drawer-close {
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: var(--space-xs);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            transition: all var(--transition);
+        }
+
+        .drawer-close:hover {
+            background: var(--gray-200);
+            color: var(--gray-900);
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-xl);
+        }
+
+        .drawer-footer {
+            padding: var(--space-xl);
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: flex-end;
+        }
+
+        .form-section {
+            margin-bottom: var(--space-2xl);
+            padding-bottom: var(--space-xl);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .form-section-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .form-section-title i {
+            color: var(--primary-500);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: var(--text-sm);
+        }
+
+        .form-label .required {
+            color: var(--error);
+            margin-left: 2px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            transition: all var(--transition);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .form-hint {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-top: var(--space-xs);
+        }
+
+        /* 区域餐别选择 */
+        .region-selector {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .region-item {
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .region-item:last-child {
+            border-bottom: none;
+        }
+
+        .region-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: background var(--transition);
+            background: var(--gray-50);
+        }
+
+        .region-header:hover {
+            background: var(--gray-100);
+        }
+
+        .region-header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            flex: 1;
+        }
+
+        .region-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .region-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: var(--text-base);
+            flex: 1;
+        }
+
+        .region-count {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-left: var(--space-xs);
+        }
+
+        .region-toggle {
+            color: var(--gray-400);
+            transition: transform var(--transition);
+            margin-left: var(--space-sm);
+        }
+
+        .region-item.expanded .region-toggle {
+            transform: rotate(180deg);
+        }
+
+        .sub-regions-list {
+            display: none;
+            background: white;
+        }
+
+        .region-item.expanded .sub-regions-list {
+            display: block;
+        }
+
+        /* 二级：消费区域/档口 */
+        .sub-region-item {
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .sub-region-item:last-child {
+            border-bottom: none;
+        }
+
+        .sub-region-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-xl);
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .sub-region-header:hover {
+            background: var(--gray-50);
+        }
+
+        .sub-region-header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            flex: 1;
+        }
+
+        .sub-region-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .sub-region-name {
+            font-weight: 500;
+            color: var(--gray-800);
+            font-size: var(--text-sm);
+            flex: 1;
+        }
+
+        .sub-region-count {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            margin-left: var(--space-xs);
+        }
+
+        .sub-region-toggle {
+            color: var(--gray-400);
+            font-size: var(--text-xs);
+            transition: transform var(--transition);
+            margin-left: var(--space-sm);
+        }
+
+        .sub-region-item.expanded .sub-region-toggle {
+            transform: rotate(180deg);
+        }
+
+        /* 三级：餐别 */
+        .meals-list {
+            display: none;
+            padding: var(--space-sm) var(--space-md) var(--space-sm) calc(var(--space-xl) + var(--space-lg));
+            background: var(--gray-50);
+        }
+
+        .sub-region-item.expanded .meals-list {
+            display: block;
+        }
+
+        .meal-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-xs) 0;
+        }
+
+        .meal-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .meal-checkbox label {
+            cursor: pointer;
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+        }
+
+        .selected-meals {
+            margin-top: var(--space-md);
+            padding: var(--space-md);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            min-height: 40px;
+        }
+
+        .meal-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border-radius: var(--radius);
+            font-size: var(--text-xs);
+            margin: var(--space-xs);
+        }
+
+        .meal-tag-remove {
+            cursor: pointer;
+            color: var(--primary-500);
+        }
+
+        .meal-tag-remove:hover {
+            color: var(--primary-700);
+        }
+
+        .actions-bar {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            margin-bottom: var(--space-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .actions-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        @media (max-width: 768px) {
+            .accounts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-bar {
+                flex-direction: column;
+                gap: var(--space-lg);
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-utensils fa-lg"></i>
+                <div>
+                    <div class="sidebar-title">消费管理系统</div>
+                    <div class="sidebar-subtitle">Consumption Hub</div>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <!-- 菜单将由 menu.js 自动生成 -->
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 顶部导航栏 -->
+            <header class="header">
+                <h1>账户类别管理</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-bell"></i>
+                        通知
+                    </button>
+                    <div class="user-info">
+                        <div>
+                            <div style="font-weight: 600;">系统管理员</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">在线</div>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 主要内容 -->
+            <div class="content">
+                <!-- 操作栏 -->
+                <section class="actions-bar">
+                    <div>
+                        <h2 class="actions-title">账户类别列表</h2>
+                        <p style="color: var(--gray-600); margin-top: var(--space-xs);">共 5 个账户类别</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal()">
+                        <i class="fas fa-plus"></i>
+                        新增类别
+                    </button>
+                </section>
+
+                <!-- 账户类别网格 -->
+                <section class="accounts-grid">
+                    <div class="account-card">
+                        <div class="account-header">
+                            <div>
+                                <h3 class="account-title">员工账户</h3>
+                                <div class="account-code">EMP001</div>
+                            </div>
+                            <div class="account-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                        </div>
+                        <div class="account-stat">
+                            <div class="account-stat-value">1,248</div>
+                            <div class="account-stat-label">用户数量</div>
+                        </div>
+                        <div class="account-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openModal('edit', '员工账户', 'EMP001', 'fas fa-user-tie', '#3b82f6')">
+                                <i class="fas fa-edit"></i>
+                                编辑
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="account-card">
+                        <div class="account-header">
+                            <div>
+                                <h3 class="account-title">临时账户</h3>
+                                <div class="account-code">TEMP001</div>
+                            </div>
+                            <div class="account-icon" style="background: linear-gradient(135deg, var(--warning), #d97706);">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                        </div>
+                        <div class="account-stat">
+                            <div class="account-stat-value">86</div>
+                            <div class="account-stat-label">用户数量</div>
+                        </div>
+                        <div class="account-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openModal('edit', '临时账户', 'TEMP001', 'fas fa-user-clock', '#f59e0b')">
+                                <i class="fas fa-edit"></i>
+                                编辑
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="account-card">
+                        <div class="account-header">
+                            <div>
+                                <h3 class="account-title">管理员账户</h3>
+                                <div class="account-code">ADMIN001</div>
+                            </div>
+                            <div class="account-icon" style="background: linear-gradient(135deg, var(--error), #dc2626);">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                        </div>
+                        <div class="account-stat">
+                            <div class="account-stat-value">12</div>
+                            <div class="account-stat-label">用户数量</div>
+                        </div>
+                        <div class="account-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openModal('edit', '管理员账户', 'ADMIN001', 'fas fa-user-shield', '#ef4444')">
+                                <i class="fas fa-edit"></i>
+                                编辑
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="account-card">
+                        <div class="account-header">
+                            <div>
+                                <h3 class="account-title">访客账户</h3>
+                                <div class="account-code">VISITOR001</div>
+                            </div>
+                            <div class="account-icon" style="background: linear-gradient(135deg, var(--success), #16a34a);">
+                                <i class="fas fa-user-tag"></i>
+                            </div>
+                        </div>
+                        <div class="account-stat">
+                            <div class="account-stat-value">245</div>
+                            <div class="account-stat-label">用户数量</div>
+                        </div>
+                        <div class="account-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openModal('edit', '访客账户', 'VISITOR001', 'fas fa-user-tag', '#22c55e')">
+                                <i class="fas fa-edit"></i>
+                                编辑
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="account-card">
+                        <div class="account-header">
+                            <div>
+                                <h3 class="account-title">学生账户</h3>
+                                <div class="account-code">STUDENT001</div>
+                            </div>
+                            <div class="account-icon" style="background: linear-gradient(135deg, var(--info), #2563eb);">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                        </div>
+                        <div class="account-stat">
+                            <div class="account-stat-value">3,856</div>
+                            <div class="account-stat-label">用户数量</div>
+                        </div>
+                        <div class="account-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="openModal('edit', '学生账户', 'STUDENT001', 'fas fa-graduation-cap', '#3b82f6')">
+                                <i class="fas fa-edit"></i>
+                                编辑
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+    <!-- 右侧抽屉 -->
+    <div class="drawer" id="accountDrawer">
+        <div class="drawer-header">
+            <h3 class="drawer-title" id="drawerTitle">新增账户类别</h3>
+            <button class="drawer-close" onclick="closeDrawer()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="drawer-body">
+            <form id="accountForm">
+                <!-- 基本信息 -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i class="fas fa-info-circle"></i>
+                        基本信息
+                    </h4>
+                    
+                    <div class="form-group">
+                        <label class="form-label">类别名称 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="accountName" placeholder="例如：员工账户" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">类别编号 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="accountCode" placeholder="例如：EMP001" required>
+                        <div class="form-hint">类别编号必须唯一，建议使用英文字母+数字组合</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">图标选择 <span class="required">*</span></label>
+                            <select class="form-select" id="accountIcon" required>
+                                <option value="fas fa-user-tie">用户西装</option>
+                                <option value="fas fa-user-clock">用户时钟</option>
+                                <option value="fas fa-user-shield">用户盾牌</option>
+                                <option value="fas fa-user-tag">用户标签</option>
+                                <option value="fas fa-graduation-cap">毕业帽</option>
+                                <option value="fas fa-user">普通用户</option>
+                                <option value="fas fa-users">用户组</option>
+                                <option value="fas fa-user-cog">用户设置</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">图标颜色 <span class="required">*</span></label>
+                            <select class="form-select" id="accountColor" required>
+                                <option value="#3b82f6">蓝色</option>
+                                <option value="#22c55e">绿色</option>
+                                <option value="#f59e0b">橙色</option>
+                                <option value="#ef4444">红色</option>
+                                <option value="#8b5cf6">紫色</option>
+                                <option value="#06b6d4">青色</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">描述说明</label>
+                        <textarea class="form-textarea" id="accountDescription" placeholder="输入该类别的描述说明"></textarea>
+                    </div>
+                </div>
+
+                <!-- 消费限额 -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i class="fas fa-wallet"></i>
+                        消费限额设置
+                    </h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">日消费限额</label>
+                            <input type="number" class="form-input" id="dailyLimit" placeholder="0.00" step="0.01" min="0">
+                            <div class="form-hint">单位：元，0 表示不限制</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">月消费限额</label>
+                            <input type="number" class="form-input" id="monthlyLimit" placeholder="0.00" step="0.01" min="0">
+                            <div class="form-hint">单位：元，0 表示不限制</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">单笔最小金额</label>
+                            <input type="number" class="form-input" id="minAmount" placeholder="0.00" step="0.01" min="0">
+                            <div class="form-hint">单位：元</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">单笔最大金额</label>
+                            <input type="number" class="form-input" id="maxAmount" placeholder="0.00" step="0.01" min="0">
+                            <div class="form-hint">单位：元，0 表示不限制</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 区域餐别权限 -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i class="fas fa-map-marked-alt"></i>
+                        区域餐别权限
+                    </h4>
+
+                    <div class="form-group">
+                        <label class="form-label">选择可用区域和餐别</label>
+                        <div class="region-selector">
+                            <!-- 第一食堂 -->
+                            <div class="region-item" data-region="canteen1">
+                                <div class="region-header">
+                                    <div class="region-header-left" onclick="toggleRegion(this)">
+                                        <input type="checkbox" class="region-checkbox" onclick="event.stopPropagation(); toggleRegionAll(this)">
+                                        <span class="region-name">🏢 第一食堂<span class="region-count" id="count-canteen1"></span></span>
+                                    </div>
+                                    <i class="fas fa-chevron-down region-toggle" onclick="toggleRegion(this)"></i>
+                                </div>
+                                <div class="sub-regions-list">
+                                    <!-- 一楼主食区 -->
+                                    <div class="sub-region-item" data-sub-region="canteen1-floor1">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">一楼主食区<span class="sub-region-count" id="count-canteen1-floor1"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f1-breakfast" value="canteen1-floor1-breakfast" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f1-breakfast">早餐 (07:00-09:00)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f1-lunch" value="canteen1-floor1-lunch" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f1-lunch">午餐 (11:30-13:30)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f1-dinner" value="canteen1-floor1-dinner" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f1-dinner">晚餐 (17:00-19:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 二楼面食区 -->
+                                    <div class="sub-region-item" data-sub-region="canteen1-floor2">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">二楼面食区<span class="sub-region-count" id="count-canteen1-floor2"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f2-breakfast" value="canteen1-floor2-breakfast" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f2-breakfast">早餐 (07:00-09:00)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f2-lunch" value="canteen1-floor2-lunch" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f2-lunch">午餐 (11:30-13:30)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f2-dinner" value="canteen1-floor2-dinner" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f2-dinner">晚餐 (17:00-19:00)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f2-snack" value="canteen1-floor2-snack" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f2-snack">夜宵 (20:00-22:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 三楼小吃区 -->
+                                    <div class="sub-region-item" data-sub-region="canteen1-floor3">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">三楼小吃区<span class="sub-region-count" id="count-canteen1-floor3"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f3-lunch" value="canteen1-floor3-lunch" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f3-lunch">午餐 (11:30-13:30)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c1-f3-dinner" value="canteen1-floor3-dinner" onchange="updateSelectedMeals()">
+                                                <label for="meal-c1-f3-dinner">晚餐 (17:00-19:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 第二食堂 -->
+                            <div class="region-item" data-region="canteen2">
+                                <div class="region-header">
+                                    <div class="region-header-left" onclick="toggleRegion(this)">
+                                        <input type="checkbox" class="region-checkbox" onclick="event.stopPropagation(); toggleRegionAll(this)">
+                                        <span class="region-name">🏢 第二食堂<span class="region-count" id="count-canteen2"></span></span>
+                                    </div>
+                                    <i class="fas fa-chevron-down region-toggle" onclick="toggleRegion(this)"></i>
+                                </div>
+                                <div class="sub-regions-list">
+                                    <!-- 一楼窗口区 -->
+                                    <div class="sub-region-item" data-sub-region="canteen2-floor1">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">一楼窗口区<span class="sub-region-count" id="count-canteen2-floor1"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c2-f1-breakfast" value="canteen2-floor1-breakfast" onchange="updateSelectedMeals()">
+                                                <label for="meal-c2-f1-breakfast">早餐 (07:00-09:00)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c2-f1-lunch" value="canteen2-floor1-lunch" onchange="updateSelectedMeals()">
+                                                <label for="meal-c2-f1-lunch">午餐 (11:30-13:30)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c2-f1-dinner" value="canteen2-floor1-dinner" onchange="updateSelectedMeals()">
+                                                <label for="meal-c2-f1-dinner">晚餐 (17:00-19:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 二楼自选区 -->
+                                    <div class="sub-region-item" data-sub-region="canteen2-floor2">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">二楼自选区<span class="sub-region-count" id="count-canteen2-floor2"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c2-f2-lunch" value="canteen2-floor2-lunch" onchange="updateSelectedMeals()">
+                                                <label for="meal-c2-f2-lunch">午餐 (11:30-13:30)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-c2-f2-dinner" value="canteen2-floor2-dinner" onchange="updateSelectedMeals()">
+                                                <label for="meal-c2-f2-dinner">晚餐 (17:00-19:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 员工餐厅 -->
+                            <div class="region-item" data-region="restaurant">
+                                <div class="region-header">
+                                    <div class="region-header-left" onclick="toggleRegion(this)">
+                                        <input type="checkbox" class="region-checkbox" onclick="event.stopPropagation(); toggleRegionAll(this)">
+                                        <span class="region-name">🍽️ 员工餐厅<span class="region-count" id="count-restaurant"></span></span>
+                                    </div>
+                                    <i class="fas fa-chevron-down region-toggle" onclick="toggleRegion(this)"></i>
+                                </div>
+                                <div class="sub-regions-list">
+                                    <!-- VIP包间区 -->
+                                    <div class="sub-region-item" data-sub-region="restaurant-vip">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">VIP包间区<span class="sub-region-count" id="count-restaurant-vip"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-r-vip-lunch" value="restaurant-vip-lunch" onchange="updateSelectedMeals()">
+                                                <label for="meal-r-vip-lunch">午餐 (11:30-13:30)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-r-vip-dinner" value="restaurant-vip-dinner" onchange="updateSelectedMeals()">
+                                                <label for="meal-r-vip-dinner">晚餐 (17:00-19:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 自助餐区 -->
+                                    <div class="sub-region-item" data-sub-region="restaurant-buffet">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">自助餐区<span class="sub-region-count" id="count-restaurant-buffet"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-r-buffet-lunch" value="restaurant-buffet-lunch" onchange="updateSelectedMeals()">
+                                                <label for="meal-r-buffet-lunch">午餐 (11:30-13:30)</label>
+                                            </div>
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-r-buffet-dinner" value="restaurant-buffet-dinner" onchange="updateSelectedMeals()">
+                                                <label for="meal-r-buffet-dinner">晚餐 (17:00-19:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 咖啡厅 -->
+                            <div class="region-item" data-region="cafe">
+                                <div class="region-header">
+                                    <div class="region-header-left" onclick="toggleRegion(this)">
+                                        <input type="checkbox" class="region-checkbox" onclick="event.stopPropagation(); toggleRegionAll(this)">
+                                        <span class="region-name">☕ 咖啡厅<span class="region-count" id="count-cafe"></span></span>
+                                    </div>
+                                    <i class="fas fa-chevron-down region-toggle" onclick="toggleRegion(this)"></i>
+                                </div>
+                                <div class="sub-regions-list">
+                                    <!-- 饮品区 -->
+                                    <div class="sub-region-item" data-sub-region="cafe-drink">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">饮品区<span class="sub-region-count" id="count-cafe-drink"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-cafe-drink-all" value="cafe-drink-allday" onchange="updateSelectedMeals()">
+                                                <label for="meal-cafe-drink-all">全天 (08:00-20:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 简餐区 -->
+                                    <div class="sub-region-item" data-sub-region="cafe-meal">
+                                        <div class="sub-region-header">
+                                            <div class="sub-region-header-left" onclick="toggleSubRegion(this)">
+                                                <input type="checkbox" class="sub-region-checkbox" onclick="event.stopPropagation(); toggleSubRegionAll(this)">
+                                                <span class="sub-region-name">简餐区<span class="sub-region-count" id="count-cafe-meal"></span></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down sub-region-toggle" onclick="toggleSubRegion(this)"></i>
+                                        </div>
+                                        <div class="meals-list">
+                                            <div class="meal-checkbox">
+                                                <input type="checkbox" id="meal-cafe-meal-all" value="cafe-meal-allday" onchange="updateSelectedMeals()">
+                                                <label for="meal-cafe-meal-all">全天 (08:00-20:00)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="selected-meals" id="selectedMeals">
+                            <div style="color: var(--gray-500); font-size: var(--text-xs);">已选择的餐别将显示在这里</div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="drawer-footer">
+            <button type="button" class="btn btn-outline" onclick="closeDrawer()">取消</button>
+            <button type="button" class="btn btn-primary" onclick="submitForm()">
+                <i class="fas fa-check"></i>
+                保存
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 存储选中的餐别
+        let selectedMealsData = new Set();
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('账户类别管理页面加载完成');
+        });
+
+        // 打开抽屉
+        function openModal(mode = 'add', name = '', code = '', icon = '', color = '') {
+            const drawer = document.getElementById('accountDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            const drawerTitle = document.getElementById('drawerTitle');
+            const form = document.getElementById('accountForm');
+            
+            if (mode === 'edit') {
+                drawerTitle.textContent = '编辑账户类别';
+                document.getElementById('accountName').value = name;
+                document.getElementById('accountCode').value = code;
+                document.getElementById('accountIcon').value = icon;
+                document.getElementById('accountColor').value = color;
+            } else {
+                drawerTitle.textContent = '新增账户类别';
+                form.reset();
+                selectedMealsData.clear();
+                updateSelectedMealsDisplay();
+            }
+            
+            // 延迟添加show类以触发动画
+            overlay.classList.add('show');
+            setTimeout(() => {
+                drawer.classList.add('show');
+            }, 10);
+        }
+
+        // 关闭抽屉
+        function closeDrawer() {
+            const drawer = document.getElementById('accountDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            
+            drawer.classList.remove('show');
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 300);
+        }
+
+        // 切换一级区域展开/收起
+        function toggleRegion(element) {
+            const regionItem = element.closest('.region-item');
+            regionItem.classList.toggle('expanded');
+        }
+
+        // 切换二级区域展开/收起
+        function toggleSubRegion(element) {
+            const subRegionItem = element.closest('.sub-region-item');
+            subRegionItem.classList.toggle('expanded');
+        }
+
+        // 一级区域全选/取消全选
+        function toggleRegionAll(checkbox) {
+            const regionItem = checkbox.closest('.region-item');
+            const isChecked = checkbox.checked;
+            
+            // 选中/取消该区域下所有的二级区域复选框
+            const subRegionCheckboxes = regionItem.querySelectorAll('.sub-region-checkbox');
+            subRegionCheckboxes.forEach(cb => {
+                cb.checked = isChecked;
+                cb.indeterminate = false;
+            });
+            
+            // 选中/取消该区域下所有的餐别复选框
+            const mealCheckboxes = regionItem.querySelectorAll('.meal-checkbox input[type="checkbox"]');
+            mealCheckboxes.forEach(cb => {
+                cb.checked = isChecked;
+            });
+            
+            updateSelectedMeals();
+        }
+
+        // 二级区域全选/取消全选
+        function toggleSubRegionAll(checkbox) {
+            const subRegionItem = checkbox.closest('.sub-region-item');
+            const isChecked = checkbox.checked;
+            
+            // 选中/取消该二级区域下所有的餐别复选框
+            const mealCheckboxes = subRegionItem.querySelectorAll('.meal-checkbox input[type="checkbox"]');
+            mealCheckboxes.forEach(cb => {
+                cb.checked = isChecked;
+            });
+            
+            updateSelectedMeals();
+        }
+
+        // 更新选中的餐别
+        function updateSelectedMeals() {
+            // 获取所有选中的checkbox
+            const checkboxes = document.querySelectorAll('.meal-checkbox input[type="checkbox"]:checked');
+            
+            selectedMealsData.clear();
+            checkboxes.forEach(checkbox => {
+                const mealLabel = checkbox.nextElementSibling.textContent.trim();
+                const subRegionName = checkbox.closest('.sub-region-item').querySelector('.sub-region-name').textContent.trim();
+                const regionName = checkbox.closest('.region-item').querySelector('.region-name').textContent.trim();
+                
+                selectedMealsData.add({
+                    value: checkbox.value,
+                    label: `${regionName} > ${subRegionName} > ${mealLabel}`
+                });
+            });
+            
+            updateSelectedMealsDisplay();
+            updateAllCheckboxStates();
+            updateAllCounts();
+        }
+
+        // 更新所有复选框状态（自动显示半选/全选状态）
+        function updateAllCheckboxStates() {
+            // 更新所有二级区域复选框状态
+            document.querySelectorAll('.sub-region-item').forEach(subRegionItem => {
+                const subCheckbox = subRegionItem.querySelector('.sub-region-checkbox');
+                const mealCheckboxes = subRegionItem.querySelectorAll('.meal-checkbox input[type="checkbox"]');
+                const checkedCount = Array.from(mealCheckboxes).filter(cb => cb.checked).length;
+                
+                if (checkedCount === 0) {
+                    subCheckbox.checked = false;
+                    subCheckbox.indeterminate = false;
+                } else if (checkedCount === mealCheckboxes.length) {
+                    subCheckbox.checked = true;
+                    subCheckbox.indeterminate = false;
+                } else {
+                    subCheckbox.checked = false;
+                    subCheckbox.indeterminate = true;
+                }
+            });
+            
+            // 更新所有一级区域复选框状态
+            document.querySelectorAll('.region-item').forEach(regionItem => {
+                const regionCheckbox = regionItem.querySelector('.region-checkbox');
+                const allMealCheckboxes = regionItem.querySelectorAll('.meal-checkbox input[type="checkbox"]');
+                const checkedCount = Array.from(allMealCheckboxes).filter(cb => cb.checked).length;
+                
+                if (checkedCount === 0) {
+                    regionCheckbox.checked = false;
+                    regionCheckbox.indeterminate = false;
+                } else if (checkedCount === allMealCheckboxes.length) {
+                    regionCheckbox.checked = true;
+                    regionCheckbox.indeterminate = false;
+                } else {
+                    regionCheckbox.checked = false;
+                    regionCheckbox.indeterminate = true;
+                }
+            });
+        }
+
+        // 更新所有计数器
+        function updateAllCounts() {
+            // 更新二级区域计数
+            document.querySelectorAll('.sub-region-item').forEach(subRegionItem => {
+                const subRegionId = subRegionItem.getAttribute('data-sub-region');
+                const countSpan = document.getElementById(`count-${subRegionId}`);
+                if (countSpan) {
+                    const mealCheckboxes = subRegionItem.querySelectorAll('.meal-checkbox input[type="checkbox"]');
+                    const checkedCount = Array.from(mealCheckboxes).filter(cb => cb.checked).length;
+                    const totalCount = mealCheckboxes.length;
+                    
+                    if (checkedCount > 0) {
+                        countSpan.textContent = ` (${checkedCount}/${totalCount})`;
+                    } else {
+                        countSpan.textContent = '';
+                    }
+                }
+            });
+            
+            // 更新一级区域计数
+            document.querySelectorAll('.region-item').forEach(regionItem => {
+                const regionId = regionItem.getAttribute('data-region');
+                const countSpan = document.getElementById(`count-${regionId}`);
+                if (countSpan) {
+                    const allMealCheckboxes = regionItem.querySelectorAll('.meal-checkbox input[type="checkbox"]');
+                    const checkedCount = Array.from(allMealCheckboxes).filter(cb => cb.checked).length;
+                    const totalCount = allMealCheckboxes.length;
+                    
+                    if (checkedCount > 0) {
+                        countSpan.textContent = ` (${checkedCount}/${totalCount})`;
+                    } else {
+                        countSpan.textContent = '';
+                    }
+                }
+            });
+        }
+
+        // 显示已选择的餐别标签
+        function updateSelectedMealsDisplay() {
+            const container = document.getElementById('selectedMeals');
+            
+            if (selectedMealsData.size === 0) {
+                container.innerHTML = '<div style="color: var(--gray-500); font-size: var(--text-xs);">已选择的餐别将显示在这里</div>';
+                return;
+            }
+            
+            let html = '';
+            selectedMealsData.forEach(meal => {
+                html += `
+                    <span class="meal-tag">
+                        ${meal.label}
+                        <i class="fas fa-times meal-tag-remove" onclick="removeMeal('${meal.value}')"></i>
+                    </span>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // 移除餐别标签
+        function removeMeal(value) {
+            const checkbox = document.querySelector(`input[value="${value}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+                updateSelectedMeals();
+            }
+        }
+
+        // 提交表单
+        function submitForm() {
+            const form = document.getElementById('accountForm');
+            
+            // 验证必填项
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            // 收集表单数据
+            const formData = {
+                name: document.getElementById('accountName').value,
+                code: document.getElementById('accountCode').value,
+                icon: document.getElementById('accountIcon').value,
+                color: document.getElementById('accountColor').value,
+                description: document.getElementById('accountDescription').value,
+                dailyLimit: document.getElementById('dailyLimit').value || 0,
+                monthlyLimit: document.getElementById('monthlyLimit').value || 0,
+                minAmount: document.getElementById('minAmount').value || 0,
+                maxAmount: document.getElementById('maxAmount').value || 0,
+                meals: Array.from(selectedMealsData)
+            };
+            
+            console.log('提交表单数据:', formData);
+            
+            // 构建提示信息
+            let message = '账户类别配置：\n\n';
+            message += `类别名称：${formData.name}\n`;
+            message += `类别编号：${formData.code}\n`;
+            message += `日消费限额：¥${formData.dailyLimit}\n`;
+            message += `月消费限额：¥${formData.monthlyLimit}\n`;
+            message += `单笔金额范围：¥${formData.minAmount} - ¥${formData.maxAmount}\n`;
+            message += `可用餐别：${formData.meals.length} 个`;
+            
+            // 这里可以添加实际的保存逻辑
+            alert(message);
+            
+            closeDrawer();
+        }
+
+        // 按ESC键关闭抽屉
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const drawer = document.getElementById('accountDrawer');
+                if (drawer.classList.contains('show')) {
+                    closeDrawer();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

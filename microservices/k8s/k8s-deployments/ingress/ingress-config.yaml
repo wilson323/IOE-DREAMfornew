@@ -1,0 +1,338 @@
+# IOE-DREAM微服务Ingress配置
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ioedream-ingress-prod
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-ingress
+    component: ingress
+    environment: production
+    project: ioedream
+  annotations:
+    # Ingress控制器类型
+    kubernetes.io/ingress.class: "nginx"
+
+    # 重写规则
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+
+    # SSL配置
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-ciphers: "ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384"
+    nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1.2 TLSv1.3"
+
+    # 限流配置
+    nginx.ingress.kubernetes.io/rate-limit-connections: "100"
+    nginx.ingress.kubernetes.io/rate-limit-requests-per-second: "50"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+
+    # 超时配置
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+    # 请求头配置
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "32k"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+      more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
+      more_set_headers "Content-Security-Policy: default-src 'self'";
+
+    # 认证配置
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-secret: "ioedream-basic-auth"
+
+    # 灰度发布配置
+    nginx.ingress.kubernetes.io/canary: "false"
+
+    # 自定义错误页面
+    nginx.ingress.kubernetes.io/custom-http-errors: "404,503"
+
+    # 日志配置
+    nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+
+    # 健康检查
+    nginx.ingress.kubernetes.io/healthcheck-uri: "/actuator/health"
+    nginx.ingress.kubernetes.io/healthcheck-interval: "10"
+    nginx.ingress.kubernetes.io/healthcheck-timeout: "5"
+    nginx.ingress.kubernetes.io/healthcheck-threshold: "3"
+
+    description: "IOE-DREAM生产环境入口网关"
+spec:
+  # TLS配置
+  tls:
+    - hosts:
+        - api.ioedream.com
+        - admin.ioedream.com
+        - monitor.ioedream.com
+      secretName: ioedream-tls-secret
+
+  # 规则配置
+  rules:
+    # 主API域名
+    - host: api.ioedream.com
+      http:
+        paths:
+          # 所有API请求都路由到网关
+          - path: /api(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: smart-gateway
+                port:
+                  number: 8080
+
+          # 健康检查
+          - path: /health
+            pathType: Exact
+            backend:
+              service:
+                name: smart-gateway
+                port:
+                  number: 8080
+
+          # 管理端点（限制访问）
+          - path: /actuator(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: smart-gateway
+                port:
+                  number: 8080
+
+    # 管理后台域名
+    - host: admin.ioedream.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: smart-gateway
+                port:
+                  number: 8080
+
+    # 监控域名
+    - host: monitor.ioedream.com
+      http:
+        paths:
+          # Prometheus
+          - path: /prometheus(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-service
+                port:
+                  number: 9090
+
+          # Grafana
+          - path: /grafana(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana-service
+                port:
+                  number: 3000
+
+          # 告警管理
+          - path: /alertmanager(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: alertmanager-service
+                port:
+                  number: 9093
+
+---
+# 预发布环境Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ioedream-ingress-staging
+  namespace: ioedream-staging
+  labels:
+    app: ioedream-ingress
+    component: ingress
+    environment: staging
+    project: ioedream
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # 预发布环境暂时不强制HTTPS
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/rate-limit-requests-per-second: "20"
+    description: "IOE-DREAM预发布环境入口网关"
+spec:
+  rules:
+    - host: staging-api.ioedream.com
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: smart-gateway
+                port:
+                  number: 8080
+          - path: /health
+            pathType: Exact
+            backend:
+              service:
+                name: smart-gateway
+                port:
+                  number: 8080
+
+---
+# 灰度发布Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ioedream-ingress-canary
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-ingress
+    component: ingress
+    environment: production
+    project: ioedream
+    deployment-type: canary
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+
+    # 灰度发布配置
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "10"  # 10%流量到新版本
+    nginx.ingress.kubernetes.io/canary-by-header: "X-Canary"
+    nginx.ingress.kubernetes.io/canary-by-header-value: "true"
+    nginx.ingress.kubernetes.io/canary-by-cookie: "canary"
+
+    description: "IOE-DREAM灰度发布入口网关"
+spec:
+  rules:
+    - host: api.ioedream.com
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: smart-gateway-canary  # 指向新版本服务
+                port:
+                  number: 8080
+
+---
+# 内部服务Ingress（仅集群内部访问）
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ioedream-internal-ingress
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-ingress
+    component: ingress
+    environment: production
+    access-type: internal
+    project: ioedream
+  annotations:
+    kubernetes.io/ingress.class: "nginx-internal"  # 使用内部Ingress控制器
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-secret: "ioedream-internal-auth"
+    nginx.ingress.kubernetes.io/auth-realm: "IOE-DREAM Internal Services"
+    description: "IOE-DREAM内部服务访问入口"
+spec:
+  rules:
+    # 内部服务域名
+    - host: internal.ioedream.local
+      http:
+        paths:
+          # 数据库管理
+          - path: /phpmyadmin(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: phpmyadmin-service
+                port:
+                  number: 80
+
+          # Redis管理
+          - path: /redis-commander(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: redis-commander-service
+                port:
+                  number: 8081
+
+          # Nacos管理
+          - path: /nacos(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: nacos-service
+                port:
+                  number: 8848
+
+---
+# WebSocket Ingress（用于实时功能）
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ioedream-websocket-ingress
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-ingress
+    component: ingress
+    protocol: websocket
+    environment: production
+    project: ioedream
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+    description: "IOE-DREAM WebSocket服务入口"
+spec:
+  tls:
+    - hosts:
+        - ws.ioedream.com
+      secretName: ioedream-ws-tls-secret
+  rules:
+    - host: ws.ioedream.com
+      http:
+        paths:
+          # WebSocket连接
+          - path: /ws(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: ioedream-notification-service
+                port:
+                  number: 8092
+
+          # Server-Sent Events
+          - path: /sse(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: ioedream-monitor-service
+                port:
+                  number: 8090

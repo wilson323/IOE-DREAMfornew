@@ -1,0 +1,619 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-admin ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 12 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-admin ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 528 source files with javac [debug target 17] to target\classes
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/domain/entity/AttendanceRecordEntity.java: 某些输入文件使用或覆盖了已过时的 API。
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/domain/entity/AttendanceRecordEntity.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[484,128] 未经检查的转换
+  需要: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity>
+  找到:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#2, 共 ?>
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[497,128] 未经检查的转换
+  需要: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity>
+  找到:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#3, 共 ?>
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/websocket/WebSocketSessionManager.java:[200,64] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.util.Map
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeCacheService.java:[209,68] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeCacheService.java:[269,67] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[290,81] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[305,77] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[347,48] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[297,81] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[304,79] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[346,48] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/SmartMode.java:[243,98] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/AdvancedReportManager.java:[259,99] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/manager/AccessAreaManager.java:[434,43] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.util.Map
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/service/impl/AccessRecordServiceImpl.java:[74,75] 未经检查的转换
+  需要: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.smart.access.domain.entity.AccessRecordEntity>
+  找到:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#4, 共 ?>
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[127,68] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.util.Map
+[INFO] 16 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[79,12] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[573,73] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[630,12] 对UserBehaviorBaseline的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[659,80] 对UserBehaviorBaseline的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[690,94] 对OperationEvent的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.OperationEvent 和 net.lab1024.sa.admin.module.consume.domain.entity 中的类 net.lab1024.sa.admin.module.consume.domain.entity.OperationEvent 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[704,78] 对DetectionRule的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.DetectionRule 和 net.lab1024.sa.admin.module.consume.domain.entity 中的类 net.lab1024.sa.admin.module.consume.domain.entity.DetectionRule 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[710,17] 对DetectionRule的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.DetectionRule 和 net.lab1024.sa.admin.module.consume.domain.entity 中的类 net.lab1024.sa.admin.module.consume.domain.entity.DetectionRule 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[715,77] 对OperationEvent的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.OperationEvent 和 net.lab1024.sa.admin.module.consume.domain.entity 中的类 net.lab1024.sa.admin.module.consume.domain.entity.OperationEvent 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[763,13] 对UserBehaviorBaseline的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[818,65] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[818,13] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[875,86] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[882,56] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[893,13] 找不到符号
+  符号:   类 ConsumptionPattern
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[916,13] 找不到符号
+  符号:   类 TimePattern
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[942,13] 找不到符号
+  符号:   类 LocationPattern
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[963,13] 找不到符号
+  符号:   类 DevicePattern
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[984,13] 找不到符号
+  符号:   类 BehaviorAnalysis
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[996,47] 找不到符号
+  符号:   类 BehaviorAnalysis
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1019,61] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1060,83] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1067,13] 对AbnormalDetectionResult的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1077,13] 对UserBehaviorBaseline的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1091,56] 对UserBehaviorBaseline的引用不明确
+  net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/ReconciliationServiceImpl.java:[42,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/impl/AdvancedReportServiceImpl.java:[29,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[40,26] 找不到符号
+  符号:   方法 getExceptionId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceExceptionEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[42,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[56,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[69,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[85,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[98,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[111,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceStatisticsRepository.java:[42,26] 找不到符号
+  符号:   方法 getStatisticsId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceStatisticsEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[543,37] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[543,72] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[547,33] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[264,78] 不兼容的类型: com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#1, 共 ?>无法转换为com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[267,33] 对于convert2PageResult(com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>,java.util.List<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>), 找不到合适的方法
+    方法 net.lab1024.sa.base.common.util.SmartPageUtil.<T,E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>,java.lang.Class<T>)不适用
+      (无法推断类型变量 T,E
+        (实际参数列表和形式参数列表长度不同))
+    方法 net.lab1024.sa.base.common.util.SmartPageUtil.<E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>)不适用
+      (无法推断类型变量 E
+        (参数不匹配; com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>无法转换为com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>))
+    方法 net.lab1024.sa.base.common.util.SmartPageUtil.<E,T>convert2PageResult(net.lab1024.sa.base.common.domain.PageResult<E>,java.lang.Class<T>)不适用
+      (无法推断类型变量 E,T
+        (参数不匹配; com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>无法转换为net.lab1024.sa.base.common.domain.PageResult<E>))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[270,30] 无法将类 net.lab1024.sa.base.common.domain.PageResult<T>中的方法 of应用到给定类型;
+  需要: java.util.List<T>,long,long,long
+  找到:    java.lang.Long,java.lang.Long,long,java.util.List<java.lang.Object>
+  原因: 无法推断类型变量 T
+    (参数不匹配; java.lang.Long无法转换为java.util.List<T>)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[60,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[75,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[94,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[111,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[122,9] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[143,9] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[317,25] 找不到符号
+  符号:   方法 getShiftId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[323,29] 找不到符号
+  符号:   方法 getShiftId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[325,37] 找不到符号
+  符号:   方法 getShiftId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[335,73] 找不到符号
+  符号:   方法 getShiftId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[390,25] 找不到符号
+  符号:   方法 getShiftId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[392,29] 找不到符号
+  符号:   方法 getShiftId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[407,73] 找不到符号
+  符号:   方法 getShiftId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[615,58] 找不到符号
+  符号:   方法 getRemarks()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 sourceSchedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[291,30] 找不到符号
+  符号:   方法 getEmployeeId()
+  位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[291,57] 找不到符号
+  符号:   方法 getAttendanceDate()
+  位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[308,67] 找不到符号
+  符号:   方法 getEmployeeId()
+  位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[308,94] 找不到符号
+  符号:   方法 getAttendanceDate()
+  位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[329,52] 找不到符号
+  符号:   方法 getRecordId()
+  位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordUpdateDTO的变量 updateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[332,92] 找不到符号
+  符号:   方法 getRecordId()
+  位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordUpdateDTO的变量 updateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[836,57] 找不到符号
+  符号:   方法 getRemark()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordVO的变量 vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[836,82] 找不到符号
+  符号:   方法 getRemark()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordVO的变量 vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[894,30] 找不到符号
+  符号:   方法 getRemark()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordVO的变量 vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[894,70] 找不到符号
+  符号:   方法 getRemark()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordVO的变量 vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[1500,37] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[1500,72] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[1505,33] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[221,55] 找不到符号
+  符号:   方法 getEmployeeId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[221,82] 找不到符号
+  符号:   方法 getAttendanceDate()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[238,46] 找不到符号
+  符号:   方法 getRecordId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordUpdateDTO的变量 updateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1441,48] 找不到符号
+  符号:   方法 getOvertimeRate()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1442,43] 找不到符号
+  符号:   方法 getOvertimeRate()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1447,48] 找不到符号
+  符号:   方法 getOvertimeRate()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1448,43] 找不到符号
+  符号:   方法 getOvertimeRate()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1626,37] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1626,72] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1630,33] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[112,73] 不兼容的类型: java.lang.Long无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[116,73] 不兼容的类型: java.lang.Long无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[128,80] 不兼容的类型: java.lang.Long无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[219,69] 找不到符号
+  符号:   方法 selectHourlyTrend(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[223,69] 找不到符号
+  符号:   方法 selectHotProducts(java.time.LocalDateTime,java.time.LocalDateTime,int)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[227,77] 找不到符号
+  符号:   方法 selectPaymentDistribution(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.PaymentRecordDao的变量 paymentRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[231,76] 找不到符号
+  符号:   方法 selectRegionDistribution(java.time.LocalDateTime,java.time.LocalDateTime,int)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[236,70] 找不到符号
+  符号:   方法 selectAbnormalPayments(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.PaymentRecordDao的变量 paymentRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[237,71] 找不到符号
+  符号:   方法 selectLargeAmountOrders(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[238,72] 找不到符号
+  符号:   方法 selectFrequentOperations(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[320,64] 不兼容的类型: java.lang.Long无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[321,68] 不兼容的类型: java.lang.Double无法转换为java.math.BigDecimal
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[330,48] 找不到符号
+  符号:   方法 selectUserConsumeCount(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[339,50] 找不到符号
+  符号:   方法 selectUserTotalAmount(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[348,41] 找不到符号
+  符号:   方法 countByUserIdAndTimeRange(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.OrderingDao的变量 orderingDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[356,48] 找不到符号
+  符号:   方法 selectUserProductCount(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[364,64] 找不到符号
+  符号:   方法 selectUserHourlyConsume(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[372,49] 找不到符号
+  符号:   方法 selectUserAvgPaymentTime(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.PaymentRecordDao的变量 paymentRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[385,68] 找不到符号
+  符号:   方法 selectDailyAmountTrend(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[412,68] 找不到符号
+  符号:   方法 selectDailyOrderTrend(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/consistency/ConsistencyValidator.java:[35,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.ConsistencyValidator
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/consistency/ConsistencyValidator.java:[43,17] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.ConsistencyValidator
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/consistency/ConsistencyValidator.java:[46,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.ConsistencyValidator
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.687 s
+[INFO] Finished at: 2025-11-22T18:04:57+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[79,12] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[573,73] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[630,12] 对UserBehaviorBaseline的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[659,80] 对UserBehaviorBaseline的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[690,94] 对OperationEvent的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.OperationEvent 和 net.lab1024.sa.admin.module.consume.domain.entity 中的类 net.lab1024.sa.admin.module.consume.domain.entity.OperationEvent 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[704,78] 对DetectionRule的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.DetectionRule 和 net.lab1024.sa.admin.module.consume.domain.entity 中的类 net.lab1024.sa.admin.module.consume.domain.entity.DetectionRule 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[710,17] 对DetectionRule的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.DetectionRule 和 net.lab1024.sa.admin.module.consume.domain.entity 中的类 net.lab1024.sa.admin.module.consume.domain.entity.DetectionRule 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[715,77] 对OperationEvent的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.OperationEvent 和 net.lab1024.sa.admin.module.consume.domain.entity 中的类 net.lab1024.sa.admin.module.consume.domain.entity.OperationEvent 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[763,13] 对UserBehaviorBaseline的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[818,65] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[818,13] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[875,86] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[882,56] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[893,13] 找不到符号
+[ERROR]   符号:   类 ConsumptionPattern
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[916,13] 找不到符号
+[ERROR]   符号:   类 TimePattern
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[942,13] 找不到符号
+[ERROR]   符号:   类 LocationPattern
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[963,13] 找不到符号
+[ERROR]   符号:   类 DevicePattern
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[984,13] 找不到符号
+[ERROR]   符号:   类 BehaviorAnalysis
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[996,47] 找不到符号
+[ERROR]   符号:   类 BehaviorAnalysis
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1019,61] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1060,83] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1067,13] 对AbnormalDetectionResult的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.AbnormalDetectionResult 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.AbnormalDetectionResult 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1077,13] 对UserBehaviorBaseline的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[1091,56] 对UserBehaviorBaseline的引用不明确
+[ERROR]   net.lab1024.sa.admin.module.consume.domain.result 中的类 net.lab1024.sa.admin.module.consume.domain.result.UserBehaviorBaseline 和 net.lab1024.sa.admin.module.consume.domain.vo 中的类 net.lab1024.sa.admin.module.consume.domain.vo.UserBehaviorBaseline 都匹配
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/ReconciliationServiceImpl.java:[42,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/impl/AdvancedReportServiceImpl.java:[29,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[40,26] 找不到符号
+[ERROR]   符号:   方法 getExceptionId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceExceptionEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[42,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[56,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[69,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[85,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[98,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[111,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceStatisticsRepository.java:[42,26] 找不到符号
+[ERROR]   符号:   方法 getStatisticsId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceStatisticsEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[543,37] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[543,72] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[547,33] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[264,78] 不兼容的类型: com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#1, 共 ?>无法转换为com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[267,33] 对于convert2PageResult(com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>,java.util.List<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>), 找不到合适的方法
+[ERROR]     方法 net.lab1024.sa.base.common.util.SmartPageUtil.<T,E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>,java.lang.Class<T>)不适用
+[ERROR]       (无法推断类型变量 T,E
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]     方法 net.lab1024.sa.base.common.util.SmartPageUtil.<E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>)不适用
+[ERROR]       (无法推断类型变量 E
+[ERROR]         (参数不匹配; com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>无法转换为com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>))
+[ERROR]     方法 net.lab1024.sa.base.common.util.SmartPageUtil.<E,T>convert2PageResult(net.lab1024.sa.base.common.domain.PageResult<E>,java.lang.Class<T>)不适用
+[ERROR]       (无法推断类型变量 E,T
+[ERROR]         (参数不匹配; com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>无法转换为net.lab1024.sa.base.common.domain.PageResult<E>))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[270,30] 无法将类 net.lab1024.sa.base.common.domain.PageResult<T>中的方法 of应用到给定类型;
+[ERROR]   需要: java.util.List<T>,long,long,long
+[ERROR]   找到:    java.lang.Long,java.lang.Long,long,java.util.List<java.lang.Object>
+[ERROR]   原因: 无法推断类型变量 T
+[ERROR]     (参数不匹配; java.lang.Long无法转换为java.util.List<T>)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[60,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[75,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[94,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[111,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[122,9] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[143,9] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[317,25] 找不到符号
+[ERROR]   符号:   方法 getShiftId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[323,29] 找不到符号
+[ERROR]   符号:   方法 getShiftId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[325,37] 找不到符号
+[ERROR]   符号:   方法 getShiftId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[335,73] 找不到符号
+[ERROR]   符号:   方法 getShiftId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[390,25] 找不到符号
+[ERROR]   符号:   方法 getShiftId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[392,29] 找不到符号
+[ERROR]   符号:   方法 getShiftId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[407,73] 找不到符号
+[ERROR]   符号:   方法 getShiftId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[615,58] 找不到符号
+[ERROR]   符号:   方法 getRemarks()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 sourceSchedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[291,30] 找不到符号
+[ERROR]   符号:   方法 getEmployeeId()
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[291,57] 找不到符号
+[ERROR]   符号:   方法 getAttendanceDate()
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[308,67] 找不到符号
+[ERROR]   符号:   方法 getEmployeeId()
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[308,94] 找不到符号
+[ERROR]   符号:   方法 getAttendanceDate()
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[329,52] 找不到符号
+[ERROR]   符号:   方法 getRecordId()
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordUpdateDTO的变量 updateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[332,92] 找不到符号
+[ERROR]   符号:   方法 getRecordId()
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordUpdateDTO的变量 updateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[836,57] 找不到符号
+[ERROR]   符号:   方法 getRemark()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordVO的变量 vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[836,82] 找不到符号
+[ERROR]   符号:   方法 getRemark()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordVO的变量 vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[894,30] 找不到符号
+[ERROR]   符号:   方法 getRemark()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordVO的变量 vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[894,70] 找不到符号
+[ERROR]   符号:   方法 getRemark()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordVO的变量 vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[1500,37] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[1500,72] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[1505,33] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[221,55] 找不到符号
+[ERROR]   符号:   方法 getEmployeeId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[221,82] 找不到符号
+[ERROR]   符号:   方法 getAttendanceDate()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordCreateDTO的变量 createDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[238,46] 找不到符号
+[ERROR]   符号:   方法 getRecordId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.dto.AttendanceRecordUpdateDTO的变量 updateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1441,48] 找不到符号
+[ERROR]   符号:   方法 getOvertimeRate()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1442,43] 找不到符号
+[ERROR]   符号:   方法 getOvertimeRate()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1447,48] 找不到符号
+[ERROR]   符号:   方法 getOvertimeRate()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1448,43] 找不到符号
+[ERROR]   符号:   方法 getOvertimeRate()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1626,37] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1626,72] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[1630,33] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[112,73] 不兼容的类型: java.lang.Long无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[116,73] 不兼容的类型: java.lang.Long无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[128,80] 不兼容的类型: java.lang.Long无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[219,69] 找不到符号
+[ERROR]   符号:   方法 selectHourlyTrend(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[223,69] 找不到符号
+[ERROR]   符号:   方法 selectHotProducts(java.time.LocalDateTime,java.time.LocalDateTime,int)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[227,77] 找不到符号
+[ERROR]   符号:   方法 selectPaymentDistribution(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.PaymentRecordDao的变量 paymentRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[231,76] 找不到符号
+[ERROR]   符号:   方法 selectRegionDistribution(java.time.LocalDateTime,java.time.LocalDateTime,int)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[236,70] 找不到符号
+[ERROR]   符号:   方法 selectAbnormalPayments(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.PaymentRecordDao的变量 paymentRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[237,71] 找不到符号
+[ERROR]   符号:   方法 selectLargeAmountOrders(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[238,72] 找不到符号
+[ERROR]   符号:   方法 selectFrequentOperations(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[320,64] 不兼容的类型: java.lang.Long无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[321,68] 不兼容的类型: java.lang.Double无法转换为java.math.BigDecimal
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[330,48] 找不到符号
+[ERROR]   符号:   方法 selectUserConsumeCount(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[339,50] 找不到符号
+[ERROR]   符号:   方法 selectUserTotalAmount(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[348,41] 找不到符号
+[ERROR]   符号:   方法 countByUserIdAndTimeRange(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.OrderingDao的变量 orderingDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[356,48] 找不到符号
+[ERROR]   符号:   方法 selectUserProductCount(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[364,64] 找不到符号
+[ERROR]   符号:   方法 selectUserHourlyConsume(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[372,49] 找不到符号
+[ERROR]   符号:   方法 selectUserAvgPaymentTime(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.PaymentRecordDao的变量 paymentRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[385,68] 找不到符号
+[ERROR]   符号:   方法 selectDailyAmountTrend(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/AdvancedReportService.java:[412,68] 找不到符号
+[ERROR]   符号:   方法 selectDailyOrderTrend(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/consistency/ConsistencyValidator.java:[35,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.ConsistencyValidator
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/consistency/ConsistencyValidator.java:[43,17] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.ConsistencyValidator
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/consistency/ConsistencyValidator.java:[46,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.ConsistencyValidator
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

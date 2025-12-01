@@ -1,0 +1,46 @@
+# ===================================================================
+# IOE-DREAM Grafana 数据源配置 - Prometheus
+# ===================================================================
+
+apiVersion: 1
+
+# 数据源列表
+datasources:
+  # Prometheus主数据源
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: "15s"
+      queryTimeout: "60s"
+      httpMethod: "POST"
+    secureJsonData: {}
+
+  # 备用Prometheus数据源
+  - name: Prometheus-Backup
+    type: prometheus
+    access: proxy
+    url: http://prometheus-backup:9090
+    isDefault: false
+    editable: true
+    jsonData:
+      timeInterval: "15s"
+      queryTimeout: "60s"
+      httpMethod: "POST"
+    secureJsonData: {}
+
+  # 业务指标数据源
+  - name: Business-Metrics
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: false
+    editable: true
+    jsonData:
+      timeInterval: "30s"
+      queryTimeout: "60s"
+      httpMethod: "POST"
+    secureJsonData: {}

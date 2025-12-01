@@ -1,0 +1,57 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: ioedream-system-service-simple
+  profiles:
+    active: simple
+
+# 简化配置，避免Nacos依赖
+spring:
+  datasource:
+    # 使用H2内存数据库进行测试
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# MyBatis Plus配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: net.lab1024.sa.system.**.domain.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    global-config:
+      db-config:
+        id-type: auto
+
+# 日志配置
+logging:
+  level:
+    net.lab1024: DEBUG
+    org.springframework: INFO
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# 禁用一些不必要的配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info

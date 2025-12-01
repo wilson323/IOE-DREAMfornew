@@ -1,0 +1,15 @@
+{
+  "fix_result": {
+    "total_entities": 68,
+    "fixed_entities": 0,
+    "failed_entities": 0,
+    "added_methods": 0,
+    "fix_details": []
+  },
+  "validation_result": {
+    "success": false,
+    "error": "[WinError 2] 系统找不到指定的文件。",
+    "validation_time": "2025-11-22T23:37:10.174461"
+  },
+  "fix_time": "2025-11-22T23:37:10.174461"
+}

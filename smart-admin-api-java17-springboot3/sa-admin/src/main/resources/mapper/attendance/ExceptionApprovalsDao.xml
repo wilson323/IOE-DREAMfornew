@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.attendance.dao.ExceptionApprovalsDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.attendance.domain.entity.ExceptionApprovalsEntity">
+        <id column="approval_id" property="approvalId" jdbcType="BIGINT"/>
+        <result column="application_id" property="applicationId" jdbcType="BIGINT"/>
+        <result column="approver_id" property="approverId" jdbcType="BIGINT"/>
+        <result column="approver_name" property="approverName" jdbcType="VARCHAR"/>
+        <result column="approval_result" property="approvalResult" jdbcType="VARCHAR"/>
+        <result column="approval_comments" property="approvalComments" jdbcType="VARCHAR"/>
+        <result column="approval_time" property="approvalTime" jdbcType="TIMESTAMP"/>
+        <result column="task_id" property="taskId" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="process_instance_id" property="processInstanceId" jdbcType="VARCHAR"/>
+        <!-- BaseEntity 字段 -->
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        approval_id, application_id, approver_id, approver_name, approval_result,
+        approval_comments, approval_time, task_id, task_name, process_instance_id,
+        create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+    </sql>
+
+    <!-- 根据申请ID查询审批记录 -->
+    <select id="selectByApplicationId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        AND application_id = #{applicationId}
+        ORDER BY approval_time ASC
+    </select>
+
+    <!-- 根据审批人ID查询审批记录 -->
+    <select id="selectByApproverId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        AND approver_id = #{approverId}
+        ORDER BY approval_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 根据申请ID和审批人ID查询审批记录 -->
+    <select id="selectByApplicationIdAndApproverId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        AND application_id = #{applicationId}
+        AND approver_id = #{approverId}
+        ORDER BY approval_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 查询指定时间范围内的审批记录 -->
+    <select id="selectByDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        AND approval_time >= #{startDate}
+        AND approval_time <= #{endDate}
+        <if test="approverId != null">
+            AND approver_id = #{approverId}
+        </if>
+        ORDER BY approval_time DESC
+    </select>
+
+    <!-- 分页查询审批记录 -->
+    <select id="selectPageByCondition" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        <if test="query.applicationId != null">
+            AND application_id = #{query.applicationId}
+        </if>
+        <if test="query.approverId != null">
+            AND approver_id = #{query.approverId}
+        </if>
+        <if test="query.approvalResult != null and query.approvalResult != ''">
+            AND approval_result = #{query.approvalResult}
+        </if>
+        <if test="query.startDate != null">
+            AND approval_time >= #{query.startDate}
+        </if>
+        <if test="query.endDate != null">
+            AND approval_time <= #{query.endDate}
+        </if>
+        <if test="query.approverName != null and query.approverName != ''">
+            AND approver_name LIKE CONCAT('%', #{query.approverName}, '%')
+        </if>
+        ORDER BY approval_time DESC
+    </select>
+
+    <!-- 查询审批人的审批统计 -->
+    <select id="selectApproverStatistics" resultType="map">
+        SELECT
+            COUNT(*) as total_count,
+            COUNT(CASE WHEN approval_result = 'APPROVED' THEN 1 END) as approved_count,
+            COUNT(CASE WHEN approval_result = 'REJECTED' THEN 1 END) as rejected_count,
+            AVG(TIMESTAMPDIFF(HOUR, create_time, approval_time)) as avg_approval_hours
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        AND approver_id = #{approverId}
+        <if test="startDate != null">
+            AND approval_time >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND approval_time <= #{endDate}
+        </if>
+    </select>
+
+    <!-- 查询申请的最新审批记录 -->
+    <select id="selectLatestByApplicationId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        AND application_id = #{applicationId}
+        ORDER BY approval_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 删除申请的所有审批记录 -->
+    <update id="deleteByApplicationId">
+        UPDATE t_exception_approvals
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE deleted_flag = 0
+        AND application_id = #{applicationId}
+    </update>
+
+    <!-- 统计审批记录数量 -->
+    <select id="countApprovals" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        <if test="approverId != null">
+            AND approver_id = #{approverId}
+        </if>
+        <if test="approvalResult != null and approvalResult != ''">
+            AND approval_result = #{approvalResult}
+        </if>
+        <if test="startDate != null">
+            AND approval_time >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND approval_time <= #{endDate}
+        </if>
+    </select>
+
+    <!-- 查询延迟审批的记录 -->
+    <select id="selectDelayedApprovals" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_exception_approvals
+        WHERE deleted_flag = 0
+        AND approval_time > DATE_ADD(create_time, INTERVAL #{hours} HOUR)
+        ORDER BY approval_time DESC
+    </select>
+
+</mapper>

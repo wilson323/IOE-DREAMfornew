@@ -1,0 +1,97 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 26 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ sa-admin ---
+[INFO] Compiling 681 source files with javac [forked debug target 17] to target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\ExceptionApprovalsEntity.java:[18] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\TimePeriodsEntity.java:[18] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\ClockRecordsEntity.java:[20] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\query\ShiftsQuery.java:[17] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\LeaveTypesEntity.java:[18] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\query\TimePeriodsQuery.java:[16] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRulesEntity.java:[18] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\ExceptionApplicationsEntity.java:[20] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\ShiftsEntity.java:[18] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[INFO] 9 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[318,5] ´íÎó: ÕÒ²»µ½·ûºÅ
+  ·ûºÅ:   Àà Data
+  Î»ÖÃ: Àà BiometricMonitorService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[319,5] ´íÎó: ÕÒ²»µ½·ûºÅ
+  ·ûºÅ:   Àà Builder
+  Î»ÖÃ: Àà BiometricMonitorService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[320,5] ´íÎó: ÕÒ²»µ½·ûºÅ
+  ·ûºÅ:   Àà AllArgsConstructor
+  Î»ÖÃ: Àà BiometricMonitorService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[321,5] ´íÎó: ÕÒ²»µ½·ûºÅ
+  ·ûºÅ:   Àà NoArgsConstructor
+  Î»ÖÃ: Àà BiometricMonitorService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumePermissionService.java:[8,54] ´íÎó: ³ÌÐò°ünet.lab1024.sa.base.module.support.rbac.service²»´æÔÚ
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumePermissionService.java:[50,12] ´íÎó: ÕÒ²»µ½·ûºÅ
+  ·ûºÅ:   Àà AreaPermissionService
+  Î»ÖÃ: Àà ConsumePermissionService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceRecordRepository.java:[6,44] ´íÎó: ³ÌÐò°ünet.lab1024.sa.base.common.repository²»´æÔÚ
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceRecordRepository.java:[37,51] ´íÎó: ÕÒ²»µ½·ûºÅ
+  ·ûºÅ: Àà BaseRepository
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\controller\AccessAreaController.java:[59,49] ´íÎó: ÕÒ²»µ½·ûºÅ
+  ·ûºÅ:   ·½·¨ action()
+  Î»ÖÃ: @interface RequireResource
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\controller\AccessAreaController.java:[59,66] ´íÎó: ÕÒ²»µ½·ûºÅ
+  ·ûºÅ:   ·½·¨ dataScope()
+  Î»ÖÃ: @interface RequireResource
+[INFO] 10 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.223 s
+[INFO] Finished at: 2025-11-26T14:58:20+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[318,5] ´íÎó: ÕÒ²»µ½·ûºÅ
+[ERROR]   ·ûºÅ:   Àà Data
+[ERROR]   Î»ÖÃ: Àà BiometricMonitorService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[319,5] ´íÎó: ÕÒ²»µ½·ûºÅ
+[ERROR]   ·ûºÅ:   Àà Builder
+[ERROR]   Î»ÖÃ: Àà BiometricMonitorService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[320,5] ´íÎó: ÕÒ²»µ½·ûºÅ
+[ERROR]   ·ûºÅ:   Àà AllArgsConstructor
+[ERROR]   Î»ÖÃ: Àà BiometricMonitorService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[321,5] ´íÎó: ÕÒ²»µ½·ûºÅ
+[ERROR]   ·ûºÅ:   Àà NoArgsConstructor
+[ERROR]   Î»ÖÃ: Àà BiometricMonitorService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumePermissionService.java:[8,54] ´íÎó: ³ÌÐò°ünet.lab1024.sa.base.module.support.rbac.service²»´æÔÚ
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumePermissionService.java:[50,12] ´íÎó: ÕÒ²»µ½·ûºÅ
+[ERROR]   ·ûºÅ:   Àà AreaPermissionService
+[ERROR]   Î»ÖÃ: Àà ConsumePermissionService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceRecordRepository.java:[6,44] ´íÎó: ³ÌÐò°ünet.lab1024.sa.base.common.repository²»´æÔÚ
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceRecordRepository.java:[37,51] ´íÎó: ÕÒ²»µ½·ûºÅ
+[ERROR]   ·ûºÅ: Àà BaseRepository
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\controller\AccessAreaController.java:[59,49] ´íÎó: ÕÒ²»µ½·ûºÅ
+[ERROR]   ·ûºÅ:   ·½·¨ action()
+[ERROR]   Î»ÖÃ: @interface RequireResource
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\controller\AccessAreaController.java:[59,66] ´íÎó: ÕÒ²»µ½·ûºÅ
+[ERROR]   ·ûºÅ:   ·½·¨ dataScope()
+[ERROR]   Î»ÖÃ: @interface RequireResource
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.attendance.dao.AttendanceScheduleDao">
+
+    <!-- 基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity">
+        <id column="schedule_id" property="scheduleId" jdbcType="BIGINT"/>
+        <result column="employee_id" property="employeeId" jdbcType="BIGINT"/>
+        <result column="schedule_date" property="scheduleDate" jdbcType="DATE"/>
+        <result column="shift_id" property="shiftId" jdbcType="BIGINT"/>
+        <result column="shift_name" property="shiftName" jdbcType="VARCHAR"/>
+        <result column="work_start_time" property="workStartTime" jdbcType="TIME"/>
+        <result column="work_end_time" property="workEndTime" jdbcType="TIME"/>
+        <result column="break_start_time" property="breakStartTime" jdbcType="TIME"/>
+        <result column="break_end_time" property="breakEndTime" jdbcType="TIME"/>
+        <result column="work_hours" property="workHours" jdbcType="DECIMAL"/>
+        <result column="break_hours" property="breakHours" jdbcType="DECIMAL"/>
+        <result column="is_holiday" property="isHoliday" jdbcType="INTEGER"/>
+        <result column="is_overtime_day" property="isOvertimeDay" jdbcType="INTEGER"/>
+        <result column="is_weekend" property="isWeekend" jdbcType="INTEGER"/>
+        <result column="schedule_type" property="scheduleType" jdbcType="VARCHAR"/>
+        <result column="overtime_rate" property="overtimeRate" jdbcType="DECIMAL"/>
+        <result column="location_id" property="locationId" jdbcType="BIGINT"/>
+        <result column="location_name" property="locationName" jdbcType="VARCHAR"/>
+        <result column="supervisor_id" property="supervisorId" jdbcType="BIGINT"/>
+        <result column="supervisor_name" property="supervisorName" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="LONGVARCHAR"/>
+        <!-- BaseEntity 字段 -->
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 根据员工ID和日期范围查询排班 -->
+    <select id="selectByEmployeeAndDateRange" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.employee_id = #{employeeId}
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+        ORDER BY s.schedule_date ASC
+    </select>
+
+    <!-- 根据日期查询排班 -->
+    <select id="selectByDate" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.schedule_date = #{scheduleDate}
+        ORDER BY s.employee_id
+    </select>
+
+    <!-- 根据部门ID和日期范围查询排班 -->
+    <select id="selectByDepartmentAndDateRange" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id
+        WHERE s.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND e.department_id = #{departmentId}
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+        ORDER BY s.schedule_date ASC, s.employee_id
+    </select>
+
+    <!-- 根据班次ID查询排班 -->
+    <select id="selectByShiftId" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.shift_id = #{shiftId}
+        <if test="startDate != null">
+            AND s.schedule_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND s.schedule_date &lt;= #{endDate}
+        </if>
+        ORDER BY s.schedule_date DESC, s.employee_id
+    </select>
+
+    <!-- 查询指定日期的加班排班 -->
+    <select id="selectOvertimeByDate" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.schedule_date = #{scheduleDate}
+        AND (s.is_overtime_day = 1 OR s.schedule_type = 'OVERTIME')
+        ORDER BY s.employee_id
+    </select>
+
+    <!-- 查询指定时间范围的加班排班 -->
+    <select id="selectOvertimeByDateRange" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id
+        WHERE s.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+        AND (s.is_overtime_day = 1 OR s.schedule_type = 'OVERTIME')
+        <if test="departmentIds != null and departmentIds.size() > 0">
+            AND e.department_id IN
+            <foreach collection="departmentIds" item="deptId" open="(" separator="," close=")">
+                #{deptId}
+            </foreach>
+        </if>
+        ORDER BY s.schedule_date DESC, s.employee_id
+    </select>
+
+    <!-- 查询节假日排班 -->
+    <select id="selectHolidayByDateRange" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id
+        WHERE s.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+        AND (s.is_holiday = 1 OR s.schedule_type = 'HOLIDAY')
+        <if test="departmentIds != null and departmentIds.size() > 0">
+            AND e.department_id IN
+            <foreach collection="departmentIds" item="deptId" open="(" separator="," close=")">
+                #{deptId}
+            </foreach>
+        </if>
+        ORDER BY s.schedule_date DESC, s.employee_id
+    </select>
+
+    <!-- 查询员工指定日期的排班 -->
+    <select id="selectByEmployeeAndDate" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.employee_id = #{employeeId}
+        AND s.schedule_date = #{scheduleDate}
+        LIMIT 1
+    </select>
+
+    <!-- 按条件查询排班 -->
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        <if test="departmentId != null">
+            INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id AND e.department_id = #{departmentId} AND e.deleted_flag = 0
+        </if>
+        WHERE s.deleted_flag = 0
+        <if test="employeeId != null">
+            AND s.employee_id = #{employeeId}
+        </if>
+        <if test="shiftId != null">
+            AND s.shift_id = #{shiftId}
+        </if>
+        <if test="scheduleType != null and scheduleType != ''">
+            AND s.schedule_type = #{scheduleType}
+        </if>
+        <if test="startDate != null">
+            AND s.schedule_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND s.schedule_date &lt;= #{endDate}
+        </if>
+        <if test="locationId != null">
+            AND s.location_id = #{locationId}
+        </if>
+        ORDER BY s.schedule_date DESC, s.employee_id
+    </select>
+
+    <!-- 查询员工的周排班 -->
+    <select id="selectWeeklySchedule" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.employee_id = #{employeeId}
+        AND s.schedule_date >= #{weekStart}
+        AND s.schedule_date &lt;= #{weekEnd}
+        ORDER BY s.schedule_date ASC
+    </select>
+
+    <!-- 查询员工的月排班 -->
+    <select id="selectMonthlySchedule" resultMap="BaseResultMap">
+        SELECT s.*
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.employee_id = #{employeeId}
+        AND YEAR(s.schedule_date) = #{year}
+        AND MONTH(s.schedule_date) = #{month}
+        ORDER BY s.schedule_date ASC
+    </select>
+
+    <!-- 检查员工在指定日期是否有排班 -->
+    <select id="existsScheduleForEmployee" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.employee_id = #{employeeId}
+        AND s.schedule_date = #{scheduleDate}
+    </select>
+
+    <!-- 检查排班冲突 -->
+    <select id="checkScheduleConflict" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.employee_id = #{employeeId}
+        AND s.schedule_date = #{scheduleDate}
+        <if test="excludeScheduleId != null">
+            AND s.schedule_id != #{excludeScheduleId}
+        </if>
+        AND (
+            -- 时间重叠检查
+            (s.work_start_time &lt; #{workEndTime} AND s.work_end_time > #{workStartTime})
+        )
+    </select>
+
+    <!-- 统计部门排班数据 -->
+    <select id="selectDepartmentScheduleStats" resultType="java.util.Map">
+        SELECT
+            COUNT(DISTINCT s.employee_id) as totalEmployees,
+            COUNT(*) as totalSchedules,
+            COUNT(CASE WHEN s.schedule_type = 'NORMAL' THEN 1 END) as normalCount,
+            COUNT(CASE WHEN s.schedule_type = 'OVERTIME' THEN 1 END) as overtimeCount,
+            COUNT(CASE WHEN s.schedule_type = 'HOLIDAY' THEN 1 END) as holidayCount,
+            COUNT(CASE WHEN s.schedule_type = 'LEAVE' THEN 1 END) as leaveCount,
+            COUNT(CASE WHEN s.is_weekend = 1 THEN 1 END) as weekendCount,
+            IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+            IFNULL(SUM(s.break_hours), 0) as totalBreakHours,
+            COUNT(DISTINCT s.shift_id) as totalShifts,
+            COUNT(DISTINCT s.location_id) as totalLocations
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id
+        WHERE s.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND e.department_id = #{departmentId}
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+    </select>
+
+    <!-- 统计员工排班数据 -->
+    <select id="selectEmployeeScheduleStats" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as totalSchedules,
+            COUNT(CASE WHEN s.schedule_type = 'NORMAL' THEN 1 END) as normalCount,
+            COUNT(CASE WHEN s.schedule_type = 'OVERTIME' THEN 1 END) as overtimeCount,
+            COUNT(CASE WHEN s.schedule_type = 'HOLIDAY' THEN 1 END) as holidayCount,
+            COUNT(CASE WHEN s.schedule_type = 'LEAVE' THEN 1 END) as leaveCount,
+            COUNT(CASE WHEN s.is_weekend = 1 THEN 1 END) as weekendCount,
+            IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+            IFNULL(SUM(s.break_hours), 0) as totalBreakHours,
+            COUNT(DISTINCT s.shift_id) as totalShifts,
+            COUNT(DISTINCT s.location_id) as totalLocations,
+            ROUND(COUNT(*) * 1.0 / (DATEDIFF(#{endDate}, #{startDate}) + 1), 2) as avgSchedulesPerDay
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.employee_id = #{employeeId}
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+    </select>
+
+    <!-- 批量插入排班 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO t_attendance_schedule (
+            employee_id, schedule_date, shift_id, shift_name, work_start_time, work_end_time,
+            break_start_time, break_end_time, work_hours, break_hours, is_holiday, is_overtime_day,
+            is_weekend, schedule_type, overtime_rate, location_id, location_name,
+            supervisor_id, supervisor_name, remarks,
+            create_time, create_user_id, deleted_flag, version
+        ) VALUES
+        <foreach collection="schedules" item="schedule" separator=",">
+            (
+                #{schedule.employeeId}, #{schedule.scheduleDate}, #{schedule.shiftId}, #{schedule.shiftName},
+                #{schedule.workStartTime}, #{schedule.workEndTime}, #{schedule.breakStartTime}, #{schedule.breakEndTime},
+                #{schedule.workHours}, #{schedule.breakHours}, #{schedule.isHoliday}, #{schedule.isOvertimeDay},
+                #{schedule.isWeekend}, #{schedule.scheduleType}, #{schedule.overtimeRate}, #{schedule.locationId}, #{schedule.locationName},
+                #{schedule.supervisorId}, #{schedule.supervisorName}, #{schedule.remarks},
+                NOW(), #{schedule.createUserId}, 0, 1
+            )
+        </foreach>
+    </insert>
+
+    <!-- 批量更新排班 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="schedules" item="schedule" separator=";">
+            UPDATE t_attendance_schedule
+            SET shift_id = #{schedule.shiftId},
+                shift_name = #{schedule.shiftName},
+                work_start_time = #{schedule.workStartTime},
+                work_end_time = #{schedule.workEndTime},
+                break_start_time = #{schedule.breakStartTime},
+                break_end_time = #{schedule.breakEndTime},
+                work_hours = #{schedule.workHours},
+                break_hours = #{schedule.breakHours},
+                is_holiday = #{schedule.isHoliday},
+                is_overtime_day = #{schedule.isOvertimeDay},
+                is_weekend = #{schedule.isWeekend},
+                schedule_type = #{schedule.scheduleType},
+                overtime_rate = #{schedule.overtimeRate},
+                location_id = #{schedule.locationId},
+                location_name = #{schedule.locationName},
+                supervisor_id = #{schedule.supervisorId},
+                supervisor_name = #{schedule.supervisorName},
+                remarks = #{schedule.remarks},
+                update_time = NOW(),
+                update_user_id = #{schedule.updateUserId},
+                version = version + 1
+            WHERE deleted_flag = 0
+            AND schedule_id = #{schedule.scheduleId}
+        </foreach>
+    </update>
+
+    <!-- 批量删除排班 -->
+    <update id="batchDelete">
+        UPDATE t_attendance_schedule
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE deleted_flag = 0
+        AND schedule_id IN
+        <foreach collection="scheduleIds" item="scheduleId" open="(" separator="," close=")">
+            #{scheduleId}
+        </foreach>
+    </update>
+
+    <!-- 按日期范围删除排班 -->
+    <update id="deleteByDateRange">
+        UPDATE t_attendance_schedule
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE deleted_flag = 0
+        AND schedule_date >= #{startDate}
+        AND schedule_date &lt;= #{endDate}
+        <if test="employeeId != null">
+            AND employee_id = #{employeeId}
+        </if>
+    </update>
+
+    <!-- 查询未分配考勤记录的日期 -->
+    <select id="selectUnscheduledDates" resultType="java.time.LocalDate">
+        SELECT DATE(d.date) as unscheduledDate
+        FROM (
+            SELECT #{startDate} + INTERVAL seq DAY as date
+            FROM (
+                SELECT 0 as seq UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION
+                SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION
+                SELECT 10 UNION SELECT 11 UNION SELECT 12 UNION SELECT 13 UNION SELECT 14 UNION
+                SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION SELECT 18 UNION SELECT 19 UNION
+                SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24 UNION
+                SELECT 25 UNION SELECT 26 UNION SELECT 27 UNION SELECT 28 UNION SELECT 29 UNION
+                SELECT 30
+            ) seq
+            WHERE #{startDate} + INTERVAL seq DAY &lt;= #{endDate}
+        ) d
+        WHERE NOT EXISTS (
+            SELECT 1 FROM t_attendance_schedule s
+            WHERE s.deleted_flag = 0
+            AND s.employee_id = #{employeeId}
+            AND s.schedule_date = DATE(d.date)
+        )
+        ORDER BY unscheduledDate
+    </select>
+
+    <!-- 查询排班汇总报表 -->
+    <select id="selectScheduleReport" resultType="java.util.Map">
+        <choose>
+            <when test="dimension == 'department'">
+                SELECT
+                    d.department_id as departmentId,
+                    d.department_name as departmentName,
+                    COUNT(DISTINCT s.employee_id) as employeeCount,
+                    COUNT(*) as totalSchedules,
+                    COUNT(CASE WHEN s.schedule_type = 'NORMAL' THEN 1 END) as normalCount,
+                    COUNT(CASE WHEN s.schedule_type = 'OVERTIME' THEN 1 END) as overtimeCount,
+                    COUNT(CASE WHEN s.schedule_type = 'HOLIDAY' THEN 1 END) as holidayCount,
+                    COUNT(CASE WHEN s.schedule_type = 'LEAVE' THEN 1 END) as leaveCount,
+                    IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+                    IFNULL(SUM(s.overtime_rate * s.work_hours), 0) as totalOvertimeHours
+                FROM t_sys_department d
+                LEFT JOIN t_hr_employee e ON d.department_id = e.department_id AND e.deleted_flag = 0
+                LEFT JOIN t_attendance_schedule s ON e.employee_id = s.employee_id
+                    AND s.deleted_flag = 0
+                    AND s.schedule_date >= #{startDate}
+                    AND s.schedule_date &lt;= #{endDate}
+                WHERE d.deleted_flag = 0
+                <if test="departmentId != null">
+                    AND d.department_id = #{departmentId}
+                </if>
+                GROUP BY d.department_id, d.department_name
+                ORDER BY d.department_sort, d.department_name
+            </when>
+            <when test="dimension == 'employee'">
+                SELECT
+                    e.employee_id as employeeId,
+                    e.employee_name as employeeName,
+                    d.department_name as departmentName,
+                    COUNT(*) as totalSchedules,
+                    COUNT(CASE WHEN s.schedule_type = 'NORMAL' THEN 1 END) as normalCount,
+                    COUNT(CASE WHEN s.schedule_type = 'OVERTIME' THEN 1 END) as overtimeCount,
+                    COUNT(CASE WHEN s.schedule_type = 'HOLIDAY' THEN 1 END) as holidayCount,
+                    COUNT(CASE WHEN s.schedule_type = 'LEAVE' THEN 1 END) as leaveCount,
+                    IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+                    IFNULL(SUM(s.overtime_rate * s.work_hours), 0) as totalOvertimeHours
+                FROM t_hr_employee e
+                LEFT JOIN t_sys_department d ON e.department_id = d.department_id AND d.deleted_flag = 0
+                LEFT JOIN t_attendance_schedule s ON e.employee_id = s.employee_id
+                    AND s.deleted_flag = 0
+                    AND s.schedule_date >= #{startDate}
+                    AND s.schedule_date &lt;= #{endDate}
+                WHERE e.deleted_flag = 0
+                <if test="departmentId != null">
+                    AND e.department_id = #{departmentId}
+                </if>
+                GROUP BY e.employee_id, e.employee_name, d.department_name
+                ORDER BY d.department_name, e.employee_name
+            </when>
+            <when test="dimension == 'shift'">
+                SELECT
+                    s.shift_id as shiftId,
+                    s.shift_name as shiftName,
+                    COUNT(DISTINCT s.employee_id) as employeeCount,
+                    COUNT(*) as totalSchedules,
+                    IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+                    COUNT(CASE WHEN s.schedule_type = 'OVERTIME' THEN 1 END) as overtimeCount,
+                    AVG(s.work_hours) as avgWorkHours
+                FROM t_attendance_schedule s
+                INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id AND e.deleted_flag = 0
+                WHERE s.deleted_flag = 0
+                AND s.schedule_date >= #{startDate}
+                AND s.schedule_date &lt;= #{endDate}
+                <if test="departmentId != null">
+                    AND e.department_id = #{departmentId}
+                </if>
+                GROUP BY s.shift_id, s.shift_name
+                ORDER BY totalSchedules DESC
+            </when>
+            <when test="dimension == 'location'">
+                SELECT
+                    s.location_id as locationId,
+                    s.location_name as locationName,
+                    COUNT(DISTINCT s.employee_id) as employeeCount,
+                    COUNT(*) as totalSchedules,
+                    IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+                    COUNT(DISTINCT s.shift_id) as shiftCount
+                FROM t_attendance_schedule s
+                INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id AND e.deleted_flag = 0
+                WHERE s.deleted_flag = 0
+                AND s.location_id IS NOT NULL
+                AND s.schedule_date >= #{startDate}
+                AND s.schedule_date &lt;= #{endDate}
+                <if test="departmentId != null">
+                    AND e.department_id = #{departmentId}
+                </if>
+                GROUP BY s.location_id, s.location_name
+                ORDER BY totalSchedules DESC
+            </when>
+        </choose>
+    </select>
+
+    <!-- 查询班次使用统计 -->
+    <select id="selectShiftUsageStatistics" resultType="java.util.Map">
+        SELECT
+            s.shift_id as shiftId,
+            s.shift_name as shiftName,
+            COUNT(DISTINCT s.employee_id) as employeeCount,
+            COUNT(*) as usageCount,
+            COUNT(CASE WHEN s.schedule_type = 'NORMAL' THEN 1 END) as normalCount,
+            COUNT(CASE WHEN s.schedule_type = 'OVERTIME' THEN 1 END) as overtimeCount,
+            IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+            AVG(s.work_hours) as avgWorkHours,
+            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM t_attendance_schedule s2
+                INNER JOIN t_hr_employee e2 ON s2.employee_id = e2.employee_id
+                WHERE s2.deleted_flag = 0 AND e2.deleted_flag = 0
+                AND s2.schedule_date >= #{startDate} AND s2.schedule_date &lt;= #{endDate}
+                <if test="departmentId != null">AND e2.department_id = #{departmentId}</if>), 2) as usagePercentage
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id AND e.deleted_flag = 0
+        WHERE s.deleted_flag = 0
+        AND s.shift_id IS NOT NULL
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+        <if test="departmentId != null">
+            AND e.department_id = #{departmentId}
+        </if>
+        GROUP BY s.shift_id, s.shift_name
+        ORDER BY usageCount DESC
+    </select>
+
+    <!-- 查询工作地点使用统计 -->
+    <select id="selectLocationUsageStatistics" resultType="java.util.Map">
+        SELECT
+            s.location_id as locationId,
+            s.location_name as locationName,
+            COUNT(DISTINCT s.employee_id) as employeeCount,
+            COUNT(*) as usageCount,
+            COUNT(DISTINCT s.shift_id) as shiftCount,
+            IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+            AVG(s.work_hours) as avgWorkHours
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id AND e.deleted_flag = 0
+        WHERE s.deleted_flag = 0
+        AND s.location_id IS NOT NULL
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+        <if test="departmentId != null">
+            AND e.department_id = #{departmentId}
+        </if>
+        GROUP BY s.location_id, s.location_name
+        ORDER BY usageCount DESC
+    </select>
+
+    <!-- 查询排班类型统计 -->
+    <select id="selectScheduleTypeStatistics" resultType="java.util.Map">
+        SELECT
+            s.schedule_type as scheduleType,
+            CASE s.schedule_type
+                WHEN 'NORMAL' THEN '正常'
+                WHEN 'OVERTIME' THEN '加班'
+                WHEN 'HOLIDAY' THEN '节假日'
+                WHEN 'LEAVE' THEN '请假'
+                ELSE s.schedule_type
+            END as scheduleTypeName,
+            COUNT(*) as count,
+            COUNT(DISTINCT s.employee_id) as employeeCount,
+            IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+            IFNULL(SUM(s.overtime_rate * s.work_hours), 0) as totalOvertimeHours,
+            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM t_attendance_schedule s2
+                INNER JOIN t_hr_employee e2 ON s2.employee_id = e2.employee_id
+                WHERE s2.deleted_flag = 0 AND e2.deleted_flag = 0
+                AND s2.schedule_date >= #{startDate} AND s2.schedule_date &lt;= #{endDate}
+                <if test="departmentId != null">AND e2.department_id = #{departmentId}</if>), 2) as percentage
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id AND e.deleted_flag = 0
+        WHERE s.deleted_flag = 0
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+        <if test="departmentId != null">
+            AND e.department_id = #{departmentId}
+        </if>
+        GROUP BY s.schedule_type
+        ORDER BY count DESC
+    </select>
+
+    <!-- 查询主管排班统计 -->
+    <select id="selectSupervisorScheduleStats" resultType="java.util.Map">
+        SELECT
+            COUNT(DISTINCT s.employee_id) as totalEmployees,
+            COUNT(*) as totalSchedules,
+            COUNT(CASE WHEN s.schedule_type = 'NORMAL' THEN 1 END) as normalCount,
+            COUNT(CASE WHEN s.schedule_type = 'OVERTIME' THEN 1 END) as overtimeCount,
+            COUNT(CASE WHEN s.schedule_type = 'HOLIDAY' THEN 1 END) as holidayCount,
+            COUNT(CASE WHEN s.schedule_type = 'LEAVE' THEN 1 END) as leaveCount,
+            IFNULL(SUM(s.work_hours), 0) as totalWorkHours,
+            IFNULL(SUM(s.overtime_rate * s.work_hours), 0) as totalOvertimeHours,
+            COUNT(DISTINCT s.location_id) as totalLocations
+        FROM t_attendance_schedule s
+        WHERE s.deleted_flag = 0
+        AND s.supervisor_id = #{supervisorId}
+        AND s.schedule_date >= #{startDate}
+        AND s.schedule_date &lt;= #{endDate}
+    </select>
+
+    <!-- 查询需要提醒的排班 -->
+    <select id="selectReminderSchedules" resultType="java.util.Map">
+        SELECT
+            s.schedule_id as scheduleId,
+            s.employee_id as employeeId,
+            e.employee_name as employeeName,
+            e.mobile as mobile,
+            e.email as email,
+            s.schedule_date as scheduleDate,
+            s.shift_name as shiftName,
+            s.work_start_time as workStartTime,
+            s.location_name as locationName,
+            DATEDIFF(s.schedule_date, #{reminderDate}) as daysUntil
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id AND e.deleted_flag = 0
+        WHERE s.deleted_flag = 0
+        AND s.schedule_date > #{reminderDate}
+        AND s.schedule_date &lt;= DATE_ADD(#{reminderDate}, INTERVAL #{daysBefore} DAY)
+        AND s.schedule_type IN ('NORMAL', 'OVERTIME')
+        ORDER BY s.schedule_date ASC, s.work_start_time ASC
+    </select>
+
+    <!-- 查询排班异常 -->
+    <select id="selectScheduleAnomalies" resultType="java.util.Map">
+        SELECT
+            'CONFLICT' as anomalyType,
+            '时间冲突' as anomalyTypeName,
+            s1.employee_id as employeeId,
+            e.employee_name as employeeName,
+            s1.schedule_date as scheduleDate,
+            s1.shift_name as shiftName1,
+            s2.shift_name as shiftName2,
+            s1.work_start_time as startTime1,
+            s1.work_end_time as endTime1,
+            s2.work_start_time as startTime2,
+            s2.work_end_time as endTime2
+        FROM t_attendance_schedule s1
+        INNER JOIN t_attendance_schedule s2 ON (
+            s1.employee_id = s2.employee_id
+            AND s1.schedule_date = s2.schedule_date
+            AND s1.schedule_id < s2.schedule_id
+            AND s1.deleted_flag = 0
+            AND s2.deleted_flag = 0
+            AND (
+                (s1.work_start_time &lt; s2.work_end_time AND s1.work_end_time > s2.work_start_time)
+            )
+        )
+        INNER JOIN t_hr_employee e ON s1.employee_id = e.employee_id AND e.deleted_flag = 0
+        WHERE s1.schedule_date >= #{startDate}
+        AND s1.schedule_date &lt;= #{endDate}
+        <if test="departmentId != null">
+            AND e.department_id = #{departmentId}
+        </if>
+
+        UNION ALL
+
+        SELECT
+            'NO_SCHEDULE' as anomalyType,
+            '缺少排班' as anomalyTypeName,
+            e.employee_id as employeeId,
+            e.employee_name as employeeName,
+            d.date as scheduleDate,
+            NULL as shiftName1,
+            NULL as shiftName2,
+            NULL as startTime1,
+            NULL as endTime1,
+            NULL as startTime2,
+            NULL as endTime2
+        FROM t_hr_employee e
+        INNER JOIN (
+            SELECT #{startDate} + INTERVAL seq DAY as date
+            FROM (
+                SELECT 0 as seq UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION
+                SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION
+                SELECT 10 UNION SELECT 11 UNION SELECT 12 UNION SELECT 13 UNION SELECT 14 UNION
+                SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION SELECT 18 UNION SELECT 19 UNION
+                SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24 UNION
+                SELECT 25 UNION SELECT 26 UNION SELECT 27 UNION SELECT 28 UNION SELECT 29 UNION
+                SELECT 30
+            ) seq
+            WHERE #{startDate} + INTERVAL seq DAY &lt;= #{endDate}
+        ) d ON 1=1
+        LEFT JOIN t_attendance_schedule s ON e.employee_id = s.employee_id AND s.schedule_date = d.date AND s.deleted_flag = 0
+        WHERE e.deleted_flag = 0
+        AND e.employee_status = 'ACTIVE'
+        <if test="departmentId != null">
+            AND e.department_id = #{departmentId}
+        </if>
+        AND s.schedule_id IS NULL
+        AND WEEKDAY(d.date) &lt; 5  -- 只检查工作日
+
+        ORDER BY scheduleDate, employeeName
+    </select>
+
+    <!-- 清理过期排班 -->
+    <update id="cleanExpiredSchedules">
+        UPDATE t_attendance_schedule
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE deleted_flag = 0
+        AND schedule_date &lt; #{beforeDate}
+    </update>
+
+    <!-- 复制排班到新日期范围 -->
+    <insert id="copySchedulesToDateRange">
+        INSERT INTO t_attendance_schedule (
+            employee_id, schedule_date, shift_id, shift_name, work_start_time, work_end_time,
+            break_start_time, break_end_time, work_hours, break_hours, is_holiday, is_overtime_day,
+            is_weekend, schedule_type, overtime_rate, location_id, location_name,
+            supervisor_id, supervisor_name, remarks,
+            create_time, create_user_id, deleted_flag, version
+        )
+        SELECT
+            s.employee_id,
+            DATE_ADD(s.schedule_date, INTERVAL datediffDateOffset DAY) as new_schedule_date,
+            s.shift_id, s.shift_name, s.work_start_time, s.work_end_time,
+            s.break_start_time, s.break_end_time, s.work_hours, s.break_hours,
+            s.is_holiday, s.is_overtime_day, s.is_weekend, s.schedule_type, s.overtime_rate,
+            s.location_id, s.location_name, s.supervisor_id, s.supervisor_name, s.remarks,
+            NOW(), #{userId}, 0, 1
+        FROM t_attendance_schedule s
+        INNER JOIN (
+            SELECT #{targetStartDate} - #{sourceStartDate} as datediffDateOffset
+        ) offset ON 1=1
+        WHERE s.deleted_flag = 0
+        AND s.schedule_date >= #{sourceStartDate}
+        AND s.schedule_date &lt;= #{sourceEndDate}
+        <if test="employeeIds != null and employeeIds.size() > 0">
+            AND s.employee_id IN
+            <foreach collection="employeeIds" item="employeeId" open="(" separator="," close=")">
+                #{employeeId}
+            </foreach>
+        </if>
+        AND NOT EXISTS (
+            SELECT 1 FROM t_attendance_schedule existing
+            WHERE existing.deleted_flag = 0
+            AND existing.employee_id = s.employee_id
+            AND existing.schedule_date = DATE_ADD(s.schedule_date, INTERVAL offset.datediffDateOffset DAY)
+        )
+    </insert>
+
+    <!-- 获取排班日历数据 -->
+    <select id="selectScheduleCalendar" resultType="java.util.Map">
+        SELECT
+            DATE(s.schedule_date) as date,
+            DAYOFWEEK(s.schedule_date) as dayOfWeek,
+            DAY(s.schedule_date) as day,
+            COUNT(DISTINCT s.employee_id) as employeeCount,
+            COUNT(*) as scheduleCount,
+            COUNT(CASE WHEN s.schedule_type = 'NORMAL' THEN 1 END) as normalCount,
+            COUNT(CASE WHEN s.schedule_type = 'OVERTIME' THEN 1 END) as overtimeCount,
+            COUNT(CASE WHEN s.schedule_type = 'HOLIDAY' THEN 1 END) as holidayCount,
+            GROUP_CONCAT(DISTINCT s.shift_name) as shiftNames,
+            GROUP_CONCAT(DISTINCT s.location_name) as locationNames
+        FROM t_attendance_schedule s
+        INNER JOIN t_hr_employee e ON s.employee_id = e.employee_id AND e.deleted_flag = 0
+        WHERE s.deleted_flag = 0
+        AND YEAR(s.schedule_date) = #{year}
+        AND MONTH(s.schedule_date) = #{month}
+        <if test="departmentId != null">
+            AND e.department_id = #{departmentId}
+        </if>
+        GROUP BY DATE(s.schedule_date)
+        ORDER BY date
+    </select>
+
+</mapper>

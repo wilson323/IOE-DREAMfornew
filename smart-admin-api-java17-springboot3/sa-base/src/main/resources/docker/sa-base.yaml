@@ -1,0 +1,146 @@
+spring:
+  # 允许Bean定义覆盖
+  main:
+    allow-bean-definition-overriding: true
+
+  # 数据库连接信息 - Docker环境
+  datasource:
+    url: jdbc:p6spy:mysql://smart-admin-mysql:3306/smart_admin_v3?autoReconnect=true&useServerPreparedStmts=false&rewriteBatchedStatements=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root1234
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    initial-size: 2
+    min-idle: 2
+    max-active: 10
+    max-wait: 60000
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    filters: stat
+    druid:
+      username: druid
+      password: 1024
+      login:
+        enabled: false
+      method:
+        pointcut: net.lab1024.sa..*Service.*
+
+  # redis 连接池配置信息 - 本地开发环境（修复Docker硬编码问题）
+  data:
+    redis:
+      database: 1
+      host: 127.0.0.1
+      port: 6379
+      password: "zkteco3100"
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+  # Redisson配置 - 禁用自动配置，使用@Primary LocalRedissonConfig
+  # redisson:
+  #   config: |
+  #     singleServerConfig:
+  #       address: "redis://127.0.0.1:6379"
+  #       database: 1
+  #       password: ""
+  #       connectTimeout: 10000
+  #       timeout: 10000
+  #       retryAttempts: 3
+  #       retryInterval: 1500
+  #       subscriptionsPerConnection: 5
+  #       subscriptionConnectionMinimumIdleSize: 1
+  #       subscriptionConnectionPoolSize: 50
+  #       connectionMinimumIdleSize: 24
+  #       connectionPoolSize: 64
+  #       idleConnectionTimeout: 10000
+  #       pingConnectionInterval: 30000
+  #       pingTimeout: 1000
+
+  # json序列化相关配置
+  jackson:
+    serialization:
+      write-enums-using-to-string: true
+      write-dates-as-timestamps: false
+    deserialization:
+      read-enums-using-to-string: true
+      fail-on-unknown-properties: false
+    default-property-inclusion: always
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+  # 上传文件和请求大小
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  # 缓存实现类型
+  cache:
+    type: redis
+
+# 健康检查
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  health:
+    mail:
+      enabled: false
+
+server:
+  port: 1024
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+    threads:
+      max: 200
+      min-spare: 30
+
+# 项目配置
+project:
+  # 项目名称（用于存放上传文件的目录名称）
+  name: smart-admin-v3
+  # 是否启用swagger文档
+  swagger:
+    enabled: true
+  # 是否启用多租户
+  tenant:
+    enabled: false
+  # 是否开启字段加密
+  field-encryption:
+    enabled: false
+  # 是否开启数据脱敏
+    data-masking:
+    enabled: true
+
+# 日志文件路径
+log:
+  path: /app/logs
+  level:
+    root: warn
+
+# SmartAdmin配置 - Docker环境简化
+smart:
+  # 禁用IP地址解析
+  ip:
+    enabled: false
+
+# 项目配置
+project:
+  # 日志目录（用于Ip2RegionListener）
+  log-directory: /tmp
+  # 禁用IP初始化
+  disable-ip-init: true
+
+# 文件存储配置 - 使用本地存储（禁用云存储）
+file:
+  storage:
+    mode: local
+    local:
+      upload-path: /tmp/smart-admin-upload/
+      url-prefix:

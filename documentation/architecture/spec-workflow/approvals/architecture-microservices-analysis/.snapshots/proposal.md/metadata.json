@@ -1,0 +1,22 @@
+{
+  "filePath": "openspec/changes/architecture-microservices-analysis/proposal.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-26T14:43:45.140Z",
+      "trigger": "initial",
+      "approvalId": "approval_1764168225106_8m9cdplwr",
+      "approvalTitle": "架构微服务化分析OpenSpec提案执行请求"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-26T14:45:47.303Z",
+      "trigger": "approved",
+      "approvalId": "approval_1764168225106_8m9cdplwr",
+      "approvalTitle": "架构微服务化分析OpenSpec提案执行请求"
+    }
+  ]
+}

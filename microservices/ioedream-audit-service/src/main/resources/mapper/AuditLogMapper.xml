@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.audit.dao.AuditLogDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="AuditLogResultMap" type="net.lab1024.sa.audit.domain.entity.AuditLogEntity">
+        <id column="audit_id" property="auditId" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="operation_type" property="operationType" jdbcType="INTEGER"/>
+        <result column="module_name" property="moduleName" jdbcType="VARCHAR"/>
+        <result column="function_name" property="functionName" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="request_method" property="requestMethod" jdbcType="VARCHAR"/>
+        <result column="request_url" property="requestUrl" jdbcType="VARCHAR"/>
+        <result column="request_params" property="requestParams" jdbcType="LONGVARCHAR"/>
+        <result column="response_data" property="responseData" jdbcType="LONGVARCHAR"/>
+        <result column="result_status" property="resultStatus" jdbcType="INTEGER"/>
+        <result column="error_code" property="errorCode" jdbcType="VARCHAR"/>
+        <result column="error_message" property="errorMessage" jdbcType="LONGVARCHAR"/>
+        <result column="execution_time" property="executionTime" jdbcType="BIGINT"/>
+        <result column="client_ip" property="clientIp" jdbcType="VARCHAR"/>
+        <result column="user_agent" property="userAgent" jdbcType="VARCHAR"/>
+        <result column="device_info" property="deviceInfo" jdbcType="VARCHAR"/>
+        <result column="session_id" property="sessionId" jdbcType="VARCHAR"/>
+        <result column="request_id" property="requestId" jdbcType="VARCHAR"/>
+        <result column="operation_time" property="operationTime" jdbcType="TIMESTAMP"/>
+        <result column="data_change" property="dataChange" jdbcType="LONGVARCHAR"/>
+        <result column="business_id" property="businessId" jdbcType="VARCHAR"/>
+        <result column="business_type" property="businessType" jdbcType="VARCHAR"/>
+        <result column="risk_level" property="riskLevel" jdbcType="INTEGER"/>
+        <result column="audit_tags" property="auditTags" jdbcType="VARCHAR"/>
+        <result column="extensions" property="extensions" jdbcType="LONGVARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 操作类型统计结果映射 -->
+    <resultMap id="OperationTypeStatisticsResultMap" type="net.lab1024.sa.audit.dao.AuditLogDao$OperationTypeStatistics">
+        <result column="operation_type" property="operationType" jdbcType="INTEGER"/>
+        <result column="operation_type_text" property="operationTypeText" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <!-- 模块统计结果映射 -->
+    <resultMap id="ModuleStatisticsResultMap" type="net.lab1024.sa.audit.dao.AuditLogDao$ModuleStatistics">
+        <result column="module_name" property="moduleName" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <!-- 用户活跃度统计结果映射 -->
+    <resultMap id="UserActivityStatisticsResultMap" type="net.lab1024.sa.audit.dao.AuditLogDao$UserActivityStatistics">
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="operation_count" property="operationCount" jdbcType="BIGINT"/>
+        <result column="success_count" property="successCount" jdbcType="BIGINT"/>
+        <result column="failure_count" property="failureCount" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <!-- 每日操作统计结果映射 -->
+    <resultMap id="DailyOperationStatisticsResultMap" type="net.lab1024.sa.audit.dao.AuditLogDao$DailyOperationStatistics">
+        <result column="operation_date" property="operationDate" jdbcType="VARCHAR"/>
+        <result column="total_operations" property="totalOperations" jdbcType="BIGINT"/>
+        <result column="success_operations" property="successOperations" jdbcType="BIGINT"/>
+        <result column="failure_operations" property="failureOperations" jdbcType="BIGINT"/>
+        <result column="success_rate" property="successRate" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <!-- 失败原因统计结果映射 -->
+    <resultMap id="FailureReasonStatisticsResultMap" type="net.lab1024.sa.audit.dao.AuditLogDao$FailureReasonStatistics">
+        <result column="error_code" property="errorCode" jdbcType="VARCHAR"/>
+        <result column="error_message" property="errorMessage" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="BIGINT"/>
+        <result column="percentage" property="percentage" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        audit_id, user_id, username, operation_type, module_name, function_name, description,
+        request_method, request_url, request_params, response_data, result_status, error_code, error_message,
+        execution_time, client_ip, user_agent, device_info, session_id, request_id, operation_time,
+        data_change, business_id, business_type, risk_level, audit_tags, extensions, create_time
+    </sql>
+
+    <!-- 插入审计日志 -->
+    <insert id="insert" parameterType="net.lab1024.sa.audit.domain.entity.AuditLogEntity" useGeneratedKeys="true" keyProperty="auditId">
+        INSERT INTO t_audit_log (
+            user_id, username, operation_type, module_name, function_name, description,
+            request_method, request_url, request_params, response_data, result_status, error_code, error_message,
+            execution_time, client_ip, user_agent, device_info, session_id, request_id, operation_time,
+            data_change, business_id, business_type, risk_level, audit_tags, extensions, create_time
+        ) VALUES (
+            #{userId}, #{username}, #{operationType}, #{moduleName}, #{functionName}, #{description},
+            #{requestMethod}, #{requestUrl}, #{requestParams}, #{responseData}, #{resultStatus}, #{errorCode}, #{errorMessage},
+            #{executionTime}, #{clientIp}, #{userAgent}, #{deviceInfo}, #{sessionId}, #{requestId}, #{operationTime},
+            #{dataChange}, #{businessId}, #{businessType}, #{riskLevel}, #{auditTags}, #{extensions}, #{createTime}
+        )
+    </insert>
+
+    <!-- 批量插入审计日志 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO t_audit_log (
+            user_id, username, operation_type, module_name, function_name, description,
+            request_method, request_url, request_params, response_data, result_status, error_code, error_message,
+            execution_time, client_ip, user_agent, device_info, session_id, request_id, operation_time,
+            data_change, business_id, business_type, risk_level, audit_tags, extensions, create_time
+        ) VALUES
+        <foreach collection="auditLogs" item="log" separator=",">
+            (#{log.userId}, #{log.username}, #{log.operationType}, #{log.moduleName}, #{log.functionName}, #{log.description},
+             #{log.requestMethod}, #{log.requestUrl}, #{log.requestParams}, #{log.responseData}, #{log.resultStatus}, #{log.errorCode}, #{log.errorMessage},
+             #{log.executionTime}, #{log.clientIp}, #{log.userAgent}, #{log.deviceInfo}, #{log.sessionId}, #{log.requestId}, #{log.operationTime},
+             #{log.dataChange}, #{log.businessId}, #{log.businessType}, #{log.riskLevel}, #{log.auditTags}, #{log.extensions}, #{log.createTime})
+        </foreach>
+    </insert>
+
+    <!-- 根据ID查询 -->
+    <select id="selectById" resultMap="AuditLogResultMap" parameterType="java.lang.Long">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_audit_log
+        WHERE audit_id = #{auditId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectByPage" resultMap="AuditLogResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_audit_log
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="moduleName != null and moduleName != ''">
+                AND module_name = #{moduleName}
+            </if>
+            <if test="operationType != null">
+                AND operation_type = #{operationType}
+            </if>
+            <if test="resultStatus != null">
+                AND result_status = #{resultStatus}
+            </if>
+            <if test="startTime != null">
+                AND operation_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND operation_time &lt;= #{endTime}
+            </if>
+            <if test="clientIp != null and clientIp != ''">
+                AND client_ip = #{clientIp}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (username LIKE CONCAT('%', #{keyword}, '%')
+                     OR module_name LIKE CONCAT('%', #{keyword}, '%')
+                     OR function_name LIKE CONCAT('%', #{keyword}, '%')
+                     OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY operation_time DESC, audit_id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 统计总数 -->
+    <select id="countByCondition" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM t_audit_log
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="moduleName != null and moduleName != ''">
+                AND module_name = #{moduleName}
+            </if>
+            <if test="operationType != null">
+                AND operation_type = #{operationType}
+            </if>
+            <if test="resultStatus != null">
+                AND result_status = #{resultStatus}
+            </if>
+            <if test="startTime != null">
+                AND operation_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND operation_time &lt;= #{endTime}
+            </if>
+            <if test="clientIp != null and clientIp != ''">
+                AND client_ip = #{clientIp}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (username LIKE CONCAT('%', #{keyword}, '%')
+                     OR module_name LIKE CONCAT('%', #{keyword}, '%')
+                     OR function_name LIKE CONCAT('%', #{keyword}, '%')
+                     OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据用户ID查询 -->
+    <select id="selectByUserId" resultMap="AuditLogResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_audit_log
+        WHERE user_id = #{userId}
+        ORDER BY operation_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 根据会话ID查询 -->
+    <select id="selectBySessionId" resultMap="AuditLogResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_audit_log
+        WHERE session_id = #{sessionId}
+        ORDER BY operation_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 根据请求ID查询 -->
+    <select id="selectByRequestId" resultMap="AuditLogResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_audit_log
+        WHERE request_id = #{requestId}
+        LIMIT 1
+    </select>
+
+    <!-- 查询高风险操作 -->
+    <select id="selectHighRiskOperations" resultMap="AuditLogResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_audit_log
+        WHERE risk_level = 3
+        <if test="startTime != null">
+            AND operation_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND operation_time &lt;= #{endTime}
+        </if>
+        ORDER BY operation_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 查询失败操作 -->
+    <select id="selectFailureOperations" resultMap="AuditLogResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_audit_log
+        WHERE result_status IN (2, 3)
+        <if test="startTime != null">
+            AND operation_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND operation_time &lt;= #{endTime}
+        </if>
+        ORDER BY operation_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 查询数据修改操作 -->
+    <select id="selectDataModificationOperations" resultMap="AuditLogResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_audit_log
+        WHERE operation_type IN (3, 4, 5)
+        <if test="startTime != null">
+            AND operation_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND operation_time &lt;= #{endTime}
+        </if>
+        ORDER BY operation_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 统计用户操作次数 -->
+    <select id="countUserOperations" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM t_audit_log
+        WHERE user_id = #{userId}
+        <if test="startTime != null">
+            AND operation_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND operation_time &lt;= #{endTime}
+        </if>
+    </select>
+
+    <!-- 统计模块操作次数 -->
+    <select id="countModuleOperations" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM t_audit_log
+        WHERE module_name = #{moduleName}
+        <if test="startTime != null">
+            AND operation_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND operation_time &lt;= #{endTime}
+        </if>
+    </select>
+
+    <!-- 统计各操作类型的次数 -->
+    <select id="countByOperationType" resultMap="OperationTypeStatisticsResultMap">
+        SELECT
+            operation_type,
+            CASE operation_type
+                WHEN 1 THEN '登录'
+                WHEN 2 THEN '登出'
+                WHEN 3 THEN '新增'
+                WHEN 4 THEN '删除'
+                WHEN 5 THEN '修改'
+                WHEN 6 THEN '查询'
+                WHEN 7 THEN '导出'
+                WHEN 8 THEN '导入'
+                WHEN 9 THEN '配置'
+                WHEN 10 THEN '其他'
+                ELSE '未知'
+            END AS operation_type_text,
+            COUNT(*) AS count
+        FROM t_audit_log
+        <where>
+            <if test="startTime != null">
+                AND operation_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND operation_time &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY operation_type
+        ORDER BY count DESC
+    </select>
+
+    <!-- 统计各模块的操作次数 -->
+    <select id="countByModule" resultMap="ModuleStatisticsResultMap">
+        SELECT
+            module_name,
+            COUNT(*) AS count
+        FROM t_audit_log
+        <where>
+            <if test="startTime != null">
+                AND operation_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND operation_time &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY module_name
+        ORDER BY count DESC
+    </select>
+
+    <!-- 查询用户活跃度统计 -->
+    <select id="selectUserActivityStatistics" resultMap="UserActivityStatisticsResultMap">
+        SELECT
+            user_id,
+            username,
+            COUNT(*) AS operation_count,
+            SUM(CASE WHEN result_status = 1 THEN 1 ELSE 0 END) AS success_count,
+            SUM(CASE WHEN result_status != 1 THEN 1 ELSE 0 END) AS failure_count
+        FROM t_audit_log
+        <where>
+            <if test="startTime != null">
+                AND operation_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND operation_time &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY user_id, username
+        ORDER BY operation_count DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 查询每日操作统计 -->
+    <select id="selectDailyOperationStatistics" resultMap="DailyOperationStatisticsResultMap">
+        SELECT
+            DATE(operation_time) AS operation_date,
+            COUNT(*) AS total_operations,
+            SUM(CASE WHEN result_status = 1 THEN 1 ELSE 0 END) AS success_operations,
+            SUM(CASE WHEN result_status != 1 THEN 1 ELSE 0 END) AS failure_operations,
+            ROUND(SUM(CASE WHEN result_status = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS success_rate
+        FROM t_audit_log
+        <where>
+            <if test="startTime != null">
+                AND operation_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND operation_time &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY DATE(operation_time)
+        ORDER BY operation_date DESC
+    </select>
+
+    <!-- 查询操作失败原因统计 -->
+    <select id="selectFailureReasonStatistics" resultMap="FailureReasonStatisticsResultMap">
+        SELECT
+            error_code,
+            LEFT(error_message, 100) AS error_message,
+            COUNT(*) AS count,
+            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM t_audit_log WHERE result_status != 1), 2) AS percentage
+        FROM t_audit_log
+        WHERE result_status != 1
+        <if test="startTime != null">
+            AND operation_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND operation_time &lt;= #{endTime}
+        </if>
+        GROUP BY error_code, LEFT(error_message, 100)
+        ORDER BY count DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 删除过期审计日志 -->
+    <delete id="deleteByCreateTimeBefore" parameterType="java.time.LocalDateTime">
+        DELETE FROM t_audit_log
+        WHERE create_time &lt; #{beforeTime}
+    </delete>
+
+    <!-- 更新扩展属性 -->
+    <update id="updateExtensions" parameterType="map">
+        UPDATE t_audit_log
+        SET extensions = #{extensions}
+        WHERE audit_id = #{auditId}
+    </update>
+
+</mapper>

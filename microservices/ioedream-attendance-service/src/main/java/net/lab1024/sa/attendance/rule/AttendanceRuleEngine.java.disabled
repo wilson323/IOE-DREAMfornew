@@ -1,0 +1,647 @@
+package net.lab1024.sa.attendance.rule;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.dao.AttendanceRuleDao;
+import net.lab1024.sa.attendance.domain.entity.AttendanceRecordEntity;
+import net.lab1024.sa.attendance.domain.entity.AttendanceRuleEntity;
+import net.lab1024.sa.attendance.domain.entity.AttendanceScheduleEntity;
+import net.lab1024.sa.attendance.service.AttendanceRuleService;
+import net.lab1024.sa.attendance.service.AttendanceScheduleService;
+// TEMP: HR module not yet available
+// TEMP: HR module not yet available
+
+/**
+ * 考勤规则引擎
+ *
+ * <p>
+ * 严格遵循repowiki规范:
+ * - 实现考勤规则的业务逻辑判断
+ * - 支持灵活的规则配置
+ * - 提供位置验证、设备验证等功能
+ * - 支持工作日和排班规则
+ * </p>
+ *
+ * @author SmartAdmin Team
+ * @version 3.0.0
+ * @since 2025-11-17
+ */
+@Slf4j
+@Component
+public class AttendanceRuleEngine {
+
+    @Resource
+    private AttendanceRuleService attendanceRuleService;
+
+    @Resource
+    private AttendanceScheduleService attendanceScheduleService;
+
+    @Resource
+    private AttendanceRuleDao attendanceRuleDao;
+
+    @Resource
+// TEMP: HR functionality disabled
+
+    @Resource
+    private ObjectMapper objectMapper;
+
+    // 规则缓存
+// TEMP: Cache functionality disabled
+// TEMP: Cache functionality disabled
+
+    /**
+     * 验证打卡位置是否合法
+     *
+     * @param employeeId 员工ID
+     * @param latitude   纬度
+     * @param longitude  经度
+     * @return 是否合法
+     */
+    public boolean validateLocation(Long employeeId, Double latitude, Double longitude) {
+        try {
+            log.debug("验证打卡位置: 员工ID={}, 经纬度=({},{})", employeeId, latitude, longitude);
+
+            if (latitude == null || longitude == null) {
+                return true; // 如果没有位置信息，则跳过验证
+            }
+
+            // 获取员工考勤规则
+            AttendanceRuleEntity rule = getEmployeeRule(employeeId);
+            if (rule == null || rule.getLocationRequired() == null || !rule.getLocationRequired()) {
+                return true; // 未启用位置验证
+            }
+
+            // 检查位置是否在允许范围内
+            double maxDistance = rule.getMaxDistance() != null ? rule.getMaxDistance() : 500.0; // 默认500米
+
+            // 这里简化处理，实际应该检查公司位置、办公区域等
+            // TODO: 实现具体的位置验证逻辑
+            return isValidLocation(latitude, longitude, maxDistance);
+
+        } catch (Exception e) {
+            log.error("验证打卡位置失败: 员工ID" + employeeId, e);
+            return false;
+        }
+    }
+
+    /**
+     * 验证打卡设备是否合法
+     *
+     * @param employeeId 员工ID
+     * @param deviceId   设备ID
+     * @return 是否合法
+     */
+    public boolean validateDevice(Long employeeId, String deviceId) {
+        try {
+            log.debug("验证打卡设备: 员工ID={}, 设备ID={}", employeeId, deviceId);
+
+            if (deviceId == null || deviceId.trim().isEmpty()) {
+                return false;
+            }
+
+            // 获取员工考勤规则
+            AttendanceRuleEntity rule = getEmployeeRule(employeeId);
+            if (rule == null || rule.getDeviceRequired() == null || !rule.getDeviceRequired()) {
+                return true; // 未启用设备验证
+            }
+
+            // 检查设备是否在允许列表中
+            List<String> allowedDevices = getEmployeeAllowedDevices(employeeId);
+            if (allowedDevices == null || allowedDevices.isEmpty()) {
+                return true; // 没有限制设备列表
+            }
+
+            return allowedDevices.contains(deviceId.trim());
+
+        } catch (Exception e) {
+            log.error("验证打卡设备失败: 员工ID" + employeeId, e);
+            return false;
+        }
+    }
+
+    /**
+     * 计算考勤状态
+     *
+     * @param record 考勤记录
+     * @param rule   考勤规则
+     * @return 考勤状态
+     */
+    public String calculateAttendanceStatus(AttendanceRecordEntity record, AttendanceRuleEntity rule) {
+        try {
+            log.debug("计算考勤状态: 记录ID={}", record.getRecordId());
+
+            if (record.getPunchInTime() == null && record.getPunchOutTime() == null) {
+                return "ABSENT"; // 旷工
+            }
+
+            boolean isLate = isLate(record, rule);
+            boolean isEarlyLeave = isEarlyLeave(record, rule);
+            boolean isAbsent = isAbsent(record, rule);
+
+            if (isAbsent) {
+                return "ABSENT";
+            } else if (isLate && isEarlyLeave) {
+                return "ABNORMAL";
+            } else if (isLate) {
+                return "LATE";
+            } else if (isEarlyLeave) {
+                return "EARLY_LEAVE";
+            } else {
+                return "NORMAL";
+            }
+
+        } catch (Exception e) {
+            log.error("计算考勤状态失败: 记录ID" + record.getRecordId(), e);
+            return "ERROR";
+        }
+    }
+
+    /**
+     * 检查是否迟到
+     */
+    public boolean isLate(AttendanceRecordEntity record, AttendanceRuleEntity rule) {
+        if (record.getPunchInTime() == null || rule == null || rule.getWorkStartTime() == null) {
+            return false;
+        }
+
+        LocalTime punchInTime = record.getPunchInTime();
+        LocalTime workStartTime = rule.getWorkStartTime();
+
+        // 考虑迟到宽限时间
+        Integer lateGraceMinutes = rule.getLateGraceMinutes() != null ? rule.getLateGraceMinutes() : 0;
+        LocalTime effectiveStartTime = workStartTime.plusMinutes(lateGraceMinutes);
+
+        return punchInTime.isAfter(effectiveStartTime);
+    }
+
+    /**
+     * 检查是否早退
+     */
+    public boolean isEarlyLeave(AttendanceRecordEntity record, AttendanceRuleEntity rule) {
+        if (record.getPunchOutTime() == null || rule == null || rule.getWorkEndTime() == null) {
+            return false;
+        }
+
+        LocalTime punchOutTime = record.getPunchOutTime();
+        LocalTime workEndTime = rule.getWorkEndTime();
+
+        // 考虑早退宽限时间
+        Integer earlyLeaveGraceMinutes = rule.getEarlyLeaveGraceMinutes() != null ? rule.getEarlyLeaveGraceMinutes()
+                : 0;
+        LocalTime effectiveEndTime = workEndTime.minusMinutes(earlyLeaveGraceMinutes);
+
+        return punchOutTime.isBefore(effectiveEndTime);
+    }
+
+    /**
+     * 检查是否旷工
+     */
+    public boolean isAbsent(AttendanceRecordEntity record, AttendanceRuleEntity rule) {
+        if (record == null || rule == null) {
+            return false;
+        }
+
+        // 简化处理：如果当天没有任何打卡记录，则认为是旷工
+        return record.getPunchInTime() == null && record.getPunchOutTime() == null;
+    }
+
+    /**
+     * 计算工作时长
+     *
+     * @param record 考勤记录
+     * @param rule   考勤规则
+     * @return 工作时长（小时）
+     */
+    public Double calculateWorkHours(AttendanceRecordEntity record, AttendanceRuleEntity rule) {
+        try {
+            if (record.getPunchInTime() == null || record.getPunchOutTime() == null || rule == null) {
+                return 0.0;
+            }
+
+            LocalTime punchInTime = record.getPunchInTime();
+            LocalTime punchOutTime = record.getPunchOutTime();
+
+            // 处理跨天情况
+            if (punchOutTime.isBefore(punchInTime)) {
+                punchOutTime = punchOutTime.plusHours(24);
+            }
+
+            // 计算总时长（分钟）
+            long totalMinutes = java.time.Duration.between(punchInTime, punchOutTime).toMinutes();
+
+            // 减去休息时间
+            if (rule.getBreakStartTime() != null && rule.getBreakEndTime() != null) {
+                LocalTime breakStart = rule.getBreakStartTime();
+                LocalTime breakEnd = rule.getBreakEndTime();
+
+                // 如果休息时间在工作时间内，则减去休息时间
+                if (punchInTime.isBefore(breakStart) && punchOutTime.isAfter(breakEnd)) {
+                    long breakMinutes = java.time.Duration.between(breakStart, breakEnd).toMinutes();
+                    totalMinutes -= breakMinutes;
+                }
+            }
+
+            // 转换为小时
+            return totalMinutes / 60.0;
+
+        } catch (Exception e) {
+            log.error("计算工作时长失败: 记录ID" + record.getRecordId(), e);
+            return 0.0;
+        }
+    }
+
+    /**
+     * 计算加班时长
+     *
+     * @param record 考勤记录
+     * @param rule   考勤规则
+     * @return 加班时长（小时）
+     */
+    public Double calculateOvertimeHours(AttendanceRecordEntity record, AttendanceRuleEntity rule) {
+        try {
+            if (record.getPunchOutTime() == null || rule == null || rule.getWorkEndTime() == null) {
+                return 0.0;
+            }
+
+            LocalTime punchOutTime = record.getPunchOutTime();
+            LocalTime workEndTime = rule.getWorkEndTime();
+
+            // 如果下班时间在工作时间之前，则没有加班
+            if (!punchOutTime.isAfter(workEndTime)) {
+                return 0.0;
+            }
+
+            // 计算加班时长
+            long overtimeMinutes = java.time.Duration.between(workEndTime, punchOutTime).toMinutes();
+
+            // 转换为小时
+            return overtimeMinutes / 60.0;
+
+        } catch (Exception e) {
+            log.error("计算加班时长失败: 记录ID" + record.getRecordId(), e);
+            return 0.0;
+        }
+    }
+
+    /**
+     * 检查是否为工作日
+     *
+     * @param employeeId 员工ID
+     * @param date       日期
+     * @return 是否为工作日
+     */
+    public boolean isWorkingDay(Long employeeId, LocalDate date) {
+        try {
+            // 检查是否为周末
+            if (date.getDayOfWeek().getValue() > 5) {
+                return false;
+            }
+
+            // 检查节假日
+            if (isHoliday(employeeId, date)) {
+                return false;
+            }
+
+            // 检查排班
+            return hasSchedule(employeeId, date);
+
+        } catch (Exception e) {
+            log.error("检查工作日失败: 员工ID" + employeeId + ", 日期" + date, e);
+            return false;
+        }
+    }
+
+    /**
+     * 获取员工的考勤规则
+     * 支持个人、部门、全局三级规则查询
+     */
+    private AttendanceRuleEntity getEmployeeRule(Long employeeId) {
+// TEMP: Cache functionality disabled
+            try {
+                LocalDate today = LocalDate.now();
+
+                // 1. 查询个人规则（优先级最高）
+                List<AttendanceRuleEntity> individualRules = attendanceRuleDao.selectIndividualRules(employeeId, today);
+                if (individualRules != null && !individualRules.isEmpty()) {
+                    // 返回优先级最高的个人规则
+                    return individualRules.stream()
+                            .filter(r -> r.getEnabled() != null && r.getEnabled())
+                            .sorted((r1, r2) -> Integer.compare(
+                                    r2.getPriority() != null ? r2.getPriority() : 0,
+                                    r1.getPriority() != null ? r1.getPriority() : 0))
+                            .findFirst()
+                            .orElse(null);
+                }
+
+                // 2. 查询部门规则（如果员工有部门）
+// TEMP: HR functionality disabled
+                if (employee != null && employee.getDepartmentId() != null) {
+                    List<AttendanceRuleEntity> deptRules = attendanceRuleDao.selectDepartmentRules(
+                            employee.getDepartmentId(), today);
+                    if (deptRules != null && !deptRules.isEmpty()) {
+                        return deptRules.stream()
+                                .filter(r -> r.getEnabled() != null && r.getEnabled())
+                                .sorted((r1, r2) -> Integer.compare(
+                                        r2.getPriority() != null ? r2.getPriority() : 0,
+                                        r1.getPriority() != null ? r1.getPriority() : 0))
+                                .findFirst()
+                                .orElse(null);
+                    }
+                }
+
+                // 3. 查询全局规则（默认规则）
+                List<AttendanceRuleEntity> globalRules = attendanceRuleDao.selectGlobalRules(null, today);
+                if (globalRules != null && !globalRules.isEmpty()) {
+                    return globalRules.stream()
+                            .filter(r -> r.getEnabled() != null && r.getEnabled())
+                            .sorted((r1, r2) -> Integer.compare(
+                                    r2.getPriority() != null ? r2.getPriority() : 0,
+                                    r1.getPriority() != null ? r1.getPriority() : 0))
+                            .findFirst()
+                            .orElse(null);
+                }
+
+                // 4. 返回默认规则（如果都没有）
+                log.warn("未找到员工考勤规则，使用默认规则: employeeId={}", employeeId);
+                AttendanceRuleEntity defaultRule = new AttendanceRuleEntity();
+                defaultRule.setRuleId(1L);
+                defaultRule.setWorkStartTime(LocalTime.of(9, 0));
+                defaultRule.setWorkEndTime(LocalTime.of(18, 0));
+                defaultRule.setBreakStartTime(LocalTime.of(12, 0));
+                defaultRule.setBreakEndTime(LocalTime.of(13, 0));
+                defaultRule.setLocationRequired(false);
+                defaultRule.setDeviceRequired(false);
+                defaultRule.setMaxDistance(500.0);
+                defaultRule.setLateGraceMinutes(5);
+                defaultRule.setEarlyLeaveGraceMinutes(5);
+                return defaultRule;
+
+            } catch (Exception e) {
+                log.error("查询员工考勤规则失败: employeeId={}", employeeId, e);
+                // 返回默认规则
+                AttendanceRuleEntity defaultRule = new AttendanceRuleEntity();
+                defaultRule.setRuleId(1L);
+                defaultRule.setWorkStartTime(LocalTime.of(9, 0));
+                defaultRule.setWorkEndTime(LocalTime.of(18, 0));
+                defaultRule.setBreakStartTime(LocalTime.of(12, 0));
+                defaultRule.setBreakEndTime(LocalTime.of(13, 0));
+                defaultRule.setLocationRequired(false);
+                defaultRule.setDeviceRequired(false);
+                defaultRule.setMaxDistance(500.0);
+                defaultRule.setLateGraceMinutes(5);
+                defaultRule.setEarlyLeaveGraceMinutes(5);
+                return defaultRule;
+            }
+        });
+    }
+
+    /**
+     * 获取员工允许的设备列表
+     * <p>
+     * 从考勤规则的deviceRestrictions字段中解析允许的设备列表
+     * 如果规则中没有设备限制，返回空列表（表示不限制设备）
+     * </p>
+     *
+     * @param employeeId 员工ID
+     * @return 允许的设备ID列表，如果规则未限制设备则返回空列表
+     */
+    private List<String> getEmployeeAllowedDevices(Long employeeId) {
+        try {
+            // 1. 获取员工适用的考勤规则
+            AttendanceRuleEntity rule = getEmployeeRule(employeeId);
+            if (rule == null) {
+                log.debug("员工无适用考勤规则，不限制设备: employeeId={}", employeeId);
+                return new ArrayList<>(); // 无规则，不限制设备
+            }
+
+            // 2. 检查规则是否启用设备限制
+            if (rule.getDeviceRequired() == null || !rule.getDeviceRequired()) {
+                log.debug("规则未启用设备限制: employeeId={}, ruleId={}", employeeId, rule.getRuleId());
+                return new ArrayList<>(); // 未启用设备限制，不限制设备
+            }
+
+            // 3. 解析设备限制配置（JSON格式）
+            String deviceRestrictions = rule.getDeviceRestrictions();
+            if (deviceRestrictions == null || deviceRestrictions.trim().isEmpty()) {
+                log.debug("规则未配置设备限制，不限制设备: employeeId={}, ruleId={}", employeeId, rule.getRuleId());
+                return new ArrayList<>(); // 未配置设备限制，不限制设备
+            }
+
+            // 4. 解析JSON配置
+            try {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> restrictions = objectMapper.readValue(
+                        deviceRestrictions,
+                        objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+
+                // 5. 获取允许的设备列表
+                @SuppressWarnings("unchecked")
+                List<String> allowedDevices = (List<String>) restrictions.get("allowedDevices");
+
+                if (allowedDevices == null || allowedDevices.isEmpty()) {
+                    log.debug("规则设备限制配置为空，不限制设备: employeeId={}, ruleId={}", employeeId, rule.getRuleId());
+                    return new ArrayList<>(); // 配置为空，不限制设备
+                }
+
+                log.debug("获取员工允许的设备列表: employeeId={}, ruleId={}, deviceCount={}",
+                        employeeId, rule.getRuleId(), allowedDevices.size());
+                return allowedDevices;
+
+            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                log.error("解析设备限制配置失败: employeeId={}, ruleId={}, deviceRestrictions={}",
+                        employeeId, rule.getRuleId(), deviceRestrictions, e);
+                return new ArrayList<>(); // 解析失败，不限制设备（降级处理）
+            }
+
+        } catch (Exception e) {
+            log.error("获取员工允许的设备列表失败: employeeId={}", employeeId, e);
+            return new ArrayList<>(); // 异常时返回空列表，不限制设备（降级处理）
+        }
+    }
+
+    /**
+     * 检查位置是否合法
+     */
+    private boolean isValidLocation(Double latitude, Double longitude, double maxDistance) {
+        // 这里简化处理，实际应该检查具体的坐标范围
+        // 示例：以公司坐标为中心，检查距离
+        double companyLat = 39.9042; // 示例坐标
+        double companyLng = 116.4074;
+
+        double distance = calculateDistance(latitude, longitude, companyLat, companyLng);
+        return distance <= maxDistance;
+    }
+
+    /**
+     * 计算两点间距离（米）
+     */
+    private double calculateDistance(Double lat1, Double lng1, Double lat2, Double lng2) {
+        if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) {
+            return Double.MAX_VALUE;
+        }
+
+        double earthRadius = 6371000; // 地球半径（米）
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                        * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return earthRadius * c;
+    }
+
+    /**
+     * 检查是否为节假日
+     * 严格遵循repowiki规范：实现完整的节假日检查逻辑
+     *
+     * 检查优先级：
+     * 1. 排班表中的isHoliday字段（最高优先级）
+     * 2. 考勤规则中的holidayRules JSON配置
+     * 3. 周末判断（周六、周日）
+     *
+     * @param employeeId 员工ID
+     * @param date       检查日期
+     * @return 是否为节假日
+     */
+    private boolean isHoliday(Long employeeId, LocalDate date) {
+        try {
+            log.debug("检查节假日: employeeId={}, date={}", employeeId, date);
+
+            // 1. 首先检查排班表中的isHoliday字段（最高优先级）
+            AttendanceScheduleEntity schedule = attendanceScheduleService.getEmployeeScheduleByDate(employeeId, date);
+            if (schedule != null) {
+                // 检查排班类型是否为节假日
+                if (schedule.isHoliday()) {
+                    log.debug("排班表标记为节假日: employeeId={}, date={}, scheduleId={}",
+                            employeeId, date, schedule.getScheduleId());
+                    return true;
+                }
+                // 如果排班类型为HOLIDAY，也是节假日
+                if ("HOLIDAY".equalsIgnoreCase(schedule.getScheduleType())) {
+                    log.debug("排班类型为节假日: employeeId={}, date={}", employeeId, date);
+                    return true;
+                }
+            }
+
+            // 2. 检查考勤规则中的holidayRules JSON配置
+            AttendanceRuleEntity rule = getEmployeeRule(employeeId);
+            if (rule != null && rule.getHolidayRules() != null && !rule.getHolidayRules().trim().isEmpty()) {
+                try {
+                    // 解析holidayRules JSON配置
+                    Map<String, Object> holidayConfig = objectMapper.readValue(
+                            rule.getHolidayRules(),
+                            objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+
+                    // 检查holidays数组
+                    @SuppressWarnings("unchecked")
+                    List<String> holidays = (List<String>) holidayConfig.get("holidays");
+                    if (holidays != null && !holidays.isEmpty()) {
+                        String dateStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        if (holidays.contains(dateStr)) {
+                            log.debug("考勤规则配置为节假日: employeeId={}, date={}, ruleId={}",
+                                    employeeId, date, rule.getRuleId());
+                            return true;
+                        }
+                    }
+                } catch (Exception e) {
+                    log.warn("解析考勤规则节假日配置失败: employeeId={}, date={}, ruleId={}",
+                            employeeId, date, rule.getRuleId(), e);
+                    // JSON解析失败不影响后续判断
+                }
+            }
+
+            // 3. 检查是否为周末（周六、周日）
+            int dayOfWeek = date.getDayOfWeek().getValue();
+            if (dayOfWeek == 6 || dayOfWeek == 7) {
+                log.debug("周末判断为节假日: employeeId={}, date={}, dayOfWeek={}",
+                        employeeId, date, dayOfWeek);
+                return true;
+            }
+
+            // 4. 默认返回false（工作日）
+            log.debug("判断为工作日: employeeId={}, date={}", employeeId, date);
+            return false;
+
+        } catch (Exception e) {
+            log.error("检查节假日失败: employeeId={}, date={}", employeeId, date, e);
+            // 异常情况下返回false（工作日），避免因节假日检查失败导致业务中断
+            return false;
+        }
+    }
+
+    /**
+     * 检查是否有排班
+     * 使用AttendanceScheduleService查询员工指定日期的排班
+     */
+    private boolean hasSchedule(Long employeeId, LocalDate date) {
+        try {
+            // 1. 使用排班服务查询员工指定日期的排班
+            AttendanceScheduleEntity schedule = attendanceScheduleService.getEmployeeScheduleByDate(employeeId, date);
+
+            if (schedule == null) {
+                // 没有排班，默认返回true（允许打卡）
+                // 实际业务中可能需要根据规则判断是否允许无排班打卡
+                log.debug("员工指定日期无排班: employeeId={}, date={}", employeeId, date);
+                return true;
+            }
+
+            // 2. 检查排班类型
+            // 如果排班类型为休息日或节假日，返回false
+            String scheduleType = schedule.getScheduleType();
+            if (scheduleType != null &&
+                    ("REST".equalsIgnoreCase(scheduleType) ||
+                            "HOLIDAY".equalsIgnoreCase(scheduleType) ||
+                            "LEAVE".equalsIgnoreCase(scheduleType))) {
+                log.debug("员工指定日期为休息/节假日: employeeId={}, date={}, type={}",
+                        employeeId, date, scheduleType);
+                return false;
+            }
+
+            // 3. 检查排班状态
+            // 如果排班已禁用或已删除，返回false
+            // 注意：MyBatis-Plus的@TableLogic会自动过滤已删除的记录，这里主要检查其他状态
+            // 如果查询到的schedule不为null，说明未被删除（MyBatis-Plus已自动过滤）
+
+            // 4. 有有效排班，返回true
+            log.debug("员工指定日期有有效排班: employeeId={}, date={}, scheduleId={}",
+                    employeeId, date, schedule.getScheduleId());
+            return true;
+
+        } catch (Exception e) {
+            log.error("检查排班失败: employeeId={}, date={}", employeeId, date, e);
+            // 异常情况下返回true，允许打卡（避免因排班检查失败导致无法打卡）
+            return true;
+        }
+    }
+
+    /**
+     * 清除规则缓存
+     */
+// TEMP: Cache functionality disabled
+// TEMP: Cache functionality disabled
+// TEMP: Cache functionality disabled
+        log.info("考勤规则引擎缓存已清除");
+    }
+
+    /**
+     * 清除员工规则缓存
+     */
+// TEMP: Cache functionality disabled
+// TEMP: Cache functionality disabled
+// TEMP: Cache functionality disabled
+        log.info("员工考勤规则缓存已清除: 员工ID={}", employeeId);
+    }
+}

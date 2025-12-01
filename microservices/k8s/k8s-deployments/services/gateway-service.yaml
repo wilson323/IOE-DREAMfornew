@@ -1,0 +1,210 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-gateway
+  namespace: ioedream-prod
+  labels:
+    app: smart-gateway
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM智能网关服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: management
+      port: 8081
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: smart-gateway
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-gateway
+  namespace: ioedream-staging
+  labels:
+    app: smart-gateway
+    component: service
+    environment: staging
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM智能网关服务 - 预发布环境"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: smart-gateway
+    environment: staging
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-auth-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-auth-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM认证授权服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8081"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+      protocol: TCP
+    - name: management
+      port: 8082
+      targetPort: 8081
+      protocol: TCP
+  selector:
+    app: ioedream-auth-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-auth-service
+  namespace: ioedream-staging
+  labels:
+    app: ioedream-auth-service
+    component: service
+    environment: staging
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM认证授权服务 - 预发布环境"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+      protocol: TCP
+  selector:
+    app: ioedream-auth-service
+    environment: staging
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-identity-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-identity-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM身份权限服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8082"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082
+      protocol: TCP
+  selector:
+    app: ioedream-identity-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-identity-service
+  namespace: ioedream-staging
+  labels:
+    app: ioedream-identity-service
+    component: service
+    environment: staging
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM身份权限服务 - 预发布环境"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082
+      protocol: TCP
+  selector:
+    app: ioedream-identity-service
+    environment: staging
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-device-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-device-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM设备管理服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8083"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+      protocol: TCP
+  selector:
+    app: ioedream-device-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-device-service
+  namespace: ioedream-staging
+  labels:
+    app: ioedream-device-service
+    component: service
+    environment: staging
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM设备管理服务 - 预发布环境"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+      protocol: TCP
+  selector:
+    app: ioedream-device-service
+    environment: staging

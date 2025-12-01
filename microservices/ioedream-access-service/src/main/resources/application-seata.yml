@@ -1,0 +1,91 @@
+# Access Service Seata分布式事务配置
+spring:
+  application:
+    name: access-service
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        metadata:
+          version: 1.0.0
+          service-type: access-control
+
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        file-extension: yml
+
+  # Redis配置
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:1}
+      timeout: 5000ms
+
+  # Kafka配置
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:127.0.0.1:9092}
+    producer:
+      retries: 3
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: ${spring.application.name}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+# Seata配置
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: ${SEATA_TX_GROUP:access-service-tx-group}
+  service:
+    vgroup-mapping:
+      access-service-tx-group: default
+    grouplist:
+      default: ${SEATA_SERVER:127.0.0.1:8091}
+    disable-global-transaction: false
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+      namespace: ${NACOS_NAMESPACE:}
+      group: ${NACOS_GROUP:DEFAULT_GROUP}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      data-id: seata-server.properties
+  registry:
+    type: nacos
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+      namespace: ${NACOS_NAMESPACE:}
+      group: ${NACOS_GROUP:DEFAULT_GROUP}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      cluster: default
+
+# Access Service特定配置
+access:
+  transaction:
+    # 门禁记录事务配置
+    record:
+      enabled: true
+      timeout: 30000
+    # 权限管理事务配置
+    permission:
+      enabled: true
+      timeout: 20000
+    # 设备控制事务配置
+    device:
+      enabled: true
+      timeout: 15000

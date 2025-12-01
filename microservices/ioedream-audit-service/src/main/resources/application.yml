@@ -1,0 +1,277 @@
+# IOE-DREAM 审计服务配置文件
+# Spring Boot 3.5.7 + Spring Cloud 2023.0.3
+
+server:
+  port: 8096
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    min-spare-threads: 10
+
+spring:
+  application:
+    name: ioedream-audit-service
+  profiles:
+    active: dev
+
+  # 数据库配置
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:ioedream_audit;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE;INIT=RUNSCRIPT FROM 'classpath:sql/audit_schema.sql'
+    username: sa
+    password: ""
+    h2:
+      console:
+        enabled: true
+        path: /h2-console
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        use_sql_comments: true
+
+  # Redis配置
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 3000
+
+  # MyBatis-Plus配置
+  mybatis-plus:
+    configuration:
+      map-underscore-to-camel-case: true
+      cache-enabled: false
+      call-setters-on-nulls: true
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    mapper-locations: classpath:mapper/*.xml
+    global-config:
+      db-config:
+        id-type: auto
+        logic-delete-field: deleted_flag
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+        update-strategy: not_null
+
+  # Jackson配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+# 服务发现配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    healthcheck:
+      enabled: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    metadata:
+      management.context-path: ${server.servlet.context-path}/actuator
+
+# Feign配置
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      sla:
+        http.server.requests: 100ms,200ms,500ms,1s
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+
+# 日志配置
+logging:
+  level:
+    net.lab1024.sa.audit: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} [%thread] %clr(%-5level){cyan} %clr(%logger{39}){magenta} - %clr(%msg%n){faint}"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{39} - %msg%n"
+  file:
+    name: logs/audit-service.log
+    max-size: 100MB
+    max-history: 30
+  path: logs
+
+# 审计服务特定配置
+audit:
+  # 日志保留天数
+  log-retention-days: 365
+  # 批量插入大小
+  batch-insert-size: 1000
+  # 告警是否启用
+  alert-enabled: true
+  # 高风险操作阈值
+  high-risk-threshold: 3
+  # 导出最大行数
+  export-max-rows: 10000
+  # 统计缓存过期时间（分钟）
+  statistics-cache-expire: 30
+  # 异步处理线程池大小
+  async-thread-pool-size: 5
+  # 异步队列容量
+  async-queue-capacity: 1000
+  # 风险检测配置
+  anomaly-detection:
+    enabled: true
+    max-login-attempts: 5
+    time-window: 300  # 5分钟
+    max-operations: 100
+  # 合规检查配置
+  compliance:
+    enabled: true
+    rules:
+      - name: "password_policy"
+        description: "密码策略检查"
+        enabled: true
+      - name: "access_control"
+        description: "访问控制检查"
+        enabled: true
+      - name: "data_encryption"
+        description: "数据加密检查"
+        enabled: true
+
+---
+# 开发环境配置
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:h2:mem:ioedream_audit_dev;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE;INIT=RUNSCRIPT FROM 'classpath:sql/audit_schema.sql'
+
+audit:
+  log-retention-days: 30
+  alert-enabled: true
+  anomaly-detection:
+    enabled: true
+    max-login-attempts: 3
+    time-window: 180  # 3分钟
+
+logging:
+  level:
+    net.lab1024.sa.audit: DEBUG
+    root: INFO
+
+---
+# 测试环境配置
+spring:
+  profiles: test
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://test-mysql:3306/ioedream_audit_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai
+    username: test_audit
+    password: test_audit123
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+
+audit:
+  log-retention-days: 90
+  alert-enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://test-eureka:8761/eureka/
+
+---
+# 生产环境配置
+spring:
+  profiles: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://prod-mysql:3306/ioedream_audit_prod?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
+    username: prod_audit
+    password: prod_audit123!
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+
+  # Redis生产配置
+  data:
+    redis:
+      host: prod-redis
+      port: 6379
+      password: prod_redis123!
+      database: 0
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+
+audit:
+  log-retention-days: 730  # 2年
+  alert-enabled: true
+  high-risk-threshold: 2
+  batch-insert-size: 500
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://prod-eureka:8761/eureka/
+
+logging:
+  level:
+    net.lab1024.sa.audit: WARN
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    root: WARN

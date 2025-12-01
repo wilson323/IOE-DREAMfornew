@@ -1,0 +1,259 @@
+# IOE-DREAM Device Service Docker Compose配置
+# 基于现有项目Docker配置重构，包含MQTT服务
+#
+# @author IOE-DREAM Team
+# @since 2025-11-27
+
+version: '3.8'
+
+services:
+  # Device Service微服务
+  device-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ioedream-device-service
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+      - "1883:1883"  # MQTT端口
+    environment:
+      # Spring配置
+      SPRING_PROFILES_ACTIVE: docker
+
+      # 数据库配置（基于现有配置）
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/smart_admin_v3?autoReconnect=true&useServerPreparedStmts=false&rewriteBatchedStatements=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root1234
+
+      # Redis配置（基于现有配置）
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: zkteco3100
+      SPRING_REDIS_DATABASE: 1
+
+      # Nacos配置
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR: nacos:8848
+      SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR: nacos:8848
+
+      # MQTT配置
+      SPRING_INTEGRATION_MQTT_DEFAULT_URL: tcp://mqtt:1883
+      SPRING_INTEGRATION_MQTT_DEFAULT_USERNAME: device-service
+      SPRING_INTEGRATION_MQTT_DEFAULT_PASSWORD: device-service-password
+
+      # 设备配置
+      DEVICE_HEARTBEAT_DEFAULT_INTERVAL: 60
+      DEVICE_HEARTBEAT_TIMEOUT_THRESHOLD: 180
+      DEVICE_COMMUNICATION_CONNECTION_TIMEOUT: 10
+      DEVICE_MONITORING_ENABLE_METRICS: true
+
+      # JVM配置
+      JAVA_OPTS: "-Xms512m -Xmx1024m -Dspring.profiles.active=docker"
+    volumes:
+      # 日志目录
+      - ./logs:/app/logs
+      # 设备配置文件
+      - ./config/device:/app/config
+      # 文件上传目录
+      - device-uploads:/app/uploads
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/api/device/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 共享基础服务
+  mysql:
+    image: mysql:8.0
+    container_name: ioedream-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: smart_admin_v3
+      MYSQL_USER: smart_admin
+      MYSQL_PASSWORD: smart_admin_1024
+    volumes:
+      mysql-data:/var/lib/mysql
+      ./config/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      ./scripts/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max-connections=1000
+      --innodb-buffer-pool-size=512M
+
+  redis:
+    image: redis:7-alpine
+    container_name: ioedream-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass zkteco3100
+    volumes:
+      redis-data:/data
+      ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nacos:
+    image: nacos/nacos-server:v2.2.0
+    container_name: ioedream-nacos
+    restart: unless-stopped
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: nacos_config
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root1234
+      NACOS_AUTH_ENABLE: false
+      JVM_XMS: 256m
+      JVM_XMX: 512m
+    volumes:
+      nacos-data:/home/nacos/data
+      nacos-logs:/home/nacos/logs
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/v1/console/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MQTT消息代理服务（设备通信）
+  mqtt:
+    image: eclipse-mosquitto:2.0.15
+    container_name: ioedream-mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"  # WebSocket端口
+    environment:
+      MOSQUITTO_USERNAME: device-service
+      MOSQUITTO_PASSWORD: device-service-password
+    volumes:
+      mqtt-data:/mosquitto/data
+      mqtt-logs:/mosquitto/log
+      ./config/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "test", "-m", "health-check"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      mosquitto -c /mosquitto/config/mosquitto.conf -p 1883 -p 9001
+
+  # Prometheus监控
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ioedream-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+      - ./config/prometheus/device-rules.yml:/etc/prometheus/rules/device-rules.yml
+    networks:
+      - ioedream-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  # Grafana可视化
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ioedream-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+    volumes:
+      grafana-data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./config/grafana/device-dashboard.json:/etc/grafana/provisioning/dashboards/device-dashboard.json
+    networks:
+      - ioedream-network
+
+  # MQTT Web管理界面
+  mqtt-webui:
+    image: sterby/little-mosquitto
+    container_name: ioedream-mqtt-webui
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    environment:
+      MQTT_BROKER_URL: mqtt://mqtt:1883
+      MQTT_WEBUI_USERNAME: device-service
+      MQTT_WEBUI_PASSWORD: device-service-password
+    networks:
+      - ioedream-network
+    depends_on:
+      - mqtt
+
+# 网络配置
+networks:
+  ioedream-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# 数据卷配置
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+  nacos-data:
+    driver: local
+  nacos-logs:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  mqtt-data:
+    driver: local
+  mqtt-logs:
+    driver: local
+  device-uploads:
+    driver: local

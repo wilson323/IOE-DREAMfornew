@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.base.module.support.rbac.dao.AreaPersonDao">
+
+    <!-- 根据人员ID查询区域ID列表 -->
+    <select id="getAreaIdsByPersonId" resultType="java.lang.Long">
+        SELECT area_id
+        FROM t_area_person
+        WHERE person_id = #{personId}
+          AND status = 1
+          AND deleted_flag = 0
+          AND (effective_time IS NULL OR effective_time &lt;= NOW())
+          AND (expire_time IS NULL OR expire_time >= NOW())
+    </select>
+
+</mapper>
+

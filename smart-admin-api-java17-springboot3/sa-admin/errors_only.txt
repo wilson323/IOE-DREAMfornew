@@ -1,0 +1,398 @@
+[ERROR] COMPILATION ERROR : 
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[138,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[421,64] 错误: 无法从静态上下文中引用非静态 方法 getDiscountAmount(BigDecimal)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAIAnalysisEngineImpl.java:[148,24] 错误: 对于set(String,FaceFeature,int), 找不到合适的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAIAnalysisEngineImpl.java:[759,24] 错误: 对于set(String,Map<String,Object>,int), 找不到合适的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[46,46] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[76,46] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[149,40] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[175,40] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[198,56] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[201,43] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[205,22] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[206,32] 错误: 不兼容的类型: Integer无法转换为Long
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[243,56] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[259,56] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[274,71] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[322,46] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[326,56] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[330,49] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[334,44] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[24,7] 错误: SmartMode不是抽象的, 并且未覆盖ConsumptionMode中的抽象方法destroy()
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[160,18] 错误: SmartMode中的getConfigTemplate()无法实现ConsumptionMode中的getConfigTemplate()
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[44,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[95,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[96,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[97,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[98,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[99,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[100,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[101,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[102,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[103,19] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[113,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[159,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[262,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[364,38] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[471,43] 错误: 对于getModeParam(String), 找不到合适的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[472,39] 错误: 对于getModeParam(String), 找不到合适的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[473,38] 错误: 对于getModeParam(String), 找不到合适的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[69,33] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[73,89] 错误: 不兼容的类型: PageResult<VideoRecordingEntity>无法转换为PageResult<VideoRecordEntity>
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[75,80] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[80,29] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[100,80] 错误: 不兼容的类型: VideoRecordingEntity无法转换为VideoRecordEntity
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[288,71] 错误: 不兼容的类型: String无法转换为Long
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[409,59] 错误: 找不到符号
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[63,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[120,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[130,76] 错误: 程序包UnifiedDeviceService不存在
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[130,37] 错误: 程序包UnifiedDeviceService不存在
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[137,64] 错误: 程序包UnifiedDeviceService不存在
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[162,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[178,60] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[194,56] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[204,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[264,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[268,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[272,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[305,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[338,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[374,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[378,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[382,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[416,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[420,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[424,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[489,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[493,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[499,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[520,56] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[529,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[926,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[946,72] 错误: 不兼容的类型: 条件表达式中的类型错误
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[951,56] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[960,48] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[968,48] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[976,48] 错误: 找不到符号
+  符号:   变量 PARAM_ERROR
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[37,7] 错误: AccountSecurityServiceImpl不是抽象的, 并且未覆盖AccountSecurityService中的抽象方法getEmergencyContacts(@jakarta.validation.constraints.NotNull Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[374,34] 错误: AccountSecurityServiceImpl中的getEmergencyContacts(Long)无法实现AccountSecurityService中的getEmergencyContacts(@jakarta.validation.constraints.NotNull Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[362,38] 错误: AccountSecurityServiceImpl中的getSecurityEventHistory(Long,String,Integer)无法实现AccountSecurityService中的getSecurityEventHistory(@jakarta.validation.constraints.NotNull Long,String,Integer)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[345,37] 错误: AccountSecurityServiceImpl中的checkOperationPermission(Long,String,Object)无法实现AccountSecurityService中的checkOperationPermission(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,Object)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[339,33] 错误: AccountSecurityServiceImpl中的getHighRiskAccounts(String,Integer)无法实现AccountSecurityService中的getHighRiskAccounts(@jakarta.validation.constraints.NotNull String,Integer)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[328,33] 错误: AccountSecurityServiceImpl中的generateSecurityReport(Long,String,String)无法实现AccountSecurityService中的generateSecurityReport(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,String)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[310,33] 错误: AccountSecurityServiceImpl中的getAccountSecurityConfig(Long)无法实现AccountSecurityService中的getAccountSecurityConfig(@jakarta.validation.constraints.NotNull Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[287,32] 错误: AccountSecurityServiceImpl中的getAccountSecurityScore(Long)无法实现AccountSecurityService中的getAccountSecurityScore(@jakarta.validation.constraints.NotNull Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[275,33] 错误: AccountSecurityServiceImpl中的getAccountSecurityStatus(Long,Long)无法实现AccountSecurityService中的getAccountSecurityStatus(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[257,32] 错误: AccountSecurityServiceImpl中的getAutoFreezeRules(Long,String)无法实现AccountSecurityService中的getAutoFreezeRules(@jakarta.validation.constraints.NotNull Long,String)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[179,33] 错误: AccountSecurityServiceImpl中的extendFreezeTime(Long,Long,Integer,String,Long)无法实现AccountSecurityService中的extendFreezeTime(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Integer,@jakarta.validation.constraints.NotNull String,Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[148,29] 错误: AccountSecurityServiceImpl中的getAccountFreezeInfo(Long,Long)无法实现AccountSecurityService中的getAccountFreezeInfo(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[126,33] 错误: AccountSecurityServiceImpl中的permanentFreezeAccount(Long,Long,String,Long)无法实现AccountSecurityService中的permanentFreezeAccount(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[120,33] 错误: AccountSecurityServiceImpl中的temporaryFreezeAccount(Long,Long,String,Integer,Long)无法实现AccountSecurityService中的temporaryFreezeAccount(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,@jakarta.validation.constraints.NotNull Integer,Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[88,33] 错误: AccountSecurityServiceImpl中的unfreezeAccount(Long,Long,String,Long)无法实现AccountSecurityService中的unfreezeAccount(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[50,33] 错误: AccountSecurityServiceImpl中的freezeAccount(Long,Long,String,Integer,Long)无法实现AccountSecurityService中的freezeAccount(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,Integer,Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[48,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[86,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[119,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[125,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[147,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[178,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[231,31] 错误: 名称冲突: AccountSecurityServiceImpl 中的 batchFreezeAccounts(List<net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountFreezeRequest>,Long) 和 AccountSecurityService 中的 batchFreezeAccounts(@jakarta.validation.constraints.NotNull List<net.lab1024.sa.admin.module.consume.domain.vo.AccountFreezeRequest>,Long) 具有相同疑符, 但两者均不覆盖对方
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[230,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[138,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[421,64] 错误: 无法从静态上下文中引用非静态 方法 getDiscountAmount(BigDecimal)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAIAnalysisEngineImpl.java:[148,24] 错误: 对于set(String,FaceFeature,int), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAIAnalysisEngineImpl.java:[759,24] 错误: 对于set(String,Map<String,Object>,int), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[46,46] 错误: 找不到符号
+[ERROR]   符号:   方法 selectByBarcode(String)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[76,46] 错误: 找不到符号
+[ERROR]   符号:   方法 selectByQrCode(String)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[149,40] 错误: 找不到符号
+[ERROR]   符号:   方法 deductStock(Long,Integer)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[175,40] 错误: 找不到符号
+[ERROR]   符号:   方法 restoreStock(Long,Integer)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[198,56] 错误: 找不到符号
+[ERROR]   符号:   方法 queryProduct(ProductQueryParam)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[201,43] 错误: 找不到符号
+[ERROR]   符号:   方法 queryProductCount(ProductQueryParam)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[205,22] 错误: 找不到符号
+[ERROR]   符号:   方法 setRows(List<ProductEntity>)
+[ERROR]   位置: 类型为PageResult<ProductEntity>的变量 pageResult
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[206,32] 错误: 不兼容的类型: Integer无法转换为Long
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[243,56] 错误: 找不到符号
+[ERROR]   符号:   方法 searchProduct(String)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[259,56] 错误: 找不到符号
+[ERROR]   符号:   方法 selectHotProducts(Integer)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[274,71] 错误: 找不到符号
+[ERROR]   符号:   方法 selectActiveCategories()
+[ERROR]   位置: 类型为ProductCategoryDao的变量 productCategoryDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[322,46] 错误: 找不到符号
+[ERROR]   符号:   方法 countByStatus(String)
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[326,56] 错误: 找不到符号
+[ERROR]   符号:   方法 countActiveCategories()
+[ERROR]   位置: 类型为ProductCategoryDao的变量 productCategoryDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[330,49] 错误: 找不到符号
+[ERROR]   符号:   方法 countLowStockProducts()
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\product\ProductService.java:[334,44] 错误: 找不到符号
+[ERROR]   符号:   方法 countHotProducts()
+[ERROR]   位置: 类型为ProductDao的变量 productDao
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[24,7] 错误: SmartMode不是抽象的, 并且未覆盖ConsumptionMode中的抽象方法destroy()
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[160,18] 错误: SmartMode中的getConfigTemplate()无法实现ConsumptionMode中的getConfigTemplate()
+[ERROR]   返回类型String与Map<String,Object>不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[44,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[95,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,String)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[96,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,String)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[97,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,double)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[98,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,String)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[99,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,BigDecimal)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[100,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,BigDecimal)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[101,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,BigDecimal)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[102,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,BigDecimal)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[103,19] 错误: 找不到符号
+[ERROR]   符号:   方法 setModeData(String,Map<String,Object>)
+[ERROR]   位置: 类型为ConsumeModeResultBuilder的变量 builder
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[113,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[159,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[262,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[364,38] 错误: 找不到符号
+[ERROR]   符号:   方法 get(String,Class<String>)
+[ERROR]   位置: 类型为ConsumeModeRequest的变量 request
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[471,43] 错误: 对于getModeParam(String), 找不到合适的方法
+[ERROR]     方法 ConsumeModeRequest.<T#1>getModeParam(String,Class<T#1>)不适用
+[ERROR]       (无法推断类型变量 T#1
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]     方法 ConsumeModeRequest.<T#2>getModeParam(String,Class<T#2>,T#2)不适用
+[ERROR]       (无法推断类型变量 T#2
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]   其中, T#1,T#2是类型变量:
+[ERROR]     T#1扩展已在方法 <T#1>getModeParam(String,Class<T#1>)中声明的Object
+[ERROR]     T#2扩展已在方法 <T#2>getModeParam(String,Class<T#2>,T#2)中声明的Object
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[472,39] 错误: 对于getModeParam(String), 找不到合适的方法
+[ERROR]     方法 ConsumeModeRequest.<T#1>getModeParam(String,Class<T#1>)不适用
+[ERROR]       (无法推断类型变量 T#1
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]     方法 ConsumeModeRequest.<T#2>getModeParam(String,Class<T#2>,T#2)不适用
+[ERROR]       (无法推断类型变量 T#2
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]   其中, T#1,T#2是类型变量:
+[ERROR]     T#1扩展已在方法 <T#1>getModeParam(String,Class<T#1>)中声明的Object
+[ERROR]     T#2扩展已在方法 <T#2>getModeParam(String,Class<T#2>,T#2)中声明的Object
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\SmartMode.java:[473,38] 错误: 对于getModeParam(String), 找不到合适的方法
+[ERROR]     方法 ConsumeModeRequest.<T#1>getModeParam(String,Class<T#1>)不适用
+[ERROR]       (无法推断类型变量 T#1
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]     方法 ConsumeModeRequest.<T#2>getModeParam(String,Class<T#2>,T#2)不适用
+[ERROR]       (无法推断类型变量 T#2
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]   其中, T#1,T#2是类型变量:
+[ERROR]     T#1扩展已在方法 <T#1>getModeParam(String,Class<T#1>)中声明的Object
+[ERROR]     T#2扩展已在方法 <T#2>getModeParam(String,Class<T#2>,T#2)中声明的Object
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[69,33] 错误: 找不到符号
+[ERROR]   符号:   方法 error(String)
+[ERROR]   位置: 类 PageResult
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[73,89] 错误: 不兼容的类型: PageResult<VideoRecordingEntity>无法转换为PageResult<VideoRecordEntity>
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[75,80] 错误: 找不到符号
+[ERROR]   符号:   方法 getTotalCount()
+[ERROR]   位置: 类型为PageResult<VideoRecordEntity>的变量 result
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[80,29] 错误: 找不到符号
+[ERROR]   符号:   方法 error(String)
+[ERROR]   位置: 类 PageResult
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[100,80] 错误: 不兼容的类型: VideoRecordingEntity无法转换为VideoRecordEntity
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[288,71] 错误: 不兼容的类型: String无法转换为Long
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[409,59] 错误: 找不到符号
+[ERROR]   符号:   方法 ok(ArrayList<Object>,long)
+[ERROR]   位置: 类 PageResult
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[63,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,<匿名TypeReference<Map<String,Object>>>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[120,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,<匿名TypeReference<Map<String,Object>>>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[130,76] 错误: 程序包UnifiedDeviceService不存在
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[130,37] 错误: 程序包UnifiedDeviceService不存在
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[137,64] 错误: 程序包UnifiedDeviceService不存在
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[162,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[178,60] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[194,56] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,<匿名TypeReference<Map<String,Object>>>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[204,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[264,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[268,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[272,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[305,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[338,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[374,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[378,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[382,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[416,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[420,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[424,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[489,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[493,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[499,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[520,56] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,<匿名TypeReference<Map<String,Object>>>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[529,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[926,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[946,72] 错误: 不兼容的类型: 条件表达式中的类型错误
+[ERROR]     ResponseDTO<Long>无法转换为ResponseDTO<String>
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[951,56] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[960,48] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[968,48] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[976,48] 错误: 找不到符号
+[ERROR]   符号:   变量 PARAM_ERROR
+[ERROR]   位置: 类 SystemErrorCode
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[37,7] 错误: AccountSecurityServiceImpl不是抽象的, 并且未覆盖AccountSecurityService中的抽象方法getEmergencyContacts(@jakarta.validation.constraints.NotNull Long)
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[374,34] 错误: AccountSecurityServiceImpl中的getEmergencyContacts(Long)无法实现AccountSecurityService中的getEmergencyContacts(@jakarta.validation.constraints.NotNull Long)
+[ERROR]   返回类型List<net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.EmergencyContact>与List<net.lab1024.sa.admin.module.consume.domain.vo.EmergencyContact>不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[362,38] 错误: AccountSecurityServiceImpl中的getSecurityEventHistory(Long,String,Integer)无法实现AccountSecurityService中的getSecurityEventHistory(@jakarta.validation.constraints.NotNull Long,String,Integer)
+[ERROR]   返回类型List<net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityEvent>与List<net.lab1024.sa.admin.module.consume.domain.vo.AccountSecurityEvent>不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[345,37] 错误: AccountSecurityServiceImpl中的checkOperationPermission(Long,String,Object)无法实现AccountSecurityService中的checkOperationPermission(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,Object)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.OperationPermissionResult与net.lab1024.sa.admin.module.consume.domain.vo.OperationPermissionResult不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[339,33] 错误: AccountSecurityServiceImpl中的getHighRiskAccounts(String,Integer)无法实现AccountSecurityService中的getHighRiskAccounts(@jakarta.validation.constraints.NotNull String,Integer)
+[ERROR]   返回类型List<net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountRiskInfo>与List<net.lab1024.sa.admin.module.consume.domain.vo.AccountRiskInfo>不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[328,33] 错误: AccountSecurityServiceImpl中的generateSecurityReport(Long,String,String)无法实现AccountSecurityService中的generateSecurityReport(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,String)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityReport与net.lab1024.sa.admin.module.consume.domain.vo.AccountSecurityReport不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[310,33] 错误: AccountSecurityServiceImpl中的getAccountSecurityConfig(Long)无法实现AccountSecurityService中的getAccountSecurityConfig(@jakarta.validation.constraints.NotNull Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityConfig与net.lab1024.sa.admin.module.consume.domain.vo.AccountSecurityConfig不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[287,32] 错误: AccountSecurityServiceImpl中的getAccountSecurityScore(Long)无法实现AccountSecurityService中的getAccountSecurityScore(@jakarta.validation.constraints.NotNull Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityScore与net.lab1024.sa.admin.module.consume.domain.vo.AccountSecurityScore不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[275,33] 错误: AccountSecurityServiceImpl中的getAccountSecurityStatus(Long,Long)无法实现AccountSecurityService中的getAccountSecurityStatus(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityStatus与net.lab1024.sa.admin.module.consume.domain.vo.AccountSecurityStatus不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[257,32] 错误: AccountSecurityServiceImpl中的getAutoFreezeRules(Long,String)无法实现AccountSecurityService中的getAutoFreezeRules(@jakarta.validation.constraints.NotNull Long,String)
+[ERROR]   返回类型List<net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AutoFreezeRule>与List<net.lab1024.sa.admin.module.consume.domain.vo.AutoFreezeRule>不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[179,33] 错误: AccountSecurityServiceImpl中的extendFreezeTime(Long,Long,Integer,String,Long)无法实现AccountSecurityService中的extendFreezeTime(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Integer,@jakarta.validation.constraints.NotNull String,Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityResult与net.lab1024.sa.admin.module.consume.domain.result.AccountSecurityResult不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[148,29] 错误: AccountSecurityServiceImpl中的getAccountFreezeInfo(Long,Long)无法实现AccountSecurityService中的getAccountFreezeInfo(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountFreezeInfo与net.lab1024.sa.admin.module.consume.domain.vo.AccountFreezeInfo不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[126,33] 错误: AccountSecurityServiceImpl中的permanentFreezeAccount(Long,Long,String,Long)无法实现AccountSecurityService中的permanentFreezeAccount(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityResult与net.lab1024.sa.admin.module.consume.domain.result.AccountSecurityResult不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[120,33] 错误: AccountSecurityServiceImpl中的temporaryFreezeAccount(Long,Long,String,Integer,Long)无法实现AccountSecurityService中的temporaryFreezeAccount(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,@jakarta.validation.constraints.NotNull Integer,Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityResult与net.lab1024.sa.admin.module.consume.domain.result.AccountSecurityResult不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[88,33] 错误: AccountSecurityServiceImpl中的unfreezeAccount(Long,Long,String,Long)无法实现AccountSecurityService中的unfreezeAccount(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityResult与net.lab1024.sa.admin.module.consume.domain.result.AccountSecurityResult不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[50,33] 错误: AccountSecurityServiceImpl中的freezeAccount(Long,Long,String,Integer,Long)无法实现AccountSecurityService中的freezeAccount(@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull Long,@jakarta.validation.constraints.NotNull String,Integer,Long)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountSecurityResult与net.lab1024.sa.admin.module.consume.domain.result.AccountSecurityResult不兼容
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[48,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[86,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[119,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[125,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[147,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[178,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[231,31] 错误: 名称冲突: AccountSecurityServiceImpl 中的 batchFreezeAccounts(List<net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl.AccountFreezeRequest>,Long) 和 AccountSecurityService 中的 batchFreezeAccounts(@jakarta.validation.constraints.NotNull List<net.lab1024.sa.admin.module.consume.domain.vo.AccountFreezeRequest>,Long) 具有相同疑符, 但两者均不覆盖对方
+[ERROR] d:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[230,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

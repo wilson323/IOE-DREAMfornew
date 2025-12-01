@@ -1,0 +1,52 @@
+package net.lab1024.sa.admin.common.json.deserializer;
+
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 字典反序列化
+ *
+ * @Author 1024创新实验室: 罗伊
+ * @Date 2022-08-12 22:17:53
+ * @Wechat zhuoda1024
+ * @Email lab1024@163.com
+ * @Copyright <a href"https://1024lab.net">1024创新实验室</a>
+ */
+public class DictDataDeserializer extends JsonDeserializer<String> {
+
+    private static final Logger log = LoggerFactory.getLogger(DictDataDeserializer.class);
+
+    @Override
+    public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+        List<String> list = new ArrayList<>();
+        ObjectCodec objectCodec = jsonParser.getCodec();
+        JsonNode listOrObjectNode = objectCodec.readTree(jsonParser);
+        String deserialize = "";
+        try {
+            if (listOrObjectNode.isArray()) {
+                for (JsonNode node : listOrObjectNode) {
+                    list.add(node.asText());
+                }
+            } else {
+                list.add(listOrObjectNode.asText());
+            }
+            deserialize = String.join(",", list);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            deserialize = listOrObjectNode.asText();
+        }
+        return deserialize;
+    }
+
+
+}

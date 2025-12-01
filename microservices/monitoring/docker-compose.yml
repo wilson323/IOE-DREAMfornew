@@ -1,0 +1,344 @@
+# ===================================================================
+# IOE-DREAM 微服务性能测试监控系统
+# Docker Compose配置文件
+# ===================================================================
+
+version: '3.8'
+
+services:
+  # Prometheus 监控系统
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: ioedream-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--storage.tsdb.retention.size=10GB'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--web.external-url=http://localhost:9090'
+      - '--web.page-title=IOE-DREAM Performance Monitoring'
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    networks:
+      - monitoring
+    environment:
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Grafana 可视化平台
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: ioedream-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_SMTP_ENABLED=false
+      - GF_INSTALL_PLUGINS=redis-datasource,grafana-piechart-panel,grafana-worldmap-panel
+      - GF_SERVER_DOMAIN=localhost
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      - TZ=Asia/Shanghai
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - monitoring
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # AlertManager 告警管理
+  alertmanager:
+    image: prom/alertmanager:v0.25.0
+    container_name: ioedream-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=http://localhost:9093'
+      - '--web.route-prefix=/'
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+      - alertmanager_data:/alertmanager
+    networks:
+      - monitoring
+    environment:
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9093/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Node Exporter 系统监控
+  node-exporter:
+    image: prom/node-exporter:v1.6.0
+    container_name: ioedream-node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/host'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--collector.diskstats.ignored-devices=^(ram|loop|fd|(h|s|v)d[a-z]|nvme\\d+n\\d+p)\\d+$$'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - monitoring
+    environment:
+      - TZ=Asia/Shanghai
+
+  # MySQL Exporter 数据库监控
+  mysql-exporter:
+    image: prom/mysqld-exporter:v0.14.0
+    container_name: ioedream-mysql-exporter
+    restart: unless-stopped
+    ports:
+      - "9104:9104"
+    environment:
+      - DATA_SOURCE_NAME=user:password@(host.docker.internal:3306)/
+    command:
+      - '--config.my-cnf=/etc/mysql/.my.cnf'
+      - '--collect.global-status'
+      - '--collect.info_schema.innodb_metrics'
+      - '--collect.auto_increment.columns'
+      - '--collect.binlog_size'
+      - '--collect.global_variables'
+      - '--collect.info_schema.processlist'
+      - '--collect.info_schema.tables'
+      - '--collect.info_schema.tablestats'
+      - '--collect.info_schema.userstats'
+      - '--collect.perf_schema.eventswaits'
+      - '--collect.perf_schema.file_events'
+      - '--collect.perf_schema.indexiowaits'
+      - '--collect.perf_schema.tableiowaits'
+      - '--collect.perf_schema.tablelocks'
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+
+  # Redis Exporter Redis监控
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.45.0
+    container_name: ioedream-redis-exporter
+    restart: unless-stopped
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis://host.docker.internal:6379
+      - REDIS_PASSWORD=
+    command:
+      - '--redis-only-metrics'
+      - '--include-system-metrics'
+      - '--connection-timeout=5s'
+      - '--web.listen-address=:9121'
+      - '--web.telemetry-path=/metrics'
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+
+  # JMeter Master 分布式测试主节点
+  jmeter-master:
+    image: justb4/jmeter:5.5
+    container_name: ioedream-jmeter-master
+    restart: unless-stopped
+    ports:
+      - "1099:1099"
+      - "50000:50000"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ../performance-test-results:/opt/jmeter/results
+      - ../jmeter-test-plans:/opt/jmeter/test-plans
+      - ../wrk-scripts:/opt/jmeter/wrk-scripts
+    command: >
+      sh -c "
+        # 等待其他服务启动
+        sleep 30
+
+        # 启动JMeter服务器
+        jmeter-server -Djava.rmi.server.hostname=jmeter-master -Dclient.rmi.localport=50000
+
+        # 保持容器运行
+        tail -f /dev/null
+      "
+    networks:
+      - monitoring
+
+  # JMeter Slave 1 分布式测试从节点1
+  jmeter-slave-1:
+    image: justb4/jmeter:5.5
+    container_name: ioedream-jmeter-slave-1
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ../performance-test-results:/opt/jmeter/results
+      - ../jmeter-test-plans:/opt/jmeter/test-plans
+    command: >
+      sh -c "
+        # 等待主节点启动
+        sleep 45
+
+        # 启动JMeter从节点
+        jmeter-server -Djava.rmi.server.hostname=jmeter-slave-1 -Dserver.rmi.localport=50001 -Dserver_port=50001
+
+        # 保持容器运行
+        tail -f /dev/null
+      "
+    networks:
+      - monitoring
+    depends_on:
+      - jmeter-master
+
+  # JMeter Slave 2 分布式测试从节点2
+  jmeter-slave-2:
+    image: justb4/jmeter:5.5
+    container_name: ioedream-jmeter-slave-2
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ../performance-test-results:/opt/jmeter/results
+      - ../jmeter-test-plans:/opt/jmeter/test-plans
+    command: >
+      sh -c "
+        # 等待主节点启动
+        sleep 45
+
+        # 启动JMeter从节点
+        jmeter-server -Djava.rmi.server.hostname=jmeter-slave-2 -Dserver.rmi.localport=50002 -Dserver_port=50002
+
+        # 保持容器运行
+        tail -f /dev/null
+      "
+    networks:
+      - monitoring
+    depends_on:
+      - jmeter-master
+
+  # Prometheus Pushgateway 用于批处理作业
+  pushgateway:
+    image: prom/pushgateway:v1.6.0
+    container_name: ioedream-pushgateway
+    restart: unless-stopped
+    ports:
+      - "9091:9091"
+    command:
+      - '--persistence.interval=5m'
+      - '--persistence.file=/pushgateway/persistence'
+    volumes:
+      - pushgateway_data:/pushgateway
+    networks:
+      - monitoring
+    environment:
+      - TZ=Asia/Shanghai
+
+  # Grafana Loki 日志聚合系统
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: ioedream-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki:/etc/loki
+      - loki_data:/loki
+    networks:
+      - monitoring
+    environment:
+      - TZ=Asia/Shanghai
+
+  # Promtail 日志收集代理
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: ioedream-promtail
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./promtail:/etc/promtail
+      - /var/log:/var/log:ro
+      - ../performance-test-results/logs:/var/log/performance:ro
+    networks:
+      - monitoring
+    depends_on:
+      - loki
+    environment:
+      - TZ=Asia/Shanghai
+
+  # Blackbox Exporter HTTP监控
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.24.0
+    container_name: ioedream-blackbox-exporter
+    restart: unless-stopped
+    ports:
+      - "9115:9115"
+    command:
+      - '--config.file=/etc/blackbox/blackbox.yml'
+    volumes:
+      - ./blackbox:/etc/blackbox
+    networks:
+      - monitoring
+    environment:
+      - TZ=Asia/Shanghai
+
+# 网络配置
+networks:
+  monitoring:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# 数据卷配置
+volumes:
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  alertmanager_data:
+    driver: local
+  pushgateway_data:
+    driver: local
+  loki_data:
+    driver: local
+
+# 日志驱动配置
+logging:
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"

@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.attendance.dao.AttendanceRuleDao">
+
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity">
+        <id column="rule_id" property="ruleId" jdbcType="BIGINT"/>
+        <result column="rule_name" property="ruleName" jdbcType="VARCHAR"/>
+        <result column="rule_code" property="ruleCode" jdbcType="VARCHAR"/>
+        <result column="company_id" property="companyId" jdbcType="BIGINT"/>
+        <result column="department_id" property="departmentId" jdbcType="BIGINT"/>
+        <result column="employee_id" property="employeeId" jdbcType="BIGINT"/>
+        <result column="rule_type" property="ruleType" jdbcType="VARCHAR"/>
+        <result column="employee_type" property="employeeType" jdbcType="VARCHAR"/>
+        <result column="work_schedule" property="workSchedule" jdbcType="VARCHAR"/>
+        <result column="work_start_time" property="workStartTime" jdbcType="TIME"/>
+        <result column="work_end_time" property="workEndTime" jdbcType="TIME"/>
+        <result column="break_start_time" property="breakStartTime" jdbcType="TIME"/>
+        <result column="break_end_time" property="breakEndTime" jdbcType="TIME"/>
+        <result column="location_required" property="locationRequired" jdbcType="BOOLEAN"/>
+        <result column="max_distance" property="maxDistance" jdbcType="INTEGER"/>
+        <result column="device_required" property="deviceRequired" jdbcType="BOOLEAN"/>
+        <result column="late_grace_minutes" property="lateGraceMinutes" jdbcType="INTEGER"/>
+        <result column="early_leave_grace_minutes" property="earlyLeaveGraceMinutes" jdbcType="INTEGER"/>
+        <result column="overtime_rules" property="overtimeRules" jdbcType="VARCHAR"/>
+        <result column="weekend_rules" property="weekendRules" jdbcType="VARCHAR"/>
+        <result column="holiday_rules" property="holidayRules" jdbcType="VARCHAR"/>
+        <result column="auto_approval" property="autoApproval" jdbcType="BOOLEAN"/>
+        <result column="enabled" property="enabled" jdbcType="BOOLEAN"/>
+        <result column="priority" property="priority" jdbcType="INTEGER"/>
+        <result column="effective_date" property="effectiveDate" jdbcType="DATE"/>
+        <result column="expiry_date" property="expiryDate" jdbcType="DATE"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="BOOLEAN"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        rule_id, rule_name, rule_code, company_id, department_id, employee_id, rule_type, employee_type,
+        work_schedule, work_start_time, work_end_time, break_start_time, break_end_time,
+        location_required, max_distance, device_required, late_grace_minutes, early_leave_grace_minutes,
+        overtime_rules, weekend_rules, holiday_rules, auto_approval, enabled, priority,
+        effective_date, expiry_date, description,
+        create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+    </sql>
+
+    <!-- 查询员工的适用考勤规则 -->
+    <select id="selectApplicableRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND effective_date &lt;= #{queryDate}
+        AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        AND company_id = (SELECT company_id FROM t_employee WHERE employee_id = #{employeeId})
+        AND (
+            employee_id = #{employeeId}
+            OR (employee_id IS NULL AND department_id = (SELECT department_id FROM t_employee WHERE employee_id = #{employeeId}))
+            OR (employee_id IS NULL AND department_id IS NULL)
+        )
+        AND (employee_type IS NULL OR employee_type = (SELECT employee_type FROM t_employee WHERE employee_id = #{employeeId}))
+        ORDER BY
+            CASE
+                WHEN employee_id = #{employeeId} THEN 1
+                WHEN department_id = (SELECT department_id FROM t_employee WHERE employee_id = #{employeeId}) THEN 2
+                ELSE 3
+            END,
+            priority DESC,
+            rule_id ASC
+    </select>
+
+    <!-- 查询员工的个人考勤规则 -->
+    <select id="selectIndividualRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND effective_date &lt;= #{queryDate}
+        AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        AND employee_id = #{employeeId}
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 查询部门的考勤规则 -->
+    <select id="selectDepartmentRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND effective_date &lt;= #{queryDate}
+        AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        AND department_id = #{departmentId}
+        AND employee_id IS NULL
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 查询全局考勤规则 -->
+    <select id="selectGlobalRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND effective_date &lt;= #{queryDate}
+        AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        AND department_id IS NULL
+        AND employee_id IS NULL
+        AND (employee_type IS NULL OR employee_type = #{employeeType})
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 根据规则类型查询规则 -->
+    <select id="selectByRuleType" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND rule_type = #{ruleType}
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="queryDate != null">
+            AND effective_date &lt;= #{queryDate}
+            AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        </if>
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 查询生效的考勤规则 -->
+    <select id="selectActiveRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        <if test="queryDate != null">
+            AND effective_date &lt;= #{queryDate}
+            AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        </if>
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 根据公司ID查询规则 -->
+    <select id="selectByCompany" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND company_id = #{companyId}
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="queryDate != null">
+            AND effective_date &lt;= #{queryDate}
+            AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        </if>
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 查询即将过期的规则 -->
+    <select id="selectExpiringRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND expiry_date IS NOT NULL
+        AND expiry_date &lt;= DATE_ADD(CURDATE(), INTERVAL #{days} DAY)
+        AND expiry_date > CURDATE()
+        ORDER BY expiry_date ASC
+    </select>
+
+    <!-- 查询已过期的规则 -->
+    <select id="selectExpiredRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND expiry_date IS NOT NULL
+        AND expiry_date &lt; #{queryDate}
+        ORDER BY expiry_date DESC
+    </select>
+
+    <!-- 根据优先级查询规则 -->
+    <select id="selectByPriorityRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND priority >= #{minPriority}
+        AND priority &lt;= #{maxPriority}
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        ORDER BY priority ASC, create_time DESC
+    </select>
+
+    <!-- 按条件分页查询考勤规则 -->
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        <if test="companyId != null">
+            AND company_id = #{companyId}
+        </if>
+        <if test="departmentId != null">
+            AND department_id = #{departmentId}
+        </if>
+        <if test="employeeId != null">
+            AND employee_id = #{employeeId}
+        </if>
+        <if test="ruleType != null and ruleType != ''">
+            AND rule_type = #{ruleType}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="employeeType != null and employeeType != ''">
+            AND employee_type = #{employeeType}
+        </if>
+        <if test="ruleName != null and ruleName != ''">
+            AND rule_name LIKE CONCAT('%', #{ruleName}, '%')
+        </if>
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 检查规则编码是否存在 -->
+    <select id="existsByRuleCode" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND rule_code = #{ruleCode}
+        <if test="excludeId != null">
+            AND rule_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 查询规则的优先级统计 -->
+    <select id="selectPriorityStatistics" resultType="map">
+        SELECT
+            priority,
+            COUNT(*) as rule_count,
+            rule_type,
+            CASE
+                WHEN priority <= 3 THEN 'HIGH'
+                WHEN priority <= 7 THEN 'MEDIUM'
+                ELSE 'LOW'
+            END as priority_level
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        <if test="companyId != null">
+            AND company_id = #{companyId}
+        </if>
+        <if test="departmentId != null">
+            AND department_id = #{departmentId}
+        </if>
+        GROUP BY priority, rule_type
+        ORDER BY priority ASC
+    </select>
+
+    <!-- 查询规则类型统计 -->
+    <select id="selectRuleTypeStatistics" resultType="map">
+        SELECT
+            rule_type,
+            COUNT(*) as rule_count,
+            SUM(CASE WHEN enabled = true THEN 1 ELSE 0 END) as enabled_count,
+            SUM(CASE WHEN enabled = false THEN 1 ELSE 0 END) as disabled_count
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        <if test="companyId != null">
+            AND company_id = #{companyId}
+        </if>
+        GROUP BY rule_type
+        ORDER BY rule_count DESC
+    </select>
+
+    <!-- 查询规则状态统计 -->
+    <select id="selectRuleStatusStatistics" resultType="map">
+        SELECT
+            status,
+            COUNT(*) as rule_count,
+            rule_type
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        <if test="companyId != null">
+            AND company_id = #{companyId}
+        </if>
+        GROUP BY status, rule_type
+        ORDER BY rule_count DESC
+    </select>
+
+    <!-- 批量更新规则状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE t_attendance_rule
+        SET status = #{status},
+            update_time = NOW(),
+            update_user_id = #{updateUserId},
+            version = version + 1
+        WHERE deleted_flag = false
+        AND rule_id IN
+        <foreach collection="ruleIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 批量更新规则优先级 -->
+    <update id="batchUpdatePriority">
+        UPDATE t_attendance_rule
+        SET priority =
+        <foreach collection="rulePriorityMap" index="ruleId" item="priority" separator=" " open="CASE rule_id" close="END">
+            WHEN #{ruleId} THEN #{priority}
+        </foreach>,
+            update_time = NOW(),
+            version = version + 1
+        WHERE deleted_flag = false
+        AND rule_id IN
+        <foreach collection="rulePriorityMap" index="ruleId" item="priority" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+    </update>
+
+    <!-- 查询员工今日适用规则 -->
+    <select id="selectTodayRule" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND effective_date &lt;= CURDATE()
+        AND (expiry_date IS NULL OR expiry_date >= CURDATE())
+        AND company_id = (SELECT company_id FROM t_employee WHERE employee_id = #{employeeId})
+        AND (
+            employee_id = #{employeeId}
+            OR (employee_id IS NULL AND department_id = #{departmentId})
+            OR (employee_id IS NULL AND department_id IS NULL)
+        )
+        AND (employee_type IS NULL OR employee_type = #{employeeType})
+        ORDER BY
+            CASE
+                WHEN employee_id = #{employeeId} THEN 1
+                WHEN department_id = #{departmentId} THEN 2
+                ELSE 3
+            END,
+            priority DESC
+        LIMIT 1
+    </select>
+
+    <!-- 查询规则冲突检查 -->
+    <select id="selectRuleConflicts" resultType="map">
+        SELECT
+            r1.rule_id,
+            r1.rule_name,
+            r1.priority as priority1,
+            r2.priority as priority2,
+            'PRIORITY_CONFLICT' as conflict_type
+        FROM t_attendance_rule r1
+        JOIN t_attendance_rule r2 ON r1.company_id = r2.company_id
+        WHERE r1.deleted_flag = false
+        AND r2.deleted_flag = false
+        AND r1.enabled = true
+        AND r2.enabled = true
+        AND r1.effective_date &lt;= #{queryDate}
+        AND (r1.expiry_date IS NULL OR r1.expiry_date >= #{queryDate})
+        AND r2.effective_date &lt;= #{queryDate}
+        AND (r2.expiry_date IS NULL OR r2.expiry_date >= #{queryDate})
+        AND r1.rule_id < r2.rule_id
+        AND (
+            (r1.employee_id = #{employeeId} AND r2.employee_id = #{employeeId})
+            OR (r1.department_id = #{departmentId} AND r2.department_id = #{departmentId})
+            OR (r1.employee_id IS NULL AND r1.department_id IS NULL
+                AND r2.employee_id IS NULL AND r2.department_id IS NULL)
+        )
+        <if test="employeeType != null and employeeType != ''">
+            AND (r1.employee_type = #{employeeType} OR r1.employee_type IS NULL)
+            AND (r2.employee_type = #{employeeType} OR r2.employee_type IS NULL)
+        </if>
+        AND r1.priority = r2.priority
+    </select>
+
+    <!-- 查询规则使用情况统计 -->
+    <select id="selectRuleUsageStatistics" resultType="map">
+        SELECT
+            COUNT(*) as usage_count,
+            AVG(CASE WHEN ar.punch_in_time IS NOT NULL THEN 1 ELSE 0 END) as punch_in_rate,
+            AVG(CASE WHEN ar.punch_out_time IS NOT NULL THEN 1 ELSE 0 END) as punch_out_rate,
+            COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as late_count,
+            COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as early_leave_count
+        FROM t_attendance_rule r
+        LEFT JOIN t_attendance_record ar ON r.rule_id = ar.rule_id
+        WHERE r.deleted_flag = false
+        AND r.rule_id = #{ruleId}
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        AND (ar.deleted_flag IS NULL OR ar.deleted_flag = false)
+    </select>
+
+    <!-- 查询需要GPS验证的规则 -->
+    <select id="selectGpsValidationRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND location_required = true
+        AND effective_date &lt;= #{queryDate}
+        AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 查询需要人脸识别的规则 -->
+    <select id="selectFaceRecognitionRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND device_required = true
+        AND effective_date &lt;= #{queryDate}
+        AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 查询自动审批规则的规则 -->
+    <select id="selectAutoApprovalRules" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_rule
+        WHERE deleted_flag = false
+        AND enabled = true
+        AND auto_approval = true
+        AND effective_date &lt;= #{queryDate}
+        AND (expiry_date IS NULL OR expiry_date >= #{queryDate})
+        ORDER BY priority DESC, create_time DESC
+    </select>
+
+    <!-- 获取规则配置详情 -->
+    <select id="selectRuleDetails" resultType="map">
+        SELECT
+            r.*,
+            (SELECT COUNT(*) FROM t_employee e WHERE e.department_id = r.department_id AND e.deleted_flag = false) as covered_employees,
+            (SELECT COUNT(*) FROM t_attendance_record ar WHERE ar.rule_id = r.rule_id AND ar.attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)) as recent_usage
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = false
+        AND r.rule_id = #{ruleId}
+    </select>
+
+    <!-- 查询规则覆盖的员工数量 -->
+    <select id="selectRuleCoveredEmployeeCount" resultType="integer">
+        SELECT COUNT(*)
+        FROM t_employee e
+        WHERE e.deleted_flag = false
+        AND (
+            EXISTS (
+                SELECT 1 FROM t_attendance_rule r
+                WHERE r.rule_id = #{ruleId}
+                AND r.deleted_flag = false
+                AND r.enabled = true
+                AND (r.employee_id = e.employee_id
+                     OR (r.employee_id IS NULL AND r.department_id = e.department_id)
+                     OR (r.employee_id IS NULL AND r.department_id IS NULL))
+                AND (r.employee_type IS NULL OR r.employee_type = e.employee_type)
+            )
+        )
+    </select>
+
+    <!-- 更新规则的最后使用时间 -->
+    <update id="updateLastUsedTime">
+        UPDATE t_attendance_rule
+        SET update_time = NOW()
+        WHERE deleted_flag = false
+        AND rule_id = #{ruleId}
+    </update>
+
+    <!-- 清理过期的规则 -->
+    <update id="cleanExpiredRules">
+        UPDATE t_attendance_rule
+        SET deleted_flag = true,
+            update_time = NOW()
+        WHERE deleted_flag = false
+        AND expiry_date IS NOT NULL
+        AND expiry_date &lt; #{beforeDate}
+    </update>
+
+</mapper>

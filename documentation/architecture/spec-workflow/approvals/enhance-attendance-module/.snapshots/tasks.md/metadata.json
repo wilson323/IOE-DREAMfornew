@@ -1,0 +1,14 @@
+{
+  "filePath": "openspec/changes/enhance-attendance-module/tasks.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-25T12:29:40.078Z",
+      "trigger": "initial",
+      "approvalId": "approval_1764073780030_tjge6h25p",
+      "approvalTitle": "Enhance Attendance Module - 基于现有代码直接完成归档"
+    }
+  ]
+}

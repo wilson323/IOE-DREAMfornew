@@ -1,0 +1,817 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-parent ---
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-base ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Compiling 187 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[248,26] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[247,64] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:[740,88] [deprecation] DefaultedRedisConnection中的info()已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\LocalRedissonConfig.java:[47,16] [deprecation] BaseConfig中的setRetryInterval(int)已过时
+  其中, T是类型变量:
+    T扩展已在类 BaseConfig中声明的BaseConfig<T>
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\TransactionConfig.java:[59,15] [deprecation] TransactionInterceptor中的TransactionInterceptor(PlatformTransactionManager,TransactionAttributeSource)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[384,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[384,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[400,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[400,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[570,98] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[570,75] [deprecation] BigDecimal中的setScale(int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[637,71] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[637,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[645,74] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[645,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[653,60] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[653,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [3/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-support ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-support ---
+[INFO] Compiling 51 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\target\classes
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-admin ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 12 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-admin ---
+[INFO] Compiling 527 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountSecurityManager.java:[7,38] 错误: 无法访问SmartDateUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartDateUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartDateUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[11,40] 错误: 无法访问PageParam
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\PageParam.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\PageParam.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[12,40] 错误: 无法访问PageResult
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\PageResult.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\PageResult.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[13,40] 错误: 无法访问ResponseDTO
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\ResponseDTO.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\ResponseDTO.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\ConsumeRecordEntity.java:[13,40] 错误: 无法访问BaseEntity
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\entity\BaseEntity.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\entity\BaseEntity.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[20,39] 错误: 无法访问CacheService
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheService.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheService.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[21,39] 错误: 无法访问RedisUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\RedisUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\RedisUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[20,47] 错误: 无法访问RedisTemplateUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\redis\RedisTemplateUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\redis\RedisTemplateUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[7,47] 错误: 无法访问MonitorEventEntity
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\MonitorEventEntity.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\MonitorEventEntity.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[26,47] 错误: 无法访问RequireResource
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\authz\rac\annotation\RequireResource.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\authz\rac\annotation\RequireResource.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[27,55] 错误: 无法访问AttendanceLocationService
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[28,55] 错误: 无法访问AttendanceMobileService
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[29,55] 错误: 无法访问AttendanceQueryService
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[33,38] 错误: 无法访问SmartResponseUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartResponseUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartResponseUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java:[22,44] 错误: 无法访问NoNeedLogin
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\NoNeedLogin.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\NoNeedLogin.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java:[23,38] 错误: 无法访问SystemErrorCode
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\code\SystemErrorCode.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\code\SystemErrorCode.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java:[24,38] 错误: 无法访问UserErrorCode
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\code\UserErrorCode.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\code\UserErrorCode.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java:[26,38] 错误: 无法访问SmartRequestUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartRequestUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartRequestUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[4,40] 错误: 无法访问RequestUser
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\RequestUser.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\RequestUser.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[5,45] 错误: 无法访问UserTypeEnum
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\enumeration\UserTypeEnum.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\enumeration\UserTypeEnum.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\device\controller\SmartDeviceController.java:[27,46] 错误: 无法访问DataScope
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\auth\DataScope.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\auth\DataScope.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\device\controller\SmartDeviceController.java:[29,65] 错误: 无法访问OperationLog
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\operationlog\annotation\OperationLog.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\operationlog\annotation\OperationLog.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\domain\entity\AccessDeviceEntity.java:[7,54] 错误: 无法访问SmartDeviceEntity
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\entity\SmartDeviceEntity.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\entity\SmartDeviceEntity.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\workflow\manager\WorkflowEngineManager.java:[25,41] 错误: 无法访问BaseCacheManager
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\manager\BaseCacheManager.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\manager\BaseCacheManager.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\form\DocumentQueryForm.java:[8,38] 错误: 无法访问PageForm
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\page\PageForm.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\page\PageForm.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\form\DocumentQueryForm.java:[9,55] 错误: 无法访问CheckEnum
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\validator\enumeration\CheckEnum.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\validator\enumeration\CheckEnum.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\consistency\DataConsistencyManager.java:[18,43] 错误: 无法访问SmartException
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\exception\SmartException.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\exception\SmartException.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\AccessAreaController.java:[11,44] 错误: 无法访问SaCheckLogin
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\SaCheckLogin.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\SaCheckLogin.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\AccessAreaController.java:[12,44] 错误: 无法访问SaCheckPermission
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\SaCheckPermission.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\SaCheckPermission.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\biometric\constant\BiometricTypeEnum.java:[3,45] 错误: 无法访问BaseEnum
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\enumeration\BaseEnum.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\enumeration\BaseEnum.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceServiceSimpleImpl.java:[43,38] 错误: 无法访问SmartBeanUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartBeanUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartBeanUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceServiceSimpleImpl.java:[44,54] 错误: 无法访问IFileStorageService
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\file\service\IFileStorageService.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\file\service\IFileStorageService.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountManager.java:[15,39] 错误: 无法访问BaseCacheManager
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\BaseCacheManager.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\BaseCacheManager.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountManager.java:[16,38] 错误: 无法访问SmartStringUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartStringUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartStringUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\validator\ConsumePermissionValidator.java:[16,45] 错误: 无法访问AuthorizationContextHolder
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\authorization\util\AuthorizationContextHolder.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\authorization\util\AuthorizationContextHolder.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\validator\ConsumePermissionValidator.java:[17,38] 错误: 无法访问SmartRedisUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartRedisUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartRedisUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\security\AccountSecurityManager.java:[20,56] 错误: 无法访问HeartBeatManager
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\heartbeat\core\HeartBeatManager.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\heartbeat\core\HeartBeatManager.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeAuditService.java:[13,38] 错误: 无法访问SmartVerificationUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartVerificationUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartVerificationUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\common\exception\GlobalExceptionHandler.java:[21,43] 错误: 无法访问BusinessException
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\exception\BusinessException.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\exception\BusinessException.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\AdminApplication.java:[3,35] 错误: 无法访问Ip2RegionListener
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\listener\Ip2RegionListener.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\listener\Ip2RegionListener.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\AdminApplication.java:[4,35] 错误: 无法访问LogVariableListener
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\listener\LogVariableListener.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\listener\LogVariableListener.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\constant\AdminCacheConst.java:[3,35] 错误: 无法访问CacheKeyConst
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\CacheKeyConst.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\CacheKeyConst.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoSurveillanceService.java:[5,47] 错误: 无法访问VideoDeviceEntity
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\VideoDeviceEntity.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\VideoDeviceEntity.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\ReportController.java:[8,44] 错误: 无法访问SupportBaseController
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\controller\SupportBaseController.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\controller\SupportBaseController.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\service\impl\UnifiedDeviceServiceImpl.java:[32,38] 错误: 无法访问SmartPageUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartPageUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartPageUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceReportController.java:[22,55] 错误: 无法访问AttendanceExportService
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceExportService.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceExportService.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceReportController.java:[23,55] 错误: 无法访问AttendanceReportService
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\constant\AdminSwaggerTagConst.java:[3,35] 错误: 无法访问SwaggerTagConst
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\SwaggerTagConst.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\SwaggerTagConst.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\CacheManagementController.java:[25,39] 错误: 无法访问CacheMetricsCollector
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheMetricsCollector.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheMetricsCollector.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\CacheManagementController.java:[26,39] 错误: 无法访问CacheNamespace
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheNamespace.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheNamespace.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\CacheManagementController.java:[27,39] 错误: 无法访问UnifiedCacheManager
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\UnifiedCacheManager.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\UnifiedCacheManager.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\biometric\service\BiometricDataEncryptionService.java:[15,40] 错误: 无法访问SM3Digest
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\crypto\SM3Digest.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\crypto\SM3Digest.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\biometric\service\BiometricDataEncryptionService.java:[16,40] 错误: 无法访问SM4Cipher
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\crypto\SM4Cipher.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\crypto\SM4Cipher.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\SecurityNotificationServiceImpl.java:[53,38] 错误: 无法访问SmartDateFormatterUtil
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartDateFormatterUtil.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartDateFormatterUtil.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoFaceFeatureDao.java:[8,47] 错误: 无法访问FaceFeatureEntity
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\FaceFeatureEntity.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\FaceFeatureEntity.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\DeviceStatusLogDao.java:[8,47] 错误: 无法访问DeviceStatusLogEntity
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\DeviceStatusLogEntity.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\DeviceStatusLogEntity.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\AccountController.java:[18,42] 错误: 无法访问ValidateGroup
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\validate\ValidateGroup.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\validate\ValidateGroup.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\constant\AdminRedisKeyConst.java:[3,35] 错误: 无法访问RedisKeyConst
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\RedisKeyConst.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\RedisKeyConst.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\DistributedLockManager.java:[10,42] 错误: 无法访问RedisKeyConst
+  错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\constant\RedisKeyConst.class
+    无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\constant\RedisKeyConst.class
+    请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\ConsumeRecordEntity.java:[18,41] 错误: 找不到符号
+  符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[36,12] 错误: 找不到符号
+  符号:   类 CacheService
+  位置: 类 ConsumeCacheService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[39,12] 错误: 找不到符号
+  符号:   类 RedisUtil
+  位置: 类 ConsumeCacheService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\AccountEntity.java:[23,35] 错误: 找不到符号
+  符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[17,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 ConsumeService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[20,48] 错误: 找不到符号
+  符号:   类 PageParam
+  位置: 接口 ConsumeService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[20,4] 错误: 找不到符号
+  符号:   类 PageResult
+  位置: 接口 ConsumeService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\domain\entity\VideoRecordingEntity.java:[23,42] 错误: 找不到符号
+  符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[59,64] 错误: 找不到符号
+  符号:   类 PageParam
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[59,11] 错误: 找不到符号
+  符号:   类 PageResult
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[49,12] 错误: 找不到符号
+  符号:   类 RedisTemplateUtil
+  位置: 类 VideoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[31,48] 错误: 找不到符号
+  符号:   类 PageParam
+  位置: 接口 VideoRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[31,4] 错误: 找不到符号
+  符号:   类 PageResult
+  位置: 接口 VideoRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoPlaybackService.java:[31,57] 错误: 找不到符号
+  符号:   类 PageParam
+  位置: 接口 VideoPlaybackService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoPlaybackService.java:[31,4] 错误: 找不到符号
+  符号:   类 PageResult
+  位置: 接口 VideoPlaybackService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[35,44] 错误: 找不到符号
+  符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\ProductCategoryEntity.java:[31,43] 错误: 找不到符号
+  符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\domain\entity\AccessAreaEntity.java:[26,38] 错误: 找不到符号
+  符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[38,60] 错误: 找不到符号
+  符号:   类 PageParam
+  位置: 类 VideoAnalysisServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[38,11] 错误: 找不到符号
+  符号:   类 PageResult
+  位置: 类 VideoAnalysisServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[38,22] 错误: 找不到符号
+  符号:   类 MonitorEventEntity
+  位置: 类 VideoAnalysisServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[441,12] 错误: 找不到符号
+  符号:   类 MonitorEventEntity
+  位置: 类 VideoAnalysisServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoAnalysisService.java:[34,53] 错误: 找不到符号
+  符号:   类 PageParam
+  位置: 接口 VideoAnalysisService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoAnalysisService.java:[34,4] 错误: 找不到符号
+  符号:   类 PageResult
+  位置: 接口 VideoAnalysisService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoAnalysisService.java:[34,15] 错误: 找不到符号
+  符号:   类 MonitorEventEntity
+  位置: 接口 VideoAnalysisService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\AuthController.java:[28,11] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 类 AuthController
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\AuthController.java:[42,11] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 类 AuthController
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\AuthController.java:[48,11] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 类 AuthController
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\AuthController.java:[70,11] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 类 AuthController
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[39,90] 错误: 找不到符号
+  符号:   类 PageParam
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[39,4] 错误: 找不到符号
+  符号:   类 PageResult
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[47,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[55,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[63,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[71,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[79,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[87,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[97,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[107,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[117,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[129,4] 错误: 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 IAttendanceService
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.159 s]
+[INFO] sa-base ............................................ SUCCESS [ 11.406 s]
+[INFO] sa-support ......................................... SUCCESS [  5.507 s]
+[INFO] sa-admin ........................................... FAILURE [ 11.790 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  29.239 s
+[INFO] Finished at: 2025-11-23T18:15:52+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountSecurityManager.java:[7,38] 错误: 无法访问SmartDateUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartDateUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartDateUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[11,40] 错误: 无法访问PageParam
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\PageParam.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\PageParam.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[12,40] 错误: 无法访问PageResult
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\PageResult.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\PageResult.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[13,40] 错误: 无法访问ResponseDTO
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\ResponseDTO.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\ResponseDTO.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\ConsumeRecordEntity.java:[13,40] 错误: 无法访问BaseEntity
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\entity\BaseEntity.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\entity\BaseEntity.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[20,39] 错误: 无法访问CacheService
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheService.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheService.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[21,39] 错误: 无法访问RedisUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\RedisUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\RedisUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[20,47] 错误: 无法访问RedisTemplateUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\redis\RedisTemplateUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\redis\RedisTemplateUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[7,47] 错误: 无法访问MonitorEventEntity
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\MonitorEventEntity.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\MonitorEventEntity.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[26,47] 错误: 无法访问RequireResource
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\authz\rac\annotation\RequireResource.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\authz\rac\annotation\RequireResource.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[27,55] 错误: 无法访问AttendanceLocationService
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[28,55] 错误: 无法访问AttendanceMobileService
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[29,55] 错误: 无法访问AttendanceQueryService
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceController.java:[33,38] 错误: 无法访问SmartResponseUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartResponseUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartResponseUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java:[22,44] 错误: 无法访问NoNeedLogin
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\NoNeedLogin.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\NoNeedLogin.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java:[23,38] 错误: 无法访问SystemErrorCode
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\code\SystemErrorCode.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\code\SystemErrorCode.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java:[24,38] 错误: 无法访问UserErrorCode
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\code\UserErrorCode.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\code\UserErrorCode.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java:[26,38] 错误: 无法访问SmartRequestUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartRequestUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartRequestUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[4,40] 错误: 无法访问RequestUser
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\RequestUser.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\RequestUser.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[5,45] 错误: 无法访问UserTypeEnum
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\enumeration\UserTypeEnum.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\enumeration\UserTypeEnum.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\device\controller\SmartDeviceController.java:[27,46] 错误: 无法访问DataScope
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\auth\DataScope.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\auth\DataScope.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\device\controller\SmartDeviceController.java:[29,65] 错误: 无法访问OperationLog
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\operationlog\annotation\OperationLog.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\operationlog\annotation\OperationLog.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\domain\entity\AccessDeviceEntity.java:[7,54] 错误: 无法访问SmartDeviceEntity
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\entity\SmartDeviceEntity.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\entity\SmartDeviceEntity.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\workflow\manager\WorkflowEngineManager.java:[25,41] 错误: 无法访问BaseCacheManager
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\manager\BaseCacheManager.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\manager\BaseCacheManager.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\form\DocumentQueryForm.java:[8,38] 错误: 无法访问PageForm
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\page\PageForm.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\page\PageForm.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\form\DocumentQueryForm.java:[9,55] 错误: 无法访问CheckEnum
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\validator\enumeration\CheckEnum.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\validator\enumeration\CheckEnum.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\consistency\DataConsistencyManager.java:[18,43] 错误: 无法访问SmartException
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\exception\SmartException.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\exception\SmartException.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\AccessAreaController.java:[11,44] 错误: 无法访问SaCheckLogin
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\SaCheckLogin.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\SaCheckLogin.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\AccessAreaController.java:[12,44] 错误: 无法访问SaCheckPermission
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\SaCheckPermission.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\annotation\SaCheckPermission.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\biometric\constant\BiometricTypeEnum.java:[3,45] 错误: 无法访问BaseEnum
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\enumeration\BaseEnum.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\enumeration\BaseEnum.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceServiceSimpleImpl.java:[43,38] 错误: 无法访问SmartBeanUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartBeanUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartBeanUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceServiceSimpleImpl.java:[44,54] 错误: 无法访问IFileStorageService
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\file\service\IFileStorageService.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\file\service\IFileStorageService.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountManager.java:[15,39] 错误: 无法访问BaseCacheManager
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\BaseCacheManager.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\BaseCacheManager.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountManager.java:[16,38] 错误: 无法访问SmartStringUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartStringUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartStringUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\validator\ConsumePermissionValidator.java:[16,45] 错误: 无法访问AuthorizationContextHolder
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\authorization\util\AuthorizationContextHolder.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\authorization\util\AuthorizationContextHolder.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\validator\ConsumePermissionValidator.java:[17,38] 错误: 无法访问SmartRedisUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartRedisUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartRedisUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\security\AccountSecurityManager.java:[20,56] 错误: 无法访问HeartBeatManager
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\heartbeat\core\HeartBeatManager.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\module\support\heartbeat\core\HeartBeatManager.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeAuditService.java:[13,38] 错误: 无法访问SmartVerificationUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartVerificationUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartVerificationUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\common\exception\GlobalExceptionHandler.java:[21,43] 错误: 无法访问BusinessException
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\exception\BusinessException.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\exception\BusinessException.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\AdminApplication.java:[3,35] 错误: 无法访问Ip2RegionListener
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\listener\Ip2RegionListener.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\listener\Ip2RegionListener.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\AdminApplication.java:[4,35] 错误: 无法访问LogVariableListener
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\listener\LogVariableListener.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\listener\LogVariableListener.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\constant\AdminCacheConst.java:[3,35] 错误: 无法访问CacheKeyConst
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\CacheKeyConst.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\CacheKeyConst.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoSurveillanceService.java:[5,47] 错误: 无法访问VideoDeviceEntity
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\VideoDeviceEntity.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\VideoDeviceEntity.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\ReportController.java:[8,44] 错误: 无法访问SupportBaseController
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\controller\SupportBaseController.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\controller\SupportBaseController.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\service\impl\UnifiedDeviceServiceImpl.java:[32,38] 错误: 无法访问SmartPageUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartPageUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartPageUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceReportController.java:[22,55] 错误: 无法访问AttendanceExportService
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceExportService.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceExportService.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceReportController.java:[23,55] 错误: 无法访问AttendanceReportService
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\constant\AdminSwaggerTagConst.java:[3,35] 错误: 无法访问SwaggerTagConst
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\SwaggerTagConst.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\SwaggerTagConst.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\CacheManagementController.java:[25,39] 错误: 无法访问CacheMetricsCollector
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheMetricsCollector.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheMetricsCollector.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\CacheManagementController.java:[26,39] 错误: 无法访问CacheNamespace
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheNamespace.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\CacheNamespace.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\CacheManagementController.java:[27,39] 错误: 无法访问UnifiedCacheManager
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\UnifiedCacheManager.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\cache\UnifiedCacheManager.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\biometric\service\BiometricDataEncryptionService.java:[15,40] 错误: 无法访问SM3Digest
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\crypto\SM3Digest.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\crypto\SM3Digest.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\biometric\service\BiometricDataEncryptionService.java:[16,40] 错误: 无法访问SM4Cipher
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\crypto\SM4Cipher.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\crypto\SM4Cipher.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\SecurityNotificationServiceImpl.java:[53,38] 错误: 无法访问SmartDateFormatterUtil
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartDateFormatterUtil.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\util\SmartDateFormatterUtil.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoFaceFeatureDao.java:[8,47] 错误: 无法访问FaceFeatureEntity
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\FaceFeatureEntity.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\FaceFeatureEntity.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\DeviceStatusLogDao.java:[8,47] 错误: 无法访问DeviceStatusLogEntity
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\DeviceStatusLogEntity.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\domain\entity\DeviceStatusLogEntity.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\AccountController.java:[18,42] 错误: 无法访问ValidateGroup
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\validate\ValidateGroup.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\validate\ValidateGroup.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\constant\AdminRedisKeyConst.java:[3,35] 错误: 无法访问RedisKeyConst
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\RedisKeyConst.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\constant\RedisKeyConst.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\DistributedLockManager.java:[10,42] 错误: 无法访问RedisKeyConst
+[ERROR]   错误的类文件: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\constant\RedisKeyConst.class
+[ERROR]     无法访问文件: java.nio.file.NoSuchFileException: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes\net\lab1024\sa\base\common\constant\RedisKeyConst.class
+[ERROR]     请删除该文件或确保该文件位于正确的类路径子目录中。
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\ConsumeRecordEntity.java:[18,41] 错误: 找不到符号
+[ERROR]   符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[36,12] 错误: 找不到符号
+[ERROR]   符号:   类 CacheService
+[ERROR]   位置: 类 ConsumeCacheService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[39,12] 错误: 找不到符号
+[ERROR]   符号:   类 RedisUtil
+[ERROR]   位置: 类 ConsumeCacheService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\AccountEntity.java:[23,35] 错误: 找不到符号
+[ERROR]   符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[17,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 ConsumeService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[20,48] 错误: 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 接口 ConsumeService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeService.java:[20,4] 错误: 找不到符号
+[ERROR]   符号:   类 PageResult
+[ERROR]   位置: 接口 ConsumeService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\domain\entity\VideoRecordingEntity.java:[23,42] 错误: 找不到符号
+[ERROR]   符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[59,64] 错误: 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[59,11] 错误: 找不到符号
+[ERROR]   符号:   类 PageResult
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[49,12] 错误: 找不到符号
+[ERROR]   符号:   类 RedisTemplateUtil
+[ERROR]   位置: 类 VideoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[31,48] 错误: 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 接口 VideoRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[31,4] 错误: 找不到符号
+[ERROR]   符号:   类 PageResult
+[ERROR]   位置: 接口 VideoRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoPlaybackService.java:[31,57] 错误: 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 接口 VideoPlaybackService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoPlaybackService.java:[31,4] 错误: 找不到符号
+[ERROR]   符号:   类 PageResult
+[ERROR]   位置: 接口 VideoPlaybackService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[35,44] 错误: 找不到符号
+[ERROR]   符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\ProductCategoryEntity.java:[31,43] 错误: 找不到符号
+[ERROR]   符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\domain\entity\AccessAreaEntity.java:[26,38] 错误: 找不到符号
+[ERROR]   符号: 类 BaseEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[38,60] 错误: 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 类 VideoAnalysisServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[38,11] 错误: 找不到符号
+[ERROR]   符号:   类 PageResult
+[ERROR]   位置: 类 VideoAnalysisServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[38,22] 错误: 找不到符号
+[ERROR]   符号:   类 MonitorEventEntity
+[ERROR]   位置: 类 VideoAnalysisServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[441,12] 错误: 找不到符号
+[ERROR]   符号:   类 MonitorEventEntity
+[ERROR]   位置: 类 VideoAnalysisServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoAnalysisService.java:[34,53] 错误: 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 接口 VideoAnalysisService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoAnalysisService.java:[34,4] 错误: 找不到符号
+[ERROR]   符号:   类 PageResult
+[ERROR]   位置: 接口 VideoAnalysisService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoAnalysisService.java:[34,15] 错误: 找不到符号
+[ERROR]   符号:   类 MonitorEventEntity
+[ERROR]   位置: 接口 VideoAnalysisService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\AuthController.java:[28,11] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 类 AuthController
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\AuthController.java:[42,11] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 类 AuthController
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\AuthController.java:[48,11] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 类 AuthController
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\AuthController.java:[70,11] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 类 AuthController
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[39,90] 错误: 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[39,4] 错误: 找不到符号
+[ERROR]   符号:   类 PageResult
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[47,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[55,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[63,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[71,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[79,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[87,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[97,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[107,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[117,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\IAttendanceService.java:[129,4] 错误: 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 IAttendanceService
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

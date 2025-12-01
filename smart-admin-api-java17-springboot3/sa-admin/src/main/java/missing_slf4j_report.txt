@@ -1,0 +1,98 @@
+缺失@Slf4j注解的Java文件报告
+生成时间: 2025-11-30 04:11:54.203768
+总共检查到使用log变量的文件: 221 个
+缺失@Slf4j注解的文件: 30 个
+
+================================================================================
+文件列表:
+================================================================================
+  1. net\lab1024\sa\admin\common\json\deserializer\DictDataDeserializer.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\common\json\deserializer\DictDataDeserializer.java
+
+  2. net\lab1024\sa\admin\common\json\deserializer\FileKeyVoDeserializer.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\common\json\deserializer\FileKeyVoDeserializer.java
+
+  3. net\lab1024\sa\admin\controller\CacheManagementController.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\controller\CacheManagementController.java
+
+  4. net\lab1024\sa\admin\interceptor\AdminInterceptor.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\interceptor\AdminInterceptor.java
+
+  5. net\lab1024\sa\admin\module\access\adapter\AccessDeviceAdapter.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\adapter\AccessDeviceAdapter.java
+
+  6. net\lab1024\sa\admin\module\access\adapter\protocol\impl\DahuaAdapter.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\adapter\protocol\impl\DahuaAdapter.java
+
+  7. net\lab1024\sa\admin\module\access\adapter\protocol\impl\HikvisionAdapter.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\adapter\protocol\impl\HikvisionAdapter.java
+
+  8. net\lab1024\sa\admin\module\access\adapter\protocol\impl\HttpProtocolAdapter.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\adapter\protocol\impl\HttpProtocolAdapter.java
+
+  9. net\lab1024\sa\admin\module\access\controller\VisitorController.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\controller\VisitorController.java
+
+ 10. net\lab1024\sa\admin\module\access\manager\AccessAreaManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessAreaManager.java
+
+ 11. net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java
+
+ 12. net\lab1024\sa\admin\module\access\manager\AccessRecordManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessRecordManager.java
+
+ 13. net\lab1024\sa\admin\module\access\manager\VisitorCacheManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\VisitorCacheManager.java
+
+ 14. net\lab1024\sa\admin\module\access\service\impl\VisitorServiceImpl.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\impl\VisitorServiceImpl.java
+
+ 15. net\lab1024\sa\admin\module\attendance\controller\AttendanceRuleController.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceRuleController.java
+
+ 16. net\lab1024\sa\admin\module\attendance\controller\AttendanceScheduleController.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\AttendanceScheduleController.java
+
+ 17. net\lab1024\sa\admin\module\attendance\controller\ShiftsController.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\controller\ShiftsController.java
+
+ 18. net\lab1024\sa\admin\module\attendance\manager\AttendanceManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceManager.java
+
+ 19. net\lab1024\sa\admin\module\attendance\manager\AttendanceRuleEngine.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceRuleEngine.java
+
+ 20. net\lab1024\sa\admin\module\attendance\repository\AttendanceScheduleRepository.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceScheduleRepository.java
+
+ 21. net\lab1024\sa\admin\module\attendance\service\impl\ShiftsServiceImpl.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\ShiftsServiceImpl.java
+
+ 22. net\lab1024\sa\admin\module\consume\service\ConsumeCacheServiceV2.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheServiceV2.java
+
+ 23. net\lab1024\sa\admin\module\consume\service\impl\VerifyCodeServiceImpl.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\VerifyCodeServiceImpl.java
+
+ 24. net\lab1024\sa\admin\module\consume\tool\DatabaseIndexAnalyzer.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\tool\DatabaseIndexAnalyzer.java
+
+ 25. net\lab1024\sa\admin\module\device\manager\SmartDeviceManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\device\manager\SmartDeviceManager.java
+
+ 26. net\lab1024\sa\admin\module\monitor\scheduled\HistoryDataCleanupScheduler.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\monitor\scheduled\HistoryDataCleanupScheduler.java
+
+ 27. net\lab1024\sa\admin\module\smart\biometric\controller\BiometricMonitorController.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\biometric\controller\BiometricMonitorController.java
+
+ 28. net\lab1024\sa\admin\module\smart\video\manager\VideoPreviewManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPreviewManager.java
+
+ 29. net\lab1024\sa\admin\module\video\manager\VideoDeviceManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\video\manager\VideoDeviceManager.java
+
+ 30. net\lab1024\sa\admin\module\video\manager\VideoSurveillanceManager.java
+     完整路径: D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\video\manager\VideoSurveillanceManager.java
+

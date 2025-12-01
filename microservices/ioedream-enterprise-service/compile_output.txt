@@ -1,0 +1,45 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------< net.lab1024.sa:ioedream-enterprise-service >-------------
+[INFO] Building IOE-DREAM Enterprise Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-enterprise-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-enterprise-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 54 source files with javac [debug target 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,113] 需要';'
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,115] 不是语句
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,121] 需要';'
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,123] 不是语句
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,125] 需要';'
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[61,14] 非法的表达式开始
+[INFO] 6 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.518 s
+[INFO] Finished at: 2025-11-30T08:10:41+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-enterprise-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,113] 需要';'
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,115] 不是语句
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,121] 需要';'
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,123] 不是语句
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[58,125] 需要';'
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-enterprise-service/src/main/java/net/lab1024/sa/hr/controller/EmployeeController.java:[61,14] 非法的表达式开始
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

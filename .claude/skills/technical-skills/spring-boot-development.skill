@@ -1,0 +1,713 @@
+# ☕ Spring Boot 开发技能
+
+**技能名称**: Spring Boot 3.x 企业级应用开发
+**技能等级**: 高级
+**适用角色**: Java后端开发工程师、系统架构师、技术负责人
+**前置技能**: Java基础、Spring框架、数据库开发、RESTful API设计
+**预计学时**: 40小时
+
+---
+
+## 📚 知识要求
+
+### 📖 理论知识
+- **Spring Boot架构**: 深入理解Spring Boot的自动配置、启动机制、依赖管理
+- **Jakarta EE**: 掌握Java EE 9+ (Jakarta EE) 规范，包括Servlet、JPA、Bean Validation等
+- **微服务架构**: 理解微服务设计原则、服务发现、配置管理、负载均衡
+- **设计模式**: 熟练应用工厂模式、单例模式、策略模式、模板方法模式等
+
+### 💼 业务理解
+- **四层架构**: 深入理解Controller-Service-Manager-DAO四层架构设计
+- **业务领域建模**: 掌握领域驱动设计(DDD)的基本概念和实践
+- **数据一致性**: 理解分布式事务、数据一致性、幂等性设计
+- **系统安全**: 了解企业级应用的安全架构和最佳实践
+
+### 🔧 技术背景
+- **Java 17**: 掌握Java 17的新特性，包括记录类、密封类、模式匹配等
+- **Spring生态**: 熟练使用Spring Security、Spring Data JPA、Spring AMQP等
+- **数据库**: 精通MySQL、Redis、消息队列等数据存储技术
+- **开发工具**: 熟练使用Maven、Git、IDEA、Docker等开发工具
+
+---
+
+## 🛠️ 操作步骤
+
+### 步骤1: 项目环境搭建 (6小时)
+
+#### 1.1 开发环境配置
+```bash
+# 1. 安装Java 17
+java -version  # 验证版本应为17.x
+
+# 2. 安装Maven 3.8+
+mvn -version   # 验证版本
+
+# 3. 配置Maven settings.xml
+# 设置阿里云镜像加速
+# 配置私服仓库地址
+
+# 4. 安装开发工具
+# IntelliJ IDEA 2023.2+
+# 安装Lombok插件
+# 安装Spring Boot插件
+# 安装MyBatis插件
+```
+
+#### 1.2 创建Spring Boot项目
+```xml
+<!-- pom.xml 核心配置 -->
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.2.0</version>
+</parent>
+
+<properties>
+    <java.version>17</java.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+</properties>
+
+<dependencies>
+    <!-- Web Starter -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Data JPA -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <!-- Redis -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
+    <!-- Security -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <!-- Validation -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+</dependencies>
+```
+
+### 步骤2: 四层架构实现 (8小时)
+
+#### 2.1 Controller层实现
+```java
+@RestController
+@RequestMapping("/api/v1/employees")
+@Validated
+@Slf4j
+public class EmployeeController {
+
+    @Resource
+    private EmployeeService employeeService;
+
+    @PostMapping("/query")
+    @SaCheckPermission("employee:query")
+    public ResponseDTO<PageResult<EmployeeVO>> queryEmployees(
+            @Valid @RequestBody EmployeeQueryForm queryForm) {
+
+        log.info("查询员工列表: {}", queryForm);
+
+        PageResult<EmployeeVO> result = employeeService.queryEmployees(queryForm);
+        return ResponseDTO.ok(result);
+    }
+
+    @PostMapping("/add")
+    @SaCheckPermission("employee:add")
+    public ResponseDTO<Long> addEmployee(
+            @Valid @RequestBody EmployeeAddForm addForm) {
+
+        log.info("新增员工: {}", addForm);
+
+        Long employeeId = employeeService.addEmployee(addForm, SmartLoginUtil.getCurrentUserId());
+        return ResponseDTO.ok(employeeId);
+    }
+
+    @PutMapping("/update")
+    @SaCheckPermission("employee:update")
+    public ResponseDTO<Void> updateEmployee(
+            @Valid @RequestBody EmployeeUpdateForm updateForm) {
+
+        log.info("更新员工: {}", updateForm);
+
+        employeeService.updateEmployee(updateForm, SmartLoginUtil.getCurrentUserId());
+        return ResponseDTO.ok();
+    }
+
+    @DeleteMapping("/delete/{employeeId}")
+    @SaCheckPermission("employee:delete")
+    public ResponseDTO<Void> deleteEmployee(
+            @PathVariable @NotNull Long employeeId) {
+
+        log.info("删除员工: employeeId={}", employeeId);
+
+        employeeService.deleteEmployee(employeeId, SmartLoginUtil.getCurrentUserId());
+        return ResponseDTO.ok();
+    }
+}
+```
+
+#### 2.2 Service层实现
+```java
+@Service
+@Transactional(rollbackFor = Exception.class)
+@Slf4j
+public class EmployeeService {
+
+    @Resource
+    private EmployeeManager employeeManager;
+
+    @Resource
+    private EmployeeDao employeeDao;
+
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
+
+    public PageResult<EmployeeVO> queryEmployees(EmployeeQueryForm queryForm) {
+        // 1. 参数验证
+        validateQueryForm(queryForm);
+
+        // 2. 业务逻辑处理
+        return employeeManager.queryEmployees(queryForm);
+    }
+
+    public Long addEmployee(EmployeeAddForm addForm, Long operatorId) {
+        // 1. 业务规则验证
+        validateEmployeeAddForm(addForm);
+
+        // 2. 检查工号唯一性
+        if (employeeDao.existsByEmployeeCode(addForm.getEmployeeCode())) {
+            throw new SmartException("工号已存在");
+        }
+
+        // 3. 调用Manager层处理复杂业务逻辑
+        return employeeManager.addEmployee(addForm, operatorId);
+    }
+
+    public void updateEmployee(EmployeeUpdateForm updateForm, Long operatorId) {
+        // 1. 验证员工是否存在
+        EmployeeEntity employee = employeeDao.selectById(updateForm.getEmployeeId());
+        if (employee == null) {
+            throw new SmartException("员工不存在");
+        }
+
+        // 2. 业务规则验证
+        validateEmployeeUpdateForm(updateForm, employee);
+
+        // 3. 调用Manager层处理更新逻辑
+        employeeManager.updateEmployee(updateForm, operatorId);
+    }
+}
+```
+
+#### 2.3 Manager层实现
+```java
+@Component
+@Slf4j
+public class EmployeeManager {
+
+    @Resource
+    private EmployeeDao employeeDao;
+
+    @Resource
+    private DepartmentDao departmentDao;
+
+    @Resource
+    private PositionDao positionDao;
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
+
+    public PageResult<EmployeeVO> queryEmployees(EmployeeQueryForm queryForm) {
+        // 1. 构建查询条件
+        EmployeeQuery query = EmployeeQuery.builder()
+                .keyword(queryForm.getKeyword())
+                .departmentId(queryForm.getDepartmentId())
+                .positionId(queryForm.getPositionId())
+                .employmentStatus(queryForm.getEmploymentStatus())
+                .build();
+
+        // 2. 分页查询
+        PageResult<EmployeeEntity> pageResult = employeeDao.selectPage(queryForm, query);
+
+        // 3. 转换为VO
+        List<EmployeeVO> voList = pageResult.getRows().stream()
+                .map(this::convertToVO)
+                .collect(Collectors.toList());
+
+        return new PageResult<>(voList, pageResult.getTotal());
+    }
+
+    @Transactional
+    public Long addEmployee(EmployeeAddForm addForm, Long operatorId) {
+        // 1. 创建员工实体
+        EmployeeEntity employee = EmployeeEntity.builder()
+                .employeeId(SnowflakeIdUtil.nextId())
+                .employeeCode(addForm.getEmployeeCode())
+                .employeeName(addForm.getEmployeeName())
+                .gender(addForm.getGender())
+                .mobilePhone(addForm.getMobilePhone())
+                .email(addForm.getEmail())
+                .departmentId(addForm.getDepartmentId())
+                .positionId(addForm.getPositionId())
+                .employmentStatus(EmploymentStatusEnum.ONBOARD)
+                .createUserId(operatorId)
+                .build();
+
+        // 2. 保存到数据库
+        employeeDao.insert(employee);
+
+        // 3. 发送领域事件
+        EmployeeCreatedEvent event = EmployeeCreatedEvent.builder()
+                .employeeId(employee.getEmployeeId())
+                .employeeCode(employee.getEmployeeCode())
+                .employeeName(employee.getEmployeeName())
+                .departmentId(employee.getDepartmentId())
+                .operatorId(operatorId)
+                .timestamp(new Date())
+                .build();
+
+        rabbitTemplate.convertAndSend("employee.exchange", "employee.created", event);
+
+        // 4. 更新缓存
+        updateEmployeeCache(employee);
+
+        return employee.getEmployeeId();
+    }
+}
+```
+
+#### 2.4 DAO层实现
+```java
+@Mapper
+public interface EmployeeDao extends BaseMapper<EmployeeEntity> {
+
+    /**
+     * 分页查询员工
+     */
+    PageResult<EmployeeEntity> selectPage(@Param("queryForm") PageForm queryForm,
+                                        @Param("query") EmployeeQuery query);
+
+    /**
+     * 根据工号查询员工
+     */
+    EmployeeEntity selectByEmployeeCode(@Param("employeeCode") String employeeCode);
+
+    /**
+     * 检查工号是否存在
+     */
+    boolean existsByEmployeeCode(@Param("employeeCode") String employeeCode);
+
+    /**
+     * 批量更新员工状态
+     */
+    int batchUpdateStatus(@Param("employeeIds") List<Long> employeeIds,
+                         @Param("employmentStatus") Integer employmentStatus,
+                         @Param("updateUserId") Long updateUserId);
+}
+```
+
+### 步骤3: 数据库设计和优化 (8小时)
+
+#### 3.1 实体类设计
+```java
+@Entity
+@Table(name = "t_employee")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class EmployeeEntity extends BaseEntity {
+
+    @Id
+    @Column(name = "employee_id")
+    private Long employeeId;
+
+    @Column(name = "employee_code", nullable = false, unique = true, length = 32)
+    private String employeeCode;
+
+    @Column(name = "employee_name", nullable = false, length = 100)
+    private String employeeName;
+
+    @Column(name = "gender", nullable = false)
+    private Integer gender;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(name = "id_card", length = 18)
+    private String idCard;
+
+    @Column(name = "mobile_phone", length = 20)
+    private String mobilePhone;
+
+    @Column(name = "email", length = 100)
+    private String email;
+
+    @Column(name = "department_id")
+    private Long departmentId;
+
+    @Column(name = "position_id")
+    private Long positionId;
+
+    @Column(name = "employment_status", nullable = false)
+    private Integer employmentStatus;
+
+    @Column(name = "hire_date")
+    private LocalDate hireDate;
+
+    @Column(name = "leave_date")
+    private LocalDate leaveDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "education")
+    private EducationEnum education;
+
+    @Column(name = "address", length = 200)
+    private String address;
+
+    @Column(name = "emergency_contact", length = 50)
+    private String emergencyContact;
+
+    @Column(name = "emergency_phone", length = 20)
+    private String emergencyPhone;
+
+    @Column(name = "remark", length = 500)
+    private String remark;
+}
+```
+
+#### 3.2 数据库索引优化
+```sql
+-- 员工表索引优化
+CREATE INDEX idx_employee_code ON t_employee(employee_code);
+CREATE INDEX idx_employee_name ON t_employee(employee_name);
+CREATE INDEX idx_department_id ON t_employee(department_id);
+CREATE INDEX idx_position_id ON t_employee(position_id);
+CREATE INDEX idx_employment_status ON t_employee(employment_status);
+CREATE INDEX idx_hire_date ON t_employee(hire_date);
+CREATE INDEX idx_create_time ON t_employee(create_time);
+
+-- 复合索引
+CREATE INDEX idx_dept_position_status ON t_employee(department_id, position_id, employment_status);
+CREATE INDEX idx_name_mobile ON t_employee(employee_name, mobile_phone);
+```
+
+### 步骤4: 安全认证实现 (6小时)
+
+#### 4.1 Spring Security配置
+```java
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+public class SecurityConfig {
+
+    @Resource
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            // 禁用CSRF
+            .csrf(csrf -> csrf.disable())
+
+            // 配置会话管理
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // 配置请求授权
+            .authorizeHttpRequests(auth -> auth
+                .放行静态资源
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/doc.html", "/webjars/**", "/swagger-resources/**").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
+                .anyRequest().authenticated())
+
+            // 配置异常处理
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint(unauthorizedHandler)
+                .accessDeniedHandler(accessDeniedHandler))
+
+            // 添加JWT过滤器
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}
+```
+
+#### 4.2 权限控制注解
+```java
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@PreAuthorize("hasPermission(#deviceId, 'DEVICE', 'ACCESS')")
+public @interface DeviceAccess {
+}
+
+// 使用示例
+@PostMapping("/access")
+@DeviceAccess
+public ResponseDTO<Void> accessDevice(@RequestBody DeviceAccessRequest request) {
+    // 方法实现
+}
+```
+
+### 步骤5: 缓存和性能优化 (6小时)
+
+#### 5.1 Redis缓存配置
+```java
+@Configuration
+@EnableCaching
+public class CacheConfig {
+
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(30))
+                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(config)
+                .transactionAware()
+                .build();
+    }
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
+        // 设置序列化器
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        template.afterPropertiesSet();
+        return template;
+    }
+}
+```
+
+#### 5.2 缓存注解使用
+```java
+@Service
+public class DepartmentService {
+
+    @Cacheable(value = "department", key = "#departmentId")
+    public DepartmentVO getDepartmentById(Long departmentId) {
+        DepartmentEntity entity = departmentDao.selectById(departmentId);
+        return convertToVO(entity);
+    }
+
+    @CacheEvict(value = "department", key = "#departmentId")
+    public void updateDepartment(Long departmentId, DepartmentUpdateForm updateForm) {
+        // 更新逻辑
+    }
+
+    @Cacheable(value = "department:tree", unless = "#result == null")
+    public List<DepartmentTreeVO> getDepartmentTree() {
+        return departmentManager.buildDepartmentTree();
+    }
+}
+```
+
+### 步骤6: 测试和部署 (6小时)
+
+#### 6.1 单元测试
+```java
+@SpringBootTest
+@Transactional
+@Rollback
+class EmployeeServiceTest {
+
+    @Resource
+    private EmployeeService employeeService;
+
+    @Test
+    void testAddEmployee() {
+        // Given
+        EmployeeAddForm addForm = EmployeeAddForm.builder()
+                .employeeCode("TEST001")
+                .employeeName("测试员工")
+                .gender(GenderEnum.MALE.getValue())
+                .mobilePhone("13800138000")
+                .departmentId(1L)
+                .positionId(1L)
+                .build();
+
+        // When
+        Long employeeId = employeeService.addEmployee(addForm, 1L);
+
+        // Then
+        assertNotNull(employeeId);
+        EmployeeVO employee = employeeService.getEmployeeById(employeeId);
+        assertEquals("TEST001", employee.getEmployeeCode());
+        assertEquals("测试员工", employee.getEmployeeName());
+    }
+
+    @Test
+    void testAddEmployeeWithDuplicateCode() {
+        // Given
+        EmployeeAddForm addForm = createEmployeeAddForm("EXIST001");
+
+        // When & Then
+        assertThrows(SmartException.class, () ->
+            employeeService.addEmployee(addForm, 1L));
+    }
+}
+```
+
+#### 6.2 Docker部署配置
+```dockerfile
+# Dockerfile
+FROM openjdk:17-jre-slim
+
+WORKDIR /app
+
+COPY target/sa-admin-*.jar app.jar
+
+EXPOSE 1024
+
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker"]
+```
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "1024:1024"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MYSQL_HOST=mysql
+      - REDIS_HOST=redis
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smart_admin_v3
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mysql_data:
+```
+
+---
+
+## ⚠️ 注意事项
+
+### 🔒 安全提醒
+- **依赖注入**: 使用@Resource而非@Autowired
+- **包名规范**: 使用jakarta包而非javax包
+- **SQL注入**: 使用参数化查询，避免SQL拼接
+- **数据验证**: 使用@Valid进行参数验证
+- **权限控制**: 所有API接口必须进行权限验证
+
+### 📊 质量要求
+- **代码规范**: 严格遵循项目编码规范
+- **测试覆盖率**: 单元测试覆盖率不低于80%
+- **性能指标**: API响应时间不超过500ms
+- **并发处理**: 支持至少1000并发用户
+
+### 🎯 最佳实践
+- **分层调用**: 严格遵循四层架构调用规范
+- **事务管理**: 事务边界在Service层
+- **异常处理**: 使用统一的异常处理机制
+- **日志记录**: 使用SLF4J进行日志记录
+- **缓存策略**: 合理使用缓存提升性能
+
+---
+
+## 📊 评估标准
+
+### ⏱️ 开发效率要求
+- **CRUD接口开发**: 单个实体2小时内完成
+- **复杂业务接口**: 单个接口1天内完成
+- **单元测试编写**: 代码测试比达到1:1
+- **Bug修复**: 一般Bug30分钟内修复
+
+### 🎯 代码质量要求
+- **代码规范**: 100%符合项目编码规范
+- **圈复杂度**: 单个方法圈复杂度不超过10
+- **代码重复率**: 重复代码率不超过5%
+- **安全检查**: 通过静态代码安全扫描
+
+### 🔍 系统性能要求
+- **响应时间**: 95%的请求响应时间<500ms
+- **吞吐量**: 支持至少1000 TPS
+- **资源利用率**: CPU利用率<80%，内存利用率<85%
+- **可用性**: 系统可用性达到99.9%
+
+---
+
+## 🔗 相关技能
+
+### 📚 相关技能
+- **[Vue3开发技能](./vue3-development.skill)** - 前端开发技能
+- **[数据库设计技能](./database-design.skill)** - 数据库设计和优化
+- **[系统运维技能](./system-operations.skill)** - 系统部署和运维
+- **[微服务架构技能](./microservices-architecture.skill)** - 微服务设计和实现
+
+### 🚀 进阶路径
+1. **架构师**: 负责系统架构设计和技术选型
+2. **技术专家**: 深入研究特定技术领域
+3. **团队负责人**: 带领开发团队完成项目
+4. **开源贡献**: 参与开源项目贡献代码
+
+### 📖 参考资料
+- **[Spring Boot官方文档](https://spring.io/projects/spring-boot)**
+- **[项目架构设计规范](../../docs/ARCHITECTURE_STANDARDS.md)**
+- **[Java编码规范](../../docs/repowiki/zh/content/开发规范体系/Java编码规范.md)**
+- **[四层架构详解](../../docs/repowiki/zh/content/后端架构/四层架构详解.md)**
+
+---
+
+**✅ 技能认证完成标准**:
+- 能够独立设计和实现Spring Boot企业级应用
+- 熟练掌握四层架构设计和实现
+- 能够进行性能优化和安全加固
+- 具备系统设计和架构能力
+- 通过技能评估测试（理论+实操+项目实战）

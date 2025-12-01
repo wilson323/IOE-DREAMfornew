@@ -1,0 +1,22 @@
+{
+  "filePath": "openspec/changes/complete-architecture-optimization/requirements.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-25T14:51:10.078Z",
+      "trigger": "initial",
+      "approvalId": "approval_1764082270039_2cmr33onz",
+      "approvalTitle": "Complete Architecture Optimization Requirements"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-25T14:54:32.475Z",
+      "trigger": "approved",
+      "approvalId": "approval_1764082270039_2cmr33onz",
+      "approvalTitle": "Complete Architecture Optimization Requirements"
+    }
+  ]
+}

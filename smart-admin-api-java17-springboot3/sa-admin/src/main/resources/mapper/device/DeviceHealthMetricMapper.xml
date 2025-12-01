@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.device.dao.DeviceHealthMetricDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.device.domain.entity.DeviceHealthMetricEntity">
+        <id column="metric_id" property="metricId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="metric_code" property="metricCode"/>
+        <result column="metric_value" property="metricValue"/>
+        <result column="metric_time" property="metricTime"/>
+        <result column="source_type" property="sourceType"/>
+        <result column="unit" property="unit"/>
+        <result column="threshold_min" property="thresholdMin"/>
+        <result column="threshold_max" property="thresholdMax"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+    </resultMap>
+
+    <!-- 统计结果映射 -->
+    <resultMap id="MetricStatisticsMap" type="net.lab1024.sa.admin.module.device.dao.DeviceHealthMetricDao$MetricStatistics">
+        <result column="avg_value" property="avgValue"/>
+        <result column="min_value" property="minValue"/>
+        <result column="max_value" property="maxValue"/>
+        <result column="data_points" property="dataPoints"/>
+        <result column="exceed_threshold_count" property="exceedThresholdCount"/>
+    </resultMap>
+
+    <!-- 获取设备最新的指标值 -->
+    <select id="getLatestMetric" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_health_metric
+        WHERE device_id = #{deviceId}
+          AND metric_code = #{metricCode}
+          AND deleted_flag = 0
+        ORDER BY metric_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 获取设备指定时间范围内的指标数据 -->
+    <select id="getMetricsByTimeRange" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_health_metric
+        WHERE device_id = #{deviceId}
+          AND metric_code = #{metricCode}
+          AND metric_time BETWEEN #{startTime} AND #{endTime}
+          AND deleted_flag = 0
+        ORDER BY metric_time ASC
+    </select>
+
+    <!-- 获取设备所有指标的最新值 -->
+    <select id="getLatestMetricsByDeviceId" resultMap="BaseResultMap">
+        SELECT t1.*
+        FROM t_device_health_metric t1
+        INNER JOIN (
+            SELECT device_id, metric_code, MAX(metric_time) as max_time
+            FROM t_device_health_metric
+            WHERE device_id = #{deviceId}
+              AND deleted_flag = 0
+            GROUP BY device_id, metric_code
+        ) t2 ON t1.device_id = t2.device_id
+              AND t1.metric_code = t2.metric_code
+              AND t1.metric_time = t2.max_time
+        WHERE t1.deleted_flag = 0
+        ORDER BY t1.metric_code
+    </select>
+
+    <!-- 获取超过阈值的指标数据 -->
+    <select id="getExceedThresholdMetrics" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_health_metric
+        WHERE deleted_flag = 0
+          AND metric_time >= #{time}
+          AND (
+              (threshold_min IS NOT NULL AND metric_value &lt; threshold_min)
+              OR (threshold_max IS NOT NULL AND metric_value &gt; threshold_max)
+          )
+        ORDER BY metric_time DESC, device_id, metric_code
+    </select>
+
+    <!-- 批量插入指标数据 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO t_device_health_metric (
+            device_id, metric_code, metric_value, metric_time, source_type, unit,
+            threshold_min, threshold_max, create_time, create_user_id, deleted_flag
+        ) VALUES
+        <foreach collection="metrics" item="metric" separator=",">
+            (
+                #{metric.deviceId},
+                #{metric.metricCode},
+                #{metric.metricValue},
+                #{metric.metricTime},
+                #{metric.sourceType},
+                #{metric.unit},
+                #{metric.thresholdMin},
+                #{metric.thresholdMax},
+                NOW(),
+                #{metric.createUserId},
+                0
+            )
+        </foreach>
+    </insert>
+
+    <!-- 删除指定时间之前的指标数据 -->
+    <delete id="deleteMetricsBeforeTime">
+        UPDATE t_device_health_metric
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE metric_time &lt; #{time}
+          AND deleted_flag = 0
+          <if test="metricCode != null and metricCode != ''">
+          AND metric_code = #{metricCode}
+          </if>
+    </delete>
+
+    <!-- 获取指标统计信息 -->
+    <select id="getMetricStatistics" resultMap="MetricStatisticsMap">
+        SELECT
+            ROUND(AVG(metric_value), 4) as avg_value,
+            MIN(metric_value) as min_value,
+            MAX(metric_value) as max_value,
+            COUNT(*) as data_points,
+            SUM(
+                CASE
+                    WHEN (threshold_min IS NOT NULL AND metric_value &lt; threshold_min)
+                      OR (threshold_max IS NOT NULL AND metric_value &gt; threshold_max)
+                    THEN 1
+                    ELSE 0
+                END
+            ) as exceed_threshold_count
+        FROM t_device_health_metric
+        WHERE device_id = #{deviceId}
+          AND metric_code = #{metricCode}
+          AND deleted_flag = 0
+          <if test="startTime != null">
+          AND metric_time >= #{startTime}
+          </if>
+          <if test="endTime != null">
+          AND metric_time &lt;= #{endTime}
+          </if>
+    </select>
+
+</mapper>

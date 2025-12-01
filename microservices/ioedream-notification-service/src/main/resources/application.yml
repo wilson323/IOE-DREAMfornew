@@ -1,0 +1,396 @@
+# IOE-DREAM 通知服务配置文件
+# Spring Boot 3.5.7 + Spring Cloud 2023.0.3
+
+server:
+  port: 8095
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    min-spare-threads: 10
+
+spring:
+  application:
+    name: ioedream-notification-service
+  profiles:
+    active: dev
+
+  # 数据库配置
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:ioedream_notification;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE;INIT=RUNSCRIPT FROM 'classpath:sql/notification_schema.sql'
+    username: sa
+    password: ""
+    h2:
+      console:
+        enabled: true
+        path: /h2-console
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        use_sql_comments: true
+
+  # Redis配置
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 2
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 3000
+
+  # MyBatis-Plus配置
+  mybatis-plus:
+    configuration:
+      map-underscore-to-camel-case: true
+      cache-enabled: false
+      call-setters-on-nulls: true
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    mapper-locations: classpath:mapper/*.xml
+    global-config:
+      db-config:
+        id-type: auto
+        logic-delete-field: deleted_flag
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+        update-strategy: not_null
+
+  # Jackson配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+  # 异步任务配置
+  task:
+    execution:
+      pool:
+        core-size: 10
+        max-size: 50
+        queue-capacity: 1000
+        keep-alive: 60s
+      thread-name-prefix: notification-async-
+    scheduling:
+      pool:
+        size: 5
+      thread-name-prefix: notification-schedule-
+
+# 服务发现配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    healthcheck:
+      enabled: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    metadata:
+      management.context-path: ${server.servlet.context-path}/actuator
+
+# Feign配置
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+        loggerLevel: full
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,notifications
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    notifications:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        notification.send.duration: true
+      sla:
+        http.server.requests: 100ms,200ms,500ms,1s
+        notification.send.duration: 1s,2s,5s,10s
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+        notification.send.duration: 0.5,0.9,0.95,0.99
+
+# 日志配置
+logging:
+  level:
+    net.lab1024.sa.notification: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} [%thread] %clr(%-5level){cyan} %clr(%logger{39}){magenta} - %clr(%msg%n){faint}"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{39} - %msg%n"
+  file:
+    name: logs/notification-service.log
+    max-size: 100MB
+    max-history: 30
+  path: logs
+
+# 通知服务特定配置
+notification:
+  # 默认配置
+  default:
+    retry-count: 3
+    timeout-seconds: 30
+    batch-size: 100
+    async-enabled: true
+
+  # 频率限制配置
+  rate-limit:
+    daily-limit: 1000
+    hourly-limit: 100
+    minutely-limit: 10
+    enabled: true
+
+  # 消息保留配置
+  retention:
+    message-days: 30
+    record-days: 90
+    template-versions: 10
+
+  # 缓存配置
+  cache:
+    template-cache-hours: 24
+    config-cache-minutes: 60
+    statistics-cache-minutes: 30
+
+  # 队列配置
+  queue:
+    pending-queue-size: 1000
+    retry-queue-size: 500
+    dead-letter-queue-size: 200
+
+  # 邮件配置
+  email:
+    enabled: true
+    smtp:
+      host: ${EMAIL_SMTP_HOST:smtp.gmail.com}
+      port: ${EMAIL_SMTP_PORT:587}
+      username: ${EMAIL_USERNAME:}
+      password: ${EMAIL_PASSWORD:}
+      auth: true
+      starttls: true
+    from:
+      address: ${EMAIL_FROM_ADDRESS:noreply@ioedream.com}
+      name: ${EMAIL_FROM_NAME:IOE-DREAM系统}
+
+  # 短信配置
+  sms:
+    enabled: true
+    provider: ${SMS_PROVIDER:aliyun}
+    aliyun:
+      access-key: ${SMS_ALIYUN_ACCESS_KEY:}
+      secret-key: ${SMS_ALIYUN_SECRET_KEY:}
+      sign-name: ${SMS_ALIYUN_SIGN_NAME:IOE-DREAM}
+      region: cn-hangzhou
+    tencent:
+      secret-id: ${SMS_TENCENT_SECRET_ID:}
+      secret-key: ${SMS_TENCENT_SECRET_KEY:}
+      sign-name: ${SMS_TENCENT_SIGN_NAME:IOE-DREAM}
+      region: ap-guangzhou
+
+  # 微信配置
+  wechat:
+    enabled: true
+    app-id: ${WECHAT_APP_ID:}
+    app-secret: ${WECHAT_APP_SECRET:}
+    token: ${WECHAT_TOKEN:}
+    encoding-aes-key: ${WECHAT_ENCODING_AES_KEY:}
+    template:
+      access-granted: ${WECHAT_TEMPLATE_ACCESS_GRANTED:}
+      access-denied: ${WECHAT_TEMPLATE_ACCESS_DENIED:}
+      consumption-alert: ${WECHAT_TEMPLATE_CONSUMPTION_ALERT:}
+      attendance-reminder: ${WECHAT_TEMPLATE_ATTENDANCE_REMINDER:}
+
+  # 推送配置
+  push:
+    enabled: true
+    provider: ${PUSH_PROVIDER:jpush}
+    jpush:
+      app-key: ${JPUSH_APP_KEY:}
+      master-secret: ${JPUSH_MASTER_SECRET:}
+      apns-production: false
+    umeng:
+      app-key: ${UMENG_APP_KEY:}
+      app-secret: ${UMENG_APP_SECRET:}
+      production-mode: false
+
+  # 语音通知配置
+  voice:
+    enabled: false
+    provider: ${VOICE_PROVIDER:aliyun}
+    aliyun:
+      access-key: ${VOICE_ALIYUN_ACCESS_KEY:}
+      secret-key: ${VOICE_ALIYUN_SECRET_KEY:}
+      app-id: ${VOICE_ALIYUN_APP_ID:}
+      region: cn-beijing
+
+  # 模板引擎配置
+  template:
+    engine: simple
+    cache-enabled: true
+    cache-size: 1000
+    validation-enabled: true
+
+  # 统计配置
+  statistics:
+    enabled: true
+    batch-size: 1000
+    schedule-cron: "0 0 */6 * * ?" # 每6小时执行一次
+    retention-days: 90
+
+---
+# 开发环境配置
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:h2:mem:ioedream_notification_dev;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE;INIT=RUNSCRIPT FROM 'classpath:sql/notification_schema.sql'
+
+notification:
+  email:
+    enabled: false
+  sms:
+    enabled: false
+  wechat:
+    enabled: false
+  push:
+    enabled: false
+  voice:
+    enabled: false
+  default:
+    async-enabled: true
+  rate-limit:
+    enabled: false
+
+logging:
+  level:
+    net.lab1024.sa.notification: DEBUG
+    root: INFO
+
+---
+# 测试环境配置
+spring:
+  profiles: test
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://test-mysql:3306/ioedream_notification_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai
+    username: test_notification
+    password: test_notification123
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://test-eureka:8761/eureka/
+
+notification:
+  email:
+    enabled: true
+  sms:
+    enabled: true
+  push:
+    enabled: true
+
+---
+# 生产环境配置
+spring:
+  profiles: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://prod-mysql:3306/ioedream_notification_prod?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
+    username: prod_notification
+    password: prod_notification123!
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+
+  # Redis生产配置
+  data:
+    redis:
+      host: prod-redis
+      port: 6379
+      password: prod_redis123!
+      database: 2
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+
+notification:
+  email:
+    enabled: true
+  sms:
+    enabled: true
+  wechat:
+    enabled: true
+  push:
+    enabled: true
+  voice:
+    enabled: true
+  default:
+    async-enabled: true
+    batch-size: 200
+  rate-limit:
+    enabled: true
+    daily-limit: 5000
+    hourly-limit: 500
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://prod-eureka:8761/eureka/
+
+logging:
+  level:
+    net.lab1024.sa.notification: WARN
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    root: WARN

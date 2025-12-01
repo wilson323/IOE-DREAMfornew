@@ -1,0 +1,91 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 42 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Compiling 42 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[205,75] [deprecation] BaseMapper中的selectBatchIds(Collection<? extends Serializable>)已过时
+  其中, T是类型变量:
+    T扩展已在接口 BaseMapper中声明的Object
+[INFO] 1 warning
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[41,25] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[123,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[197,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[225,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[275,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[833,16] 错误: 找不到符号
+  符号:   变量 RedisUtil
+  位置: 类 BiometricCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[293,65] 错误: 找不到符号
+  符号:   方法 getPageNum()
+  位置: 类型为PersonAreaRelationForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[293,93] 错误: 找不到符号
+  符号:   方法 getPageNum()
+  位置: 类型为PersonAreaRelationForm的变量 form
+[INFO] 8 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.004 s]
+[INFO] sa-base ............................................ FAILURE [  8.030 s]
+[INFO] sa-support ......................................... SKIPPED
+[INFO] sa-admin ........................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.348 s
+[INFO] Finished at: 2025-11-25T10:02:21+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-base: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[41,25] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[123,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[197,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[225,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[275,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[833,16] 错误: 找不到符号
+[ERROR]   符号:   变量 RedisUtil
+[ERROR]   位置: 类 BiometricCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[293,65] 错误: 找不到符号
+[ERROR]   符号:   方法 getPageNum()
+[ERROR]   位置: 类型为PersonAreaRelationForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[293,93] 错误: 找不到符号
+[ERROR]   符号:   方法 getPageNum()
+[ERROR]   位置: 类型为PersonAreaRelationForm的变量 form
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-base

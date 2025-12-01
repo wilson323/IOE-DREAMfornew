@@ -1,0 +1,606 @@
+# ELK Stack配置 - Elasticsearch + Logstash + Kibana
+
+---
+# Elasticsearch配置
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+  namespace: ioedream-prod
+  labels:
+    app: elasticsearch
+    component: statefulset
+    environment: production
+    project: ioedream
+spec:
+  serviceName: elasticsearch
+  replicas: 3
+  selector:
+    matchLabels:
+      app: elasticsearch
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+        environment: production
+        component: pod
+        project: ioedream
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      initContainers:
+        - name: increase-vm-max-map
+          image: busybox:1.35
+          command: ["sysctl", "-w", "vm.max_map_count=262144"]
+          securityContext:
+            privileged: true
+        - name: increase-fd-limit
+          image: busybox:1.35
+          command: ["sh", "-c", "ulimit -n 65536"]
+          securityContext:
+            privileged: true
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9200
+              protocol: TCP
+            - name: transport
+              containerPort: 9300
+              protocol: TCP
+          env:
+            - name: cluster.name
+              value: "ioedream-logs"
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: discovery.seed_hosts
+              value: "elasticsearch-0.elasticsearch,elasticsearch-1.elasticsearch,elasticsearch-2.elasticsearch"
+            - name: cluster.initial_master_nodes
+              value: "elasticsearch-0,elasticsearch-1,elasticsearch-2"
+            - name: ES_JAVA_OPTS
+              value: "-Xms1g -Xmx1g"
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: xpack.security.enabled
+              value: "false"
+            - name: xpack.security.enrollment.enabled
+              value: "false"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+          volumeMounts:
+            - name: data-volume
+              mountPath: /usr/share/elasticsearch/data
+            - name: config-volume
+              mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+              subPath: elasticsearch.yml
+          securityContext:
+            capabilities:
+              add:
+                - IPC_LOCK
+          livenessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: config-volume
+          configMap:
+            name: elasticsearch-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data-volume
+        labels:
+          app: elasticsearch
+          component: pvc
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 100Gi
+        storageClassName: fast-ssd
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-config
+  namespace: ioedream-prod
+  labels:
+    app: elasticsearch
+    component: configmap
+    environment: production
+    project: ioedream
+data:
+  elasticsearch.yml: |
+    cluster.name: "ioedream-logs"
+    network.host: 0.0.0.0
+    discovery.type: zen
+    discovery.zen.minimum_master_nodes: 2
+    discovery.zen.ping.unicast.hosts: elasticsearch
+    xpack.security.enabled: false
+    xpack.monitoring.enabled: true
+    xpack.watcher.enabled: true
+    xpack.ml.enabled: false
+    bootstrap.memory_lock: true
+    indices.lifecycle.poll_interval: 1m
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: ioedream-prod
+  labels:
+    app: elasticsearch
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "Elasticsearch集群服务"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9200
+      targetPort: 9200
+      protocol: TCP
+    - name: transport
+      port: 9300
+      targetPort: 9300
+      protocol: TCP
+  selector:
+    app: elasticsearch
+    environment: production
+
+---
+# Logstash配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  namespace: ioedream-prod
+  labels:
+    app: logstash
+    component: deployment
+    environment: production
+    project: ioedream
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: logstash
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: logstash
+        environment: production
+        component: pod
+        project: ioedream
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: logstash
+          image: docker.elastic.co/logstash/logstash:8.8.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: beats
+              containerPort: 5044
+              protocol: TCP
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: LS_JAVA_OPTS
+              value: "-Xmx1g -Xms1g"
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/logstash/pipeline/logstash.conf
+              subPath: logstash.conf
+            - name: config-volume
+              mountPath: /usr/share/logstash/config/logstash.yml
+              subPath: logstash.yml
+            - name: config-volume
+              mountPath: /usr/share/logstash/config/jvm.options
+              subPath: jvm.options
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: config-volume
+          configMap:
+            name: logstash-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-config
+  namespace: ioedream-prod
+  labels:
+    app: logstash
+    component: configmap
+    environment: production
+    project: ioedream
+data:
+  logstash.yml: |
+    http.host: "0.0.0.0"
+    path.config: /usr/share/logstash/pipeline/logstash.conf
+    pipeline.workers: 4
+    pipeline.batch.size: 125
+    pipeline.batch.delay: 50
+
+  jvm.options: |
+    -Xms1g
+    -Xmx1g
+    -XX:+UseG1GC
+    -XX:MaxGCPauseMillis=200
+    -XX:+UnlockExperimentalVMOptions
+    -XX:+UseCGroupMemoryLimitForHeap
+    -Djava.awt.headless=true
+    -Dfile.encoding=UTF-8
+    -Djruby.compile.invokedynamic=true
+    -Djruby.jit.threshold=0
+    -XX:+HeapDumpOnOutOfMemoryError
+    -XX:HeapDumpPath=/var/log/logstash/heapdump.hprof
+
+  logstash.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+      http {
+        port => 8080
+        codec => json
+      }
+    }
+
+    filter {
+      # 添加时间戳
+      if ![timestamp] {
+        mutate {
+          add_field => { "[@timestamp]" => "%{@timestamp}" }
+        }
+      }
+
+      # 解析Spring Boot日志格式
+      if [fields][app] and [fields][environment] {
+        mutate {
+          add_field => { "service" => "%{[fields][app]}" }
+          add_field => { "environment" => "%{[fields][environment]}" }
+        }
+      }
+
+      # 解析JSON格式的日志
+      if [message] {
+        json {
+          source => "message"
+          target => "parsed"
+          # 如果解析失败，保持原始message
+          skip_on_invalid_json => true
+        }
+      }
+
+      # 处理HTTP访问日志
+      if [parsed][request_uri] {
+        grok {
+          match => {
+            "[parsed][request_uri]" => "%{WORD:method} %{URIPATH:uri_path}(?:%{URIPARAM:uri_params})? HTTP/%{NUMBER:http_version}"
+          }
+        }
+      }
+
+      # 处理异常堆栈
+      if [parsed][exception] {
+        multiline {
+          pattern => "^\s"
+          what => "previous"
+          negate => true
+        }
+      }
+
+      # 添加地理位置信息（如果存在IP）
+      if [client_ip] {
+        geoip {
+          source => "client_ip"
+          target => "geoip"
+        }
+      }
+
+      # 数据清洗
+      mutate {
+        # 移除不需要的字段
+        remove_field => ["host", "agent", "ecs", "input", "log"]
+        # 重命名字段
+        rename => {
+          "[parsed][level]" => "log_level"
+          "[parsed][logger]" => "logger_name"
+          "[parsed][thread]" => "thread_name"
+          "[parsed][message]" => "log_message"
+        }
+      }
+
+      # 转换日志级别
+      if [log_level] == "ERROR" or [log_level] == "WARN" {
+        mutate {
+          add_field => { "severity" => "high" }
+        }
+      } else if [log_level] == "INFO" {
+        mutate {
+          add_field => { "severity" => "medium" }
+        }
+      } else {
+        mutate {
+          add_field => { "severity" => "low" }
+        }
+      }
+
+      # 根据服务类型添加标签
+      if [service] {
+        if [service] =~ "gateway" {
+          mutate {
+            add_tag => ["gateway", "api"]
+          }
+        } else if [service] =~ "auth" {
+          mutate {
+            add_tag => ["auth", "security"]
+          }
+        } else if [service] =~ "consume" {
+          mutate {
+            add_tag => ["business", "finance"]
+          }
+        } else if [service] =~ "access" {
+          mutate {
+            add_tag => ["business", "security"]
+          }
+        } else {
+          mutate {
+            add_tag => ["application"]
+          }
+        }
+      }
+    }
+
+    output {
+      # 输出到Elasticsearch
+      elasticsearch {
+        hosts => ["elasticsearch:9200"]
+        index => "ioedream-logs-%{[environment]}-%{+YYYY.MM.dd}"
+        template_name => "ioedream-logs"
+        template_pattern => "ioedream-logs-*"
+        template => {
+          "index_patterns" => ["ioedream-logs-*"],
+          "settings" => {
+            "number_of_shards" => 1,
+            "number_of_replicas" => 1,
+            "index.refresh_interval" => "5s"
+          },
+          "mappings" => {
+            "properties" => {
+              "@timestamp" => { "type" => "date" },
+              "log_level" => { "type" => "keyword" },
+              "logger_name" => { "type" => "keyword" },
+              "thread_name" => { "type" => "keyword" },
+              "log_message" => { "type" => "text" },
+              "service" => { "type" => "keyword" },
+              "environment" => { "type" => "keyword" },
+              "severity" => { "type" => "keyword" },
+              "client_ip" => { "type" => "ip" },
+              "method" => { "type" => "keyword" },
+              "uri_path" => { "type" => "keyword" },
+              "status_code" => { "type" => "integer" },
+              "response_time" => { "type" => "float" },
+              "user_id" => { "type" => "keyword" },
+              "trace_id" => { "type" => "keyword" },
+              "span_id" => { "type" => "keyword" },
+              "geoip" => {
+                "properties" => {
+                  "location" => { "type" => "geo_point" },
+                  "country_name" => { "type" => "keyword" },
+                  "city_name" => { "type" => "keyword" }
+                }
+              }
+            }
+          }
+        }
+      }
+      # 错误日志输出到文件（调试用）
+      if [log_level] == "ERROR" {
+        file {
+          path => "/var/log/logstash/error-%{+YYYY-MM-dd}.log"
+        }
+      }
+    }
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  namespace: ioedream-prod
+  labels:
+    app: logstash
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "Logstash日志处理服务"
+spec:
+  type: ClusterIP
+  ports:
+    - name: beats
+      port: 5044
+      targetPort: 5044
+      protocol: TCP
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: logstash
+    environment: production
+
+---
+# Kibana配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: ioedream-prod
+  labels:
+    app: kibana
+    component: deployment
+    environment: production
+    project: ioedream
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: kibana
+        environment: production
+        component: pod
+        project: ioedream
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:8.8.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 5601
+              protocol: TCP
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: "http://elasticsearch:9200"
+            - name: SERVER_NAME
+              value: "kibana.ioedream.com"
+            - name: SERVER_HOST
+              value: "0.0.0.0"
+            - name: SERVER_PORT
+              value: "5601"
+            - name: XPACK_SECURITY_ENABLED
+              value: "false"
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/kibana/config/kibana.yml
+              subPath: kibana.yml
+          livenessProbe:
+            httpGet:
+              path: /api/status
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/status
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: config-volume
+          configMap:
+            name: kibana-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kibana-config
+  namespace: ioedream-prod
+  labels:
+    app: kibana
+    component: configmap
+    environment: production
+    project: ioedream
+data:
+  kibana.yml: |
+    server.name: kibana
+    server.host: "0.0.0.0"
+    server.port: 5601
+    elasticsearch.hosts: ["http://elasticsearch:9200"]
+    elasticsearch.requestTimeout: 90000
+    logging.silent: false
+    logging.quiet: false
+    logging.verbose: true
+    xpack.security.enabled: false
+    xpack.monitoring.enabled: true
+    xpack.uptime.enabled: true
+    i18n.locale: "zh-CN"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: ioedream-prod
+  labels:
+    app: kibana
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "Kibana日志可视化服务"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 5601
+      targetPort: 5601
+      protocol: TCP
+  selector:
+    app: kibana
+    environment: production

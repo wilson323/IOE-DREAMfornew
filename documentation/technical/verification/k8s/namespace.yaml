@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ioedream
+  labels:
+    name: ioedream
+    environment: production-simulation
+    project: ioedream-microservices
+  annotations:
+    description: "IOE-DREAM微服务架构生产模拟环境"

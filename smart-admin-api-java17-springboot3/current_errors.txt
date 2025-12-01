@@ -1,0 +1,259 @@
+﻿[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [2/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-support ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [3/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-base ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 11 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-admin ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 272 source files with javac [debug target 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[45,17] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[45,42] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[45,43] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[50,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[51,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[55,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[56,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[60,12] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[62,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[83,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/controller/BiometricMonitorController.java:[62,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[86,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[56,62] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[58,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[59,44] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[59,60] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[61,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[62,44] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[62,56] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[84,66] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[86,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[87,46] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[87,64] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[89,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[90,44] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[90,62] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[92,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[93,44] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[93,59] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[116,63] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[118,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[119,46] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[119,63] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[121,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[122,47] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[122,64] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[150,43] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[152,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[153,47] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[153,66] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[178,45] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[180,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[181,26] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[181,44] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[183,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[184,26] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[184,42] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[186,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[187,50] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[187,64] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[211,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[59,13] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[61,21] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[61,22] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[62,13] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[62,34] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[62,41] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[63,11] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[65,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[66,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[77,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[78,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[79,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[82,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[83,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[85,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[86,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[100,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[102,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[103,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[104,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[106,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[107,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[121,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[123,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[124,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[125,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[127,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[128,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[142,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[144,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[145,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[146,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[148,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[149,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[166,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoDeviceController.java:[70,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoSurveillanceController.java:[62,1] 进行语法分析时已到达文件结尾
+[INFO] 88 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.012 s]
+[INFO] sa-support ......................................... SUCCESS [  0.872 s]
+[INFO] sa-base ............................................ SUCCESS [  0.821 s]
+[INFO] sa-admin ........................................... FAILURE [  1.170 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.160 s
+[INFO] Finished at: 2025-11-18T00:34:27+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[45,17] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[45,42] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[45,43] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[50,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[51,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[55,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[56,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[60,12] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[62,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[83,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/controller/BiometricMonitorController.java:[62,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[86,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[56,62] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[58,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[59,44] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[59,60] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[61,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[62,44] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[62,56] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[84,66] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[86,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[87,46] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[87,64] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[89,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[90,44] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[90,62] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[92,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[93,44] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[93,59] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[116,63] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[118,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[119,46] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[119,63] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[121,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[122,47] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[122,64] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[150,43] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[152,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[153,47] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[153,66] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[178,45] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[180,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[181,26] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[181,44] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[183,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[184,26] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[184,42] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[186,13] 非法的表达式开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[187,50] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[187,64] 需要';'
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/controller/AccessMonitorController.java:[211,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[59,13] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[61,21] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[61,22] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[62,13] 非法的类型开始
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[62,34] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[62,41] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[63,11] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[65,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[66,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[77,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[78,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[79,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[82,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[83,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[85,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[86,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[100,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[102,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[103,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[104,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[106,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[107,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[121,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[123,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[124,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[125,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[127,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[128,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[142,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[144,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[145,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[146,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[148,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[149,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoAnalyticsController.java:[166,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoDeviceController.java:[70,1] 进行语法分析时已到达文件结尾
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoSurveillanceController.java:[62,1] 进行语法分析时已到达文件结尾
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin
+

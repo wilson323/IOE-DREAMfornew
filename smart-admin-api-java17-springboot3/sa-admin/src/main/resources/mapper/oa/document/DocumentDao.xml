@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.oa.document.dao.DocumentDao">
+
+    <!-- 基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.oa.document.domain.entity.DocumentEntity">
+        <id column="document_id" property="documentId" jdbcType="BIGINT"/>
+        <result column="document_no" property="documentNo" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
+        <result column="summary" property="summary" jdbcType="VARCHAR"/>
+        <result column="document_type" property="documentType" jdbcType="VARCHAR"/>
+        <result column="file_path" property="filePath" jdbcType="VARCHAR"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="file_size" property="fileSize" jdbcType="BIGINT"/>
+        <result column="category_id" property="categoryId" jdbcType="BIGINT"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="priority" property="priority" jdbcType="VARCHAR"/>
+        <result column="tags" property="tags" jdbcType="VARCHAR"/>
+        <result column="keywords" property="keywords" jdbcType="VARCHAR"/>
+        <result column="author" property="author" jdbcType="VARCHAR"/>
+        <result column="publisher" property="publisher" jdbcType="VARCHAR"/>
+        <result column="publish_date" property="publishDate" jdbcType="TIMESTAMP"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="access_level" property="accessLevel" jdbcType="VARCHAR"/>
+        <result column="download_count" property="downloadCount" jdbcType="INTEGER"/>
+        <result column="view_count" property="viewCount" jdbcType="INTEGER"/>
+        <result column="last_access_time" property="lastAccessTime" jdbcType="TIMESTAMP"/>
+        <result column="last_access_by" property="lastAccessBy" jdbcType="BIGINT"/>
+        <result column="expire_time" property="expireTime" jdbcType="TIMESTAMP"/>
+        <result column="archived_time" property="archivedTime" jdbcType="TIMESTAMP"/>
+        <result column="create_by_id" property="createById" jdbcType="BIGINT"/>
+        <result column="create_by_name" property="createByName" jdbcType="VARCHAR"/>
+        <result column="update_by_id" property="updateById" jdbcType="BIGINT"/>
+        <result column="update_by_name" property="updateByName" jdbcType="VARCHAR"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 查询文档条件 -->
+    <sql id="selectDocumentsByConditionSQL">
+        SELECT d.*
+        FROM t_oa_document d
+        WHERE d.deleted_flag = 0
+        <if test="categoryId != null">
+            AND d.category_id = #{categoryId}
+        </if>
+        <if test="documentType != null and documentType != ''">
+            AND d.document_type = #{documentType}
+        </if>
+        <if test="status != null and status != ''">
+            AND d.status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (d.title LIKE CONCAT('%', #{keyword}, '%')
+                 OR d.content LIKE CONCAT('%', #{keyword}, '%')
+                 OR d.keywords LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="tags != null and tags != ''">
+            AND d.tags LIKE CONCAT('%', #{tags}, '%')
+        </if>
+        <if test="startDate != null">
+            AND d.create_time >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND d.create_time &lt;= #{endDate}
+        </if>
+        <if test="createdById != null">
+            AND d.create_by_id = #{createdById}
+        </if>
+        ORDER BY d.create_time DESC
+    </sql>
+
+    <!-- 分页查询文档 -->
+    <select id="selectDocumentsByCondition" resultMap="BaseResultMap">
+        <include refid="selectDocumentsByConditionSQL"/>
+    </select>
+
+    <!-- 批量查询文档 -->
+    <select id="selectBatchByIds" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document
+        WHERE document_id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 获取文档统计信息 -->
+    <select id="selectStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as totalCount,
+            COUNT(CASE WHEN status = 'DRAFT' THEN 1 END) as draftCount,
+            COUNT(CASE WHEN status = 'PUBLISHED' THEN 1 END) as publishedCount,
+            COUNT(CASE WHEN status = 'ARCHIVED' THEN 1 END) as archivedCount,
+            COUNT(CASE WHEN document_type = 'WORD' THEN 1 END) as wordCount,
+            COUNT(CASE WHEN document_type = 'EXCEL' THEN 1 END) as excelCount,
+            COUNT(CASE WHEN document_type = 'PDF' THEN 1 END) as pdfCount,
+            COUNT(CASE WHEN document_type = 'IMAGE' THEN 1 END) as imageCount,
+            SUM(file_size) as totalSize,
+            AVG(file_size) as avgSize
+        FROM t_oa_document
+        WHERE deleted_flag = 0
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+    </select>
+
+    <!-- 查询用户创建的文档 -->
+    <select id="selectByCreatedBy" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document
+        WHERE create_by_id = #{userId}
+        AND deleted_flag = 0
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        ORDER BY create_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询最新文档 -->
+    <select id="selectLatestDocuments" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document
+        WHERE deleted_flag = 0
+        AND status = 'PUBLISHED'
+        ORDER BY create_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询热门文档 -->
+    <select id="selectPopularDocuments" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document
+        WHERE deleted_flag = 0
+        AND status = 'PUBLISHED'
+        ORDER BY view_count DESC, download_count DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询收藏文档 -->
+    <select id="selectFavoriteDocumentIds" resultType="java.lang.Long">
+        SELECT DISTINCT document_id
+        FROM t_oa_document_favorite
+        WHERE user_id = #{userId}
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 更新文档访问信息 -->
+    <update id="updateAccessInfo">
+        UPDATE t_oa_document
+        SET view_count = IFNULL(view_count, 0) + 1,
+            last_access_time = NOW(),
+            last_access_by = #{userId}
+        WHERE document_id = #{documentId}
+    </update>
+
+    <!-- 更新文档统计信息 -->
+    <update id="updateStatistics">
+        UPDATE t_oa_document
+        SET view_count = IFNULL(view_count, 0) + #{viewCountDelta},
+            download_count = IFNULL(download_count, 0) + #{downloadCountDelta}
+        WHERE document_id = #{documentId}
+    </update>
+
+    <!-- 更新文档状态 -->
+    <update id="updateStatus">
+        UPDATE t_oa_document
+        SET status = #{status},
+            <if test="archivedTime != null">
+                archived_time = #{archivedTime},
+            </if>
+            update_time = NOW()
+        WHERE document_id = #{documentId}
+    </update>
+
+    <!-- 检查文档编号是否存在 -->
+    <select id="existsByDocumentNo" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0
+        FROM t_oa_document
+        WHERE document_no = #{documentNo}
+        AND deleted_flag = 0
+        <if test="excludeId != null">
+            AND document_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 查询即将到期的文档 -->
+    <select id="selectExpiringDocuments" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document
+        WHERE deleted_flag = 0
+        AND status = 'PUBLISHED'
+        AND expire_time IS NOT NULL
+        AND expire_time &lt; DATE_ADD(NOW(), INTERVAL #{hours} HOUR)
+        AND expire_time > NOW()
+        ORDER BY expire_time ASC
+    </select>
+
+    <!-- 查询分类下的文档数量 -->
+    <select id="countByCategory" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_oa_document
+        WHERE category_id = #{categoryId}
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 查询文档类型统计 -->
+    <select id="countByDocumentType" resultType="java.util.Map">
+        SELECT
+            document_type as documentType,
+            COUNT(*) as count
+        FROM t_oa_document
+        WHERE deleted_flag = 0
+        GROUP BY document_type
+        ORDER BY count DESC
+    </select>
+
+    <!-- 查询用户权限统计 -->
+    <select id="countByUserPermission" resultType="java.util.Map">
+        SELECT
+            dp.permission as permission,
+            COUNT(*) as count
+        FROM t_oa_document_permission dp
+        INNER JOIN t_oa_document d ON dp.document_id = d.document_id
+        WHERE dp.target_id = #{userId}
+        AND dp.permission_type = 'USER'
+        AND dp.deleted_flag = 0
+        AND d.deleted_flag = 0
+        GROUP BY dp.permission
+    </select>
+
+    <!-- 全文搜索文档 -->
+    <select id="fullTextSearch" resultMap="BaseResultMap">
+        SELECT d.*,
+               MATCH(d.title, d.content, d.keywords) AGAINST(#{keyword} IN NATURAL LANGUAGE MODE) as relevance
+        FROM t_oa_document d
+        WHERE d.deleted_flag = 0
+        AND d.status = 'PUBLISHED'
+        <if test="categoryId != null">
+            AND d.category_id = #{categoryId}
+        </if>
+        <if test="documentType != null and documentType != ''">
+            AND d.document_type = #{documentType}
+        </if>
+        <if test="tags != null and tags != ''">
+            AND d.tags LIKE CONCAT('%', #{tags}, '%')
+        </if>
+        AND (MATCH(d.title, d.content, d.keywords) AGAINST(#{keyword} IN NATURAL LANGUAGE MODE)
+             OR d.title LIKE CONCAT('%', #{keyword}, '%')
+             OR d.content LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY relevance DESC, d.create_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 获取文档历史记录 -->
+    <select id="selectDocumentHistory" resultType="java.util.Map">
+        SELECT
+            document_id as documentId,
+            version as version,
+            title as title,
+            status as status,
+            create_by_name as createByName,
+            create_time as createTime,
+            update_by_name as updateByName,
+            update_time as updateTime
+        FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        ORDER BY version DESC
+    </select>
+
+    <!-- 检查用户是否有任何文档权限 -->
+    <select id="hasAnyPermission" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0
+        FROM t_oa_document_permission dp
+        WHERE dp.target_id = #{userId}
+        AND dp.permission_type = 'USER'
+        AND dp.deleted_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 获取文档存储空间统计 -->
+    <select id="getStorageSpaceStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as totalDocuments,
+            SUM(CASE WHEN deleted_flag = 0 THEN 1 ELSE 0 END) as activeDocuments,
+            SUM(file_size) as totalFileSize,
+            SUM(CASE WHEN deleted_flag = 0 THEN file_size ELSE 0 END) as activeFileSize,
+            AVG(file_size) as avgFileSize,
+            MAX(file_size) as maxFileSize,
+            MIN(file_size) as minFileSize
+        FROM t_oa_document
+    </select>
+
+    <!-- 清理过期文档缓存标记 -->
+    <update id="cleanExpiredCache">
+        UPDATE t_oa_document
+        SET cache_version = NULL
+        WHERE deleted_flag = 0
+        AND update_time &lt; DATE_SUB(NOW(), INTERVAL #{expireDays} DAY)
+        AND cache_version IS NOT NULL
+    </update>
+
+</mapper>

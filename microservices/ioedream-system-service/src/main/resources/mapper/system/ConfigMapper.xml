@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.system.config.dao.ConfigDao">
+
+    <!-- 基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.system.config.domain.entity.ConfigEntity">
+        <id column="config_id" property="configId"/>
+        <result column="config_name" property="configName"/>
+        <result column="config_key" property="configKey"/>
+        <result column="config_value" property="configValue"/>
+        <result column="config_type" property="configType"/>
+        <result column="config_group" property="configGroup"/>
+        <result column="is_system" property="isSystem"/>
+        <result column="description" property="description"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+    </resultMap>
+
+    <!-- 扩展结果映射 -->
+    <resultMap id="DetailResultMap" type="net.lab1024.sa.system.config.domain.vo.ConfigVO" extends="BaseResultMap">
+        <result column="group_name" property="groupName"/>
+        <result column="create_user_name" property="createUserName"/>
+        <result column="update_user_name" property="updateUserName"/>
+        <result column="is_encrypted" property="isEncrypted"/>
+        <result column="validation_rule" property="validationRule"/>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        config_id, config_name, config_key, config_value, config_type, config_group,
+        is_system, description, sort_order, status,
+        create_time, update_time, create_user_id, update_user_id, deleted_flag
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Query_Condition">
+        <where>
+            deleted_flag = 0
+            <if test="configName != null and configName != ''">
+                AND config_name LIKE CONCAT('%', #{configName}, '%')
+            </if>
+            <if test="configKey != null and configKey != ''">
+                AND config_key = #{configKey}
+            </if>
+            <if test="configValue != null and configValue != ''">
+                AND config_value LIKE CONCAT('%', #{configValue}, '%')
+            </if>
+            <if test="configType != null and configType != ''">
+                AND config_type = #{configType}
+            </if>
+            <if test="configGroup != null and configGroup != ''">
+                AND config_group = #{configGroup}
+            </if>
+            <if test="isSystem != null">
+                AND is_system = #{isSystem}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 排序条件 -->
+    <sql id="Order_By_Condition">
+        ORDER BY config_group ASC, sort_order ASC, config_id ASC
+    </sql>
+
+    <!-- 插入配置 -->
+    <insert id="insert" parameterType="net.lab1024.sa.system.config.domain.entity.ConfigEntity" useGeneratedKeys="true" keyProperty="configId">
+        INSERT INTO t_system_config (
+            config_name, config_key, config_value, config_type, config_group,
+            is_system, description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id
+        ) VALUES (
+            #{configName}, #{configKey}, #{configValue}, #{configType}, #{configGroup},
+            #{isSystem}, #{description}, #{sortOrder}, #{status},
+            #{createTime}, #{updateTime}, #{createUserId}, #{updateUserId}
+        )
+    </insert>
+
+    <!-- 批量插入配置 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO t_system_config (
+            config_name, config_key, config_value, config_type, config_group,
+            is_system, description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id
+        ) VALUES
+        <foreach collection="list" item="config" separator=",">
+            (#{config.configName}, #{config.configKey}, #{config.configValue}, #{config.configType}, #{config.configGroup},
+             #{config.isSystem}, #{config.description}, #{config.sortOrder}, #{config.status},
+             #{config.createTime}, #{config.updateTime}, #{config.createUserId}, #{config.updateUserId})
+        </foreach>
+    </insert>
+
+    <!-- 更新配置 -->
+    <update id="update" parameterType="net.lab1024.sa.system.config.domain.entity.ConfigEntity">
+        UPDATE t_system_config
+        <set>
+            <if test="configName != null and configName != ''">config_name = #{configName},</if>
+            <if test="configKey != null and configKey != ''">config_key = #{configKey},</if>
+            <if test="configValue != null">config_value = #{configValue},</if>
+            <if test="configType != null and configType != ''">config_type = #{configType},</if>
+            <if test="configGroup != null and configGroup != ''">config_group = #{configGroup},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUserId != null">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE config_id = #{configId} AND deleted_flag = 0
+    </update>
+
+    <!-- 批量更新配置 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="config" separator=";">
+            UPDATE t_system_config SET
+                <if test="config.status != null">status = #{config.status},</if>
+                <if test="config.sortOrder != null">sort_order = #{config.sortOrder},</if>
+                <if test="config.updateTime != null">update_time = #{config.updateTime},</if>
+                <if test="config.updateUserId != null">update_user_id = #{config.updateUserId},</if>
+            WHERE config_id = #{config.configId} AND deleted_flag = 0
+        </foreach>
+    </update>
+
+    <!-- 删除配置 -->
+    <update id="delete" parameterType="java.lang.Long">
+        UPDATE t_system_config
+        SET deleted_flag = 1,
+            update_time = NOW(),
+            update_user_id = #{updateUserId}
+        WHERE config_id = #{configId}
+    </update>
+
+    <!-- 批量删除配置 -->
+    <update id="batchDelete" parameterType="java.util.List">
+        UPDATE t_system_config
+        SET deleted_flag = 1,
+            update_time = NOW(),
+            update_user_id = #{updateUserId}
+        WHERE config_id IN
+        <foreach collection="configIds" item="configId" separator=",">
+            #{configId}
+        </foreach>
+    </update>
+
+    <!-- 根据ID查询配置 -->
+    <select id="getById" resultMap="DetailResultMap" parameterType="java.lang.Long">
+        SELECT
+            c.*,
+            (
+                SELECT CASE
+                    WHEN c.config_type = 'PASSWORD' OR c.config_type = 'SECRET' THEN 1
+                    ELSE 0
+                END
+            ) as is_encrypted,
+            creator.user_name as create_user_name,
+            updater.user_name as update_user_name
+        FROM t_system_config c
+        LEFT JOIN t_system_employee creator ON c.create_user_id = creator.employee_id AND creator.deleted_flag = 0
+        LEFT JOIN t_system_employee updater ON c.update_user_id = updater.employee_id AND updater.deleted_flag = 0
+        WHERE c.config_id = #{configId} AND c.deleted_flag = 0
+    </select>
+
+    <!-- 根据配置键查询配置 -->
+    <select id="getByKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_config
+        WHERE config_key = #{configKey} AND deleted_flag = 0 AND status = 1
+        LIMIT 1
+    </select>
+
+    <!-- 分页查询配置 -->
+    <select id="queryPage" resultMap="DetailResultMap">
+        SELECT
+            c.*,
+            (
+                SELECT CASE
+                    WHEN c.config_type = 'PASSWORD' OR c.config_type = 'SECRET' THEN 1
+                    ELSE 0
+                END
+            ) as is_encrypted,
+            creator.user_name as create_user_name,
+            updater.user_name as update_user_name
+        FROM t_system_config c
+        LEFT JOIN t_system_employee creator ON c.create_user_id = creator.employee_id AND creator.deleted_flag = 0
+        LEFT JOIN t_system_employee updater ON c.update_user_id = updater.employee_id AND updater.deleted_flag = 0
+        <include refid="Query_Condition"/>
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询所有配置 -->
+    <select id="getAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_config
+        <include refid="Query_Condition"/>
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询所有配置（详细） -->
+    <select id="getAllDetail" resultMap="DetailResultMap">
+        SELECT
+            c.*,
+            (
+                SELECT CASE
+                    WHEN c.config_type = 'PASSWORD' OR c.config_type = 'SECRET' THEN 1
+                    ELSE 0
+                END
+            ) as is_encrypted,
+            creator.user_name as create_user_name,
+            updater.user_name as update_user_name
+        FROM t_system_config c
+        LEFT JOIN t_system_employee creator ON c.create_user_id = creator.employee_id AND creator.deleted_flag = 0
+        LEFT JOIN t_system_employee updater ON c.update_user_id = updater.employee_id AND updater.deleted_flag = 0
+        WHERE c.deleted_flag = 0
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询配置组列表 -->
+    <select id="getConfigGroups" resultType="java.util.Map">
+        SELECT
+            config_group as group_code,
+            config_group as group_name,
+            COUNT(*) as config_count,
+            COUNT(CASE WHEN status = 1 THEN 1 END) as enabled_count
+        FROM t_system_config
+        WHERE deleted_flag = 0
+        GROUP BY config_group
+        ORDER BY config_group
+    </select>
+
+    <!-- 根据组查询配置 -->
+    <select id="getConfigsByGroup" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_config
+        WHERE config_group = #{configGroup} AND deleted_flag = 0
+        ORDER BY sort_order ASC, config_id ASC
+    </select>
+
+    <!-- 查询系统配置 -->
+    <select id="getSystemConfigs" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_config
+        WHERE is_system = 1 AND deleted_flag = 0 AND status = 1
+        ORDER BY config_group ASC, sort_order ASC
+    </select>
+
+    <!-- 查询用户自定义配置 -->
+    <select id="getUserConfigs" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_config
+        WHERE is_system = 0 AND deleted_flag = 0
+        ORDER BY config_group ASC, sort_order ASC
+    </select>
+
+    <!-- 检查配置名称是否存在 -->
+    <select id="checkConfigNameExist" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_system_config
+        WHERE config_name = #{configName} AND deleted_flag = 0
+        <if test="excludeId != null">
+            AND config_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 检查配置键是否存在 -->
+    <select id="checkConfigKeyExist" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_system_config
+        WHERE config_key = #{configKey} AND deleted_flag = 0
+        <if test="excludeId != null">
+            AND config_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 导出配置数据 -->
+    <select id="exportConfigs" resultType="java.util.Map">
+        SELECT
+            config_name,
+            config_key,
+            config_value,
+            config_type,
+            config_group,
+            is_system,
+            description,
+            status
+        FROM t_system_config
+        WHERE deleted_flag = 0
+        <if test="configIds != null and configIds.size() > 0">
+            AND config_id IN
+            <foreach collection="configIds" item="configId" separator=",">
+                #{configId}
+            </foreach>
+        </if>
+        ORDER BY config_group ASC, sort_order ASC
+    </select>
+
+    <!-- 获取配置统计 -->
+    <select id="getConfigStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as total_count,
+            COUNT(CASE WHEN status = 1 THEN 1 END) as enabled_count,
+            COUNT(CASE WHEN status = 0 THEN 1 END) as disabled_count,
+            COUNT(CASE WHEN is_system = 1 THEN 1 END) as system_count,
+            COUNT(CASE WHEN is_system = 0 THEN 1 END) as user_count,
+            COUNT(DISTINCT config_group) as group_count,
+            COUNT(CASE WHEN config_type = 'STRING' THEN 1 END) as string_count,
+            COUNT(CASE WHEN config_type = 'NUMBER' THEN 1 END) as number_count,
+            COUNT(CASE WHEN config_type = 'BOOLEAN' THEN 1 END) as boolean_count,
+            COUNT(CASE WHEN config_type = 'PASSWORD' THEN 1 END) as password_count,
+            COUNT(CASE WHEN config_type = 'SECRET' THEN 1 END) as secret_count
+        FROM t_system_config
+        WHERE deleted_flag = 0
+    </select>
+
+    <!-- 获取最近的配置变更 -->
+    <select id="getRecentConfigChanges" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_config
+        WHERE deleted_flag = 0
+        AND update_time >= DATE_SUB(NOW(), INTERVAL #{days} DAY)
+        ORDER BY update_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 搜索配置 -->
+    <select id="searchConfigs" resultMap="DetailResultMap">
+        SELECT
+            c.*,
+            (
+                SELECT CASE
+                    WHEN c.config_type = 'PASSWORD' OR c.config_type = 'SECRET' THEN 1
+                    ELSE 0
+                END
+            ) as is_encrypted
+        FROM t_system_config c
+        WHERE c.deleted_flag = 0
+        AND (
+            c.config_name LIKE CONCAT('%', #{keyword}, '%')
+            OR c.config_key LIKE CONCAT('%', #{keyword}, '%')
+            OR c.config_value LIKE CONCAT('%', #{keyword}, '%')
+            OR c.description LIKE CONCAT('%', #{keyword}, '%')
+        )
+        ORDER BY
+            CASE
+                WHEN c.config_name LIKE CONCAT(#{keyword}, '%') THEN 1
+                WHEN c.config_name LIKE CONCAT('%', #{keyword}) THEN 2
+                ELSE 3
+            END,
+            c.config_name ASC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 更新配置状态 -->
+    <update id="updateStatus" parameterType="java.util.List">
+        UPDATE t_system_config
+        SET status = #{status}, update_time = NOW()
+        WHERE config_id IN
+        <foreach collection="configIds" item="configId" separator=",">
+            #{configId}
+        </foreach>
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 批量更新配置组 -->
+    <update id="batchUpdateGroup" parameterType="java.util.Map">
+        UPDATE t_system_config
+        SET config_group = #{newGroup},
+            update_time = NOW(),
+            update_user_id = #{updateUserId}
+        WHERE config_id IN
+        <foreach collection="configIds" item="configId" separator=",">
+            #{configId}
+        </foreach>
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 清理无效配置 -->
+    <delete id="cleanupInvalidConfigs" parameterType="java.lang.Integer">
+        DELETE FROM t_system_config
+        WHERE deleted_flag = 1
+        AND update_time &lt; DATE_SUB(NOW(), INTERVAL #{retentionDays} DAY)
+    </delete>
+
+</mapper>

@@ -1,0 +1,17 @@
+===============================================
+服务: ioedream-consume-service 测试覆盖率报告
+生成时间: 2025年11月29日  7:05:53
+===============================================
+源文件数量: 171
+测试文件数量: 7
+测试方法数量: 275
+预估覆盖率: 100%
+
+详细文件列表:
+/d/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java
+/d/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AdvancedReportControllerTest.java
+/d/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java
+/d/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RechargeControllerTest.java
+/d/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java
+/d/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImplTest.java
+/d/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/ReportServiceImplTest.java

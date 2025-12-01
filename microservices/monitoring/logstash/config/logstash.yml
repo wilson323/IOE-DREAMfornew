@@ -1,0 +1,44 @@
+# ===================================================================
+# IOE-DREAM 生产环境 Logstash 配置
+# 版本: v2.0.0
+# 更新时间: 2025-11-29
+# ===================================================================
+
+# 节点配置
+node.name: logstash-node-1
+
+# 路径配置
+path.data: /usr/share/logstash/data
+path.config: /usr/share/logstash/pipeline
+path.logs: /usr/share/logstash/logs
+
+# 管道配置
+pipeline.workers: 4
+pipeline.batch.size: 125
+pipeline.batch.delay: 50
+
+# 监控配置
+monitoring.enabled: true
+
+# 日志配置
+log.level: INFO
+
+# HTTP配置
+http.host: "0.0.0.0"
+http.port: 9600
+
+# Elasticsearch输出配置
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  index: "ioedream-logs-%{+YYYY.MM.dd}"
+  template_name: "ioedream-log-template"
+  template_pattern: "ioedream-*"
+  template: /usr/share/logstash/templates/logstash-template.json
+
+# 管道ID
+pipeline.id: main
+
+# 队列配置
+queue.type: persisted
+queue.max_bytes: 1gb
+queue.checkpoint.writes: 1024

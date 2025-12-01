@@ -1,0 +1,390 @@
+# 业务服务配置
+# 包含门禁、消费、考勤、视频等核心业务服务
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-access-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-access-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM门禁管理服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8084"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8084
+      targetPort: 8084
+      protocol: TCP
+  selector:
+    app: ioedream-access-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-consume-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-consume-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM消费管理服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8085"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8085
+      targetPort: 8085
+      protocol: TCP
+  selector:
+    app: ioedream-consume-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-attendance-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-attendance-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM考勤管理服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8086"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8086
+      targetPort: 8086
+      protocol: TCP
+  selector:
+    app: ioedream-attendance-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-video-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-video-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM视频监控服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8087"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8087
+      targetPort: 8087
+      protocol: TCP
+    - name: rtsp  # 视频流端口
+      port: 8554
+      targetPort: 8554
+      protocol: TCP
+  selector:
+    app: ioedream-video-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-oa-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-oa-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM OA办公服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8088"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8088
+      targetPort: 8088
+      protocol: TCP
+  selector:
+    app: ioedream-oa-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-system-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-system-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM系统管理服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8089"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8089
+      targetPort: 8089
+      protocol: TCP
+  selector:
+    app: ioedream-system-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-monitor-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-monitor-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM监控告警服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8090"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8090
+      targetPort: 8090
+      protocol: TCP
+  selector:
+    app: ioedream-monitor-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-file-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-file-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM文件管理服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8091"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8091
+      targetPort: 8091
+      protocol: TCP
+  selector:
+    app: ioedream-file-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-notification-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-notification-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM通知服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8092"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8092
+      targetPort: 8092
+      protocol: TCP
+  selector:
+    app: ioedream-notification-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-visitor-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-visitor-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM访客管理服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8093"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8093
+      targetPort: 8093
+      protocol: TCP
+  selector:
+    app: ioedream-visitor-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-hr-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-hr-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM人力资源服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8094"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8094
+      targetPort: 8094
+      protocol: TCP
+  selector:
+    app: ioedream-hr-service
+    environment: production
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-report-service
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-report-service
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "IOE-DREAM报表服务"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8095"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8095
+      targetPort: 8095
+      protocol: TCP
+  selector:
+    app: ioedream-report-service
+    environment: production
+
+---
+# NodePort服务（用于外部访问测试）
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-gateway-nodeport
+  namespace: ioedream-prod
+  labels:
+    app: smart-gateway
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "网关服务外部访问入口"
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+      protocol: TCP
+  selector:
+    app: smart-gateway
+    environment: production
+
+---
+# LoadBalancer服务（用于云环境外部访问）
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-gateway-loadbalancer
+  namespace: ioedream-prod
+  labels:
+    app: smart-gateway
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "网关服务负载均衡器"
+    # AWS ELB annotations
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    # Azure Load Balancer annotations
+    service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: smart-gateway
+    environment: production

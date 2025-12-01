@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.lab1024.sa</groupId>
+  <artifactId>smart-admin-microservices</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <name>Smart Admin Microservices</name>
+  <description>IOE-DREAM智能管理系统微服务架构</description>
+
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Spring Boot版本 -->
+    <spring-boot.version>3.5.8</spring-boot.version>
+    <spring-cloud.version>2023.0.3</spring-cloud.version>
+    <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+
+    <!-- 数据库相关 -->
+    <mybatis-plus.version>3.5.7</mybatis-plus.version>
+    <druid.version>1.2.21</druid.version>
+    <mysql.version>8.0.33</mysql.version>
+
+    <!-- 工具库 -->
+    <hutool.version>5.8.39</hutool.version>
+    <fastjson.version>2.0.57</fastjson.version>
+    <fastjson2.version>2.0.57</fastjson2.version>
+    <lombok.version>1.18.34</lombok.version>
+
+    <!-- Apache POI -->
+    <poi.version>5.4.1</poi.version>
+
+    <!-- 其他 -->
+    <knife4j.version>4.4.0</knife4j.version>
+    <sa-token.version>1.44.0</sa-token.version>
+    <mapstruct.version>1.5.5.Final</mapstruct.version>
+  </properties>
+
+  <modules>
+    <!-- 公共模块 -->
+    <module>microservices-common</module>
+
+    <!-- 基础设施服务 -->
+    <module>ioedream-config-service</module>       <!-- 配置中心服务 -->
+    <module>ioedream-gateway-service</module>      <!-- API网关服务 -->
+    <module>ioedream-auth-service</module>         <!-- 认证服务 -->
+    <module>ioedream-identity-service</module>     <!-- 身份权限服务 -->
+    <module>ioedream-audit-service</module>        <!-- 审计服务 -->
+
+    <!-- 核心服务 -->
+    <module>ioedream-device-service</module>       <!-- 设备管理服务 -->
+    <module>ioedream-system-service</module>       <!-- 系统管理服务 -->
+    <module>ioedream-enterprise-service</module>   <!-- 企业管理服务 -->
+
+    <!-- 业务服务 -->
+    <module>ioedream-access-service</module>       <!-- 门禁管理服务 -->
+    <module>ioedream-consume-service</module>      <!-- 消费管理服务 -->
+    <module>ioedream-visitor-service</module>      <!-- 访客管理服务 -->
+    <module>ioedream-attendance-service</module>   <!-- 考勤管理服务 -->
+    <module>ioedream-video-service</module>        <!-- 视频监控服务 -->
+    <module>ioedream-notification-service</module> <!-- 通知服务 -->
+    <!-- 文件服务已整合到enterprise-service -->
+
+    <!-- 支撑服务 -->
+    <module>ioedream-infrastructure-service</module> <!-- 基础设施服务 -->
+    <!-- <module>ioedream-oa-service</module> -->     <!-- 办公自动化服务 - 已合并到 enterprise-service -->
+    <module>ioedream-monitor-service</module>      <!-- 监控告警服务 -->
+    <module>ioedream-report-service</module>     <!-- 报表服务 -->
+    <module>ioedream-integration-service</module> <!-- 集成服务 -->
+    <module>ioedream-scheduler-service</module>   <!-- 调度服务 -->
+
+    <!-- 兼容性模块（逐步迁移后删除） -->
+    <!-- <module>analytics</module> -->                     <!-- 原分析服务（已整合到ioedream-report-service） -->
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Spring Boot -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Spring Cloud -->
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Spring Cloud Alibaba -->
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        <version>${spring-cloud-alibaba.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- 数据库相关 -->
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-boot-starter</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid-spring-boot-3-starter</artifactId>
+        <version>${druid.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql.version}</version>
+      </dependency>
+
+      <!-- 工具库 -->
+      <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-all</artifactId>
+        <version>${hutool.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson2</artifactId>
+        <version>${fastjson2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.fastjson2</groupId>
+        <artifactId>fastjson2</artifactId>
+        <version>${fastjson2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+
+      <!-- API文档 -->
+      <dependency>
+        <groupId>com.github.xiaoymin</groupId>
+        <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+        <version>${knife4j.version}</version>
+      </dependency>
+
+      <!-- 权限认证 -->
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-spring-boot3-starter</artifactId>
+        <version>${sa-token.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-redis-jackson</artifactId>
+        <version>${sa-token.version}</version>
+      </dependency>
+
+      <!-- Apache POI -->
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>${poi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>${poi.version}</version>
+      </dependency>
+
+      <!-- 对象映射 -->
+      <dependency>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct</artifactId>
+        <version>${mapstruct.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct-processor</artifactId>
+        <version>${mapstruct.version}</version>
+      </dependency>
+
+      <!-- 内部模块依赖 -->
+      <dependency>
+        <groupId>net.lab1024.sa</groupId>
+        <artifactId>microservices-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>17</source>
+          <target>17</target>
+          <encoding>UTF-8</encoding>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>${mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>aliyun-maven</id>
+      <name>Aliyun Maven Repository</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </repository>
+  </repositories>
+</project>

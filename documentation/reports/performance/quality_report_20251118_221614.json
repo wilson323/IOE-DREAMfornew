@@ -1,0 +1,19 @@
+{
+  "report_timestamp": "2025-11-18 22:19:41",
+  "project": "IOE-DREAM",
+  "current_metrics": ,
+  "target": {
+    "errors": 120,
+    "stage": "second_phase",
+    "deadline_hours": 20
+  },
+  "analysis": {
+    "quality_improvement_needed":  - 120,
+    "error_density": 
+  },
+  "recommendations": {
+    "batch_fix_jakarta": ,
+    "batch_fix_autowired": ,
+    "fix_missing_symbols": 
+  }
+}

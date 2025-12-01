@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.smart.access.dao.AccessEventDao">
+
+    <!-- 通用结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.smart.access.domain.entity.AccessEventEntity">
+        <id column="event_id" property="eventId"/>
+        <result column="event_no" property="eventNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_code" property="userCode"/>
+        <result column="user_name" property="userName"/>
+        <result column="department_id" property="departmentId"/>
+        <result column="department_name" property="departmentName"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="device_code" property="deviceCode"/>
+        <result column="device_name" property="deviceName"/>
+        <result column="area_id" property="areaId"/>
+        <result column="area_name" property="areaName"/>
+        <result column="verify_method" property="verifyMethod"/>
+        <result column="verify_result" property="verifyResult"/>
+        <result column="fail_reason" property="failReason"/>
+        <result column="card_no" property="cardNo"/>
+        <result column="biometric_id" property="biometricId"/>
+        <result column="fingerprint_id" property="fingerprintId"/>
+        <result column="face_id" property="faceId"/>
+        <result column="direction" property="direction"/>
+        <result column="event_time" property="eventTime"/>
+        <result column="door_open_time" property="doorOpenTime"/>
+        <result column="door_close_time" property="doorCloseTime"/>
+        <result column="duration" property="duration"/>
+        <result column="door_opened" property="doorOpened"/>
+        <result column="photo_path" property="photoPath"/>
+        <result column="thumbnail_path" property="thumbnailPath"/>
+        <result column="temperature" property="temperature"/>
+        <result column="temperature_abnormal" property="temperatureAbnormal"/>
+        <result column="mask_status" property="maskStatus"/>
+        <result column="visitor_id" property="visitorId"/>
+        <result column="visitor_name" property="visitorName"/>
+        <result column="visitor_id_card" property="visitorIdCard"/>
+        <result column="visitee_id" property="visiteeId"/>
+        <result column="visitee_name" property="visiteeName"/>
+        <result column="valid_start_time" property="validStartTime"/>
+        <result column="valid_end_time" property="validEndTime"/>
+        <result column="event_level" property="eventLevel"/>
+        <result column="blacklist_event" property="blacklistEvent"/>
+        <result column="alarm_type" property="alarmType"/>
+        <result column="alarm_desc" property="alarmDesc"/>
+        <result column="handle_status" property="handleStatus"/>
+        <result column="handler_id" property="handlerId"/>
+        <result column="handler_name" property="handlerName"/>
+        <result column="handle_time" property="handleTime"/>
+        <result column="handle_remark" property="handleRemark"/>
+        <result column="data_source" property="dataSource"/>
+        <result column="third_party_id" property="thirdPartyId"/>
+        <result column="raw_message" property="rawMessage"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <!-- 统计设备总数 -->
+    <select id="countTotalDevices" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT device_id)
+        FROM t_smart_access_event
+    </select>
+
+    <!-- 统计在线设备数量 -->
+    <select id="countOnlineDevices" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT device_id)
+        FROM t_smart_access_event
+        WHERE event_time >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+        AND verify_result = 0
+    </select>
+
+    <!-- 分页查询门禁事件 -->
+    <select id="selectEventPage" resultMap="BaseResultMap">
+        SELECT
+            event_id, event_no, user_id, user_code, user_name, department_id, department_name,
+            device_id, device_code, device_name, area_id, area_name,
+            verify_method, verify_result, fail_reason, card_no, biometric_id,
+            fingerprint_id, face_id, direction, event_time, door_open_time,
+            door_close_time, duration, door_opened, photo_path, thumbnail_path,
+            temperature, temperature_abnormal, mask_status, visitor_id, visitor_name,
+            visitor_id_card, visitee_id, visitee_name, valid_start_time, valid_end_time,
+            event_level, blacklist_event, alarm_type, alarm_desc, handle_status,
+            handler_id, handler_name, handle_time, handle_remark, data_source,
+            third_party_id, raw_message, remark
+        FROM t_smart_access_event
+        <where>
+            1=1
+            <if test="deviceId != null and deviceId != ''">
+                AND device_id = #{deviceId}
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="verifyResult != null and verifyResult != ''">
+                AND verify_result = #{verifyResult}
+            </if>
+            <if test="startTime != null">
+                AND event_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND event_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY event_time DESC
+    </select>
+
+    <!-- 根据时间范围查询事件统计 -->
+    <select id="selectEventStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as total_events,
+            SUM(CASE WHEN verify_result = 0 THEN 1 ELSE 0 END) as success_events,
+            SUM(CASE WHEN verify_result = 1 THEN 1 ELSE 0 END) as failed_events,
+            SUM(CASE WHEN verify_result = 2 THEN 1 ELSE 0 END) as timeout_events,
+            COUNT(DISTINCT device_id) as active_devices,
+            COUNT(DISTINCT user_id) as active_users
+        FROM t_smart_access_event
+        <where>
+            1=1
+            <if test="startTime != null">
+                AND event_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND event_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询指定区域的访问统计 -->
+    <select id="selectAreaStatistics" resultType="java.util.Map">
+        SELECT
+            area_name,
+            COUNT(*) as event_count,
+            SUM(CASE WHEN verify_result = 0 THEN 1 ELSE 0 END) as success_count,
+            SUM(CASE WHEN verify_result = 1 THEN 1 ELSE 0 END) as failed_count
+        FROM t_smart_access_event
+        <where>
+            1=1
+            <if test="areaIds != null and areaIds.size() > 0">
+                AND area_id IN
+                <foreach collection="areaIds" item="areaId" open="(" separator="," close=")">
+                    #{areaId}
+                </foreach>
+            </if>
+            <if test="startTime != null">
+                AND event_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND event_time &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY area_id, area_name
+        ORDER BY event_count DESC
+    </select>
+
+    <!-- 查询设备访问统计 -->
+    <select id="selectDeviceStatistics" resultType="java.util.Map">
+        SELECT
+            device_name,
+            COUNT(*) as event_count,
+            SUM(CASE WHEN verify_result = 0 THEN 1 ELSE 0 END) as success_count,
+            SUM(CASE WHEN verify_result = 1 THEN 1 ELSE 0 END) as failed_count,
+            MAX(event_time) as last_event_time
+        FROM t_smart_access_event
+        <where>
+            1=1
+            <if test="startTime != null">
+                AND event_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND event_time &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY device_id, device_name
+        ORDER BY event_count DESC
+        LIMIT 20
+    </select>
+
+    <!-- 查询验证方式统计 -->
+    <select id="selectVerifyMethodStatistics" resultType="java.util.Map">
+        SELECT
+            verify_method,
+            CASE
+                WHEN verify_method = 1 THEN '刷卡'
+                WHEN verify_method = 2 THEN '密码'
+                WHEN verify_method = 3 THEN '指纹'
+                WHEN verify_method = 4 THEN '人脸'
+                WHEN verify_method = 5 THEN '二维码'
+                WHEN verify_method = 6 THEN 'IC卡+密码'
+                ELSE '其他'
+            END as method_name,
+            COUNT(*) as usage_count,
+            SUM(CASE WHEN verify_result = 0 THEN 1 ELSE 0 END) as success_count,
+            SUM(CASE WHEN verify_result = 1 THEN 1 ELSE 0 END) as failed_count,
+            ROUND(SUM(CASE WHEN verify_result = 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as success_rate
+        FROM t_smart_access_event
+        <where>
+            1=1
+            <if test="startTime != null">
+                AND event_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND event_time &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY verify_method
+        ORDER BY usage_count DESC
+    </select>
+
+    <!-- 查询最近的事件记录 -->
+    <select id="selectRecentEvents" resultMap="BaseResultMap">
+        <include refid="selectColumns"/>
+        FROM t_smart_access_event
+        ORDER BY event_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询用户最近访问记录 -->
+    <select id="selectUserRecentEvents" resultMap="BaseResultMap">
+        <include refid="selectColumns"/>
+        FROM t_smart_access_event
+        WHERE user_id = #{userId}
+        ORDER BY event_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询设备最近事件 -->
+    <select id="selectDeviceRecentEvents" resultMap="BaseResultMap">
+        <include refid="selectColumns"/>
+        FROM t_smart_access_event
+        WHERE device_id = #{deviceId}
+        ORDER BY event_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 统计失败访问次数 -->
+    <select id="countFailedAccess" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_smart_access_event
+        WHERE user_id = #{userId}
+        AND verify_result = 1
+        <if test="startTime != null">
+            AND event_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND event_time &lt;= #{endTime}
+        </if>
+    </select>
+
+    <!-- 查询黑名单访问记录 -->
+    <select id="selectBlacklistEvents" resultMap="BaseResultMap">
+        <include refid="selectColumns"/>
+        FROM t_smart_access_event
+        WHERE blacklist_event = 1
+        <if test="startTime != null">
+            AND event_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND event_time &lt;= #{endTime}
+        </if>
+        ORDER BY event_time DESC
+    </select>
+
+    <!-- 查询异常访问记录 -->
+    <select id="selectAbnormalEvents" resultMap="BaseResultMap">
+        <include refid="selectColumns"/>
+        FROM t_smart_access_event
+        WHERE (alarm_type > 0 OR event_level >= 2)
+        <if test="startTime != null">
+            AND event_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND event_time &lt;= #{endTime}
+        </if>
+        ORDER BY event_time DESC
+    </select>
+
+    <!-- 删除过期事件记录 -->
+    <delete id="deleteExpiredEvents">
+        DELETE FROM t_smart_access_event
+        WHERE event_time &lt; #{cutoffTime}
+    </delete>
+
+    <!-- 通用查询列 -->
+    <sql id="selectColumns">
+        SELECT
+            event_id, event_no, user_id, user_code, user_name, department_id, department_name,
+            device_id, device_code, device_name, area_id, area_name,
+            verify_method, verify_result, fail_reason, card_no, biometric_id,
+            fingerprint_id, face_id, direction, event_time, door_open_time,
+            door_close_time, duration, door_opened, photo_path, thumbnail_path,
+            temperature, temperature_abnormal, mask_status, visitor_id, visitor_name,
+            visitor_id_card, visitee_id, visitee_name, valid_start_time, valid_end_time,
+            event_level, blacklist_event, alarm_type, alarm_desc, handle_status,
+            handler_id, handler_name, handle_time, handle_remark, data_source,
+            third_party_id, raw_message, remark
+    </sql>
+
+</mapper>

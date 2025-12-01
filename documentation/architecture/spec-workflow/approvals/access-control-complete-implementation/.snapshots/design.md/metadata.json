@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/access-control-complete-implementation/design.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-16T08:41:57.719Z",
+      "trigger": "initial",
+      "approvalId": "approval_1763282517692_ph2enfqkr",
+      "approvalTitle": "门禁系统完整实现设计文档审批"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-25T11:34:41.794Z",
+      "trigger": "approved",
+      "approvalId": "approval_1763282517692_ph2enfqkr",
+      "approvalTitle": "门禁系统完整实现设计文档审批"
+    }
+  ]
+}

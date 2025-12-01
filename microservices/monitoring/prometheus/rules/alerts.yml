@@ -1,0 +1,320 @@
+# ===================================================================
+# IOE-DREAM 生产环境告警规则配置
+# 严重程度级别: critical(严重) > warning(警告) > info(信息)
+# ===================================================================
+
+groups:
+  # ========================================
+  # 系统基础设施告警规则
+  # ========================================
+  - name: infrastructure.rules
+    rules:
+      # 服务器宕机告警
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "服务器实例 {{ $labels.instance }} 宕机"
+          description: "{{ $labels.instance }} 已宕机超过1分钟，请立即检查！"
+
+      # CPU使用率过高告警
+      - alert: HighCpuUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "服务器 {{ $labels.instance }} CPU使用率过高"
+          description: "CPU使用率已达到 {{ $value }}%，超过80%阈值"
+
+      # 内存使用率过高告警
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "服务器 {{ $labels.instance }} 内存使用率过高"
+          description: "内存使用率已达到 {{ $value }}%，超过85%阈值"
+
+      # 磁盘空间不足告警
+      - alert: DiskSpaceLow
+        expr: (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})) * 100 > 90
+        for: 2m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "服务器 {{ $labels.instance }} 磁盘空间不足"
+          description: "磁盘 {{ $labels.mountpoint }} 使用率已达到 {{ $value }}%，超过90%阈值"
+
+  # ========================================
+  # 微服务应用告警规则
+  # ========================================
+  - name: microservices.rules
+    rules:
+      # 微服务不可用告警
+      - alert: MicroserviceDown
+        expr: up{job=~".*-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: microservice
+        annotations:
+          summary: "微服务 {{ $labels.job }} 不可用"
+          description: "微服务 {{ $labels.job }} 已停止响应超过1分钟"
+
+      # 微服务响应时间过长告警
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service)) > 2
+        for: 5m
+        labels:
+          severity: warning
+          category: microservice
+        annotations:
+          summary: "微服务 {{ $labels.service }} 响应时间过长"
+          description: "95%请求响应时间超过2秒，当前值：{{ $value }}秒"
+
+      # 微服务错误率过高告警
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status=~"5.."}[5m])) by (service) / sum(rate(http_requests_total[5m])) by (service) * 100 > 5
+        for: 3m
+        labels:
+          severity: warning
+          category: microservice
+        annotations:
+          summary: "微服务 {{ $labels.service }} 错误率过高"
+          description: "5xx错误率已达到 {{ $value }}%，超过5%阈值"
+
+      # 微服务并发连接数过高告警
+      - alert: HighConcurrency
+        expr: http_requests_concurrent > 1000
+        for: 2m
+        labels:
+          severity: warning
+          category: microservice
+        annotations:
+          summary: "微服务 {{ $labels.service }} 并发连接数过高"
+          description: "并发连接数已达到 {{ $value }}，超过1000阈值"
+
+  # ========================================
+  # JVM性能告警规则
+  # ========================================
+  - name: jvm.rules
+    rules:
+      # JVM堆内存使用率过高告警
+      - alert: HighJvmHeapUsage
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          category: jvm
+        annotations:
+          summary: "JVM堆内存使用率过高"
+          description: "{{ $labels.instance }} JVM堆内存使用率已达到 {{ $value }}%"
+
+      # JVM非堆内存使用率过高告警
+      - alert: HighJvmNonHeapUsage
+        expr: (jvm_memory_used_bytes{area="nonheap"} / jvm_memory_max_bytes{area="nonheap"}) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+          category: jvm
+        annotations:
+          summary: "JVM非堆内存使用率过高"
+          description: "{{ $labels.instance }} JVM非堆内存使用率已达到 {{ $value }}%"
+
+      # GC时间过长告警
+      - alert: LongGcPause
+        expr: rate(jvm_gc_collection_seconds_sum[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          category: jvm
+        annotations:
+          summary: "JVM GC停顿时间过长"
+          description: "{{ $labels.instance }} GC停顿时间过长，当前值：{{ $value }}秒"
+
+      # 线程数过多告警
+      - alert: HighThreadCount
+        expr: jvm_threads_live_threads > 200
+        for: 3m
+        labels:
+          severity: info
+          category: jvm
+        annotations:
+          summary: "JVM活跃线程数过多"
+          description: "{{ $labels.instance }} 活跃线程数：{{ $value }}"
+
+  # ========================================
+  # 数据库告警规则
+  # ========================================
+  - name: database.rules
+    rules:
+      # MySQL连接数过多告警
+      - alert: HighMysqlConnections
+        expr: mysql_global_status_threads_connected / mysql_global_variables_max_connections * 100 > 80
+        for: 3m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "MySQL连接数过多"
+          description: "MySQL连接数已达到 {{ $value }}%，超过80%阈值"
+
+      # MySQL慢查询过多告警
+      - alert: HighMysqlSlowQueries
+        expr: rate(mysql_global_status_slow_queries[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "MySQL慢查询过多"
+          description: "慢查询频率：{{ $value }} 次/秒"
+
+      # MySQL复制延迟告警
+      - alert: MysqlReplicationLag
+        expr: mysql_slave_lag_seconds > 30
+        for: 1m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "MySQL主从复制延迟"
+          description: "复制延迟：{{ $value }} 秒"
+
+  # ========================================
+  # Redis缓存告警规则
+  # ========================================
+  - name: redis.rules
+    rules:
+      # Redis内存使用率过高告警
+      - alert: HighRedisMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: "Redis内存使用率过高"
+          description: "Redis内存使用率已达到 {{ $value }}%"
+
+      # Redis连接数过多告警
+      - alert: HighRedisConnections
+        expr: redis_connected_clients > 100
+        for: 3m
+        labels:
+          severity: info
+          category: cache
+        annotations:
+          summary: "Redis连接数过多"
+          description: "Redis连接数：{{ $value }}"
+
+      # Redis命中率过低告警
+      - alert: LowRedisHitRate
+        expr: redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total) * 100 < 90
+        for: 5m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: "Redis命中率过低"
+          description: "Redis命中率：{{ $value }}%"
+
+  # ========================================
+  # 业务指标告警规则
+  # ========================================
+  - name: business.rules
+    rules:
+      # 用户在线数过低告警
+      - alert: LowUserOnlineCount
+        expr: users_online_total < 10
+        for: 10m
+        labels:
+          severity: info
+          category: business
+        annotations:
+          summary: "在线用户数过低"
+          description: "当前在线用户数：{{ $value }}"
+
+      # 交易成功率过低告警
+      - alert: LowTransactionSuccessRate
+        expr: transaction_success_rate * 100 < 95
+        for: 5m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: "交易成功率过低"
+          description: "交易成功率：{{ $value }}%"
+
+      # 关键业务操作延迟过高告警
+      - alert: HighBusinessOperationLatency
+        expr: histogram_quantile(0.95, rate(business_operation_duration_seconds_bucket[5m])) > 5
+        for: 3m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: "关键业务操作延迟过高"
+          description: "95%操作延迟：{{ $value }} 秒"
+
+  # ========================================
+  # 安全告警规则
+  # ========================================
+  - name: security.rules
+    rules:
+      # 异常登录尝试告警
+      - alert: SuspiciousLoginAttempts
+        expr: rate(login_failed_total[5m]) > 5
+        for: 1m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "检测到异常登录尝试"
+          description: "5分钟内失败登录次数：{{ $value }}"
+
+      # 权限变更频繁告警
+      - alert: FrequentPermissionChanges
+        expr: rate(permission_changes_total[10m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "权限变更操作频繁"
+          description: "10分钟内权限变更次数：{{ $value }}"
+
+  # ========================================
+  # 网络告警规则
+  # ========================================
+  - name: network.rules
+    rules:
+      # 网络带宽使用率过高告警
+      - alert: HighNetworkBandwidthUsage
+        expr: rate(node_network_receive_bytes_total[5m]) + rate(node_network_transmit_bytes_total[5m]) > 1000000000  # 1GB/s
+        for: 5m
+        labels:
+          severity: warning
+          category: network
+        annotations:
+          summary: "网络带宽使用率过高"
+          description: "网络带宽使用：{{ $value }} bytes/s"
+
+      # 网络丢包率过高告警
+      - alert: HighNetworkPacketLoss
+        expr: rate(node_network_receive_drop_total[5m]) + rate(node_network_transmit_drop_total[5m]) > 10
+        for: 3m
+        labels:
+          severity: warning
+          category: network
+        annotations:
+          summary: "网络丢包率过高"
+          description: "网络丢包率：{{ $value }} packets/s"

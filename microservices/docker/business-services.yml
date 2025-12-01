@@ -1,0 +1,576 @@
+# IOE-DREAM 微服务业务服务配置
+# 包含：门禁服务、消费服务、考勤服务、视频服务、访客服务等
+version: '3.8'
+
+services:
+  # 智能网关
+  smart-gateway:
+    build:
+      context: ../smart-gateway
+      dockerfile: Dockerfile
+    container_name: smart-gateway
+    hostname: smart-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+    volumes:
+      - gateway_logs:/app/logs
+      - gateway_config:/app/config
+    networks:
+      - ioedream-network
+    depends_on:
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 门禁控制服务
+  ioedream-access-service:
+    build:
+      context: ../ioedream-access-service
+      dockerfile: Dockerfile
+    container_name: ioedream-access-service
+    hostname: ioedream-access-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_NAME: ioedream_access
+      DB_USERNAME: root
+      DB_PASSWORD: ioedream@2024
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: ioedream@2024
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+      DEVICE_SERVICE_URL: http://ioedream-device-service:8083
+      AREA_SERVICE_URL: http://ioedream-area-service:8084
+      VISITOR_SERVICE_URL: http://ioedream-visitor-service:8089
+    volumes:
+      - access_logs:/app/logs
+      - access_config:/app/config
+      - access_images:/app/images
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+      ioedream-device-service:
+        condition: service_healthy
+      ioedream-area-service:
+        condition: service_healthy
+      ioedream-visitor-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 消费管理服务
+  ioedream-consume-service:
+    build:
+      context: ../ioedream-consume-service
+      dockerfile: Dockerfile
+    container_name: ioedream-consume-service
+    hostname: ioedream-consume-service
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_NAME: ioedream_consume
+      DB_USERNAME: root
+      DB_PASSWORD: ioedream@2024
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: ioedream@2024
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+      DEVICE_SERVICE_URL: http://ioedream-device-service:8083
+    volumes:
+      - consume_logs:/app/logs
+      - consume_config:/app/config
+      - consume_uploads:/app/uploads
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+      ioedream-device-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 考勤管理服务
+  ioedream-attendance-service:
+    build:
+      context: ../ioedream-attendance-service
+      dockerfile: Dockerfile
+    container_name: ioedream-attendance-service
+    hostname: ioedream-attendance-service
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_NAME: ioedream_attendance
+      DB_USERNAME: root
+      DB_PASSWORD: ioedream@2024
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: ioedream@2024
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+      DEVICE_SERVICE_URL: http://ioedream-device-service:8083
+      AREA_SERVICE_URL: http://ioedream-area-service:8084
+    volumes:
+      - attendance_logs:/app/logs
+      - attendance_config:/app/config
+      - attendance_files:/app/files
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+      ioedream-device-service:
+        condition: service_healthy
+      ioedream-area-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8087/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 视频监控服务
+  ioedream-video-service:
+    build:
+      context: ../ioedream-video-service
+      dockerfile: Dockerfile
+    container_name: ioedream-video-service
+    hostname: ioedream-video-service
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_NAME: ioedream_video
+      DB_USERNAME: root
+      DB_PASSWORD: ioedream@2024
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: ioedream@2024
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+      DEVICE_SERVICE_URL: http://ioedream-device-service:8083
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+    volumes:
+      - video_logs:/app/logs
+      - video_config:/app/config
+      - video_storage:/app/storage
+      - video_recordings:/app/recordings
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+      ioedream-device-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 访客管理服务
+  ioedream-visitor-service:
+    build:
+      context: ../ioedream-visitor-service
+      dockerfile: Dockerfile
+    container_name: ioedream-visitor-service
+    hostname: ioedream-visitor-service
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_NAME: ioedream_visitor
+      DB_USERNAME: root
+      DB_PASSWORD: ioedream@2024
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: ioedream@2024
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+      ACCESS_SERVICE_URL: http://ioedream-access-service:8085
+      NOTIFICATION_SERVICE_URL: http://ioedream-notification-service:8090
+    volumes:
+      - visitor_logs:/app/logs
+      - visitor_config:/app/config
+      - visitor_photos:/app/photos
+      - visitor_qrcodes:/app/qrcodes
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8089/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 通知服务
+  ioedream-notification-service:
+    build:
+      context: ../ioedream-notification-service
+      dockerfile: Dockerfile
+    container_name: ioedream-notification-service
+    hostname: ioedream-notification-service
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_NAME: ioedream_notification
+      DB_USERNAME: root
+      DB_PASSWORD: ioedream@2024
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: ioedream@2024
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: ioedream@example.com
+      MAIL_PASSWORD: mail_password
+    volumes:
+      - notification_logs:/app/logs
+      - notification_config:/app/config
+      - notification_templates:/app/templates
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 文件管理服务
+  ioedream-file-service:
+    build:
+      context: ../ioedream-file-service
+      dockerfile: Dockerfile
+    container_name: ioedream-file-service
+    hostname: ioedream-file-service
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_NAME: ioedream_file
+      DB_USERNAME: root
+      DB_PASSWORD: ioedream@2024
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      FILE_STORAGE_PATH: /app/storage
+    volumes:
+      - file_logs:/app/logs
+      - file_config:/app/config
+      - file_storage:/app/storage
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8091/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 报表服务
+  ioedream-report-service:
+    build:
+      context: ../ioedream-report-service
+      dockerfile: Dockerfile
+    container_name: ioedream-report-service
+    hostname: ioedream-report-service
+    ports:
+      - "8092:8092"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+      NACOS_GROUP: DEFAULT_GROUP
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_NAME: ioedream_report
+      DB_USERNAME: root
+      DB_PASSWORD: ioedream@2024
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: admin
+      RABBITMQ_PASSWORD: ioedream@2024
+      AUTH_SERVICE_URL: http://ioedream-auth-service:8081
+      IDENTITY_SERVICE_URL: http://ioedream-identity-service:8082
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+    volumes:
+      - report_logs:/app/logs
+      - report_config:/app/config
+      - report_templates:/app/templates
+      - report_exports:/app/exports
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      redis-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-identity-service:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8092/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  gateway_logs:
+    driver: local
+  gateway_config:
+    driver: local
+  access_logs:
+    driver: local
+  access_config:
+    driver: local
+  access_images:
+    driver: local
+  consume_logs:
+    driver: local
+  consume_config:
+    driver: local
+  consume_uploads:
+    driver: local
+  attendance_logs:
+    driver: local
+  attendance_config:
+    driver: local
+  attendance_files:
+    driver: local
+  video_logs:
+    driver: local
+  video_config:
+    driver: local
+  video_storage:
+    driver: local
+  video_recordings:
+    driver: local
+  visitor_logs:
+    driver: local
+  visitor_config:
+    driver: local
+  visitor_photos:
+    driver: local
+  visitor_qrcodes:
+    driver: local
+  notification_logs:
+    driver: local
+  notification_config:
+    driver: local
+  notification_templates:
+    driver: local
+  file_logs:
+    driver: local
+  file_config:
+    driver: local
+  file_storage:
+    driver: local
+  report_logs:
+    driver: local
+  report_config:
+    driver: local
+  report_templates:
+    driver: local
+  report_exports:
+    driver: local
+
+networks:
+  ioedream-network:
+    external: true

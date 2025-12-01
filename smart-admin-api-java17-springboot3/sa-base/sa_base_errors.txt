@@ -1,0 +1,33 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-base ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-base ---
+[INFO] Compiling 187 source files with javac [forked debug deprecation target 17] to target\classes
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[248,26] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[247,64] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[384,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[384,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[400,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[400,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\LocalRedissonConfig.java:[47,16] [deprecation] BaseConfig中的setRetryInterval(int)已过时
+  其中, T是类型变量:
+    T扩展已在类 BaseConfig中声明的BaseConfig<T>
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\TransactionConfig.java:[60,15] [deprecation] TransactionInterceptor中的TransactionInterceptor(PlatformTransactionManager,TransactionAttributeSource)已过时
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.853 s
+[INFO] Finished at: 2025-11-22T10:26:59+08:00
+[INFO] ------------------------------------------------------------------------

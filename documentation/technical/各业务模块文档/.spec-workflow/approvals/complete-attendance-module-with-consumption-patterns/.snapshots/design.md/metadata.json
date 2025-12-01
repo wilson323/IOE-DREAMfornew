@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/complete-attendance-module-with-consumption-patterns/design.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-25T08:21:38.435Z",
+      "trigger": "initial",
+      "approvalId": "approval_1764058898430_lo34seb3f",
+      "approvalTitle": "考勤模块完善设计文档"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-25T11:35:48.813Z",
+      "trigger": "approved",
+      "approvalId": "approval_1764058898430_lo34seb3f",
+      "approvalTitle": "考勤模块完善设计文档"
+    }
+  ]
+}

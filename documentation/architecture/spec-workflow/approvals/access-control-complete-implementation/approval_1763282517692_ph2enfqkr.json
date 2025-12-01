@@ -1,0 +1,12 @@
+{
+  "id": "approval_1763282517692_ph2enfqkr",
+  "title": "门禁系统完整实现设计文档审批",
+  "filePath": ".spec-workflow/specs/access-control-complete-implementation/design.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-11-16T08:41:57.692Z",
+  "category": "spec",
+  "categoryName": "access-control-complete-implementation",
+  "response": "通过仪表板批准",
+  "respondedAt": "2025-11-25T11:34:41.802Z"
+}

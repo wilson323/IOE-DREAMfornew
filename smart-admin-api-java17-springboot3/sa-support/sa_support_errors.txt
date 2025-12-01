@@ -1,0 +1,24 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-support ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-support ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 49 source files with javac [debug target 17] to target\classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.590 s
+[INFO] Finished at: 2025-11-22T10:27:27+08:00
+[INFO] ------------------------------------------------------------------------

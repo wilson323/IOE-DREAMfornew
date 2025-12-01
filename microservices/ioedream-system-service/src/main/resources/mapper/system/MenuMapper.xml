@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.system.menu.dao.MenuDao">
+
+    <!-- 菜单基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.system.menu.domain.entity.MenuEntity">
+        <id column="menu_id" property="menuId"/>
+        <result column="menu_type" property="menuType"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="menu_code" property="menuCode"/>
+        <result column="menu_icon" property="menuIcon"/>
+        <result column="menu_url" property="menuUrl"/>
+        <result column="component" property="component"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="is_frame" property="isFrame"/>
+        <result column="is_cache" property="isCache"/>
+        <result column="permission" property="permission"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+    </resultMap>
+
+    <!-- 扩展结果映射 -->
+    <resultMap id="DetailResultMap" type="net.lab1024.sa.system.menu.domain.vo.MenuVO" extends="BaseResultMap">
+        <result column="parent_name" property="parentName"/>
+        <result column="permission_list" property="permissionList"/>
+        <result column="role_count" property="roleCount"/>
+        <result column="user_count" property="userCount"/>
+        <result column="is_button" property="isButton"/>
+        <result column="component_name" property="componentName"/>
+        <result column="children" property="children"/>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        menu_id, menu_type, menu_name, menu_code, menu_icon, menu_url, component,
+        parent_id, is_frame, is_cache, permission, sort_order, status,
+        create_time, update_time, create_user_id, update_user_id, deleted_flag
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Query_Condition">
+        <where>
+            deleted_flag = 0
+            <if test="menuName != null and menuName != ''">
+                AND menu_name LIKE CONCAT('%', #{menuName}, '%')
+            </if>
+            <if test="menuCode != null and menuCode != ''">
+                AND menu_code = #{menuCode}
+            </if>
+            <if test="menuType != null">
+                AND menu_type = #{menuType}
+            </if>
+            <if test="parentId != null">
+                AND parent_id = #{parentId}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="menuUrl != null and menuUrl != ''">
+                AND menu_url LIKE CONCAT('%', #{menuUrl}, '%')
+            </if>
+            <if test="permission != null and permission != ''">
+                AND permission LIKE CONCAT('%', #{permission}, '%')
+            </if>
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 排序条件 -->
+    <sql id="Order_By_Condition">
+        ORDER BY sort_order ASC, menu_id ASC
+    </sql>
+
+    <!-- 插入菜单 -->
+    <insert id="insert" parameterType="net.lab1024.sa.system.menu.domain.entity.MenuEntity" useGeneratedKeys="true" keyProperty="menuId">
+        INSERT INTO t_system_menu (
+            menu_type, menu_name, menu_code, menu_icon, menu_url, component,
+            parent_id, is_frame, is_cache, permission, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id
+        ) VALUES (
+            #{menuType}, #{menuName}, #{menuCode}, #{menuIcon}, #{menuUrl}, #{component},
+            #{parentId}, #{isFrame}, #{isCache}, #{permission}, #{sortOrder}, #{status},
+            #{createTime}, #{updateTime}, #{createUserId}, #{updateUserId}
+        )
+    </insert>
+
+    <!-- 批量插入菜单 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO t_system_menu (
+            menu_type, menu_name, menu_code, menu_icon, menu_url, component,
+            parent_id, is_frame, is_cache, permission, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id
+        ) VALUES
+        <foreach collection="list" item="menu" separator=",">
+            (#{menu.menuType}, #{menu.menuName}, #{menu.menuCode}, #{menu.menuIcon}, #{menu.menuUrl}, #{menu.component},
+             #{menu.parentId}, #{menu.isFrame}, #{menu.isCache}, #{menu.permission}, #{menu.sortOrder}, #{menu.status},
+             #{menu.createTime}, #{menu.updateTime}, #{menu.createUserId}, #{menu.updateUserId})
+        </foreach>
+    </insert>
+
+    <!-- 更新菜单 -->
+    <update id="update" parameterType="net.lab1024.sa.system.menu.domain.entity.MenuEntity">
+        UPDATE t_system_menu
+        <set>
+            <if test="menuType != null">menu_type = #{menuType},</if>
+            <if test="menuName != null and menuName != ''">menu_name = #{menuName},</if>
+            <if test="menuCode != null and menuCode != ''">menu_code = #{menuCode},</if>
+            <if test="menuIcon != null and menuIcon != ''">menu_icon = #{menuIcon},</if>
+            <if test="menuUrl != null and menuUrl != ''">menu_url = #{menuUrl},</if>
+            <if test="component != null and component != ''">component = #{component},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="isFrame != null">is_frame = #{isFrame},</if>
+            <if test="isCache != null">is_cache = #{isCache},</if>
+            <if test="permission != null and permission != ''">permission = #{permission},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUserId != null">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE menu_id = #{menuId} AND deleted_flag = 0
+    </update>
+
+    <!-- 批量更新菜单 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="menu" separator=";">
+            UPDATE t_system_menu SET
+                <if test="menu.status != null">status = #{menu.status},</if>
+                <if test="menu.sortOrder != null">sort_order = #{menu.sortOrder},</if>
+                <if test="menu.updateTime != null">update_time = #{menu.updateTime},</if>
+                <if test="menu.updateUserId != null">update_user_id = #{menu.updateUserId},</if>
+            WHERE menu_id = #{menu.menuId} AND deleted_flag = 0;
+        </foreach>
+    </update>
+
+    <!-- 删除菜单 -->
+    <update id="delete" parameterType="net.lab1024.sa.system.menu.domain.entity.MenuEntity">
+        UPDATE t_system_menu
+        SET deleted_flag = 1,
+            update_time = #{updateTime},
+            update_user_id = #{updateUserId}
+        WHERE menu_id = #{menuId}
+    </update>
+
+    <!-- 批量删除菜单 -->
+    <update id="batchDelete" parameterType="java.util.List">
+        UPDATE t_system_menu
+        SET deleted_flag = 1,
+            update_time = NOW(),
+            update_user_id = #{updateUserId}
+        WHERE menu_id IN
+        <foreach collection="menuIds" item="menuId" separator=",">
+            #{menuId}
+        </foreach>
+    </update>
+
+    <!-- 根据ID查询菜单 -->
+    <select id="getById" resultMap="DetailResultMap" parameterType="java.lang.Long">
+        SELECT
+            m.*,
+            p.menu_name as parent_name,
+            CASE
+                WHEN m.component IS NOT NULL AND m.component != ''
+                THEN JSON_EXTRACT(m.component, '$.name')
+                ELSE NULL
+            END as component_name
+        FROM t_system_menu m
+        LEFT JOIN t_system_menu p ON m.parent_id = p.menu_id AND p.deleted_flag = 0
+        WHERE m.menu_id = #{menuId} AND m.deleted_flag = 0
+    </select>
+
+    <!-- 分页查询菜单 -->
+    <select id="queryPage" resultMap="DetailResultMap">
+        SELECT
+            m.*,
+            p.menu_name as parent_name,
+            CASE
+                WHEN m.component IS NOT NULL AND m.component != ''
+                THEN JSON_EXTRACT(m.component, '$.name')
+                ELSE NULL
+            END as component_name,
+            (
+                SELECT COUNT(DISTINCT ur.role_id)
+                FROM t_system_user_role ur
+                JOIN t_system_role_menu rm ON ur.role_id = rm.role_id
+                WHERE rm.menu_id = m.menu_id AND rm.deleted_flag = 0 AND ur.deleted_flag = 0
+            ) as role_count,
+            (
+                SELECT COUNT(DISTINCT ur.user_id)
+                FROM t_system_user_role ur
+                JOIN t_system_role_menu rm ON ur.role_id = rm.role_id
+                WHERE rm.menu_id = m.menu_id AND rm.deleted_flag = 0 AND ur.deleted_flag = 0
+            ) as user_count
+        FROM t_system_menu m
+        LEFT JOIN t_system_menu p ON m.parent_id = p.menu_id AND p.deleted_flag = 0
+        <include refid="Query_Condition"/>
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询所有菜单 -->
+    <select id="getAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_menu
+        <include refid="Query_Condition"/>
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询所有菜单（详细） -->
+    <select id="getAllDetail" resultMap="DetailResultMap">
+        SELECT
+            m.*,
+            p.menu_name as parent_name,
+            CASE
+                WHEN m.component IS NOT NULL AND m.component != ''
+                THEN JSON_EXTRACT(m.component, '$.name')
+                ELSE NULL
+            END as component_name
+        FROM t_system_menu m
+        LEFT JOIN t_system_menu p ON m.parent_id = p.menu_id AND p.deleted_flag = 0
+        WHERE m.deleted_flag = 0
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询菜单树 -->
+    <select id="queryMenuTree" resultMap="DetailResultMap">
+        SELECT
+            m.*,
+            p.menu_name as parent_name,
+            CASE
+                WHEN m.component IS NOT NULL AND m.component != ''
+                THEN JSON_EXTRACT(m.component, '$.name')
+                ELSE NULL
+            END as component_name
+        FROM t_system_menu m
+        LEFT JOIN t_system_menu p ON m.parent_id = p.menu_id AND p.deleted_flag = 0
+        WHERE m.deleted_flag = 0 AND m.status = 1
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询用户菜单 -->
+    <select id="getUserMenu" resultMap="DetailResultMap">
+        SELECT DISTINCT
+            m.*,
+            p.menu_name as parent_name,
+            CASE
+                WHEN m.component IS NOT NULL AND m.component != ''
+                THEN JSON_EXTRACT(m.component, '$.name')
+                ELSE NULL
+            END as component_name,
+            CASE
+                WHEN m.menu_url IS NOT NULL AND m.menu_url != ''
+                THEN '1'
+                ELSE '0'
+            END as is_button
+        FROM t_system_user_role ur
+        JOIN t_system_role_menu rm ON ur.role_id = rm.role_id
+        JOIN t_system_menu m ON rm.menu_id = m.menu_id
+        LEFT JOIN t_system_menu p ON m.parent_id = p.menu_id AND p.deleted_flag = 0
+        WHERE ur.user_id = #{userId}
+            AND ur.deleted_flag = 0
+            AND rm.deleted_flag = 0
+            AND m.deleted_flag = 0
+            AND m.status = 1
+        ORDER BY m.sort_order ASC, m.menu_id ASC
+    </select>
+
+    <!-- 查询角色菜单 -->
+    <select id="getRoleMenu" resultMap="DetailResultMap">
+        SELECT
+            m.*,
+            p.menu_name as parent_name,
+            CASE
+                WHEN m.component IS NOT NULL AND m.component != ''
+                THEN JSON_EXTRACT(m.component, '$.name')
+                ELSE NULL
+            END as component_name
+        FROM t_system_role_menu rm
+        JOIN t_system_menu m ON rm.menu_id = m.menu_id
+        LEFT JOIN t_system_menu p ON m.parent_id = p.menu_id AND p.deleted_flag = 0
+        WHERE rm.role_id = #{roleId}
+            AND rm.deleted_flag = 0
+            AND m.deleted_flag = 0
+            AND m.status = 1
+        ORDER BY m.sort_order ASC, m.menu_id ASC
+    </select>
+
+    <!-- 查询菜单权限标识 -->
+    <select id="getMenuPermissions" resultType="java.util.List">
+        SELECT DISTINCT permission
+        FROM t_system_menu
+        WHERE deleted_flag = 0
+        AND status = 1
+        AND permission IS NOT NULL
+        AND permission != ''
+        ORDER BY permission
+    </select>
+
+    <!-- 检查菜单名称是否存在 -->
+    <select id="checkMenuNameExist" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_system_menu
+        WHERE deleted_flag = 0
+        AND menu_name = #{menuName}
+        <if test="excludeId != null">
+            AND menu_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 检查菜单编码是否存在 -->
+    <select id="checkMenuCodeExist" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_system_menu
+        WHERE deleted_flag = 0
+        AND menu_code = #{menuCode}
+        <if test="excludeId != null">
+            AND menu_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 获取父菜单列表 -->
+    <select id="getParentMenuList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_menu
+        WHERE deleted_flag = 0
+        AND status = 1
+        AND (parent_id = 0 OR parent_id IS NULL)
+        ORDER BY sort_order ASC, menu_id ASC
+    </select>
+
+    <!-- 获取子菜单列表 -->
+    <select id="getChildMenuList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_menu
+        WHERE deleted_flag = 0
+        AND status = 1
+        AND parent_id = #{parentId}
+        ORDER BY sort_order ASC, menu_id ASC
+    </select>
+
+    <!-- 移动菜单 -->
+    <update id="moveMenu" parameterType="net.lab1024.sa.system.menu.domain.entity.MenuEntity">
+        UPDATE t_system_menu
+        SET
+            parent_id = #{newParentId},
+            update_time = #{updateTime},
+            update_user_id = #{updateUserId}
+        WHERE menu_id = #{menuId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 批量移动菜单 -->
+    <update id="batchMoveMenu" parameterType="java.util.List">
+        UPDATE t_system_menu
+        SET
+            parent_id = CASE
+                WHEN FIND_IN_SET(menu_id,
+                    <foreach collection="menuIds" item="menuId" separator=",">
+                        #{menuId}
+                    </foreach>
+                ) THEN #{newParentId}
+                ELSE parent_id
+            END,
+            update_time = NOW(),
+            update_user_id = #{updateUserId}
+        WHERE menu_id IN (
+            <foreach collection="menuIds" item="menuId" separator=",">
+                #{menuId}
+            </foreach>
+        )
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 检查菜单循环引用 -->
+    <select id="checkMenuCircularReference" resultType="java.lang.Integer">
+        WITH RECURSIVE_MENU AS (
+            SELECT menu_id, parent_id, 1 as level
+            FROM t_system_menu
+            WHERE menu_id = #{menuId} AND deleted_flag = 0
+
+            UNION ALL
+
+            SELECT m.menu_id, m.parent_id, r.level + 1
+            FROM t_system_menu m
+            JOIN RECURSIVE_MENU r ON m.parent_id = r.menu_id
+            WHERE m.deleted_flag = 0 AND r.level &lt; 10
+        )
+        SELECT COUNT(*) FROM RECURSIVE_MENU WHERE menu_id = #{menuId}
+    </select>
+
+    <!-- 菜单统计 -->
+    <select id="getMenuStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as total_count,
+            COUNT(CASE WHEN status = 1 THEN 1 END) as enabled_count,
+            COUNT(CASE WHEN status = 0 THEN 1 END) as disabled_count,
+            COUNT(CASE WHEN parent_id = 0 OR parent_id IS NULL THEN 1 END) as root_count,
+            COUNT(CASE WHEN parent_id > 0 THEN 1 END) as child_count,
+            COUNT(CASE WHEN menu_type = 'MENU' THEN 1 END) as menu_count,
+            COUNT(CASE WHEN menu_type = 'BUTTON' THEN 1 END) as button_count,
+            COUNT(CASE WHEN menu_type = 'DIRECTORY' THEN 1 END) as directory_count
+        FROM t_system_menu
+        WHERE deleted_flag = 0
+    </select>
+
+    <!-- 更新菜单状态 -->
+    <update id="updateStatus" parameterType="java.util.List">
+        UPDATE t_system_menu
+        SET status = #{status}, update_time = NOW()
+        WHERE menu_id IN
+        <foreach collection="menuIds" item="menuId" separator=",">
+            #{menuId}
+        </foreach>
+        AND deleted_flag = 0
+    </update>
+
+</mapper>

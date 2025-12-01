@@ -1,0 +1,703 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-parent ---
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-base ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target
+[INFO] 
+[INFO] --- lombok:1.18.20.0:delombok (default) @ sa-base ---
+[INFO] Delombok complete.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Compiling 188 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[248,26] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[247,64] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:[740,88] [deprecation] DefaultedRedisConnection中的info()已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\LocalRedissonConfig.java:[47,16] [deprecation] BaseConfig中的setRetryInterval(int)已过时
+  其中, T是类型变量:
+    T扩展已在类 BaseConfig中声明的BaseConfig<T>
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\TransactionConfig.java:[60,15] [deprecation] TransactionInterceptor中的TransactionInterceptor(PlatformTransactionManager,TransactionAttributeSource)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[384,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[384,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[400,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[400,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[570,98] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[570,75] [deprecation] BigDecimal中的setScale(int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[637,71] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[637,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[645,74] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[645,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[653,60] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[653,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [3/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-support ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-support ---
+[INFO] Compiling 49 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\target\classes
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-admin ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 12 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-admin ---
+[INFO] Compiling 528 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[174,45] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[220,45] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[312,23] [unchecked] 未经检查的转换
+  需要: T
+  找到:    Object
+  其中, T是类型变量:
+    T扩展已在方法 <T>getCachedValue(String)中声明的Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[381,48] [unchecked] 未经检查的转换
+  需要: T
+  找到:    Object
+  其中, T是类型变量:
+    T扩展已在方法 <T>getOrLoad(String,Class<T>,Supplier<T>,Duration)中声明的Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[435,51] [unchecked] 未经检查的转换
+  需要: Set<String>
+  找到:    Set<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\monitor\service\impl\AccessMonitorServiceImpl.java:[127,67] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\monitor\websocket\WebSocketSessionManager.java:[200,63] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[314,80] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[321,78] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[363,47] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AdvancedReportManager.java:[73,92] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AdvancedReportManager.java:[171,105] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AdvancedReportManager.java:[267,92] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AdvancedReportManager.java:[277,98] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[70,63] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[127,63] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[201,64] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[528,64] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[290,80] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[305,76] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[347,47] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\manager\AccessAreaManager.java:[434,42] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\SmartMode.java:[243,97] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceScheduleServiceImpl.java:[484,127] [unchecked] 未经检查的转换
+  需要: Page<AttendanceScheduleEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceScheduleServiceImpl.java:[497,127] [unchecked] 未经检查的转换
+  需要: Page<AttendanceScheduleEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\service\impl\AccessRecordServiceImpl.java:[74,74] [unchecked] 未经检查的转换
+  需要: Page<AccessRecordEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[INFO] 26 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[771,36] 错误: 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为ConsumeRequest的变量 request
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[777,19] 错误: 找不到符号
+  符号:   方法 getData()
+  位置: 类型为ConsumeRequest的变量 request
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[778,46] 错误: 找不到符号
+  符号:   方法 getData()
+  位置: 类型为ConsumeRequest的变量 request
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[41,7] 错误: ConsumeEngineServiceImpl不是抽象的, 并且未覆盖ConsumeEngineService中的抽象方法queryConsumeResult(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[474,25] 错误: ConsumeEngineServiceImpl中的queryConsumeResult(String)无法实现ConsumeEngineService中的queryConsumeResult(String)
+  返回类型net.lab1024.sa.admin.module.consume.engine.ConsumeResult与net.lab1024.sa.admin.module.consume.domain.response.ConsumeResult不兼容
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[61,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[113,32] 错误: 找不到符号
+  符号:   方法 isPaymentPasswordRequired()
+  位置: 类型为ConsumeRequest的变量 processedRequest
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[114,57] 错误: 找不到符号
+  符号:   方法 getPaymentPassword()
+  位置: 类型为ConsumeRequest的变量 processedRequest
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[119,97] 错误: 找不到符号
+  符号:   方法 getPaymentPassword()
+  位置: 类型为ConsumeRequest的变量 processedRequest
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[149,42] 错误: 找不到符号
+  符号:   方法 getCode()
+  位置: 类型为SmartException的变量 e
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[212,49] 错误: 找不到符号
+  符号:   方法 getErrorCode()
+  位置: 类型为ConsumeRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[212,72] 错误: 找不到符号
+  符号:   方法 getErrorMsg()
+  位置: 类型为ConsumeRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[223,36] 错误: 找不到符号
+  符号:   方法 getConsumeTime()
+  位置: 类型为ConsumeRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[280,46] 错误: 找不到符号
+  符号:   方法 deductBalanceWithVersion(Long,BigDecimal,String,long)
+  位置: 类型为AccountService的变量 accountService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[328,14] 错误: 找不到符号
+  符号:   方法 setVersion(long)
+  位置: 类型为ConsumeResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[420,50] 错误: 不兼容的类型: Map<String,Object>无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[421,50] 错误: 不兼容的类型: Map<String,Object>无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[456,50] 错误: 不兼容的类型: Map<String,Object>无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[457,50] 错误: 不兼容的类型: Map<String,Object>无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[473,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[47,7] 错误: ConsumeLimitConfigServiceImpl不是抽象的, 并且未覆盖ConsumeLimitConfigService中的抽象方法setRegionLimitConfig(@jakarta.validation.constraints.NotNull String,@jakarta.validation.constraints.NotNull ConsumeLimitConfig,String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[77,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<ConsumeLimitConfig>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[86,25] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[91,97] 错误: 不兼容的类型: ConsumeLimitConfigEntity无法转换为List<ConsumeLimitConfigEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[101,25] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[111,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[126,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<ConsumeLimitConfig>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[131,97] 错误: 不兼容的类型: ConsumeLimitConfigEntity无法转换为List<ConsumeLimitConfigEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[142,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[155,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<ConsumeLimitConfig>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[160,97] 错误: 不兼容的类型: ConsumeLimitConfigEntity无法转换为List<ConsumeLimitConfigEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[171,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[184,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<ConsumeLimitConfig>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[189,97] 错误: 不兼容的类型: ConsumeLimitConfigEntity无法转换为List<ConsumeLimitConfigEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[200,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[222,18] 错误: 找不到符号
+  符号:   方法 setTargetType(String)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[223,18] 错误: 找不到符号
+  符号:   方法 setConfigName(String)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[224,18] 错误: 找不到符号
+  符号:   方法 setReason(String)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[229,75] 错误: 找不到符号
+  符号:   方法 selectByTargetAndTypeAndPriority(String,String,Integer)
+  位置: 类型为ConsumeLimitConfigDao的变量 consumeLimitConfigDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[235,49] 错误: 找不到符号
+  符号:   方法 getConfigId()
+  位置: 类型为ConsumeLimitConfigEntity的变量 existingEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[323,53] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<ConsumeStatistics>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[332,69] 错误: 找不到符号
+  符号:   方法 selectByPersonIdAndTimeRange(@jakarta.validation.constraints.NotNull Long,LocalDateTime,LocalDateTime)
+  位置: 类型为ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[347,68] 错误: 找不到符号
+  符号:   方法 selectByPersonIdAndTimeRange(@jakarta.validation.constraints.NotNull Long,LocalDateTime,LocalDateTime)
+  位置: 类型为ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[361,69] 错误: 找不到符号
+  符号:   方法 selectByPersonIdAndTimeRange(@jakarta.validation.constraints.NotNull Long,LocalDateTime,LocalDateTime)
+  位置: 类型为ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[385,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[417,20] 错误: 找不到符号
+  符号:   方法 currentValue(BigDecimal)
+  位置: 类 LimitCheckResultBuilder
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[431,20] 错误: 找不到符号
+  符号:   方法 currentValue(BigDecimal)
+  位置: 类 LimitCheckResultBuilder
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[445,20] 错误: 找不到符号
+  符号:   方法 currentValue(BigDecimal)
+  位置: 类 LimitCheckResultBuilder
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[509,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[670,27] 错误: 不兼容的类型: List<String>无法转换为List<ConflictInfo>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[680,16] 错误: 不兼容的类型: 推论变量 E 具有不兼容的上限
+    等式约束条件：ConflictInfo
+    下限：String
+  其中, E是类型变量:
+    E扩展已在方法 <E>of(E)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[702,22] 错误: 找不到符号
+  符号:   方法 getSingleLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[703,44] 错误: 找不到符号
+  符号:   方法 getSingleLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[705,22] 错误: 找不到符号
+  符号:   方法 getDailyLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[706,43] 错误: 找不到符号
+  符号:   方法 getDailyLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[708,22] 错误: 找不到符号
+  符号:   方法 getWeeklyLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[709,44] 错误: 找不到符号
+  符号:   方法 getWeeklyLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[711,22] 错误: 找不到符号
+  符号:   方法 getMonthlyLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[712,45] 错误: 找不到符号
+  符号:   方法 getMonthlyLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[714,22] 错误: 找不到符号
+  符号:   方法 getDailyCountLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[715,48] 错误: 找不到符号
+  符号:   方法 getDailyCountLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[717,22] 错误: 找不到符号
+  符号:   方法 getWeeklyCountLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[718,49] 错误: 找不到符号
+  符号:   方法 getWeeklyCountLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[720,22] 错误: 找不到符号
+  符号:   方法 getMonthlyCountLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[721,50] 错误: 找不到符号
+  符号:   方法 getMonthlyCountLimit()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[723,22] 错误: 找不到符号
+  符号:   方法 getMinAmount()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[724,42] 错误: 找不到符号
+  符号:   方法 getMinAmount()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[726,22] 错误: 找不到符号
+  符号:   方法 getMaxAmount()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[727,42] 错误: 找不到符号
+  符号:   方法 getMaxAmount()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[729,22] 错误: 找不到符号
+  符号:   方法 getEnabled()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[730,40] 错误: 找不到符号
+  符号:   方法 getEnabled()
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[745,24] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<ConsumeLimitConfig>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[753,17] 错误: 无法从静态上下文中引用非静态 方法 delete(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[786,14] 错误: 找不到符号
+  符号:   方法 setSingleLimit(BigDecimal)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[787,14] 错误: 找不到符号
+  符号:   方法 setDailyLimit(BigDecimal)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[788,14] 错误: 找不到符号
+  符号:   方法 setWeeklyLimit(BigDecimal)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[789,14] 错误: 找不到符号
+  符号:   方法 setMonthlyLimit(BigDecimal)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[790,14] 错误: 找不到符号
+  符号:   方法 setDailyCountLimit(Integer)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[791,14] 错误: 找不到符号
+  符号:   方法 setWeeklyCountLimit(Integer)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[792,14] 错误: 找不到符号
+  符号:   方法 setMonthlyCountLimit(Integer)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[793,14] 错误: 找不到符号
+  符号:   方法 setMinAmount(BigDecimal)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[794,14] 错误: 找不到符号
+  符号:   方法 setMaxAmount(BigDecimal)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[795,14] 错误: 找不到符号
+  符号:   方法 setEnabled(Boolean)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[799,14] 错误: 找不到符号
+  符号:   方法 setExtendProperties(String)
+  位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[51,7] 错误: PaymentPasswordServiceImpl不是抽象的, 并且未覆盖PaymentPasswordService中的抽象方法checkPasswordStrength(@jakarta.validation.constraints.NotNull String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[362,33] 错误: PaymentPasswordServiceImpl中的checkPasswordStrength(@jakarta.validation.constraints.NotNull String)无法实现PaymentPasswordService中的checkPasswordStrength(@jakarta.validation.constraints.NotNull String)
+  返回类型PaymentPasswordResult与PasswordStrengthResult不兼容
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[356,16] 错误: 找不到符号
+  符号:   方法 maxAttempts(Integer)
+  位置: 类 PasswordSecurityPolicyBuilder
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[361,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[410,21] 错误: 找不到符号
+  符号:   方法 lPush(String,String)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[411,21] 错误: 找不到符号
+  符号:   方法 lTrim(String,int,int)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[412,21] 错误: 无法将类 RedisUtil中的方法 expire应用到给定类型;
+  需要: String,long
+  找到:    String,int,TimeUnit
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[426,44] 错误: 找不到符号
+  符号:   方法 lRange(String,int,int)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[495,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[498,64] 错误: 找不到符号
+  符号:   方法 locked(LocalDateTime,int)
+  位置: 类 PaymentPasswordResult
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[536,21] 错误: 无法从静态上下文中引用非静态 方法 delete(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[555,43] 错误: 无法从静态上下文中引用非静态 方法 get(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[555,47] 错误: 不兼容的类型: Object无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[563,29] 错误: 无法从静态上下文中引用非静态 方法 delete(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[582,25] 错误: 无法从静态上下文中引用非静态 方法 delete(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[630,68] 错误: 找不到符号
+  符号:   方法 biometricResult(boolean,String,@jakarta.validation.constraints.NotNull String)
+  位置: 类 PaymentPasswordResult
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.389 s]
+[INFO] sa-base ............................................ SUCCESS [01:02 min]
+[INFO] sa-support ......................................... SUCCESS [ 15.812 s]
+[INFO] sa-admin ........................................... FAILURE [ 50.959 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  02:10 min
+[INFO] Finished at: 2025-11-23T10:55:02+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[771,36] 错误: 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为ConsumeRequest的变量 request
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[777,19] 错误: 找不到符号
+[ERROR]   符号:   方法 getData()
+[ERROR]   位置: 类型为ConsumeRequest的变量 request
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[778,46] 错误: 找不到符号
+[ERROR]   符号:   方法 getData()
+[ERROR]   位置: 类型为ConsumeRequest的变量 request
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[41,7] 错误: ConsumeEngineServiceImpl不是抽象的, 并且未覆盖ConsumeEngineService中的抽象方法queryConsumeResult(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[474,25] 错误: ConsumeEngineServiceImpl中的queryConsumeResult(String)无法实现ConsumeEngineService中的queryConsumeResult(String)
+[ERROR]   返回类型net.lab1024.sa.admin.module.consume.engine.ConsumeResult与net.lab1024.sa.admin.module.consume.domain.response.ConsumeResult不兼容
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[61,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[113,32] 错误: 找不到符号
+[ERROR]   符号:   方法 isPaymentPasswordRequired()
+[ERROR]   位置: 类型为ConsumeRequest的变量 processedRequest
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[114,57] 错误: 找不到符号
+[ERROR]   符号:   方法 getPaymentPassword()
+[ERROR]   位置: 类型为ConsumeRequest的变量 processedRequest
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[119,97] 错误: 找不到符号
+[ERROR]   符号:   方法 getPaymentPassword()
+[ERROR]   位置: 类型为ConsumeRequest的变量 processedRequest
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[149,42] 错误: 找不到符号
+[ERROR]   符号:   方法 getCode()
+[ERROR]   位置: 类型为SmartException的变量 e
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[212,49] 错误: 找不到符号
+[ERROR]   符号:   方法 getErrorCode()
+[ERROR]   位置: 类型为ConsumeRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[212,72] 错误: 找不到符号
+[ERROR]   符号:   方法 getErrorMsg()
+[ERROR]   位置: 类型为ConsumeRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[223,36] 错误: 找不到符号
+[ERROR]   符号:   方法 getConsumeTime()
+[ERROR]   位置: 类型为ConsumeRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[280,46] 错误: 找不到符号
+[ERROR]   符号:   方法 deductBalanceWithVersion(Long,BigDecimal,String,long)
+[ERROR]   位置: 类型为AccountService的变量 accountService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[328,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setVersion(long)
+[ERROR]   位置: 类型为ConsumeResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[420,50] 错误: 不兼容的类型: Map<String,Object>无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[421,50] 错误: 不兼容的类型: Map<String,Object>无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[456,50] 错误: 不兼容的类型: Map<String,Object>无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[457,50] 错误: 不兼容的类型: Map<String,Object>无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeEngineServiceImpl.java:[473,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[47,7] 错误: ConsumeLimitConfigServiceImpl不是抽象的, 并且未覆盖ConsumeLimitConfigService中的抽象方法setRegionLimitConfig(@jakarta.validation.constraints.NotNull String,@jakarta.validation.constraints.NotNull ConsumeLimitConfig,String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[77,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<ConsumeLimitConfig>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[86,25] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[91,97] 错误: 不兼容的类型: ConsumeLimitConfigEntity无法转换为List<ConsumeLimitConfigEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[101,25] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[111,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[126,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<ConsumeLimitConfig>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[131,97] 错误: 不兼容的类型: ConsumeLimitConfigEntity无法转换为List<ConsumeLimitConfigEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[142,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[155,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<ConsumeLimitConfig>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[160,97] 错误: 不兼容的类型: ConsumeLimitConfigEntity无法转换为List<ConsumeLimitConfigEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[171,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[184,55] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<ConsumeLimitConfig>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[189,97] 错误: 不兼容的类型: ConsumeLimitConfigEntity无法转换为List<ConsumeLimitConfigEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[200,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[222,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setTargetType(String)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[223,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setConfigName(String)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[224,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setReason(String)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[229,75] 错误: 找不到符号
+[ERROR]   符号:   方法 selectByTargetAndTypeAndPriority(String,String,Integer)
+[ERROR]   位置: 类型为ConsumeLimitConfigDao的变量 consumeLimitConfigDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[235,49] 错误: 找不到符号
+[ERROR]   符号:   方法 getConfigId()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 existingEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[323,53] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<ConsumeStatistics>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[332,69] 错误: 找不到符号
+[ERROR]   符号:   方法 selectByPersonIdAndTimeRange(@jakarta.validation.constraints.NotNull Long,LocalDateTime,LocalDateTime)
+[ERROR]   位置: 类型为ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[347,68] 错误: 找不到符号
+[ERROR]   符号:   方法 selectByPersonIdAndTimeRange(@jakarta.validation.constraints.NotNull Long,LocalDateTime,LocalDateTime)
+[ERROR]   位置: 类型为ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[361,69] 错误: 找不到符号
+[ERROR]   符号:   方法 selectByPersonIdAndTimeRange(@jakarta.validation.constraints.NotNull Long,LocalDateTime,LocalDateTime)
+[ERROR]   位置: 类型为ConsumeRecordDao的变量 consumeRecordDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[385,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[417,20] 错误: 找不到符号
+[ERROR]   符号:   方法 currentValue(BigDecimal)
+[ERROR]   位置: 类 LimitCheckResultBuilder
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[431,20] 错误: 找不到符号
+[ERROR]   符号:   方法 currentValue(BigDecimal)
+[ERROR]   位置: 类 LimitCheckResultBuilder
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[445,20] 错误: 找不到符号
+[ERROR]   符号:   方法 currentValue(BigDecimal)
+[ERROR]   位置: 类 LimitCheckResultBuilder
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[509,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[670,27] 错误: 不兼容的类型: List<String>无法转换为List<ConflictInfo>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[680,16] 错误: 不兼容的类型: 推论变量 E 具有不兼容的上限
+[ERROR]     等式约束条件：ConflictInfo
+[ERROR]     下限：String
+[ERROR]   其中, E是类型变量:
+[ERROR]     E扩展已在方法 <E>of(E)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[702,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getSingleLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[703,44] 错误: 找不到符号
+[ERROR]   符号:   方法 getSingleLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[705,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getDailyLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[706,43] 错误: 找不到符号
+[ERROR]   符号:   方法 getDailyLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[708,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getWeeklyLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[709,44] 错误: 找不到符号
+[ERROR]   符号:   方法 getWeeklyLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[711,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getMonthlyLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[712,45] 错误: 找不到符号
+[ERROR]   符号:   方法 getMonthlyLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[714,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getDailyCountLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[715,48] 错误: 找不到符号
+[ERROR]   符号:   方法 getDailyCountLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[717,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getWeeklyCountLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[718,49] 错误: 找不到符号
+[ERROR]   符号:   方法 getWeeklyCountLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[720,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getMonthlyCountLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[721,50] 错误: 找不到符号
+[ERROR]   符号:   方法 getMonthlyCountLimit()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[723,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getMinAmount()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[724,42] 错误: 找不到符号
+[ERROR]   符号:   方法 getMinAmount()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[726,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getMaxAmount()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[727,42] 错误: 找不到符号
+[ERROR]   符号:   方法 getMaxAmount()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[729,22] 错误: 找不到符号
+[ERROR]   符号:   方法 getEnabled()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[730,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getEnabled()
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[745,24] 错误: 无法将类 RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<ConsumeLimitConfig>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[753,17] 错误: 无法从静态上下文中引用非静态 方法 delete(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[786,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setSingleLimit(BigDecimal)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[787,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setDailyLimit(BigDecimal)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[788,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setWeeklyLimit(BigDecimal)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[789,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setMonthlyLimit(BigDecimal)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[790,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setDailyCountLimit(Integer)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[791,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setWeeklyCountLimit(Integer)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[792,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setMonthlyCountLimit(Integer)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[793,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setMinAmount(BigDecimal)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[794,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setMaxAmount(BigDecimal)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[795,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setEnabled(Boolean)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\ConsumeLimitConfigServiceImpl.java:[799,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setExtendProperties(String)
+[ERROR]   位置: 类型为ConsumeLimitConfigEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[51,7] 错误: PaymentPasswordServiceImpl不是抽象的, 并且未覆盖PaymentPasswordService中的抽象方法checkPasswordStrength(@jakarta.validation.constraints.NotNull String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[362,33] 错误: PaymentPasswordServiceImpl中的checkPasswordStrength(@jakarta.validation.constraints.NotNull String)无法实现PaymentPasswordService中的checkPasswordStrength(@jakarta.validation.constraints.NotNull String)
+[ERROR]   返回类型PaymentPasswordResult与PasswordStrengthResult不兼容
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[356,16] 错误: 找不到符号
+[ERROR]   符号:   方法 maxAttempts(Integer)
+[ERROR]   位置: 类 PasswordSecurityPolicyBuilder
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[361,4] 错误: 方法不会覆盖或实现超类型的方法
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[410,21] 错误: 找不到符号
+[ERROR]   符号:   方法 lPush(String,String)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[411,21] 错误: 找不到符号
+[ERROR]   符号:   方法 lTrim(String,int,int)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[412,21] 错误: 无法将类 RedisUtil中的方法 expire应用到给定类型;
+[ERROR]   需要: String,long
+[ERROR]   找到:    String,int,TimeUnit
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[426,44] 错误: 找不到符号
+[ERROR]   符号:   方法 lRange(String,int,int)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[495,21] 错误: 无法从静态上下文中引用非静态 方法 set(String,Object,long,TimeUnit)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[498,64] 错误: 找不到符号
+[ERROR]   符号:   方法 locked(LocalDateTime,int)
+[ERROR]   位置: 类 PaymentPasswordResult
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[536,21] 错误: 无法从静态上下文中引用非静态 方法 delete(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[555,43] 错误: 无法从静态上下文中引用非静态 方法 get(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[555,47] 错误: 不兼容的类型: Object无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[563,29] 错误: 无法从静态上下文中引用非静态 方法 delete(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[582,25] 错误: 无法从静态上下文中引用非静态 方法 delete(String)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[630,68] 错误: 找不到符号
+[ERROR]   符号:   方法 biometricResult(boolean,String,@jakarta.validation.constraints.NotNull String)
+[ERROR]   位置: 类 PaymentPasswordResult
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

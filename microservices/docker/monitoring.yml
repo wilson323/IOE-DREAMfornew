@@ -1,0 +1,323 @@
+# IOE-DREAM 微服务监控配置
+# 包含：MinIO对象存储、链路追踪、日志聚合等
+version: '3.8'
+
+services:
+  # MinIO对象存储
+  minio:
+    image: minio/minio:RELEASE.2024-01-16T16-07-38Z
+    container_name: ioedream-minio
+    hostname: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:9001
+    volumes:
+      - minio_data:/data
+      - ./minio/config:/root/.minio
+    networks:
+      - ioedream-network
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Zipkin分布式链路追踪
+  zipkin:
+    image: openzipkin/zipkin:2.24
+    container_name: ioedream-zipkin
+    hostname: zipkin
+    ports:
+      - "9411:9411"
+    environment:
+      JAVA_OPTS: "-Xms512m -Xmx512m"
+      STORAGE_TYPE: elasticsearch
+      ES_HOSTS: http://elasticsearch:9200
+      ES_INDEX: zipkin
+    networks:
+      - ioedream-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9411/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Zipkin UI
+  zipkin-ui:
+    image: openzipkin/zipkin-ui:2.24
+    container_name: ioedream-zipkin-ui
+    hostname: zipkin-ui
+    ports:
+      - "9412:8080"
+    environment:
+      ZIPKIN_BASE_URL: http://zipkin:9411
+    networks:
+      - ioedream-network
+    depends_on:
+      zipkin:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Elasticsearch Head
+  elasticsearch-head:
+    image: mobz/elasticsearch-head:5
+    container_name: ioedream-elasticsearch-head
+    hostname: elasticsearch-head
+    ports:
+      - "9100:9100"
+    environment:
+      ELASTICSEARCH_HOST: http://elasticsearch:9200
+    networks:
+      - ioedream-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Logstash日志聚合
+  logstash:
+    image: logstash:8.11.0
+    container_name: ioedream-logstash
+    hostname: logstash
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx1g -Xms1g"
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+      ELASTICSEARCH_USER: ""
+      ELASTICSEARCH_PASSWORD: ""
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - logstash_data:/usr/share/logstash/data
+    networks:
+      - ioedream-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Filebeat日志收集
+  filebeat:
+    image: elastic/filebeat:8.11.0
+    container_name: ioedream-filebeat
+    hostname: filebeat
+    user: root
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch:9200
+      KIBANA_HOST: kibana:5601
+      LOGSTASH_HOST: logstash:5044
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/log/ioedream:/var/log/ioedream:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - ioedream-network
+    depends_on:
+      logstash:
+        condition: service_healthy
+    restart: unless-stopped
+    command: filebeat -e -strict.perms=false
+
+  # Jaeger分布式追踪
+  jaeger:
+    image: jaegertracing/all-in-one:1.49
+    container_name: ioedream-jaeger
+    hostname: jaeger
+    ports:
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+    environment:
+      COLLECTOR_ZIPKIN_HOST_PORT: 9411
+      SPAN_STORAGE_TYPE: elasticsearch
+      ES_SERVER_URLS: http://elasticsearch:9200
+      ES_INDEX_PREFIX: jaeger
+      LOG_LEVEL: INFO
+    volumes:
+      - jaeger_data:/tmp/jaeger
+    networks:
+      - ioedream-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:16686"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Apollo配置中心（可选，作为Nacos的补充）
+  apollo-config:
+    image: apolloconfig/apollo-configservice:2.2.0
+    container_name: ioedream-apollo-config
+    hostname: apollo-config
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-master:3306/ApolloConfigDB?characterEncoding=utf8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ioedream@2024
+    volumes:
+      - apollo_config_logs:/opt/logs
+      - apollo_config_data:/apollo-configservice/data
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Apollo管理台
+  apollo-admin:
+    image: apolloconfig/apollo-adminservice:2.2.0
+    container_name: ioedream-apollo-admin
+    hostname: apollo-admin
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-master:3306/ApolloConfigDB?characterEncoding=utf8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ioedream@2024
+    volumes:
+      - apollo_admin_logs:/opt/logs
+      - apollo_admin_data:/apollo-adminservice/data
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      apollo-config:
+        condition: service_started
+    restart: unless-stopped
+
+  # Sentinel控制台
+  sentinel:
+    image: bladex/sentinel-dashboard:1.8.6
+    container_name: ioedream-sentinel
+    hostname: sentinel
+    ports:
+      - "8858:8858"
+      - "8719:8719"
+    environment:
+      JAVA_OPTS: "-Dserver.port=8858 -Dcsp.sentinel.dashboard.server.port=8858 -Dproject.name=sentinel-dashboard"
+    volumes:
+      - sentinel_logs:/opt/logs
+      - sentinel_data:/opt/sentinel
+    networks:
+      - ioedream-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8858"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Seata分布式事务协调器
+  seata-server:
+    image: seataio/seata-server:1.7.0
+    container_name: ioedream-seata-server
+    hostname: seata-server
+    ports:
+      - "8091:8091"
+      - "7091:7091"
+    environment:
+      SEATA_PORT: 8091
+      STORE_MODE: db
+      SEATA_IP: 0.0.0.0
+      SEATA_CONFIG_NAME: file
+      SEATA_ENV: dev
+      DB_HOST: mysql-master
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ioedream@2024
+      DB_DATABASE: seata
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_NAMESPACE: ioedream-dev
+    volumes:
+      - seata_logs:/root/logs
+      - ./seata/conf:/seata-server/conf
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8091"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # RabbitMQ管理插件
+  rabbitmq-management:
+    image: rabbitmq:3.12-management-alpine
+    container_name: ioedream-rabbitmq-management
+    hostname: rabbitmq-management
+    ports:
+      - "15673:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: ioedream@2024
+      RABBITMQ_DEFAULT_VHOST: ioedream
+      RABBITMQ_MANAGEMENT_PORT: 15672
+    volumes:
+      - rabbitmq_management_data:/var/lib/rabbitmq
+    networks:
+      - ioedream-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  minio_data:
+    driver: local
+  logstash_data:
+    driver: local
+  jaeger_data:
+    driver: local
+  apollo_config_logs:
+    driver: local
+  apollo_config_data:
+    driver: local
+  apollo_admin_logs:
+    driver: local
+  apollo_admin_data:
+    driver: local
+  sentinel_logs:
+    driver: local
+  sentinel_data:
+    driver: local
+  seata_logs:
+    driver: local
+  rabbitmq_management_data:
+    driver: local
+
+networks:
+  ioedream-network:
+    external: true

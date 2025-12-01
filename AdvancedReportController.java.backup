@@ -1,0 +1,157 @@
+package net.lab1024.sa.consume.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+// import net.lab1024.sa.common.annotation.SaCheckPermission; // 閺嗗倹妞傚▔銊╁櫞閿涘瞼鐡戝鍛彆閸忚鲸膩閸ф鐣崰?// import net.lab1024.sa.common.controller.SupportBaseController; // 閺嗗倹妞傚▔銊╁櫞閿涘瞼鐡戝鍛彆閸忚鲸膩閸ф鐣崰?import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.domain.ResponseDTO;
+// import net.lab1024.sa.common.util.SmartRequestUtil; // 閺嗗倹妞傚▔銊╁櫞閿涘瞼鐡戝鍛彆閸忚鲸膩閸ф鐣崰?import net.lab1024.sa.consume.service.report.AdvancedReportService;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+
+/**
+ * 妤傛楠囬幎銉ㄣ€冮幒褍鍩楅崳? * 閹绘劒绶垫妯奸獓閸欘垵顫嬮崠鏍ф嫲閺佺増宓侀崚鍡樼€介崝鐔诲厴
+ *
+ * @author SmartAdmin
+ * @since 2025-11-17
+ */
+@Slf4j
+@RestController
+@RequestMapping("/api/consume/advanced-report")
+@Tag(name = "高级报表规则", description = "提供高级报表规则相关的接口")
+public class AdvancedReportController { // extends SupportBaseController
+
+    @Resource
+    private AdvancedReportService advancedReportService;
+
+    /**
+     * 閻㈢喐鍨氬☉鍫ｅ瀭閻戭厼濮忛崶鐐殶閹?     */
+    @Operation(summary = "閻㈢喐鍨氬☉鍫ｅ瀭閻戭厼濮忛崶鐐殶閹?, description = "閻㈢喐鍨氶幐澶婄毈閺冭泛鎷伴弰鐔告埂閸掑棗绔烽惃鍕Х鐠愬湱鍎归崝娑樻禈")
+    // @SaCheckPermission("consume:report:heatmap")
+    @GetMapping("/heatmap")
+    public ResponseDTO<Map<String, Object>> generateConsumeHeatmap(
+            @Parameter(description = "瀵偓婵妫╅張?) @RequestParam(required = false) String startDate,
+            @Parameter(description = "缂佹挻娼弮銉︽埂") @RequestParam(required = false) String endDate) {
+
+        try {
+            LocalDateTime start = parseDateTime(startDate, LocalDateTime.now().minusDays(30));
+            LocalDateTime end = parseDateTime(endDate, LocalDateTime.now());
+
+            return ResponseDTO.ok(advancedReportService.generateConsumeHeatmap(start, end));
+        } catch (Exception e) {
+            log.error("閻㈢喐鍨氬☉鍫ｅ瀭閻戭厼濮忛崶鎯с亼鐠?, e);
+            return ResponseDTO.error("閻㈢喐鍨氬☉鍫ｅ瀭閻戭厼濮忛崶鎯с亼鐠? " + e.getMessage());
+        }
+    }
+
+    /**
+     * 閻㈢喐鍨氬☉鍫ｅ瀭鐡掑濞嶉崶鎹愩€冮弫鐗堝祦
+     */
+    @Operation(summary = "閻㈢喐鍨氬☉鍫ｅ瀭鐡掑濞嶉崶鎹愩€冮弫鐗堝祦", description = "閻㈢喐鍨氶幐鍥х暰閺冨爼妫垮▓鐢垫畱濞戝牐鍨傜搾瀣◢閺佺増宓?)
+    // @SaCheckPermission("consume:report:trend")
+    @GetMapping("/trend")
+    public ResponseDTO<Map<String, Object>> generateConsumeTrend(
+            @Parameter(description = "瀵偓婵妫╅張?) @RequestParam(required = false) String startDate,
+            @Parameter(description = "缂佹挻娼弮銉︽埂") @RequestParam(required = false) String endDate,
+            @Parameter(description = "閺冨爼妫跨划鎺戝: hour/day/week/month") @RequestParam(defaultValue = "day") String granularity) {
+
+        try {
+            LocalDateTime start = parseDateTime(startDate, LocalDateTime.now().minusDays(30));
+            LocalDateTime end = parseDateTime(endDate, LocalDateTime.now());
+
+            return ResponseDTO.ok(advancedReportService.generateConsumeTrend(start, end, granularity));
+        } catch (Exception e) {
+            log.error("閻㈢喐鍨氬☉鍫ｅ瀭鐡掑濞嶉崶鎹愩€冩径杈Е", e);
+            return ResponseDTO.error("閻㈢喐鍨氬☉鍫ｅ瀭鐡掑濞嶉崶鎹愩€冩径杈Е: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 閻㈢喐鍨氱拋鎯ь槵濞戝牐鍨傞幒鎺曨攽濮?     */
+    @Operation(summary = "閻㈢喐鍨氱拋鎯ь槵濞戝牐鍨傞幒鎺曨攽濮?, description = "閻㈢喐鍨氶幐鍥х暰閺冨爼妫垮▓鐢垫畱鐠佹儳顦☉鍫ｅ瀭閹烘帟顢戝?)
+    // @SaCheckPermission("consume:report:device-ranking")
+    @GetMapping("/device-ranking")
+    public ResponseDTO<Map<String, Object>> generateDeviceRanking(
+            @Parameter(description = "瀵偓婵妫╅張?) @RequestParam(required = false) String startDate,
+            @Parameter(description = "缂佹挻娼弮銉︽埂") @RequestParam(required = false) String endDate,
+            @Parameter(description = "閹烘帒鎮曢弫浼村櫤") @RequestParam(defaultValue = "10") Integer limit) {
+
+        try {
+            LocalDateTime start = parseDateTime(startDate, LocalDateTime.now().minusDays(7));
+            LocalDateTime end = parseDateTime(endDate, LocalDateTime.now());
+
+            return ResponseDTO.ok(advancedReportService.generateDeviceRanking(start, end, limit));
+        } catch (Exception e) {
+            log.error("閻㈢喐鍨氱拋鎯ь槵濞戝牐鍨傞幒鎺曨攽濮掓粌銇戠拹?, e);
+            return ResponseDTO.error("閻㈢喐鍨氱拋鎯ь槵濞戝牐鍨傞幒鎺曨攽濮掓粌銇戠拹? " + e.getMessage());
+        }
+    }
+
+    /**
+     * 閻㈢喐鍨氶弨顖欑帛閺傜懓绱￠崚鍡樼€介弫鐗堝祦
+     */
+    @Operation(summary = "閻㈢喐鍨氶弨顖欑帛閺傜懓绱￠崚鍡樼€介弫鐗堝祦", description = "閻㈢喐鍨氶幐鍥х暰閺冨爼妫垮▓鐢垫畱閺€顖欑帛閺傜懓绱℃担璺ㄦ暏閸掑棙鐎?)
+    // @SaCheckPermission("consume:report:payment-analysis")
+    @GetMapping("/payment-analysis")
+    public ResponseDTO<Map<String, Object>> generatePaymentAnalysis(
+            @Parameter(description = "瀵偓婵妫╅張?) @RequestParam(required = false) String startDate,
+            @Parameter(description = "缂佹挻娼弮銉︽埂") @RequestParam(required = false) String endDate) {
+
+        try {
+            LocalDateTime start = parseDateTime(startDate, LocalDateTime.now().minusDays(30));
+            LocalDateTime end = parseDateTime(endDate, LocalDateTime.now());
+
+            return ResponseDTO.ok(advancedReportService.generatePaymentAnalysis(start, end));
+        } catch (Exception e) {
+            log.error("閻㈢喐鍨氶弨顖欑帛閺傜懓绱￠崚鍡樼€介弫鐗堝祦婢惰精瑙?, e);
+            return ResponseDTO.error("閻㈢喐鍨氶弨顖欑帛閺傜懓绱￠崚鍡樼€介弫鐗堝祦婢惰精瑙? " + e.getMessage());
+        }
+    }
+
+    /**
+     * 鐎电厧鍤妯奸獓閹躲儴銆?     */
+    @Operation(summary = "鐎电厧鍤妯奸獓閹躲儴銆?, description = "鐎电厧鍤妯奸獓閹躲儴銆冮弫鐗堝祦閸掔檴xcel")
+    // @SaCheckPermission("consume:report:export")
+    @GetMapping("/export")
+    public void exportAdvancedReport(
+            @Parameter(description = "閹躲儴銆冪猾璇茬€?) @RequestParam String reportType,
+            @Parameter(description = "瀵偓婵妫╅張?) @RequestParam(required = false) String startDate,
+            @Parameter(description = "缂佹挻娼弮銉︽埂") @RequestParam(required = false) String endDate,
+            HttpServletResponse response) {
+
+        try {
+            LocalDateTime start = parseDateTime(startDate, LocalDateTime.now().minusDays(30));
+            LocalDateTime end = parseDateTime(endDate, LocalDateTime.now());
+
+            advancedReportService.exportAdvancedReport(reportType, start, end, response);
+        } catch (Exception e) {
+            log.error("鐎电厧鍤妯奸獓閹躲儴銆冩径杈Е", e);
+            try {
+                response.getWriter().write("鐎电厧鍤径杈Е: " + e.getMessage());
+            } catch (Exception ex) {
+                log.error("閸愭瑥鍙嗛柨娆掝嚖閸濆秴绨叉径杈Е", ex);
+            }
+        }
+    }
+
+    /**
+     * 鐟欙絾鐎介弮銉︽埂閺冨爼妫块崣鍌涙殶
+     */
+    private LocalDateTime parseDateTime(String dateStr, LocalDateTime defaultValue) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return LocalDateTime.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        } catch (Exception e) {
+            log.warn("閺冦儲婀￠弽鐓庣础鐟欙絾鐎芥径杈Е: {}, 娴ｈ法鏁ゆ妯款吇閸?, dateStr, e);
+            return defaultValue;
+        }
+    }
+}

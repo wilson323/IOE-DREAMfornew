@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/device-service-microservice/requirements.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-26T17:32:50.965Z",
+      "trigger": "initial",
+      "approvalId": "approval_1764178370916_5y2ub3w0p",
+      "approvalTitle": "Device Service微服务需求文档审批"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-26T22:15:01.843Z",
+      "trigger": "approved",
+      "approvalId": "approval_1764178370916_5y2ub3w0p",
+      "approvalTitle": "Device Service微服务需求文档审批"
+    }
+  ]
+}

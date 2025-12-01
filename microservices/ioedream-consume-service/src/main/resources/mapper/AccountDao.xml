@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.consume.dao.AccountDao">
+
+  <!-- 使用乐观锁扣减余额 -->
+  <update id="deductBalanceWithVersion"> UPDATE t_consume_account SET balance = #{newBalance},
+    version = version + 1, update_time = NOW(), current_daily_amount = current_daily_amount +
+    #{amount}, current_monthly_amount = current_monthly_amount + #{amount}, total_consume_amount =
+    total_consume_amount + #{amount}, last_consume_time = NOW() WHERE account_id = #{accountId} AND
+    balance = #{oldBalance} AND version = #{version} AND deleted_flag = 0 </update>
+
+  <!-- 使用乐观锁增加余额 -->
+  <update id="addBalanceWithVersion"> UPDATE t_consume_account SET balance = #{newBalance}, version
+    = version + 1, update_time = NOW(), total_recharge_amount = total_recharge_amount + #{amount},
+    last_recharge_time = NOW() WHERE account_id = #{accountId} AND balance = #{oldBalance} AND
+    version = #{version} AND deleted_flag = 0 </update>
+
+  <!-- 使用乐观锁更新冻结金额 -->
+  <update id="updateFrozenAmountWithVersion"> UPDATE t_consume_account SET frozen_amount =
+    #{newFrozenAmount}, version = version + 1, update_time = NOW() WHERE account_id = #{accountId}
+    AND frozen_amount = #{oldFrozenAmount} AND version = #{version} AND deleted_flag = 0 </update>
+
+  <!-- 增加累计消费金额 -->
+  <update id="incrementTotalConsumeAmount"> UPDATE t_consume_account SET total_consume_amount =
+    total_consume_amount + #{amount}, update_time = NOW() WHERE account_id = #{accountId} AND
+    deleted_flag = 0 </update>
+
+  <!-- 原子性增加累计充值金额 -->
+  <update id="incrementTotalRechargeAmount"> UPDATE t_consume_account SET total_recharge_amount =
+    total_recharge_amount + #{amount}, update_time = NOW() WHERE account_id = #{accountId} AND
+    deleted_flag = 0 </update>
+
+  <!-- 增加当前日度消费金额 -->
+  <update id="incrementCurrentDailyAmount"> UPDATE t_consume_account SET current_daily_amount =
+    current_daily_amount + #{amount}, update_time = NOW() WHERE account_id = #{accountId} AND
+    deleted_flag = 0 </update>
+
+  <!-- 增加当前月度消费金额 -->
+  <update id="incrementCurrentMonthlyAmount"> UPDATE t_consume_account SET current_monthly_amount =
+    current_monthly_amount + #{amount}, update_time = NOW() WHERE account_id = #{accountId} AND
+    deleted_flag = 0 </update>
+
+  <!-- 更新最后消费时间 -->
+  <update id="updateLastConsumeTime"> UPDATE t_consume_account SET last_consume_time =
+    #{lastConsumeTime}, update_time = NOW() WHERE account_id = #{accountId} AND deleted_flag = 0 </update>
+
+  <!-- 更新最后充值时间 -->
+  <update id="updateLastRechargeTime"> UPDATE t_consume_account SET last_recharge_time =
+    #{lastRechargeTime}, update_time = NOW() WHERE account_id = #{accountId} AND deleted_flag = 0 </update>
+
+  <!-- 获取指定时间范围内的消费金额 -->
+  <select id="getConsumeAmountByTimeRange" resultType="java.math.BigDecimal"> SELECT
+    COALESCE(SUM(amount), 0) as totalAmount FROM t_consume_record WHERE person_id = #{personId} AND
+    status = 'SUCCESS' AND pay_time >= #{startTime} AND pay_time &lt;= #{endTime} AND deleted_flag =
+    0 </select>
+
+  <!--
+获取指定时间范围内的总消费金额（所有账户） -->
+  <select
+    id="getTotalConsumeAmountByTimeRange" resultType="java.math.BigDecimal"> SELECT
+    COALESCE(SUM(amount), 0) as totalAmount FROM t_consume_record WHERE status = 'SUCCESS' AND
+    deleted_flag = 0 <if test="startTime != null"> AND pay_time >= #{startTime} </if>
+        <if
+      test="endTime != null"> AND pay_time &lt;= #{endTime} </if>
+  </select>
+
+  <!-- 获取所有账户的总余额 -->
+  <select id="getTotalBalance" resultType="java.math.BigDecimal"> SELECT COALESCE(SUM(balance), 0)
+    as totalBalance FROM t_consume_account WHERE status = 'ACTIVE' AND deleted_flag = 0 </select>
+
+  <!-- 获取所有账户的总充值金额 -->
+  <select id="getTotalRechargeAmount" resultType="java.math.BigDecimal"> SELECT
+    COALESCE(SUM(total_recharge_amount), 0) as totalRechargeAmount FROM t_consume_account WHERE
+    status = 'ACTIVE' AND deleted_flag = 0 </select>
+
+</mapper>

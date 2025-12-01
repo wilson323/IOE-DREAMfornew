@@ -1,0 +1,92 @@
+# Enforce UTF-8 encoding and consistent line endings across platforms
+#
+# Text files in UTF-8 without BOM, LF line endings
+* text=auto eol=lf
+
+# Explicitly mark common source/text types as UTF-8 text
+*.java text working-tree-encoding=UTF-8
+*.xml  text working-tree-encoding=UTF-8
+*.yml  text working-tree-encoding=UTF-8
+*.yaml text working-tree-encoding=UTF-8
+*.md   text working-tree-encoding=UTF-8
+*.json text working-tree-encoding=UTF-8
+*.js   text working-tree-encoding=UTF-8
+*.ts   text working-tree-encoding=UTF-8
+*.vue  text working-tree-encoding=UTF-8
+*.properties text working-tree-encoding=UTF-8
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.jar binary
+*.xdb binary
+
+* text=auto eol=lf
+
+*.java text working-tree-encoding=UTF-8
+*.xml  text working-tree-encoding=UTF-8
+*.md   text working-tree-encoding=UTF-8
+*.js   text working-tree-encoding=UTF-8
+*.ts   text working-tree-encoding=UTF-8
+*.vue  text working-tree-encoding=UTF-8
+*.json text working-tree-encoding=UTF-8
+*.yml  text working-tree-encoding=UTF-8
+*.yaml text working-tree-encoding=UTF-8
+*.sh   text working-tree-encoding=UTF-8
+*.ps1  text working-tree-encoding=UTF-8
+
+# Do not normalize images/binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.jar binary
+
+# Git编码配置 - 确保所有文件使用UTF-8编码
+
+# 设置所有文本文件使用UTF-8编码
+* text=auto eol=lf encoding=UTF-8
+
+# Java文件
+*.java text eol=lf encoding=UTF-8
+
+# 配置文件
+*.xml text eol=lf encoding=UTF-8
+*.properties text eol=lf encoding=UTF-8
+*.yml text eol=lf encoding=UTF-8
+*.yaml text eol=lf encoding=UTF-8
+*.json text eol=lf encoding=UTF-8
+
+# 文档文件
+*.md text eol=lf encoding=UTF-8
+*.txt text eol=lf encoding=UTF-8
+
+# 脚本文件
+*.sh text eol=lf encoding=UTF-8
+*.bat text eol=crlf encoding=UTF-8
+
+# 二进制文件（不进行编码转换）
+*.jpg binary
+*.png binary
+*.gif binary
+*.pdf binary
+*.zip binary
+*.jar binary
+*.war binary
+
+# IDE文件
+*.iml text eol=lf encoding=UTF-8
+*.idea/** text=auto eol=lf encoding=UTF-8
+
+# Vue/JavaScript文件
+*.vue text eol=lf encoding=UTF-8
+*.js text eol=lf encoding=UTF-8
+*.ts text eol=lf encoding=UTF-8
+*.html text eol=lf encoding=UTF-8
+*.css text eol=lf encoding=UTF-8

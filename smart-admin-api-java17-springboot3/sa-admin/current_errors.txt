@@ -1,0 +1,471 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 11 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-admin ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 294 source files with javac [debug target 17] to target\classes
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/domain/vo/NotificationStatistics.java: 某些输入文件使用或覆盖了已过时的 API。
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/domain/vo/NotificationStatistics.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/service/impl/AccessRecordServiceImpl.java:[69,75] 未经检查的转换
+  需要: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.smart.access.domain.entity.AccessRecordEntity>
+  找到:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#1, 共 ?>
+[INFO] 1 warning
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[18,43] 程序包net.lab1024.sa.base.common.validate不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsistencyValidationController.java:[10,63] net.lab1024.sa.admin.module.consume.service.consistency.ReconciliationResult在net.lab1024.sa.admin.module.consume.service.consistency中不是公共的; 无法从外部程序包中对其进行访问
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsistencyValidationController.java:[235,46] 找不到符号
+  符号:   类 ConsistencyCleanupResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.DataConsistencyManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[23,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[172,45] 找不到符号
+  符号:   类 EngineHealthResult
+  位置: 类 net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/RechargeController.java:[24,26] 找不到符号
+  符号:   类 Validated
+  位置: 程序包 jakarta.validation
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[11,47] 找不到符号
+  符号:   类 LoginHelper
+  位置: 程序包 net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/workflow/manager/WorkflowEngineManager.java:[34,44] 找不到符号
+  符号: 类 BaseCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessAreaController.java:[17,47] 程序包net.lab1024.sa.base.module.support.rbac不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[14,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[17,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/manager/AccessRecordManager.java:[30,42] 找不到符号
+  符号: 类 BaseCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/manager/SmartDeviceManager.java:[18,41] 找不到符号
+  符号: 类 BaseCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/manager/VideoPreviewManager.java:[30,42] 找不到符号
+  符号: 类 BaseCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/service/impl/VideoAIAnalysisEngineImpl.java:[26,13] 找不到符号
+  符号:   类 CacheService
+  位置: 类 net.lab1024.sa.admin.module.smart.video.service.impl.VideoAIAnalysisEngineImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/service/impl/VideoRecordingManagerImpl.java:[26,13] 找不到符号
+  符号:   类 CacheService
+  位置: 类 net.lab1024.sa.admin.module.smart.video.service.impl.VideoRecordingManagerImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/service/impl/VideoStreamProcessorImpl.java:[26,13] 找不到符号
+  符号:   类 CacheService
+  位置: 类 net.lab1024.sa.admin.module.smart.video.service.impl.VideoStreamProcessorImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/device/manager/impl/UnifiedDeviceManagerImpl.java:[33,50] 找不到符号
+  符号: 类 UnifiedDeviceManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[38,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.consume.controller.ConsumeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[41,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[55,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.consume.controller.ConsumeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[58,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[65,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[66,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[75,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[77,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[79,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[82,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[70,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[71,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[72,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[73,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[74,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[76,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[78,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[83,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[84,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[80,5] org.springframework.web.bind.annotation.PutMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[69,5] org.springframework.web.bind.annotation.DeleteMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[81,5] org.springframework.web.bind.annotation.DeleteMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessAreaController.java:[58,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessAreaController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[49,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[52,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[237,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[240,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[41,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.SmartAccessControlController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[44,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[88,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.SmartAccessControlController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[91,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[35,5] 容器jakarta.annotation.Resources不适用于元素 accessDeviceDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoDeviceController.java:[57,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoDeviceController.java:[58,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoDeviceController.java:[59,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoSurveillanceController.java:[55,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/device/manager/impl/UnifiedDeviceManagerImpl.java:[38,5] 容器jakarta.annotation.Resources不适用于元素 eventPublisher
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[49,60] 找不到符号
+  符号:   方法 getEmployeeList(net.lab1024.sa.admin.module.hr.domain.form.EmployeeQueryForm)
+  位置: 类型为net.lab1024.sa.admin.module.hr.service.EmployeeService的变量 employeeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[52,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[61,48] 找不到符号
+  符号:   方法 getEmployeeDetail(java.lang.Long)
+  位置: 类型为net.lab1024.sa.admin.module.hr.service.EmployeeService的变量 employeeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[64,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[73,58] 不兼容的类型: @jakarta.validation.Valid net.lab1024.sa.admin.module.hr.domain.dto.EmployeeAddDTO无法转换为net.lab1024.sa.admin.module.hr.domain.entity.EmployeeEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[77,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[86,45] 找不到符号
+  符号:   方法 updateEmployee(@jakarta.validation.Valid net.lab1024.sa.admin.module.hr.domain.dto.EmployeeUpdateDTO)
+  位置: 类型为net.lab1024.sa.admin.module.hr.service.EmployeeService的变量 employeeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[90,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[90,65] 找不到符号
+  符号:   方法 getEmployeeId()
+  位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.hr.domain.dto.EmployeeUpdateDTO的变量 employeeUpdateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[99,45] 找不到符号
+  符号:   方法 deleteEmployee(java.lang.Long)
+  位置: 类型为net.lab1024.sa.admin.module.hr.service.EmployeeService的变量 employeeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[103,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[93,32] 找不到符号
+  符号:   方法 getAdministratorFlag()
+  位置: 类型为net.lab1024.sa.admin.module.system.login.domain.RequestEmployee的变量 requestEmployee
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[51,64] 不兼容的类型: @jakarta.validation.Valid net.lab1024.sa.admin.module.consume.domain.form.AccountCreateForm无法转换为net.lab1024.sa.admin.module.consume.domain.entity.AccountEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[66,49] 找不到符号
+  符号:   方法 getAccountList(@jakarta.validation.Valid net.lab1024.sa.base.common.domain.PageParam,java.lang.String,java.lang.Integer,java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[78,49] 找不到符号
+  符号:   方法 getAccountDetail(@jakarta.validation.constraints.NotNull java.lang.Long)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[90,49] 找不到符号
+  符号:   方法 updateAccount(@jakarta.validation.Valid net.lab1024.sa.admin.module.consume.domain.form.AccountUpdateForm)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[102,49] 找不到符号
+  符号:   方法 rechargeAccount(@jakarta.validation.Valid net.lab1024.sa.admin.module.consume.domain.form.AccountRechargeForm)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[114,49] 找不到符号
+  符号:   方法 getAccountBalance(@jakarta.validation.constraints.NotNull java.lang.Long)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[127,49] 找不到符号
+  符号:   方法 freezeAccount(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[140,49] 找不到符号
+  符号:   方法 unfreezeAccount(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[153,49] 找不到符号
+  符号:   方法 closeAccount(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[170,49] 找不到符号
+  符号:   方法 getAccountTransactions(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.Valid net.lab1024.sa.base.common.domain.PageParam,java.time.LocalDateTime,java.time.LocalDateTime,java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[184,49] 找不到符号
+  符号:   方法 getAccountStatistics(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[201,49] 找不到符号
+  符号:   方法 exportAccounts(java.lang.String,java.lang.Integer,java.lang.String,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[213,49] 找不到符号
+  符号:   方法 getAccountTypes()
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[227,49] 找不到符号
+  符号:   方法 batchUpdateStatus(@jakarta.validation.constraints.NotNull java.util.List<java.lang.Long>,@jakarta.validation.constraints.NotNull java.lang.Integer,java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsistencyValidationController.java:[181,13] net.lab1024.sa.admin.module.consume.service.consistency.ReconciliationResult在net.lab1024.sa.admin.module.consume.service.consistency中不是公共的; 无法从外部程序包中对其进行访问
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsistencyValidationController.java:[239,35] 找不到符号
+  符号:   类 ConsistencyCleanupResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.DataConsistencyManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[178,49] 找不到符号
+  符号:   方法 validateConsume(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.math.BigDecimal,java.lang.Long,java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[190,49] 找不到符号
+  符号:   方法 batchConsume(@jakarta.validation.Valid java.util.List<java.util.Map<java.lang.String,java.lang.Object>>)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[210,49] 找不到符号
+  符号:   方法 exportRecords(java.lang.Long,java.lang.String,java.lang.Long,java.lang.String,java.lang.String,java.time.LocalDateTime,java.time.LocalDateTime,java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[226,49] 找不到符号
+  符号:   方法 getConsumeTrend(java.lang.String,java.time.LocalDateTime,java.time.LocalDateTime,java.lang.Long)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[239,49] 找不到符号
+  符号:   方法 cancelConsume(java.lang.Long,java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[251,49] 找不到符号
+  符号:   方法 getConsumeLogs(java.lang.Long)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[264,49] 找不到符号
+  符号:   方法 syncConsumeData(java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[64,45] 找不到符号
+  符号:   方法 isModeSupported(java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[69,60] 找不到符号
+  符号:   方法 getStrategy(java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[86,54] 找不到符号
+  符号:   方法 getModeConfig(java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[105,82] 不兼容的类型: java.util.Map<java.lang.String,java.util.Map<java.lang.String,java.lang.Object>>无法转换为java.util.Map<java.lang.String,net.lab1024.sa.admin.module.consume.engine.mode.config.ConsumptionModeConfig>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[122,54] 找不到符号
+  符号:   方法 parseAndCacheConfig(java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[174,34] 找不到符号
+  符号:   类 EngineHealthResult
+  位置: 类 net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[190,72] 不兼容的类型: java.util.Map<java.lang.String,java.lang.Object>无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[249,34] 找不到符号
+  符号:   类 EngineHealthResult
+  位置: 类 net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[258,53] 找不到符号
+  符号:   方法 getModeConfig(java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[259,52] 找不到符号
+  符号:   方法 getStrategy(java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.367 s
+[INFO] Finished at: 2025-11-18T02:44:48+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[18,43] 程序包net.lab1024.sa.base.common.validate不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsistencyValidationController.java:[10,63] net.lab1024.sa.admin.module.consume.service.consistency.ReconciliationResult在net.lab1024.sa.admin.module.consume.service.consistency中不是公共的; 无法从外部程序包中对其进行访问
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsistencyValidationController.java:[235,46] 找不到符号
+[ERROR]   符号:   类 ConsistencyCleanupResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.DataConsistencyManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[23,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[172,45] 找不到符号
+[ERROR]   符号:   类 EngineHealthResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/RechargeController.java:[24,26] 找不到符号
+[ERROR]   符号:   类 Validated
+[ERROR]   位置: 程序包 jakarta.validation
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[11,47] 找不到符号
+[ERROR]   符号:   类 LoginHelper
+[ERROR]   位置: 程序包 net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/workflow/manager/WorkflowEngineManager.java:[34,44] 找不到符号
+[ERROR]   符号: 类 BaseCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessAreaController.java:[17,47] 程序包net.lab1024.sa.base.module.support.rbac不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[14,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[17,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/manager/AccessRecordManager.java:[30,42] 找不到符号
+[ERROR]   符号: 类 BaseCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/manager/SmartDeviceManager.java:[18,41] 找不到符号
+[ERROR]   符号: 类 BaseCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/manager/VideoPreviewManager.java:[30,42] 找不到符号
+[ERROR]   符号: 类 BaseCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/service/impl/VideoAIAnalysisEngineImpl.java:[26,13] 找不到符号
+[ERROR]   符号:   类 CacheService
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.video.service.impl.VideoAIAnalysisEngineImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/service/impl/VideoRecordingManagerImpl.java:[26,13] 找不到符号
+[ERROR]   符号:   类 CacheService
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.video.service.impl.VideoRecordingManagerImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/service/impl/VideoStreamProcessorImpl.java:[26,13] 找不到符号
+[ERROR]   符号:   类 CacheService
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.video.service.impl.VideoStreamProcessorImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/device/manager/impl/UnifiedDeviceManagerImpl.java:[33,50] 找不到符号
+[ERROR]   符号: 类 UnifiedDeviceManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[38,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.controller.ConsumeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[41,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[55,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.controller.ConsumeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[58,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[65,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[66,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[75,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[77,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[79,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[82,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[70,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[71,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[72,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[73,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[74,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[76,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[78,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[83,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[84,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[80,5] org.springframework.web.bind.annotation.PutMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[69,5] org.springframework.web.bind.annotation.DeleteMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[81,5] org.springframework.web.bind.annotation.DeleteMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessAreaController.java:[58,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessAreaController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[49,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[52,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[237,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[240,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[41,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.SmartAccessControlController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[44,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[88,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.SmartAccessControlController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[91,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[35,5] 容器jakarta.annotation.Resources不适用于元素 accessDeviceDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoDeviceController.java:[57,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoDeviceController.java:[58,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoDeviceController.java:[59,5] org.springframework.web.bind.annotation.PostMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoSurveillanceController.java:[55,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/device/manager/impl/UnifiedDeviceManagerImpl.java:[38,5] 容器jakarta.annotation.Resources不适用于元素 eventPublisher
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[49,60] 找不到符号
+[ERROR]   符号:   方法 getEmployeeList(net.lab1024.sa.admin.module.hr.domain.form.EmployeeQueryForm)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.hr.service.EmployeeService的变量 employeeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[52,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[61,48] 找不到符号
+[ERROR]   符号:   方法 getEmployeeDetail(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.hr.service.EmployeeService的变量 employeeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[64,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[73,58] 不兼容的类型: @jakarta.validation.Valid net.lab1024.sa.admin.module.hr.domain.dto.EmployeeAddDTO无法转换为net.lab1024.sa.admin.module.hr.domain.entity.EmployeeEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[77,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[86,45] 找不到符号
+[ERROR]   符号:   方法 updateEmployee(@jakarta.validation.Valid net.lab1024.sa.admin.module.hr.domain.dto.EmployeeUpdateDTO)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.hr.service.EmployeeService的变量 employeeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[90,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[90,65] 找不到符号
+[ERROR]   符号:   方法 getEmployeeId()
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.hr.domain.dto.EmployeeUpdateDTO的变量 employeeUpdateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[99,45] 找不到符号
+[ERROR]   符号:   方法 deleteEmployee(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.hr.service.EmployeeService的变量 employeeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[103,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[93,32] 找不到符号
+[ERROR]   符号:   方法 getAdministratorFlag()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.system.login.domain.RequestEmployee的变量 requestEmployee
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[51,64] 不兼容的类型: @jakarta.validation.Valid net.lab1024.sa.admin.module.consume.domain.form.AccountCreateForm无法转换为net.lab1024.sa.admin.module.consume.domain.entity.AccountEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[66,49] 找不到符号
+[ERROR]   符号:   方法 getAccountList(@jakarta.validation.Valid net.lab1024.sa.base.common.domain.PageParam,java.lang.String,java.lang.Integer,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[78,49] 找不到符号
+[ERROR]   符号:   方法 getAccountDetail(@jakarta.validation.constraints.NotNull java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[90,49] 找不到符号
+[ERROR]   符号:   方法 updateAccount(@jakarta.validation.Valid net.lab1024.sa.admin.module.consume.domain.form.AccountUpdateForm)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[102,49] 找不到符号
+[ERROR]   符号:   方法 rechargeAccount(@jakarta.validation.Valid net.lab1024.sa.admin.module.consume.domain.form.AccountRechargeForm)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[114,49] 找不到符号
+[ERROR]   符号:   方法 getAccountBalance(@jakarta.validation.constraints.NotNull java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[127,49] 找不到符号
+[ERROR]   符号:   方法 freezeAccount(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[140,49] 找不到符号
+[ERROR]   符号:   方法 unfreezeAccount(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[153,49] 找不到符号
+[ERROR]   符号:   方法 closeAccount(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[170,49] 找不到符号
+[ERROR]   符号:   方法 getAccountTransactions(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.Valid net.lab1024.sa.base.common.domain.PageParam,java.time.LocalDateTime,java.time.LocalDateTime,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[184,49] 找不到符号
+[ERROR]   符号:   方法 getAccountStatistics(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[201,49] 找不到符号
+[ERROR]   符号:   方法 exportAccounts(java.lang.String,java.lang.Integer,java.lang.String,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[213,49] 找不到符号
+[ERROR]   符号:   方法 getAccountTypes()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[227,49] 找不到符号
+[ERROR]   符号:   方法 batchUpdateStatus(@jakarta.validation.constraints.NotNull java.util.List<java.lang.Long>,@jakarta.validation.constraints.NotNull java.lang.Integer,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.AccountService的变量 accountService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsistencyValidationController.java:[181,13] net.lab1024.sa.admin.module.consume.service.consistency.ReconciliationResult在net.lab1024.sa.admin.module.consume.service.consistency中不是公共的; 无法从外部程序包中对其进行访问
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsistencyValidationController.java:[239,35] 找不到符号
+[ERROR]   符号:   类 ConsistencyCleanupResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.consistency.DataConsistencyManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[178,49] 找不到符号
+[ERROR]   符号:   方法 validateConsume(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.math.BigDecimal,java.lang.Long,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[190,49] 找不到符号
+[ERROR]   符号:   方法 batchConsume(@jakarta.validation.Valid java.util.List<java.util.Map<java.lang.String,java.lang.Object>>)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[210,49] 找不到符号
+[ERROR]   符号:   方法 exportRecords(java.lang.Long,java.lang.String,java.lang.Long,java.lang.String,java.lang.String,java.time.LocalDateTime,java.time.LocalDateTime,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[226,49] 找不到符号
+[ERROR]   符号:   方法 getConsumeTrend(java.lang.String,java.time.LocalDateTime,java.time.LocalDateTime,java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[239,49] 找不到符号
+[ERROR]   符号:   方法 cancelConsume(java.lang.Long,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[251,49] 找不到符号
+[ERROR]   符号:   方法 getConsumeLogs(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[264,49] 找不到符号
+[ERROR]   符号:   方法 syncConsumeData(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.service.ConsumeService的变量 consumeService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[64,45] 找不到符号
+[ERROR]   符号:   方法 isModeSupported(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[69,60] 找不到符号
+[ERROR]   符号:   方法 getStrategy(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[86,54] 找不到符号
+[ERROR]   符号:   方法 getModeConfig(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[105,82] 不兼容的类型: java.util.Map<java.lang.String,java.util.Map<java.lang.String,java.lang.Object>>无法转换为java.util.Map<java.lang.String,net.lab1024.sa.admin.module.consume.engine.mode.config.ConsumptionModeConfig>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[122,54] 找不到符号
+[ERROR]   符号:   方法 parseAndCacheConfig(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[174,34] 找不到符号
+[ERROR]   符号:   类 EngineHealthResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[190,72] 不兼容的类型: java.util.Map<java.lang.String,java.lang.Object>无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[249,34] 找不到符号
+[ERROR]   符号:   类 EngineHealthResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[258,53] 找不到符号
+[ERROR]   符号:   方法 getModeConfig(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumptionModeController.java:[259,52] 找不到符号
+[ERROR]   符号:   方法 getStrategy(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.consume.engine.mode.ConsumptionModeEngine的变量 modeEngine
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.base.common.device.domain.dao.AttendanceRecordDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.base.common.device.domain.entity.AttendanceRecordEntity">
+        <id column="record_id" property="recordId" jdbcType="BIGINT"/>
+        <result column="employee_id" property="employeeId" jdbcType="BIGINT"/>
+        <result column="attendance_date" property="attendanceDate" jdbcType="DATE"/>
+        <result column="punch_in_time" property="punchInTime" jdbcType="TIME"/>
+        <result column="punch_out_time" property="punchOutTime" jdbcType="TIME"/>
+        <result column="punch_in_location" property="punchInLocation" jdbcType="VARCHAR"/>
+        <result column="punch_out_location" property="punchOutLocation" jdbcType="VARCHAR"/>
+        <result column="punch_in_device_id" property="punchInDeviceId" jdbcType="BIGINT"/>
+        <result column="punch_out_device_id" property="punchOutDeviceId" jdbcType="BIGINT"/>
+        <result column="punch_in_photo_url" property="punchInPhotoUrl" jdbcType="VARCHAR"/>
+        <result column="punch_out_photo_url" property="punchOutPhotoUrl" jdbcType="VARCHAR"/>
+        <result column="work_hours" property="workHours" jdbcType="DECIMAL"/>
+        <result column="overtime_hours" property="overtimeHours" jdbcType="DECIMAL"/>
+        <result column="attendance_status" property="attendanceStatus" jdbcType="VARCHAR"/>
+        <result column="exception_type" property="exceptionType" jdbcType="VARCHAR"/>
+        <result column="exception_reason" property="exceptionReason" jdbcType="VARCHAR"/>
+        <result column="is_processed" property="isProcessed" jdbcType="BOOLEAN"/>
+        <result column="processed_by" property="processedBy" jdbcType="BIGINT"/>
+        <result column="processed_time" property="processedTime" jdbcType="TIMESTAMP"/>
+        <result column="process_remark" property="processRemark" jdbcType="VARCHAR"/>
+        <result column="gps_validation" property="gpsValidation" jdbcType="INTEGER"/>
+        <result column="device_validation" property="deviceValidation" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="BOOLEAN"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 统计结果映射 -->
+    <resultMap id="MonthlyStatisticsMap" type="net.lab1024.sa.base.common.device.domain.dao.AttendanceRecordDao$AttendanceMonthlyStatistics">
+        <result column="total_days" property="totalDays" jdbcType="INTEGER"/>
+        <result column="present_days" property="presentDays" jdbcType="INTEGER"/>
+        <result column="absent_days" property="absentDays" jdbcType="INTEGER"/>
+        <result column="late_days" property="lateDays" jdbcType="INTEGER"/>
+        <result column="early_leave_days" property="earlyLeaveDays" jdbcType="INTEGER"/>
+        <result column="total_work_hours" property="totalWorkHours" jdbcType="DECIMAL"/>
+        <result column="total_overtime_hours" property="totalOvertimeHours" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <resultMap id="DepartmentStatisticsMap" type="net.lab1024.sa.base.common.device.domain.dao.AttendanceRecordDao$DepartmentAttendanceStatistics">
+        <result column="department_id" property="departmentId" jdbcType="BIGINT"/>
+        <result column="department_name" property="departmentName" jdbcType="VARCHAR"/>
+        <result column="total_employees" property="totalEmployees" jdbcType="INTEGER"/>
+        <result column="present_count" property="presentCount" jdbcType="INTEGER"/>
+        <result column="absent_count" property="absentCount" jdbcType="INTEGER"/>
+        <result column="late_count" property="lateCount" jdbcType="INTEGER"/>
+        <result column="attendance_rate" property="attendanceRate" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <resultMap id="CompanyStatisticsMap" type="net.lab1024.sa.base.common.device.domain.dao.AttendanceRecordDao$CompanyAttendanceStatistics">
+        <result column="total_employees" property="totalEmployees" jdbcType="INTEGER"/>
+        <result column="present_count" property="presentCount" jdbcType="INTEGER"/>
+        <result column="absent_count" property="absentCount" jdbcType="INTEGER"/>
+        <result column="late_count" property="lateCount" jdbcType="INTEGER"/>
+        <result column="total_work_hours" property="totalWorkHours" jdbcType="DECIMAL"/>
+        <result column="total_overtime_hours" property="totalOvertimeHours" jdbcType="DECIMAL"/>
+        <result column="attendance_rate" property="attendanceRate" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <resultMap id="ExceptionTypeStatisticsMap" type="net.lab1024.sa.base.common.device.domain.dao.AttendanceRecordDao$ExceptionTypeStatistics">
+        <result column="exception_type" property="exceptionType" jdbcType="VARCHAR"/>
+        <result column="exception_type_name" property="exceptionTypeName" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="percentage" property="percentage" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        record_id, employee_id, attendance_date, punch_in_time, punch_out_time,
+        punch_in_location, punch_out_location, punch_in_device_id, punch_out_device_id,
+        punch_in_photo_url, punch_out_photo_url, work_hours, overtime_hours,
+        attendance_status, exception_type, exception_reason, is_processed,
+        processed_by, processed_time, process_remark, gps_validation, device_validation,
+        create_time, update_time, deleted_flag, create_user_id, update_user_id, version
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Query_Where_Clause">
+        <where>
+            deleted_flag = false
+            <if test="query.employeeId != null">
+                AND employee_id = #{query.employeeId}
+            </if>
+            <if test="query.departmentId != null">
+                AND employee_id IN (SELECT employee_id FROM t_employee WHERE department_id = #{query.departmentId})
+            </if>
+            <if test="query.startDate != null">
+                AND attendance_date >= #{query.startDate}
+            </if>
+            <if test="query.endDate != null">
+                AND attendance_date &lt;= #{query.endDate}
+            </if>
+            <if test="query.attendanceStatus != null and query.attendanceStatus != ''">
+                AND attendance_status = #{query.attendanceStatus}
+            </if>
+            <if test="query.exceptionType != null and query.exceptionType != ''">
+                AND exception_type = #{query.exceptionType}
+            </if>
+            <if test="query.isProcessed != null">
+                AND is_processed = #{query.isProcessed}
+            </if>
+            <if test="query.gpsValidation != null">
+                AND gps_validation = #{query.gpsValidation}
+            </if>
+            <if test="query.deviceValidation != null">
+                AND device_validation = #{query.deviceValidation}
+            </if>
+        </where>
+    </sql>
+
+    <!-- ===== 分页查询 ===== -->
+
+    <select id="selectRecordPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        <include refid="Query_Where_Clause"/>
+        ORDER BY attendance_date DESC, create_time DESC
+    </select>
+
+    <select id="selectEmployeeRecordPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        <if test="startDate != null">
+            AND attendance_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND attendance_date &lt;= #{endDate}
+        </if>
+        <if test="status != null and status != ''">
+            AND attendance_status = #{status}
+        </if>
+        ORDER BY attendance_date DESC
+    </select>
+
+    <!-- ===== 单个记录查询 ===== -->
+
+    <select id="selectTodayRecord" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        AND attendance_date = #{date}
+        LIMIT 1
+    </select>
+
+    <select id="selectRecordsByDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        AND attendance_date >= #{startDate}
+        AND attendance_date &lt;= #{endDate}
+        ORDER BY attendance_date ASC
+    </select>
+
+    <select id="selectMonthlyRecords" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        AND DATE_FORMAT(attendance_date, '%Y-%m') = #{yearMonth}
+        ORDER BY attendance_date ASC
+    </select>
+
+    <select id="selectRecentRecords" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)
+        ORDER BY attendance_date DESC
+    </select>
+
+    <!-- ===== 异常记录查询 ===== -->
+
+    <select id="selectExceptionRecords" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND exception_type IS NOT NULL
+        AND exception_type != ''
+        <if test="startDate != null">
+            AND attendance_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND attendance_date &lt;= #{endDate}
+        </if>
+        <if test="exceptionType != null and exceptionType != ''">
+            AND exception_type = #{exceptionType}
+        </if>
+        <if test="status != null and status != ''">
+            AND is_processed =
+            <choose>
+                <when test="status == 'PENDING'">false</when>
+                <when test="status == 'PROCESSED'">true</when>
+                <otherwise>false</otherwise>
+            </choose>
+        </if>
+        ORDER BY attendance_date DESC
+    </select>
+
+    <select id="selectEmployeeExceptionRecords" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        AND exception_type IS NOT NULL
+        AND exception_type != ''
+        <if test="startDate != null">
+            AND attendance_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND attendance_date &lt;= #{endDate}
+        </if>
+        ORDER BY attendance_date DESC
+    </select>
+
+    <!-- ===== 统计查询 ===== -->
+
+    <select id="selectMonthlyStatistics" resultMap="MonthlyStatisticsMap">
+        SELECT
+            COUNT(*) AS total_days,
+            SUM(CASE WHEN attendance_status = 'PRESENT' THEN 1 ELSE 0 END) AS present_days,
+            SUM(CASE WHEN attendance_status = 'ABSENT' THEN 1 ELSE 0 END) AS absent_days,
+            SUM(CASE WHEN exception_type = 'LATE' THEN 1 ELSE 0 END) AS late_days,
+            SUM(CASE WHEN exception_type = 'EARLY_LEAVE' THEN 1 ELSE 0 END) AS early_leave_days,
+            COALESCE(SUM(work_hours), 0) AS total_work_hours,
+            COALESCE(SUM(overtime_hours), 0) AS total_overtime_hours
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        AND DATE_FORMAT(attendance_date, '%Y-%m') = #{yearMonth}
+    </select>
+
+    <select id="selectDepartmentStatistics" resultMap="DepartmentStatisticsMap">
+        SELECT
+            e.department_id,
+            d.department_name,
+            COUNT(DISTINCT r.employee_id) AS total_employees,
+            SUM(CASE WHEN r.attendance_status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count,
+            SUM(CASE WHEN r.attendance_status = 'ABSENT' THEN 1 ELSE 0 END) AS absent_count,
+            SUM(CASE WHEN r.exception_type = 'LATE' THEN 1 ELSE 0 END) AS late_count,
+            ROUND(
+                SUM(CASE WHEN r.attendance_status = 'PRESENT' THEN 1 ELSE 0 END) * 100.0 /
+                NULLIF(COUNT(DISTINCT r.employee_id), 0), 2
+            ) AS attendance_rate
+        FROM t_attendance_record r
+        INNER JOIN t_employee e ON r.employee_id = e.employee_id
+        LEFT JOIN t_department d ON e.department_id = d.department_id
+        WHERE r.deleted_flag = false
+        AND e.deleted_flag = false
+        AND r.attendance_date >= #{startDate}
+        AND r.attendance_date &lt;= #{endDate}
+        <if test="departmentId != null">
+            AND e.department_id = #{departmentId}
+        </if>
+        GROUP BY e.department_id, d.department_name
+        ORDER BY attendance_rate DESC
+    </select>
+
+    <select id="selectCompanyStatistics" resultMap="CompanyStatisticsMap">
+        SELECT
+            COUNT(DISTINCT r.employee_id) AS total_employees,
+            SUM(CASE WHEN r.attendance_status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count,
+            SUM(CASE WHEN r.attendance_status = 'ABSENT' THEN 1 ELSE 0 END) AS absent_count,
+            SUM(CASE WHEN r.exception_type = 'LATE' THEN 1 ELSE 0 END) AS late_count,
+            COALESCE(SUM(r.work_hours), 0) AS total_work_hours,
+            COALESCE(SUM(r.overtime_hours), 0) AS total_overtime_hours,
+            ROUND(
+                SUM(CASE WHEN r.attendance_status = 'PRESENT' THEN 1 ELSE 0 END) * 100.0 /
+                NULLIF(COUNT(DISTINCT r.employee_id), 0), 2
+            ) AS attendance_rate
+        FROM t_attendance_record r
+        INNER JOIN t_employee e ON r.employee_id = e.employee_id
+        WHERE r.deleted_flag = false
+        AND e.deleted_flag = false
+        AND r.attendance_date >= #{startDate}
+        AND r.attendance_date &lt;= #{endDate}
+    </select>
+
+    <select id="selectExceptionTypeStatistics" resultMap="ExceptionTypeStatisticsMap">
+        SELECT
+            exception_type,
+            CASE exception_type
+                WHEN 'LATE' THEN '迟到'
+                WHEN 'EARLY_LEAVE' THEN '早退'
+                WHEN 'ABSENTEEISM' THEN '旷工'
+                WHEN 'FORGOT_PUNCH' THEN '忘打卡'
+                WHEN 'DEVICE_ERROR' THEN '设备故障'
+                ELSE exception_type
+            END AS exception_type_name,
+            COUNT(*) AS count,
+            ROUND(
+                COUNT(*) * 100.0 /
+                (SELECT COUNT(*) FROM t_attendance_record WHERE deleted_flag = false AND exception_type IS NOT NULL), 2
+            ) AS percentage
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND exception_type IS NOT NULL
+        AND exception_type != ''
+        <if test="startDate != null">
+            AND attendance_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND attendance_date &lt;= #{endDate}
+        </if>
+        GROUP BY exception_type
+        ORDER BY count DESC
+    </select>
+
+    <!-- ===== 批量操作 ===== -->
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO t_attendance_record (
+            employee_id, attendance_date, punch_in_time, punch_out_time,
+            punch_in_location, punch_out_location, punch_in_device_id, punch_out_device_id,
+            punch_in_photo_url, punch_out_photo_url, work_hours, overtime_hours,
+            attendance_status, exception_type, exception_reason, is_processed,
+            processed_by, processed_time, process_remark, gps_validation, device_validation,
+            create_time, create_user_id, version
+        ) VALUES
+        <foreach collection="records" item="record" separator=",">
+            (
+                #{record.employeeId}, #{record.attendanceDate}, #{record.punchInTime}, #{record.punchOutTime},
+                #{record.punchInLocation}, #{record.punchOutLocation}, #{record.punchInDeviceId}, #{record.punchOutDeviceId},
+                #{record.punchInPhotoUrl}, #{record.punchOutPhotoUrl}, #{record.workHours}, #{record.overtimeHours},
+                #{record.attendanceStatus}, #{record.exceptionType}, #{record.exceptionReason}, #{record.isProcessed},
+                #{record.processedBy}, #{record.processedTime}, #{record.processRemark}, #{record.gpsValidation}, #{record.deviceValidation},
+                NOW(), #{record.createUserId}, 0
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateStatusBatch">
+        UPDATE t_attendance_record
+        SET attendance_status = #{status},
+            update_time = NOW(),
+            update_user_id = #{updateUserId},
+            version = version + 1
+        WHERE deleted_flag = false
+        AND record_id IN
+        <foreach collection="recordIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateProcessStatusBatch">
+        UPDATE t_attendance_record
+        SET is_processed = #{isProcessed},
+            processed_by = #{processedBy},
+            processed_time = #{processedTime},
+            update_time = NOW(),
+            version = version + 1
+        WHERE deleted_flag = false
+        AND record_id IN
+        <foreach collection="recordIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- ===== 查询方法 ===== -->
+
+    <select id="selectPendingExceptionCount" resultType="int">
+        SELECT COUNT(*)
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND exception_type IS NOT NULL
+        AND exception_type != ''
+        AND is_processed = false
+        <if test="employeeId != null">
+            AND employee_id = #{employeeId}
+        </if>
+    </select>
+
+    <select id="selectRecordCountByDate" resultType="int">
+        SELECT COUNT(*)
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND attendance_date = #{date}
+    </select>
+
+    <select id="selectLastRecord" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        ORDER BY attendance_date DESC, create_time DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectTodayPunchCount" resultType="int">
+        SELECT COUNT(*)
+        FROM t_attendance_record
+        WHERE deleted_flag = false
+        AND employee_id = #{employeeId}
+        AND attendance_date = CURDATE()
+        AND (punch_in_time IS NOT NULL OR punch_out_time IS NOT NULL)
+    </select>
+
+    <!-- ===== 数据清理 ===== -->
+
+    <delete id="deleteExpiredRecords">
+        UPDATE t_attendance_record
+        SET deleted_flag = true,
+            update_time = NOW()
+        WHERE deleted_flag = false
+        AND attendance_date &lt; #{beforeDate}
+    </delete>
+
+</mapper>

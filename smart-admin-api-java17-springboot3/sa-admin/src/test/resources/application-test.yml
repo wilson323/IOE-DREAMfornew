@@ -1,0 +1,105 @@
+# 测试环境配置
+spring:
+  # 数据源配置
+  datasource:
+    # 使用H2内存数据库进行快速测试（也可以使用TestContainers配置MySQL）
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      leak-detection-threshold: 60000
+
+  # JPA/Hibernate配置
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+        use_sql_comments: false
+
+  # Redis配置（使用嵌入式的Redis或跳过）
+  data:
+    redis:
+      host: localhost
+      port: 6370
+      database: 2
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+  # 缓存配置
+  cache:
+    type: simple  # 使用简单的内存缓存
+
+# 日志配置
+logging:
+  level:
+    net.lab1024.sa: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.testcontainers: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 应用配置
+server:
+  port: 0  # 随机端口
+
+# JWT配置
+sa-token:
+  token-name: Authorization
+  timeout: 2592000
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  is-log: false
+  jwt-secret-key: "test-jwt-secret-key-for-integration-testing"
+
+# 文件上传配置（测试环境）
+file:
+  upload:
+    path: /tmp/test-uploads
+    max-size: 10MB
+
+# MyBatis Plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+
+# 测试专用配置
+test:
+  containers:
+    enabled: true  # 启用TestContainers
+  database:
+    cleanup: true   # 测试后清理数据
+  redis:
+    embedded: true  # 使用嵌入式Redis（如果可用）
+
+# 性能测试配置
+performance:
+  test:
+    enabled: false  # 默认禁用性能测试
+    threshold:
+      query-time: 5000ms    # 查询时间阈值
+      api-response: 3000ms  # API响应时间阈值

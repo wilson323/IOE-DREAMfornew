@@ -1,0 +1,34 @@
+# 访问控制服务Bootstrap配置
+spring:
+  application:
+    name: access-service
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848,localhost:8849,localhost:8850
+        namespace: microservices
+        group: IOE-DREAM
+        username: nacos
+        password: nacos
+      config:
+        server-addr: localhost:8848,localhost:8849,localhost:8850
+        namespace: microservices
+        group: IOE-DREAM
+        file-extension: yml
+        username: nacos
+        password: nacos
+        shared-configs:
+          - data-id: access-service-config.yml
+            group: IOE-DREAM
+            refresh: true
+          - data-id: common-mysql.yml
+            group: IOE-DREAM
+            refresh: true
+          - data-id: common-redis.yml
+            group: IOE-DREAM
+            refresh: true
+          - data-id: common-logging.yml
+            group: IOE-DREAM
+            refresh: true

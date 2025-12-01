@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: visitor-service
+
+  profiles:
+    active: test
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: net.lab1024.sa.visitor.domain.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+  global-config:
+    db-config:
+      id-type: AUTO
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+logging:
+  level:
+    net.lab1024.sa.visitor: DEBUG
+    org.springframework.test: DEBUG
+    org.mockito: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+---
+# 测试特定的配置
+spring:
+  config:
+    activate:
+      on-profile: test
+
+# 禁用Consul服务发现
+spring.cloud.consul.discovery.enabled: false
+spring.cloud.consul.config.enabled: false

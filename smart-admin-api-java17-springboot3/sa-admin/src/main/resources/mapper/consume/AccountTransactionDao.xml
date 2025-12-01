@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.consume.dao.AccountTransactionDao">
+
+    <!-- 分页查询账户交易记录 -->
+    <select id="queryTransactions" resultType="net.lab1024.sa.admin.module.consume.domain.vo.AccountTransactionVO">
+        SELECT
+            t.transaction_id AS transactionId,
+            t.transaction_no AS transactionNo,
+            t.account_id AS accountId,
+            t.person_id AS personId,
+            t.person_name AS personName,
+            t.transaction_type AS transactionType,
+            t.amount,
+            t.balance_before AS balanceBefore,
+            t.balance_after AS balanceAfter,
+            t.order_no AS orderNo,
+            t.payment_method AS paymentMethod,
+            t.status,
+            t.transaction_time AS transactionTime,
+            t.remark
+        FROM t_consume_account_transaction t
+        WHERE t.deleted_flag = 0
+          AND t.account_id = #{accountId}
+        <if test="startTime != null">
+            AND t.transaction_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND t.transaction_time &lt;= #{endTime}
+        </if>
+        <if test="transactionType != null and transactionType != ''">
+            AND t.transaction_type = #{transactionType}
+        </if>
+        ORDER BY t.transaction_time DESC
+    </select>
+
+</mapper>
+

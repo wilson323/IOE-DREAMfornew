@@ -1,0 +1,48 @@
+# IOE-DREAM 微服务完整部署配置
+# 统一编排所有微服务
+version: '3.8'
+
+# 引入所有服务配置
+include:
+  - infrastructure.yml
+  - basic-services.yml
+  - business-services.yml
+  - monitoring.yml
+
+# 全局网络配置
+networks:
+  ioedream-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+
+# 全局环境变量
+x-common-variables: &common-variables
+  TZ: Asia/Shanghai
+  LANG: en_US.UTF-8
+  LC_ALL: en_US.UTF-8
+
+# 全局标签
+x-common-labels: &common-labels
+  project: ioedream
+  environment: production
+  managed-by: docker-compose
+
+# 全局重启策略
+x-common-restart: &common-restart
+  restart: unless-stopped
+  deploy:
+    resources:
+      limits:
+        memory: 2G
+      reservations:
+        memory: 512M
+
+# 健康检查配置模板
+x-health-check: &health-check
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 60s

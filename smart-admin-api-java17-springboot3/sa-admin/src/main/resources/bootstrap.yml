@@ -1,0 +1,114 @@
+# Spring Boot Bootstrap 配置 (微服务支持)
+# 用于Nacos服务发现和配置中心的初始化
+# 确保与现有IOE-DREAM项目架构的全局一致性
+
+spring:
+  application:
+    name: attendance-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  cloud:
+    nacos:
+      # 服务发现配置
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM-SERVICES}
+        service: ${spring.application.name}
+        enabled: true
+        register-enabled: true
+        ephemeral: true
+        heart-beat-interval: 5000
+        heart-beat-timeout: 15000
+        ip-delete-timeout: 30000
+        # 服务元数据 - 用于服务识别和路由
+        metadata:
+          version: ${APP_VERSION:1.0.0}
+          description: 考勤管理微服务 - 基于现有94个Java文件改造
+          module: attendance
+          business-domain: hr-management
+          dependencies: user-service,device-service,notification-service
+          controller-count: "8"
+          service-count: "18"
+          codebase-size: "37,245-lines"
+        # 健康检查配置
+        health-check-path: /actuator/health
+        health-check-enabled: true
+
+      # 配置中心配置
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM-CONFIG}
+        file-extension: yml
+        enabled: true
+        refresh-enabled: true
+        # 共享配置 - 确保全局配置一致性
+        shared-configs:
+          # 公共基础配置
+          - data-id: common-global-config.yml
+            group: SHARED_CONFIG
+            refresh: true
+          # 数据库配置
+          - data-id: database-mysql-config.yml
+            group: SHARED_CONFIG
+            refresh: true
+          # Redis缓存配置
+          - data-id: redis-cluster-config.yml
+            group: SHARED_CONFIG
+            refresh: true
+          # 消息队列配置
+          - data-id: rabbitmq-config.yml
+            group: SHARED_CONFIG
+            refresh: true
+          # 日志配置
+          - data-id: logback-config.yml
+            group: SHARED_CONFIG
+            refresh: true
+        # 考勤服务专属配置
+        extension-configs:
+          - data-id: attendance-service-config.yml
+            group: BUSINESS_CONFIG
+            refresh: true
+          - data-id: attendance-cache-config.yml
+            group: BUSINESS_CONFIG
+            refresh: true
+          - data-id: attendance-rules-config.yml
+            group: BUSINESS_CONFIG
+            refresh: true
+
+# 管理端点配置 - 支持服务监控和健康检查
+management:
+  endpoints:
+    web:
+      exposure:
+        # 暴露关键端点用于监控和管理
+        include: health,info,metrics,prometheus,nacos,env,configprops
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    # 支持Nacos服务健康检查
+    nacos:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      module: attendance
+      environment: ${spring.profiles.active}
+
+# 日志配置 - 确保与项目全局日志策略一致
+logging:
+  level:
+    # Nacos客户端日志级别
+    com.alibaba.cloud: INFO
+    org.springframework.cloud: INFO
+    com.alibaba.nacos: INFO
+    # 服务发现和配置相关日志
+    net.lab1024.sa.base.common.device: DEBUG
+    net.lab1024.sa.admin.module.attendance: DEBUG
+  # 日志配置文件
+  config: classpath:logback-spring.xml

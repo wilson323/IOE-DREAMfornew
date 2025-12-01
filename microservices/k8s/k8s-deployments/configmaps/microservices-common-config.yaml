@@ -1,0 +1,292 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microservices-common-config
+  namespace: ioedream-prod
+  labels:
+    component: configmap
+    environment: production
+    project: ioedream
+data:
+  common-config.yml: |
+    # 微服务通用配置
+
+    # Spring Boot基础配置
+    spring:
+      profiles:
+        active: prod
+
+      # 数据源通用配置
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        hikari:
+          maximum-pool-size: 20
+          minimum-idle: 5
+          idle-timeout: 300000
+          connection-timeout: 20000
+          max-lifetime: 1800000
+          leak-detection-threshold: 60000
+          connection-test-query: SELECT 1
+
+      # JPA配置
+      jpa:
+        hibernate:
+          ddl-auto: validate
+        show-sql: false
+        properties:
+          hibernate:
+            dialect: org.hibernate.dialect.MySQL8Dialect
+            format_sql: true
+            use_sql_comments: false
+            jdbc:
+              batch_size: 50
+            order_inserts: true
+            order_updates: true
+
+      # Redis配置
+      data:
+        redis:
+          host: ${REDIS_HOST:redis-cluster-ioedream-prod}
+          port: ${REDIS_PORT:6379}
+          password: ${REDIS_PASSWORD:}
+          database: ${REDIS_DATABASE:0}
+          timeout: 3000ms
+          lettuce:
+            pool:
+              max-active: 16
+              max-idle: 8
+              min-idle: 2
+              max-wait: -1ms
+              time-between-eviction-runs: 30000
+
+      # Nacos配置
+      cloud:
+        nacos:
+          discovery:
+            server-addr: ${NACOS_SERVER_ADDR:nacos-cluster-ioedream-prod:8848}
+            namespace: ${NACOS_NAMESPACE:prod}
+            group: ${NACOS_GROUP:DEFAULT_GROUP}
+            cluster-name: ${NACOS_CLUSTER:default}
+            metadata:
+              version: ${APP_VERSION:latest}
+              environment: ${SPRING_PROFILES_ACTIVE:prod}
+            weight: 1.0
+            enabled: true
+            register-enabled: true
+            heart-beat-interval: 5000
+            heart-beat-timeout: 15000
+            ip-delete-timeout: 30000
+          config:
+            server-addr: ${NACOS_SERVER_ADDR:nacos-cluster-ioedream-prod:8848}
+            namespace: ${NACOS_NAMESPACE:prod}
+            group: ${NACOS_GROUP:DEFAULT_GROUP}
+            file-extension: yml
+            refresh-enabled: true
+            shared-configs:
+              - data-id: common-config.yml
+                group: SHARED_GROUP
+                refresh: true
+
+    # MyBatis Plus配置
+    mybatis-plus:
+      configuration:
+        map-underscore-to-camel-case: true
+        cache-enabled: true
+        lazy-loading-enabled: true
+        multiple-result-sets-enabled: true
+        use-column-label: true
+        use-generated-keys: true
+        auto-mapping-behavior: partial
+        auto-mapping-unknown-column-behavior: warning
+        default-executor-type: reuse
+        default-statement-timeout: 25
+        default-fetch-size: 100
+        safe-row-bounds-enabled: false
+        local-cache-scope: session
+        jdbc-type-for-null: other
+        lazy-load-trigger-methods: equals,clone,hashCode,toString
+
+      global-config:
+        db-config:
+          id-type: auto
+          field-strategy: not_empty
+          logic-delete-field: deleted_flag
+          logic-delete-value: 1
+          logic-not-delete-value: 0
+          insert-strategy: not_null
+          update-strategy: not_null
+          select-strategy: not_empty
+
+    # 日志配置
+    logging:
+      level:
+        root: INFO
+        net.lab1024: DEBUG
+        org.springframework: WARN
+        org.springframework.cloud: INFO
+        com.alibaba.nacos: INFO
+        com.baomidou.mybatisplus: DEBUG
+        org.hibernate.SQL: DEBUG
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] [%X{service:-}] %logger{36} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] [%X{service:-}] %logger{36} - %msg%n"
+      file:
+        name: /app/logs/application.log
+        max-size: 100MB
+        max-history: 30
+        total-size-cap: 1GB
+
+    # 监控配置
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus,env,configprops
+          base-path: /actuator
+      endpoint:
+        health:
+          show-details: always
+          show-components: always
+        metrics:
+          enabled: true
+        prometheus:
+          enabled: true
+      metrics:
+        export:
+          prometheus:
+            enabled: true
+            step: 30s
+        distribution:
+          percentiles-histogram:
+            http.server.requests: true
+          percentiles:
+            http.server.requests: 0.5,0.9,0.95,0.99
+          sla:
+            http.server.requests: 100ms,200ms,500ms,1s
+
+    # 线程池配置
+    task:
+      execution:
+        pool:
+          core-size: 8
+          max-size: 32
+          queue-capacity: 100
+          keep-alive: 60s
+          allow-core-thread-timeout: true
+        thread-name-prefix: async-exec-
+
+    # 异步配置
+    async:
+      executor:
+        thread:
+          core-pool-size: 8
+          max-pool-size: 32
+          queue-capacity: 1000
+          keep-alive-seconds: 60
+          thread-name-prefix: async-
+
+    # 定时任务配置
+    scheduling:
+      pool:
+        size: 10
+      thread-name-prefix: scheduled-
+
+    # Jackson配置
+    jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      time-zone: Asia/Shanghai
+      serialization:
+        write-dates-as-timestamps: false
+        fail-on-empty-beans: false
+        indent-output: false
+      deserialization:
+        fail-on-unknown-properties: false
+        fail-on-null-for-primitives: false
+        fail-on-null-for-creatable-properties: false
+      default-property-inclusion: non_null
+
+    # 缓存配置
+    cache:
+      type: redis
+      redis:
+        time-to-live: 600000
+        cache-null-values: true
+        key-prefix: ioedream
+        use-key-prefix: true
+
+    # 安全配置
+    security:
+      oauth2:
+        resourceserver:
+          jwt:
+            issuer-uri: ${OAUTH2_ISSUER_URI:http://auth-service:8081}
+
+    # 服务配置
+    service:
+      # 超时配置
+      timeout:
+        connect: 5000
+        read: 10000
+        write: 10000
+      # 重试配置
+      retry:
+        max-attempts: 3
+        delay: 1000
+        multiplier: 2.0
+      # 断路器配置
+      circuitbreaker:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30000
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microservices-common-config
+  namespace: ioedream-staging
+  labels:
+    component: configmap
+    environment: staging
+    project: ioedream
+data:
+  common-config.yml: |
+    # 微服务通用配置 - 预发布环境
+
+    spring:
+      profiles:
+        active: staging
+
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        hikari:
+          maximum-pool-size: 10
+          minimum-idle: 2
+
+      data:
+        redis:
+          host: ${REDIS_HOST:redis-cluster-ioedream-staging}
+          port: ${REDIS_PORT:6379}
+          database: 0
+
+      cloud:
+        nacos:
+          discovery:
+            server-addr: ${NACOS_SERVER_ADDR:nacos-cluster-ioedream-staging:8848}
+            namespace: ${NACOS_NAMESPACE:staging}
+          config:
+            server-addr: ${NACOS_SERVER_ADDR:nacos-cluster-ioedream-staging:8848}
+            namespace: ${NACOS_NAMESPACE:staging}
+
+    logging:
+      level:
+        root: INFO
+        net.lab1024: DEBUG
+
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics

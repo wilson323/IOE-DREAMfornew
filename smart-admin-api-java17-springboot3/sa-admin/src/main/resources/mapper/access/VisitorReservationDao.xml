@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.access.dao.VisitorReservationDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.access.domain.entity.VisitorReservationEntity">
+        <id column="reservation_id" property="reservationId" jdbcType="BIGINT"/>
+        <result column="reservation_code" property="reservationCode" jdbcType="VARCHAR"/>
+        <result column="visitor_name" property="visitorName" jdbcType="VARCHAR"/>
+        <result column="visitor_phone" property="visitorPhone" jdbcType="VARCHAR"/>
+        <result column="visitor_email" property="visitorEmail" jdbcType="VARCHAR"/>
+        <result column="visitor_company" property="visitorCompany" jdbcType="VARCHAR"/>
+        <result column="visitor_id_card" property="visitorIdCard" jdbcType="VARCHAR"/>
+        <result column="visitor_photo" property="visitorPhoto" jdbcType="VARCHAR"/>
+        <result column="visit_purpose" property="visitPurpose" jdbcType="VARCHAR"/>
+        <result column="visit_date" property="visitDate" jdbcType="DATE"/>
+        <result column="visit_start_time" property="visitStartTime" jdbcType="TIME"/>
+        <result column="visit_end_time" property="visitEndTime" jdbcType="TIME"/>
+        <result column="visit_area_ids" property="visitAreaIds" jdbcType="LONGVARCHAR"/>
+        <result column="host_user_id" property="hostUserId" jdbcType="BIGINT"/>
+        <result column="host_user_name" property="hostUserName" jdbcType="VARCHAR"/>
+        <result column="host_department" property="hostDepartment" jdbcType="VARCHAR"/>
+        <result column="approval_status" property="approvalStatus" jdbcType="TINYINT"/>
+        <result column="approval_user_id" property="approvalUserId" jdbcType="BIGINT"/>
+        <result column="approval_user_name" property="approvalUserName" jdbcType="VARCHAR"/>
+        <result column="approval_time" property="approvalTime" jdbcType="TIMESTAMP"/>
+        <result column="approval_comment" property="approvalComment" jdbcType="LONGVARCHAR"/>
+        <result column="qr_code" property="qrCode" jdbcType="VARCHAR"/>
+        <result column="qr_code_expire_time" property="qrCodeExpireTime" jdbcType="TIMESTAMP"/>
+        <result column="access_status" property="accessStatus" jdbcType="TINYINT"/>
+        <result column="access_count" property="accessCount" jdbcType="INTEGER"/>
+        <result column="max_access_count" property="maxAccessCount" jdbcType="INTEGER"/>
+        <result column="remarks" property="remarks" jdbcType="LONGVARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        reservation_id, reservation_code, visitor_name, visitor_phone, visitor_email, visitor_company,
+        visitor_id_card, visitor_photo, visit_purpose, visit_date, visit_start_time, visit_end_time,
+        visit_area_ids, host_user_id, host_user_name, host_department, approval_status, approval_user_id,
+        approval_user_name, approval_time, approval_comment, qr_code, qr_code_expire_time, access_status,
+        access_count, max_access_count, remarks, create_time, update_time, create_user_id,
+        update_user_id, deleted_flag, version
+    </sql>
+
+    <!-- 根据预约编号查询 -->
+    <select id="selectByReservationCode" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_reservation
+        WHERE reservation_code = #{reservationCode} AND deleted_flag = 0
+    </select>
+
+    <!-- 根据访客手机号查询预约列表 -->
+    <select id="selectByVisitorPhone" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_reservation
+        WHERE visitor_phone = #{visitorPhone} AND deleted_flag = 0
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 根据接待人ID和日期范围查询预约列表 -->
+    <select id="selectByHostUserIdAndDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_reservation
+        WHERE host_user_id = #{hostUserId}
+          AND visit_date >= #{startDate}
+          AND visit_date &lt;= #{endDate}
+          AND deleted_flag = 0
+        ORDER BY visit_date DESC, visit_start_time DESC
+    </select>
+
+    <!-- 根据审批状态查询预约列表 -->
+    <select id="selectByApprovalStatus" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_reservation
+        WHERE approval_status = #{approvalStatus} AND deleted_flag = 0
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 查询待审批的预约数量 -->
+    <select id="countPendingApproval" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_visitor_reservation
+        WHERE approval_status = 0 AND deleted_flag = 0
+    </select>
+
+    <!-- 查询指定日期的预约数量 -->
+    <select id="countByVisitDate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_visitor_reservation
+        WHERE visit_date = #{visitDate} AND approval_status = 1 AND deleted_flag = 0
+    </select>
+
+    <!-- 查询指定接待人今日预约数量 -->
+    <select id="countByHostUserIdAndDate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_visitor_reservation
+        WHERE host_user_id = #{hostUserId}
+          AND visit_date = #{visitDate}
+          AND approval_status = 1
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 查询即将过期的预约 -->
+    <select id="selectExpiringSoon" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_reservation
+        WHERE qr_code_expire_time > #{beforeTime}
+          AND qr_code_expire_time &lt;= #{afterTime}
+          AND approval_status = 1
+          AND access_status IN (0,1)
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 查询已过期的预约 -->
+    <select id="selectExpired" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_reservation
+        WHERE (visit_date &lt; #{expireDate}
+               OR (visit_date = #{expireDate} AND visit_end_time &lt; #{expireTime}))
+          AND approval_status = 1
+          AND access_status != 3
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 根据访客身份证号查询预约 -->
+    <select id="selectByIdCard" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_reservation
+        WHERE visitor_id_card = #{visitorIdCard} AND deleted_flag = 0
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 查询指定时间范围内的预约统计 -->
+    <select id="selectStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as total_count,
+            SUM(CASE WHEN approval_status = 0 THEN 1 ELSE 0 END) as pending_count,
+            SUM(CASE WHEN approval_status = 1 THEN 1 ELSE 0 END) as approved_count,
+            SUM(CASE WHEN approval_status = 2 THEN 1 ELSE 0 END) as rejected_count
+        FROM t_visitor_reservation
+        WHERE visit_date >= #{startDate}
+          AND visit_date &lt;= #{endDate}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 查询重复预约 -->
+    <select id="countDuplicateReservations" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_visitor_reservation
+        WHERE visitor_phone = #{visitorPhone}
+          AND visit_date = #{visitDate}
+          AND approval_status = 1
+          AND reservation_id != #{excludeId}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 查询今日待接待的预约列表 -->
+    <select id="selectTodayReceptions" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_reservation
+        WHERE host_user_id = #{hostUserId}
+          AND visit_date = #{visitDate}
+          AND approval_status = 1
+          AND access_status IN (0,1)
+          AND deleted_flag = 0
+        ORDER BY visit_start_time ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报表查询中心 - 消费管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../js/menu.js" defer></script>
+    <link rel="stylesheet" href="../css/main.css">
+
+    <style>
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .report-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-300);
+        }
+
+        .report-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-xl);
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: var(--text-2xl);
+            margin-bottom: var(--space-lg);
+        }
+
+        .report-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-sm);
+        }
+
+        .report-description {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+            line-height: 1.5;
+            margin-bottom: var(--space-lg);
+        }
+
+        .report-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+
+        .report-stats {
+            background: var(--gray-50);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius);
+        }
+
+        .actions-bar {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            margin-bottom: var(--space-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .actions-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        @media (max-width: 768px) {
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-bar {
+                flex-direction: column;
+                gap: var(--space-lg);
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-utensils fa-lg"></i>
+                <div>
+                    <div class="sidebar-title">消费管理系统</div>
+                    <div class="sidebar-subtitle">Consumption Hub</div>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <!-- 菜单将由 menu.js 自动生成 -->
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 顶部导航栏 -->
+            <header class="header">
+                <h1>报表查询中心</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-bell"></i>
+                        通知
+                    </button>
+                    <div class="user-info">
+                        <div>
+                            <div style="font-weight: 600;">系统管理员</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">在线</div>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 主要内容 -->
+            <div class="content">
+                <!-- 操作栏 -->
+                <section class="actions-bar">
+                    <div>
+                        <h2 class="actions-title">数据报表</h2>
+                        <p style="color: var(--gray-600); margin-top: var(--space-xs);">选择需要查询的报表类型</p>
+                    </div>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-download"></i>
+                        批量导出
+                    </button>
+                </section>
+
+                <!-- 报表网格 -->
+                <section class="reports-grid">
+                    <a href="consumption-details.html" class="report-card">
+                        <div class="report-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <h3 class="report-title">消费明细表</h3>
+                        <p class="report-description">
+                            查看详细的消费记录，包括时间、金额、用户等完整信息
+                        </p>
+                        <div class="report-meta">
+                            <span class="report-stats">今日更新: 2,847条</span>
+                            <span>查看详情 →</span>
+                        </div>
+                    </a>
+
+                    <a href="recharge-details.html" class="report-card">
+                        <div class="report-icon" style="background: linear-gradient(135deg, var(--success), #16a34a);">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <h3 class="report-title">充值明细表</h3>
+                        <p class="report-description">
+                            查看用户充值记录，包括充值时间、金额、方式等信息
+                        </p>
+                        <div class="report-meta">
+                            <span class="report-stats">今日更新: 156条</span>
+                            <span>查看详情 →</span>
+                        </div>
+                    </a>
+
+                    <a href="refund-details.html" class="report-card">
+                        <div class="report-icon" style="background: linear-gradient(135deg, var(--error), #dc2626);">
+                            <i class="fas fa-minus-circle"></i>
+                        </div>
+                        <h3 class="report-title">退款明细表</h3>
+                        <p class="report-description">
+                            查看退款记录，包括退款原因、金额、处理状态等
+                        </p>
+                        <div class="report-meta">
+                            <span class="report-stats">今日更新: 12条</span>
+                            <span>查看详情 →</span>
+                        </div>
+                    </a>
+
+                    <a href="balance.html" class="report-card">
+                        <div class="report-icon" style="background: linear-gradient(135deg, var(--warning), #d97706);">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h3 class="report-title">账户余额表</h3>
+                        <p class="report-description">
+                            查看所有用户的账户余额状态和资金分布情况
+                        </p>
+                        <div class="report-meta">
+                            <span class="report-stats">总余额: ¥458,920</span>
+                            <span>查看详情 →</span>
+                        </div>
+                    </a>
+
+                    <a href="subsidy-details.html" class="report-card">
+                        <div class="report-icon" style="background: linear-gradient(135deg, var(--info), #2563eb);">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <h3 class="report-title">补贴明细表</h3>
+                        <p class="report-description">
+                            查看补贴发放记录，包括发放时间、金额、对象等
+                        </p>
+                        <div class="report-meta">
+                            <span class="report-stats">本月发放: ¥28,500</span>
+                            <span>查看详情 →</span>
+                        </div>
+                    </a>
+
+                    <a href="account-income-expense.html" class="report-card">
+                        <div class="report-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="report-title">账户收支</h3>
+                        <p class="report-description">
+                            查看账户的收支明细和资金流向统计分析
+                        </p>
+                        <div class="report-meta">
+                            <span class="report-stats">今日流水: ¥158,420</span>
+                            <span>查看详情 →</span>
+                        </div>
+                    </a>
+
+                    <a href="offline-consumption.html" class="report-card">
+                        <div class="report-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h3 class="report-title">离线消费明细表</h3>
+                        <p class="report-description">
+                            查看设备离线时的消费记录和同步状态
+                        </p>
+                        <div class="report-meta">
+                            <span class="report-stats">待同步: 86条</span>
+                            <span>查看详情 →</span>
+                        </div>
+                    </a>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('报表查询中心页面加载完成');
+        });
+    </script>
+</body>
+</html>

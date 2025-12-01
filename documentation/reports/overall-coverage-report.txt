@@ -1,0 +1,29 @@
+===============================================
+IOE-DREAM 微服务总体测试覆盖率报告
+生成时间: 2025年11月29日  7:05:55
+===============================================
+
+总体统计:
+  总计测试文件数量: 8
+  总计测试方法数量: 320
+
+测试类型分布:
+  Controller层测试: 7 个
+  Service层测试: 3 个
+  Manager层测试: 1 个
+  DAO层测试: 0 个
+  集成测试: 1 个
+
+各服务测试分布:
+  ioedream-consume-service: 7 个
+  ioedream-access-service: 1 个
+  ioedream-auth-service: 0 个
+  ioedream-device-service: 0 个
+  ioedream-attendance-service: 0 个
+
+测试覆盖率评估:
+  ⚠ 测试覆盖率良好
+  ⚠ 建议继续增加测试用例
+
+质量门禁状态:
+  ✗ 质量门禁: 未通过 (目标400+个测试方法)

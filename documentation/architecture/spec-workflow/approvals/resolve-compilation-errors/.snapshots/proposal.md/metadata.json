@@ -1,0 +1,22 @@
+{
+  "filePath": "openspec/changes/resolve-compilation-errors/proposal.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-22T07:41:00.229Z",
+      "trigger": "initial",
+      "approvalId": "approval_1763797260210_zhaatkjzw",
+      "approvalTitle": "解决剩余382个编译错误的系统性修复方案"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-25T11:34:39.470Z",
+      "trigger": "approved",
+      "approvalId": "approval_1763797260210_zhaatkjzw",
+      "approvalTitle": "解决剩余382个编译错误的系统性修复方案"
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+version: '3.8'
+
+services:
+  # Prometheus监控服务
+  prometheus:
+    image: prom/prometheus:v2.40.0
+    container_name: ioe-dream-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    networks:
+      - ioe-dream-network
+
+  # AlertManager告警管理
+  alertmanager:
+    image: prom/alertmanager:v0.25.0
+    container_name: ioe-dream-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=http://localhost:9093'
+    networks:
+      - ioe-dream-network
+
+  # Grafana可视化平台
+  grafana:
+    image: grafana/grafana:9.2.0
+    container_name: ioe-dream-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - ioe-dream-network
+
+  # Node Exporter (主机监控)
+  node-exporter:
+    image: prom/node-exporter:v1.5.0
+    container_name: ioe-dream-node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - ioe-dream-network
+
+  # MySQL Exporter
+  mysql-exporter:
+    image: prom/mysqld-exporter:v0.14.0
+    container_name: ioe-dream-mysql-exporter
+    restart: unless-stopped
+    ports:
+      - "9104:9104"
+    environment:
+      - DATA_SOURCE_NAME=root:root@(localhost:3306)/
+    command:
+      - '--config.my-cnf=/etc/mysql/.my.cnf'
+      - '--collect.global_status'
+      - '--collect.info_schema.innodb_metrics'
+      - '--collect.auto_increment.columns'
+      - '--collect.binlog_size'
+      - '--collect.global_variables'
+      - '--collect.info_schema.processlist'
+      - '--collect.info_schema.tables'
+      - '--collect.info_schema.tablestats'
+      - '--collect.info_schema.userstats'
+      - '--collect.perf_schema.eventswaits'
+      - '--collect.perf_schema.file_events'
+      - '--collect.perf_schema.indexiowaits'
+      - '--collect.perf_schema.tableiowaits'
+      - '--collect.perf_schema.tablelocks'
+    networks:
+      - ioe-dream-network
+
+  # Redis Exporter
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.43.0
+    container_name: ioe-dream-redis-exporter
+    restart: unless-stopped
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis://localhost:6379
+      - REDIS_PASSWORD=zkteco3100
+    command:
+      - '--include-system-metrics'
+      - '--redis-only-metrics'
+      - '--namespace=redis'
+    networks:
+      - ioe-dream-network
+
+  # Cadvisor (容器监控)
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.46.0
+    container_name: ioe-dream-cadvisor
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - ioe-dream-network
+
+  # Blackbox Exporter (网站监控)
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.21.1
+    container_name: ioe-dream-blackbox-exporter
+    restart: unless-stopped
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml
+    command:
+      - '--config.file=/etc/blackbox_exporter/config.yml'
+    networks:
+      - ioe-dream-network
+
+  # Pushgateway (用于批处理任务监控)
+  pushgateway:
+    image: prom/pushgateway:v1.5.0
+    container_name: ioe-dream-pushgateway
+    restart: unless-stopped
+    ports:
+      - "9091:9091"
+    command:
+      - '--persistence.interval=5m'
+      - '--persistence.file=/pushgateway/data'
+    volumes:
+      - pushgateway_data:/pushgateway
+    networks:
+      - ioe-dream-network
+
+volumes:
+  prometheus_data:
+    driver: local
+  alertmanager_data:
+    driver: local
+  grafana_data:
+    driver: local
+  pushgateway_data:
+    driver: local
+
+networks:
+  ioe-dream-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

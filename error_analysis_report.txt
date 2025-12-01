@@ -1,0 +1,53 @@
+================================================================================
+错误分析报告
+================================================================================
+
+总错误数: 4480
+
+import_error: 3340 个
+  1. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAreaController.java:17] The import net.lab1024.sa.base.authz.rac.annotation cannot be resolved
+  2. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAreaController.java:60] RequireResource cannot be resolved to a type
+  3. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessDeviceController.java:14] The import net.lab1024.sa.base.authz.rac.annotation cannot be resolved
+  4. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessDeviceController.java:50] RequireResource cannot be resolved to a type
+  5. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessDeviceController.java:238] RequireResource cannot be resolved to a type
+  ... 还有 3335 个类似错误
+
+undefined_method: 506 个
+  1. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/biometric/BiometricTemplateManager.java:63] The constructor BiometricTemplateManager.QualityGrade(String, String, double) is undefined
+  2. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/biometric/BiometricTemplateManager.java:64] The constructor BiometricTemplateManager.QualityGrade(String, String, double) is undefined
+  3. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/biometric/BiometricTemplateManager.java:65] The constructor BiometricTemplateManager.QualityGrade(String, String, double) is undefined
+  4. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/biometric/BiometricTemplateManager.java:66] The constructor BiometricTemplateManager.QualityGrade(String, String, double) is undefined
+  5. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/biometric/BiometricTemplateManager.java:67] The constructor BiometricTemplateManager.QualityGrade(String, String, double) is undefined
+  ... 还有 501 个类似错误
+
+method_error: 381 个
+  1. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/biometric/LivenessDetectionEngine.java:239] The method setTimeouts(Map<LivenessDetectionEngine.LivenessType,Integer>) in the type LivenessDetect
+  2. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/biometric/LivenessDetectionEngine.java:313] The method setQualityMetrics(Map<String,Object>) in the type LivenessDetectionEngine.LivenessDetecti
+  3. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/test/java/net/lab1024/sa/access/controller/AccessDeviceControllerTest.java:68] The method setPages(Long) in the type PageResult<AccessDeviceEntity> is not applicable for the argum
+  4. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/test/java/net/lab1024/sa/access/controller/AccessDeviceControllerTest.java:121] The method addDevice(AccessDeviceEntity) in the type AccessDeviceService is not applicable for the a
+  5. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/test/java/net/lab1024/sa/access/controller/AccessDeviceControllerTest.java:143] The method updateDevice(AccessDeviceEntity) in the type AccessDeviceService is not applicable for th
+  ... 还有 376 个类似错误
+
+other: 164 个
+  1. [/D:/IOE-DREAM/microservices/analytics/:1] The project cannot be built until build path errors are resolved
+  2. [/D:/IOE-DREAM/microservices/analytics/:1] The container 'Maven Dependencies' references non existing library 'C:\Users\10201\.m2\repository\co
+  3. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/test/java/net/lab1024/sa/access/controller/AccessDeviceControllerTest.java:121] Type mismatch: cannot convert from AccessDeviceForm to AccessDeviceEntity
+  4. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/test/java/net/lab1024/sa/access/controller/AccessDeviceControllerTest.java:143] Type mismatch: cannot convert from AccessDeviceForm to AccessDeviceEntity
+  5. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/test/java/net/lab1024/sa/access/controller/AccessDeviceControllerTest.java:216] Type mismatch: cannot convert from ResponseDTO<String> to Boolean
+  ... 还有 159 个类似错误
+
+type_error: 75 个
+  1. [/D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/BiometricMonitorController.java:96] The type PageForm is not generic; it cannot be parameterized with arguments <BiometricQueryForm>
+  2. [/D:/IOE-DREAM/microservices/ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/controller/AttendanceExceptionApplicationController.java:61] The type Object is not generic; it cannot be parameterized with arguments <ExceptionApplicationVO>
+  3. [/D:/IOE-DREAM/microservices/ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/controller/AttendanceExceptionApplicationController.java:74] The type Object is not generic; it cannot be parameterized with arguments <ExceptionApplicationVO>
+  4. [/D:/IOE-DREAM/microservices/ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/controller/AttendanceManager.java:121] The type Object is not generic; it cannot be parameterized with arguments <AttendanceRecordVO>
+  5. [/D:/IOE-DREAM/microservices/ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/controller/AttendanceManager.java:132] The type Object is not generic; it cannot be parameterized with arguments <AttendanceRecordVO>
+  ... 还有 70 个类似错误
+
+missing_dependency: 14 个
+  1. [/D:/IOE-DREAM/microservices/analytics/pom.xml:149] Missing artifact com.alibaba:fastjson2:jar:2.0.57
+  2. [/D:/IOE-DREAM/microservices/analytics/pom.xml:237] Missing artifact net.lab1024.sa:microservices-common-transaction:jar:1.0.0
+  3. [/D:/IOE-DREAM/microservices/analytics/pom.xml:244] Missing artifact net.lab1024.sa:microservices-common-sync:jar:1.0.0
+  4. [/D:/IOE-DREAM/microservices/ioedream-auth-service/pom.xml:109] Missing artifact com.alibaba:fastjson2:jar:2.0.32
+  5. [/D:/IOE-DREAM/microservices/ioedream-file-service/pom.xml:20] Missing artifact net.lab1024:microservices-common:jar:1.0.0
+  ... 还有 9 个类似错误

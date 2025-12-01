@@ -1,0 +1,71 @@
+# 访问控制服务应用配置
+server:
+  port: 8081
+
+# 项目配置
+project:
+  name: access-service
+  log-directory: ${localPath:/home}/logs/smart_admin_v3/${project.name}/${spring.profiles.active}
+
+spring:
+  # 数据库配置（从共享配置获取具体参数）
+  datasource:
+    url: jdbc:mysql://localhost:33060/smart_admin_v3?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: ""
+
+  # Redis配置（从共享配置获取具体参数）
+  redis:
+    host: 127.0.0.1
+    port: 6389
+    password: zkteco3100
+    database: 2  # 使用独立的Redis数据库
+
+# MyBatis Plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted_flag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      update-strategy: not_null
+
+# Sa-Token配置
+sa-token:
+  token-name: satoken
+  timeout: 2592000
+  active-timeout: -1
+  is-concurrent: true
+  is-share: false
+  token-style: uuid
+  is-log: true
+  is-read-header: true
+
+# Kafka配置
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: access-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true

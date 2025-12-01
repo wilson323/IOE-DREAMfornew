@@ -1,0 +1,37 @@
+# Anti-Fragile Patterns Memory
+
+## Pattern AF-001: 文档更新缺失验证
+- 触发条件: 修改或新增文档但未执行最小校验。
+- 行动指令:
+  1. 创建最小验证清单(链接: `docs/TESTING/COVERAGE_REPORT_TEMPLATE.md`).
+  2. 记录验证结果于 `docs/testing/reports/`。
+- Fast Patch:
+  ```patch
+  *** Update File: docs/testing/reports/README.md
+  +## 最小验证清单占位
+  +- [ ] 文档审阅完成
+  +- [ ] 链接有效性检查
+  +- [ ] 规范格式校验
+  ```
+
+## Pattern AF-002: Markdown 规范遗留告警
+- 触发条件: 继承旧文档存在 Markdown linter 警告。
+- 行动指令:
+  1. 在 `docs/SmartAdmin规范体系_v4/CHANGELOG.md` 增加整改 TODO 区块。
+  2. 安排专门任务修正所有警告。
+- Fast Patch:
+  ```patch
+  *** Update File: docs/SmartAdmin规范体系_v4/CHANGELOG.md
+  @@
+  +## Markdown 整改 TODO
+  +- [ ] 修复 MD022 警告
+  +- [ ] 修复 MD032 警告
+  ```
+
+## Auto Load Instruction
+- 下次启动时若检测到文档更新未附验证或 CHANGELOG 存在 Markdown 警告, 强制提示“已激活记忆#AF-001/AF-002”。
+- 配置示例:
+  ```yaml
+  memory_source: .trae/memories/anti-fragile-patterns.mdc
+  auto_inject: true
+  ```

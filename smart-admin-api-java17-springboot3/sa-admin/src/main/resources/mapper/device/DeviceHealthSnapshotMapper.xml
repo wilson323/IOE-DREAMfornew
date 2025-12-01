@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.device.dao.DeviceHealthSnapshotDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.device.domain.entity.DeviceHealthSnapshotEntity">
+        <id column="snapshot_id" property="snapshotId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="score_value" property="scoreValue"/>
+        <result column="level_code" property="levelCode"/>
+        <result column="heartbeat_latency_ms" property="heartbeatLatencyMs"/>
+        <result column="cpu_usage_pct" property="cpuUsagePct"/>
+        <result column="temperature_celsius" property="temperatureCelsius"/>
+        <result column="command_success_ratio" property="commandSuccessRatio"/>
+        <result column="alarm_count" property="alarmCount"/>
+        <result column="uptime_hours" property="uptimeHours"/>
+        <result column="maintenance_delay_days" property="maintenanceDelayDays"/>
+        <result column="snapshot_time" property="snapshotTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+    </resultMap>
+
+    <!-- 统计结果映射 -->
+    <resultMap id="HealthScoreStatisticsMap" type="net.lab1024.sa.admin.module.device.dao.DeviceHealthSnapshotDao$HealthScoreStatistics">
+        <result column="health_level" property="healthLevel"/>
+        <result column="device_count" property="deviceCount"/>
+        <result column="avg_score" property="avgScore"/>
+        <result column="min_score" property="minScore"/>
+        <result column="max_score" property="maxScore"/>
+    </resultMap>
+
+    <!-- 分布统计结果映射 -->
+    <resultMap id="HealthLevelDistributionMap" type="net.lab1024.sa.admin.module.device.dao.DeviceHealthSnapshotDao$HealthLevelDistribution">
+        <result column="level_code" property="levelCode"/>
+        <result column="level_description" property="levelDescription"/>
+        <result column="device_count" property="deviceCount"/>
+        <result column="percentage" property="percentage"/>
+    </resultMap>
+
+    <!-- 获取设备最新的健康快照 -->
+    <select id="getLatestByDeviceId" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_health_snapshot
+        WHERE device_id = #{deviceId}
+          AND deleted_flag = 0
+        ORDER BY snapshot_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 获取设备指定时间范围内的健康快照 -->
+    <select id="getByDeviceIdAndTimeRange" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_health_snapshot
+        WHERE device_id = #{deviceId}
+          AND snapshot_time BETWEEN #{startTime} AND #{endTime}
+          AND deleted_flag = 0
+        ORDER BY snapshot_time ASC
+    </select>
+
+    <!-- 获取指定时间之后的所有设备健康快照 -->
+    <select id="getAfterTime" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_health_snapshot
+        WHERE snapshot_time >= #{time}
+          AND deleted_flag = 0
+        ORDER BY snapshot_time ASC
+    </select>
+
+    <!-- 获取健康评分低于阈值的设备数量 -->
+    <select id="countDevicesWithLowScore" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT device_id)
+        FROM t_device_health_snapshot
+        WHERE score_value &lt; #{threshold}
+          AND deleted_flag = 0
+          AND snapshot_time = (
+              SELECT MAX(snapshot_time)
+              FROM t_device_health_snapshot s2
+              WHERE s2.device_id = t_device_health_snapshot.device_id
+                AND s2.deleted_flag = 0
+          )
+    </select>
+
+    <!-- 获取设备健康评分统计 -->
+    <select id="getHealthScoreStatistics" resultMap="HealthScoreStatisticsMap">
+        SELECT
+            CASE
+                WHEN score_value >= 85 THEN 'healthy'
+                WHEN score_value >= 60 THEN 'warning'
+                ELSE 'critical'
+            END as health_level,
+            COUNT(DISTINCT device_id) as device_count,
+            ROUND(AVG(score_value), 2) as avg_score,
+            MIN(score_value) as min_score,
+            MAX(score_value) as max_score
+        FROM t_device_health_snapshot
+        WHERE deleted_flag = 0
+          AND snapshot_time BETWEEN #{startTime} AND #{endTime}
+          AND snapshot_time = (
+              SELECT MAX(snapshot_time)
+              FROM t_device_health_snapshot s2
+              WHERE s2.device_id = t_device_health_snapshot.device_id
+                AND s2.deleted_flag = 0
+                AND s2.snapshot_time BETWEEN #{startTime} AND #{endTime}
+          )
+        GROUP BY
+            CASE
+                WHEN score_value >= 85 THEN 'healthy'
+                WHEN score_value >= 60 THEN 'warning'
+                ELSE 'critical'
+            END
+        ORDER BY min_score DESC
+    </select>
+
+    <!-- 删除指定时间之前的快照数据 -->
+    <delete id="deleteBeforeTime">
+        UPDATE t_device_health_snapshot
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE snapshot_time &lt; #{time}
+          AND deleted_flag = 0
+    </delete>
+
+    <!-- 获取设备健康等级分布统计 -->
+    <select id="getHealthLevelDistribution" resultMap="HealthLevelDistributionMap">
+        SELECT
+            level_code,
+            CASE
+                WHEN level_code = 'healthy' THEN '健康'
+                WHEN level_code = 'warning' THEN '警告'
+                WHEN level_code = 'critical' THEN '危险'
+                ELSE '未知'
+            END as level_description,
+            COUNT(*) as device_count,
+            ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM t_device_health_snapshot WHERE deleted_flag = 0 AND snapshot_time = (
+                SELECT MAX(snapshot_time) FROM t_device_health_snapshot s2 WHERE s2.device_id = t_device_health_snapshot.device_id AND s2.deleted_flag = 0
+            )), 2) as percentage
+        FROM t_device_health_snapshot
+        WHERE deleted_flag = 0
+          AND snapshot_time = (
+              SELECT MAX(snapshot_time)
+              FROM t_device_health_snapshot s2
+              WHERE s2.device_id = t_device_health_snapshot.device_id
+                AND s2.deleted_flag = 0
+          )
+        GROUP BY level_code
+        ORDER BY
+            CASE level_code
+                WHEN 'healthy' THEN 1
+                WHEN 'warning' THEN 2
+                WHEN 'critical' THEN 3
+                ELSE 4
+            END
+    </select>
+
+</mapper>

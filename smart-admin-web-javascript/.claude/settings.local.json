@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run localhost:*)",
+      "Bash(mkdir:*)",
+      "Bash(lsof -i :8081)",
+      "Bash(lsof:*)",
+      "WebFetch(domain:smartadmin.vip)",
+      "Bash(rm:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

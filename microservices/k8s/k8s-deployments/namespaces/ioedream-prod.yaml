@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ioedream-prod
+  labels:
+    name: ioedream-prod
+    environment: production
+    project: ioedream
+    managed-by: kubernetes
+  annotations:
+    description: "IOE-DREAM生产环境命名空间"
+    created-by: "kubernetes-manifests"
+    contact: "ops-team@ioedream.com"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ioedream-staging
+  labels:
+    name: ioedream-staging
+    environment: staging
+    project: ioedream
+    managed-by: kubernetes
+  annotations:
+    description: "IOE-DREAM预发布环境命名空间"
+    created-by: "kubernetes-manifests"
+    contact: "ops-team@ioedream.com"

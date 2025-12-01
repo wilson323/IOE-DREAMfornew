@@ -1,0 +1,67 @@
+# ===================================================================
+# IOE-DREAM 生产环境 Elasticsearch 配置
+# 版本: v2.0.0
+# 更新时间: 2025-11-29
+# ===================================================================
+
+# 集群配置
+cluster.name: ioedream-log-cluster
+node.name: ${HOSTNAME:elasticsearch-node-1}
+
+# 网络配置
+network.host: 0.0.0.0
+http.port: 9200
+transport.port: 9300
+
+# 发现配置
+discovery.type: single-node  # 单节点模式，生产环境可改为集群模式
+
+# 内存配置
+bootstrap.memory_lock: true
+
+# JVM堆内存设置 (在docker-compose中通过ES_JAVA_OPTS设置)
+# -Xms2g -Xmx2g (生产环境建议设置为物理内存的50%)
+
+# 路径配置
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+path.repo: /usr/share/elasticsearch/backup
+
+# 安全配置
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false
+
+# 监控配置
+xpack.monitoring.collection.enabled: true
+
+# 索引配置
+index.number_of_shards: 1
+index.number_of_replicas: 0
+index.refresh_interval: "5s"
+
+# 索引生命周期管理配置
+xpack.ilm.enabled: true
+
+# 日志配置
+logger.level: INFO
+logger.org.elasticsearch.cluster.routing.allocation: DEBUG
+
+# API限流配置
+http.max_content_length: 500mb
+
+# 跨域配置 (允许Grafana访问)
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-headers: Authorization,X-Requested-With,Content-Type,Content-Length
+
+# 索引模板配置
+index.templates:
+  - name: "ioedream-log-template"
+    pattern: "ioedream-*"
+    settings:
+      number_of_shards: 1
+      number_of_replicas: 0
+      refresh_interval: "5s"
+      index.lifecycle.name: "ioedream-policy"
+      index.lifecycle.rollover_alias: "ioedream-logs"

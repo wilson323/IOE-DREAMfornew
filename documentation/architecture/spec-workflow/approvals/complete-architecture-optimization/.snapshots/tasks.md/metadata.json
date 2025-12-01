@@ -1,0 +1,22 @@
+{
+  "filePath": "openspec/changes/complete-architecture-optimization/tasks.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-25T14:51:16.466Z",
+      "trigger": "initial",
+      "approvalId": "approval_1764082276441_481wxjy58",
+      "approvalTitle": "Complete Architecture Optimization Tasks"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-25T14:54:34.752Z",
+      "trigger": "approved",
+      "approvalId": "approval_1764082276441_481wxjy58",
+      "approvalTitle": "Complete Architecture Optimization Tasks"
+    }
+  ]
+}

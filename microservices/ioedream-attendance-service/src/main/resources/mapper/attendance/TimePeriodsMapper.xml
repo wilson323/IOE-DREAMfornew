@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.attendance.dao.TimePeriodsDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.attendance.domain.entity.TimePeriodsEntity">
+        <id column="period_id" property="periodId"/>
+        <result column="period_code" property="periodCode"/>
+        <result column="period_name" property="periodName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="duration_minutes" property="durationMinutes"/>
+        <result column="is_cross_day" property="isCrossDay"/>
+        <result column="break_time" property="breakTime"/>
+        <result column="work_type" property="workType"/>
+        <result column="tolerance_before" property="toleranceBefore"/>
+        <result column="tolerance_after" property="toleranceAfter"/>
+        <result column="description" property="description"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="status" property="status"/>
+        <!-- BaseEntity字段 -->
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+        <result column="version" property="version"/>
+    </resultMap>
+
+    <!-- 根据时间段编码查询 -->
+    <select id="selectByPeriodCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+            period_id, period_code, period_name, start_time, end_time, duration_minutes,
+            is_cross_day, break_time, work_type, tolerance_before, tolerance_after,
+            description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        FROM t_time_periods
+        WHERE period_code = #{periodCode}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 分页查询时间段列表 -->
+    <select id="selectPageByQuery" resultMap="BaseResultMap">
+        SELECT
+            period_id, period_code, period_name, start_time, end_time, duration_minutes,
+            is_cross_day, break_time, work_type, tolerance_before, tolerance_after,
+            description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        FROM t_time_periods
+        <where>
+            deleted_flag = 0
+            <if test="query.periodCode != null and query.periodCode != ''">
+                AND period_code LIKE CONCAT('%', #{query.periodCode}, '%')
+            </if>
+            <if test="query.periodName != null and query.periodName != ''">
+                AND period_name LIKE CONCAT('%', #{query.periodName}, '%')
+            </if>
+            <if test="query.workType != null and query.workType != ''">
+                AND work_type = #{query.workType}
+            </if>
+            <if test="query.status != null">
+                AND status = #{query.status}
+            </if>
+            <if test="query.isCrossDay != null">
+                AND is_cross_day = #{query.isCrossDay}
+            </if>
+            <if test="query.minDurationMinutes != null">
+                AND duration_minutes &gt;= #{query.minDurationMinutes}
+            </if>
+            <if test="query.maxDurationMinutes != null">
+                AND duration_minutes &lt;= #{query.maxDurationMinutes}
+            </if>
+        </where>
+        ORDER BY sort_order ASC, create_time DESC
+    </select>
+
+    <!-- 根据工作类型查询时间段列表 -->
+    <select id="selectByWorkType" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+            period_id, period_code, period_name, start_time, end_time, duration_minutes,
+            is_cross_day, break_time, work_type, tolerance_before, tolerance_after,
+            description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        FROM t_time_periods
+        WHERE work_type = #{workType}
+          AND deleted_flag = 0
+          AND status = 1
+        ORDER BY sort_order ASC, start_time ASC
+    </select>
+
+    <!-- 查询启用的工作时间段列表 -->
+    <select id="selectEnabledWorkPeriods" resultMap="BaseResultMap">
+        SELECT
+            period_id, period_code, period_name, start_time, end_time, duration_minutes,
+            is_cross_day, break_time, work_type, tolerance_before, tolerance_after,
+            description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        FROM t_time_periods
+        WHERE work_type = 'WORK'
+          AND deleted_flag = 0
+          AND status = 1
+        ORDER BY sort_order ASC, start_time ASC
+    </select>
+
+    <!-- 查询启用的时间段列表（按时间排序） -->
+    <select id="selectEnabledPeriodsOrderByTime" resultMap="BaseResultMap">
+        SELECT
+            period_id, period_code, period_name, start_time, end_time, duration_minutes,
+            is_cross_day, break_time, work_type, tolerance_before, tolerance_after,
+            description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        FROM t_time_periods
+        WHERE deleted_flag = 0
+          AND status = 1
+        ORDER BY start_time ASC
+    </select>
+
+    <!-- 查询跨日时间段列表 -->
+    <select id="selectCrossDayPeriods" resultMap="BaseResultMap">
+        SELECT
+            period_id, period_code, period_name, start_time, end_time, duration_minutes,
+            is_cross_day, break_time, work_type, tolerance_before, tolerance_after,
+            description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        FROM t_time_periods
+        WHERE is_cross_day = 1
+          AND deleted_flag = 0
+          AND status = 1
+        ORDER BY sort_order ASC, start_time ASC
+    </select>
+
+    <!-- 根据时间范围查询时间段 -->
+    <select id="selectByTimeRange" resultMap="BaseResultMap">
+        SELECT
+            period_id, period_code, period_name, start_time, end_time, duration_minutes,
+            is_cross_day, break_time, work_type, tolerance_before, tolerance_after,
+            description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        FROM t_time_periods
+        WHERE ((start_time BETWEEN #{startTime} AND #{endTime})
+            OR (end_time BETWEEN #{startTime} AND #{endTime})
+            OR (start_time &lt;= #{startTime} AND end_time &gt;= #{endTime}))
+          AND deleted_flag = 0
+          AND status = 1
+        ORDER BY start_time ASC
+    </select>
+
+    <!-- 查询时间段冲突 -->
+    <select id="countTimeConflicts" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_time_periods
+        WHERE ((start_time &lt;= #{endTime} AND end_time &gt;= #{startTime})
+            OR (start_time BETWEEN #{startTime} AND #{endTime})
+            OR (end_time BETWEEN #{startTime} AND #{endTime}))
+          AND deleted_flag = 0
+          AND status = 1
+        <if test="excludePeriodId != null">
+            AND period_id != #{excludePeriodId}
+        </if>
+    </select>
+
+    <!-- 批量插入时间段 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO t_time_periods (
+            period_code, period_name, start_time, end_time, duration_minutes,
+            is_cross_day, break_time, work_type, tolerance_before, tolerance_after,
+            description, sort_order, status,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        ) VALUES
+        <foreach collection="periods" item="period" separator=",">
+            (
+                #{period.periodCode}, #{period.periodName}, #{period.startTime}, #{period.endTime},
+                #{period.durationMinutes}, #{period.isCrossDay}, #{period.breakTime},
+                #{period.workType}, #{period.toleranceBefore}, #{period.toleranceAfter},
+                #{period.description}, #{period.sortOrder}, #{period.status},
+                #{period.createTime}, #{period.updateTime}, #{period.createUserId},
+                #{period.updateUserId}, #{period.deletedFlag}, #{period.version}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 批量更新时间段状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE t_time_periods
+        SET status = #{status},
+            update_time = NOW(),
+            version = version + 1
+        WHERE period_id IN
+        <foreach collection="periodIds" item="periodId" open="(" separator="," close=")">
+            #{periodId}
+        </foreach>
+          AND deleted_flag = 0
+    </update>
+
+    <!-- 统计各工作类型时间段数量 -->
+    <select id="countByWorkType" resultType="net.lab1024.sa.attendance.domain.entity.TimePeriodsEntity">
+        SELECT
+            work_type as workType,
+            COUNT(*) as periodCount
+        FROM t_time_periods
+        WHERE deleted_flag = 0
+          AND status = 1
+        GROUP BY work_type
+        ORDER BY periodCount DESC
+    </select>
+
+    <!-- 查询时间段最大排序值 -->
+    <select id="selectMaxSortOrder" resultType="java.lang.Integer">
+        SELECT MAX(sort_order)
+        FROM t_time_periods
+        WHERE deleted_flag = 0
+    </select>
+
+    <!-- 更新时间段排序 -->
+    <update id="updateSortOrder">
+        UPDATE t_time_periods
+        SET sort_order = #{sortOrder},
+            update_time = NOW(),
+            version = version + 1
+        WHERE period_id = #{periodId}
+          AND deleted_flag = 0
+    </update>
+
+</mapper>

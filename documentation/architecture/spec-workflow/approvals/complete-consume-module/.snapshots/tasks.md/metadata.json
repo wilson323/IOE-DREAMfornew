@@ -1,0 +1,30 @@
+{
+  "filePath": "D:\\IOE-DREAM\\.spec-workflow\\specs\\complete-consume-module\\tasks.md",
+  "currentVersion": 3,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-17T07:33:16.803Z",
+      "trigger": "initial",
+      "approvalId": "approval_1763364796745_hmgk07frm",
+      "approvalTitle": "开始实施消费记录页面实现任务(2.6)"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-25T11:34:39.977Z",
+      "trigger": "approved",
+      "approvalId": "approval_1763365117941_i9ejp3b2q",
+      "approvalTitle": "开始实施消费模块任务"
+    },
+    {
+      "version": 3,
+      "filename": "snapshot-003.json",
+      "timestamp": "2025-11-25T11:34:40.385Z",
+      "trigger": "approved",
+      "approvalId": "approval_1763364796745_hmgk07frm",
+      "approvalTitle": "开始实施消费记录页面实现任务(2.6)"
+    }
+  ]
+}

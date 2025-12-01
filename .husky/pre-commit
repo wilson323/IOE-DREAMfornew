@@ -1,0 +1,42 @@
+#!/bin/sh
+# Pre-commit hook
+# 在提交前执行质量检查
+
+set -e
+
+echo "🔍 Pre-commit 质量检查开始..."
+
+# 1. 运行质量门禁检查
+node scripts/quality-gate.js
+
+# 2. 运行ESLint
+if [ -f "package.json" ] && command -v npm &> /dev/null; then
+    echo "🔍 运行ESLint检查..."
+    npm run lint
+fi
+
+# 3. 运行格式化检查
+if command -v prettier &> /dev/null; then
+    echo "🎨 检查代码格式..."
+    npx prettier --check .
+fi
+
+# 4. 运行单元测试
+if [ -f "package.json" ] && npm run test &> /dev/null; then
+    echo "🧪 运行单元测试..."
+    npm run test
+fi
+
+# 5. 检查文件大小（防止意外提交大文件）
+echo "📏 检查文件大小..."
+MAX_FILE_SIZE=$((10 * 1024 * 1024)) # 10MB
+large_files=$(find . -type f -size +${MAX_FILE_SIZE}c -not -path "./node_modules/*" -not -path "./.git/*")
+
+if [ ! -z "$large_files" ]; then
+    echo "❌ 发现大文件:"
+    echo "$large_files"
+    echo "请移除或添加到.gitignore"
+    exit 1
+fi
+
+echo "✅ Pre-commit 检查通过！"

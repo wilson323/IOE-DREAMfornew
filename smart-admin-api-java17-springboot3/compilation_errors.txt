@@ -1,0 +1,408 @@
+[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/cache/CachePerformanceTest.java:[82,9] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/cache/CachePerformanceTest.java:[83,9] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/cache/CachePerformanceTest.java:[84,9] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/cache/CachePerformanceTest.java:[106,26] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[66,60] 无法将接口 net.lab1024.sa.base.module.area.service.AreaService中的方法 getAreaTree应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[83,50] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[110,68] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[125,26] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[145,17] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[146,26] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[163,26] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[178,26] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[199,49] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[220,26] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[241,26] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[262,45] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[279,46] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/entity/AccessAreaEntity.java:[136,36] net.lab1024.sa.admin.module.access.domain.entity.AccessAreaEntity中的getChildren()无法覆盖net.lab1024.sa.base.module.area.domain.entity.AreaEntity中的getChildren()
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/entity/AccessAreaEntity.java:[25,1] 名称冲突: net.lab1024.sa.admin.module.access.domain.entity.AccessAreaEntity 中的 setChildren(java.util.List<net.lab1024.sa.admin.module.access.domain.entity.AccessAreaEntity>) 和 net.lab1024.sa.base.module.area.domain.entity.AreaEntity 中的 setChildren(java.util.List<net.lab1024.sa.base.module.area.domain.entity.AreaEntity>) 具有相同疑符, 但两者均不覆盖对方
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[65,72] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[80,60] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[95,67] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[110,84] 不兼容的类型: java.util.List<net.lab1024.sa.base.module.device.entity.SmartDeviceEntity>无法转换为java.util.List<net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[125,85] 不兼容的类型: java.util.List<net.lab1024.sa.base.module.device.entity.SmartDeviceEntity>无法转换为java.util.List<net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[144,32] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[193,32] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[209,32] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[225,32] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[241,49] 无法将接口 net.lab1024.sa.admin.module.access.service.AccessDeviceService中的方法 remoteOpenDoor应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[260,49] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[279,65] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[294,67] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[309,32] 无法将接口 net.lab1024.sa.admin.module.device.service.SmartDeviceService中的方法 deviceHeartbeat应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[324,49] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[343,67] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[358,67] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[374,32] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaStatusEnum.java:[22,12] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaStatusEnum中的构造器 AccessAreaStatusEnum应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaStatusEnum.java:[27,13] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaStatusEnum中的构造器 AccessAreaStatusEnum应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaStatusEnum.java:[55,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaStatusEnum.java:[73,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[22,11] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[27,13] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[32,10] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[37,9] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[42,9] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[47,10] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[75,21] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[93,21] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessMonitorManager.java:[413,67] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessMonitorManager.java:[472,51] 无法将类 net.lab1024.sa.base.common.util.RedisUtil中的方法 get应用到给定类型;
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessRecordManager.java:[115,20] 方法引用无效
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessRecordManager.java:[347,31] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessRecordManager.java:[348,13] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/DeviceProtocolAdapterFactory.java:[65,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/DeviceProtocolAdapterFactory.java:[86,31] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/DeviceProtocolAdapterFactory.java:[93,31] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/DeviceProtocolAdapterFactory.java:[102,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[181,20] net.lab1024.sa.admin.module.access.protocol.impl.TcpProtocolAdapter中的checkConnection(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的checkConnection(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[144,20] net.lab1024.sa.admin.module.access.protocol.impl.TcpProtocolAdapter中的syncDeviceTime(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的syncDeviceTime(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[112,20] net.lab1024.sa.admin.module.access.protocol.impl.TcpProtocolAdapter中的restartDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的restartDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[79,20] net.lab1024.sa.admin.module.access.protocol.impl.TcpProtocolAdapter中的remoteOpen(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的remoteOpen(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[81,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[94,60] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[96,69] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[101,57] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[104,27] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[114,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[126,60] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[128,69] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[133,57] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[136,27] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[146,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[163,31] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[165,71] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[170,59] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[173,27] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[183,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[197,58] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[222,55] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[289,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[302,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[316,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[179,20] net.lab1024.sa.admin.module.access.protocol.impl.HttpProtocolAdapter中的checkConnection(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的checkConnection(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[146,20] net.lab1024.sa.admin.module.access.protocol.impl.HttpProtocolAdapter中的syncDeviceTime(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的syncDeviceTime(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[117,20] net.lab1024.sa.admin.module.access.protocol.impl.HttpProtocolAdapter中的restartDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的restartDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[82,20] net.lab1024.sa.admin.module.access.protocol.impl.HttpProtocolAdapter中的remoteOpen(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的remoteOpen(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[84,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[99,61] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[101,70] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[106,58] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[109,27] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[119,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[128,61] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[130,70] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[135,58] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[138,27] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[148,23] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[161,31] 找不到符号
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[163,72] 找不到符号
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/cache/CachePerformanceTest.java:[82,9] 找不到符号
+[ERROR]   符号:   变量 videoCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.cache.CachePerformanceTest
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/cache/CachePerformanceTest.java:[83,9] 找不到符号
+[ERROR]   符号:   变量 videoCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.cache.CachePerformanceTest
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/cache/CachePerformanceTest.java:[84,9] 找不到符号
+[ERROR]   符号:   变量 videoCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.cache.CachePerformanceTest
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/cache/CachePerformanceTest.java:[106,26] 找不到符号
+[ERROR]   符号:   变量 videoCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.cache.CachePerformanceTest
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[66,60] 无法将接口 net.lab1024.sa.base.module.area.service.AreaService中的方法 getAreaTree应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    java.lang.Long,java.lang.Boolean
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[83,50] 找不到符号
+[ERROR]   符号:   方法 getAreaById(@jakarta.validation.constraints.NotNull(message="\u533a\u57dfID\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[110,68] 找不到符号
+[ERROR]   符号:   方法 getAreaPage(net.lab1024.sa.base.common.domain.PageParam,java.lang.String,java.lang.Integer,java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[125,26] 找不到符号
+[ERROR]   符号:   方法 addArea(@jakarta.validation.Valid net.lab1024.sa.admin.module.access.domain.form.AccessAreaForm)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[145,17] 找不到符号
+[ERROR]   符号:   方法 setAreaId(@jakarta.validation.constraints.NotNull(message="\u533a\u57dfID\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Long)
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.access.domain.form.AccessAreaForm的变量 areaForm
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[146,26] 找不到符号
+[ERROR]   符号:   方法 updateArea(@jakarta.validation.Valid net.lab1024.sa.admin.module.access.domain.form.AccessAreaForm)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[163,26] 找不到符号
+[ERROR]   符号:   方法 deleteArea(@jakarta.validation.constraints.NotNull(message="\u533a\u57dfID\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[178,26] 找不到符号
+[ERROR]   符号:   方法 batchDeleteAreas(java.util.List<java.lang.Long>)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[199,49] 找不到符号
+[ERROR]   符号:   方法 getAreaDevices(@jakarta.validation.constraints.NotNull(message="\u533a\u57dfID\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Long,java.lang.Boolean)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[220,26] 找不到符号
+[ERROR]   符号:   方法 moveArea(@jakarta.validation.constraints.NotNull(message="\u533a\u57dfID\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Long,@jakarta.validation.constraints.NotNull(message="\u65b0\u7236\u7ea7\u533a\u57dfID\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[241,26] 找不到符号
+[ERROR]   符号:   方法 updateAreaStatus(@jakarta.validation.constraints.NotNull(message="\u533a\u57dfID\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Long,@jakarta.validation.constraints.NotNull(message="\u533a\u57df\u72b6\u6001\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[262,45] 找不到符号
+[ERROR]   符号:   方法 validateAreaCode(@jakarta.validation.constraints.NotNull(message="\u533a\u57df\u7f16\u7801\u4e0d\u80fd\u4e3a\u7a7a") java.lang.String,java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessAreaController.java:[279,46] 找不到符号
+[ERROR]   符号:   方法 getAreaStatistics(@jakarta.validation.constraints.NotNull(message="\u533a\u57dfID\u4e0d\u80fd\u4e3a\u7a7a") java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessAreaService的变量 accessAreaService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/entity/AccessAreaEntity.java:[136,36] net.lab1024.sa.admin.module.access.domain.entity.AccessAreaEntity中的getChildren()无法覆盖net.lab1024.sa.base.module.area.domain.entity.AreaEntity中的getChildren()
+[ERROR]   返回类型java.util.List<net.lab1024.sa.admin.module.access.domain.entity.AccessAreaEntity>与java.util.List<net.lab1024.sa.base.module.area.domain.entity.AreaEntity>不兼容
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/entity/AccessAreaEntity.java:[25,1] 名称冲突: net.lab1024.sa.admin.module.access.domain.entity.AccessAreaEntity 中的 setChildren(java.util.List<net.lab1024.sa.admin.module.access.domain.entity.AccessAreaEntity>) 和 net.lab1024.sa.base.module.area.domain.entity.AreaEntity 中的 setChildren(java.util.List<net.lab1024.sa.base.module.area.domain.entity.AreaEntity>) 具有相同疑符, 但两者均不覆盖对方
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[65,72] 找不到符号
+[ERROR]   符号:   方法 getDevicePage(@jakarta.validation.Valid net.lab1024.sa.base.common.domain.PageParam,java.lang.Long,java.lang.Long,java.lang.String,java.lang.Integer,java.lang.Integer,java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[80,60] 找不到符号
+[ERROR]   符号:   方法 getDeviceById(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[95,67] 找不到符号
+[ERROR]   符号:   方法 getDevicesByAreaId(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[110,84] 不兼容的类型: java.util.List<net.lab1024.sa.base.module.device.entity.SmartDeviceEntity>无法转换为java.util.List<net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[125,85] 不兼容的类型: java.util.List<net.lab1024.sa.base.module.device.entity.SmartDeviceEntity>无法转换为java.util.List<net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[144,32] 找不到符号
+[ERROR]   符号:   方法 addDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[193,32] 找不到符号
+[ERROR]   符号:   方法 batchDeleteDevices(java.util.List<java.lang.Long>)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[209,32] 找不到符号
+[ERROR]   符号:   方法 updateDeviceOnlineStatus(java.lang.Long,java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[225,32] 找不到符号
+[ERROR]   符号:   方法 batchUpdateDeviceOnlineStatus(java.util.List<java.lang.Long>,java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[241,49] 无法将接口 net.lab1024.sa.admin.module.access.service.AccessDeviceService中的方法 remoteOpenDoor应用到给定类型;
+[ERROR]   需要: java.lang.Long,java.lang.Long
+[ERROR]   找到:    java.lang.Long
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[260,49] 找不到符号
+[ERROR]   符号:   方法 restartDevice(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[279,65] 找不到符号
+[ERROR]   符号:   方法 getDeviceStatistics()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[294,67] 找不到符号
+[ERROR]   符号:   方法 getDeviceHealthStatus(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[309,32] 无法将接口 net.lab1024.sa.admin.module.device.service.SmartDeviceService中的方法 deviceHeartbeat应用到给定类型;
+[ERROR]   需要: java.lang.Long
+[ERROR]   找到:    java.lang.Long,java.util.Map<java.lang.String,java.lang.Object>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[324,49] 找不到符号
+[ERROR]   符号:   方法 syncDeviceTime(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[343,67] 找不到符号
+[ERROR]   符号:   方法 getDevicesNeedingMaintenance()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[358,67] 找不到符号
+[ERROR]   符号:   方法 getHeartbeatTimeoutDevices()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/controller/AccessDeviceController.java:[374,32] 找不到符号
+[ERROR]   符号:   方法 updateDeviceWorkMode(java.lang.Long,java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.service.AccessDeviceService的变量 accessDeviceService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaStatusEnum.java:[22,12] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaStatusEnum中的构造器 AccessAreaStatusEnum应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    int,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaStatusEnum.java:[27,13] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaStatusEnum中的构造器 AccessAreaStatusEnum应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    int,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaStatusEnum.java:[55,23] 找不到符号
+[ERROR]   符号:   方法 getValue()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.enums.AccessAreaStatusEnum的变量 status
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaStatusEnum.java:[73,23] 找不到符号
+[ERROR]   符号:   方法 getCode()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.enums.AccessAreaStatusEnum的变量 status
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[22,11] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    int,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[27,13] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    int,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[32,10] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    int,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[37,9] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    int,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[42,9] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    int,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[47,10] 无法将枚举 net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum中的构造器 AccessAreaTypeEnum应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    int,java.lang.String,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[75,21] 找不到符号
+[ERROR]   符号:   方法 getValue()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum的变量 type
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/domain/enums/AccessAreaTypeEnum.java:[93,21] 找不到符号
+[ERROR]   符号:   方法 getCode()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.enums.AccessAreaTypeEnum的变量 type
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessMonitorManager.java:[413,67] 找不到符号
+[ERROR]   符号:   方法 selectAccessStatistics(java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.dao.AccessEventDao的变量 accessEventDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessMonitorManager.java:[472,51] 无法将类 net.lab1024.sa.base.common.util.RedisUtil中的方法 get应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Class<net.lab1024.sa.admin.module.access.domain.vo.MonitorStatisticsVO>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessRecordManager.java:[115,20] 方法引用无效
+[ERROR]   找不到符号
+[ERROR]     符号:   方法 getUserId()
+[ERROR]     位置: 类 net.lab1024.sa.admin.module.access.domain.entity.AccessRecordEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessRecordManager.java:[347,31] 找不到符号
+[ERROR]   符号:   方法 buildCacheKey(java.lang.String,java.lang.String)
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.access.manager.AccessRecordManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/manager/AccessRecordManager.java:[348,13] 找不到符号
+[ERROR]   符号:   方法 removeCache(java.lang.String)
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.access.manager.AccessRecordManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/DeviceProtocolAdapterFactory.java:[65,23] 找不到符号
+[ERROR]   符号:   方法 getProtocol()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/DeviceProtocolAdapterFactory.java:[86,31] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/DeviceProtocolAdapterFactory.java:[93,31] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/DeviceProtocolAdapterFactory.java:[102,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[181,20] net.lab1024.sa.admin.module.access.protocol.impl.TcpProtocolAdapter中的checkConnection(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的checkConnection(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   被覆盖的方法未抛出net.lab1024.sa.base.common.device.DeviceProtocolException
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[144,20] net.lab1024.sa.admin.module.access.protocol.impl.TcpProtocolAdapter中的syncDeviceTime(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的syncDeviceTime(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   被覆盖的方法未抛出net.lab1024.sa.base.common.device.DeviceProtocolException
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[112,20] net.lab1024.sa.admin.module.access.protocol.impl.TcpProtocolAdapter中的restartDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的restartDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   被覆盖的方法未抛出net.lab1024.sa.base.common.device.DeviceProtocolException
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[79,20] net.lab1024.sa.admin.module.access.protocol.impl.TcpProtocolAdapter中的remoteOpen(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的remoteOpen(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   被覆盖的方法未抛出net.lab1024.sa.base.common.device.DeviceProtocolException
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[81,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[94,60] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[96,69] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[101,57] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[104,27] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[114,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[126,60] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[128,69] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[133,57] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[136,27] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[146,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[163,31] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[165,71] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[170,59] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[173,27] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[183,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[197,58] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[222,55] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[289,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[302,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/TcpProtocolAdapter.java:[316,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[179,20] net.lab1024.sa.admin.module.access.protocol.impl.HttpProtocolAdapter中的checkConnection(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的checkConnection(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   被覆盖的方法未抛出net.lab1024.sa.base.common.device.DeviceProtocolException
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[146,20] net.lab1024.sa.admin.module.access.protocol.impl.HttpProtocolAdapter中的syncDeviceTime(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的syncDeviceTime(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   被覆盖的方法未抛出net.lab1024.sa.base.common.device.DeviceProtocolException
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[117,20] net.lab1024.sa.admin.module.access.protocol.impl.HttpProtocolAdapter中的restartDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的restartDevice(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   被覆盖的方法未抛出net.lab1024.sa.base.common.device.DeviceProtocolException
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[82,20] net.lab1024.sa.admin.module.access.protocol.impl.HttpProtocolAdapter中的remoteOpen(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)无法实现net.lab1024.sa.admin.module.access.protocol.DeviceProtocolAdapter中的remoteOpen(net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity)
+[ERROR]   被覆盖的方法未抛出net.lab1024.sa.base.common.device.DeviceProtocolException
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[84,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[99,61] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[101,70] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[106,58] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[109,27] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[119,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[128,61] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[130,70] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[135,58] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[138,27] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[148,23] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[161,31] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/access/protocol/impl/HttpProtocolAdapter.java:[163,72] 找不到符号
+[ERROR]   符号:   方法 getAccessDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.access.domain.entity.AccessDeviceEntity的变量 device
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

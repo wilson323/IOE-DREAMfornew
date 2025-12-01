@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.oa.document.dao.DocumentVersionDao">
+
+    <!-- 基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.oa.document.domain.entity.DocumentVersionEntity">
+        <id column="version_id" property="versionId" jdbcType="BIGINT"/>
+        <result column="document_id" property="documentId" jdbcType="BIGINT"/>
+        <result column="version_number" property="versionNumber" jdbcType="INTEGER"/>
+        <result column="version_name" property="versionName" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
+        <result column="content_diff" property="contentDiff" jdbcType="LONGVARCHAR"/>
+        <result column="change_description" property="changeDescription" jdbcType="VARCHAR"/>
+        <result column="change_type" property="changeType" jdbcType="VARCHAR"/>
+        <result column="file_path" property="filePath" jdbcType="VARCHAR"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="file_size" property="fileSize" jdbcType="BIGINT"/>
+        <result column="content_hash" property="contentHash" jdbcType="VARCHAR"/>
+        <result column="approval_status" property="approvalStatus" jdbcType="VARCHAR"/>
+        <result column="approved_by" property="approvedBy" jdbcType="BIGINT"/>
+        <result column="approved_name" property="approvedName" jdbcType="VARCHAR"/>
+        <result column="approval_time" property="approvalTime" jdbcType="TIMESTAMP"/>
+        <result column="approval_comment" property="approvalComment" jdbcType="VARCHAR"/>
+        <result column="is_current" property="isCurrent" jdbcType="TINYINT"/>
+        <result column="is_major" property="isMajor" jdbcType="TINYINT"/>
+        <result column="is_archived" property="isArchived" jdbcType="TINYINT"/>
+        <result column="archived_time" property="archivedTime" jdbcType="TIMESTAMP"/>
+        <result column="created_by" property="createdBy" jdbcType="BIGINT"/>
+        <result column="created_by_name" property="createdByName" jdbcType="VARCHAR"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 查询文档的所有版本 -->
+    <select id="selectByDocumentId" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND deleted_flag = 0
+        ORDER BY version_number DESC
+    </select>
+
+    <!-- 查询文档的最新版本 -->
+    <select id="selectLatestVersion" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND deleted_flag = 0
+        ORDER BY version_number DESC
+        LIMIT 1
+    </select>
+
+    <!-- 查询文档的当前版本 -->
+    <select id="selectCurrentVersion" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND is_current = 1
+        AND deleted_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 查询指定版本的下一个版本 -->
+    <select id="selectNextVersion" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND version_number > #{versionNumber}
+        AND deleted_flag = 0
+        ORDER BY version_number ASC
+        LIMIT 1
+    </select>
+
+    <!-- 查询指定版本的上一个版本 -->
+    <select id="selectPreviousVersion" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND version_number &lt; #{versionNumber}
+        AND deleted_flag = 0
+        ORDER BY version_number DESC
+        LIMIT 1
+    </select>
+
+    <!-- 查询指定版本号范围的版本 -->
+    <select id="selectByVersionRange" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND version_number >= #{startVersion}
+        AND version_number &lt;= #{endVersion}
+        AND deleted_flag = 0
+        ORDER BY version_number DESC
+    </select>
+
+    <!-- 查询用户创建的版本 -->
+    <select id="selectByCreatedBy" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE created_by = #{createdBy}
+        AND deleted_flag = 0
+        <if test="documentId != null">
+            AND document_id = #{documentId}
+        </if>
+        ORDER BY create_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询待审批的版本 -->
+    <select id="selectPendingApproval" resultMap="BaseResultMap">
+        SELECT dv.*, d.title as documentTitle
+        FROM t_oa_document_version dv
+        INNER JOIN t_oa_document d ON dv.document_id = d.document_id
+        WHERE dv.approval_status = #{approvalStatus}
+        AND dv.deleted_flag = 0
+        AND d.deleted_flag = 0
+        ORDER BY dv.create_time ASC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询指定时间范围内的版本 -->
+    <select id="selectByTimeRange" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND create_time >= #{startTime}
+        AND create_time &lt;= #{endTime}
+        AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询主要版本 -->
+    <select id="selectMajorVersions" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND is_major = 1
+        AND deleted_flag = 0
+        ORDER BY version_number DESC
+    </select>
+
+    <!-- 统计文档版本数量 -->
+    <select id="countVersionsByDocument" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 获取文档最大版本号 -->
+    <select id="selectMaxVersionNumber" resultType="java.lang.Integer">
+        SELECT IFNULL(MAX(version_number), 0)
+        FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 检查版本号是否已存在 -->
+    <select id="existsVersionNumber" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0
+        FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND version_number = #{versionNumber}
+        AND deleted_flag = 0
+        <if test="excludeVersionId != null">
+            AND version_id != #{excludeVersionId}
+        </if>
+        LIMIT 1
+    </select>
+
+    <!-- 更新版本审批状态 -->
+    <update id="updateApprovalStatus">
+        UPDATE t_oa_document_version
+        SET approval_status = #{approvalStatus},
+            <if test="approvedBy != null">
+                approved_by = #{approvedBy},
+                approved_name = #{approvedName},
+                approval_time = #{approvalTime},
+            </if>
+            <if test="approvalComment != null">
+                approval_comment = #{approvalComment},
+            </if>
+            update_time = NOW()
+        WHERE version_id = #{versionId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 设置当前版本 -->
+    <update id="setCurrentVersion">
+        <!-- 先清除所有当前版本标识 -->
+        UPDATE t_oa_document_version
+        SET is_current = 0,
+            update_time = NOW()
+        WHERE document_id = #{documentId}
+        AND is_current = 1
+        AND deleted_flag = 0;
+
+        <!-- 设置新的当前版本 -->
+        UPDATE t_oa_document_version
+        SET is_current = 1,
+            update_time = NOW()
+        WHERE document_id = #{documentId}
+        AND version_id = #{versionId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 清除当前版本标识 -->
+    <update id="clearCurrentVersion">
+        UPDATE t_oa_document_version
+        SET is_current = 0,
+            update_time = NOW()
+        WHERE document_id = #{documentId}
+        AND is_current = 1
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 归档版本 -->
+    <update id="archiveVersion">
+        UPDATE t_oa_document_version
+        SET is_archived = 1,
+            archived_time = #{archivedTime},
+            update_time = NOW()
+        WHERE version_id = #{versionId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 批量删除文档的所有版本 -->
+    <update id="deleteByDocumentId">
+        UPDATE t_oa_document_version
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE document_id = #{documentId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 获取版本大小统计 -->
+    <select id="getVersionSizeStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as totalVersions,
+            COUNT(CASE WHEN is_major = 1 THEN 1 END) as majorVersions,
+            COUNT(CASE WHEN is_current = 1 THEN 1 END) as currentVersions,
+            COUNT(CASE WHEN is_archived = 1 THEN 1 END) as archivedVersions,
+            SUM(file_size) as totalSize,
+            AVG(file_size) as avgSize,
+            MAX(file_size) as maxSize,
+            MIN(file_size) as minSize,
+            COUNT(CASE WHEN approval_status = 'PENDING' THEN 1 END) as pendingCount,
+            COUNT(CASE WHEN approval_status = 'APPROVED' THEN 1 END) as approvedCount,
+            COUNT(CASE WHEN approval_status = 'REJECTED' THEN 1 END) as rejectedCount
+        FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 查询版本变更类型统计 -->
+    <select id="getChangeTypeStatistics" resultType="java.util.Map">
+        SELECT
+            change_type as changeType,
+            COUNT(*) as count
+        FROM t_oa_document_version
+        WHERE document_id = #{documentId}
+        AND deleted_flag = 0
+        GROUP BY change_type
+        ORDER BY count DESC
+    </select>
+
+    <!-- 查询用户版本活动统计 -->
+    <select id="getUserVersionActivity" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as totalVersions,
+            COUNT(CASE WHEN is_major = 1 THEN 1 END) as majorVersions,
+            COUNT(CASE WHEN approval_status = 'APPROVED' THEN 1 END) as approvedVersions,
+            COUNT(CASE WHEN approval_status = 'PENDING' THEN 1 END) as pendingVersions,
+            DATE_FORMAT(create_time, '%Y-%m') as month
+        FROM t_oa_document_version
+        WHERE created_by = #{createdBy}
+        AND create_time >= #{startDate}
+        AND create_time &lt;= #{endDate}
+        AND deleted_flag = 0
+        GROUP BY DATE_FORMAT(create_time, '%Y-%m')
+        ORDER BY month DESC
+    </select>
+
+</mapper>

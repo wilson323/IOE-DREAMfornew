@@ -1,0 +1,209 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-parent ---
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-base ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Compiling 188 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[248,26] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[247,64] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\LocalRedissonConfig.java:[47,16] [deprecation] BaseConfig中的setRetryInterval(int)已过时
+  其中, T是类型变量:
+    T扩展已在类 BaseConfig中声明的BaseConfig<T>
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\TransactionConfig.java:[60,15] [deprecation] TransactionInterceptor中的TransactionInterceptor(PlatformTransactionManager,TransactionAttributeSource)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[459,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[459,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[475,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[475,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[572,98] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[572,75] [deprecation] BigDecimal中的setScale(int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[639,71] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[639,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[647,74] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[647,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[655,60] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[655,20] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[INFO] 16 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRecordEntity.java:[480,15] 错误: 找不到符号
+  符号:   方法 getStatusDescription()
+  位置: 类 AttendanceRecordEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[534,12] 错误: 找不到符号
+  符号:   方法 getWorkStartTime()
+  位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[534,42] 错误: 找不到符号
+  符号:   方法 getWorkEndTime()
+  位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[536,27] 错误: 找不到符号
+  符号:   方法 getWorkStartTime()
+  位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[536,66] 错误: 找不到符号
+  符号:   方法 getWorkEndTime()
+  位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[547,40] 错误: 找不到符号
+  符号:   方法 getStatusText()
+  位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[334,36] 错误: 找不到符号
+  符号:   方法 getDayOfWeekText()
+  位置: 类 AttendanceScheduleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[336,40] 错误: 找不到符号
+  符号:   方法 getWorkTimeRangeText()
+  位置: 类 AttendanceScheduleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[337,40] 错误: 找不到符号
+  符号:   方法 getScheduleTypeText()
+  位置: 类 AttendanceScheduleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[366,47] 错误: 找不到符号
+  符号:   方法 getWorkStartTime()
+  位置: 类型为AttendanceRuleEntity的变量 primaryRule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[367,45] 错误: 找不到符号
+  符号:   方法 getWorkEndTime()
+  位置: 类型为AttendanceRuleEntity的变量 primaryRule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceExceptionEntity.java:[406,40] 错误: 找不到符号
+  符号:   方法 getExceptionTypeText()
+  位置: 类 AttendanceExceptionEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceExceptionEntity.java:[407,40] 错误: 找不到符号
+  符号:   方法 getExceptionLevelText()
+  位置: 类 AttendanceExceptionEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceExceptionEntity.java:[415,40] 错误: 找不到符号
+  符号:   方法 getStatusText()
+  位置: 类 AttendanceExceptionEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceExceptionEntity.java:[438,43] 错误: 找不到符号
+  符号:   方法 getHandleActionText()
+  位置: 类 AttendanceExceptionEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[79,60] 错误: 找不到符号
+  符号:   方法 getMessage()
+  位置: 类型为ReportConfigValidationResult的变量 validation
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[217,18] 错误: 找不到符号
+  符号:   方法 setMessage(String)
+  位置: 类型为ExportResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[246,18] 错误: 找不到符号
+  符号:   方法 setMessage(String)
+  位置: 类型为ExportResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[443,14] 错误: 找不到符号
+  符号:   方法 setMessage(String)
+  位置: 类型为CustomReportResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[563,14] 错误: 找不到符号
+  符号:   方法 setMessage(String)
+  位置: 类型为PivotTableResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceExportService.java:[264,78] 错误: 找不到符号
+  符号:   方法 getMessage()
+  位置: 类型为CustomReportResult的变量 reportResult
+[INFO] 21 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.128 s]
+[INFO] sa-base ............................................ FAILURE [  7.227 s]
+[INFO] sa-support ......................................... SKIPPED
+[INFO] sa-admin ........................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.624 s
+[INFO] Finished at: 2025-11-23T19:43:50+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-base: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRecordEntity.java:[480,15] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatusDescription()
+[ERROR]   位置: 类 AttendanceRecordEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[534,12] 错误: 找不到符号
+[ERROR]   符号:   方法 getWorkStartTime()
+[ERROR]   位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[534,42] 错误: 找不到符号
+[ERROR]   符号:   方法 getWorkEndTime()
+[ERROR]   位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[536,27] 错误: 找不到符号
+[ERROR]   符号:   方法 getWorkStartTime()
+[ERROR]   位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[536,66] 错误: 找不到符号
+[ERROR]   符号:   方法 getWorkEndTime()
+[ERROR]   位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceRuleEntity.java:[547,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatusText()
+[ERROR]   位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[334,36] 错误: 找不到符号
+[ERROR]   符号:   方法 getDayOfWeekText()
+[ERROR]   位置: 类 AttendanceScheduleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[336,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getWorkTimeRangeText()
+[ERROR]   位置: 类 AttendanceScheduleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[337,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getScheduleTypeText()
+[ERROR]   位置: 类 AttendanceScheduleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[366,47] 错误: 找不到符号
+[ERROR]   符号:   方法 getWorkStartTime()
+[ERROR]   位置: 类型为AttendanceRuleEntity的变量 primaryRule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[367,45] 错误: 找不到符号
+[ERROR]   符号:   方法 getWorkEndTime()
+[ERROR]   位置: 类型为AttendanceRuleEntity的变量 primaryRule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceExceptionEntity.java:[406,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getExceptionTypeText()
+[ERROR]   位置: 类 AttendanceExceptionEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceExceptionEntity.java:[407,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getExceptionLevelText()
+[ERROR]   位置: 类 AttendanceExceptionEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceExceptionEntity.java:[415,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatusText()
+[ERROR]   位置: 类 AttendanceExceptionEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceExceptionEntity.java:[438,43] 错误: 找不到符号
+[ERROR]   符号:   方法 getHandleActionText()
+[ERROR]   位置: 类 AttendanceExceptionEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[79,60] 错误: 找不到符号
+[ERROR]   符号:   方法 getMessage()
+[ERROR]   位置: 类型为ReportConfigValidationResult的变量 validation
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[217,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setMessage(String)
+[ERROR]   位置: 类型为ExportResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[246,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setMessage(String)
+[ERROR]   位置: 类型为ExportResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[443,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setMessage(String)
+[ERROR]   位置: 类型为CustomReportResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceCustomReportService.java:[563,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setMessage(String)
+[ERROR]   位置: 类型为PivotTableResult的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceExportService.java:[264,78] 错误: 找不到符号
+[ERROR]   符号:   方法 getMessage()
+[ERROR]   位置: 类型为CustomReportResult的变量 reportResult
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-base

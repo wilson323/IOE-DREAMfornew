@@ -1,0 +1,441 @@
+# IOE-DREAM智慧园区一卡通管理平台 - Redis集群配置
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: ioe-dream
+  labels:
+    app: redis
+    component: cache
+data:
+  redis.conf: |
+    # 网络配置
+    bind 0.0.0.0
+    port 6379
+    protected-mode yes
+    requirepass zkteco3100
+
+    # 通用配置
+    timeout 300
+    tcp-keepalive 60
+
+    # 内存配置
+    maxmemory 1gb
+    maxmemory-policy allkeys-lru
+    maxmemory-samples 5
+
+    # 持久化配置
+    save 900 1
+    save 300 10
+    save 60 10000
+    rdbcompression yes
+    rdbchecksum yes
+    dbfilename dump.rdb
+    dir /data
+
+    # AOF配置
+    appendonly yes
+    appendfilename "appendonly.aof"
+    appendfsync everysec
+    no-appendfsync-on-rewrite no
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 64mb
+
+    # 集群配置
+    cluster-enabled yes
+    cluster-config-file nodes.conf
+    cluster-node-timeout 5000
+    cluster-announce-ip ${POD_IP}
+    cluster-announce-port 6379
+    cluster-announce-bus-port 16379
+
+    # 日志配置
+    loglevel notice
+    logfile /var/log/redis/redis.log
+
+    # 性能优化
+    tcp-backlog 511
+    databases 16
+    always-show-logo yes
+    stop-writes-on-bgsave-error yes
+    dynamic-hz yes
+
+    # 客户端配置
+    maxclients 10000
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-cluster
+  namespace: ioe-dream
+  labels:
+    app: redis
+    component: cache
+spec:
+  serviceName: redis-cluster
+  replicas: 6
+  selector:
+    matchLabels:
+      app: redis
+      component: cache
+  template:
+    metadata:
+      labels:
+        app: redis
+        component: cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+          name: client
+          protocol: TCP
+        - containerPort: 16379
+          name: gossip
+          protocol: TCP
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: REDIS_PASSWORD
+          value: "zkteco3100"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -ex
+          # 创建配置文件目录
+          mkdir -p /etc/redis
+          # 复制配置文件
+          cp /usr/local/etc/redis/redis.conf /etc/redis/redis.conf
+          # 设置密码
+          echo "requirepass $REDIS_PASSWORD" >> /etc/redis/redis.conf
+          # 启动Redis
+          exec redis-server /etc/redis/redis.conf
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: conf
+          mountPath: /usr/local/etc/redis
+        - name: data
+          mountPath: /data
+        - name: logs
+          mountPath: /var/log/redis
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - -a
+            - $(REDIS_PASSWORD)
+            - ping
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - -a
+            - $(REDIS_PASSWORD)
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      - name: redis-exporter
+        image: oliver006/redis_exporter:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9121
+          name: metrics
+          protocol: TCP
+        env:
+        - name: REDIS_ADDR
+          value: "redis://localhost:6379"
+        - name: REDIS_PASSWORD
+          value: "zkteco3100"
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "100Mi"
+            cpu: "100m"
+      volumes:
+      - name: conf
+        configMap:
+          name: redis-config
+      - name: data
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
+      nodeSelector:
+        node-type: cache
+      tolerations:
+      - key: "cache"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                - cache
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster
+  namespace: ioe-dream
+  labels:
+    app: redis
+    component: cache
+spec:
+  type: ClusterIP
+  ports:
+  - name: client
+    port: 6379
+    targetPort: 6379
+    protocol: TCP
+  - name: gossip
+    port: 16379
+    targetPort: 16379
+    protocol: TCP
+  - name: metrics
+    port: 9121
+    targetPort: 9121
+    protocol: TCP
+  selector:
+    app: redis
+    component: cache
+  publishNotReadyAddresses: true
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: ioe-dream
+  labels:
+    app: redis
+    component: cache
+spec:
+  type: ClusterIP
+  ports:
+  - name: redis
+    port: 6389
+    targetPort: 6379
+    protocol: TCP
+  selector:
+    app: redis
+    component: cache
+
+---
+# Redis集群初始化Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: redis-cluster-init
+  namespace: ioe-dream
+  labels:
+    app: redis
+    component: cache-init
+spec:
+  template:
+    metadata:
+      labels:
+        app: redis
+        component: cache-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: redis-cluster-init
+        image: redis:7-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -ex
+          # 等待所有Redis节点启动
+          for i in {1..30}; do
+            if [ $(redis-cli -h redis-cluster-0.redis-cluster -p 6379 ping) = "PONG" ] && \
+               [ $(redis-cli -h redis-cluster-1.redis-cluster -p 6379 ping) = "PONG" ] && \
+               [ $(redis-cli -h redis-cluster-2.redis-cluster -p 6379 ping) = "PONG" ] && \
+               [ $(redis-cli -h redis-cluster-3.redis-cluster -p 6379 ping) = "PONG" ] && \
+               [ $(redis-cli -h redis-cluster-4.redis-cluster -p 6379 ping) = "PONG" ] && \
+               [ $(redis-cli -h redis-cluster-5.redis-cluster -p 6379 ping) = "PONG" ]; then
+              echo "All Redis nodes are ready"
+              break
+            fi
+            echo "Waiting for Redis nodes to be ready..."
+            sleep 5
+          done
+
+          # 初始化Redis集群
+          echo "yes" | redis-cli --cluster create \
+            redis-cluster-0.redis-cluster:6379 \
+            redis-cluster-1.redis-cluster:6379 \
+            redis-cluster-2.redis-cluster:6379 \
+            redis-cluster-3.redis-cluster:6379 \
+            redis-cluster-4.redis-cluster:6379 \
+            redis-cluster-5.redis-cluster:6379 \
+            --cluster-replicas 1 \
+            -a zkteco3100
+
+          # 检查集群状态
+          redis-cli --cluster check redis-cluster-0.redis-cluster:6379 -a zkteco3100
+
+          echo "Redis cluster initialization completed"
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+          limits:
+            memory: "200Mi"
+            cpu: "200m"
+      restartPolicy: OnFailure
+
+---
+# Redis集群监控Service
+apiVersion: v1
+kind: ServiceMonitor
+metadata:
+  name: redis-cluster-monitor
+  namespace: ioe-dream
+  labels:
+    app: redis
+    component: cache
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      component: cache
+  endpoints:
+  - port: metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+# Redis哨兵配置（用于高可用）
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-sentinel
+  namespace: ioe-dream
+  labels:
+    app: redis
+    component: sentinel
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis
+      component: sentinel
+  template:
+    metadata:
+      labels:
+        app: redis
+        component: sentinel
+    spec:
+      containers:
+      - name: redis-sentinel
+        image: redis:7-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 26379
+          name: sentinel
+          protocol: TCP
+        env:
+        - name: REDIS_PASSWORD
+          value: "zkteco3100"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -ex
+          # 创建sentinel配置文件
+          cat > /etc/redis/sentinel.conf << EOF
+          port 26379
+          sentinel monitor mymaster redis-cluster-0.redis-cluster 6379 2
+          sentinel auth-pass mymaster $REDIS_PASSWORD
+          sentinel down-after-milliseconds mymaster 5000
+          sentinel parallel-syncs mymaster 1
+          sentinel failover-timeout mymaster 10000
+          sentinel deny-scripts-reconfig yes
+          sentinel notification-script mymaster /etc/redis/notify.sh
+          sentinel client-reconfig-script mymaster /etc/redis/reconfig.sh
+          logfile /var/log/redis/sentinel.log
+          dir /tmp
+          EOF
+
+          # 启动sentinel
+          exec redis-sentinel /etc/redis/sentinel.conf
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "50m"
+          limits:
+            memory: "200Mi"
+            cpu: "100m"
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - -p
+            - "26379"
+            - ping
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - -p
+            - "26379"
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      nodeSelector:
+        node-type: cache
+      tolerations:
+      - key: "cache"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-sentinel
+  namespace: ioe-dream
+  labels:
+    app: redis
+    component: sentinel
+spec:
+  type: ClusterIP
+  ports:
+  - name: sentinel
+    port: 26379
+    targetPort: 26379
+    protocol: TCP
+  selector:
+    app: redis
+    component: sentinel

@@ -1,0 +1,22 @@
+{
+  "filePath": "D:\\IOE-DREAM\\.spec-workflow\\specs\\architecture-integrity-system\\requirements.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-18T00:09:39.581Z",
+      "trigger": "initial",
+      "approvalId": "approval_1763424579565_1hfrr96n9",
+      "approvalTitle": "Architecture Integrity System Requirements Review"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-18T00:13:42.672Z",
+      "trigger": "approved",
+      "approvalId": "approval_1763424579565_1hfrr96n9",
+      "approvalTitle": "Architecture Integrity System Requirements Review"
+    }
+  ]
+}

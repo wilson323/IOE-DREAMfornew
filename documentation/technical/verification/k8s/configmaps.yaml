@@ -1,0 +1,419 @@
+# ===================================================================
+# IOE-DREAM 微服务Kubernetes配置文件
+# 用于生产环境模拟部署，包含ConfigMap、Secret等配置
+# ===================================================================
+
+# MySQL配置
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: ioedream
+  labels:
+    app: mysql
+    component: database
+data:
+  mysql.cnf: |
+    [mysqld]
+    character-set-server=utf8mb4
+    collation-server=utf8mb4_unicode_ci
+    max_connections=1000
+    innodb_buffer_pool_size=1G
+    innodb_log_file_size=256M
+    innodb_flush_log_at_trx_commit=1
+    sync_binlog=1
+    slow_query_log=1
+    slow_query_log_file=/var/log/mysql/slow.log
+    long_query_time=2
+
+# Redis配置
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: ioedream
+  labels:
+    app: redis
+    component: cache
+data:
+  redis.conf: |
+    bind 0.0.0.0
+    port 6379
+    timeout 0
+    tcp-keepalive 300
+    maxmemory 512mb
+    maxmemory-policy allkeys-lru
+    appendonly yes
+    appendfsync everysec
+    save 900 1
+    save 300 10
+    save 60 10000
+
+# Nacos配置
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nacos-config
+  namespace: ioedream
+  labels:
+    app: nacos
+    component: registry
+data:
+  application.properties: |
+    server.contextPath=/nacos
+    server.servlet.contextPath=/nacos
+    server.port=8848
+
+    # 数据库配置
+    spring.datasource.platform=mysql
+    db.num=1
+    db.url.0=jdbc:mysql://mysql:3306/nacos_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
+    db.user.0=root
+    db.password.0=root123456
+
+    # 日志配置
+    server.tomcat.basedir=
+    logging.config=classpath:nacos-logback.xml
+    server.tomcat.accesslog.enabled=true
+    server.tomcat.accesslog.pattern=%h %l %u %t "%r" %s %b %D %{User-Agent}i %{Request-Id}i
+
+    # 安全配置
+    nacos.security.ignore.urls=/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-ui/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**
+    nacos.core.auth.enabled=false
+    nacos.core.auth.default.token.secret.key=SecretKey012345678901234567890123456789012345678901234567890123456789
+
+# 微服务通用配置
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microservices-common-config
+  namespace: ioedream
+  labels:
+    app: microservices
+    component: common-config
+data:
+  application-docker.yml: |
+    spring:
+      profiles:
+        active: docker
+      cloud:
+        nacos:
+          discovery:
+            server-addr: nacos:8848
+            namespace: ioedream
+            group: IOEDREAM_GROUP
+          config:
+            server-addr: nacos:8848
+            namespace: ioedream
+            group: IOEDREAM_GROUP
+            file-extension: yml
+
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://mysql:3306/ioedream?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+        username: ioedream
+        password: ioedream123
+        hikari:
+          maximum-pool-size: 20
+          minimum-idle: 5
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+
+      redis:
+        host: redis
+        port: 6379
+        timeout: 3000
+        database: 0
+        lettuce:
+          pool:
+            max-active: 20
+            max-idle: 8
+            min-idle: 2
+            max-wait: 3000
+
+    server:
+      port: 8080
+      servlet:
+        context-path: /
+
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus
+      endpoint:
+        health:
+          show-details: always
+      metrics:
+        export:
+          prometheus:
+            enabled: true
+
+    logging:
+      level:
+        root: INFO
+        net.lab1024: DEBUG
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Prometheus配置
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: ioedream
+  labels:
+    app: prometheus
+    component: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+    rule_files:
+      - "/etc/prometheus/rules/*.yml"
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+              - alertmanager:9093
+
+    scrape_configs:
+      # Prometheus自身监控
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
+      # 微服务监控
+      - job_name: 'ioedream-microservices'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - ioedream
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            action: replace
+            target_label: kubernetes_name
+
+      # 节点监控
+      - job_name: 'kubernetes-nodes'
+        kubernetes_sd_configs:
+          - role: node
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+
+      # 基础设施监控
+      - job_name: 'node-exporter'
+        static_configs:
+          - targets: ['node-exporter:9100']
+
+  # 告警规则
+  alert_rules.yml: |
+    groups:
+      - name: ioedream.rules
+        rules:
+          # 服务下线告警
+          - alert: ServiceDown
+            expr: up == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Service {{ $labels.job }} is down"
+              description: "Service {{ $labels.job }} on {{ $labels.instance }} has been down for more than 1 minute."
+
+          # 高CPU使用率告警
+          - alert: HighCPUUsage
+            expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU usage on {{ $labels.instance }}"
+              description: "CPU usage is above 80% on {{ $labels.instance }} for more than 5 minutes."
+
+          # 高内存使用率告警
+          - alert: HighMemoryUsage
+            expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High memory usage on {{ $labels.instance }}"
+              description: "Memory usage is above 85% on {{ $labels.instance }} for more than 5 minutes."
+
+          # 磁盘空间不足告警
+          - alert: DiskSpaceAlert
+            expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Low disk space on {{ $labels.instance }}"
+              description: "Disk space is below 15% on {{ $labels.device }} at {{ $labels.instance }}."
+
+          # 应用错误率告警
+          - alert: HighErrorRate
+            expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High error rate for {{ $labels.job }}"
+              description: "Error rate is above 5% for {{ $labels.job }} on {{ $labels.instance }}."
+
+# Grafana配置
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: ioedream
+  labels:
+    app: grafana
+    component: monitoring
+data:
+  grafana.ini: |
+    [server]
+    http_port = 3000
+    domain = grafana.ioedream.local
+
+    [security]
+    admin_user = admin
+    admin_password = admin123
+
+    [users]
+    allow_sign_up = false
+
+    [auth.anonymous]
+    enabled = false
+
+    [database]
+    type = mysql
+    host = mysql:3306
+    name = grafana
+    user = grafana
+    password = grafana123
+
+    [session]
+    provider = mysql
+
+    [analytics]
+    check_for_updates = false
+
+    [log]
+    mode = console
+    level = info
+
+    [dashboards.json]
+    enabled = true
+    path = /var/lib/grafana/dashboards
+
+    [smtp]
+    enabled = true
+    host = smtp.example.com:587
+    user = noreply@example.com
+    password = smtp123
+    from_address = noreply@example.com
+    from_name = Grafana
+
+# 微服务日志配置
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-config
+  namespace: ioedream
+  labels:
+    app: logstash
+    component: logging
+data:
+  logstash.yml: |
+    http.host: "0.0.0.0"
+    path.config: /usr/share/logstash/pipeline
+    xpack.monitoring.elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+
+  pipeline.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+
+    filter {
+      if [kubernetes][container][name] {
+        mutate {
+          add_field => { "service_name" => "%{[kubernetes][container][name]}" }
+        }
+      }
+
+      grok {
+        match => { "message" => "%{TIMESTAMP_ISO8601:timestamp} \[%{DATA:thread}\] %{LOGLEVEL:level} %{DATA:logger} - %{GREEDYDATA:message}" }
+      }
+
+      date {
+        match => [ "timestamp", "yyyy-MM-dd HH:mm:ss.SSS" ]
+      }
+
+      if [level] == "ERROR" or [level] == "WARN" {
+        mutate {
+          add_tag => [ "alert" ]
+        }
+      }
+    }
+
+    output {
+      elasticsearch {
+        hosts => ["elasticsearch:9200"]
+        index => "ioedream-logs-%{+YYYY.MM.dd}"
+      }
+
+      if "alert" in [tags] {
+        http {
+          url => "http://alertmanager:9093/api/v1/alerts"
+          http_method => "post"
+          format => "json"
+          mapping => {
+            "alerts" => [{
+              "labels" => {
+                "alertname" => "ApplicationError",
+                "service" => "%{service_name}",
+                "level" => "%{level}"
+              },
+              "annotations" => {
+                "summary" => "Application error in %{service_name}",
+                "description" => "%{message}"
+              }
+            }]
+          }
+        }
+      }
+    }

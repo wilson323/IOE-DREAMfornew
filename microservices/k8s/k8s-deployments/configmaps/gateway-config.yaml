@@ -1,0 +1,313 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: ioedream-prod
+  labels:
+    app: smart-gateway
+    component: configmap
+    environment: production
+data:
+  application.yml: |
+    server:
+      port: 8080
+      servlet:
+        context-path: /
+      tomcat:
+        max-threads: 200
+        min-spare-threads: 10
+        max-connections: 8192
+
+    spring:
+      application:
+        name: smart-gateway
+      profiles:
+        active: prod
+      cloud:
+        gateway:
+          # 全局过滤器
+          default-filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY,GATEWAY_TIMEOUT
+                methods: GET,POST
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
+                  factor: 2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+
+          # 路由配置
+          routes:
+            # 认证服务
+            - id: auth-service
+              uri: lb://ioedream-auth-service
+              predicates:
+                - Path=/api/auth/**,/api/login/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: auth-circuit-breaker
+                    fallbackUri: forward:/fallback/auth
+
+            # 身份权限服务
+            - id: identity-service
+              uri: lb://ioedream-identity-service
+              predicates:
+                - Path=/api/identity/**,/api/permissions/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: identity-circuit-breaker
+
+            # 设备管理服务
+            - id: device-service
+              uri: lb://ioedream-device-service
+              predicates:
+                - Path=/api/devices/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: device-circuit-breaker
+
+            # 门禁管理服务
+            - id: access-service
+              uri: lb://ioedream-access-service
+              predicates:
+                - Path=/api/access/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: access-circuit-breaker
+
+            # 消费管理服务
+            - id: consume-service
+              uri: lb://ioedream-consume-service
+              predicates:
+                - Path=/api/consume/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: consume-circuit-breaker
+
+            # 考勤管理服务
+            - id: attendance-service
+              uri: lb://ioedream-attendance-service
+              predicates:
+                - Path=/api/attendance/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: attendance-circuit-breaker
+
+            # 视频监控服务
+            - id: video-service
+              uri: lb://ioedream-video-service
+              predicates:
+                - Path=/api/video/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: video-circuit-breaker
+
+            # OA办公服务 - 已合并到 enterprise-service
+            # OA功能由 enterprise-service 提供，路由配置在 enterprise-service 中
+
+            # 系统管理服务
+            - id: system-service
+              uri: lb://ioedream-system-service
+              predicates:
+                - Path=/api/system/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: system-circuit-breaker
+
+            # 监控告警服务
+            - id: monitor-service
+              uri: lb://ioedream-monitor-service
+              predicates:
+                - Path=/api/monitor/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: monitor-circuit-breaker
+
+            # 文件服务
+            - id: file-service
+              uri: lb://ioedream-file-service
+              predicates:
+                - Path=/api/files/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: file-circuit-breaker
+
+            # 通知服务
+            - id: notification-service
+              uri: lb://ioedream-notification-service
+              predicates:
+                - Path=/api/notifications/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: notification-circuit-breaker
+
+            # 访客管理服务
+            - id: visitor-service
+              uri: lb://ioedream-visitor-service
+              predicates:
+                - Path=/api/visitors/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: visitor-circuit-breaker
+
+            # 人力资源服务
+            - id: hr-service
+              uri: lb://ioedream-hr-service
+              predicates:
+                - Path=/api/hr/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: hr-circuit-breaker
+
+            # 报表服务
+            - id: report-service
+              uri: lb://ioedream-report-service
+              predicates:
+                - Path=/api/reports/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: report-circuit-breaker
+
+      # Redis配置
+      data:
+        redis:
+          host: ${REDIS_HOST:redis-cluster-ioedream-prod}
+          port: ${REDIS_PORT:6379}
+          password: ${REDIS_PASSWORD:}
+          database: 0
+          timeout: 3000ms
+          lettuce:
+            pool:
+              max-active: 8
+              max-idle: 8
+              min-idle: 0
+              max-wait: -1ms
+
+    # 日志配置
+    logging:
+      level:
+        org.springframework.cloud.gateway: DEBUG
+        org.springframework.web.reactive: DEBUG
+        reactor.netty: INFO
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{50} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{50} - %msg%n"
+
+    # 管理端点配置
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus,gateway
+      endpoint:
+        health:
+          show-details: always
+        gateway:
+          enabled: true
+      metrics:
+        export:
+          prometheus:
+            enabled: true
+
+    # 限流配置
+    ratelimiter:
+      enabled: true
+      default-limits:
+        requests-per-minute: 60
+      endpoints:
+        "/api/auth/**":
+          requests-per-minute: 30
+        "/api/consume/**":
+          requests-per-minute: 100
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: ioedream-staging
+  labels:
+    app: smart-gateway
+    component: configmap
+    environment: staging
+data:
+  application.yml: |
+    server:
+      port: 8080
+
+    spring:
+      application:
+        name: smart-gateway
+      profiles:
+        active: staging
+      cloud:
+        gateway:
+          routes:
+            # 认证服务
+            - id: auth-service
+              uri: lb://ioedream-auth-service
+              predicates:
+                - Path=/api/auth/**,/api/login/**
+              filters:
+                - StripPrefix=2
+
+            # 身份权限服务
+            - id: identity-service
+              uri: lb://ioedream-identity-service
+              predicates:
+                - Path=/api/identity/**,/api/permissions/**
+              filters:
+                - StripPrefix=2
+
+            # 其他服务路由...
+            - id: device-service
+              uri: lb://ioedream-device-service
+              predicates:
+                - Path=/api/devices/**
+              filters:
+                - StripPrefix=2
+
+    logging:
+      level:
+        org.springframework.cloud.gateway: DEBUG
+        org.springframework.web.reactive: DEBUG
+
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,gateway

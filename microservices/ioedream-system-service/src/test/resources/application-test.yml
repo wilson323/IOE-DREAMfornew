@@ -1,0 +1,99 @@
+# 测试环境配置
+server:
+  port: 0  # 随机端口，避免端口冲突
+
+spring:
+  application:
+    name: ioedream-system-service-test
+  profiles:
+    active: test
+
+  # 内存数据库，用于测试
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      minimum-idle: 5
+      maximum-pool-size: 15
+      leak-detection-threshold: 60000
+
+  # H2控制台（测试环境启用，方便调试）
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+
+  # Redis配置（测试环境使用简单内存缓存替代）
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 15  # 使用专用测试数据库，避免与开发环境冲突
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 5000ms
+
+  # 缓存配置 - 使用简单的内存缓存，不依赖Redis
+  cache:
+    type: simple
+    cache-names:
+      - departments
+      - roles
+      - permissions
+      - menus
+      - dicts
+      - permissionTrees
+      - userRoles
+      - userPermissions
+      - rolePermissions
+
+# MyBatis Plus配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: net.lab1024.sa.system.**.domain.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false  # 测试环境禁用二级缓存
+    call-setters-on-nulls: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# Sa-Token配置（测试环境）
+sa-token:
+  token-name: Authorization
+  timeout: 2592000  # 30天
+  active-timeout: -1  # 永不过期
+  is-concurrent: true
+  is-share: true
+  is-log: false  # 测试环境关闭日志
+  jwt-secret-key: "test-jwt-secret-key-for-system-service-testing-only"
+  token-prefix: "Bearer "
+
+# 日志配置
+logging:
+  level:
+    "net.lab1024.sa.system": DEBUG
+    "net.lab1024": DEBUG
+    "org.springframework": INFO
+    "org.springframework.web": DEBUG
+    "org.springframework.cache": DEBUG
+    "com.baomidou.mybatisplus": DEBUG
+    "org.apache.ibatis": DEBUG
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n'
+
+# 测试专用配置
+test:
+  mock-external-apis: true
+  disable-security: false  # 保持安全验证，但使用测试密钥
+  cleanup-data: true

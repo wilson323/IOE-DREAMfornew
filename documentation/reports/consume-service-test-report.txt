@@ -1,0 +1,15 @@
+消费服务测试报告
+================
+测试文件数量: 7
+通过: 6
+失败: 1
+成功率: 85%
+
+测试文件列表:
+AccountControllerTest.java
+AdvancedReportControllerTest.java
+ConsumeControllerTest.java
+RechargeControllerTest.java
+ReportControllerTest.java
+ConsumeServiceImplTest.java
+ReportServiceImplTest.java

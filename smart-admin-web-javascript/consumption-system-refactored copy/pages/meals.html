@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐别资料 - 消费管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../js/menu.js" defer></script>
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .split-container {
+            display: flex;
+            gap: var(--space-lg);
+            height: calc(100vh - 180px);
+            overflow: hidden;
+        }
+
+        /* 左侧面板 - 大餐别分类 */
+        .left-panel {
+            width: 280px;
+            min-width: 240px;
+            max-width: 350px;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-md);
+        }
+
+        /* 大餐别列表 */
+        .meal-category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .meal-category-item {
+            margin-bottom: var(--space-xs);
+        }
+
+        .meal-category-header {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            transition: background var(--transition);
+        }
+
+        .meal-category-header:hover {
+            background: var(--gray-50);
+        }
+
+        .meal-category-header.active {
+            background: var(--primary-50);
+            color: var(--primary-600);
+        }
+
+        .meal-category-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-100);
+            color: var(--primary-600);
+            border-radius: var(--radius-md);
+            margin-right: var(--space-sm);
+            font-size: var(--text-base);
+        }
+
+        .meal-category-header.active .meal-category-icon {
+            background: var(--primary-600);
+            color: white;
+        }
+
+        .meal-category-name {
+            flex: 1;
+            font-weight: 500;
+            font-size: var(--text-sm);
+        }
+
+        .meal-category-count {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            background: var(--gray-100);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+        }
+
+        .meal-category-header.active .meal-category-count {
+            background: var(--primary-600);
+            color: white;
+        }
+
+        /* 右侧面板 - 餐别列表 */
+        .right-panel {
+            flex: 1;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .meals-header {
+            padding: var(--space-lg) var(--space-xl);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .meals-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .meals-info h3 {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0 0 var(--space-xs) 0;
+        }
+
+        .meals-meta {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+
+        .meals-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .meals-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-xl);
+        }
+
+        /* 餐别卡片 */
+        .meals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .meal-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .meal-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: var(--primary-300);
+        }
+
+        .meal-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .meal-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            color: var(--primary-600);
+        }
+
+        .meal-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius);
+            font-size: var(--text-xs);
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .meal-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-xs);
+            font-size: var(--text-lg);
+        }
+
+        .meal-time {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .meal-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            padding: var(--space-md);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+        }
+
+        .meal-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meal-info-label {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+
+        .meal-info-value {
+            font-size: var(--text-sm);
+            color: var(--gray-900);
+            font-weight: 500;
+        }
+
+        .meal-actions {
+            display: flex;
+            gap: var(--space-xs);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn-sm {
+            padding: var(--space-xs) var(--space-sm);
+            font-size: var(--text-xs);
+            flex: 1;
+        }
+
+        /* 抽屉样式 */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+        }
+
+        .drawer-overlay.show {
+            display: block;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            max-width: 90vw;
+            height: 100vh;
+            background: white;
+            box-shadow: var(--shadow-xl);
+            z-index: 1001;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.show {
+            right: 0;
+        }
+
+        .drawer-header {
+            padding: var(--space-xl);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .drawer-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-600);
+        }
+
+        .drawer-close:hover {
+            background: var(--gray-200);
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-xl);
+        }
+
+        .drawer-footer {
+            padding: var(--space-xl);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: flex-end;
+        }
+
+        .form-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .form-section-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: var(--space-xs);
+            font-size: var(--text-sm);
+        }
+
+        .form-label .required {
+            color: var(--error);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+
+        .form-hint {
+            margin-top: var(--space-xs);
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-utensils fa-lg"></i>
+                <div>
+                    <div class="sidebar-title">消费管理系统</div>
+                    <div class="sidebar-subtitle">Consumption Hub</div>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <!-- 菜单将由 menu.js 自动生成 -->
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 顶部导航栏 -->
+            <header class="header">
+                <h1>餐别资料</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-bell"></i>
+                        通知
+                    </button>
+                    <div class="user-info">
+                        <div>
+                            <div style="font-weight: 600;">系统管理员</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">在线</div>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 主要内容 -->
+            <div class="content">
+                <div class="split-container">
+                    <!-- 左侧：大餐别分类 -->
+                    <div class="left-panel">
+                        <div class="panel-header">
+                            <h2 class="panel-title">大餐别分类</h2>
+                            <button class="btn btn-sm btn-primary" onclick="openCategoryDrawer('add')" title="新增大餐别">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="meal-category-list" id="categoryList">
+                                <li class="meal-category-item">
+                                    <div class="meal-category-header active" onclick="selectCategory(this, 'all')">
+                                        <div class="meal-category-icon"><i class="fas fa-th"></i></div>
+                                        <div class="meal-category-name">全部餐别</div>
+                                        <span class="meal-category-count">9</span>
+                                    </div>
+                                </li>
+                                <li class="meal-category-item">
+                                    <div class="meal-category-header" onclick="selectCategory(this, 'main')">
+                                        <div class="meal-category-icon"><i class="fas fa-utensils"></i></div>
+                                        <div class="meal-category-name">主餐</div>
+                                        <span class="meal-category-count">3</span>
+                                    </div>
+                                </li>
+                                <li class="meal-category-item">
+                                    <div class="meal-category-header" onclick="selectCategory(this, 'extra')">
+                                        <div class="meal-category-icon"><i class="fas fa-cookie"></i></div>
+                                        <div class="meal-category-name">加餐</div>
+                                        <span class="meal-category-count">2</span>
+                                    </div>
+                                </li>
+                                <li class="meal-category-item">
+                                    <div class="meal-category-header" onclick="selectCategory(this, 'night')">
+                                        <div class="meal-category-icon"><i class="fas fa-moon"></i></div>
+                                        <div class="meal-category-name">宵夜</div>
+                                        <span class="meal-category-count">2</span>
+                                    </div>
+                                </li>
+                                <li class="meal-category-item">
+                                    <div class="meal-category-header" onclick="selectCategory(this, 'special')">
+                                        <div class="meal-category-icon"><i class="fas fa-star"></i></div>
+                                        <div class="meal-category-name">特殊餐</div>
+                                        <span class="meal-category-count">2</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：餐别列表 -->
+                    <div class="right-panel">
+                        <div class="meals-header">
+                            <div class="meals-header-top">
+                                <div class="meals-info">
+                                    <h3 id="currentCategoryName">全部餐别</h3>
+                                    <div class="meals-meta">共 <span id="mealCount">9</span> 个餐别</div>
+                                </div>
+                                <div class="meals-actions">
+                                    <button class="btn btn-primary" onclick="openMealDrawer('add')">
+                                        <i class="fas fa-plus"></i>
+                                        新增餐别
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="meals-body" id="mealsBody">
+                            <!-- 餐别卡片将由JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 餐别抽屉 -->
+    <div class="drawer-overlay" id="mealDrawerOverlay" onclick="closeMealDrawer()"></div>
+    <div class="drawer" id="mealDrawer">
+        <div class="drawer-header">
+            <h3 class="drawer-title" id="mealDrawerTitle">新增餐别</h3>
+            <button class="drawer-close" onclick="closeMealDrawer()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <form id="mealForm">
+                <div class="form-section">
+                    <h4 class="form-section-title">基本信息</h4>
+                    <div class="form-group">
+                        <label class="form-label">餐别名称 <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="mealName" placeholder="请输入餐别名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">所属大餐别 <span class="required">*</span></label>
+                        <select class="form-select" name="category" required>
+                            <option value="">请选择</option>
+                            <option value="main">主餐</option>
+                            <option value="extra">加餐</option>
+                            <option value="night">宵夜</option>
+                            <option value="special">特殊餐</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">图标</label>
+                        <select class="form-select" name="icon">
+                            <option value="sun">☀️ 太阳</option>
+                            <option value="cloud-sun">🌤️ 云太阳</option>
+                            <option value="moon">🌙 月亮</option>
+                            <option value="star">⭐ 星星</option>
+                            <option value="cookie">🍪 饼干</option>
+                            <option value="coffee">☕ 咖啡</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4 class="form-section-title">时间设置</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">开始时间 <span class="required">*</span></label>
+                            <input type="time" class="form-input" name="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">结束时间 <span class="required">*</span></label>
+                            <input type="time" class="form-input" name="endTime" required>
+                        </div>
+                    </div>
+                    <div class="form-hint">时间段不能与其他餐别重叠</div>
+                </div>
+
+                <div class="form-section">
+                    <h4 class="form-section-title">价格策略</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">基础价格</label>
+                            <input type="number" class="form-input" name="basePrice" placeholder="0.00" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">折扣比例</label>
+                            <input type="number" class="form-input" name="discount" placeholder="100" min="0" max="100">
+                            <div class="form-hint">填写折扣百分比，如80表示8折</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4 class="form-section-title">其他设置</h4>
+                    <div class="form-group">
+                        <label class="form-label">状态</label>
+                        <select class="form-select" name="status">
+                            <option value="active">启用</option>
+                            <option value="inactive">停用</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">排序</label>
+                        <input type="number" class="form-input" name="sort" placeholder="0" min="0">
+                        <div class="form-hint">数值越小越靠前</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="drawer-footer">
+            <button class="btn btn-outline" onclick="closeMealDrawer()">取消</button>
+            <button class="btn btn-primary" onclick="submitMeal()">保存</button>
+        </div>
+    </div>
+
+    <!-- 大餐别抽屉 -->
+    <div class="drawer-overlay" id="categoryDrawerOverlay" onclick="closeCategoryDrawer()"></div>
+    <div class="drawer" id="categoryDrawer">
+        <div class="drawer-header">
+            <h3 class="drawer-title" id="categoryDrawerTitle">新增大餐别</h3>
+            <button class="drawer-close" onclick="closeCategoryDrawer()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <form id="categoryForm">
+                <div class="form-group">
+                    <label class="form-label">大餐别名称 <span class="required">*</span></label>
+                    <input type="text" class="form-input" name="categoryName" placeholder="请输入大餐别名称" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">图标</label>
+                    <select class="form-select" name="icon">
+                        <option value="utensils">🍴 餐具</option>
+                        <option value="cookie">🍪 饼干</option>
+                        <option value="moon">🌙 月亮</option>
+                        <option value="star">⭐ 星星</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">排序</label>
+                    <input type="number" class="form-input" name="sort" placeholder="0" min="0">
+                    <div class="form-hint">数值越小越靠前</div>
+                </div>
+            </form>
+        </div>
+        <div class="drawer-footer">
+            <button class="btn btn-outline" onclick="closeCategoryDrawer()">取消</button>
+            <button class="btn btn-primary" onclick="submitCategory()">保存</button>
+        </div>
+    </div>
+
+    <script>
+        // 餐别数据（模拟）
+        const mealsData = [
+            { id: 1, name: '早餐', category: 'main', startTime: '07:00', endTime: '09:00', basePrice: 10, discount: 100, status: 'active', icon: 'sun' },
+            { id: 2, name: '午餐', category: 'main', startTime: '11:30', endTime: '13:30', basePrice: 15, discount: 100, status: 'active', icon: 'cloud-sun' },
+            { id: 3, name: '晚餐', category: 'main', startTime: '17:30', endTime: '19:30', basePrice: 15, discount: 100, status: 'active', icon: 'moon' },
+            { id: 4, name: '上午茶', category: 'extra', startTime: '09:30', endTime: '10:30', basePrice: 5, discount: 100, status: 'active', icon: 'coffee' },
+            { id: 5, name: '下午茶', category: 'extra', startTime: '15:00', endTime: '16:00', basePrice: 5, discount: 100, status: 'active', icon: 'cookie' },
+            { id: 6, name: '夜宵', category: 'night', startTime: '21:00', endTime: '23:00', basePrice: 12, discount: 100, status: 'active', icon: 'star' },
+            { id: 7, name: '早宵夜', category: 'night', startTime: '00:00', endTime: '02:00', basePrice: 12, discount: 100, status: 'inactive', icon: 'moon' },
+            { id: 8, name: '节日餐', category: 'special', startTime: '00:00', endTime: '23:59', basePrice: 20, discount: 80, status: 'inactive', icon: 'star' },
+            { id: 9, name: '加班餐', category: 'special', startTime: '19:00', endTime: '21:00', basePrice: 15, discount: 100, status: 'active', icon: 'utensils' }
+        ];
+
+        let currentCategory = 'all';
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('餐别资料页面加载完成');
+            renderMeals();
+        });
+
+        // 选择大餐别分类
+        function selectCategory(element, categoryId) {
+            // 更新选中状态
+            document.querySelectorAll('.meal-category-header').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            currentCategory = categoryId;
+            
+            // 更新分类名称
+            const categoryNames = {
+                'all': '全部餐别',
+                'main': '主餐',
+                'extra': '加餐',
+                'night': '宵夜',
+                'special': '特殊餐'
+            };
+            document.getElementById('currentCategoryName').textContent = categoryNames[categoryId];
+
+            // 重新渲染餐别
+            renderMeals();
+        }
+
+        // 渲染餐别卡片
+        function renderMeals() {
+            // 筛选餐别
+            const filteredMeals = currentCategory === 'all' 
+                ? mealsData 
+                : mealsData.filter(m => m.category === currentCategory);
+
+            // 更新数量
+            document.getElementById('mealCount').textContent = filteredMeals.length;
+
+            // 渲染卡片
+            const mealsBody = document.getElementById('mealsBody');
+            mealsBody.innerHTML = `
+                <div class="meals-grid">
+                    ${filteredMeals.map(meal => `
+                        <div class="meal-card">
+                            <div class="meal-card-header">
+                                <div class="meal-icon">
+                                    <i class="fas fa-${meal.icon}"></i>
+                                </div>
+                                <span class="meal-status status-${meal.status}">
+                                    <i class="fas fa-${meal.status === 'active' ? 'check-circle' : 'times-circle'}"></i>
+                                    ${meal.status === 'active' ? '启用' : '停用'}
+                                </span>
+                            </div>
+                            <div class="meal-name">${meal.name}</div>
+                            <div class="meal-time">
+                                <i class="fas fa-clock"></i>
+                                ${meal.startTime} - ${meal.endTime}
+                            </div>
+                            <div class="meal-info">
+                                <div class="meal-info-item">
+                                    <div class="meal-info-label">基础价格</div>
+                                    <div class="meal-info-value">¥${meal.basePrice.toFixed(2)}</div>
+                                </div>
+                                <div class="meal-info-item">
+                                    <div class="meal-info-label">折扣比例</div>
+                                    <div class="meal-info-value">${meal.discount}%</div>
+                                </div>
+                            </div>
+                            <div class="meal-actions">
+                                <button class="btn btn-sm btn-outline" onclick="editMeal(${meal.id})">
+                                    <i class="fas fa-edit"></i>
+                                    编辑
+                                </button>
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="fas fa-cog"></i>
+                                    配置
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 打开餐别抽屉
+        function openMealDrawer(mode, mealId) {
+            const overlay = document.getElementById('mealDrawerOverlay');
+            const drawer = document.getElementById('mealDrawer');
+            const title = document.getElementById('mealDrawerTitle');
+
+            if (mode === 'add') {
+                title.textContent = '新增餐别';
+                document.getElementById('mealForm').reset();
+            } else {
+                title.textContent = '编辑餐别';
+                // 加载餐别数据
+            }
+
+            overlay.classList.add('show');
+            drawer.classList.add('show');
+        }
+
+        // 关闭餐别抽屉
+        function closeMealDrawer() {
+            const overlay = document.getElementById('mealDrawerOverlay');
+            const drawer = document.getElementById('mealDrawer');
+            overlay.classList.remove('show');
+            drawer.classList.remove('show');
+        }
+
+        // 提交餐别
+        function submitMeal() {
+            const form = document.getElementById('mealForm');
+            if (form.checkValidity()) {
+                console.log('保存餐别');
+                alert('餐别保存成功！');
+                closeMealDrawer();
+                // 实际应用中，这里应该调用API
+            } else {
+                form.reportValidity();
+            }
+        }
+
+        // 编辑餐别
+        function editMeal(mealId) {
+            openMealDrawer('edit', mealId);
+        }
+
+        // 打开大餐别抽屉
+        function openCategoryDrawer(mode, categoryId) {
+            const overlay = document.getElementById('categoryDrawerOverlay');
+            const drawer = document.getElementById('categoryDrawer');
+            const title = document.getElementById('categoryDrawerTitle');
+
+            if (mode === 'add') {
+                title.textContent = '新增大餐别';
+                document.getElementById('categoryForm').reset();
+            } else {
+                title.textContent = '编辑大餐别';
+                // 加载大餐别数据
+            }
+
+            overlay.classList.add('show');
+            drawer.classList.add('show');
+        }
+
+        // 关闭大餐别抽屉
+        function closeCategoryDrawer() {
+            const overlay = document.getElementById('categoryDrawerOverlay');
+            const drawer = document.getElementById('categoryDrawer');
+            overlay.classList.remove('show');
+            drawer.classList.remove('show');
+        }
+
+        // 提交大餐别
+        function submitCategory() {
+            const form = document.getElementById('categoryForm');
+            if (form.checkValidity()) {
+                console.log('保存大餐别');
+                alert('大餐别保存成功！');
+                closeCategoryDrawer();
+                // 实际应用中，这里应该调用API
+            } else {
+                form.reportValidity();
+            }
+        }
+    </script>
+</body>
+</html>

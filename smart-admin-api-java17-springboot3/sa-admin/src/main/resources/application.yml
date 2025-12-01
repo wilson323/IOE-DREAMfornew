@@ -1,0 +1,42 @@
+#############################################################################################################
+#                                                                                                           #
+#                             SmartAdmin v3 - 根配置文件 (最高优先级)                                           #
+#                                                                                                           #
+# 此配置文件用于强制覆盖所有环境下的关键配置，确保本地开发环境正常运行                               #
+# 优先级：application.yml > application-{profile}.yml > 其他配置文件                                        #
+#                                                                                                           #
+#############################################################################################################
+
+# Redis强制配置（覆盖所有profile）- 本地开发版本
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: "zkteco3100"
+    database: 1
+    timeout: 10000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+  # Redisson自动配置启用，LocalRedissonConfig使用@Primary覆盖
+
+  # 统一消息与国际化文件编码为 UTF-8
+  messages:
+    encoding: UTF-8
+
+  # Web 层默认 UTF-8（Spring Boot 3 已默认开启字符过滤器，这里显式声明以避免环境差异）
+  mvc:
+    log-resolved-exception: true
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+server:
+  tomcat:
+    uri-encoding: UTF-8

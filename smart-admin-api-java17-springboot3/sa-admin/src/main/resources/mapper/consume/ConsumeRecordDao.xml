@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.consume.dao.ConsumeRecordDao">
+
+    <!-- 根据订单号查询记录 -->
+    <select id="selectByOrderNo" resultType="net.lab1024.sa.admin.module.consume.domain.entity.ConsumeRecordEntity">
+        SELECT *
+        FROM t_consume_record
+        WHERE order_no = #{orderNo}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 检查订单号是否存在 -->
+    <select id="existsByOrderNo" resultType="java.lang.Boolean">
+        SELECT COUNT(1) > 0
+        FROM t_consume_record
+        WHERE order_no = #{orderNo}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 批量插入消费记录 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO t_consume_record (
+            person_id, person_name, employee_id, consume_date, amount, consume_amount,
+            balance_before, balance_after, currency, consume_type, pay_method, order_no,
+            status, pay_time, device_id, device_name, consumption_mode, region_id,
+            region_name, account_type, remark, mode_config, extend_data, client_ip,
+            transaction_id, third_party_order_no, fee_amount, refund_amount,
+            refund_time, refund_reason, original_record_id,
+            create_time, update_time, create_user_id, update_user_id, deleted_flag, version
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.personId}, #{item.personName}, #{item.employeeId}, #{item.consumeDate},
+                #{item.amount}, #{item.consumeAmount}, #{item.balanceBefore}, #{item.balanceAfter},
+                #{item.currency}, #{item.consumeType}, #{item.payMethod}, #{item.orderNo},
+                #{item.status}, #{item.payTime}, #{item.deviceId}, #{item.deviceName},
+                #{item.consumptionMode}, #{item.regionId}, #{item.regionName}, #{item.accountType},
+                #{item.remark}, #{item.modeConfig}, #{item.extendData}, #{item.clientIp},
+                #{item.transactionId}, #{item.thirdPartyOrderNo}, #{item.feeAmount},
+                #{item.refundAmount}, #{item.refundTime}, #{item.refundReason},
+                #{item.originalRecordId}, NOW(), NOW(), #{item.createUserId}, #{item.updateUserId},
+                0, 0
+            )
+        </foreach>
+    </insert>
+
+    <!-- 分页查询消费记录 -->
+    <select id="selectPageWithCondition" resultType="net.lab1024.sa.admin.module.consume.domain.entity.ConsumeRecordEntity">
+        SELECT *
+        FROM t_consume_record
+        <where>
+            deleted_flag = 0
+            <if test="personId != null">
+                AND person_id = #{personId}
+            </if>
+            <if test="personName != null and personName != ''">
+                AND person_name LIKE CONCAT('%', #{personName}, '%')
+            </if>
+            <if test="deviceId != null">
+                AND device_id = #{deviceId}
+            </if>
+            <if test="regionId != null and regionId != ''">
+                AND region_id = #{regionId}
+            </if>
+            <if test="consumptionMode != null and consumptionMode != ''">
+                AND consumption_mode = #{consumptionMode}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="payMethod != null and payMethod != ''">
+                AND pay_method = #{payMethod}
+            </if>
+            <if test="startDate != null">
+                AND pay_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND pay_time &lt;= #{endDate}
+            </if>
+            <if test="minAmount != null">
+                AND amount &gt;= #{minAmount}
+            </if>
+            <if test="maxAmount != null">
+                AND amount &lt;= #{maxAmount}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND order_no LIKE CONCAT('%', #{orderNo}, '%')
+            </if>
+        </where>
+        ORDER BY pay_time DESC, create_time DESC
+    </select>
+
+    <!-- 消费统计查询 -->
+    <select id="selectDailyStatistics" resultType="java.util.Map">
+        SELECT
+            consume_date as date,
+            COUNT(*) as totalCount,
+            COALESCE(SUM(amount), 0) as totalAmount,
+            COUNT(DISTINCT person_id) as uniqueUsers
+        FROM t_consume_record
+        WHERE status = 'SUCCESS'
+          AND deleted_flag = 0
+          AND consume_date >= #{startDate}
+          AND consume_date &lt;= #{endDate}
+          <if test="personId != null">
+              AND person_id = #{personId}
+          </if>
+          <if test="regionId != null and regionId != ''">
+              AND region_id = #{regionId}
+          </if>
+        GROUP BY consume_date
+        ORDER BY consume_date DESC
+    </select>
+
+    <!-- 月度消费统计 -->
+    <select id="selectMonthlyStatistics" resultType="java.util.Map">
+        SELECT
+            DATE_FORMAT(pay_time, '%Y-%m') as month,
+            COUNT(*) as totalCount,
+            COALESCE(SUM(amount), 0) as totalAmount,
+            COUNT(DISTINCT person_id) as uniqueUsers,
+            COALESCE(AVG(amount), 0) as avgAmount
+        FROM t_consume_record
+        WHERE status = 'SUCCESS'
+          AND deleted_flag = 0
+          AND pay_time >= #{startDate}
+          AND pay_time &lt;= #{endDate}
+          <if test="personId != null">
+              AND person_id = #{personId}
+          </if>
+        GROUP BY DATE_FORMAT(pay_time, '%Y-%m')
+        ORDER BY month DESC
+    </select>
+
+    <!-- 设备消费统计 -->
+    <select id="selectDeviceStatistics" resultType="java.util.Map">
+        SELECT
+            device_id as deviceId,
+            device_name as deviceName,
+            COUNT(*) as totalCount,
+            COALESCE(SUM(amount), 0) as totalAmount,
+            COUNT(DISTINCT person_id) as uniqueUsers
+        FROM t_consume_record
+        WHERE status = 'SUCCESS'
+          AND deleted_flag = 0
+          AND pay_time >= #{startDate}
+          AND pay_time &lt;= #{endDate}
+          AND device_id IS NOT NULL
+        GROUP BY device_id, device_name
+        ORDER BY totalAmount DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 用户消费排行 -->
+    <select id="selectUserConsumptionRanking" resultType="java.util.Map">
+        SELECT
+            person_id as personId,
+            person_name as personName,
+            COUNT(*) as totalCount,
+            COALESCE(SUM(amount), 0) as totalAmount,
+            COALESCE(AVG(amount), 0) as avgAmount
+        FROM t_consume_record
+        WHERE status = 'SUCCESS'
+          AND deleted_flag = 0
+          AND pay_time >= #{startDate}
+          AND pay_time &lt;= #{endDate}
+          <if test="regionId != null and regionId != ''">
+              AND region_id = #{regionId}
+          </if>
+        GROUP BY person_id, person_name
+        ORDER BY totalAmount DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 消费模式统计 -->
+    <select id="selectModeStatistics" resultType="java.util.Map">
+        SELECT
+            consumption_mode as mode,
+            COUNT(*) as totalCount,
+            COALESCE(SUM(amount), 0) as totalAmount,
+            COALESCE(AVG(amount), 0) as avgAmount
+        FROM t_consume_record
+        WHERE status = 'SUCCESS'
+          AND deleted_flag = 0
+          AND pay_time >= #{startDate}
+          AND pay_time &lt;= #{endDate}
+          AND consumption_mode IS NOT NULL
+        GROUP BY consumption_mode
+        ORDER BY totalCount DESC
+    </select>
+
+    <!-- 退款记录查询 -->
+    <select id="selectRefundRecords" resultType="net.lab1024.sa.admin.module.consume.domain.entity.ConsumeRecordEntity">
+        SELECT *
+        FROM t_consume_record
+        WHERE status IN ('REFUND', 'PARTIAL_REFUND')
+          AND deleted_flag = 0
+          <if test="personId != null">
+              AND person_id = #{personId}
+          </if>
+          <if test="originalRecordId != null">
+              AND original_record_id = #{originalRecordId}
+          </if>
+          <if test="startDate != null">
+              AND refund_time &gt;= #{startDate}
+          </if>
+          <if test="endDate != null">
+              AND refund_time &lt;= #{endDate}
+          </if>
+        ORDER BY refund_time DESC
+    </select>
+
+    <!-- 更新消费记录状态 -->
+    <update id="updateRecordStatus">
+        UPDATE t_consume_record
+        SET status = #{status},
+            update_time = NOW(),
+            update_user_id = #{updateUserId},
+            version = version + 1
+        WHERE record_id = #{recordId}
+          AND version = #{version}
+          AND deleted_flag = 0
+    </update>
+
+    <!-- 更新退款信息 -->
+    <update id="updateRefundInfo">
+        UPDATE t_consume_record
+        SET status = #{status},
+            refund_amount = #{refundAmount},
+            refund_time = #{refundTime},
+            refund_reason = #{refundReason},
+            update_time = NOW(),
+            update_user_id = #{updateUserId},
+            version = version + 1
+        WHERE record_id = #{recordId}
+          AND version = #{version}
+          AND deleted_flag = 0
+    </update>
+
+</mapper>

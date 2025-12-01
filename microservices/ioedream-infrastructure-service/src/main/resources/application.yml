@@ -1,0 +1,241 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /infrastructure
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: ioedream-infrastructure-service
+
+  profiles:
+    active: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ioedream_infrastructure?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 1
+      password:
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: public
+        group: DEFAULT_GROUP
+        service: ioedream-infrastructure-service
+      config:
+        server-addr: localhost:8848
+        namespace: public
+        group: DEFAULT_GROUP
+        file-extension: yml
+        shared-configs:
+          - data-id: common.yml
+            group: DEFAULT_GROUP
+            refresh: true
+
+  # Quartz调度器配置
+  quartz:
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: clusteredScheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            clusterCheckinInterval: 20000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+    job-store-type: jdbc
+
+  # Mail配置
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: your-email@qq.com
+    password: your-password
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: false
+
+# MyBatis Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: net.lab1024.sa.infrastructure.domain.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      table-underline: true
+
+# 基础设施配置
+infrastructure:
+  config:
+    # 配置管理
+    cache-enabled: true
+    cache-ttl: 300
+    max-config-history: 100
+    auto-publish: false
+
+  logging:
+    # 日志管理
+    log-level: INFO
+    log-retention-days: 30
+    max-log-size: 100MB
+    elk-enabled: false
+    logstash-url: http://localhost:5000
+
+  scheduler:
+    # 调度管理
+    max-concurrent-jobs: 50
+    job-timeout: 3600
+    retry-times: 3
+    retry-interval: 60
+
+  integration:
+    # 集成管理
+    timeout: 30000
+    retry-times: 3
+    circuit-breaker-enabled: true
+    rate-limit-enabled: true
+
+  monitor:
+    # 监控管理
+    metrics-enabled: true
+    health-check-enabled: true
+    alert-enabled: false
+    alert-webhook: http://localhost:8080/webhook/alert
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,quartz
+  endpoint:
+    health:
+      show-details: always
+    quartz:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# WebSocket配置
+websocket:
+  allowed-origins: "*"
+  message-broker: /topic
+  application-destination-prefix: /app
+
+# 日志配置
+logging:
+  level:
+    net.lab1024.sa.infrastructure: DEBUG
+    org.springframework.cloud: INFO
+    org.springframework.scheduling: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger{50}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%logger{50}] - %msg%n"
+  file:
+    name: logs/infrastructure-service.log
+    max-size: 100MB
+    max-history: 30
+
+---
+# 开发环境配置
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ioedream_infrastructure?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 1
+
+  quartz:
+    job-store-type: memory
+
+---
+# 生产环境配置
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:mysql://mysql-master:3306/ioedream_infrastructure_prod?useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=Asia/Shanghai
+    username: infra_user
+    password: secure_password
+
+  data:
+    redis:
+      cluster:
+        nodes:
+          - redis-cluster-1:6379
+          - redis-cluster-2:6379
+          - redis-cluster-3:6379
+
+# 生产环境日志配置
+logging:
+  level:
+    net.lab1024.sa.infrastructure: INFO
+    org.springframework.cloud: WARN
+    root: WARN

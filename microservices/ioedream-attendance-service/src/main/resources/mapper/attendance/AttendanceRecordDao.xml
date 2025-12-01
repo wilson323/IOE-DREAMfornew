@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.attendance.dao.AttendanceRecordDao">
+
+    <!-- 基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.attendance.domain.entity.AttendanceRecordEntity">
+        <id column="record_id" property="recordId" jdbcType="BIGINT"/>
+        <result column="employee_id" property="employeeId" jdbcType="BIGINT"/>
+        <result column="attendance_date" property="attendanceDate" jdbcType="DATE"/>
+        <result column="punch_in_time" property="punchInTime" jdbcType="TIME"/>
+        <result column="punch_out_time" property="punchOutTime" jdbcType="TIME"/>
+        <result column="punch_in_location" property="punchInLocation" jdbcType="LONGVARCHAR"/>
+        <result column="punch_out_location" property="punchOutLocation" jdbcType="LONGVARCHAR"/>
+        <result column="punch_in_device_id" property="punchInDeviceId" jdbcType="BIGINT"/>
+        <result column="punch_out_device_id" property="punchOutDeviceId" jdbcType="BIGINT"/>
+        <result column="punch_in_photo" property="punchInPhoto" jdbcType="VARCHAR"/>
+        <result column="punch_out_photo" property="punchOutPhoto" jdbcType="VARCHAR"/>
+        <result column="work_hours" property="workHours" jdbcType="DECIMAL"/>
+        <result column="overtime_hours" property="overtimeHours" jdbcType="DECIMAL"/>
+        <result column="attendance_status" property="attendanceStatus" jdbcType="VARCHAR"/>
+        <result column="exception_type" property="exceptionType" jdbcType="VARCHAR"/>
+        <result column="exception_reason" property="exceptionReason" jdbcType="LONGVARCHAR"/>
+        <result column="is_processed" property="isProcessed" jdbcType="INTEGER"/>
+        <result column="processed_by" property="processedBy" jdbcType="BIGINT"/>
+        <result column="processed_time" property="processedTime" jdbcType="TIMESTAMP"/>
+        <result column="process_remark" property="processRemark" jdbcType="LONGVARCHAR"/>
+        <!-- BaseEntity 字段 -->
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 查询条件 -->
+    <sql id="selectByConditionSQL">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        <if test="employeeId != null">
+            AND ar.employee_id = #{employeeId}
+        </if>
+        <if test="departmentId != null">
+            AND EXISTS (
+                SELECT 1 FROM t_hr_employee e
+                WHERE e.employee_id = ar.employee_id
+                AND e.department_id = #{departmentId}
+                AND e.deleted_flag = 0
+            )
+        </if>
+        <if test="startDate != null">
+            AND ar.attendance_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND ar.attendance_date &lt;= #{endDate}
+        </if>
+        <if test="attendanceStatus != null and attendanceStatus != ''">
+            AND ar.attendance_status = #{attendanceStatus}
+        </if>
+        <if test="exceptionType != null and exceptionType != ''">
+            AND ar.exception_type = #{exceptionType}
+        </if>
+        ORDER BY ar.attendance_date DESC, ar.employee_id
+    </sql>
+
+    <!-- 根据员工ID和日期范围查询考勤记录 -->
+    <select id="selectByEmployeeAndDateRange" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        AND ar.employee_id = #{employeeId}
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        ORDER BY ar.attendance_date DESC
+    </select>
+
+    <!-- 根据日期查询考勤记录 -->
+    <select id="selectByDate" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        AND ar.attendance_date = #{attendanceDate}
+        ORDER BY ar.employee_id
+    </select>
+
+    <!-- 根据部门ID和日期范围查询考勤记录 -->
+    <select id="selectByDepartmentAndDateRange" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        INNER JOIN t_hr_employee e ON ar.employee_id = e.employee_id
+        WHERE ar.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND e.department_id = #{departmentId}
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        ORDER BY ar.attendance_date DESC, ar.employee_id
+    </select>
+
+    <!-- 查询指定日期的异常考勤记录 -->
+    <select id="selectAbnormalByDate" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        AND ar.attendance_date = #{attendanceDate}
+        AND (ar.exception_type IS NOT NULL AND ar.exception_type != '')
+        ORDER BY ar.employee_id
+    </select>
+
+    <!-- 查询指定时间范围的异常考勤记录 -->
+    <select id="selectAbnormalByDateRangeAndTypes" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        AND ar.exception_type IS NOT NULL
+        AND ar.exception_type != ''
+        <if test="exceptionTypes != null and exceptionTypes != ''">
+            AND FIND_IN_SET(ar.exception_type, #{exceptionTypes})
+        </if>
+        ORDER BY ar.attendance_date DESC, ar.employee_id
+    </select>
+
+    <!-- 统计员工考勤数据 -->
+    <select id="selectEmployeeAttendanceStats" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as totalDays,
+            COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) as normalDays,
+            COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateDays,
+            COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveDays,
+            COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentDays,
+            COUNT(CASE WHEN ar.attendance_status = 'LEAVE' THEN 1 END) as leaveDays,
+            COUNT(CASE WHEN ar.exception_type IS NOT NULL AND ar.exception_type != '' THEN 1 END) as abnormalDays,
+            IFNULL(SUM(ar.work_hours), 0) as totalWorkHours,
+            IFNULL(SUM(ar.overtime_hours), 0) as totalOvertimeHours,
+            IFNULL(AVG(ar.work_hours), 0) as avgWorkHours,
+            ROUND(COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) * 100.0 / COUNT(*), 2) as attendanceRate
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        AND ar.employee_id = #{employeeId}
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+    </select>
+
+    <!-- 统计部门考勤数据 -->
+    <select id="selectDepartmentAttendanceStats" resultType="java.util.Map">
+        SELECT
+            COUNT(DISTINCT ar.employee_id) as totalEmployees,
+            COUNT(*) as totalDays,
+            COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) as normalDays,
+            COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateDays,
+            COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveDays,
+            COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentDays,
+            COUNT(CASE WHEN ar.attendance_status = 'LEAVE' THEN 1 END) as leaveDays,
+            COUNT(CASE WHEN ar.exception_type IS NOT NULL AND ar.exception_type != '' THEN 1 END) as abnormalDays,
+            IFNULL(SUM(ar.work_hours), 0) as totalWorkHours,
+            IFNULL(SUM(ar.overtime_hours), 0) as totalOvertimeHours,
+            IFNULL(AVG(ar.work_hours), 0) as avgWorkHours,
+            ROUND(COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) * 100.0 / COUNT(*), 2) as attendanceRate
+        FROM t_attendance_record ar
+        INNER JOIN t_hr_employee e ON ar.employee_id = e.employee_id
+        WHERE ar.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND e.department_id = #{departmentId}
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+    </select>
+
+    <!-- 查询迟到记录 -->
+    <select id="selectLateRecords" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        INNER JOIN t_hr_employee e ON ar.employee_id = e.employee_id
+        WHERE ar.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        AND ar.attendance_status = 'LATE'
+        <if test="departmentIds != null and departmentIds.size() > 0">
+            AND e.department_id IN
+            <foreach collection="departmentIds" item="deptId" open="(" separator="," close=")">
+                #{deptId}
+            </foreach>
+        </if>
+        ORDER BY ar.attendance_date DESC, ar.punch_in_time
+    </select>
+
+    <!-- 查询早退记录 -->
+    <select id="selectEarlyLeaveRecords" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        INNER JOIN t_hr_employee e ON ar.employee_id = e.employee_id
+        WHERE ar.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        AND ar.attendance_status = 'EARLY_LEAVE'
+        <if test="departmentIds != null and departmentIds.size() > 0">
+            AND e.department_id IN
+            <foreach collection="departmentIds" item="deptId" open="(" separator="," close=")">
+                #{deptId}
+            </foreach>
+        </if>
+        ORDER BY ar.attendance_date DESC, ar.punch_out_time
+    </select>
+
+    <!-- 查询旷工记录 -->
+    <select id="selectAbsentRecords" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        INNER JOIN t_hr_employee e ON ar.employee_id = e.employee_id
+        WHERE ar.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        AND ar.attendance_status = 'ABSENT'
+        <if test="departmentIds != null and departmentIds.size() > 0">
+            AND e.department_id IN
+            <foreach collection="departmentIds" item="deptId" open="(" separator="," close=")">
+                #{deptId}
+            </foreach>
+        </if>
+        ORDER BY ar.attendance_date DESC
+    </select>
+
+    <!-- 查询加班记录 -->
+    <select id="selectOvertimeRecords" resultMap="BaseResultMap">
+        SELECT ar.*
+        FROM t_attendance_record ar
+        INNER JOIN t_hr_employee e ON ar.employee_id = e.employee_id
+        WHERE ar.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        AND ar.overtime_hours > 0
+        <if test="departmentIds != null and departmentIds.size() > 0">
+            AND e.department_id IN
+            <foreach collection="departmentIds" item="deptId" open="(" separator="," close=")">
+                #{deptId}
+            </foreach>
+        </if>
+        ORDER BY ar.attendance_date DESC, ar.overtime_hours DESC
+    </select>
+
+    <!-- 按条件分页查询考勤记录 -->
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        <include refid="selectByConditionSQL"/>
+    </select>
+
+    <!-- 检查员工在指定日期是否有考勤记录 -->
+    <select id="existsByEmployeeAndDate" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        AND ar.employee_id = #{employeeId}
+        AND ar.attendance_date = #{attendanceDate}
+    </select>
+
+    <!-- 查询员工的首次打卡时间 -->
+    <select id="selectFirstPunchInTime" resultType="java.time.LocalTime">
+        SELECT ar.punch_in_time
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        AND ar.employee_id = #{employeeId}
+        AND ar.attendance_date = #{attendanceDate}
+        AND ar.punch_in_time IS NOT NULL
+        ORDER BY ar.punch_in_time ASC
+        LIMIT 1
+    </select>
+
+    <!-- 查询员工的最后打卡时间 -->
+    <select id="selectLastPunchOutTime" resultType="java.time.LocalTime">
+        SELECT ar.punch_out_time
+        FROM t_attendance_record ar
+        WHERE ar.deleted_flag = 0
+        AND ar.employee_id = #{employeeId}
+        AND ar.attendance_date = #{attendanceDate}
+        AND ar.punch_out_time IS NOT NULL
+        ORDER BY ar.punch_out_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 统计月度考勤汇总 -->
+    <select id="selectMonthlySummary" resultType="java.util.Map">
+        SELECT
+            e.employee_id as employeeId,
+            e.employee_name as employeeName,
+            e.department_id as departmentId,
+            d.department_name as departmentName,
+            COUNT(*) as workDays,
+            COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) as normalDays,
+            COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateDays,
+            COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveDays,
+            COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentDays,
+            COUNT(CASE WHEN ar.attendance_status = 'LEAVE' THEN 1 END) as leaveDays,
+            IFNULL(SUM(ar.work_hours), 0) as totalWorkHours,
+            IFNULL(SUM(ar.overtime_hours), 0) as totalOvertimeHours
+        FROM t_hr_employee e
+        LEFT JOIN t_attendance_record ar ON e.employee_id = ar.employee_id
+            AND ar.deleted_flag = 0
+            AND YEAR(ar.attendance_date) = #{year}
+            AND MONTH(ar.attendance_date) = #{month}
+        LEFT JOIN t_sys_department d ON e.department_id = d.department_id
+        WHERE e.deleted_flag = 0
+        <if test="departmentId != null">
+            AND e.department_id = #{departmentId}
+        </if>
+        GROUP BY e.employee_id, e.employee_name, e.department_id, d.department_name
+        ORDER BY e.department_id, e.employee_id
+    </select>
+
+    <!-- 考勤异常趋势分析 -->
+    <select id="selectAbnormalTrend" resultType="java.util.Map">
+        <choose>
+            <when test="groupBy == 'day'">
+                SELECT
+                    DATE(ar.attendance_date) as dateKey,
+                    COUNT(*) as totalCount,
+                    COUNT(CASE WHEN ar.exception_type IS NOT NULL AND ar.exception_type != '' THEN 1 END) as abnormalCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentCount
+                FROM t_attendance_record ar
+                <where>
+                    ar.deleted_flag = 0
+                    AND ar.attendance_date >= #{startDate}
+                    AND ar.attendance_date &lt;= #{endDate}
+                    <if test="departmentId != null">
+                        AND EXISTS (
+                            SELECT 1 FROM t_hr_employee e
+                            WHERE e.employee_id = ar.employee_id
+                            AND e.department_id = #{departmentId}
+                            AND e.deleted_flag = 0
+                        )
+                    </if>
+                </where>
+                GROUP BY DATE(ar.attendance_date)
+                ORDER BY dateKey
+            </when>
+            <when test="groupBy == 'week'">
+                SELECT
+                    YEARWEEK(ar.attendance_date) as dateKey,
+                    COUNT(*) as totalCount,
+                    COUNT(CASE WHEN ar.exception_type IS NOT NULL AND ar.exception_type != '' THEN 1 END) as abnormalCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentCount
+                FROM t_attendance_record ar
+                <where>
+                    ar.deleted_flag = 0
+                    AND ar.attendance_date >= #{startDate}
+                    AND ar.attendance_date &lt;= #{endDate}
+                    <if test="departmentId != null">
+                        AND EXISTS (
+                            SELECT 1 FROM t_hr_employee e
+                            WHERE e.employee_id = ar.employee_id
+                            AND e.department_id = #{departmentId}
+                            AND e.deleted_flag = 0
+                        )
+                    </if>
+                </where>
+                GROUP BY YEARWEEK(ar.attendance_date)
+                ORDER BY dateKey
+            </when>
+            <when test="groupBy == 'month'">
+                SELECT
+                    DATE_FORMAT(ar.attendance_date, '%Y-%m') as dateKey,
+                    COUNT(*) as totalCount,
+                    COUNT(CASE WHEN ar.exception_type IS NOT NULL AND ar.exception_type != '' THEN 1 END) as abnormalCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveCount,
+                    COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentCount
+                FROM t_attendance_record ar
+                <where>
+                    ar.deleted_flag = 0
+                    AND ar.attendance_date >= #{startDate}
+                    AND ar.attendance_date &lt;= #{endDate}
+                    <if test="departmentId != null">
+                        AND EXISTS (
+                            SELECT 1 FROM t_hr_employee e
+                            WHERE e.employee_id = ar.employee_id
+                            AND e.department_id = #{departmentId}
+                            AND e.deleted_flag = 0
+                        )
+                    </if>
+                </where>
+                GROUP BY DATE_FORMAT(ar.attendance_date, '%Y-%m')
+                ORDER BY dateKey
+            </when>
+        </choose>
+    </select>
+
+    <!-- 查询连续旷工记录 -->
+    <select id="selectConsecutiveAbsentRecords" resultType="java.util.Map">
+        SELECT
+            ar.employee_id as employeeId,
+            e.employee_name as employeeName,
+            e.department_id as departmentId,
+            d.department_name as departmentName,
+            MIN(ar.attendance_date) as startDate,
+            MAX(ar.attendance_date) as endDate,
+            COUNT(*) as consecutiveDays
+        FROM t_attendance_record ar
+        INNER JOIN t_hr_employee e ON ar.employee_id = e.employee_id
+        LEFT JOIN t_sys_department d ON e.department_id = d.department_id
+        WHERE ar.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND ar.attendance_status = 'ABSENT'
+        AND ar.attendance_date &lt;= #{endDate}
+        AND NOT EXISTS (
+            SELECT 1 FROM t_attendance_record ar2
+            WHERE ar2.employee_id = ar.employee_id
+            AND ar2.deleted_flag = 0
+            AND ar2.attendance_status != 'ABSENT'
+            AND ar2.attendance_date BETWEEN DATE_SUB(ar.attendance_date, INTERVAL 1 DAY) AND DATE_ADD(ar.attendance_date, INTERVAL 1 DAY)
+        )
+        GROUP BY ar.employee_id, e.employee_name, e.department_id, d.department_name,
+                 DATE(ar.attendance_date) - ROW_NUMBER() OVER (PARTITION BY ar.employee_id ORDER BY ar.attendance_date)
+        HAVING COUNT(*) >= #{minConsecutiveDays}
+        ORDER BY consecutiveDays DESC, endDate DESC
+    </select>
+
+    <!-- 批量更新考勤状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE t_attendance_record
+        SET attendance_status = #{attendanceStatus},
+            exception_type = #{exceptionType},
+            update_time = NOW()
+        WHERE deleted_flag = 0
+        AND record_id IN
+        <foreach collection="recordIds" item="recordId" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </update>
+
+    <!-- 清理指定日期之前的考勤记录 -->
+    <update id="cleanRecordsBefore">
+        UPDATE t_attendance_record
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE deleted_flag = 0
+        AND attendance_date &lt; #{beforeDate}
+    </update>
+
+    <!-- 获取考勤数据统计报表 -->
+    <select id="selectAttendanceReport" resultType="java.util.Map">
+        <choose>
+            <when test="dimension == 'department'">
+                SELECT
+                    d.department_id as departmentId,
+                    d.department_name as departmentName,
+                    COUNT(DISTINCT ar.employee_id) as employeeCount,
+                    COUNT(*) as totalDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) as normalDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'LEAVE' THEN 1 END) as leaveDays,
+                    IFNULL(SUM(ar.work_hours), 0) as totalWorkHours,
+                    IFNULL(SUM(ar.overtime_hours), 0) as totalOvertimeHours,
+                    ROUND(COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) * 100.0 / COUNT(*), 2) as attendanceRate
+                FROM t_sys_department d
+                LEFT JOIN t_hr_employee e ON d.department_id = e.department_id AND e.deleted_flag = 0
+                LEFT JOIN t_attendance_record ar ON e.employee_id = ar.employee_id
+                    AND ar.deleted_flag = 0
+                    AND ar.attendance_date >= #{startDate}
+                    AND ar.attendance_date &lt;= #{endDate}
+                WHERE d.deleted_flag = 0
+                GROUP BY d.department_id, d.department_name
+                ORDER BY d.department_sort, d.department_name
+            </when>
+            <when test="dimension == 'employee'">
+                SELECT
+                    e.employee_id as employeeId,
+                    e.employee_name as employeeName,
+                    d.department_name as departmentName,
+                    COUNT(*) as totalDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) as normalDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'LEAVE' THEN 1 END) as leaveDays,
+                    IFNULL(SUM(ar.work_hours), 0) as totalWorkHours,
+                    IFNULL(SUM(ar.overtime_hours), 0) as totalOvertimeHours,
+                    ROUND(COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) * 100.0 / COUNT(*), 2) as attendanceRate
+                FROM t_hr_employee e
+                LEFT JOIN t_sys_department d ON e.department_id = d.department_id AND d.deleted_flag = 0
+                LEFT JOIN t_attendance_record ar ON e.employee_id = ar.employee_id
+                    AND ar.deleted_flag = 0
+                    AND ar.attendance_date >= #{startDate}
+                    AND ar.attendance_date &lt;= #{endDate}
+                WHERE e.deleted_flag = 0
+                GROUP BY e.employee_id, e.employee_name, d.department_name
+                ORDER BY d.department_name, e.employee_name
+            </when>
+            <when test="dimension == 'date'">
+                SELECT
+                    ar.attendance_date as dateKey,
+                    COUNT(DISTINCT ar.employee_id) as employeeCount,
+                    COUNT(*) as totalDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) as normalDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'LATE' THEN 1 END) as lateDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'EARLY_LEAVE' THEN 1 END) as earlyLeaveDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'ABSENT' THEN 1 END) as absentDays,
+                    COUNT(CASE WHEN ar.attendance_status = 'LEAVE' THEN 1 END) as leaveDays,
+                    IFNULL(SUM(ar.work_hours), 0) as totalWorkHours,
+                    IFNULL(SUM(ar.overtime_hours), 0) as totalOvertimeHours,
+                    ROUND(COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) * 100.0 / COUNT(*), 2) as attendanceRate
+                FROM t_attendance_record ar
+                WHERE ar.deleted_flag = 0
+                AND ar.attendance_date >= #{startDate}
+                AND ar.attendance_date &lt;= #{endDate}
+                GROUP BY ar.attendance_date
+                ORDER BY ar.attendance_date
+            </when>
+        </choose>
+    </select>
+
+</mapper>

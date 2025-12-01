@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.smart.access.dao.SmartAccessPermissionDao">
+
+    <select id="selectByCardNumber"
+        resultType="net.lab1024.sa.admin.module.smart.access.domain.entity.SmartAccessPermissionEntity">
+        SELECT * FROM smart_access_permission WHERE deleted_flag = 0 AND enabled_flag = 1 AND
+        card_number = #{cardNumber} AND (effective_time IS NULL OR effective_time &lt;=
+        #{currentTime}) AND (expire_time IS NULL OR expire_time &gt;= #{currentTime}) LIMIT 1 </select>
+
+    <select id="selectByFaceFeatureId"
+        resultType="net.lab1024.sa.admin.module.smart.access.domain.entity.SmartAccessPermissionEntity">
+        SELECT * FROM smart_access_permission WHERE deleted_flag = 0 AND enabled_flag = 1 AND
+        face_feature_id = #{faceFeatureId} AND (effective_time IS NULL OR effective_time &lt;=
+        #{currentTime}) AND (expire_time IS NULL OR expire_time &gt;= #{currentTime}) LIMIT 1 </select>
+
+    <select id="selectByFingerprintId"
+        resultType="net.lab1024.sa.admin.module.smart.access.domain.entity.SmartAccessPermissionEntity">
+        SELECT * FROM smart_access_permission WHERE deleted_flag = 0 AND enabled_flag = 1 AND
+        fingerprint_id = #{fingerprintId} AND (effective_time IS NULL OR effective_time &lt;=
+        #{currentTime}) AND (expire_time IS NULL OR expire_time &gt;= #{currentTime}) LIMIT 1 </select>
+
+    <select id="selectValidPermissionsByPersonId"
+        resultType="net.lab1024.sa.admin.module.smart.access.domain.entity.SmartAccessPermissionEntity">
+        SELECT * FROM smart_access_permission WHERE deleted_flag = 0 AND enabled_flag = 1 AND
+        person_id = #{personId} AND (effective_time IS NULL OR effective_time &lt;= #{currentTime})
+        AND (expire_time IS NULL OR expire_time &gt;= #{currentTime}) </select>
+
+    <update id="incrementAccessCount"> UPDATE smart_access_permission SET access_count =
+        COALESCE(access_count, 0) + 1 WHERE permission_id = #{permissionId} </update>
+
+</mapper>

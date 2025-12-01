@@ -1,0 +1,600 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-admin ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 11 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-admin ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 340 source files with javac [debug target 17] to target\classes
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/domain/dto/AccountValidationResult.java: 某些输入文件使用或覆盖了已过时的 API。
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/domain/dto/AccountValidationResult.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[290,81] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[305,77] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[347,48] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[297,81] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[304,79] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[346,48] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/SmartMode.java:[243,98] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/AdvancedReportManager.java:[259,99] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/service/impl/AccessRecordServiceImpl.java:[69,75] 未经检查的转换
+  需要: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.smart.access.domain.entity.AccessRecordEntity>
+  找到:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#1, 共 ?>
+[INFO] 9 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[20,45] 找不到符号
+  符号:   类 NoNeedLogin
+  位置: 程序包 net.lab1024.sa.base.common.annotation
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[3,41] 程序包net.lab1024.sa.base.common.tenant不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[6,48] 程序包net.lab1024.sa.base.module.support.redis不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[18,43] 程序包net.lab1024.sa.base.common.validate不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[23,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/AdvancedReportManager.java:[3,41] 程序包net.lab1024.sa.base.common.tenant不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/AdvancedReportManager.java:[4,48] 程序包net.lab1024.sa.base.module.support.redis不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/DistributedLockManager.java:[7,43] 找不到符号
+  符号:   类 RedisKeyConst
+  位置: 程序包 net.lab1024.sa.base.common.constant
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AccountServiceImpl.java:[28,34] 程序包net.lab1024.sa.base.domain不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AccountServiceImpl.java:[98,49] 找不到符号
+  符号:   类 PageParam
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AccountServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AccountServiceImpl.java:[283,83] 找不到符号
+  符号:   类 PageParam
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AccountServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[12,47] 找不到符号
+  符号:   类 LoginHelper
+  位置: 程序包 net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[14,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[17,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/manager/VideoPlaybackManager.java:[3,41] 程序包net.lab1024.sa.base.common.tenant不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/manager/VideoPlaybackManager.java:[4,48] 程序包net.lab1024.sa.base.module.support.redis不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[39,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.consume.controller.ConsumeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[56,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.consume.controller.ConsumeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[49,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[52,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[237,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[240,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[41,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.SmartAccessControlController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[44,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[88,6] 找不到符号
+  符号:   类 RequireResource
+  位置: 类 net.lab1024.sa.admin.module.smart.access.controller.SmartAccessControlController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[91,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[35,5] 容器jakarta.annotation.Resources不适用于元素 accessDeviceDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoSurveillanceController.java:[55,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/device/manager/impl/UnifiedDeviceManagerImpl.java:[39,5] 容器jakarta.annotation.Resources不适用于元素 eventPublisher
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[54,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[66,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[79,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[92,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[92,65] 找不到符号
+  符号:   方法 getEmployeeId()
+  位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.hr.domain.dto.EmployeeUpdateDTO的变量 employeeUpdateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[105,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[68,13] 找不到符号
+  符号:   类 NoNeedLogin
+  位置: 类 net.lab1024.sa.admin.interceptor.AdminInterceptor
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[69,67] 找不到符号
+  符号:   类 NoNeedLogin
+  位置: 类 net.lab1024.sa.admin.interceptor.AdminInterceptor
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[94,32] 找不到符号
+  符号:   方法 getAdministratorFlag()
+  位置: 类型为net.lab1024.sa.admin.module.system.login.domain.RequestEmployee的变量 requestEmployee
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[117,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.interceptor.AdminInterceptor
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[57,13] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[58,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[61,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[75,20] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[78,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[92,13] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[93,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[96,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[109,13] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[110,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[113,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[126,20] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[129,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[143,13] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[144,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[147,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[160,20] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[163,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[177,13] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[178,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[181,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[194,20] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[197,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[211,13] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[212,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[215,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[228,20] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[231,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[244,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[247,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[263,13] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[267,13] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[269,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[272,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[285,17] 找不到符号
+  符号:   变量 RedisTemplateUtil
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[287,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[290,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[313,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[321,96] 找不到符号
+  符号:   变量 TenantContextHolder
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[325,51] 找不到符号
+  符号:   变量 TenantContextHolder
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[329,59] 找不到符号
+  符号:   变量 TenantContextHolder
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[333,64] 找不到符号
+  符号:   变量 TenantContextHolder
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[337,57] 找不到符号
+  符号:   变量 TenantContextHolder
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[347,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[350,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[53,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[60,17] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[68,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[72,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[87,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[92,17] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[99,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[103,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[125,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[139,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[143,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[168,23] 找不到符号
+  符号:   方法 setEmployeeId(java.lang.Long)
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[169,23] 找不到符号
+  符号:   方法 setDepartmentId(java.lang.Long)
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[170,23] 找不到符号
+  符号:   方法 setAttendanceDate(java.time.LocalDate)
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[171,23] 找不到符号
+  符号:   方法 setAttendanceStatus(java.lang.String)
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[172,23] 找不到符号
+  符号:   方法 setWorkHours(java.math.BigDecimal)
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  24.099 s
+[INFO] Finished at: 2025-11-18T11:35:54+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[20,45] 找不到符号
+[ERROR]   符号:   类 NoNeedLogin
+[ERROR]   位置: 程序包 net.lab1024.sa.base.common.annotation
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[3,41] 程序包net.lab1024.sa.base.common.tenant不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[6,48] 程序包net.lab1024.sa.base.module.support.redis不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/AccountController.java:[18,43] 程序包net.lab1024.sa.base.common.validate不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[23,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/AdvancedReportManager.java:[3,41] 程序包net.lab1024.sa.base.common.tenant不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/AdvancedReportManager.java:[4,48] 程序包net.lab1024.sa.base.module.support.redis不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/DistributedLockManager.java:[7,43] 找不到符号
+[ERROR]   符号:   类 RedisKeyConst
+[ERROR]   位置: 程序包 net.lab1024.sa.base.common.constant
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AccountServiceImpl.java:[28,34] 程序包net.lab1024.sa.base.domain不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AccountServiceImpl.java:[98,49] 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AccountServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AccountServiceImpl.java:[283,83] 找不到符号
+[ERROR]   符号:   类 PageParam
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AccountServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/oa/document/controller/DocumentController.java:[12,47] 找不到符号
+[ERROR]   符号:   类 LoginHelper
+[ERROR]   位置: 程序包 net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[14,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[17,48] 程序包net.lab1024.sa.base.authz.rac.annotation不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/manager/VideoPlaybackManager.java:[3,41] 程序包net.lab1024.sa.base.common.tenant不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/manager/VideoPlaybackManager.java:[4,48] 程序包net.lab1024.sa.base.module.support.redis不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[39,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.controller.ConsumeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/controller/ConsumeController.java:[56,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.controller.ConsumeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[49,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[52,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[237,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.AccessDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessDeviceController.java:[240,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[41,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.SmartAccessControlController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[44,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[88,6] 找不到符号
+[ERROR]   符号:   类 RequireResource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.access.controller.SmartAccessControlController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/SmartAccessControlController.java:[91,60] 程序包net.lab1024.sa.base.authz.rac.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[35,5] 容器jakarta.annotation.Resources不适用于元素 accessDeviceDao
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/controller/VideoSurveillanceController.java:[55,5] org.springframework.web.bind.annotation.GetMapping 不是可重复的注释类型
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/device/manager/impl/UnifiedDeviceManagerImpl.java:[39,5] 容器jakarta.annotation.Resources不适用于元素 eventPublisher
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[54,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[66,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[79,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[92,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[92,65] 找不到符号
+[ERROR]   符号:   方法 getEmployeeId()
+[ERROR]   位置: 类型为@jakarta.validation.Valid net.lab1024.sa.admin.module.hr.domain.dto.EmployeeUpdateDTO的变量 employeeUpdateDTO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[105,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[68,13] 找不到符号
+[ERROR]   符号:   类 NoNeedLogin
+[ERROR]   位置: 类 net.lab1024.sa.admin.interceptor.AdminInterceptor
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[69,67] 找不到符号
+[ERROR]   符号:   类 NoNeedLogin
+[ERROR]   位置: 类 net.lab1024.sa.admin.interceptor.AdminInterceptor
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[94,32] 找不到符号
+[ERROR]   符号:   方法 getAdministratorFlag()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.system.login.domain.RequestEmployee的变量 requestEmployee
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/interceptor/AdminInterceptor.java:[117,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.interceptor.AdminInterceptor
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[57,13] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[58,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[61,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[75,20] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[78,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[92,13] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[93,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[96,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[109,13] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[110,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[113,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[126,20] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[129,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[143,13] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[144,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[147,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[160,20] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[163,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[177,13] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[178,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[181,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[194,20] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[197,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[211,13] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[212,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[215,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[228,20] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[231,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[244,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[247,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[263,13] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[267,13] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[269,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[272,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[285,17] 找不到符号
+[ERROR]   符号:   变量 RedisTemplateUtil
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[287,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[290,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[313,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[321,96] 找不到符号
+[ERROR]   符号:   变量 TenantContextHolder
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[325,51] 找不到符号
+[ERROR]   符号:   变量 TenantContextHolder
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[329,59] 找不到符号
+[ERROR]   符号:   变量 TenantContextHolder
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[333,64] 找不到符号
+[ERROR]   符号:   变量 TenantContextHolder
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[337,57] 找不到符号
+[ERROR]   符号:   变量 TenantContextHolder
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[347,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceCacheManager.java:[350,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceCacheManager
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[53,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[60,17] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[68,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[72,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[87,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[92,17] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[99,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[103,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[125,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[139,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[143,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.manager.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[168,23] 找不到符号
+[ERROR]   符号:   方法 setEmployeeId(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[169,23] 找不到符号
+[ERROR]   符号:   方法 setDepartmentId(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[170,23] 找不到符号
+[ERROR]   符号:   方法 setAttendanceDate(java.time.LocalDate)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[171,23] 找不到符号
+[ERROR]   符号:   方法 setAttendanceStatus(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[172,23] 找不到符号
+[ERROR]   符号:   方法 setWorkHours(java.math.BigDecimal)
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRecordEntity的变量 record
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

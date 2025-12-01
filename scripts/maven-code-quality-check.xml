@@ -1,0 +1,93 @@
+<!-- Maven代码质量检查插件配置 -->
+<!-- 将此配置添加到 smart-admin-api-java17-springboot3/pom.xml 的 <build><plugins> 节点中 -->
+
+<plugins>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+            <configLocation>checkstyle.xml</configLocation>
+            <consoleOutput>true</consoleOutput>
+            <failsOnError>false</failsOnError>
+            <violationSeverity>warning</violationSeverity>
+        </configuration>
+        <executions>
+            <execution>
+                <id>validate</id>
+                <phase>validate</phase>
+                <goals>
+                    <goal>check</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+
+    <!-- PMD代码分析插件 -->
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.21.2</version>
+        <configuration>
+            <targetJdk>17</targetJdk>
+            <linkXRef>false</linkXRef>
+            <rulesets>
+                <ruleset>/category/java/bestpractices.xml</ruleset>
+                <ruleset>/category/java/codestyle.xml</ruleset>
+                <ruleset>/category/java/design.xml</ruleset>
+                <ruleset>/category/java/errorprone.xml</ruleset>
+                <ruleset>/category/java/performance.xml</ruleset>
+            </rulesets>
+            <excludes>
+                <exclude>**/generated/**</exclude>
+            </excludes>
+        </configuration>
+        <executions>
+            <execution>
+                <id>pmd-check</id>
+                <phase>validate</phase>
+                <goals>
+                    <goal>check</goal>
+                    <goal>cpd-check</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+
+    <!-- SpotBugs代码缺陷检测 -->
+    <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>4.8.3.0</version>
+        <configuration>
+            <effort>Max</effort>
+            <threshold>Low</threshold>
+            <xmlOutput>true</xmlOutput>
+        </configuration>
+        <executions>
+            <execution>
+                <id>spotbugs-check</id>
+                <phase>verify</phase>
+                <goals>
+                    <goal>check</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+
+    <!-- 使用方法：
+1. 将以上配置添加到项目根pom.xml
+2. 运行命令检查代码质量：
+   mvn checkstyle:check
+   mvn pmd:check
+   mvn spotbugs:check
+   
+3. 生成完整报告：
+   mvn clean verify site
+   
+4. 查看报告：
+   target/site/checkstyle.html
+   target/site/pmd.html
+   target/site/spotbugs.html
+-->
+</plugins>

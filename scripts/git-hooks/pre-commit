@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# =============================================================================
+# Git Pre-commit Hook - 强制执行工作前验证
+# =============================================================================
+# 在每次git commit前强制执行，确保代码质量和完整性
+
+echo "🔍 Git Pre-commit Hook: 执行强制验证..."
+
+# 获取脚本目录
+SCRIPT_DIR="$(dirname "$0")/.."
+
+# 检查是否存在工作验证脚本
+if [ ! -f "$SCRIPT_DIR/pre-work-validation.sh" ]; then
+    echo "❌ 缺少工作验证脚本: $SCRIPT_DIR/pre-work-validation.sh"
+    exit 1
+fi
+
+# 检查是否有未完成的任务
+if [ -f ".todo-lock" ]; then
+    current_task=$(cat ".todo-lock")
+    echo "⚠️ 检测到未完成任务: $current_task"
+
+    # 检查任务是否真的在运行
+    if pgrep -f "docker-compose.*build\|mvn.*compile\|npm.*build" > /dev/null 2>&1; then
+        echo "🔄 任务正在运行中，允许提交"
+    else
+        echo "❌ 任务未运行但有锁文件，可能存在异常"
+        echo "💡 请检查任务状态或运行: ./scripts/pre-work-validation.sh [任务名] [任务类型]"
+        echo ""
+        read -p "是否强制解锁并继续提交? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "❌ 提交被阻止"
+            exit 1
+        fi
+        rm ".todo-lock"
+        echo "✅ 已强制解锁"
+    fi
+else
+    echo "✅ 无未完成任务，可以继续提交"
+fi
+
+# 运行基础代码检查
+echo ""
+echo "🔍 执行基础代码检查..."
+if ! bash "$SCRIPT_DIR/../jakarta-guard.sh"; then
+    echo "❌ Jakarta 规范守卫失败（EE javax.* / @Autowired）"
+    exit 1
+fi
+
+# 如果存在Maven项目，检查编译状态
+if [ -f "pom.xml" ]; then
+    echo ""
+    echo "🔍 检查Maven编译状态..."
+    if ! mvn clean compile -DskipTests >/dev/null 2>&1; then
+        echo "❌ Maven编译失败，请修复后再提交"
+        exit 1
+    fi
+    echo "✅ Maven编译通过"
+fi
+
+echo "✅ Pre-commit检查通过，可以提交"

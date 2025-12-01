@@ -1,0 +1,150 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: ioedream-config-service
+  profiles:
+    active: dev
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/ioedream/config-repo
+          search-paths: '{application}'
+          default-label: master
+          force-pull: true
+          clone-on-start: true
+          timeout: 10
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:ioedream_config;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+
+# 服务发现配置
+cloud:
+  nacos:
+    discovery:
+      server-addr: localhost:8848
+      namespace: dev
+      group: IOE-DREAM
+      service: ioedream-config-service
+
+# Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,refresh
+  endpoint:
+    health:
+      show-details: always
+
+# 配置服务特定配置
+config:
+  # 安全配置
+  security:
+    enabled: true
+    username: admin
+    password: admin123
+  # 存储配置
+  storage:
+    type: git
+    backup:
+      enabled: true
+      interval: 3600
+  # 通知配置
+  notification:
+    webhook:
+      enabled: true
+      url: http://localhost:8080/api/config/notify
+    email:
+      enabled: false
+      smtp:
+        host: smtp.example.com
+        port: 587
+        username: config@example.com
+        password: password
+
+# 日志配置
+logging:
+  level:
+    net.lab1024: DEBUG
+    org.springframework.cloud.config: DEBUG
+    org.springframework: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# 应用配置
+app:
+  name: "IOE-DREAM 配置中心服务"
+  version: "1.0.0"
+  description: "企业级配置管理和动态更新服务"
+
+---
+# 开发环境配置
+spring:
+  config:
+    activate:
+      on-profile: dev
+  h2:
+    console:
+      enabled: true
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:./config-repo
+
+logging:
+  level:
+    root: INFO
+    net.lab1024: DEBUG
+
+---
+# 测试环境配置
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:mysql://localhost:3306/ioedream_config_test?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ioedream_config
+    password: ioedream123
+  h2:
+    console:
+      enabled: false
+
+---
+# 生产环境配置
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mysql://prod-db:3306/ioedream_config_prod?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ioedream_config
+    password: ${CONFIG_DB_PASSWORD:default_password}
+  h2:
+    console:
+      enabled: false
+
+logging:
+  level:
+    root: WARN
+    net.lab1024: INFO

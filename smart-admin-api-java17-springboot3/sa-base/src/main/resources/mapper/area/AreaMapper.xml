@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.base.module.area.dao.AreaDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.base.module.area.domain.entity.AreaEntity">
+        <id column="area_id" property="areaId"/>
+        <result column="area_code" property="areaCode"/>
+        <result column="area_name" property="areaName"/>
+        <result column="area_type" property="areaType"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="path" property="path"/>
+        <result column="level" property="level"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="status" property="status"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <result column="area_size" property="areaSize"/>
+        <result column="capacity" property="capacity"/>
+        <result column="description" property="description"/>
+        <result column="map_image" property="mapImage"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+        <result column="version" property="version"/>
+    </resultMap>
+
+    <!-- 通用查询列 -->
+    <sql id="Base_Column_List">
+        area_id, area_code, area_name, area_type, parent_id, path, level,
+        sort_order, status, longitude, latitude, area_size, capacity,
+        description, map_image, remark, create_time, create_user_id,
+        update_time, update_user_id, deleted_flag, version
+    </sql>
+
+    <!-- 查询区域列表 -->
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_area
+        WHERE deleted_flag = 0
+        <if test="areaCode != null and areaCode != ''">
+            AND area_code = #{areaCode}
+        </if>
+        <if test="areaName != null and areaName != ''">
+            AND area_name LIKE CONCAT('%', #{areaName}, '%')
+        </if>
+        <if test="areaType != null">
+            AND area_type = #{areaType}
+        </if>
+        <if test="parentId != null">
+            AND parent_id = #{parentId}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        ORDER BY level ASC, sort_order ASC, area_id ASC
+    </select>
+
+    <!-- 插入区域 -->
+    <insert id="insert" parameterType="net.lab1024.sa.base.module.area.domain.entity.AreaEntity" useGeneratedKeys="true" keyProperty="areaId">
+        INSERT INTO t_area (
+            area_code, area_name, area_type, parent_id, path, level, sort_order,
+            status, longitude, latitude, area_size, capacity,
+            description, map_image, remark, create_time, create_user_id,
+            update_time, update_user_id, deleted_flag, version
+        ) VALUES (
+            #{areaCode}, #{areaName}, #{areaType}, #{parentId}, #{path}, #{level}, #{sortOrder},
+            #{status}, #{longitude}, #{latitude}, #{areaSize}, #{capacity},
+            #{description}, #{mapImage}, #{remark}, NOW(), #{createUserId},
+            NOW(), #{updateUserId}, 0, 1
+        )
+    </insert>
+
+    <!-- 更新区域 -->
+    <update id="update" parameterType="net.lab1024.sa.base.module.area.domain.entity.AreaEntity">
+        UPDATE t_area
+        SET
+            area_code = #{areaCode},
+            area_name = #{areaName},
+            area_type = #{areaType},
+            parent_id = #{parentId},
+            path = #{path},
+            level = #{level},
+            sort_order = #{sortOrder},
+            status = #{status},
+            longitude = #{longitude},
+            latitude = #{latitude},
+            area_size = #{areaSize},
+            capacity = #{capacity},
+            description = #{description},
+            map_image = #{mapImage},
+            remark = #{remark},
+            update_time = NOW(),
+            update_user_id = #{updateUserId},
+            version = version + 1
+        WHERE area_id = #{areaId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 删除区域（软删除） -->
+    <update id="deleteById">
+        UPDATE t_area
+        SET deleted_flag = 1,
+            update_time = NOW(),
+            update_user_id = #{updateUserId}
+        WHERE area_id = #{areaId}
+    </update>
+
+    <!-- 批量删除区域（软删除） -->
+    <update id="deleteBatchByIds">
+        UPDATE t_area
+        SET deleted_flag = 1,
+            update_time = NOW(),
+            update_user_id = #{updateUserId}
+        WHERE area_id IN
+        <foreach collection="areaIds" item="areaId" open="(" separator="," close=")">
+            #{areaId}
+        </foreach>
+    </update>
+
+    <!-- 统计指定父级下的子区域数量 -->
+    <select id="countChildrenByParentId" resultType="int">
+        SELECT COUNT(1)
+        FROM t_area
+        WHERE parent_id = #{parentId}
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 获取指定区域的所有子区域（用于构建树形结构） -->
+    <select id="selectChildrenByParentId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_area
+        WHERE parent_id = #{parentId}
+        AND deleted_flag = 0
+        ORDER BY sort_order ASC, area_id ASC
+    </select>
+
+    <!-- 获取所有根区域 -->
+    <select id="selectRootAreas" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_area
+        WHERE parent_id = 0
+        AND deleted_flag = 0
+        ORDER BY sort_order ASC, area_id ASC
+    </select>
+
+    <!-- 获取指定区域及其所有子区域（递归查询） -->
+    <select id="selectSelfAndAllChildren" resultMap="BaseResultMap">
+        WITH RECURSIVE area_tree AS (
+            SELECT <include refid="Base_Column_List"/>
+            FROM t_area
+            WHERE area_id = #{areaId}
+            AND deleted_flag = 0
+
+            UNION ALL
+
+            SELECT a.<include refid="Base_Column_List"/>
+            FROM t_area a
+            INNER JOIN area_tree at ON a.parent_id = at.area_id
+            WHERE a.deleted_flag = 0
+        )
+        SELECT <include refid="Base_Column_List"/>
+        FROM area_tree
+        ORDER BY level ASC, sort_order ASC, area_id ASC
+    </select>
+
+    <!-- 检查区域编码是否存在 -->
+    <select id="countByAreaCode" resultType="int">
+        SELECT COUNT(1)
+        FROM t_area
+        WHERE area_code = #{areaCode}
+        <if test="excludeId != null">
+            AND area_id != #{excludeId}
+        </if>
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 根据ID查询区域 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_area
+        WHERE area_id = #{areaId}
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 查询所有区域 -->
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_area
+        WHERE deleted_flag = 0
+        ORDER BY level ASC, sort_order ASC, area_id ASC
+    </select>
+
+    <!-- 根据状态查询区域 -->
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_area
+        WHERE status = #{status}
+        AND deleted_flag = 0
+        ORDER BY level ASC, sort_order ASC, area_id ASC
+    </select>
+
+    <!-- 统计区域总数 -->
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(1)
+        FROM t_area
+        WHERE deleted_flag = 0
+        <if test="areaType != null">
+            AND area_type = #{areaType}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="parentId != null">
+            AND parent_id = #{parentId}
+        </if>
+    </select>
+
+</mapper>

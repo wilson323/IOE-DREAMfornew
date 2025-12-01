@@ -1,0 +1,56 @@
+package net.lab1024.sa.admin.module.consume.domain.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import net.lab1024.sa.admin.module.consume.domain.enums.RechargeStatusEnum;
+import net.lab1024.sa.admin.module.consume.domain.enums.RechargeTypeEnum;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+/**
+ * E<ÓœDTO
+ *
+ * @author SmartAdmin Team
+ * @date 2025/11/17
+ */
+@Data
+@Schema(description = "E<Óœ")
+public class RechargeResultDTO {
+
+    @Schema(description = "¢U÷", example = "RC1694876400001234")
+    private String orderNo;
+
+    @Schema(description = "E<Ñ", example = "100.00")
+    private BigDecimal amount;
+
+    @Schema(description = "E<¹", example = "ALIPAY")
+    private RechargeTypeEnum rechargeType;
+
+    @Schema(description = "E<¶", example = "PENDING")
+    private RechargeStatusEnum status;
+
+    @Schema(description = "/Øþ¥", example = "https://openapi.alipay.com/gateway.do")
+    private String payUrl;
+
+    @Schema(description = "Œô", example = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...")
+    private String qrCode;
+
+    @Schema(description = "ˆo", example = "÷(/ØkŒ/Ø")
+    private String message;
+
+    @Schema(description = "úöô", example = "2023-11-17T10:30:00")
+    private LocalDateTime createTime;
+
+    @Schema(description = "0öô", example = "2023-11-17T11:30:00")
+    private LocalDateTime expireTime;
+
+    @Schema(description = ",	¹¢U÷", example = "2023111722001234567890")
+    private String thirdPartyOrderNo;
+
+    @Schema(description = "Kí9", example = "0.00")
+    private BigDecimal feeAmount;
+
+    @Schema(description = "žE0&Ñ", example = "100.00")
+    private BigDecimal actualAmount;
+}

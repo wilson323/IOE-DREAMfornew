@@ -1,0 +1,281 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [3/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-support ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 14 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-admin ---
+[INFO] Compiling 533 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[402,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[409,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[416,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[418,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[423,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[426,12] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[427,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[433,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[436,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[442,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[449,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[456,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[463,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[470,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[472,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[477,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[479,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[484,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[486,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[491,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[493,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[498,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[505,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[514,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[516,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[521,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[523,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[528,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[530,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[535,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[537,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[542,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[544,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[549,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[551,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[556,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[558,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[563,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[565,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[570,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[572,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[577,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[579,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[584,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[586,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[589,42] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[589,96] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[589,142] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[589,209] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[590,13] 错误: 非法字符: '\uff08'
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[590,19] 错误: 非法字符: '\uff09'
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[592,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[594,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[599,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[601,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[606,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[608,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[613,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[615,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[620,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[623,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[625,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[630,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[633,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[635,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[640,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[642,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[647,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[649,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[650,53] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[650,239] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[493,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[495,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[500,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[502,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[507,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[509,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[514,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[516,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[521,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[523,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[528,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[530,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[535,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[537,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[542,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[544,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[549,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[551,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[556,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[558,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[563,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[565,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[570,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[572,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[577,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[579,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[584,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[586,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[591,11] 错误: 需要 class、interface、enum 或 record
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.013 s]
+[INFO] sa-base ............................................ SUCCESS [  1.712 s]
+[INFO] sa-support ......................................... SUCCESS [  0.206 s]
+[INFO] sa-admin ........................................... FAILURE [  2.420 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.631 s
+[INFO] Finished at: 2025-11-24T16:56:05+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[402,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[409,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[416,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[418,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[423,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[426,12] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[427,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[433,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[436,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[442,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[449,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[456,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[463,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[470,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[472,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[477,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[479,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[484,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[486,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[491,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[493,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[498,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[505,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[514,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[516,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[521,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[523,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[528,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[530,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[535,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[537,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[542,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[544,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[549,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[551,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[556,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[558,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[563,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[565,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[570,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[572,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[577,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[579,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[584,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[586,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[589,42] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[589,96] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[589,142] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[589,209] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[590,13] 错误: 非法字符: '\uff08'
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[590,19] 错误: 非法字符: '\uff09'
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[592,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[594,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[599,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[601,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[606,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[608,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[613,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[615,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[620,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[623,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[625,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[630,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[633,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[635,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[640,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[642,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[647,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[649,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[650,53] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRecordEntity.java:[650,239] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[493,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[495,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[500,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[502,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[507,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[509,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[514,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[516,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[521,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[523,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[528,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[530,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[535,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[537,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[542,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[544,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[549,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[551,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[556,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[558,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[563,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[565,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[570,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[572,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[577,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[579,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[584,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[586,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[591,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

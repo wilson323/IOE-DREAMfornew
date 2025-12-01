@@ -1,0 +1,8 @@
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Compiling 185 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+Binary file (standard input) matches

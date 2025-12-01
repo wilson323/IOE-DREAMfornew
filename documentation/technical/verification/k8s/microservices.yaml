@@ -1,0 +1,1027 @@
+# ===================================================================
+# IOE-DREAM 微服务部署配置
+# 包含所有11个微服务的Deployment和Service配置
+# ===================================================================
+
+# API网关服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-gateway
+  namespace: ioedream
+  labels:
+    app: smart-gateway
+    component: gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: smart-gateway
+      component: gateway
+  template:
+    metadata:
+      labels:
+        app: smart-gateway
+        component: gateway
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: smart-gateway
+          image: ioedream/smart-gateway:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-gateway
+  namespace: ioedream
+  labels:
+    app: smart-gateway
+    component: gateway
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: smart-gateway
+    component: gateway
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 认证服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-auth-service
+  namespace: ioedream
+  labels:
+    app: ioedream-auth-service
+    component: authentication
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-auth-service
+      component: authentication
+  template:
+    metadata:
+      labels:
+        app: ioedream-auth-service
+        component: authentication
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-auth-service
+          image: ioedream/ioedream-auth-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: jwt-secret
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-auth-service
+  namespace: ioedream
+  labels:
+    app: ioedream-auth-service
+    component: authentication
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-auth-service
+    component: authentication
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 身份权限服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-identity-service
+  namespace: ioedream
+  labels:
+    app: ioedream-identity-service
+    component: identity
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-identity-service
+      component: identity
+  template:
+    metadata:
+      labels:
+        app: ioedream-identity-service
+        component: identity
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-identity-service
+          image: ioedream/ioedream-identity-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-identity-service
+  namespace: ioedream
+  labels:
+    app: ioedream-identity-service
+    component: identity
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-identity-service
+    component: identity
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 设备管理服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-device-service
+  namespace: ioedream
+  labels:
+    app: ioedream-device-service
+    component: device
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-device-service
+      component: device
+  template:
+    metadata:
+      labels:
+        app: ioedream-device-service
+        component: device
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-device-service
+          image: ioedream/ioedream-device-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-device-service
+  namespace: ioedream
+  labels:
+    app: ioedream-device-service
+    component: device
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-device-service
+    component: device
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 门禁管理服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-access-service
+  namespace: ioedream
+  labels:
+    app: ioedream-access-service
+    component: access-control
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-access-service
+      component: access-control
+  template:
+    metadata:
+      labels:
+        app: ioedream-access-service
+        component: access-control
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-access-service
+          image: ioedream/ioedream-access-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-access-service
+  namespace: ioedream
+  labels:
+    app: ioedream-access-service
+    component: access-control
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-access-service
+    component: access-control
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 消费管理服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-consume-service
+  namespace: ioedream
+  labels:
+    app: ioedream-consume-service
+    component: consumption
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-consume-service
+      component: consumption
+  template:
+    metadata:
+      labels:
+        app: ioedream-consume-service
+        component: consumption
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-consume-service
+          image: ioedream/ioedream-consume-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: WECHAT_PAY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys
+                  key: wechat-pay-key
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-consume-service
+  namespace: ioedream
+  labels:
+    app: ioedream-consume-service
+    component: consumption
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-consume-service
+    component: consumption
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 考勤管理服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-attendance-service
+  namespace: ioedream
+  labels:
+    app: ioedream-attendance-service
+    component: attendance
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-attendance-service
+      component: attendance
+  template:
+    metadata:
+      labels:
+        app: ioedream-attendance-service
+        component: attendance
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-attendance-service
+          image: ioedream/ioedream-attendance-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-attendance-service
+  namespace: ioedream
+  labels:
+    app: ioedream-attendance-service
+    component: attendance
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-attendance-service
+    component: attendance
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 视频监控服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-video-service
+  namespace: ioedream
+  labels:
+    app: ioedream-video-service
+    component: video
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-video-service
+      component: video
+  template:
+    metadata:
+      labels:
+        app: ioedream-video-service
+        component: video
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-video-service
+          image: ioedream/ioedream-video-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+            - name: video-storage
+              mountPath: /app/videos
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+        - name: video-storage
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-video-service
+  namespace: ioedream
+  labels:
+    app: ioedream-video-service
+    component: video
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-video-service
+    component: video
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# OA办公服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-oa-service
+  namespace: ioedream
+  labels:
+    app: ioedream-oa-service
+    component: office
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-oa-service
+      component: office
+  template:
+    metadata:
+      labels:
+        app: ioedream-oa-service
+        component: office
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-oa-service
+          image: ioedream/ioedream-oa-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+            - name: oa-storage
+              mountPath: /app/documents
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+        - name: oa-storage
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-oa-service
+  namespace: ioedream
+  labels:
+    app: ioedream-oa-service
+    component: office
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-oa-service
+    component: office
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 系统管理服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-system-service
+  namespace: ioedream
+  labels:
+    app: ioedream-system-service
+    component: system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ioedream-system-service
+      component: system
+  template:
+    metadata:
+      labels:
+        app: ioedream-system-service
+        component: system
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-system-service
+          image: ioedream/ioedream-system-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-system-service
+  namespace: ioedream
+  labels:
+    app: ioedream-system-service
+    component: system
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-system-service
+    component: system
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+# 监控服务
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ioedream-monitor-service
+  namespace: ioedream
+  labels:
+    app: ioedream-monitor-service
+    component: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ioedream-monitor-service
+      component: monitoring
+  template:
+    metadata:
+      labels:
+        app: ioedream-monitor-service
+        component: monitoring
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ioedream-monitor-service
+          image: ioedream/ioedream-monitor-service:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: NACOS_SERVER_ADDR
+              value: "nacos:8848"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: PROMETHEUS_URL
+              value: "http://prometheus:9090"
+            - name: ALERTMANAGER_URL
+              value: "http://alertmanager:9093"
+          volumeMounts:
+            - name: common-config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: common-config
+          configMap:
+            name: microservices-common-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ioedream-monitor-service
+  namespace: ioedream
+  labels:
+    app: ioedream-monitor-service
+    component: monitoring
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    app: ioedream-monitor-service
+    component: monitoring
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

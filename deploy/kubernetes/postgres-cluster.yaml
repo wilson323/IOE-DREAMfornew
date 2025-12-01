@@ -1,0 +1,431 @@
+# IOE-DREAM智慧园区一卡通管理平台 - PostgreSQL数据库集群配置
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+data:
+  postgresql.conf: |
+    # 连接设置
+    listen_addresses = '*'
+    port = 5432
+    max_connections = 200
+
+    # 内存设置
+    shared_buffers = 256MB
+    effective_cache_size = 1GB
+    work_mem = 4MB
+    maintenance_work_mem = 64MB
+
+    # WAL设置
+    wal_level = replica
+    max_wal_size = 1GB
+    min_wal_size = 80MB
+    checkpoint_completion_target = 0.9
+
+    # 复制设置
+    max_wal_senders = 3
+    wal_keep_segments = 32
+    hot_standby = on
+
+    # 日志设置
+    logging_collector = on
+    log_directory = 'pg_log'
+    log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+    log_statement = 'all'
+    log_min_duration_statement = 1000
+
+    # 性能优化
+    random_page_cost = 1.1
+    effective_io_concurrency = 200
+
+  pg_hba.conf: |
+    # TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+    # 本地连接
+    local   all             postgres                                trust
+
+    # IPv4本地连接
+    host    all             postgres        127.0.0.1/32            trust
+
+    # Kubernetes Pod连接
+    host    all             postgres        10.0.0.0/8               trust
+    host    all             app_user        10.0.0.0/8               md5
+
+    # 复制连接
+    host    replication     replicator      10.0.0.0/8               md5
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secrets
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+type: Opaque
+data:
+  postgres-password: cG9zdGdyZXMxMjM=  # postgres123
+  app-username: YXBwX3VzZXI=          # app_user
+  app-password: YXBwX3Bhc3M=          # app_pass
+  replicator-password: cmVwbGljYXRvcjEyMw==  # replicator123
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-primary
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+    role: primary
+spec:
+  serviceName: postgresql-primary
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql
+      role: primary
+  template:
+    metadata:
+      labels:
+        app: postgresql
+        role: primary
+    spec:
+      containers:
+      - name: postgresql
+        image: postgres:14-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+          name: postgresql
+          protocol: TCP
+        env:
+        - name: POSTGRES_DB
+          value: smart_admin_v3
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: postgres-password
+        - name: APP_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: app-username
+        - name: APP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: app-password
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        - name: POSTGRES_INITDB_ARGS
+          value: "-E UTF8 --locale=C"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: postgresql-storage
+          mountPath: /var/lib/postgresql/data
+        - name: postgresql-config
+          mountPath: /etc/postgresql/postgresql.conf
+          subPath: postgresql.conf
+        - name: postgresql-config
+          mountPath: /etc/postgresql/pg_hba.conf
+          subPath: pg_hba.conf
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - postgres
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - postgres
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      - name: postgresql-exporter
+        image: wrouesnel/postgres_exporter:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9187
+          name: metrics
+          protocol: TCP
+        env:
+        - name: DATA_SOURCE_NAME
+          value: "postgresql://postgres:postgres123@localhost:5432/smart_admin_v3?sslmode=disable"
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+          limits:
+            memory: "200Mi"
+            cpu: "200m"
+      volumes:
+      - name: postgresql-storage
+        persistentVolumeClaim:
+          claimName: postgresql-storage-pvc
+      - name: postgresql-config
+        configMap:
+          name: postgres-config
+      nodeSelector:
+        node-type: database
+      tolerations:
+      - key: "database"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                - database
+
+---
+apiVersion: v1
+kind: StatefulSet
+metadata:
+  name: postgresql-replica
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+    role: replica
+spec:
+  serviceName: postgresql-replica
+  replicas: 2
+  selector:
+    matchLabels:
+      app: postgresql
+      role: replica
+  template:
+    metadata:
+      labels:
+        app: postgresql
+        role: replica
+    spec:
+      containers:
+      - name: postgresql
+        image: postgres:14-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+          name: postgresql
+          protocol: TCP
+        env:
+        - name: PGUSER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: postgres-password
+        - name: POSTGRES_MASTER_SERVICE
+          value: postgresql-primary
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        - name: POSTGRES_REPLICATION_USER
+          value: replicator
+        - name: POSTGRES_REPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: replicator-password
+        command:
+        - bash
+        - -c
+        - |
+          set -ex
+          # 等待主节点可访问
+          until pg_isready -h postgresql-primary -p 5432 -U postgres
+          do
+            echo "Waiting for primary database..."
+            sleep 2
+          done
+
+          # 创建复制用户和配置
+          if [ ! -f /var/lib/postgresql/data/PG_VERSION ]; then
+            pg_basebackup -h postgresql-primary -D /var/lib/postgresql/data -U replicator -v -P -W
+            echo "standby_mode = 'on'" >> /var/lib/postgresql/data/recovery.conf
+            echo "primary_conninfo = 'host=postgresql-primary port=5432 user=replicator'" >> /var/lib/postgresql/data/recovery.conf
+          fi
+
+          # 启动PostgreSQL
+          exec docker-entrypoint.sh postgres
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: postgresql-storage
+          mountPath: /var/lib/postgresql/data
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - postgres
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - postgres
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: postgresql-storage
+        persistentVolumeClaim:
+          claimName: postgresql-replica-storage-pvc
+      nodeSelector:
+        node-type: database
+      tolerations:
+      - key: "database"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-primary
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+    role: primary
+spec:
+  type: ClusterIP
+  ports:
+  - name: postgresql
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+  - name: metrics
+    port: 9187
+    targetPort: 9187
+    protocol: TCP
+  selector:
+    app: postgresql
+    role: primary
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-replica
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+    role: replica
+spec:
+  type: ClusterIP
+  ports:
+  - name: postgresql
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+  selector:
+    app: postgresql
+    role: replica
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-service
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+spec:
+  type: ClusterIP
+  ports:
+  - name: postgresql
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+  selector:
+    app: postgresql
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-storage-pvc
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-replica-storage-pvc
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: ServiceMonitor
+metadata:
+  name: postgresql-monitor
+  namespace: ioe-dream
+  labels:
+    app: postgresql
+    component: database
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  endpoints:
+  - port: metrics
+    interval: 30s
+    scrapeTimeout: 10s

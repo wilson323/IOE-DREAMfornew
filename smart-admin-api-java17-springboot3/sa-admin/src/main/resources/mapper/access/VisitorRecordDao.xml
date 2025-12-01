@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.access.dao.VisitorRecordDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.access.domain.entity.VisitorRecordEntity">
+        <id column="record_id" property="recordId" jdbcType="BIGINT"/>
+        <result column="reservation_id" property="reservationId" jdbcType="BIGINT"/>
+        <result column="visitor_name" property="visitorName" jdbcType="VARCHAR"/>
+        <result column="visitor_phone" property="visitorPhone" jdbcType="VARCHAR"/>
+        <result column="visit_area_id" property="visitAreaId" jdbcType="BIGINT"/>
+        <result column="visit_area_name" property="visitAreaName" jdbcType="VARCHAR"/>
+        <result column="access_device_id" property="accessDeviceId" jdbcType="BIGINT"/>
+        <result column="access_device_name" property="accessDeviceName" jdbcType="VARCHAR"/>
+        <result column="access_method" property="accessMethod" jdbcType="TINYINT"/>
+        <result column="access_result" property="accessResult" jdbcType="TINYINT"/>
+        <result column="fail_reason" property="failReason" jdbcType="VARCHAR"/>
+        <result column="access_time" property="accessTime" jdbcType="TIMESTAMP"/>
+        <result column="photo_path" property="photoPath" jdbcType="VARCHAR"/>
+        <result column="temperature" property="temperature" jdbcType="DECIMAL"/>
+        <result column="health_status" property="healthStatus" jdbcType="TINYINT"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        record_id, reservation_id, visitor_name, visitor_phone, visit_area_id, visit_area_name,
+        access_device_id, access_device_name, access_method, access_result, fail_reason,
+        access_time, photo_path, temperature, health_status, remarks, create_time, update_time,
+        create_user_id, update_user_id, deleted_flag, version
+    </sql>
+
+    <!-- 根据访客手机号查询访问记录 -->
+    <select id="selectByVisitorPhone" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE visitor_phone = #{visitorPhone} AND deleted_flag = 0
+        ORDER BY access_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 根据预约ID查询访问记录 -->
+    <select id="selectByReservationId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE reservation_id = #{reservationId} AND deleted_flag = 0
+        ORDER BY access_time DESC
+    </select>
+
+    <!-- 根据访问区域查询访问记录 -->
+    <select id="selectByAreaIdAndDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE visit_area_id = #{visitAreaId}
+          AND DATE(access_time) >= #{startDate}
+          AND DATE(access_time) &lt;= #{endDate}
+          AND deleted_flag = 0
+        ORDER BY access_time DESC
+    </select>
+
+    <!-- 根据门禁设备查询访问记录 -->
+    <select id="selectByDeviceIdAndDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE access_device_id = #{accessDeviceId}
+          AND DATE(access_time) >= #{startDate}
+          AND DATE(access_time) &lt;= #{endDate}
+          AND deleted_flag = 0
+        ORDER BY access_time DESC
+    </select>
+
+    <!-- 查询指定日期的访问记录 -->
+    <select id="selectByDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE DATE(access_time) = #{accessDate} AND deleted_flag = 0
+        ORDER BY access_time DESC
+    </select>
+
+    <!-- 查询指定时间范围内的访问记录 -->
+    <select id="selectByTimeRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE access_time >= #{startTime}
+          AND access_time &lt;= #{endTime}
+          AND deleted_flag = 0
+        ORDER BY access_time DESC
+    </select>
+
+    <!-- 查询今日访问记录 -->
+    <select id="selectTodayRecords" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE DATE(access_time) = CURDATE() AND deleted_flag = 0
+        ORDER BY access_time DESC
+    </select>
+
+    <!-- 查询访问失败的记录 -->
+    <select id="selectFailedRecords" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE access_result = 1
+          AND DATE(access_time) >= #{startDate}
+          AND DATE(access_time) &lt;= #{endDate}
+          AND deleted_flag = 0
+        ORDER BY access_time DESC
+    </select>
+
+    <!-- 统计指定日期的访问数量 -->
+    <select id="countByDate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_visitor_record
+        WHERE DATE(access_time) = #{accessDate} AND deleted_flag = 0
+    </select>
+
+    <!-- 统计指定日期的成功访问数量 -->
+    <select id="countSuccessByDate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_visitor_record
+        WHERE access_result = 0
+          AND DATE(access_time) = #{accessDate}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 统计指定日期的失败访问数量 -->
+    <select id="countFailedByDate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_visitor_record
+        WHERE access_result = 1
+          AND DATE(access_time) = #{accessDate}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 统计各区域的访问数量 -->
+    <select id="selectAreaStatistics" resultType="java.util.Map">
+        SELECT visit_area_id, visit_area_name, COUNT(*) as visit_count
+        FROM t_visitor_record
+        WHERE DATE(access_time) >= #{startDate}
+          AND DATE(access_time) &lt;= #{endDate}
+          AND deleted_flag = 0
+        GROUP BY visit_area_id, visit_area_name
+        ORDER BY visit_count DESC
+    </select>
+
+    <!-- 统计各设备的访问数量 -->
+    <select id="selectDeviceStatistics" resultType="java.util.Map">
+        SELECT access_device_id, access_device_name, COUNT(*) as access_count
+        FROM t_visitor_record
+        WHERE DATE(access_time) >= #{startDate}
+          AND DATE(access_time) &lt;= #{endDate}
+          AND access_device_id IS NOT NULL
+          AND deleted_flag = 0
+        GROUP BY access_device_id, access_device_name
+        ORDER BY access_count DESC
+    </select>
+
+    <!-- 统计各通行方式的访问数量 -->
+    <select id="selectMethodStatistics" resultType="java.util.Map">
+        SELECT access_method, COUNT(*) as method_count
+        FROM t_visitor_record
+        WHERE DATE(access_time) >= #{startDate}
+          AND DATE(access_time) &lt;= #{endDate}
+          AND deleted_flag = 0
+        GROUP BY access_method
+        ORDER BY method_count DESC
+    </select>
+
+    <!-- 查询访问频率异常的访客 -->
+    <select id="selectAbnormalAccess" resultType="java.util.Map">
+        SELECT visitor_phone, visitor_name, COUNT(*) as access_count
+        FROM t_visitor_record
+        WHERE access_time >= DATE_SUB(NOW(), INTERVAL #{timeWindow} MINUTE)
+          AND deleted_flag = 0
+        GROUP BY visitor_phone, visitor_name
+        HAVING COUNT(*) >= #{threshold}
+        ORDER BY access_count DESC
+    </select>
+
+    <!-- 查询最近7天的访问趋势 -->
+    <select id="selectRecentTrend" resultType="java.util.Map">
+        SELECT DATE(access_time) as access_date,
+               COUNT(*) as total_count,
+               SUM(CASE WHEN access_result = 0 THEN 1 ELSE 0 END) as success_count,
+               SUM(CASE WHEN access_result = 1 THEN 1 ELSE 0 END) as failed_count
+        FROM t_visitor_record
+        WHERE access_time >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+          AND deleted_flag = 0
+        GROUP BY DATE(access_time)
+        ORDER BY access_date ASC
+    </select>
+
+    <!-- 查询访客的首次访问记录 -->
+    <select id="selectFirstVisit" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE visitor_phone = #{visitorPhone} AND deleted_flag = 0
+        ORDER BY access_time ASC
+        LIMIT 1
+    </select>
+
+    <!-- 查询访客的最近访问记录 -->
+    <select id="selectLastVisit" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor_record
+        WHERE visitor_phone = #{visitorPhone} AND deleted_flag = 0
+        ORDER BY access_time DESC
+        LIMIT 1
+    </select>
+
+</mapper>

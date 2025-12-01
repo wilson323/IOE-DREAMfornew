@@ -1,0 +1,689 @@
+# ===================================================================
+# IOE-DREAM 微服务Docker Compose配置
+# 用于本地开发和测试环境的容器编排
+# ===================================================================
+
+version: '3.8'
+
+# 网络配置
+networks:
+  ioedream-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# 数据卷配置
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  mysql_logs:
+    driver: local
+  mysql_slowlog:
+    driver: local
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: ioedream-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: ioedream
+      MYSQL_USER: ioedream
+      MYSQL_PASSWORD: ioedream123
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - mysql_logs:/var/log/mysql
+      - mysql_slowlog:/var/log/mysql/slow
+      - ./init:/docker-entrypoint-initdb.d
+      - ./mysql:/etc/mysql/conf.d
+    networks:
+      - ioedream-network
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max-connections=1000
+      --innodb-buffer-pool-size=1G
+      --slow-query-log=1
+      --long-query-time=2
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123456"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "com.ioedream.component=database"
+      - "com.ioedream.service=mysql"
+
+  # Redis缓存
+  redis:
+    image: redis:6.2-alpine
+    container_name: ioedream-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/etc/redis/redis.conf
+    networks:
+      - ioedream-network
+    command: redis-server /etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "com.ioedream.component=cache"
+      - "com.ioedream.service=redis"
+
+  # Nacos注册中心
+  nacos:
+    image: nacos/nacos-server:v2.3.0
+    container_name: ioedream-nacos
+    restart: unless-stopped
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_DB_NAME: nacos_config
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root123456
+      MYSQL_SERVICE_PORT: 3306
+      NACOS_AUTH_ENABLE: false
+      JVM_XMS: 256m
+      JVM_XMX: 512m
+      TZ: Asia/Shanghai
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - ./nacos:/home/nacos/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/v1/console/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "com.ioedream.component=registry"
+      - "com.ioedream.service=nacos"
+
+  # API网关
+  smart-gateway:
+    image: ioedream/smart-gateway:latest
+    container_name: ioedream-gateway
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs/gateway:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=gateway"
+      - "com.ioedream.service=smart-gateway"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 认证服务
+  ioedream-auth-service:
+    image: ioedream/ioedream-auth-service:latest
+    container_name: ioedream-auth
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: IOE-DREAM-JWT-SECRET-KEY-2024
+      TZ: Asia/Shanghai
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./logs/auth:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=authentication"
+      - "com.ioedream.service=ioedream-auth-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 身份权限服务
+  ioedream-identity-service:
+    image: ioedream/ioedream-identity-service:latest
+    container_name: ioedream-identity
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./logs/identity:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=identity"
+      - "com.ioedream.service=ioedream-identity-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 设备管理服务
+  ioedream-device-service:
+    image: ioedream/ioedream-device-service:latest
+    container_name: ioedream-device
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8083:8080"
+    volumes:
+      - ./logs/device:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=device"
+      - "com.ioedream.service=ioedream-device-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 门禁管理服务
+  ioedream-access-service:
+    image: ioedream/ioedream-access-service:latest
+    container_name: ioedream-access
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8084:8080"
+    volumes:
+      - ./logs/access:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+      ioedream-device-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=access-control"
+      - "com.ioedream.service=ioedream-access-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 消费管理服务
+  ioedream-consume-service:
+    image: ioedream/ioedream-consume-service:latest
+    container_name: ioedream-consume
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      WECHAT_PAY_KEY: wechat-pay-secret-key-1234
+      TZ: Asia/Shanghai
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./logs/consume:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=consumption"
+      - "com.ioedream.service=ioedream-consume-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 考勤管理服务
+  ioedream-attendance-service:
+    image: ioedream/ioedream-attendance-service:latest
+    container_name: ioedream-attendance
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8086:8080"
+    volumes:
+      - ./logs/attendance:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=attendance"
+      - "com.ioedream.service=ioedream-attendance-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 视频监控服务
+  ioedream-video-service:
+    image: ioedream/ioedream-video-service:latest
+    container_name: ioedream-video
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8087:8080"
+    volumes:
+      - ./logs/video:/app/logs
+      - ./data/videos:/app/videos
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    labels:
+      - "com.ioedream.component=video"
+      - "com.ioedream.service=ioedream-video-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # OA办公服务
+  ioedream-oa-service:
+    image: ioedream/ioedream-oa-service:latest
+    container_name: ioedream-oa
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8088:8080"
+    volumes:
+      - ./logs/oa:/app/logs
+      - ./data/documents:/app/documents
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=office"
+      - "com.ioedream.service=ioedream-oa-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 系统管理服务
+  ioedream-system-service:
+    image: ioedream/ioedream-system-service:latest
+    container_name: ioedream-system
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./logs/system:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      ioedream-auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=system"
+      - "com.ioedream.service=ioedream-system-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # 监控服务
+  ioedream-monitor-service:
+    image: ioedream/ioedream-monitor-service:latest
+    container_name: ioedream-monitor
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PROMETHEUS_URL: http://prometheus:9090
+      ALERTMANAGER_URL: http://alertmanager:9093
+      TZ: Asia/Shanghai
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./logs/monitor:/app/logs
+    networks:
+      - ioedream-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "com.ioedream.component=monitoring"
+      - "com.ioedream.service=ioedream-monitor-service"
+      - "prometheus.io.scrape=true"
+      - "prometheus.io.port=8080"
+      - "prometheus.io.path=/actuator/prometheus"
+
+  # Prometheus监控系统
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ioedream-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/rules:/etc/prometheus/rules
+      - prometheus_data:/prometheus
+    networks:
+      - ioedream-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.ioedream.component=monitoring"
+      - "com.ioedream.service=prometheus"
+
+  # Grafana可视化
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ioedream-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    networks:
+      - ioedream-network
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.ioedream.component=monitoring"
+      - "com.ioedream.service=grafana"
+
+  # AlertManager告警管理
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: ioedream-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ./alertmanager/templates:/etc/alertmanager/templates
+    networks:
+      - ioedream-network
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=http://localhost:9093'
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.ioedream.component=monitoring"
+      - "com.ioedream.service=alertmanager"
+
+  # Node Exporter (系统监控)
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: ioedream-node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    networks:
+      - ioedream-network
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - /:/host:ro,rslave
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9100/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.ioedream.component=monitoring"
+      - "com.ioedream.service=node-exporter"

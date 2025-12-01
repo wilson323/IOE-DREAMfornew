@@ -1,0 +1,12 @@
+{
+  "id": "approval_1764178370916_5y2ub3w0p",
+  "title": "Device Service微服务需求文档审批",
+  "filePath": ".spec-workflow/specs/device-service-microservice/requirements.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-11-26T17:32:50.916Z",
+  "category": "spec",
+  "categoryName": "device-service-microservice",
+  "response": "通过仪表板批准",
+  "respondedAt": "2025-11-26T22:15:01.861Z"
+}

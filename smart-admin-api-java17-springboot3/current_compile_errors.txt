@@ -1,0 +1,550 @@
+[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[16,57] 找不到符号
+  符号:   类 BatchSecurityResult
+  位置: 程序包 net.lab1024.sa.admin.module.consume.domain.result
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[143,5] 找不到符号
+  符号:   类 BatchSecurityResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[153,61] 找不到符号
+  符号:   类 AccountUnfreezeRequest
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[153,5] 找不到符号
+  符号:   类 BatchSecurityResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[165,47] 找不到符号
+  符号:   类 AutoFreezeRule
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[174,10] 找不到符号
+  符号:   类 AutoFreezeRule
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[195,78] 找不到符号
+  符号:   类 AutoFreezeRule
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[205,5] 找不到符号
+  符号:   类 AccountSecurityStatus
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[213,5] 找不到符号
+  符号:   类 AccountSecurityScore
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[222,66] 找不到符号
+  符号:   类 AccountSecurityEvent
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[242,5] 找不到符号
+  符号:   类 AccountSecurityConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[251,67] 找不到符号
+  符号:   类 AccountSecurityConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[261,5] 找不到符号
+  符号:   类 AccountSecurityReport
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[271,10] 找不到符号
+  符号:   类 AccountRiskInfo
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[281,5] 找不到符号
+  符号:   类 OperationPermissionResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[290,42] 找不到符号
+  符号:   类 AccountSecurityEvent
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[300,10] 找不到符号
+  符号:   类 AccountSecurityEvent
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[310,72] 找不到符号
+  符号:   类 EmergencyContact
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[318,10] 找不到符号
+  符号:   类 EmergencyContact
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[31,5] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[39,5] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[47,5] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[55,5] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[65,65] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[75,67] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[85,69] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[97,5] 找不到符号
+  符号:   类 LimitValidationResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[106,5] 找不到符号
+  符号:   类 ConsumeStatistics
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[115,5] 找不到符号
+  符号:   类 LimitCheckResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[137,64] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[147,10] 找不到符号
+  符号:   类 LimitChangeHistory
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[156,54] 找不到符号
+  符号:   类 BatchLimitSetting
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[156,5] 找不到符号
+  符号:   类 BatchLimitSetResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[163,5] 找不到符号
+  符号:   类 GlobalLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[171,43] 找不到符号
+  符号:   类 GlobalLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[187,5] 找不到符号
+  符号:   类 LimitUsageReport
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[196,82] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[196,5] 找不到符号
+  符号:   类 LimitConflictCheckResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/EmailService.java:[14,56] 找不到符号
+  符号:   类 EmailServiceStatus
+  位置: 程序包 net.lab1024.sa.admin.module.consume.domain.enums
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/EmailService.java:[82,5] 找不到符号
+  符号:   类 EmailServiceStatus
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.EmailService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[32,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[44,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[56,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[69,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[119,76] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[148,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[157,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[186,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[140,12] 找不到符号
+  符号:   类 BehaviorMonitoringResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[176,12] 找不到符号
+  符号:   类 UserPatternAnalysis
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[229,12] 找不到符号
+  符号:   类 LocationAnomalyResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[286,12] 找不到符号
+  符号:   类 TimeAnomalyResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[351,12] 找不到符号
+  符号:   类 AmountAnomalyResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[418,12] 找不到符号
+  符号:   类 DeviceAnomalyResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[480,12] 找不到符号
+  符号:   类 FrequencyAnomalyResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[537,12] 找不到符号
+  符号:   类 UserRiskScore
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[604,12] 找不到符号
+  符号:   类 AbnormalOperationReport
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[684,12] 找不到符号
+  符号:   类 SequenceAnomalyResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[689,12] 找不到符号
+  符号:   类 AbnormalTrendAnalysis
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[709,12] 找不到符号
+  符号:   类 BatchDetectionResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[718,12] 找不到符号
+  符号:   类 ModelTrainingResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[728,12] 找不到符号
+  符号:   类 MLDetectionResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[737,12] 找不到符号
+  符号:   类 DetectionPerformanceMetrics
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[744,12] 找不到符号
+  符号:   类 ExportResult
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[887,13] 找不到符号
+  符号:   类 ConsumptionPattern
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[910,13] 找不到符号
+  符号:   类 TimePattern
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[936,13] 找不到符号
+  符号:   类 LocationPattern
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[957,13] 找不到符号
+  符号:   类 DevicePattern
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[978,13] 找不到符号
+  符号:   类 BehaviorAnalysis
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[990,47] 找不到符号
+  符号:   类 BehaviorAnalysis
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[990,74] 找不到符号
+  符号:   类 UserRiskScore
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[997,13] 找不到符号
+  符号:   类 UserRiskScore
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AccountSecurityServiceImpl.java:[219,17] 找不到符号
+  符号:   类 AccountFreezeHistory
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/PaymentPasswordServiceImpl.java:[343,12] 找不到符号
+  符号:   类 PasswordSecurityPolicy
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.PaymentPasswordServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/PaymentPasswordServiceImpl.java:[642,17] 找不到符号
+  符号:   类 PasswordVerificationHistory
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.PaymentPasswordServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/PaymentPasswordServiceImpl.java:[949,13] 找不到符号
+  符号:   类 PasswordVerificationHistory
+  位置: 类 net.lab1024.sa.admin.module.consume.service.impl.PaymentPasswordServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/ReconciliationServiceImpl.java:[29,51] 找不到符号
+  符号:   类 ReconciliationService
+  位置: 程序包 net.lab1024.sa.admin.module.consume.service
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/ReconciliationServiceImpl.java:[40,51] 找不到符号
+  符号: 类 ReconciliationService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/SecurityNotificationServiceImpl.java:[32,53] 找不到符号
+  符号:   类 EmailPriority
+  位置: 程序包 net.lab1024.sa.admin.module.consume.domain.vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/SecurityNotificationServiceImpl.java:[38,53] 找不到符号
+  符号:   类 PushPriority
+  位置: 程序包 net.lab1024.sa.admin.module.consume.domain.vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[3,32] 程序包com.wechat.pay.java.core不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[4,32] 程序包com.wechat.pay.java.core不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[5,42] 程序包com.wechat.pay.java.core.exception不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[6,42] 程序包com.wechat.pay.java.core.exception不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[7,42] 程序包com.wechat.pay.java.core.exception不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[8,50] 程序包com.wechat.pay.java.service.payments.jsapi不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[10,54] 程序包com.wechat.pay.java.service.payments.nativepay不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[12,50] 程序包com.wechat.pay.java.service.payments.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[13,50] 程序包com.wechat.pay.java.service.payments.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[14,42] 程序包com.wechat.pay.java.service.refund不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[62,13] 找不到符号
+  符号:   类 RefundService
+  位置: 类 net.lab1024.sa.admin.module.consume.service.payment.WechatPaymentService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[65,13] 找不到符号
+  符号:   类 Config
+  位置: 类 net.lab1024.sa.admin.module.consume.service.payment.WechatPaymentService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[293,58] 找不到符号
+  符号:   类 Request
+  位置: 类 net.lab1024.sa.admin.module.consume.service.payment.WechatPaymentService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[356,40] 找不到符号
+  符号:   类 Request
+  位置: 类 net.lab1024.sa.admin.module.consume.service.payment.WechatPaymentService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[9,1] 程序包com.wechat.pay.java.service.payments.jsapi.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[11,1] 程序包com.wechat.pay.java.service.payments.nativepay.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[15,1] 程序包com.wechat.pay.java.service.refund.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/impl/AdvancedReportServiceImpl.java:[29,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/engine/BiometricRecognitionEngine.java:[3,24] 程序包java.awt.iMapage不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/engine/BiometricRecognitionEngine.java:[923,1] 找不到符号
+  符号:   类 ong
+  位置: 类 net.lab1024.sa.admin.module.smart.biometric.engine.BiometricRecognitionEngine.BiometricEngineStatistics
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[16,57] 找不到符号
+[ERROR]   符号:   类 BatchSecurityResult
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.domain.result
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[143,5] 找不到符号
+[ERROR]   符号:   类 BatchSecurityResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[153,61] 找不到符号
+[ERROR]   符号:   类 AccountUnfreezeRequest
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[153,5] 找不到符号
+[ERROR]   符号:   类 BatchSecurityResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[165,47] 找不到符号
+[ERROR]   符号:   类 AutoFreezeRule
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[174,10] 找不到符号
+[ERROR]   符号:   类 AutoFreezeRule
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[195,78] 找不到符号
+[ERROR]   符号:   类 AutoFreezeRule
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[205,5] 找不到符号
+[ERROR]   符号:   类 AccountSecurityStatus
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[213,5] 找不到符号
+[ERROR]   符号:   类 AccountSecurityScore
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[222,66] 找不到符号
+[ERROR]   符号:   类 AccountSecurityEvent
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[242,5] 找不到符号
+[ERROR]   符号:   类 AccountSecurityConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[251,67] 找不到符号
+[ERROR]   符号:   类 AccountSecurityConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[261,5] 找不到符号
+[ERROR]   符号:   类 AccountSecurityReport
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[271,10] 找不到符号
+[ERROR]   符号:   类 AccountRiskInfo
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[281,5] 找不到符号
+[ERROR]   符号:   类 OperationPermissionResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[290,42] 找不到符号
+[ERROR]   符号:   类 AccountSecurityEvent
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[300,10] 找不到符号
+[ERROR]   符号:   类 AccountSecurityEvent
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[310,72] 找不到符号
+[ERROR]   符号:   类 EmergencyContact
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[318,10] 找不到符号
+[ERROR]   符号:   类 EmergencyContact
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[31,5] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[39,5] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[47,5] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[55,5] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[65,65] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[75,67] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[85,69] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[97,5] 找不到符号
+[ERROR]   符号:   类 LimitValidationResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[106,5] 找不到符号
+[ERROR]   符号:   类 ConsumeStatistics
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[115,5] 找不到符号
+[ERROR]   符号:   类 LimitCheckResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[137,64] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[147,10] 找不到符号
+[ERROR]   符号:   类 LimitChangeHistory
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[156,54] 找不到符号
+[ERROR]   符号:   类 BatchLimitSetting
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[156,5] 找不到符号
+[ERROR]   符号:   类 BatchLimitSetResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[163,5] 找不到符号
+[ERROR]   符号:   类 GlobalLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[171,43] 找不到符号
+[ERROR]   符号:   类 GlobalLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[187,5] 找不到符号
+[ERROR]   符号:   类 LimitUsageReport
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[196,82] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[196,5] 找不到符号
+[ERROR]   符号:   类 LimitConflictCheckResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/EmailService.java:[14,56] 找不到符号
+[ERROR]   符号:   类 EmailServiceStatus
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.domain.enums
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/EmailService.java:[82,5] 找不到符号
+[ERROR]   符号:   类 EmailServiceStatus
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.EmailService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[32,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[44,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[56,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[69,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[119,76] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[148,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[157,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[186,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[140,12] 找不到符号
+[ERROR]   符号:   类 BehaviorMonitoringResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[176,12] 找不到符号
+[ERROR]   符号:   类 UserPatternAnalysis
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[229,12] 找不到符号
+[ERROR]   符号:   类 LocationAnomalyResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[286,12] 找不到符号
+[ERROR]   符号:   类 TimeAnomalyResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[351,12] 找不到符号
+[ERROR]   符号:   类 AmountAnomalyResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[418,12] 找不到符号
+[ERROR]   符号:   类 DeviceAnomalyResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[480,12] 找不到符号
+[ERROR]   符号:   类 FrequencyAnomalyResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[537,12] 找不到符号
+[ERROR]   符号:   类 UserRiskScore
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[604,12] 找不到符号
+[ERROR]   符号:   类 AbnormalOperationReport
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[684,12] 找不到符号
+[ERROR]   符号:   类 SequenceAnomalyResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[689,12] 找不到符号
+[ERROR]   符号:   类 AbnormalTrendAnalysis
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[709,12] 找不到符号
+[ERROR]   符号:   类 BatchDetectionResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[718,12] 找不到符号
+[ERROR]   符号:   类 ModelTrainingResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[728,12] 找不到符号
+[ERROR]   符号:   类 MLDetectionResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[737,12] 找不到符号
+[ERROR]   符号:   类 DetectionPerformanceMetrics
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[744,12] 找不到符号
+[ERROR]   符号:   类 ExportResult
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[887,13] 找不到符号
+[ERROR]   符号:   类 ConsumptionPattern
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[910,13] 找不到符号
+[ERROR]   符号:   类 TimePattern
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[936,13] 找不到符号
+[ERROR]   符号:   类 LocationPattern
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[957,13] 找不到符号
+[ERROR]   符号:   类 DevicePattern
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[978,13] 找不到符号
+[ERROR]   符号:   类 BehaviorAnalysis
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[990,47] 找不到符号
+[ERROR]   符号:   类 BehaviorAnalysis
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[990,74] 找不到符号
+[ERROR]   符号:   类 UserRiskScore
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AbnormalDetectionServiceImpl.java:[997,13] 找不到符号
+[ERROR]   符号:   类 UserRiskScore
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AbnormalDetectionServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/AccountSecurityServiceImpl.java:[219,17] 找不到符号
+[ERROR]   符号:   类 AccountFreezeHistory
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.AccountSecurityServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/PaymentPasswordServiceImpl.java:[343,12] 找不到符号
+[ERROR]   符号:   类 PasswordSecurityPolicy
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.PaymentPasswordServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/PaymentPasswordServiceImpl.java:[642,17] 找不到符号
+[ERROR]   符号:   类 PasswordVerificationHistory
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.PaymentPasswordServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/PaymentPasswordServiceImpl.java:[949,13] 找不到符号
+[ERROR]   符号:   类 PasswordVerificationHistory
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.impl.PaymentPasswordServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/ReconciliationServiceImpl.java:[29,51] 找不到符号
+[ERROR]   符号:   类 ReconciliationService
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.service
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/ReconciliationServiceImpl.java:[40,51] 找不到符号
+[ERROR]   符号: 类 ReconciliationService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/SecurityNotificationServiceImpl.java:[32,53] 找不到符号
+[ERROR]   符号:   类 EmailPriority
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.domain.vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/SecurityNotificationServiceImpl.java:[38,53] 找不到符号
+[ERROR]   符号:   类 PushPriority
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.domain.vo
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[3,32] 程序包com.wechat.pay.java.core不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[4,32] 程序包com.wechat.pay.java.core不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[5,42] 程序包com.wechat.pay.java.core.exception不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[6,42] 程序包com.wechat.pay.java.core.exception不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[7,42] 程序包com.wechat.pay.java.core.exception不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[8,50] 程序包com.wechat.pay.java.service.payments.jsapi不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[10,54] 程序包com.wechat.pay.java.service.payments.nativepay不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[12,50] 程序包com.wechat.pay.java.service.payments.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[13,50] 程序包com.wechat.pay.java.service.payments.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[14,42] 程序包com.wechat.pay.java.service.refund不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[62,13] 找不到符号
+[ERROR]   符号:   类 RefundService
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.payment.WechatPaymentService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[65,13] 找不到符号
+[ERROR]   符号:   类 Config
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.payment.WechatPaymentService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[293,58] 找不到符号
+[ERROR]   符号:   类 Request
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.payment.WechatPaymentService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[356,40] 找不到符号
+[ERROR]   符号:   类 Request
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.consume.service.payment.WechatPaymentService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[9,1] 程序包com.wechat.pay.java.service.payments.jsapi.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[11,1] 程序包com.wechat.pay.java.service.payments.nativepay.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/payment/WechatPaymentService.java:[15,1] 程序包com.wechat.pay.java.service.refund.model不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/impl/AdvancedReportServiceImpl.java:[29,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/engine/BiometricRecognitionEngine.java:[3,24] 程序包java.awt.iMapage不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/engine/BiometricRecognitionEngine.java:[923,1] 找不到符号
+[ERROR]   符号:   类 ong
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.biometric.engine.BiometricRecognitionEngine.BiometricEngineStatistics
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

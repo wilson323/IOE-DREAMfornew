@@ -1,0 +1,313 @@
+# ===================================================================
+# IOE-DREAM 微服务性能测试告警规则
+# ===================================================================
+
+groups:
+  # HTTP请求响应时间告警
+  - name: http_response_time
+    rules:
+      - alert: HighResponseTime
+        expr: http_server_requests_seconds_sum{uri!="/actuator/health"} / http_server_requests_seconds_count{uri!="/actuator/health"} > 1.0
+        for: 30s
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "高响应时间告警"
+          description: "{{ $labels.job }} 响应时间超过1秒，当前值: {{ $value }}秒"
+
+      - alert: CriticalResponseTime
+        expr: http_server_requests_seconds_sum{uri!="/actuator/health"} / http_server_requests_seconds_count{uri!="/actuator/health"} > 3.0
+        for: 10s
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "严重响应时间告警"
+          description: "{{ $labels.job }} 响应时间超过3秒，当前值: {{ $value }}秒"
+
+  # HTTP请求错误率告警
+  - name: http_error_rate
+    rules:
+      - alert: HighErrorRate
+        expr: (rate(http_server_requests_seconds_count{status=~"5.."}[1m]) / rate(http_server_requests_seconds_count[1m])) * 100 > 5
+        for: 30s
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "高错误率告警"
+          description: "{{ $labels.job }} 错误率超过5%，当前值: {{ $value }}%"
+
+      - alert: CriticalErrorRate
+        expr: (rate(http_server_requests_seconds_count{status=~"5.."}[1m]) / rate(http_server_requests_seconds_count[1m])) * 100 > 15
+        for: 10s
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "严重错误率告警"
+          description: "{{ $labels.job }} 错误率超过15%，当前值: {{ $value }}%"
+
+  # JVM内存使用告警
+  - name: jvm_memory
+    rules:
+      - alert: HighMemoryUsage
+        expr: (jvm_memory_used_bytes / jvm_memory_max_bytes) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "高内存使用率告警"
+          description: "{{ $labels.job }} JVM内存使用率超过80%，当前值: {{ $value }}%"
+
+      - alert: CriticalMemoryUsage
+        expr: (jvm_memory_used_bytes / jvm_memory_max_bytes) * 100 > 90
+        for: 30s
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "严重内存使用率告警"
+          description: "{{ $labels.job }} JVM内存使用率超过90%，当前值: {{ $value }}%"
+
+  # JVM GC告警
+  - name: jvm_gc
+    rules:
+      - alert: HighGCTime
+        expr: rate(jvm_gc_collection_seconds_sum[1m]) * 100 > 10
+        for: 1m
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "高GC时间告警"
+          description: "{{ $labels.job }} GC时间占比超过10%，当前值: {{ $value }}%"
+
+      - alert: HighGCFrequency
+        expr: rate(jvm_gc_collection_seconds_count[1m]) > 50
+        for: 1m
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "高GC频率告警"
+          description: "{{ $labels.job }} GC频率超过50次/分钟，当前值: {{ $value }}次/分钟"
+
+  # CPU使用率告警
+  - name: system_cpu
+    rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[1m])) * 100) > 75
+        for: 2m
+        labels:
+          severity: warning
+          service: "system"
+        annotations:
+          summary: "高CPU使用率告警"
+          description: "实例 {{ $labels.instance }} CPU使用率超过75%，当前值: {{ $value }}%"
+
+      - alert: CriticalCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[1m])) * 100) > 90
+        for: 30s
+        labels:
+          severity: critical
+          service: "system"
+        annotations:
+          summary: "严重CPU使用率告警"
+          description: "实例 {{ $labels.instance }} CPU使用率超过90%，当前值: {{ $value }}%"
+
+  # 磁盘使用率告警
+  - name: system_disk
+    rules:
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: "system"
+        annotations:
+          summary: "高磁盘使用率告警"
+          description: "实例 {{ $labels.instance }} 磁盘 {{ $labels.mountpoint }} 使用率超过80%，当前值: {{ $value }}%"
+
+      - alert: CriticalDiskUsage
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 90
+        for: 1m
+        labels:
+          severity: critical
+          service: "system"
+        annotations:
+          summary: "严重磁盘使用率告警"
+          description: "实例 {{ $labels.instance }} 磁盘 {{ $labels.mountpoint }} 使用率超过90%，当前值: {{ $value }}%"
+
+  # 内存使用率告警
+  - name: system_memory
+    rules:
+      - alert: HighSystemMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 80
+        for: 3m
+        labels:
+          severity: warning
+          service: "system"
+        annotations:
+          summary: "高系统内存使用率告警"
+          description: "实例 {{ $labels.instance }} 内存使用率超过80%，当前值: {{ $value }}%"
+
+      - alert: CriticalSystemMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 30s
+        labels:
+          severity: critical
+          service: "system"
+        annotations:
+          summary: "严重系统内存使用率告警"
+          description: "实例 {{ $labels.instance }} 内存使用率超过90%，当前值: {{ $value }}%"
+
+  # 数据库连接告警
+  - name: database_connections
+    rules:
+      - alert: HighDatabaseConnections
+        expr: hikaricp_connections_active / hikaricp_connections_max * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "高数据库连接使用率告警"
+          description: "{{ $labels.job }} 数据库连接使用率超过80%，当前值: {{ $value }}%"
+
+      - alert: DatabaseConnectionLeak
+        expr: hikaricp_connections_pending > 10
+        for: 1m
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "数据库连接泄漏告警"
+          description: "{{ $labels.job }} 存在 {{ $value }} 个待处理数据库连接"
+
+  # Redis连接告警
+  - name: redis_connections
+    rules:
+      - alert: HighRedisConnections
+        expr: redis_connected_clients > 100
+        for: 2m
+        labels:
+          severity: warning
+          service: "redis"
+        annotations:
+          summary: "高Redis连接数告警"
+          description: "Redis连接数超过100，当前值: {{ $value }}"
+
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+          service: "redis"
+        annotations:
+          summary: "Redis内存使用率告警"
+          description: "Redis内存使用率超过80%，当前值: {{ $value }}%"
+
+  # 性能测试专用告警
+  - name: performance_test
+    rules:
+      - alert: PerformanceTestLowTPS
+        expr: rate(http_server_requests_seconds_count[1m]) < 10
+        for: 30s
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "性能测试TPS过低"
+          description: "{{ $labels.job }} TPS低于10，当前值: {{ $value }}"
+
+      - alert: PerformanceTestHighErrorRate
+        expr: (rate(http_server_requests_seconds_count{status=~"5.."}[30s]) / rate(http_server_requests_seconds_count[30s])) * 100 > 20
+        for: 15s
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "性能测试错误率过高"
+          description: "{{ $labels.job }} 错误率超过20%，当前值: {{ $value }}%"
+
+      - alert: PerformanceTestTimeout
+        expr: rate(http_server_requests_seconds_sum{uri=~"/actuator/health"}[1m]) / rate(http_server_requests_seconds_count{uri=~"/actuator/health"}[1m]) > 5
+        for: 10s
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "性能测试超时告警"
+          description: "{{ $labels.job }} 健康检查响应时间超过5秒，系统可能过载"
+
+  # 服务可用性告警
+  - name: service_availability
+    rules:
+      - alert: ServiceDown
+        expr: up{job=~"ioedream-.*"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "服务不可用告警"
+          description: "服务 {{ $labels.job }} ({{ $labels.instance }}) 不可用"
+
+      - alert: ServiceRestarted
+        expr: time() - process_start_time_seconds < 300
+        for: 0s
+        labels:
+          severity: info
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "服务重启告警"
+          description: "服务 {{ $labels.job }} 在过去5分钟内重启"
+
+  # 网络连接告警
+  - name: network_connections
+    rules:
+      - alert: HighNetworkConnections
+        expr: node_netstat_Tcp_CurrEstab > 1000
+        for: 2m
+        labels:
+          severity: warning
+          service: "system"
+        annotations:
+          summary: "高网络连接数告警"
+          description: "实例 {{ $labels.instance }} TCP连接数超过1000，当前值: {{ $value }}"
+
+      - alert: NetworkConnectionErrors
+        expr: rate(node_netstat_Tcp_ActiveOpens[1m]) + rate(node_netstat_Tcp_PassiveOpens[1m]) > 100
+        for: 1m
+        labels:
+          severity: warning
+          service: "system"
+        annotations:
+          summary: "网络连接错误率高"
+          description: "实例 {{ $labels.instance }} 新建TCP连接数过高，当前值: {{ $value }}/秒"
+
+  # 业务指标告警
+  - name: business_metrics
+    rules:
+      - alert: HighUserLoginFailures
+        expr: rate(http_server_requests_seconds_count{uri="/api/auth/login",status=~"4.."}[1m]) > 5
+        for: 30s
+        labels:
+          severity: warning
+          service: "auth-service"
+        annotations:
+          summary: "用户登录失败率高"
+          description: "用户登录失败率过高，当前值: {{ $value }}/秒"
+
+      - alert: HighAccessControlRequests
+        expr: rate(http_server_requests_seconds_count{uri="/api/access/verify"}[1m]) > 100
+        for: 1m
+        labels:
+          severity: info
+          service: "access-service"
+        annotations:
+          summary: "门禁控制请求频繁"
+          description: "门禁验证请求频率高，当前值: {{ $value }}/秒"

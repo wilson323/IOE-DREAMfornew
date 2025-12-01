@@ -1,0 +1,596 @@
+# 企业级数据库配置模板
+# 基于{{EntityName}}模块的数据库设计规范
+# 严格遵循repowiki数据库设计规范
+
+# ===================================================================
+# 数据库连接配置
+# ===================================================================
+
+# 基础连接配置
+database:
+  # 数据库类型
+  type: mysql
+  # 数据库版本
+  version: 8.0+
+  # 字符集
+  charset: utf8mb4
+  # 排序规则
+  collation: utf8mb4_unicode_ci
+  # 存储引擎
+  engine: InnoDB
+
+# 主数据库配置
+primary:
+  host: ${DB_HOST:localhost}
+  port: ${DB_PORT:3306}
+  database: ${DB_NAME:${databaseName}}
+  username: ${DB_USERNAME:root}
+  password: ${DB_PASSWORD:}
+  # 连接池配置
+  hikari:
+    minimum-idle: ${DB_POOL_MIN_IDLE:5}
+    maximum-pool-size: ${DB_POOL_MAX_SIZE:20}
+    auto-commit: true
+    idle-timeout: 300000  # 5分钟
+    pool-name: HikariCP-{{applicationName}}-Primary
+    max-lifetime: 1800000  # 30分钟
+    connection-timeout: 30000  # 30秒
+    connection-test-query: SELECT 1
+    leak-detection-threshold: 60000  # 1分钟
+    validation-timeout: 5000  # 5秒
+
+# 只读数据库配置（读写分离）
+read-only:
+  enabled: ${DB_READ_ONLY_ENABLED:false}
+  host: ${DB_READ_ONLY_HOST:localhost}
+  port: ${DB_READ_ONLY_PORT:3306}
+  database: ${DB_READ_ONLY_NAME:${databaseName}_ro}
+  username: ${DB_READ_ONLY_USERNAME:readonly}
+  password: ${DB_READ_ONLY_PASSWORD:}
+  # 只读连接池配置
+  hikari:
+    minimum-idle: ${DB_READ_ONLY_MIN_IDLE:3}
+    maximum-pool-size: ${DB_READ_ONLY_MAX_SIZE:15}
+    auto-commit: true
+    idle-timeout: 300000
+    pool-name: HikariCP-{{applicationName}}-ReadOnly
+    max-lifetime: 1800000
+    connection-timeout: 30000
+    connection-test-query: SELECT 1
+
+# ===================================================================
+# 表设计规范配置
+# ===================================================================
+
+# 命名规范
+table-naming:
+  # 表名前缀
+  prefix: t_
+  # 分隔符
+  separator: _
+  # 命名风格
+  style: snake_case  # snake_case, camelCase, pascal_case
+
+# 字段规范
+column-naming:
+  # 主键命名模式
+  primary-key-pattern: "{tableName}_id"
+  # 外键命名模式
+  foreign-key-pattern: "fk_{tableName}_{referencedTable}"
+  # 索引命名模式
+  index-pattern: "idx_{tableName}_{columnNames}"
+  # 唯一索引命名模式
+  unique-index-pattern: "uk_{tableName}_{columnNames}"
+
+# 审计字段标准
+audit-fields:
+  # 是否启用审计字段
+  enabled: true
+  # 创建时间字段
+  create-time:
+    name: create_time
+    type: datetime
+    nullable: false
+    default: CURRENT_TIMESTAMP
+  # 更新时间字段
+  update-time:
+    name: update_time
+    type: datetime
+    nullable: false
+    default: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  # 创建用户ID字段
+  create-user-id:
+    name: create_user_id
+    type: bigint
+    nullable: true
+  # 更新用户ID字段
+  update-user-id:
+    name: update_user_id
+    type: bigint
+    nullable: true
+  # 删除标记字段
+  deleted-flag:
+    name: deleted_flag
+    type: tinyint
+    nullable: false
+    default: 0
+    comment: 删除标记：0-未删除，1-已删除
+  # 版本字段（乐观锁）
+  version:
+    name: version
+    type: int
+    nullable: false
+    default: 1
+    comment: 版本号，用于乐观锁
+
+# ===================================================================
+# {{EntityName}}模块表配置
+# ===================================================================
+
+# {{EntityName}}主表配置
+{{applicationName}}:
+  # 表名
+  table-name: t_{{tableName}}
+  # 表注释
+  table-comment: {{tableComment}}
+  # 字段配置
+  columns:
+    # 主键字段
+    id:
+      name: {{tableName}}_id
+      type: bigint
+      auto-increment: true
+      nullable: false
+      comment: 主键ID
+
+    # 业务键字段
+    business-key:
+      name: business_key
+      type: varchar
+      length: 64
+      nullable: false
+      unique: true
+      comment: 业务唯一标识
+
+    # 业务名称字段
+    business-name:
+      name: business_name
+      type: varchar
+      length: 128
+      nullable: false
+      comment: 业务名称
+
+    # 业务类型字段
+    business-type:
+      name: business_type
+      type: varchar
+      length: 32
+      nullable: false
+      comment: 业务类型
+
+    # 状态字段
+    status:
+      name: status
+      type: varchar
+      length: 32
+      nullable: false
+      default: ACTIVE
+      comment: 状态：ACTIVE-活跃，INACTIVE-非活跃，DELETED-已删除
+
+    # 优先级字段
+    priority:
+      name: priority
+      type: int
+      nullable: true
+      default: 5
+      comment: 优先级，数值越大优先级越高
+
+    # 数值字段
+    amount:
+      name: amount
+      type: decimal
+      precision: 18
+      scale: 2
+      nullable: true
+      default: 0.00
+      comment: 金额
+
+    # 百分比字段
+    percentage:
+      name: percentage
+      type: decimal
+      precision: 5
+      scale: 2
+      nullable: true
+      default: 0.00
+      comment: 百分比
+
+    # 开始时间字段
+    start-time:
+      name: start_time
+      type: datetime
+      nullable: true
+      comment: 开始时间
+
+    # 结束时间字段
+    end-time:
+      name: end_time
+      type: datetime
+      nullable: true
+      comment: 结束时间
+
+    # 描述字段
+    description:
+      name: description
+      type: varchar
+      length: 500
+      nullable: true
+      comment: 描述信息
+
+    # 备注字段
+    remark:
+      name: remark
+      type: varchar
+      length: 200
+      nullable: true
+      comment: 备注信息
+
+    # 关联用户ID字段
+    user-id:
+      name: user_id
+      type: bigint
+      nullable: true
+      comment: 关联用户ID
+
+    # 关联部门ID字段
+    department-id:
+      name: department_id
+      type: bigint
+      nullable: true
+      comment: 关联部门ID
+
+    # 关联组织ID字段
+    organization-id:
+      name: organization_id
+      type: bigint
+      nullable: true
+      comment: 关联组织ID
+
+    # 外部系统ID字段
+    external-id:
+      name: external_id
+      type: varchar
+      length: 64
+      nullable: true
+      comment: 外部系统ID
+
+    # 扩展字段
+    extend-data:
+      name: extend_data
+      type: text
+      nullable: true
+      comment: 扩展数据（JSON格式）
+
+  # 索引配置
+  indexes:
+    # 业务键唯一索引
+    uk-business-key:
+      columns: [business_key]
+      unique: true
+      comment: 业务键唯一索引
+
+    # 状态索引
+    idx-status:
+      columns: [status]
+      unique: false
+      comment: 状态索引
+
+    # 创建时间索引
+    idx-create-time:
+      columns: [create_time]
+      unique: false
+      comment: 创建时间索引
+
+    # 用户ID索引
+    idx-user-id:
+      columns: [user_id]
+      unique: false
+      comment: 用户ID索引
+
+    # 部门ID索引
+    idx-department-id:
+      columns: [department_id]
+      unique: false
+      comment: 部门ID索引
+
+    # 组织ID索引
+    idx-organization-id:
+      columns: [organization_id]
+      unique: false
+      comment: 组织ID索引
+
+    # 业务类型索引
+    idx-business-type:
+      columns: [business_type]
+      unique: false
+      comment: 业务类型索引
+
+    # 复合索引：状态+创建时间
+    idx-status-create-time:
+      columns: [status, create_time]
+      unique: false
+      comment: 状态和创建时间复合索引
+
+    # 复合索引：用户ID+状态
+    idx-user-id-status:
+      columns: [user_id, status]
+      unique: false
+      comment: 用户ID和状态复合索引
+
+# ===================================================================
+# 数据库初始化配置
+# ===================================================================
+
+# 数据库初始化脚本
+init-scripts:
+  # 建表脚本
+  create-table: sql/create-table-{{tableName}}.sql
+  # 初始化数据脚本
+  insert-data: sql/insert-data-{{tableName}}.sql
+  # 索引创建脚本
+  create-index: sql/create-index-{{tableName}}.sql
+
+# 数据迁移配置
+migration:
+  # 是否启用Flyway
+  enabled: ${FLYWAY_ENABLED:true}
+  # 迁移脚本位置
+  locations: classpath:db/migration/{{applicationName}}
+  # 迁移表名
+  table: flyway_schema_history_{{applicationName}}
+  # 基准版本
+  baseline-on-migrate: true
+  # 基准版本号
+  baseline-version: 1.0.0
+
+# ===================================================================
+# 性能优化配置
+# ===================================================================
+
+# 查询优化
+query-optimization:
+  # 分页查询优化
+  page-optimization:
+    # 最大分页大小
+    max-page-size: 1000
+    # 是否启用count优化
+    count-optimization: true
+    # 深度分页优化阈值
+  deep-page-threshold: 1000
+
+  # 索引建议
+  index-suggestions:
+    # 是否启用索引分析
+    enabled: true
+    # 慢查询阈值（毫秒）
+    slow-query-threshold: 1000
+    # 索引使用率阈值
+    index-usage-threshold: 0.8
+
+# 缓存配置
+cache-config:
+  # 查询缓存
+  query-cache:
+    enabled: true
+    # 缓存过期时间（秒）
+    ttl: 300
+    # 最大缓存条目数
+    max-size: 1000
+    # 缓存键前缀
+    key-prefix: {{applicationName}}:query:
+
+# ===================================================================
+# 备份和恢复配置
+# ===================================================================
+
+# 备份配置
+backup:
+  # 是否启用自动备份
+  auto-backup:
+    enabled: ${DB_AUTO_BACKUP_ENABLED:false}
+    # 备份周期（小时）
+    interval: ${DB_BACKUP_INTERVAL:24}
+    # 备份保留天数
+    retention-days: ${DB_BACKUP_RETENTION_DAYS:30}
+    # 备份路径
+    backup-path: ${DB_BACKUP_PATH:/backup/database}
+    # 备份文件命名格式
+    filename-pattern: "{{applicationName}}_{timestamp}.sql"
+
+  # 手动备份
+  manual-backup:
+    # 备份文件大小限制（MB）
+    max-file-size: 100
+    # 是否压缩备份文件
+    compress: true
+    # 压缩格式
+    compression-format: gzip
+
+# 恢复配置
+restore:
+  # 恢复前是否自动备份当前数据
+  auto-backup-before-restore: true
+  # 是否启用事务恢复
+  transaction-restore: true
+  # 恢复超时时间（分钟）
+  timeout: 30
+
+# ===================================================================
+# 监控配置
+# ===================================================================
+
+# 性能监控
+monitoring:
+  # 是否启用性能监控
+  enabled: ${DB_MONITORING_ENABLED:true}
+  # 监控指标收集间隔（秒）
+  metrics-interval: 60
+  # 慢查询记录
+  slow-query:
+    enabled: true
+    # 慢查询阈值（毫秒）
+    threshold: ${DB_SLOW_QUERY_THRESHOLD:1000}
+    # 是否记录执行计划
+    explain-plan: true
+  # 连接池监控
+  connection-pool:
+    enabled: true
+    # 连接池使用率告警阈值
+    usage-threshold: 0.8
+    # 连接等待时间告警阈值（毫秒）
+    wait-time-threshold: 5000
+
+# 健康检查
+health-check:
+  # 检查间隔（秒）
+  interval: 30
+  # 连接超时时间（毫秒）
+  timeout: 5000
+  # 失败阈值（连续失败次数）
+  failure-threshold: 3
+  # 恢复阈值（连续成功次数）
+  recovery-threshold: 2
+
+# ===================================================================
+# 安全配置
+# ===================================================================
+
+# 连接安全
+security:
+  # 是否启用SSL
+  ssl-enabled: ${DB_SSL_ENABLED:false}
+  # SSL证书路径
+  ssl-cert-path: ${DB_SSL_CERT_PATH:}
+  # SSL密钥路径
+  ssl-key-path: ${DB_SSL_KEY_PATH:}
+  # SSL CA证书路径
+  ssl-ca-path: ${DB_SSL_CA_PATH:}
+
+# 访问控制
+access-control:
+  # 是否启用IP白名单
+  ip-whitelist-enabled: false
+  # IP白名单
+  ip-whitelist: []
+  # 是否启用连接数限制
+  connection-limit:
+    enabled: true
+    # 最大连接数
+    max-connections: 1000
+    # 每个用户最大连接数
+    max-connections-per-user: 100
+
+# 数据加密
+encryption:
+  # 是否启用字段加密
+  field-encryption:
+    enabled: false
+    # 加密字段列表
+    encrypted-fields: []
+    # 加密算法
+    algorithm: AES-256-GCM
+    # 密钥管理
+    key-management:
+      type: env  # env, file, kms
+      key-source: DB_ENCRYPTION_KEY
+
+# ===================================================================
+# 环境特定配置
+# ===================================================================
+
+---
+# 开发环境配置
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+# 开发环境数据库配置
+database:
+  primary:
+    database: ${databaseName}_dev
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 10
+      max-lifetime: 600000  # 10分钟
+
+# 开发环境监控配置
+monitoring:
+  enabled: true
+  slow-query:
+    threshold: 500  # 开发环境慢查询阈值较低
+
+---
+# 测试环境配置
+spring:
+  config:
+    activate:
+      on-profile: test
+
+# 测试环境数据库配置
+database:
+  primary:
+    database: ${databaseName}_test
+    hikari:
+      minimum-idle: 3
+      maximum-pool-size: 15
+      max-lifetime: 900000  # 15分钟
+
+# 测试环境监控配置
+monitoring:
+  enabled: true
+  slow-query:
+    threshold: 800
+
+---
+# 生产环境配置
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+# 生产环境数据库配置
+database:
+  primary:
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    database: ${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+      max-lifetime: 1800000  # 30分钟
+      connection-timeout: 10000
+      validation-timeout: 5000
+
+# 生产环境监控配置
+monitoring:
+  enabled: true
+  slow-query:
+    threshold: 2000  # 生产环境慢查询阈值较高
+
+# 生产环境备份配置
+backup:
+  auto-backup:
+    enabled: true
+    interval: 24  # 生产环境每天备份
+    retention-days: 90  # 生产环境保留90天
+
+# 生产环境安全配置
+security:
+  ssl-enabled: true
+  access-control:
+    connection-limit:
+      max-connections: 500
+      max-connections-per-user: 50

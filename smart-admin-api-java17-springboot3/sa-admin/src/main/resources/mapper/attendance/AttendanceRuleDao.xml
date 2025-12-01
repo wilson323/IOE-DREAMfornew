@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.attendance.dao.AttendanceRuleDao">
+
+    <!-- 基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity">
+        <id column="rule_id" property="ruleId" jdbcType="BIGINT"/>
+        <result column="rule_name" property="ruleName" jdbcType="VARCHAR"/>
+        <result column="rule_code" property="ruleCode" jdbcType="VARCHAR"/>
+        <result column="company_id" property="companyId" jdbcType="BIGINT"/>
+        <result column="department_id" property="departmentId" jdbcType="BIGINT"/>
+        <result column="employee_id" property="employeeId" jdbcType="BIGINT"/>
+        <result column="rule_type" property="ruleType" jdbcType="VARCHAR"/>
+        <result column="employee_type" property="employeeType" jdbcType="VARCHAR"/>
+        <result column="work_schedule" property="workSchedule" jdbcType="LONGVARCHAR"/>
+        <result column="late_tolerance" property="lateTolerance" jdbcType="INTEGER"/>
+        <result column="early_tolerance" property="earlyTolerance" jdbcType="INTEGER"/>
+        <result column="overtime_rules" property="overtimeRules" jdbcType="LONGVARCHAR"/>
+        <result column="holiday_rules" property="holidayRules" jdbcType="LONGVARCHAR"/>
+        <result column="gps_validation" property="gpsValidation" jdbcType="INTEGER"/>
+        <result column="gps_locations" property="gpsLocations" jdbcType="LONGVARCHAR"/>
+        <result column="gps_range" property="gpsRange" jdbcType="INTEGER"/>
+        <result column="photo_required" property="photoRequired" jdbcType="INTEGER"/>
+        <result column="face_recognition" property="faceRecognition" jdbcType="INTEGER"/>
+        <result column="device_restrictions" property="deviceRestrictions" jdbcType="LONGVARCHAR"/>
+        <result column="auto_approval" property="autoApproval" jdbcType="INTEGER"/>
+        <result column="notification_settings" property="notificationSettings" jdbcType="LONGVARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="effective_date" property="effectiveDate" jdbcType="DATE"/>
+        <result column="expiry_date" property="expiryDate" jdbcType="DATE"/>
+        <result column="priority" property="priority" jdbcType="INTEGER"/>
+        <result column="description" property="description" jdbcType="LONGVARCHAR"/>
+        <!-- BaseEntity 字段 -->
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT"/>
+        <result column="update_user_id" property="updateUserId" jdbcType="BIGINT"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 查询员工的适用考勤规则 -->
+    <select id="selectApplicableRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.status = 'ACTIVE'
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+        AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        AND (
+            -- 个人规则
+            (r.rule_type = 'INDIVIDUAL' AND r.employee_id = #{employeeId})
+            OR
+            -- 部门规则
+            (r.rule_type = 'DEPARTMENT' AND r.department_id = #{departmentId}
+             AND (r.employee_type IS NULL OR r.employee_type = #{employeeType}))
+            OR
+            -- 全局规则
+            (r.rule_type = 'GLOBAL'
+             AND (r.employee_type IS NULL OR r.employee_type = #{employeeType}))
+        )
+        ORDER BY r.rule_type DESC, r.priority DESC
+    </select>
+
+    <!-- 查询员工的个人考勤规则 -->
+    <select id="selectIndividualRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.rule_type = 'INDIVIDUAL'
+        AND r.employee_id = #{employeeId}
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+        AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        ORDER BY r.priority DESC
+    </select>
+
+    <!-- 查询部门的考勤规则 -->
+    <select id="selectDepartmentRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.rule_type = 'DEPARTMENT'
+        AND r.department_id = #{departmentId}
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+        AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        ORDER BY r.priority DESC
+    </select>
+
+    <!-- 查询全局考勤规则 -->
+    <select id="selectGlobalRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.rule_type = 'GLOBAL'
+        AND (r.employee_type IS NULL OR r.employee_type = #{employeeType})
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+        AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        ORDER BY r.priority DESC
+    </select>
+
+    <!-- 根据规则类型查询规则 -->
+    <select id="selectByRuleType" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.rule_type = #{ruleType}
+        <if test="status != null and status != ''">
+            AND r.status = #{status}
+        </if>
+        <if test="queryDate != null">
+            AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+            AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        </if>
+        ORDER BY r.priority DESC, r.create_time DESC
+    </select>
+
+    <!-- 查询生效的考勤规则 -->
+    <select id="selectActiveRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.status = 'ACTIVE'
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+        AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        ORDER BY r.rule_type DESC, r.priority DESC
+    </select>
+
+    <!-- 根据公司ID查询规则 -->
+    <select id="selectByCompany" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.company_id = #{companyId}
+        <if test="status != null and status != ''">
+            AND r.status = #{status}
+        </if>
+        <if test="queryDate != null">
+            AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+            AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        </if>
+        ORDER BY r.priority DESC, r.create_time DESC
+    </select>
+
+    <!-- 查询即将过期的规则 -->
+    <select id="selectExpiringRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.status = 'ACTIVE'
+        AND r.expiry_date IS NOT NULL
+        AND r.expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL #{days} DAY)
+        ORDER BY r.expiry_date ASC
+    </select>
+
+    <!-- 查询已过期的规则 -->
+    <select id="selectExpiredRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.status = 'ACTIVE'
+        AND r.expiry_date IS NOT NULL
+        AND r.expiry_date &lt; #{queryDate}
+        ORDER BY r.expiry_date DESC
+    </select>
+
+    <!-- 根据优先级查询规则 -->
+    <select id="selectByPriorityRange" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.priority >= #{minPriority}
+        AND r.priority &lt;= #{maxPriority}
+        <if test="status != null and status != ''">
+            AND r.status = #{status}
+        </if>
+        ORDER BY r.priority DESC, r.create_time DESC
+    </select>
+
+    <!-- 按条件分页查询考勤规则 -->
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        <if test="companyId != null">
+            AND r.company_id = #{companyId}
+        </if>
+        <if test="departmentId != null">
+            AND r.department_id = #{departmentId}
+        </if>
+        <if test="employeeId != null">
+            AND r.employee_id = #{employeeId}
+        </if>
+        <if test="ruleType != null and ruleType != ''">
+            AND r.rule_type = #{ruleType}
+        </if>
+        <if test="status != null and status != ''">
+            AND r.status = #{status}
+        </if>
+        <if test="employeeType != null and employeeType != ''">
+            AND r.employee_type = #{employeeType}
+        </if>
+        <if test="ruleName != null and ruleName != ''">
+            AND r.rule_name LIKE CONCAT('%', #{ruleName}, '%')
+        </if>
+        ORDER BY r.priority DESC, r.create_time DESC
+    </select>
+
+    <!-- 检查规则编码是否存在 -->
+    <select id="existsByRuleCode" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.rule_code = #{ruleCode}
+        <if test="excludeId != null">
+            AND r.rule_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 查询规则的优先级统计 -->
+    <select id="selectPriorityStatistics" resultType="java.util.Map">
+        SELECT
+            r.priority as priority,
+            COUNT(*) as ruleCount,
+            COUNT(CASE WHEN r.status = 'ACTIVE' THEN 1 END) as activeCount,
+            COUNT(CASE WHEN r.status = 'INACTIVE' THEN 1 END) as inactiveCount,
+            COUNT(CASE WHEN r.status = 'DRAFT' THEN 1 END) as draftCount
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        <if test="companyId != null">
+            AND r.company_id = #{companyId}
+        </if>
+        <if test="departmentId != null">
+            AND r.department_id = #{departmentId}
+        </if>
+        GROUP BY r.priority
+        ORDER BY r.priority DESC
+    </select>
+
+    <!-- 查询规则类型统计 -->
+    <select id="selectRuleTypeStatistics" resultType="java.util.Map">
+        SELECT
+            r.rule_type as ruleType,
+            COUNT(*) as totalCount,
+            COUNT(CASE WHEN r.status = 'ACTIVE' THEN 1 END) as activeCount,
+            COUNT(CASE WHEN r.status = 'INACTIVE' THEN 1 END) as inactiveCount,
+            COUNT(CASE WHEN r.status = 'DRAFT' THEN 1 END) as draftCount
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        <if test="companyId != null">
+            AND r.company_id = #{companyId}
+        </if>
+        GROUP BY r.rule_type
+        ORDER BY totalCount DESC
+    </select>
+
+    <!-- 查询规则状态统计 -->
+    <select id="selectRuleStatusStatistics" resultType="java.util.Map">
+        SELECT
+            r.status as status,
+            COUNT(*) as totalCount,
+            COUNT(CASE WHEN r.rule_type = 'GLOBAL' THEN 1 END) as globalCount,
+            COUNT(CASE WHEN r.rule_type = 'DEPARTMENT' THEN 1 END) as departmentCount,
+            COUNT(CASE WHEN r.rule_type = 'INDIVIDUAL' THEN 1 END) as individualCount
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        <if test="companyId != null">
+            AND r.company_id = #{companyId}
+        </if>
+        GROUP BY r.status
+        ORDER BY totalCount DESC
+    </select>
+
+    <!-- 批量更新规则状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE t_attendance_rule
+        SET status = #{status},
+            update_time = NOW()
+        WHERE deleted_flag = 0
+        AND rule_id IN
+        <foreach collection="ruleIds" item="ruleId" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+    </update>
+
+    <!-- 批量更新规则优先级 -->
+    <update id="batchUpdatePriority">
+        <foreach collection="rulePriorityMap" index="ruleId" item="priority" separator=";">
+            UPDATE t_attendance_rule
+            SET priority = #{priority},
+                update_time = NOW()
+            WHERE deleted_flag = 0
+            AND rule_id = #{ruleId}
+        </foreach>
+    </update>
+
+    <!-- 查询员工今日适用规则 -->
+    <select id="selectTodayRule" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.status = 'ACTIVE'
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= CURDATE())
+        AND (r.expiry_date IS NULL OR r.expiry_date >= CURDATE())
+        AND (
+            -- 优先匹配个人规则
+            (r.rule_type = 'INDIVIDUAL' AND r.employee_id = #{employeeId})
+            OR
+            -- 其次匹配部门规则
+            (r.rule_type = 'DEPARTMENT' AND r.department_id = #{departmentId}
+             AND (r.employee_type IS NULL OR r.employee_type = #{employeeType})
+             AND NOT EXISTS (
+                 SELECT 1 FROM t_attendance_rule r2
+                 WHERE r2.deleted_flag = 0
+                 AND r2.status = 'ACTIVE'
+                 AND r2.rule_type = 'INDIVIDUAL'
+                 AND r2.employee_id = #{employeeId}
+                 AND (r2.effective_date IS NULL OR r2.effective_date &lt;= CURDATE())
+                 AND (r2.expiry_date IS NULL OR r2.expiry_date >= CURDATE())
+             ))
+            OR
+            -- 最后匹配全局规则
+            (r.rule_type = 'GLOBAL'
+             AND (r.employee_type IS NULL OR r.employee_type = #{employeeType})
+             AND NOT EXISTS (
+                 SELECT 1 FROM t_attendance_rule r2
+                 WHERE r2.deleted_flag = 0
+                 AND r2.status = 'ACTIVE'
+                 AND (r2.effective_date IS NULL OR r2.effective_date &lt;= CURDATE())
+                 AND (r2.expiry_date IS NULL OR r2.expiry_date >= CURDATE())
+                 AND ((r2.rule_type = 'INDIVIDUAL' AND r2.employee_id = #{employeeId})
+                      OR (r2.rule_type = 'DEPARTMENT' AND r2.department_id = #{departmentId}
+                          AND (r2.employee_type IS NULL OR r2.employee_type = #{employeeType})))
+             ))
+        )
+        ORDER BY r.rule_type DESC, r.priority DESC
+        LIMIT 1
+    </select>
+
+    <!-- 查询规则冲突检查 -->
+    <select id="selectRuleConflicts" resultType="java.util.Map">
+        SELECT
+            r1.rule_id as ruleId1,
+            r1.rule_name as ruleName1,
+            r1.priority as priority1,
+            r2.rule_id as ruleId2,
+            r2.rule_name as ruleName2,
+            r2.priority as priority2,
+            CASE
+                WHEN r1.priority > r2.priority THEN 'r1_higher'
+                WHEN r1.priority < r2.priority THEN 'r2_higher'
+                ELSE 'equal_priority'
+            END as conflictType
+        FROM t_attendance_rule r1
+        INNER JOIN t_attendance_rule r2 ON (
+            r1.rule_id < r2.rule_id
+            AND r1.deleted_flag = 0
+            AND r2.deleted_flag = 0
+            AND r1.status = 'ACTIVE'
+            AND r2.status = 'ACTIVE'
+            AND (r1.effective_date IS NULL OR r1.effective_date &lt;= #{queryDate})
+            AND (r1.expiry_date IS NULL OR r1.expiry_date >= #{queryDate})
+            AND (r2.effective_date IS NULL OR r2.effective_date &lt;= #{queryDate})
+            AND (r2.expiry_date IS NULL OR r2.expiry_date >= #{queryDate})
+        )
+        WHERE r1.company_id = #{companyId}
+        AND r2.company_id = #{companyId}
+        <if test="departmentId != null">
+            AND (r1.department_id = #{departmentId} OR r1.department_id IS NULL)
+            AND (r2.department_id = #{departmentId} OR r2.department_id IS NULL)
+        </if>
+        <if test="employeeId != null">
+            AND (r1.employee_id = #{employeeId} OR r1.employee_id IS NULL)
+            AND (r2.employee_id = #{employeeId} OR r2.employee_id IS NULL)
+        </if>
+        <if test="employeeType != null">
+            AND (r1.employee_type = #{employeeType} OR r1.employee_type IS NULL)
+            AND (r2.employee_type = #{employeeType} OR r2.employee_type IS NULL)
+        </if>
+        ORDER BY r1.priority DESC, r2.priority DESC
+    </select>
+
+    <!-- 查询规则使用情况统计 -->
+    <select id="selectRuleUsageStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(DISTINCT ar.employee_id) as usedByEmployees,
+            COUNT(ar.record_id) as totalUsage,
+            COUNT(CASE WHEN ar.attendance_status = 'NORMAL' THEN 1 END) as normalUsage,
+            COUNT(CASE WHEN ar.exception_type IS NOT NULL THEN 1 END) as abnormalUsage,
+            IFNULL(SUM(ar.work_hours), 0) as totalWorkHours
+        FROM t_attendance_record ar
+        INNER JOIN t_hr_employee e ON ar.employee_id = e.employee_id
+        WHERE ar.deleted_flag = 0
+        AND e.deleted_flag = 0
+        AND ar.attendance_date >= #{startDate}
+        AND ar.attendance_date &lt;= #{endDate}
+        AND EXISTS (
+            SELECT 1 FROM t_attendance_rule r
+            WHERE r.rule_id = #{ruleId}
+            AND r.deleted_flag = 0
+            AND r.status = 'ACTIVE'
+            AND (
+                (r.rule_type = 'GLOBAL')
+                OR (r.rule_type = 'DEPARTMENT' AND r.department_id = e.department_id)
+                OR (r.rule_type = 'INDIVIDUAL' AND r.employee_id = e.employee_id)
+            )
+            AND (r.effective_date IS NULL OR r.effective_date &lt;= ar.attendance_date)
+            AND (r.expiry_date IS NULL OR r.expiry_date >= ar.attendance_date)
+        )
+    </select>
+
+    <!-- 查询需要GPS验证的规则 -->
+    <select id="selectGpsValidationRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.status = 'ACTIVE'
+        AND r.gps_validation = 1
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+        AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        ORDER BY r.priority DESC
+    </select>
+
+    <!-- 查询需要人脸识别的规则 -->
+    <select id="selectFaceRecognitionRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.status = 'ACTIVE'
+        AND r.face_recognition = 1
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+        AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        ORDER BY r.priority DESC
+    </select>
+
+    <!-- 查询自动审批规则的规则 -->
+    <select id="selectAutoApprovalRules" resultMap="BaseResultMap">
+        SELECT r.*
+        FROM t_attendance_rule r
+        WHERE r.deleted_flag = 0
+        AND r.status = 'ACTIVE'
+        AND r.auto_approval = 1
+        AND (r.effective_date IS NULL OR r.effective_date &lt;= #{queryDate})
+        AND (r.expiry_date IS NULL OR r.expiry_date >= #{queryDate})
+        ORDER BY r.priority DESC
+    </select>
+
+    <!-- 获取规则配置详情 -->
+    <select id="selectRuleDetails" resultType="java.util.Map">
+        SELECT
+            r.*,
+            CASE r.rule_type
+                WHEN 'GLOBAL' THEN '全局规则'
+                WHEN 'DEPARTMENT' THEN (SELECT d.department_name FROM t_sys_department d WHERE d.department_id = r.department_id)
+                WHEN 'INDIVIDUAL' THEN (SELECT e.employee_name FROM t_hr_employee e WHERE e.employee_id = r.employee_id)
+            END as scopeName,
+            CASE r.status
+                WHEN 'ACTIVE' THEN '激活'
+                WHEN 'INACTIVE' THEN '停用'
+                WHEN 'DRAFT' THEN '草稿'
+            END as statusName,
+            COUNT(DISTINCT ar.employee_id) as coveredEmployeeCount
+        FROM t_attendance_rule r
+        LEFT JOIN t_attendance_record ar ON (
+            ar.deleted_flag = 0
+            AND EXISTS (
+                SELECT 1 FROM t_hr_employee e
+                WHERE e.employee_id = ar.employee_id
+                AND e.deleted_flag = 0
+                AND (
+                    (r.rule_type = 'GLOBAL')
+                    OR (r.rule_type = 'DEPARTMENT' AND r.department_id = e.department_id)
+                    OR (r.rule_type = 'INDIVIDUAL' AND r.employee_id = e.employee_id)
+                )
+            )
+            AND (r.effective_date IS NULL OR r.effective_date &lt;= ar.attendance_date)
+            AND (r.expiry_date IS NULL OR r.expiry_date >= ar.attendance_date)
+        )
+        WHERE r.deleted_flag = 0
+        AND r.rule_id = #{ruleId}
+        GROUP BY r.rule_id
+    </select>
+
+    <!-- 查询规则覆盖的员工数量 -->
+    <select id="selectRuleCoveredEmployeeCount" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT e.employee_id)
+        FROM t_hr_employee e
+        WHERE e.deleted_flag = 0
+        AND (
+            <choose>
+                <when test="ruleId != null">
+                    EXISTS (
+                        SELECT 1 FROM t_attendance_rule r
+                        WHERE r.rule_id = #{ruleId}
+                        AND r.deleted_flag = 0
+                        AND r.status = 'ACTIVE'
+                        AND (
+                            (r.rule_type = 'GLOBAL')
+                            OR (r.rule_type = 'DEPARTMENT' AND r.department_id = e.department_id)
+                            OR (r.rule_type = 'INDIVIDUAL' AND r.employee_id = e.employee_id)
+                        )
+                        AND (r.effective_date IS NULL OR r.effective_date &lt;= CURDATE())
+                        AND (r.expiry_date IS NULL OR r.expiry_date >= CURDATE())
+                    )
+                </when>
+                <otherwise>
+                    1 = 0
+                </otherwise>
+            </choose>
+        )
+    </select>
+
+    <!-- 更新规则的最后使用时间 -->
+    <update id="updateLastUsedTime">
+        UPDATE t_attendance_rule
+        SET update_time = NOW()
+        WHERE deleted_flag = 0
+        AND rule_id = #{ruleId}
+    </update>
+
+    <!-- 清理过期的规则 -->
+    <update id="cleanExpiredRules">
+        UPDATE t_attendance_rule
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE deleted_flag = 0
+        AND expiry_date IS NOT NULL
+        AND expiry_date &lt; #{beforeDate}
+    </update>
+
+</mapper>

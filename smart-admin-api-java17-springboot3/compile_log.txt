@@ -1,0 +1,537 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-parent ---
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-base ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 42 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Compiling 182 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\LocalRedissonConfig.java:[47,16] [deprecation] BaseConfig中的setRetryInterval(int)已过时
+  其中, T是类型变量:
+    T扩展已在类 BaseConfig中声明的BaseConfig<T>
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[175,49] [deprecation] BaseMapper中的selectBatchIds(Collection<? extends Serializable>)已过时
+  其中, T是类型变量:
+    T扩展已在接口 BaseMapper中声明的Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[324,71] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[323,52] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[204,75] [deprecation] BaseMapper中的selectBatchIds(Collection<? extends Serializable>)已过时
+  其中, T是类型变量:
+    T扩展已在接口 BaseMapper中声明的Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\TransactionConfig.java:[60,15] [deprecation] TransactionInterceptor中的TransactionInterceptor(PlatformTransactionManager,TransactionAttributeSource)已过时
+[INFO] 6 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[58,77] 错误: 不兼容的类型: String无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[59,18] 错误: 找不到符号
+  符号:   方法 setAreaTypeName(String)
+  位置: 类型为AreaTreeVO的变量 treeVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[60,18] 错误: 找不到符号
+  符号:   方法 setAreaTypeEnglishName(String)
+  位置: 类型为AreaTreeVO的变量 treeVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[80,20] 错误: 找不到符号
+  符号:   方法 setParentName(String)
+  位置: 类型为AreaTreeVO的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[175,16] 错误: 找不到符号
+  符号:   方法 setChildrenCount(int)
+  位置: 类型为AreaTreeVO的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[177,12] 错误: 找不到符号
+  符号:   方法 setHasChildren(boolean)
+  位置: 类型为AreaTreeVO的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[192,54] 错误: 找不到符号
+  符号:   方法 getSelfAndChildrenIds()
+  位置: 类型为AreaTreeVO的变量 child
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[206,55] 错误: 不兼容的类型: String无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[216,30] 错误: 找不到符号
+  符号:   方法 isEnabled()
+  位置: 类型为AreaTreeVO的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\domain\vo\PersonAreaRelationVO.java:[475,40] 错误: 找不到符号
+  符号:   类 ArrayList
+  位置: 类 PersonAreaRelationVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[49,51] 错误: 找不到符号
+  符号:   方法 getCurrent()
+  位置: 类型为AreaForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[49,70] 错误: 找不到符号
+  符号:   方法 getPageSize()
+  位置: 类型为AreaForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[64,22] 错误: 找不到符号
+  符号:   方法 setRows(List<AreaVO>)
+  位置: 类型为PageResult<AreaVO>的变量 pageResult
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[94,14] 错误: 找不到符号
+  符号:   方法 setFullPath(String)
+  位置: 类型为AreaVO的变量 vo
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[282,27] 错误: 不兼容的类型: AreaEntity无法转换为Wrapper<AreaEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[312,57] 错误: 不兼容的类型: long无法转换为boolean
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[344,37] 错误: 找不到符号
+  符号:   方法 deleteBatchByIds(List<Long>,long)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[397,37] 错误: 找不到符号
+  符号:   方法 countByCondition(<空值>,<空值>,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[403,36] 错误: 找不到符号
+  符号:   方法 countByCondition(Integer,<空值>,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[409,39] 错误: 找不到符号
+  符号:   方法 countByCondition(<空值>,int,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[410,40] 错误: 找不到符号
+  符号:   方法 countByCondition(<空值>,int,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[411,43] 错误: 找不到符号
+  符号:   方法 countByCondition(<空值>,int,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[448,49] 错误: 找不到符号
+  符号:   方法 selectAll()
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[469,49] 错误: 找不到符号
+  符号:   方法 selectByStatus(int)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\util\RedisUtil.java:[83,47] 错误: 找不到符号
+  符号:   方法 of(List<Object>)
+  位置: 接口 Collection
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[116,20] 错误: 找不到符号
+  符号:   方法 setEnableStatus(int)
+  位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[181,20] 错误: 找不到符号
+  符号:   方法 updateLastUpdateTime()
+  位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[219,36] 错误: 不兼容的类型: boolean无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[220,20] 错误: 找不到符号
+  符号:   方法 updateLastUpdateTime()
+  位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[330,67] 错误: 找不到符号
+  符号:   方法 convertPageParam(Integer,Integer)
+  位置: 类 SmartPageUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[396,20] 错误: 找不到符号
+  符号:   方法 updateLastUpdateTime()
+  位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[470,20] 错误: 找不到符号
+  符号:   方法 updateLastUpdateTime()
+  位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[509,29] 错误: 找不到符号
+  符号:   方法 updateLastUpdateTime()
+  位置: 类型为BiometricTemplateEntity的变量 other
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[517,20] 错误: 找不到符号
+  符号:   方法 updateLastUpdateTime()
+  位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[592,24] 错误: 找不到符号
+  符号:   方法 updateLastUpdateTime()
+  位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[41,25] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[123,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[197,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[225,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[275,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[171,37] 错误: 找不到符号
+  符号:   方法 getRemark()
+  位置: 类型为PersonBiometricEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[211,36] 错误: 不兼容的类型: boolean无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[321,20] 错误: 对于reduce(BigDecimal,BigDecimal::add), 找不到合适的方法
+    方法 Stream.reduce(Double,BinaryOperator<Double>)不适用
+      (参数不匹配; BigDecimal无法转换为Double)
+    方法 Stream.<U>reduce(U,BiFunction<U,? super Double,U>,BinaryOperator<U>)不适用
+      (无法推断类型变量 U
+        (实际参数列表和形式参数列表长度不同))
+  其中, U,T是类型变量:
+    U扩展已在方法 <U>reduce(U,BiFunction<U,? super T,U>,BinaryOperator<U>)中声明的Object
+    T扩展已在接口 Stream中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[362,65] 错误: 找不到符号
+  符号:   方法 convertPageParam(Integer,Integer)
+  位置: 类 SmartPageUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[181,30] 错误: 找不到符号
+  符号:   方法 getBean(String,Class<PersonBiometricEntity>)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[212,21] 错误: 找不到符号
+  符号:   方法 setBean(String,PersonBiometricEntity,long)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[268,32] 错误: 找不到符号
+  符号:   方法 getBean(String,Class<BiometricTemplateEntity>)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[300,21] 错误: 找不到符号
+  符号:   方法 setBean(String,BiometricTemplateEntity,long)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[397,21] 错误: 对于set(String,List<BiometricTemplateEntity>,long), 找不到合适的方法
+    方法 RedisUtil.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 RedisUtil.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[448,31] 错误: 找不到符号
+  符号:   方法 getBean(String,Class<DeviceBiometricMappingEntity>)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[479,21] 错误: 找不到符号
+  符号:   方法 setBean(String,DeviceBiometricMappingEntity,long)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[556,21] 错误: 对于set(String,List<String>,long), 找不到合适的方法
+    方法 RedisUtil.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 RedisUtil.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[598,21] 错误: 找不到符号
+  符号:   方法 deleteByPattern(String)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[729,36] 错误: 找不到符号
+  符号:   方法 getBean(String,Class<Map>)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[766,25] 错误: 找不到符号
+  符号:   方法 setBean(String,Map<String,Object>,long)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[817,19] 错误: 找不到符号
+  符号:   类 ArrayList
+  位置: 类 BiometricCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[832,16] 错误: 找不到符号
+  符号:   变量 RedisUtil
+  位置: 类 BiometricCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[833,25] 错误: 找不到符号
+  符号:   方法 deleteByPattern(String)
+  位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[313,49] 错误: 找不到符号
+  符号:   方法 selectAll()
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[324,49] 错误: 找不到符号
+  符号:   方法 selectAll()
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[346,37] 错误: 找不到符号
+  符号:   方法 countByCondition(<空值>,<空值>,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[352,36] 错误: 找不到符号
+  符号:   方法 countByCondition(Integer,<空值>,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[358,39] 错误: 找不到符号
+  符号:   方法 countByCondition(<空值>,int,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[359,40] 错误: 找不到符号
+  符号:   方法 countByCondition(<空值>,int,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[360,43] 错误: 找不到符号
+  符号:   方法 countByCondition(<空值>,int,<空值>)
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[422,12] 错误: 找不到符号
+  符号:   类 Set
+  位置: 类 AreaCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[473,12] 错误: 找不到符号
+  符号:   类 Set
+  位置: 类 AreaCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[516,47] 错误: 找不到符号
+  符号:   方法 selectAll()
+  位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\DeviceConnectionTest.java:[110,27] 错误: 无法从静态上下文中引用非静态 方法 calculateQualityRating(Long,boolean)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[83,40] 错误: 找不到符号
+  符号:   方法 getAreaById(Long)
+  位置: 类型为AreaService的变量 areaService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[232,12] 错误: 找不到符号
+  符号:   类 Set
+  位置: 类 PersonAreaServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[235,12] 错误: 找不到符号
+  符号:   类 Set
+  位置: 类 PersonAreaServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[292,83] 错误: 不兼容的类型: PersonAreaRelationForm无法转换为PageParam
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[304,18] 错误: 找不到符号
+  符号:   方法 setRows(List<PersonAreaRelationVO>)
+  位置: 类型为PageResult<PersonAreaRelationVO>的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[322,66] 错误: 找不到符号
+  符号:   方法 getPersonAreaRelations(Long)
+  位置: 类型为PersonAreaCacheManager的变量 cacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[334,28] 错误: 找不到符号
+  符号:   方法 putPersonAreaRelations(Long,List<PersonAreaRelationEntity>)
+  位置: 类型为PersonAreaCacheManager的变量 cacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[357,67] 错误: 找不到符号
+  符号:   方法 getPersonAreaRelations(Long)
+  位置: 类型为PersonAreaCacheManager的变量 cacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[361,44] 错误: 找不到符号
+  符号:   方法 getActive()
+  位置: 类型为PersonAreaRelationEntity的变量 relation
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[386,46] 错误: 找不到符号
+  符号:   方法 hasAreaPermission(Long,Long)
+  位置: 类型为PersonAreaCacheManager的变量 cacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[411,49] 错误: 找不到符号
+  符号:   方法 getPersonType()
+  位置: 类型为BatchPersonAreaRelationForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[413,52] 错误: 找不到符号
+  符号:   方法 getEffectiveTime()
+  位置: 类型为BatchPersonAreaRelationForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[414,49] 错误: 找不到符号
+  符号:   方法 getExpireTime()
+  位置: 类型为BatchPersonAreaRelationForm的变量 form
+[INFO] 82 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.156 s]
+[INFO] sa-base ............................................ FAILURE [ 10.188 s]
+[INFO] sa-support ......................................... SKIPPED
+[INFO] sa-admin ........................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.701 s
+[INFO] Finished at: 2025-11-25T05:53:22+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-base: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[58,77] 错误: 不兼容的类型: String无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[59,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setAreaTypeName(String)
+[ERROR]   位置: 类型为AreaTreeVO的变量 treeVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[60,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setAreaTypeEnglishName(String)
+[ERROR]   位置: 类型为AreaTreeVO的变量 treeVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[80,20] 错误: 找不到符号
+[ERROR]   符号:   方法 setParentName(String)
+[ERROR]   位置: 类型为AreaTreeVO的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[175,16] 错误: 找不到符号
+[ERROR]   符号:   方法 setChildrenCount(int)
+[ERROR]   位置: 类型为AreaTreeVO的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[177,12] 错误: 找不到符号
+[ERROR]   符号:   方法 setHasChildren(boolean)
+[ERROR]   位置: 类型为AreaTreeVO的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[192,54] 错误: 找不到符号
+[ERROR]   符号:   方法 getSelfAndChildrenIds()
+[ERROR]   位置: 类型为AreaTreeVO的变量 child
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[206,55] 错误: 不兼容的类型: String无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaManager.java:[216,30] 错误: 找不到符号
+[ERROR]   符号:   方法 isEnabled()
+[ERROR]   位置: 类型为AreaTreeVO的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\domain\vo\PersonAreaRelationVO.java:[475,40] 错误: 找不到符号
+[ERROR]   符号:   类 ArrayList
+[ERROR]   位置: 类 PersonAreaRelationVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[49,51] 错误: 找不到符号
+[ERROR]   符号:   方法 getCurrent()
+[ERROR]   位置: 类型为AreaForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[49,70] 错误: 找不到符号
+[ERROR]   符号:   方法 getPageSize()
+[ERROR]   位置: 类型为AreaForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[64,22] 错误: 找不到符号
+[ERROR]   符号:   方法 setRows(List<AreaVO>)
+[ERROR]   位置: 类型为PageResult<AreaVO>的变量 pageResult
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[94,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setFullPath(String)
+[ERROR]   位置: 类型为AreaVO的变量 vo
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[282,27] 错误: 不兼容的类型: AreaEntity无法转换为Wrapper<AreaEntity>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[312,57] 错误: 不兼容的类型: long无法转换为boolean
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[344,37] 错误: 找不到符号
+[ERROR]   符号:   方法 deleteBatchByIds(List<Long>,long)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[397,37] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(<空值>,<空值>,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[403,36] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(Integer,<空值>,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[409,39] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(<空值>,int,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[410,40] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(<空值>,int,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[411,43] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(<空值>,int,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[448,49] 错误: 找不到符号
+[ERROR]   符号:   方法 selectAll()
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\AreaServiceImpl.java:[469,49] 错误: 找不到符号
+[ERROR]   符号:   方法 selectByStatus(int)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\util\RedisUtil.java:[83,47] 错误: 找不到符号
+[ERROR]   符号:   方法 of(List<Object>)
+[ERROR]   位置: 接口 Collection
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[116,20] 错误: 找不到符号
+[ERROR]   符号:   方法 setEnableStatus(int)
+[ERROR]   位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[181,20] 错误: 找不到符号
+[ERROR]   符号:   方法 updateLastUpdateTime()
+[ERROR]   位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[219,36] 错误: 不兼容的类型: boolean无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[220,20] 错误: 找不到符号
+[ERROR]   符号:   方法 updateLastUpdateTime()
+[ERROR]   位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[330,67] 错误: 找不到符号
+[ERROR]   符号:   方法 convertPageParam(Integer,Integer)
+[ERROR]   位置: 类 SmartPageUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[396,20] 错误: 找不到符号
+[ERROR]   符号:   方法 updateLastUpdateTime()
+[ERROR]   位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[470,20] 错误: 找不到符号
+[ERROR]   符号:   方法 updateLastUpdateTime()
+[ERROR]   位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[509,29] 错误: 找不到符号
+[ERROR]   符号:   方法 updateLastUpdateTime()
+[ERROR]   位置: 类型为BiometricTemplateEntity的变量 other
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[517,20] 错误: 找不到符号
+[ERROR]   符号:   方法 updateLastUpdateTime()
+[ERROR]   位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\BiometricTemplateService.java:[592,24] 错误: 找不到符号
+[ERROR]   符号:   方法 updateLastUpdateTime()
+[ERROR]   位置: 类型为BiometricTemplateEntity的变量 template
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[41,25] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[123,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[197,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[225,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\dao\BiometricTemplateDao.java:[275,24] 错误: 不兼容的类型: boolean 不是函数接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[171,37] 错误: 找不到符号
+[ERROR]   符号:   方法 getRemark()
+[ERROR]   位置: 类型为PersonBiometricEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[211,36] 错误: 不兼容的类型: boolean无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[321,20] 错误: 对于reduce(BigDecimal,BigDecimal::add), 找不到合适的方法
+[ERROR]     方法 Stream.reduce(Double,BinaryOperator<Double>)不适用
+[ERROR]       (参数不匹配; BigDecimal无法转换为Double)
+[ERROR]     方法 Stream.<U>reduce(U,BiFunction<U,? super Double,U>,BinaryOperator<U>)不适用
+[ERROR]       (无法推断类型变量 U
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]   其中, U,T是类型变量:
+[ERROR]     U扩展已在方法 <U>reduce(U,BiFunction<U,? super T,U>,BinaryOperator<U>)中声明的Object
+[ERROR]     T扩展已在接口 Stream中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\service\PersonBiometricService.java:[362,65] 错误: 找不到符号
+[ERROR]   符号:   方法 convertPageParam(Integer,Integer)
+[ERROR]   位置: 类 SmartPageUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[181,30] 错误: 找不到符号
+[ERROR]   符号:   方法 getBean(String,Class<PersonBiometricEntity>)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[212,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setBean(String,PersonBiometricEntity,long)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[268,32] 错误: 找不到符号
+[ERROR]   符号:   方法 getBean(String,Class<BiometricTemplateEntity>)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[300,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setBean(String,BiometricTemplateEntity,long)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[397,21] 错误: 对于set(String,List<BiometricTemplateEntity>,long), 找不到合适的方法
+[ERROR]     方法 RedisUtil.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 RedisUtil.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[448,31] 错误: 找不到符号
+[ERROR]   符号:   方法 getBean(String,Class<DeviceBiometricMappingEntity>)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[479,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setBean(String,DeviceBiometricMappingEntity,long)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[556,21] 错误: 对于set(String,List<String>,long), 找不到合适的方法
+[ERROR]     方法 RedisUtil.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 RedisUtil.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[598,21] 错误: 找不到符号
+[ERROR]   符号:   方法 deleteByPattern(String)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[729,36] 错误: 找不到符号
+[ERROR]   符号:   方法 getBean(String,Class<Map>)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[766,25] 错误: 找不到符号
+[ERROR]   符号:   方法 setBean(String,Map<String,Object>,long)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[817,19] 错误: 找不到符号
+[ERROR]   符号:   类 ArrayList
+[ERROR]   位置: 类 BiometricCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[832,16] 错误: 找不到符号
+[ERROR]   符号:   变量 RedisUtil
+[ERROR]   位置: 类 BiometricCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\biometric\manager\BiometricCacheManager.java:[833,25] 错误: 找不到符号
+[ERROR]   符号:   方法 deleteByPattern(String)
+[ERROR]   位置: 类 RedisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[313,49] 错误: 找不到符号
+[ERROR]   符号:   方法 selectAll()
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[324,49] 错误: 找不到符号
+[ERROR]   符号:   方法 selectAll()
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[346,37] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(<空值>,<空值>,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[352,36] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(Integer,<空值>,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[358,39] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(<空值>,int,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[359,40] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(<空值>,int,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[360,43] 错误: 找不到符号
+[ERROR]   符号:   方法 countByCondition(<空值>,int,<空值>)
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[422,12] 错误: 找不到符号
+[ERROR]   符号:   类 Set
+[ERROR]   位置: 类 AreaCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[473,12] 错误: 找不到符号
+[ERROR]   符号:   类 Set
+[ERROR]   位置: 类 AreaCacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\manager\AreaCacheManager.java:[516,47] 错误: 找不到符号
+[ERROR]   符号:   方法 selectAll()
+[ERROR]   位置: 类型为AreaDao的变量 areaDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\DeviceConnectionTest.java:[110,27] 错误: 无法从静态上下文中引用非静态 方法 calculateQualityRating(Long,boolean)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[83,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getAreaById(Long)
+[ERROR]   位置: 类型为AreaService的变量 areaService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[232,12] 错误: 找不到符号
+[ERROR]   符号:   类 Set
+[ERROR]   位置: 类 PersonAreaServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[235,12] 错误: 找不到符号
+[ERROR]   符号:   类 Set
+[ERROR]   位置: 类 PersonAreaServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[292,83] 错误: 不兼容的类型: PersonAreaRelationForm无法转换为PageParam
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[304,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setRows(List<PersonAreaRelationVO>)
+[ERROR]   位置: 类型为PageResult<PersonAreaRelationVO>的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[322,66] 错误: 找不到符号
+[ERROR]   符号:   方法 getPersonAreaRelations(Long)
+[ERROR]   位置: 类型为PersonAreaCacheManager的变量 cacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[334,28] 错误: 找不到符号
+[ERROR]   符号:   方法 putPersonAreaRelations(Long,List<PersonAreaRelationEntity>)
+[ERROR]   位置: 类型为PersonAreaCacheManager的变量 cacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[357,67] 错误: 找不到符号
+[ERROR]   符号:   方法 getPersonAreaRelations(Long)
+[ERROR]   位置: 类型为PersonAreaCacheManager的变量 cacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[361,44] 错误: 找不到符号
+[ERROR]   符号:   方法 getActive()
+[ERROR]   位置: 类型为PersonAreaRelationEntity的变量 relation
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[386,46] 错误: 找不到符号
+[ERROR]   符号:   方法 hasAreaPermission(Long,Long)
+[ERROR]   位置: 类型为PersonAreaCacheManager的变量 cacheManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[411,49] 错误: 找不到符号
+[ERROR]   符号:   方法 getPersonType()
+[ERROR]   位置: 类型为BatchPersonAreaRelationForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[413,52] 错误: 找不到符号
+[ERROR]   符号:   方法 getEffectiveTime()
+[ERROR]   位置: 类型为BatchPersonAreaRelationForm的变量 form
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\module\area\service\impl\PersonAreaServiceImpl.java:[414,49] 错误: 找不到符号
+[ERROR]   符号:   方法 getExpireTime()
+[ERROR]   位置: 类型为BatchPersonAreaRelationForm的变量 form
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-base

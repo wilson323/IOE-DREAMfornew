@@ -1,0 +1,750 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [3/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-support ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 13 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-admin ---
+[INFO] Compiling 534 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[212,67] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[272,66] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\monitor\service\impl\AccessMonitorServiceImpl.java:[125,67] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\monitor\websocket\WebSocketSessionManager.java:[203,63] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[297,80] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[304,78] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[346,47] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AdvancedReportManager.java:[262,98] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[290,80] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[305,76] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[347,47] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\manager\AccessAreaManager.java:[437,42] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\SmartMode.java:[243,97] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceScheduleServiceImpl.java:[481,127] [unchecked] 未经检查的转换
+  需要: Page<AttendanceScheduleEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceScheduleServiceImpl.java:[494,127] [unchecked] 未经检查的转换
+  需要: Page<AttendanceScheduleEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\service\impl\AccessRecordServiceImpl.java:[72,74] [unchecked] 未经检查的转换
+  需要: Page<AccessRecordEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[INFO] 16 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\workflow\domain\entity\WorkflowDefinitionEntity.java:[15,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\workflow\domain\entity\WorkflowInstanceEntity.java:[15,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[27,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceScheduleEntity.java:[29,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\entity\DocumentEntity.java:[15,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\dto\MakeupPunchRequest.java:[24,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceStatisticsEntity.java:[29,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\report\impl\AdvancedReportServiceImpl.java:[31,50] 错误: 此处需要接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\entity\DocumentVersionEntity.java:[15,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\entity\DocumentPermissionEntity.java:[17,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\payment\WechatPaymentService.java:[296,57] 错误: 找不到符号
+  符号:   类 Request
+  位置: 类 WechatPaymentService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\payment\WechatPaymentService.java:[359,39] 错误: 找不到符号
+  符号:   类 Request
+  位置: 类 WechatPaymentService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\OperationEvent.java:[23,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\SecurityNotificationServiceImpl.java:[34,52] 错误: 找不到符号
+  符号:   类 EmailPriority
+  位置: 程序包 net.lab1024.sa.admin.module.consume.domain.vo
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\SecurityNotificationServiceImpl.java:[40,52] 错误: 找不到符号
+  符号:   类 PushPriority
+  位置: 程序包 net.lab1024.sa.admin.module.consume.domain.vo
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\EmailService.java:[80,4] 错误: 找不到符号
+  符号:   类 EmailServiceStatus
+  位置: 接口 EmailService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\EmailService.java:[88,4] 错误: 找不到符号
+  符号:   类 EmailStatistics
+  位置: 接口 EmailService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[222,16] 错误: 找不到符号
+  符号:   类 AccountFreezeHistory
+  位置: 类 AccountSecurityServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\form\AccountQueryForm.java:[21,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\DetectionRule.java:[23,1] 错误: 找不到符号
+  符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[66,4] 错误: Override 不是可重复的注释类型
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[68,4] 错误: Override 不是可重复的注释类型
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[70,4] 错误: Override 不是可重复的注释类型
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[72,4] 错误: Override 不是可重复的注释类型
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\SmartAccessControlController.java:[43,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\SmartAccessControlController.java:[90,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\AccessDeviceController.java:[55,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\AccessDeviceController.java:[243,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\ConsumeController.java:[40,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\ConsumeController.java:[57,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\tool\DatabaseIndexAnalyzer.java:[28,5] 错误: 找不到符号
+  符号:   类 Resource
+  位置: 类 DatabaseIndexAnalyzer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountSecurityManager.java:[306,52] 错误: 无法将类 ConsumeCacheService中的方法 getCachedValue应用到给定类型;
+  需要: String
+  找到:    String,Class<AttemptCount>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountSecurityManager.java:[352,31] 错误: 找不到符号
+  符号:   方法 deleteCachedValue(String)
+  位置: 类型为ConsumeCacheService的变量 consumeCacheService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountSecurityManager.java:[364,47] 错误: 无法将类 ConsumeCacheService中的方法 getCachedValue应用到给定类型;
+  需要: String
+  找到:    String,Class<Integer>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[66,24] 错误: 对于set(String,AccountEntity,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[67,21] 错误: 找不到符号
+  符号:   方法 setEx(String,AccountEntity,long)
+  位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[82,54] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<AccountEntity>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[93,28] 错误: 对于set(String,AccountEntity,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[127,24] 错误: 对于set(String,BigDecimal,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[128,21] 错误: 找不到符号
+  符号:   方法 setEx(String,String,long)
+  位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[143,51] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<BigDecimal>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[154,28] 错误: 对于set(String,BigDecimal,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[187,24] 错误: 对于set(String,Map<String,Object>,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[188,21] 错误: 找不到符号
+  符号:   方法 setEx(String,Map<String,Object>,long)
+  位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[203,59] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<Map>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[214,28] 错误: 对于set(String,Map<String,Object>,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[247,24] 错误: 对于set(String,Map<String,Object>,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[248,21] 错误: 找不到符号
+  符号:   方法 setEx(String,Map<String,Object>,long)
+  位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[263,58] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<Map>
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[274,28] 错误: 对于set(String,Map<String,Object>,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[307,24] 错误: 对于set(String,Object,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[308,21] 错误: 找不到符号
+  符号:   方法 setEx(String,Object,long)
+  位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[322,41] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<T>
+  原因: 实际参数列表和形式参数列表长度不同
+  其中, T是类型变量:
+    T扩展已在方法 <T>getCachedConsumeConfig(String,Class<T>)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[333,28] 错误: 对于set(String,T,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+  其中, T是类型变量:
+    T扩展已在方法 <T>getCachedConsumeConfig(String,Class<T>)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[381,40] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+  需要: String
+  找到:    String,Class<T>
+  原因: 实际参数列表和形式参数列表长度不同
+  其中, T是类型变量:
+    T扩展已在方法 <T>getOrLoad(String,Class<T>,Supplier<T>,Duration)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[392,28] 错误: 对于set(String,T,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+  其中, T是类型变量:
+    T扩展已在方法 <T>getOrLoad(String,Class<T>,Supplier<T>,Duration)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[418,24] 错误: 对于set(String,Object,Duration), 找不到合适的方法
+    方法 CacheService.set(String,Object)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 CacheService.set(String,Object,long,TimeUnit)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[419,21] 错误: 找不到符号
+  符号:   方法 setEx(String,Object,long)
+  位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[439,49] 错误: 不兼容的类型: Set<String>无法转换为Set<Object>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[441,29] 错误: 对于delete(Set<Object>), 找不到合适的方法
+    方法 RedisTemplate.delete(String)不适用
+      (参数不匹配; Set<Object>无法转换为String)
+    方法 RedisTemplate.delete(Collection<String>)不适用
+      (参数不匹配; Set<Object>无法转换为Collection<String>)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[487,35] 错误: 找不到符号
+  符号:   方法 getInfo()
+  位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[494,56] 错误: 不兼容的类型: Set<String>无法转换为Set<Object>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[579,21] 错误: 找不到符号
+  符号:   方法 setEx(String,Object,int)
+  位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[64,33] 错误: 找不到符号
+  符号:   方法 error(String)
+  位置: 类 PageResult
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[68,71] 错误: 找不到符号
+  符号:   方法 queryVideoRecords(PageParam,Long,LocalDateTime,LocalDateTime,String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[70,80] 错误: 找不到符号
+  符号:   方法 getTotalCount()
+  位置: 类型为PageResult<VideoRecordEntity>的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[75,29] 错误: 找不到符号
+  符号:   方法 error(String)
+  位置: 类 PageResult
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[95,59] 错误: 找不到符号
+  符号:   方法 getVideoRecordDetail(Long)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[133,53] 错误: 无法将类 VideoPlaybackManager中的方法 generatePlaybackUrl应用到给定类型;
+  需要: VideoRecordingEntity,String
+  找到:    Long,LocalDateTime,LocalDateTime
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[160,50] 错误: 找不到符号
+  符号:   方法 generateRecordTimeline(Long)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[187,58] 错误: 找不到符号
+  符号:   方法 generateRecordThumbnails(Long)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[222,49] 错误: 找不到符号
+  符号:   方法 markRecordSegment(Long,String,LocalDateTime,String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[249,53] 错误: 找不到符号
+  符号:   方法 getRecordMarks(Long)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[283,55] 错误: 找不到符号
+  符号:   方法 clipVideoRecord(Long,LocalDateTime,LocalDateTime,String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[320,56] 错误: 找不到符号
+  符号:   方法 batchDownloadRecords(List<Long>,String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[348,56] 错误: 找不到符号
+  符号:   方法 getDownloadStatus(String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[385,54] 错误: 找不到符号
+  符号:   方法 backupRecords(List<Long>,String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[413,54] 错误: 找不到符号
+  符号:   方法 getBackupStatus(String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[450,54] 错误: 找不到符号
+  符号:   方法 exportRecords(List<Long>,String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[478,54] 错误: 找不到符号
+  符号:   方法 getExportStatus(String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[517,53] 错误: 找不到符号
+  符号:   方法 shareRecord(Long,String,LocalDateTime)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[544,49] 错误: 找不到符号
+  符号:   方法 cancelRecordShare(String)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[577,52] 错误: 找不到符号
+  符号:   方法 getRecordStatistics(Long,LocalDateTime,LocalDateTime)
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[599,53] 错误: 找不到符号
+  符号:   方法 getStorageSpaceInfo()
+  位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[76,47] 错误: 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[149,21] 错误: 找不到符号
+  符号:   方法 setDeviceId(Long)
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[150,21] 错误: 找不到符号
+  符号:   方法 setRecordingType(String)
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[151,21] 错误: 找不到符号
+  符号:   方法 setStartTime(LocalDateTime)
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[152,21] 错误: 找不到符号
+  符号:   方法 setStatus(String)
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[153,21] 错误: 找不到符号
+  符号:   方法 setDuration(Integer)
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[165,40] 错误: 找不到符号
+  符号:   方法 getRecordingId()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[197,45] 错误: 找不到符号
+  符号:   方法 getStatus()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[198,101] 错误: 找不到符号
+  符号:   方法 getStatus()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[203,21] 错误: 找不到符号
+  符号:   方法 setEndTime(LocalDateTime)
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[204,21] 错误: 找不到符号
+  符号:   方法 setStatus(String)
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[244,45] 错误: 找不到符号
+  符号:   方法 getStatus()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[245,105] 错误: 找不到符号
+  符号:   方法 getStatus()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[305,40] 错误: 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[305,72] 错误: 找不到符号
+  符号:   方法 getRecordingId()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[343,40] 错误: 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为VideoRecordingEntity的变量 recording
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.005 s]
+[INFO] sa-base ............................................ SUCCESS [  4.232 s]
+[INFO] sa-support ......................................... SUCCESS [  0.639 s]
+[INFO] sa-admin ........................................... FAILURE [ 19.458 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  24.986 s
+[INFO] Finished at: 2025-11-23T21:54:45+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\workflow\domain\entity\WorkflowDefinitionEntity.java:[15,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\workflow\domain\entity\WorkflowInstanceEntity.java:[15,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceRuleEntity.java:[27,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceScheduleEntity.java:[29,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\entity\DocumentEntity.java:[15,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\dto\MakeupPunchRequest.java:[24,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\entity\AttendanceStatisticsEntity.java:[29,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\report\impl\AdvancedReportServiceImpl.java:[31,50] 错误: 此处需要接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\entity\DocumentVersionEntity.java:[15,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\oa\document\domain\entity\DocumentPermissionEntity.java:[17,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\payment\WechatPaymentService.java:[296,57] 错误: 找不到符号
+[ERROR]   符号:   类 Request
+[ERROR]   位置: 类 WechatPaymentService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\payment\WechatPaymentService.java:[359,39] 错误: 找不到符号
+[ERROR]   符号:   类 Request
+[ERROR]   位置: 类 WechatPaymentService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\OperationEvent.java:[23,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\SecurityNotificationServiceImpl.java:[34,52] 错误: 找不到符号
+[ERROR]   符号:   类 EmailPriority
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.domain.vo
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\SecurityNotificationServiceImpl.java:[40,52] 错误: 找不到符号
+[ERROR]   符号:   类 PushPriority
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.domain.vo
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\EmailService.java:[80,4] 错误: 找不到符号
+[ERROR]   符号:   类 EmailServiceStatus
+[ERROR]   位置: 接口 EmailService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\EmailService.java:[88,4] 错误: 找不到符号
+[ERROR]   符号:   类 EmailStatistics
+[ERROR]   位置: 接口 EmailService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AccountSecurityServiceImpl.java:[222,16] 错误: 找不到符号
+[ERROR]   符号:   类 AccountFreezeHistory
+[ERROR]   位置: 类 AccountSecurityServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\form\AccountQueryForm.java:[21,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\domain\entity\DetectionRule.java:[23,1] 错误: 找不到符号
+[ERROR]   符号: 类 Accessors
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[66,4] 错误: Override 不是可重复的注释类型
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[68,4] 错误: Override 不是可重复的注释类型
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[70,4] 错误: Override 不是可重复的注释类型
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\login\domain\RequestEmployee.java:[72,4] 错误: Override 不是可重复的注释类型
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\SmartAccessControlController.java:[43,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\SmartAccessControlController.java:[90,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\AccessDeviceController.java:[55,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\controller\AccessDeviceController.java:[243,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\ConsumeController.java:[40,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\ConsumeController.java:[57,69] 错误: 不兼容的类型: DataScope无法转换为String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\tool\DatabaseIndexAnalyzer.java:[28,5] 错误: 找不到符号
+[ERROR]   符号:   类 Resource
+[ERROR]   位置: 类 DatabaseIndexAnalyzer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountSecurityManager.java:[306,52] 错误: 无法将类 ConsumeCacheService中的方法 getCachedValue应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<AttemptCount>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountSecurityManager.java:[352,31] 错误: 找不到符号
+[ERROR]   符号:   方法 deleteCachedValue(String)
+[ERROR]   位置: 类型为ConsumeCacheService的变量 consumeCacheService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AccountSecurityManager.java:[364,47] 错误: 无法将类 ConsumeCacheService中的方法 getCachedValue应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<Integer>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[66,24] 错误: 对于set(String,AccountEntity,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[67,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setEx(String,AccountEntity,long)
+[ERROR]   位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[82,54] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<AccountEntity>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[93,28] 错误: 对于set(String,AccountEntity,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[127,24] 错误: 对于set(String,BigDecimal,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[128,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setEx(String,String,long)
+[ERROR]   位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[143,51] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<BigDecimal>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[154,28] 错误: 对于set(String,BigDecimal,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[187,24] 错误: 对于set(String,Map<String,Object>,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[188,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setEx(String,Map<String,Object>,long)
+[ERROR]   位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[203,59] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<Map>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[214,28] 错误: 对于set(String,Map<String,Object>,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[247,24] 错误: 对于set(String,Map<String,Object>,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[248,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setEx(String,Map<String,Object>,long)
+[ERROR]   位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[263,58] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<Map>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[274,28] 错误: 对于set(String,Map<String,Object>,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[307,24] 错误: 对于set(String,Object,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[308,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setEx(String,Object,long)
+[ERROR]   位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[322,41] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<T>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR]   其中, T是类型变量:
+[ERROR]     T扩展已在方法 <T>getCachedConsumeConfig(String,Class<T>)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[333,28] 错误: 对于set(String,T,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]   其中, T是类型变量:
+[ERROR]     T扩展已在方法 <T>getCachedConsumeConfig(String,Class<T>)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[381,40] 错误: 无法将类 CacheService中的方法 get应用到给定类型;
+[ERROR]   需要: String
+[ERROR]   找到:    String,Class<T>
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR]   其中, T是类型变量:
+[ERROR]     T扩展已在方法 <T>getOrLoad(String,Class<T>,Supplier<T>,Duration)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[392,28] 错误: 对于set(String,T,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]   其中, T是类型变量:
+[ERROR]     T扩展已在方法 <T>getOrLoad(String,Class<T>,Supplier<T>,Duration)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[418,24] 错误: 对于set(String,Object,Duration), 找不到合适的方法
+[ERROR]     方法 CacheService.set(String,Object)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 CacheService.set(String,Object,long,TimeUnit)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[419,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setEx(String,Object,long)
+[ERROR]   位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[439,49] 错误: 不兼容的类型: Set<String>无法转换为Set<Object>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[441,29] 错误: 对于delete(Set<Object>), 找不到合适的方法
+[ERROR]     方法 RedisTemplate.delete(String)不适用
+[ERROR]       (参数不匹配; Set<Object>无法转换为String)
+[ERROR]     方法 RedisTemplate.delete(Collection<String>)不适用
+[ERROR]       (参数不匹配; Set<Object>无法转换为Collection<String>)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[487,35] 错误: 找不到符号
+[ERROR]   符号:   方法 getInfo()
+[ERROR]   位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[494,56] 错误: 不兼容的类型: Set<String>无法转换为Set<Object>
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[579,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setEx(String,Object,int)
+[ERROR]   位置: 类型为RedisUtil的变量 redisUtil
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[64,33] 错误: 找不到符号
+[ERROR]   符号:   方法 error(String)
+[ERROR]   位置: 类 PageResult
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[68,71] 错误: 找不到符号
+[ERROR]   符号:   方法 queryVideoRecords(PageParam,Long,LocalDateTime,LocalDateTime,String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[70,80] 错误: 找不到符号
+[ERROR]   符号:   方法 getTotalCount()
+[ERROR]   位置: 类型为PageResult<VideoRecordEntity>的变量 result
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[75,29] 错误: 找不到符号
+[ERROR]   符号:   方法 error(String)
+[ERROR]   位置: 类 PageResult
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[95,59] 错误: 找不到符号
+[ERROR]   符号:   方法 getVideoRecordDetail(Long)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[133,53] 错误: 无法将类 VideoPlaybackManager中的方法 generatePlaybackUrl应用到给定类型;
+[ERROR]   需要: VideoRecordingEntity,String
+[ERROR]   找到:    Long,LocalDateTime,LocalDateTime
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[160,50] 错误: 找不到符号
+[ERROR]   符号:   方法 generateRecordTimeline(Long)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[187,58] 错误: 找不到符号
+[ERROR]   符号:   方法 generateRecordThumbnails(Long)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[222,49] 错误: 找不到符号
+[ERROR]   符号:   方法 markRecordSegment(Long,String,LocalDateTime,String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[249,53] 错误: 找不到符号
+[ERROR]   符号:   方法 getRecordMarks(Long)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[283,55] 错误: 找不到符号
+[ERROR]   符号:   方法 clipVideoRecord(Long,LocalDateTime,LocalDateTime,String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[320,56] 错误: 找不到符号
+[ERROR]   符号:   方法 batchDownloadRecords(List<Long>,String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[348,56] 错误: 找不到符号
+[ERROR]   符号:   方法 getDownloadStatus(String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[385,54] 错误: 找不到符号
+[ERROR]   符号:   方法 backupRecords(List<Long>,String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[413,54] 错误: 找不到符号
+[ERROR]   符号:   方法 getBackupStatus(String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[450,54] 错误: 找不到符号
+[ERROR]   符号:   方法 exportRecords(List<Long>,String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[478,54] 错误: 找不到符号
+[ERROR]   符号:   方法 getExportStatus(String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[517,53] 错误: 找不到符号
+[ERROR]   符号:   方法 shareRecord(Long,String,LocalDateTime)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[544,49] 错误: 找不到符号
+[ERROR]   符号:   方法 cancelRecordShare(String)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[577,52] 错误: 找不到符号
+[ERROR]   符号:   方法 getRecordStatistics(Long,LocalDateTime,LocalDateTime)
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[599,53] 错误: 找不到符号
+[ERROR]   符号:   方法 getStorageSpaceInfo()
+[ERROR]   位置: 类型为VideoPlaybackManager的变量 videoPlaybackManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[76,47] 错误: 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[149,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setDeviceId(Long)
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[150,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setRecordingType(String)
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[151,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setStartTime(LocalDateTime)
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[152,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setStatus(String)
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[153,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setDuration(Integer)
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[165,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getRecordingId()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[197,45] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatus()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[198,101] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatus()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[203,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setEndTime(LocalDateTime)
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[204,21] 错误: 找不到符号
+[ERROR]   符号:   方法 setStatus(String)
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[244,45] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatus()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[245,105] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatus()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[305,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[305,72] 错误: 找不到符号
+[ERROR]   符号:   方法 getRecordingId()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[343,40] 错误: 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为VideoRecordingEntity的变量 recording
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

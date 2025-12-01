@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.system.dict.dao.DictTypeDao">
+
+    <!-- 字典类型结果映射 -->
+    <resultMap id="DictTypeResult" type="net.lab1024.sa.system.dict.domain.entity.DictTypeEntity">
+        <id column="dict_type_id" property="dictTypeId"/>
+        <result column="dict_type_code" property="dictTypeCode"/>
+        <result column="dict_type_name" property="dictTypeName"/>
+        <result column="description" property="description"/>
+        <result column="is_system" property="isSystem"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+    </resultMap>
+
+    <!-- 通用查询条件 -->
+    <sql id="selectDictTypeVo">
+        SELECT dict_type_id,
+               dict_type_code,
+               dict_type_name,
+               description,
+               is_system,
+               status,
+               remark,
+               create_time,
+               update_time,
+               create_user_id,
+               update_user_id,
+               deleted_flag
+        FROM t_sys_dict_type
+        WHERE deleted_flag = 0
+    </sql>
+
+    <!-- 分页查询字典类型 -->
+    <select id="selectDictTypePage" parameterType="map" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        <if test="query.dictTypeCode != null and query.dictTypeCode != ''">
+            AND dict_type_code LIKE CONCAT('%', #{query.dictTypeCode}, '%')
+        </if>
+        <if test="query.dictTypeName != null and query.dictTypeName != ''">
+            AND dict_type_name LIKE CONCAT('%', #{query.dictTypeName}, '%')
+        </if>
+        <if test="query.status != null">
+            AND status = #{query.status}
+        </if>
+        <if test="query.isSystem != null">
+            AND is_system = #{query.isSystem}
+        </if>
+        <if test="query.startTime != null and query.startTime != ''">
+            AND create_time >= #{query.startTime}
+        </if>
+        <if test="query.endTime != null and query.endTime != ''">
+            AND create_time <= #{query.endTime}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据条件查询字典类型列表 -->
+    <select id="selectDictTypeList" parameterType="map" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        <if test="query.dictTypeCode != null and query.dictTypeCode != ''">
+            AND dict_type_code = #{query.dictTypeCode}
+        </if>
+        <if test="query.dictTypeName != null and query.dictTypeName != ''">
+            AND dict_type_name LIKE CONCAT('%', #{query.dictTypeName}, '%')
+        </if>
+        <if test="query.status != null">
+            AND status = #{query.status}
+        </if>
+        <if test="query.isSystem != null">
+            AND is_system = #{query.isSystem}
+        </if>
+        ORDER BY sort_order ASC, create_time DESC
+    </select>
+
+    <!-- 获取所有字典类型 -->
+    <select id="selectAllDictTypes" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        ORDER BY sort_order ASC, create_time DESC
+    </select>
+
+    <!-- 根据ID查询字典类型详情 -->
+    <select id="selectDictTypeDetail" parameterType="long" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        AND dict_type_id = #{dictTypeId}
+    </select>
+
+    <!-- 根据字典类型编码查询字典类型 -->
+    <select id="selectByDictTypeCode" parameterType="string" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        AND dict_type_code = #{dictTypeCode}
+    </select>
+
+    <!-- 检查字典类型编码是否唯一 -->
+    <select id="checkDictTypeCodeUnique" resultType="int">
+        SELECT COUNT(1)
+        FROM t_sys_dict_type
+        WHERE deleted_flag = 0
+          AND dict_type_code = #{dictTypeCode}
+        <if test="excludeId != null">
+            AND dict_type_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 修改字典类型状态 -->
+    <update id="updateDictTypeStatus">
+        UPDATE t_sys_dict_type
+        SET status = #{status},
+            update_time = NOW(),
+            update_user_id = #{userId}
+        WHERE dict_type_id = #{dictTypeId}
+          AND deleted_flag = 0
+    </update>
+
+    <!-- 批量修改字典类型状态 -->
+    <update id="batchUpdateDictTypeStatus">
+        UPDATE t_sys_dict_type
+        SET status = #{status},
+            update_time = NOW(),
+            update_user_id = #{userId}
+        WHERE dict_type_id IN
+        <foreach collection="dictTypeIds" item="dictTypeId" open="(" separator="," close=")">
+            #{dictTypeId}
+        </foreach>
+          AND deleted_flag = 0
+    </update>
+
+    <!-- 统计字典类型数量 -->
+    <select id="countDictType" resultType="long">
+        SELECT COUNT(1)
+        FROM t_sys_dict_type
+        WHERE deleted_flag = 0
+        <if test="query.dictTypeCode != null and query.dictTypeCode != ''">
+            AND dict_type_code LIKE CONCAT('%', #{query.dictTypeCode}, '%')
+        </if>
+        <if test="query.dictTypeName != null and query.dictTypeName != ''">
+            AND dict_type_name LIKE CONCAT('%', #{query.dictTypeName}, '%')
+        </if>
+        <if test="query.status != null">
+            AND status = #{query.status}
+        </if>
+        <if test="query.isSystem != null">
+            AND is_system = #{query.isSystem}
+        </if>
+    </select>
+
+    <!-- 获取字典类型统计信息 -->
+    <select id="getDictTypeStatistics" resultType="map">
+        SELECT COUNT(1) AS totalCount,
+               SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS enabledCount,
+               SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) AS disabledCount,
+               SUM(CASE WHEN is_system = 1 THEN 1 ELSE 0 END) AS systemCount,
+               SUM(CASE WHEN is_system = 0 THEN 1 ELSE 0 END) AS customCount
+        FROM t_sys_dict_type
+        WHERE deleted_flag = 0
+    </select>
+
+    <!-- 查询启用的字典类型 -->
+    <select id="selectEnabledDictTypes" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        AND status = 1
+        ORDER BY sort_order ASC, create_time DESC
+    </select>
+
+    <!-- 查询系统内置字典类型 -->
+    <select id="selectSystemDictTypes" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        AND is_system = 1
+        ORDER BY sort_order ASC, create_time DESC
+    </select>
+
+    <!-- 根据名称模糊查询字典类型 -->
+    <select id="selectByDictTypeName" parameterType="string" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        AND dict_type_name LIKE CONCAT('%', #{dictTypeName}, '%')
+        ORDER BY create_time DESC
+        LIMIT 20
+    </select>
+
+    <!-- 根据状态查询字典类型 -->
+    <select id="selectByStatus" parameterType="int" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        AND status = #{status}
+        ORDER BY sort_order ASC, create_time DESC
+    </select>
+
+    <!-- 获取字典类型及其数据数量 -->
+    <select id="selectDictTypeWithDataCount" resultType="map">
+        SELECT t.dict_type_id,
+               t.dict_type_code,
+               t.dict_type_name,
+               t.description,
+               t.status,
+               COUNT(d.dict_data_id) AS dataCount
+        FROM t_sys_dict_type t
+        LEFT JOIN t_sys_dict_data d ON t.dict_type_id = d.dict_type_id AND d.deleted_flag = 0
+        WHERE t.deleted_flag = 0
+        GROUP BY t.dict_type_id, t.dict_type_code, t.dict_type_name, t.description, t.status
+        ORDER BY t.sort_order ASC, t.create_time DESC
+    </select>
+
+    <!-- 批量插入字典类型 -->
+    <insert id="batchInsertDictType" parameterType="list">
+        INSERT INTO t_sys_dict_type (
+            dict_type_code,
+            dict_type_name,
+            description,
+            is_system,
+            status,
+            remark,
+            create_time,
+            create_user_id
+        ) VALUES
+        <foreach collection="dictTypeList" item="item" separator=",">
+            (#{item.dictTypeCode},
+             #{item.dictTypeName},
+             #{item.description},
+             #{item.isSystem},
+             #{item.status},
+             #{item.remark},
+             NOW(),
+             #{item.createUserId})
+        </foreach>
+    </insert>
+
+    <!-- 批量更新字典类型 -->
+    <update id="batchUpdateDictType" parameterType="list">
+        <foreach collection="dictTypeList" item="item" separator=";">
+            UPDATE t_sys_dict_type
+            SET dict_type_name = #{item.dictTypeName},
+                description = #{item.description},
+                status = #{item.status},
+                remark = #{item.remark},
+                update_time = NOW(),
+                update_user_id = #{item.updateUserId}
+            WHERE dict_type_id = #{item.dictTypeId}
+              AND deleted_flag = 0
+        </foreach>
+    </update>
+
+    <!-- 批量删除字典类型（逻辑删除） -->
+    <update id="batchDeleteDictType">
+        UPDATE t_sys_dict_type
+        SET deleted_flag = 1,
+            update_time = NOW(),
+            update_user_id = #{userId}
+        WHERE dict_type_id IN
+        <foreach collection="dictTypeIds" item="dictTypeId" open="(" separator="," close=")">
+            #{dictTypeId}
+        </foreach>
+          AND deleted_flag = 0
+    </update>
+
+    <!-- 获取最近的字典类型 -->
+    <select id="selectRecentDictTypes" resultMap="DictTypeResult">
+        <include refid="selectDictTypeVo"/>
+        ORDER BY create_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 检查字典类型是否被使用 -->
+    <select id="checkDictTypeIsUsed" resultType="int">
+        SELECT COUNT(1)
+        FROM t_sys_dict_data
+        WHERE dict_type_id = #{dictTypeId}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 获取字典类型的使用情况 -->
+    <select id="getDictTypeUsage" resultType="map">
+        SELECT t.dict_type_id,
+               t.dict_type_code,
+               t.dict_type_name,
+               COUNT(d.dict_data_id) AS dataCount,
+               MAX(d.create_time) AS lastDataTime
+        FROM t_sys_dict_type t
+        LEFT JOIN t_sys_dict_data d ON t.dict_type_id = d.dict_type_id AND d.deleted_flag = 0
+        WHERE t.dict_type_id = #{dictTypeId}
+          AND t.deleted_flag = 0
+        GROUP BY t.dict_type_id, t.dict_type_code, t.dict_type_name
+    </select>
+
+</mapper>

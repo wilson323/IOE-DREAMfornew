@@ -1,0 +1,750 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 42 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [3/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-support ---
+[INFO] Compiling 1 source file to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\target\classes
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 26 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-admin ---
+[INFO] Compiling 680 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[216,67] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[278,66] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\ConsumeCacheService.java:[329,53] [unchecked] 未经检查的转换
+  需要: T
+  找到:    Object
+  其中, T是类型变量:
+    T扩展已在方法 <T>getCachedConsumeConfig(String,Class<T>)中声明的Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendancePerformanceMonitorService.java:[457,81] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendancePerformanceMonitorService.java:[551,48] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[298,80] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[305,78] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\ProductMode.java:[347,47] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\manager\AdvancedReportManager.java:[273,98] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\ConsumeMonitorController.java:[112,76] [unchecked] 未经检查的转换
+  需要: Map<String,Boolean>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\controller\ConsumeMonitorController.java:[151,62] [unchecked] 未经检查的转换
+  需要: Map<String,Boolean>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\monitor\websocket\WebSocketSessionManager.java:[201,63] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[290,80] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[305,76] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[347,47] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\impl\AccessRecordServiceImpl.java:[102,74] [unchecked] 未经检查的转换
+  需要: Page<AccessRecordEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\impl\AccessRecordServiceImpl.java:[154,42] [unchecked] 未经检查的转换
+  需要: Page<AccessEventEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\SmartMode.java:[243,97] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\adapter\protocol\impl\HttpProtocolAdapter.java:[364,80] [unchecked] 未经检查的转换
+  需要: List<String>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\rule\AttendanceRuleEngine.java:[406,88] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\rule\AttendanceRuleEngine.java:[418,111] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\rule\AttendanceRuleEngine.java:[427,117] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\rule\AttendanceRuleEngine.java:[433,112] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\rule\AttendanceRuleEngine.java:[466,73] [unchecked] 未经检查的转换
+  需要: List<String>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceScheduleServiceImpl.java:[478,127] [unchecked] 未经检查的转换
+  需要: Page<AttendanceScheduleEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceScheduleServiceImpl.java:[491,127] [unchecked] 未经检查的转换
+  需要: Page<AttendanceScheduleEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[INFO] 26 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[20,59] 错误: 找不到符号
+  符号:   类 AttendanceAreaConfigEntity
+  位置: 程序包 net.lab1024.sa.admin.module.attendance.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[21,53] 错误: 找不到符号
+  符号:   类 AttendanceAreaConfigService
+  位置: 程序包 net.lab1024.sa.admin.module.attendance.service
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceMobileService.java:[469,35] 错误: 找不到符号
+  符号:   类 AttendancePunchData
+  位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[43,12] 错误: 找不到符号
+  符号:   类 AttendanceAreaConfigService
+  位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[448,16] 错误: 找不到符号
+  符号:   类 AttendanceAreaConfigEntity
+  位置: 类 AttendanceDeviceDetailVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[456,15] 错误: 找不到符号
+  符号:   类 AttendanceAreaConfigEntity
+  位置: 类 AttendanceDeviceDetailVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[457,34] 错误: 找不到符号
+  符号:   类 AttendanceAreaConfigEntity
+  位置: 类 AttendanceDeviceDetailVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[66,11] 错误: 找不到符号
+  符号:   类 CustomReportResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[139,11] 错误: 找不到符号
+  符号:   类 CustomReportResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[169,11] 错误: 找不到符号
+  符号:   类 PivotTableResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[205,38] 错误: 找不到符号
+  符号:   类 CustomReportResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[205,11] 错误: 找不到符号
+  符号:   类 ExportResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[234,36] 错误: 找不到符号
+  符号:   类 CustomReportResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[234,11] 错误: 找不到符号
+  符号:   类 ExportResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[261,12] 错误: 找不到符号
+  符号:   类 ReportConfigValidationResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[437,12] 错误: 找不到符号
+  符号:   类 CustomReportResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[557,12] 错误: 找不到符号
+  符号:   类 PivotTableResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[573,39] 错误: 找不到符号
+  符号:   类 PivotTableResult
+  位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[33,46] 错误: 找不到符号
+  符号:   类 PaymentVerificationHistoryDao
+  位置: 程序包 net.lab1024.sa.admin.module.consume.dao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[35,56] 错误: 找不到符号
+  符号:   类 PaymentVerificationHistoryEntity
+  位置: 程序包 net.lab1024.sa.admin.module.consume.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[59,12] 错误: 找不到符号
+  符号:   类 PaymentVerificationHistoryDao
+  位置: 类 PaymentPasswordServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMobileService.java:[6,49] 错误: 找不到符号
+  符号:   类 SmartAccessControlService
+  位置: 程序包 net.lab1024.sa.admin.module.access.service
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMobileService.java:[48,18] 错误: 找不到符号
+  符号:   类 SmartAccessControlService
+  位置: 类 BiometricMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\vo\ExportResult.java:[59,36] 错误: 已在类 ExportResult中定义了变量 exportTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceExceptionService.java:[17,60] 错误: 程序包net.lab1024.sa.admin.module.attendance.domain.manager不存在
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceExceptionService.java:[18,60] 错误: 程序包net.lab1024.sa.admin.module.attendance.domain.manager不存在
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceExceptionService.java:[57,12] 错误: 找不到符号
+  符号:   类 AttendanceRuleEngine
+  位置: 类 AttendanceExceptionService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceExceptionService.java:[60,12] 错误: 找不到符号
+  符号:   类 AttendanceNotificationManager
+  位置: 类 AttendanceExceptionService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceServiceImpl.java:[119,73] 错误: 已在类 AttendanceServiceImpl中定义了变量 attendanceRuleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\device\service\DeviceMaintenanceService.java:[82,72] 错误: 找不到符号
+  符号:   类 BigDecimal
+  位置: 接口 DeviceMaintenanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceRecordRepository.java:[35,48] 错误: 此处不需要接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceRecordRepository.java:[35,62] 错误: 类型变量数目错误; 需要2
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\cache\CachePerformanceTest.java:[7,48] 错误: 找不到符号
+  符号:   类 VideoCacheManager
+  位置: 程序包 net.lab1024.sa.admin.module.video.manager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\cache\CachePerformanceTest.java:[23,12] 错误: 找不到符号
+  符号:   类 VideoCacheManager
+  位置: 类 CachePerformanceTest
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[725,51] 错误: 找不到符号
+  符号:   类 DayOfWeek
+  位置: 类 IntelligentSchedulingEngine
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[516,16] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[517,16] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[528,15] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[529,33] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[530,15] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[531,31] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[457,16] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[458,16] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[459,21] 错误: 找不到符号
+  符号:   类 DayOfWeek
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[469,15] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[470,33] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[471,15] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[472,31] 错误: 找不到符号
+  符号:   类 LocalTime
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[473,20] 错误: 找不到符号
+  符号:   类 DayOfWeek
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[474,43] 错误: 找不到符号
+  符号:   类 DayOfWeek
+  位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\AccessRecordService.java:[32,42] 错误: 找不到符号
+  符号:   类 AccessRecordEntity
+  位置: 接口 AccessRecordService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\AccessRecordService.java:[37,15] 错误: 找不到符号
+  符号:   类 AccessRecordEntity
+  位置: 接口 AccessRecordService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\AccessRecordService.java:[43,16] 错误: 找不到符号
+  符号:   类 AccessRecordEntity
+  位置: 接口 AccessRecordService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[97,31] 错误: 找不到符号
+  符号:   类 AttendanceRuleProcessResult
+  位置: 类 AttendanceRuleEngine
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[170,31] 错误: 找不到符号
+  符号:   类 AttendanceRuleProcessResult
+  位置: 类 AttendanceRuleEngine
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[184,31] 错误: 找不到符号
+  符号:   类 AttendanceRuleProcessResult
+  位置: 类 AttendanceRuleEngine
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[612,35] 错误: 找不到符号
+  符号:   类 AttendancePunchData
+  位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[611,34] 错误: 找不到符号
+  符号:   类 DeviceDataProcessResult
+  位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[627,40] 错误: 找不到符号
+  符号:   类 AttendancePunchData
+  位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[626,39] 错误: 找不到符号
+  符号:   类 DeviceDataProcessResult
+  位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[155,11] 错误: 找不到符号
+  符号:   类 BehaviorMonitoringResult
+  位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[191,11] 错误: 找不到符号
+  符号:   类 UserPatternAnalysis
+  位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[605,11] 错误: 找不到符号
+  符号:   类 AbnormalOperationReport
+  位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[685,11] 错误: 找不到符号
+  符号:   类 SequenceAnomalyResult
+  位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[691,11] 错误: 找不到符号
+  符号:   类 AbnormalTrendAnalysis
+  位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[711,11] 错误: 找不到符号
+  符号:   类 BatchDetectionResult
+  位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[720,11] 错误: 找不到符号
+  符号:   类 ModelTrainingResult
+  位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[304,55] 错误: 找不到符号
+  符号:   方法 getDoorId()
+  位置: 类型为SmartAccessDoorEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[307,33] 错误: 找不到符号
+  符号:   方法 getDoorId()
+  位置: 类型为SmartAccessDoorEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[365,57] 错误: 找不到符号
+  符号:   方法 getReaderId()
+  位置: 类型为SmartAccessReaderEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[368,33] 错误: 找不到符号
+  符号:   方法 getReaderId()
+  位置: 类型为SmartAccessReaderEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[607,37] 错误: 找不到符号
+  符号:   方法 getAreaId()
+  位置: 类型为SmartAreaAccessExtensionEntity的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[51,57] 错误: 找不到符号
+  符号:   方法 builder()
+  位置: 类 EngineStatusPayload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[51,83] 错误: 找不到符号
+  符号:   方法 getEngineId()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[52,44] 错误: 找不到符号
+  符号:   方法 getRegisteredAlgorithms()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[53,32] 错误: 找不到符号
+  符号:   方法 getRegisteredAlgorithms()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[55,41] 错误: 找不到符号
+  符号:   方法 getAlgorithmStatuses()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[56,32] 错误: 找不到符号
+  符号:   方法 getAlgorithmStatuses()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[57,72] 错误: 找不到符号
+  符号:   方法 getKey()
+  位置: 类型为Object的变量 entry
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[58,54] 错误: 找不到符号
+  符号:   方法 getValue()
+  位置: 类型为Object的变量 entry
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[59,49] 错误: 找不到符号
+  符号:   方法 getStatistics()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[60,32] 错误: 找不到符号
+  符号:   方法 getStatistics()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[61,45] 错误: 找不到符号
+  符号:   方法 getStatistics()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[62,32] 错误: 找不到符号
+  符号:   方法 getStatistics()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[63,45] 错误: 找不到符号
+  符号:   方法 getStatistics()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[64,32] 错误: 找不到符号
+  符号:   方法 getStatistics()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[65,47] 错误: 找不到符号
+  符号:   方法 getStatistics()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[66,32] 错误: 找不到符号
+  符号:   方法 getStatistics()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[68,50] 错误: 找不到符号
+  符号:   方法 getSystemResourceUsage()
+  位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[81,23] 错误: 找不到符号
+  符号:   方法 getHeartbeatTime()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[81,76] 错误: 找不到符号
+  符号:   方法 getHeartbeatTime()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[82,48] 错误: 找不到符号
+  符号:   方法 builder()
+  位置: 类 EngineSnapshot
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[82,75] 错误: 找不到符号
+  符号:   方法 getEngineId()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[84,51] 错误: 找不到符号
+  符号:   方法 getRegisteredAlgorithms()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[86,51] 错误: 找不到符号
+  符号:   方法 getAlgorithmStatuses()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[87,50] 错误: 找不到符号
+  符号:   方法 getSuccessfulAuthentications()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[88,46] 错误: 找不到符号
+  符号:   方法 getFailedAuthentications()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[89,46] 错误: 找不到符号
+  符号:   方法 getTotalProcessingTimeMs()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[90,48] 错误: 找不到符号
+  符号:   方法 getAverageProcessingTimeMs()
+  位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[91,57] 错误: 找不到符号
+  符号:   方法 getSuccessfulAuthentications()
+  位置: 类型为EngineStatusPayload的变量 payload
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.002 s]
+[INFO] sa-base ............................................ SUCCESS [  1.626 s]
+[INFO] sa-support ......................................... SUCCESS [  3.401 s]
+[INFO] sa-admin ........................................... FAILURE [  9.042 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  14.366 s
+[INFO] Finished at: 2025-11-26T12:21:12+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[20,59] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceAreaConfigEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.attendance.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[21,53] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceAreaConfigService
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.attendance.service
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceMobileService.java:[469,35] 错误: 找不到符号
+[ERROR]   符号:   类 AttendancePunchData
+[ERROR]   位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[43,12] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceAreaConfigService
+[ERROR]   位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[448,16] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceAreaConfigEntity
+[ERROR]   位置: 类 AttendanceDeviceDetailVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[456,15] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceAreaConfigEntity
+[ERROR]   位置: 类 AttendanceDeviceDetailVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\manager\AttendanceDeviceManager.java:[457,34] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceAreaConfigEntity
+[ERROR]   位置: 类 AttendanceDeviceDetailVO
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[66,11] 错误: 找不到符号
+[ERROR]   符号:   类 CustomReportResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[139,11] 错误: 找不到符号
+[ERROR]   符号:   类 CustomReportResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[169,11] 错误: 找不到符号
+[ERROR]   符号:   类 PivotTableResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[205,38] 错误: 找不到符号
+[ERROR]   符号:   类 CustomReportResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[205,11] 错误: 找不到符号
+[ERROR]   符号:   类 ExportResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[234,36] 错误: 找不到符号
+[ERROR]   符号:   类 CustomReportResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[234,11] 错误: 找不到符号
+[ERROR]   符号:   类 ExportResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[261,12] 错误: 找不到符号
+[ERROR]   符号:   类 ReportConfigValidationResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[437,12] 错误: 找不到符号
+[ERROR]   符号:   类 CustomReportResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[557,12] 错误: 找不到符号
+[ERROR]   符号:   类 PivotTableResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceCustomReportService.java:[573,39] 错误: 找不到符号
+[ERROR]   符号:   类 PivotTableResult
+[ERROR]   位置: 类 AttendanceCustomReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[33,46] 错误: 找不到符号
+[ERROR]   符号:   类 PaymentVerificationHistoryDao
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.dao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[35,56] 错误: 找不到符号
+[ERROR]   符号:   类 PaymentVerificationHistoryEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.consume.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\PaymentPasswordServiceImpl.java:[59,12] 错误: 找不到符号
+[ERROR]   符号:   类 PaymentVerificationHistoryDao
+[ERROR]   位置: 类 PaymentPasswordServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMobileService.java:[6,49] 错误: 找不到符号
+[ERROR]   符号:   类 SmartAccessControlService
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.access.service
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMobileService.java:[48,18] 错误: 找不到符号
+[ERROR]   符号:   类 SmartAccessControlService
+[ERROR]   位置: 类 BiometricMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\domain\vo\ExportResult.java:[59,36] 错误: 已在类 ExportResult中定义了变量 exportTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceExceptionService.java:[17,60] 错误: 程序包net.lab1024.sa.admin.module.attendance.domain.manager不存在
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceExceptionService.java:[18,60] 错误: 程序包net.lab1024.sa.admin.module.attendance.domain.manager不存在
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceExceptionService.java:[57,12] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceRuleEngine
+[ERROR]   位置: 类 AttendanceExceptionService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceExceptionService.java:[60,12] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceNotificationManager
+[ERROR]   位置: 类 AttendanceExceptionService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceServiceImpl.java:[119,73] 错误: 已在类 AttendanceServiceImpl中定义了变量 attendanceRuleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\device\service\DeviceMaintenanceService.java:[82,72] 错误: 找不到符号
+[ERROR]   符号:   类 BigDecimal
+[ERROR]   位置: 接口 DeviceMaintenanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceRecordRepository.java:[35,48] 错误: 此处不需要接口
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\repository\AttendanceRecordRepository.java:[35,62] 错误: 类型变量数目错误; 需要2
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\cache\CachePerformanceTest.java:[7,48] 错误: 找不到符号
+[ERROR]   符号:   类 VideoCacheManager
+[ERROR]   位置: 程序包 net.lab1024.sa.admin.module.video.manager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\cache\CachePerformanceTest.java:[23,12] 错误: 找不到符号
+[ERROR]   符号:   类 VideoCacheManager
+[ERROR]   位置: 类 CachePerformanceTest
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[725,51] 错误: 找不到符号
+[ERROR]   符号:   类 DayOfWeek
+[ERROR]   位置: 类 IntelligentSchedulingEngine
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[516,16] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[517,16] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[528,15] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[529,33] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[530,15] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[531,31] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SuggestedSchedule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[457,16] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[458,16] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[459,21] 错误: 找不到符号
+[ERROR]   符号:   类 DayOfWeek
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[469,15] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[470,33] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[471,15] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[472,31] 错误: 找不到符号
+[ERROR]   符号:   类 LocalTime
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[473,20] 错误: 找不到符号
+[ERROR]   符号:   类 DayOfWeek
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\engine\IntelligentSchedulingEngine.java:[474,43] 错误: 找不到符号
+[ERROR]   符号:   类 DayOfWeek
+[ERROR]   位置: 类 SchedulingPattern
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\AccessRecordService.java:[32,42] 错误: 找不到符号
+[ERROR]   符号:   类 AccessRecordEntity
+[ERROR]   位置: 接口 AccessRecordService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\AccessRecordService.java:[37,15] 错误: 找不到符号
+[ERROR]   符号:   类 AccessRecordEntity
+[ERROR]   位置: 接口 AccessRecordService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\service\AccessRecordService.java:[43,16] 错误: 找不到符号
+[ERROR]   符号:   类 AccessRecordEntity
+[ERROR]   位置: 接口 AccessRecordService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[97,31] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceRuleProcessResult
+[ERROR]   位置: 类 AttendanceRuleEngine
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[170,31] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceRuleProcessResult
+[ERROR]   位置: 类 AttendanceRuleEngine
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[184,31] 错误: 找不到符号
+[ERROR]   符号:   类 AttendanceRuleProcessResult
+[ERROR]   位置: 类 AttendanceRuleEngine
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[612,35] 错误: 找不到符号
+[ERROR]   符号:   类 AttendancePunchData
+[ERROR]   位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[611,34] 错误: 找不到符号
+[ERROR]   符号:   类 DeviceDataProcessResult
+[ERROR]   位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[627,40] 错误: 找不到符号
+[ERROR]   符号:   类 AttendancePunchData
+[ERROR]   位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\AttendanceService.java:[626,39] 错误: 找不到符号
+[ERROR]   符号:   类 DeviceDataProcessResult
+[ERROR]   位置: 类 AttendanceDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[155,11] 错误: 找不到符号
+[ERROR]   符号:   类 BehaviorMonitoringResult
+[ERROR]   位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[191,11] 错误: 找不到符号
+[ERROR]   符号:   类 UserPatternAnalysis
+[ERROR]   位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[605,11] 错误: 找不到符号
+[ERROR]   符号:   类 AbnormalOperationReport
+[ERROR]   位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[685,11] 错误: 找不到符号
+[ERROR]   符号:   类 SequenceAnomalyResult
+[ERROR]   位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[691,11] 错误: 找不到符号
+[ERROR]   符号:   类 AbnormalTrendAnalysis
+[ERROR]   位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[711,11] 错误: 找不到符号
+[ERROR]   符号:   类 BatchDetectionResult
+[ERROR]   位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\service\impl\AbnormalDetectionServiceImpl.java:[720,11] 错误: 找不到符号
+[ERROR]   符号:   类 ModelTrainingResult
+[ERROR]   位置: 类 AbnormalDetectionServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[304,55] 错误: 找不到符号
+[ERROR]   符号:   方法 getDoorId()
+[ERROR]   位置: 类型为SmartAccessDoorEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[307,33] 错误: 找不到符号
+[ERROR]   符号:   方法 getDoorId()
+[ERROR]   位置: 类型为SmartAccessDoorEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[365,57] 错误: 找不到符号
+[ERROR]   符号:   方法 getReaderId()
+[ERROR]   位置: 类型为SmartAccessReaderEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[368,33] 错误: 找不到符号
+[ERROR]   符号:   方法 getReaderId()
+[ERROR]   位置: 类型为SmartAccessReaderEntity的变量 entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\manager\AccessCacheManager.java:[607,37] 错误: 找不到符号
+[ERROR]   符号:   方法 getAreaId()
+[ERROR]   位置: 类型为SmartAreaAccessExtensionEntity的变量 area
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[51,57] 错误: 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 EngineStatusPayload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[51,83] 错误: 找不到符号
+[ERROR]   符号:   方法 getEngineId()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[52,44] 错误: 找不到符号
+[ERROR]   符号:   方法 getRegisteredAlgorithms()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[53,32] 错误: 找不到符号
+[ERROR]   符号:   方法 getRegisteredAlgorithms()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[55,41] 错误: 找不到符号
+[ERROR]   符号:   方法 getAlgorithmStatuses()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[56,32] 错误: 找不到符号
+[ERROR]   符号:   方法 getAlgorithmStatuses()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[57,72] 错误: 找不到符号
+[ERROR]   符号:   方法 getKey()
+[ERROR]   位置: 类型为Object的变量 entry
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[58,54] 错误: 找不到符号
+[ERROR]   符号:   方法 getValue()
+[ERROR]   位置: 类型为Object的变量 entry
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[59,49] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatistics()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[60,32] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatistics()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[61,45] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatistics()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[62,32] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatistics()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[63,45] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatistics()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[64,32] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatistics()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[65,47] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatistics()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[66,32] 错误: 找不到符号
+[ERROR]   符号:   方法 getStatistics()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[68,50] 错误: 找不到符号
+[ERROR]   符号:   方法 getSystemResourceUsage()
+[ERROR]   位置: 类型为BiometricEngineStatus的变量 status
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[81,23] 错误: 找不到符号
+[ERROR]   符号:   方法 getHeartbeatTime()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[81,76] 错误: 找不到符号
+[ERROR]   符号:   方法 getHeartbeatTime()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[82,48] 错误: 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 EngineSnapshot
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[82,75] 错误: 找不到符号
+[ERROR]   符号:   方法 getEngineId()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[84,51] 错误: 找不到符号
+[ERROR]   符号:   方法 getRegisteredAlgorithms()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[86,51] 错误: 找不到符号
+[ERROR]   符号:   方法 getAlgorithmStatuses()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[87,50] 错误: 找不到符号
+[ERROR]   符号:   方法 getSuccessfulAuthentications()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[88,46] 错误: 找不到符号
+[ERROR]   符号:   方法 getFailedAuthentications()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[89,46] 错误: 找不到符号
+[ERROR]   符号:   方法 getTotalProcessingTimeMs()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[90,48] 错误: 找不到符号
+[ERROR]   符号:   方法 getAverageProcessingTimeMs()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\access\biometric\service\BiometricMonitorService.java:[91,57] 错误: 找不到符号
+[ERROR]   符号:   方法 getSuccessfulAuthentications()
+[ERROR]   位置: 类型为EngineStatusPayload的变量 payload
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

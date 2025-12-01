@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.smart.video.dao.VideoRecordDao">
+
+  <!-- 按时间范围统计录像数量 -->
+  <select id="countRecordsByTimeRange" resultType="java.lang.Long"> SELECT COUNT(*) FROM
+    t_video_record WHERE deleted_flag = 0 <if test="deviceId != null"> AND device_id = #{deviceId} </if>
+        <if
+      test="startTime != null"> AND record_start_time &gt;= #{startTime} </if>
+        <if
+      test="endTime != null"> AND record_start_time &lt;= #{endTime} </if>
+  </select>
+
+  <!-- 按时间范围统计录像总时长（秒） -->
+  <select id="sumRecordDurationByTimeRange" resultType="java.lang.Long"> SELECT
+    COALESCE(SUM(record_duration), 0) FROM t_video_record WHERE deleted_flag = 0 <if
+      test="deviceId != null"> AND device_id = #{deviceId} </if>
+        <if test="startTime != null"> AND
+    record_start_time &gt;= #{startTime} </if>
+        <if test="endTime != null"> AND record_start_time
+    &lt;= #{endTime} </if>
+  </select>
+
+  <!-- 按时间范围统计录像总存储空间（字节） -->
+  <select id="sumRecordFileSizeByTimeRange" resultType="java.lang.Long"> SELECT
+    COALESCE(SUM(record_file_size), 0) FROM t_video_record WHERE deleted_flag = 0 <if
+      test="deviceId != null"> AND device_id = #{deviceId} </if>
+        <if test="startTime != null"> AND
+    record_start_time &gt;= #{startTime} </if>
+        <if test="endTime != null"> AND record_start_time
+    &lt;= #{endTime} </if>
+  </select>
+
+</mapper>

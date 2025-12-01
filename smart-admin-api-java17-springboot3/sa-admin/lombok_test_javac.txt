@@ -1,0 +1,4 @@
+src\main\java\net\lab1024\sa\admin\test\LombokTest.java:6: ´íÎó: ±àÂë GBK µÄ²»¿ÉÓ³Éä×Ö·û (0xBB)
+ * Lombokæµ‹è¯•ç±? - éªŒè¯@Dataæ³¨è§£æ˜¯å¦æ­£å¸¸ç”Ÿæˆgetter/setteræ–¹æ³•
+             ^
+1 ¸ö´íÎó

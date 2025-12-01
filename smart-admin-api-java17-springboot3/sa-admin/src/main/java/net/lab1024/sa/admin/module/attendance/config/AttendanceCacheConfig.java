@@ -1,0 +1,145 @@
+package net.lab1024.sa.admin.module.attendance.config;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
+
+/**
+ * 考勤缓存配置
+ *
+ * <p>
+ * 配置考勤模块相关的缓存线程池和异步执行器
+ * 严格遵循repowiki编码规范：使用jakarta包名、@Resource注入、SLF4J日志
+ * </p>
+ *
+ * <p>
+ * 配置内容：
+ * - 缓存操作线程池：专门用于缓存读写的线程池
+ * - 异步操作线程池：用于异步缓存更新和清理
+ * - 线程池监控：提供线程池状态监控
+ * </p>
+ *
+ * @author SmartAdmin Team
+ * @version 3.0.0
+ * @since 2025-11-24
+ */
+@Slf4j
+@Configuration
+@EnableAsync
+public class AttendanceCacheConfig {
+
+    /**
+     * 考勤缓存操作线程池
+     * 专门用于缓存的读取和写入操作
+     *
+     * @return 缓存线程池
+     */
+    @Bean("attendanceCacheExecutor")
+    public Executor attendanceCacheExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+
+        // 核心线程数：CPU核心数
+        executor.setCorePoolSize(4);
+
+        // 最大线程数：CPU核心数的2倍
+        executor.setMaxPoolSize(8);
+
+        // 队列容量：100
+        executor.setQueueCapacity(100);
+
+        // 线程名前缀
+        executor.setThreadNamePrefix("attendance-cache-");
+
+        // 拒绝策略：由调用线程执行
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+
+        // 等待所有任务完成后再关闭线程池
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+
+        // 等待时间：60秒
+        executor.setAwaitTerminationSeconds(60);
+
+        executor.initialize();
+
+        return executor;
+    }
+
+    /**
+     * 考勤异步操作线程池
+     * 用于异步缓存更新、清理等耗时操作
+     *
+     * @return 异步操作线程池
+     */
+    @Bean("attendanceAsyncExecutor")
+    public Executor attendanceAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+
+        // 核心线程数：2
+        executor.setCorePoolSize(2);
+
+        // 最大线程数：4
+        executor.setMaxPoolSize(4);
+
+        // 队列容量：200
+        executor.setQueueCapacity(200);
+
+        // 线程名前缀
+        executor.setThreadNamePrefix("attendance-async-");
+
+        // 拒绝策略：记录日志并丢弃
+        executor.setRejectedExecutionHandler((r, executor1) -> {
+            log.warn("考勤异步任务被拒绝执行: {}", r.toString());
+        });
+
+        // 等待所有任务完成后再关闭线程池
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+
+        // 等待时间：30秒
+        executor.setAwaitTerminationSeconds(30);
+
+        executor.initialize();
+
+        return executor;
+    }
+
+    /**
+     * 考勤缓存预热线程池
+     * 专门用于系统启动时的缓存预热
+     *
+     * @return 预热线程池
+     */
+    @Bean("attendanceWarmupExecutor")
+    public Executor attendanceWarmupExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+
+        // 核心线程数：1
+        executor.setCorePoolSize(1);
+
+        // 最大线程数：2
+        executor.setMaxPoolSize(2);
+
+        // 队列容量：50
+        executor.setQueueCapacity(50);
+
+        // 线程名前缀
+        executor.setThreadNamePrefix("attendance-warmup-");
+
+        // 拒绝策略：直接丢弃，避免影响启动
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
+
+        // 等待所有任务完成后再关闭线程池
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+
+        // 等待时间：10秒
+        executor.setAwaitTerminationSeconds(10);
+
+        executor.initialize();
+
+        return executor;
+    }
+}

@@ -1,0 +1,280 @@
+# IOE-DREAM Device Service 微服务配置
+# 基于现有Identity Service配置重构，适配设备管理需求
+#
+# @author IOE-DREAM Team
+# @since 2025-11-27 (基于原application.yml重构)
+
+server:
+  port: 8082
+  servlet:
+    context-path: /
+  tomcat:
+    basedir: ${project.log-directory}/tomcat-logs
+    accesslog:
+      enabled: true
+      max-days: 7
+      pattern: "%t %{X-Forwarded-For}i %a %r %s (%D ms) %I (%B byte)"
+
+spring:
+  application:
+    name: ioedream-device-service
+
+  # 数据库连接信息（基于现有配置）
+  datasource:
+    url: jdbc:p6spy:mysql://localhost:3306/smart_admin_v3?autoReconnect=true&useServerPreparedStmts=false&rewriteBatchedStatements=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root1234
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    initial-size: 2
+    min-idle: 2
+    max-active: 10
+    max-wait: 60000
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    filters: stat
+    druid:
+      username: druid
+      password: 1024
+      login:
+        enabled: false
+      method:
+        pointcut: net.lab1024.device..*Service.*
+
+  # JPA/Hibernate配置（基于现有数据库模式）
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+  # redis 连接池配置信息（基于现有配置）
+  data:
+    redis:
+      database: 1
+      host: 127.0.0.1
+      port: 6379
+      password: zkteco3100
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 5
+          min-idle: 1
+          max-idle: 3
+          max-wait: 30000ms
+
+  # 缓存实现类型（基于现有配置）
+  cache:
+    type: redis
+
+  # json序列化相关配置（基于现有配置）
+  jackson:
+    serialization:
+      write-enums-using-to-string: true
+      write-dates-as-timestamps: false
+    deserialization:
+      read-enums-using-to-string: true
+      fail-on-unknown-properties: false
+    default-property-inclusion: always
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+  # 上传文件和请求大小（基于现有配置）
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 10MB
+
+  # 邮件配置（基于现有配置）
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: lab1024@163.com
+    password: LAB1024LAB
+    test-connection: false
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            socketFactory:
+              class: com.sun.mail.util.MailSSLSocketFactory
+              fallback: false
+        debug: false
+
+# Spring Integration配置（设备通信）
+integration:
+  mqtt:
+    default:
+      url: tcp://localhost:1883
+      username: device-service
+      password: device-service-password
+      client-id: device-service-client
+      keep-alive-interval: 60s
+      completion-timeout: 30s
+    inbound:
+      device-status:
+        url: tcp://localhost:1883
+        client-id: device-service-inbound
+        topics: device/+/status, device/+/heartbeat, device/+/fault
+        qos: 1
+      device-command:
+        url: tcp://localhost:1883
+        client-id: device-service-command
+        topics: device/+/command
+        qos: 1
+    outbound:
+      device-control:
+        url: tcp://localhost:1883
+        client-id: device-service-outbound
+        default-qos: 1
+        producer:
+          async: true
+          default-timeout: 5000
+
+# Spring Cloud Alibaba 配置
+cloud:
+  nacos:
+    discovery:
+      server-addr: localhost:8848
+      namespace: device-service
+      group: DEFAULT_GROUP
+      service: ioedream-device-service
+      enabled: true
+    config:
+      server-addr: localhost:8848
+      namespace: device-service
+      group: DEFAULT_GROUP
+      file-extension: yml
+      enabled: true
+      refresh-enabled: true
+
+# 健康检查（基于现有配置）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  health:
+    mail:
+      enabled: false
+    redis:
+      enabled: true
+    db:
+      enabled: true
+    mqtt:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# 跨域配置（基于现有配置）
+access-control-allow-origin: '*'
+
+# 设备管理配置（Device Service专用）
+device:
+  # 心跳配置
+  heartbeat:
+    default-interval: 60  # 默认心跳间隔（秒）
+    timeout-threshold: 180  # 心跳超时阈值（秒）
+    check-interval: 30  # 心跳检查间隔（秒）
+
+  # 设备状态管理
+  status:
+    auto-offline-timeout: 300  # 自动离线超时（秒）
+    fault-auto-recovery: false  # 故障自动恢复
+    status-sync-interval: 60  # 状态同步间隔（秒）
+
+  # 设备通信配置
+  communication:
+    connection-timeout: 10  # 连接超时（秒）
+    read-timeout: 30  # 读取超时（秒）
+    retry-attempts: 3  # 重试次数
+    retry-delay: 1000  # 重试延迟（毫秒）
+
+  # 设备监控配置
+  monitoring:
+    enable-metrics: true  # 启用设备指标收集
+    metrics-collection-interval: 30  # 指标收集间隔（秒）
+    alert-threshold:
+      offline-device-count: 10  # 离线设备告警阈值
+      fault-device-count: 5  # 故障设备告警阈值
+      heartbeat-timeout-count: 20  # 心跳超时设备告警阈值
+
+# WebSocket配置（设备实时通信）
+websocket:
+  endpoint: /ws/device
+  allowed-origins: "*"
+  heartbeat-interval: 30
+
+# 文件上传 配置（基于现有配置）
+file:
+  storage:
+    type: local
+    mode: local
+    local:
+      upload-path: D:/Progect/mart-admin-master/upload/device/
+      url-prefix: /api/device/file/
+    cloud:
+      region: oss-cn-hangzhou
+      endpoint: oss-cn-hangzhou.aliyuncs.com
+      bucket-name: 1024lab-smart-admin
+      access-key:
+      secret-key:
+      url-prefix: https://${file.storage.cloud.bucket-name}.${file.storage.cloud.endpoint}/
+      private-url-expire-seconds: 3600
+
+# OpenAPI配置（基于现有配置）
+springdoc:
+  swagger-ui:
+    enabled: true
+    doc-expansion: none
+    tags-sorter: alpha
+    server-base-url: /
+  api-docs:
+    enabled: true
+  packages-to-scan: net.lab1024.device.controller
+
+knife4j:
+  enable: true
+  basic:
+    enable: false
+    username: api
+    password: 1024
+
+# RestTemplate 请求配置（基于现有配置）
+http:
+  pool:
+    max-total: 20
+    connect-timeout: 50000
+    read-timeout: 50000
+    write-timeout: 50000
+    keep-alive: 300000
+
+# 心跳配置（基于现有配置）
+heart-beat:
+  interval-seconds: 300
+
+# 热加载配置（基于现有配置）
+reload:
+  interval-seconds: 300
+
+# 日志配置
+logging:
+  level:
+    net.lab1024.device: INFO
+    net.lab1024.device.communication: DEBUG
+    org.springframework.integration: DEBUG
+    org.springframework.web.socket: DEBUG
+    com.alibaba.nacos: INFO
+    org.eclipse.paho.client.mqttv3: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

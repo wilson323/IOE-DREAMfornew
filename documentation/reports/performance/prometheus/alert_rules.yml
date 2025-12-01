@@ -1,0 +1,161 @@
+groups:
+  - name: ioe-dream-alerts
+    rules:
+      # 系统告警规则
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "服务实例 {{ $labels.instance }} 停止运行"
+          description: "服务 {{ $labels.job }} 实例 {{ $labels.instance }} 已经停止运行超过2分钟"
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "实例 {{ $labels.instance }} CPU使用率过高"
+          description: "实例 {{ $labels.instance }} CPU使用率超过80%，当前值: {{ $value }}%"
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "实例 {{ $labels.instance }} 内存使用率过高"
+          description: "实例 {{ $labels.instance }} 内存使用率超过85%，当前值: {{ $value }}%"
+
+      # 应用服务告警规则
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "服务 {{ $labels.job }} 错误率过高"
+          description: "服务 {{ $labels.job }} 的错误率超过5%，当前值: {{ $value }}%"
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "服务 {{ $labels.job }} 响应时间过长"
+          description: "服务 {{ $labels.job }} 95%分位数响应时间超过1秒，当前值: {{ $value }}秒"
+
+      - alert: LowThroughput
+        expr: rate(http_requests_total[5m]) < 10
+        for: 5m
+        labels:
+          severity: info
+        annotations:
+          summary: "服务 {{ $labels.job }} 吞吐量过低"
+          description: "服务 {{ $labels.job }} 的吞吐量低于10 req/s，当前值: {{ $value }} req/s"
+
+      # 数据库告警规则
+      - alert: MySQLDown
+        expr: mysql_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MySQL数据库连接失败"
+          description: "MySQL数据库实例 {{ $labels.instance }} 无法连接"
+
+      - alert: MySQLSlowQueries
+        expr: rate(mysql_global_status_slow_queries[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MySQL慢查询过多"
+          description: "MySQL实例 {{ $labels.instance }} 慢查询率过高: {{ $value }} queries/sec"
+
+      - alert: MySQLConnectionsHigh
+        expr: mysql_global_status_threads_connected / mysql_global_variables_max_connections * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MySQL连接数过高"
+          description: "MySQL实例 {{ $labels.instance }} 连接数使用率超过80%: {{ $value }}%"
+
+      # Redis告警规则
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis实例停止运行"
+          description: "Redis实例 {{ $labels.instance }} 无法连接"
+
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis内存使用率过高"
+          description: "Redis实例 {{ $labels.instance }} 内存使用率超过90%: {{ $value }}%"
+
+      # 业务告警规则
+      - alert: ConsumeTransactionFailed
+        expr: increase(saga_transaction_failed_total{transaction_type="CONSUME_TRANSACTION"}[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "消费事务失败率过高"
+          description: "消费事务在5分钟内失败超过5次: {{ $value }} 次"
+
+      - alert: DeviceOffline
+        expr: device_online_status == 0
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "设备离线"
+          description: "设备 {{ $labels.device_name }} ({{ $labels.device_id }}) 已离线超过3分钟"
+
+      - alert: VisitorApprovalPending
+        expr: visitor_pending_approvals_count > 20
+        for: 10m
+        labels:
+          severity: info
+        annotations:
+          summary: "访客审批积压"
+          description: "待审批访客数量过多: {{ $value }} 个"
+
+      # JVM告警规则
+      - alert: JVMHeapMemoryHigh
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "JVM堆内存使用率过高"
+          description: "应用 {{ $labels.app_name }} JVM堆内存使用率超过85%: {{ $value }}%"
+
+      - alert: JVMMemoryLeak
+        expr: increase(jvm_memory_used_bytes{area="heap"}[1h]) > 100000000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "疑似JVM内存泄漏"
+          description: "应用 {{ $labels.app_name }} 堆内存1小时内增长超过100MB"
+
+      - alert: HighGCLoad
+        expr: rate(jvm_gc_collection_seconds_sum[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GC负载过高"
+          description: "应用 {{ $labels.app_name }} GC时间占比过高: {{ $value }}"

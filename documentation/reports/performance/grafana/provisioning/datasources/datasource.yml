@@ -1,0 +1,23 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+
+  - name: MySQL
+    type: mysql
+    url: mysql:3306
+    database: grafana
+    user: root
+    password: root
+    editable: true
+
+  - name: Consul
+    type: prometheus
+    access: proxy
+    url: http://consul:8500/v1/agent/metrics
+    editable: true

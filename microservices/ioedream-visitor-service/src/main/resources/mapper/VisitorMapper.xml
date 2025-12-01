@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.visitor.dao.VisitorDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.visitor.domain.entity.VisitorEntity">
+        <id column="visitor_id" jdbcType="BIGINT" property="visitorId"/>
+        <result column="visitor_name" jdbcType="VARCHAR" property="visitorName"/>
+        <result column="gender" jdbcType="INTEGER" property="gender"/>
+        <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="id_number" jdbcType="VARCHAR" property="idNumber"/>
+        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="visitee_id" jdbcType="BIGINT" property="visiteeId"/>
+        <result column="visitee_name" jdbcType="VARCHAR" property="visiteeName"/>
+        <result column="visitee_department" jdbcType="VARCHAR" property="visiteeDepartment"/>
+        <result column="visit_purpose" jdbcType="VARCHAR" property="visitPurpose"/>
+        <result column="expected_arrival_time" jdbcType="TIMESTAMP" property="expectedArrivalTime"/>
+        <result column="expected_departure_time" jdbcType="TIMESTAMP" property="expectedDepartureTime"/>
+        <result column="actual_arrival_time" jdbcType="TIMESTAMP" property="actualArrivalTime"/>
+        <result column="actual_departure_time" jdbcType="TIMESTAMP" property="actualDepartureTime"/>
+        <result column="visit_areas" jdbcType="VARCHAR" property="visitAreas"/>
+        <result column="urgency_level" jdbcType="INTEGER" property="urgencyLevel"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="photo_path" jdbcType="VARCHAR" property="photoPath"/>
+        <result column="id_card_front_path" jdbcType="VARCHAR" property="idCardFrontPath"/>
+        <result column="id_card_back_path" jdbcType="VARCHAR" property="idCardBackPath"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="update_user_id" jdbcType="BIGINT" property="updateUserId"/>
+        <result column="deleted_flag" jdbcType="BOOLEAN" property="deletedFlag"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="last_visit_time" jdbcType="TIMESTAMP" property="lastVisitTime"/>
+        <result column="visit_count" jdbcType="INTEGER" property="visitCount"/>
+        <result column="blacklisted" jdbcType="BOOLEAN" property="blacklisted"/>
+        <result column="notes" jdbcType="VARCHAR" property="notes"/>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        visitor_id, visitor_name, gender, phone_number, email, id_number, company,
+        visitee_id, visitee_name, visitee_department, visit_purpose, expected_arrival_time,
+        expected_departure_time, actual_arrival_time, actual_departure_time, visit_areas,
+        urgency_level, status, photo_path, id_card_front_path, id_card_back_path,
+        create_time, update_time, create_user_id, update_user_id, deleted_flag, version,
+        last_visit_time, visit_count, blacklisted, notes
+    </sql>
+
+    <!-- 查询访客列表（带搜索条件） -->
+    <select id="selectVisitorList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor
+        WHERE deleted_flag = false
+        <if test="search.visitorName != null and search.visitorName != ''">
+            AND visitor_name LIKE CONCAT('%', #{search.visitorName}, '%')
+        </if>
+        <if test="search.phoneNumber != null and search.phoneNumber != ''">
+            AND phone_number = #{search.phoneNumber}
+        </if>
+        <if test="search.idNumber != null and search.idNumber != ''">
+            AND id_number = #{search.idNumber}
+        </if>
+        <if test="search.visiteeName != null and search.visiteeName != ''">
+            AND visitee_name LIKE CONCAT('%', #{search.visiteeName}, '%')
+        </if>
+        <if test="search.status != null">
+            AND status = #{search.status}
+        </if>
+        <if test="search.urgencyLevel != null">
+            AND urgency_level = #{search.urgencyLevel}
+        </if>
+        <if test="search.startTime != null">
+            AND expected_arrival_time >= #{search.startTime}
+        </if>
+        <if test="search.endTime != null">
+            AND expected_arrival_time <= #{search.endTime}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据身份证号查询访客 -->
+    <select id="selectByIdNumber" parameterType="string" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor
+        WHERE id_number = #{idNumber} AND deleted_flag = false
+    </select>
+
+    <!-- 查询指定时间段内有访客记录的访客 -->
+    <select id="selectVisitorByTimeRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor
+        WHERE deleted_flag = false
+        AND (
+            (expected_arrival_time >= #{startTime} AND expected_arrival_time <= #{endTime})
+            OR (actual_arrival_time >= #{startTime} AND actual_arrival_time <= #{endTime})
+        )
+        ORDER BY expected_arrival_time DESC
+    </select>
+
+    <!-- 查询被访人相关的访客记录 -->
+    <select id="selectVisitorByVisiteeId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor
+        WHERE visitee_id = #{visiteeId} AND deleted_flag = false
+        ORDER BY create_time DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询即将到期的访客预约 -->
+    <select id="selectExpiringVisitors" parameterType="integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_visitor
+        WHERE deleted_flag = false
+        AND status = 1
+        AND expected_arrival_time <= DATE_ADD(NOW(), INTERVAL #{hours} HOUR)
+        AND expected_arrival_time > NOW()
+        ORDER BY expected_arrival_time ASC
+    </select>
+
+    <!-- 统计访客数量（按状态） -->
+    <select id="countByStatus" parameterType="integer" resultType="long">
+        SELECT COUNT(1)
+        FROM t_visitor
+        WHERE deleted_flag = false AND status = #{status}
+    </select>
+
+    <!-- 批量更新访客状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE t_visitor
+        SET status = #{status},
+            update_time = NOW(),
+            update_user_id = #{updateUserId},
+            version = version + 1
+        WHERE deleted_flag = false
+        AND visitor_id IN
+        <foreach collection="visitorIds" item="visitorId" open="(" separator="," close=")">
+            #{visitorId}
+        </foreach>
+    </update>
+
+    <!-- 更新访客最后访问时间 -->
+    <update id="updateLastVisitTime">
+        UPDATE t_visitor
+        SET last_visit_time = #{lastVisitTime},
+            visit_count = IFNULL(visit_count, 0) + 1,
+            update_time = NOW(),
+            version = version + 1
+        WHERE visitor_id = #{visitorId} AND deleted_flag = false
+    </update>
+
+</mapper>

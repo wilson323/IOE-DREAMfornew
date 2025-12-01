@@ -1,0 +1,72 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### front ###
+**/dist
+**/node_modules
+**/.vscode
+
+### Claude Code ###
+# 包含数据库密码等敏感信息，不应提交到版本控制
+.claude/mcp.json
+.claude/settings.local.json
+
+### Temporary Files and Backups ###
+# Encoding related backups
+encoding_backup_*/
+*_backup_*/
+
+# Log files
+*.log
+compile_errors.*
+compile-errors.*
+systematic_encoding_solution_*.log
+workflow_output.log
+
+# Temporary files
+.last-validation
+.todo-lock
+garbage_files_*.txt
+temp_*.txt
+
+# Permission analysis temporary files
+permission_alert_*.md
+permission_fix_report_*.md
+permission_monitor_*.log
+permission_trend_report_*.md
+all_permission_codes.txt
+temp_backend_permissions.txt
+
+# Fix logs directory
+fix_logs/
+disabled_encoding_issues/
+
+# Empty reports
+CONSISTENCY_REPORT.md
+cache-compliance-report.md
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log
+
+# Cleanup reports and file lists
+clean-unused-files-report-*.md
+file-list-before-cleanup-*.txt
+

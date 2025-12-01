@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.base.module.support.rbac.dao.RbacUserRoleDao">
+
+    <!-- 根据用户ID查询角色编码列表 -->
+    <select id="getRoleCodesByUserId" resultType="java.lang.String">
+        SELECT r.role_code
+        FROM t_rbac_user_role ur
+        INNER JOIN t_rbac_role r ON ur.role_id = r.role_id
+        WHERE ur.user_id = #{userId}
+          AND ur.status = 1
+          AND ur.deleted_flag = 0
+          AND r.status = 1
+          AND r.deleted_flag = 0
+          AND (ur.effective_time IS NULL OR ur.effective_time &lt;= NOW())
+          AND (ur.expire_time IS NULL OR ur.expire_time >= NOW())
+    </select>
+
+    <!-- 根据用户ID查询角色ID列表 -->
+    <select id="getRoleIdsByUserId" resultType="java.lang.Long">
+        SELECT ur.role_id
+        FROM t_rbac_user_role ur
+        INNER JOIN t_rbac_role r ON ur.role_id = r.role_id
+        WHERE ur.user_id = #{userId}
+          AND ur.status = 1
+          AND ur.deleted_flag = 0
+          AND r.status = 1
+          AND r.deleted_flag = 0
+          AND (ur.effective_time IS NULL OR ur.effective_time &lt;= NOW())
+          AND (ur.expire_time IS NULL OR ur.expire_time >= NOW())
+    </select>
+
+</mapper>
+

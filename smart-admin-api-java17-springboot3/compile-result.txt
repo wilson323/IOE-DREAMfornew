@@ -1,0 +1,622 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-base ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target
+[INFO] 
+[INFO] --- lombok:1.18.20.0:delombok (default) @ sa-base ---
+mvn : D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCa
+cheAspect.java:1: ����: �Ƿ��ַ�: '\ufeff'
+所在位置 C:\Users\10201\AppData\Local\Temp\ps-script-27f651e3-2c67-4af4-941a-70ed5b2b7d34.ps1:87 字符: 53
++ ... 7-springboot3; mvn clean compile -DskipTests -pl sa-base 2>&1 | Out-F ...
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (D:\IOE-DREAM\sm...Ƿ��ַ�: '\ufeff':String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+?package net.lab1024.sa.base.common.aspect;
+^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:1: ����: ��Ҫ class��interface��enum �� record
+?package net.lab1024.sa.base.common.aspect;
+         ^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:37: ����: �Ҳ�������
+@Slf4j
+ ^
+  ����: �� Slf4j
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:38: ����: �Ҳ�������
+@Aspect
+ ^
+  ����: �� Aspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:39: ����: �Ҳ�������
+@Component
+ ^
+  ����: �� Component
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:40: ����: �Ҳ�������
+@Order(1) // ȷ������������֮ǰִ��
+ ^
+  ����: �� Order
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:44: ����: �Ҳ�������
+    private UnifiedCacheManager unifiedCacheManager;
+            ^
+  ����:   �� UnifiedCacheManager
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:46: ����: �Ҳ�������
+    private final ExpressionParser expressionParser = new SpelExpressionParser();
+                  ^
+  ����:   �� ExpressionParser
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:52: ����: �Ҳ�������
+    public Object handleCache(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCache) throws Throwable {
+                              ^
+  ����:   �� ProceedingJoinPoint
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:52: ����: �Ҳ�������
+    public Object handleCache(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCache) throws Throwable {
+                                                             ^
+  ����:   �� UnifiedCache
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:102: ����: �Ҳ�������
+    private String parseCacheKey(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCache) {
+                                 ^
+  ����:   �� ProceedingJoinPoint
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:102: ����: �Ҳ�������
+    private String parseCacheKey(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCache) {
+                                                                ^
+  ����:   �� UnifiedCache
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:131: ����: �Ҳ�������
+    private String generateDefaultKey(ProceedingJoinPoint joinPoint) {
+                                      ^
+  ����:   �� ProceedingJoinPoint
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:156: ����: �Ҳ�������
+    private EvaluationContext createEvaluationContext(ProceedingJoinPoint joinPoint) {
+                                                      ^
+  ����:   �� ProceedingJoinPoint
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:156: ����: �Ҳ�������
+    private EvaluationContext createEvaluationContext(ProceedingJoinPoint joinPoint) {
+            ^
+  ����:   �� EvaluationContext
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:182: ����: �Ҳ�������
+    private boolean shouldCache(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCache) {
+                                ^
+  ����:   �� ProceedingJoinPoint
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:182: ����: �Ҳ�������
+    private boolean shouldCache(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCache) {
+                                                               ^
+  ����:   �� UnifiedCache
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:219: ����: �Ҳ�������
+    private boolean shouldCacheResult(Object result, UnifiedCache unifiedCache) {
+                                                     ^
+  ����:   �� UnifiedCache
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:231: ����: �Ҳ�������
+    private UnifiedCacheManager.CacheResult<Object> getFromCache(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCac
+he, String cacheKey) {
+                                                                 ^
+  ����:   �� ProceedingJoinPoint
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:231: ����: �Ҳ�������
+    private UnifiedCacheManager.CacheResult<Object> getFromCache(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCac
+he, String cacheKey) {
+                                                                                                ^
+  ����:   �� UnifiedCache
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:231: ����: �����UnifiedCacheManager������
+    private UnifiedCacheManager.CacheResult<Object> getFromCache(ProceedingJoinPoint joinPoint, UnifiedCache unifiedCac
+he, String cacheKey) {
+                               ^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:269: ����: �Ҳ�������
+    private void setCache(UnifiedCache unifiedCache, String cacheKey, Object result) {
+                          ^
+  ����:   �� UnifiedCache
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:286: ����: �Ҳ�������
+    private void setCacheAsync(UnifiedCache unifiedCache, String cacheKey, Object result) {
+                               ^
+  ����:   �� UnifiedCache
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:43: ����: �Ҳ�������
+    @Resource
+     ^
+  ����:   �� Resource
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:51: ����: �Ҳ�������
+    @Around("@annotation(unifiedCache)")
+     ^
+  ����:   �� Around
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\authorization\util\Authorizat
+ionContextHolder.java:37: ����: �Ҳ�������
+                log.debug("�û������������Ȩ��: regionId={}", regionId);
+                ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.authorization.util.AuthorizationContextHolder
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\authorization\util\Authorizat
+ionContextHolder.java:45: ����: �Ҳ�������
+                log.debug("�û�����ͨ���������Ȩ��: regionId={}", regionId);
+                ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.authorization.util.AuthorizationContextHolder
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\authorization\util\Authorizat
+ionContextHolder.java:49: ����: �Ҳ�������
+            log.debug("�û����������Ȩ��: regionId={}", regionId);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.authorization.util.AuthorizationContextHolder
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\authorization\util\Authorizat
+ionContextHolder.java:53: ����: �Ҳ�������
+            log.error("����������Ȩ���쳣: regionId={}", regionId, e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.authorization.util.AuthorizationContextHolder
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\authorization\util\Authorizat
+ionContextHolder.java:73: ����: �Ҳ�������
+            log.error("��ȡȨ���������쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.authorization.util.AuthorizationContextHolder
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:46: ����: �Ҳ�������
+    private final ExpressionParser expressionParser = new SpelExpressionParser();
+                                                          ^
+  ����:   �� SpelExpressionParser
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:61: ����: �Ҳ�������
+                log.debug("�������������㣬ֱ��ִ�з���: key={}", cacheKey);
+                ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:66: ����: �����UnifiedCacheManager������
+            UnifiedCacheManager.CacheResult<Object> cacheResult = getFromCache(joinPoint, unifiedCache, cacheKey);
+                               ^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:69: ����: �Ҳ�������
+                log.debug("��������: namespace={}, key={}, hitTime={}ms",
+                ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:88: ����: �Ҳ�������
+            log.debug("����ִ����ɲ�������: namespace={}, key={}, executionTime={}ms",
+            ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:94: ����: �Ҳ�������
+            log.error("���洦��ʧ��", e);
+            ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:112: ����: �Ҳ�������
+            EvaluationContext context = createEvaluationContext(joinPoint);
+            ^
+  ����:   �� EvaluationContext
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:113: ����: �Ҳ�������
+            Expression expression = expressionParser.parseExpression(keyExpression);
+            ^
+  ����:   �� Expression
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:123: ����: �Ҳ�������
+            log.warn("������������ʽʧ��: {}, ʹ��Ĭ�ϼ�", keyExpression, e);
+            ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:132: ����: �Ҳ�������
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        ^
+  ����:   �� MethodSignature
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:132: ����: �Ҳ�������
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+                                     ^
+  ����:   �� MethodSignature
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:157: ����: �Ҳ�������
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        ^
+  ����:   �� MethodSignature
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:157: ����: �Ҳ�������
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+                                     ^
+  ����:   �� MethodSignature
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:158: ����: �Ҳ�������
+        Method method = signature.getMethod();
+        ^
+  ����:   �� Method
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:162: ����: �Ҳ�������
+        StandardEvaluationContext context = new StandardEvaluationContext();
+        ^
+  ����:   �� StandardEvaluationContext
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:162: ����: �Ҳ�������
+        StandardEvaluationContext context = new StandardEvaluationContext();
+                                                ^
+  ����:   �� StandardEvaluationContext
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:187: ����: �Ҳ�������
+                EvaluationContext context = createEvaluationContext(joinPoint);
+                ^
+  ����:   �� EvaluationContext
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:188: ����: �Ҳ�������
+                Expression expression = expressionParser.parseExpression(condition);
+                ^
+  ����:   �� Expression
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:194: ����: �Ҳ�������
+                log.warn("���������������ʽʧ��: {}", condition, e);
+                ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:202: ����: �Ҳ�������
+                EvaluationContext context = createEvaluationContext(joinPoint);
+                ^
+  ����:   �� EvaluationContext
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:203: ����: �Ҳ�������
+                Expression expression = expressionParser.parseExpression(unless);
+                ^
+  ����:   �� Expression
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:209: ����: �Ҳ�������
+                log.warn("���������ų��������ʽʧ��: {}", unless, e);
+                ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:233: ����: �Ҳ�������
+            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+            ^
+  ����:   �� MethodSignature
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:233: ����: �Ҳ�������
+            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+                                         ^
+  ����:   �� MethodSignature
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:234: ����: �Ҳ�������
+            Method method = signature.getMethod();
+            ^
+  ����:   �� Method
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:235: ����: �Ҳ�������
+            Type returnType = method.getGenericReturnType();
+            ^
+  ����:   �� Type
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:238: ����: �Ҳ�������
+            if (returnType instanceof ParameterizedType) {
+                                      ^
+  ����:   �� ParameterizedType
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:239: ����: �Ҳ�������
+                ParameterizedType parameterizedType = (ParameterizedType) returnType;
+                ^
+  ����:   �� ParameterizedType
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:239: ����: �Ҳ�������
+                ParameterizedType parameterizedType = (ParameterizedType) returnType;
+                                                       ^
+  ����:   �� ParameterizedType
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:240: ����: �Ҳ�������
+                Type rawType = parameterizedType.getRawType();
+                ^
+  ����:   �� Type
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:243: ����: �Ҳ�������
+                if (rawType.equals(CompletableFuture.class)) {
+                                   ^
+  ����:   �� CompletableFuture
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:245: ����: �����UnifiedCacheManager������
+                    return UnifiedCacheManager.CacheResult.failure(cacheKey, unifiedCache.namespace(), "Async type not 
+supported for direct cache");
+                                              ^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:249: ����: �Ҳ�������
+                return unifiedCacheManager.get(unifiedCache.namespace(), cacheKey, new TypeReference<Object>() {});
+                                                                                       ^
+  ����:   �� TypeReference
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:253: ����: �����UnifiedCacheManager������
+                UnifiedCacheManager.CacheResult<?> result = unifiedCacheManager.get(unifiedCache.namespace(), cacheKey,
+ returnClass);
+                                   ^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:256: ����: �����UnifiedCacheManager������
+                UnifiedCacheManager.CacheResult<Object> castResult = (UnifiedCacheManager.CacheResult<Object>) result;
+                                   ^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:256: ����: �����UnifiedCacheManager������
+                UnifiedCacheManager.CacheResult<Object> castResult = (UnifiedCacheManager.CacheResult<Object>) result;
+                                                                                         ^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:261: ����: �Ҳ�������
+            log.error("�ӻ����ȡ����ʧ��: namespace={}, key={}", unifiedCache.namespace().getPrefix(), cacheKey, e);
+            ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:262: ����: �����UnifiedCacheManager������
+            return UnifiedCacheManager.CacheResult.failure(cacheKey, unifiedCache.namespace(), e.getMessage());
+                                      ^
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:279: ����: �Ҳ�������
+            log.error("���û���ʧ��: namespace={}, key={}", unifiedCache.namespace().getPrefix(), cacheKey, e);
+            ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:287: ����: �Ҳ�������
+        CompletableFuture.runAsync(() -> {
+        ^
+  ����:   ���� CompletableFuture
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:296: ����: �Ҳ�������
+                log.debug("�첽�����������: namespace={}, key={}", unifiedCache.namespace().getPrefix(), cacheKey);
+                ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\aspect\UnifiedCacheAsp
+ect.java:299: ����: �Ҳ�������
+                log.error("�첽���û���ʧ��: namespace={}, key={}", unifiedCache.namespace().getPrefix(), cacheKey, e);
+                ^
+  ����:   ���� log
+  λ��: �� UnifiedCacheAspect
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:68: ����: �Ҳ�������
+        log.info("L1����(Caffeine)��ʼ����ɣ��������: 10000������ʱ��: 5����");
+        ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:75: ����: �Ҳ�������
+        log.debug("L1�����Ƴ�: key={}, value={}, cause={}", key, value, cause);
+        ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:82: ����: �Ҳ�������
+                log.warn("���L2����ʧ��: key={}", key, e);
+                ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:98: ����: �Ҳ�������
+                log.debug("L1��������: key={}", key);
+                ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:107: ����: �Ҳ�������
+                log.debug("L2�������У���дL1: key={}", key);
+                ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:111: ����: �Ҳ�������
+            log.debug("����δ����: key={}", key);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:115: ����: �Ҳ�������
+            log.error("��ȡ����ʧ��: key={}", key, e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:136: ����: �Ҳ�������
+                log.warn("ˢ�»������ʱ��ʧ��: key={}", key, e);
+                ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:169: ����: �Ҳ�������
+            log.debug("���û���ɹ�: key={}, timeout={} {}", key, randomTimeout, timeUnit);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:171: ����: �Ҳ�������
+            log.error("���û���ʧ��: key={}", key, e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:188: ����: �Ҳ�������
+            log.debug("ɾ������ɹ�: key={}", key);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:190: ����: �Ҳ�������
+            log.error("ɾ������ʧ��: key={}", key, e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:224: ����: �Ҳ�������
+            log.error("��黺�������ʧ��: key={}", key, e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:247: ����: �Ҳ�������
+            log.error("ԭ�ӵ���ʧ��: key={}, delta={}", key, delta, e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:290: ����: �Ҳ�������
+                log.debug("����δ���У���ʼ��������: key={}", key);
+                ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:296: ����: �Ҳ�������
+                    log.debug("���ݼ��ز�����ɹ�: key={}", key);
+                    ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:301: ����: �Ҳ�������
+                log.error("�����������ʧ��: key={}", key, e);
+                ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:314: ����: �Ҳ�������
+            log.info("L1���������");
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\BaseCacheManager
+.java:316: ����: �Ҳ�������
+            log.error("���L1����ʧ��", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.BaseCacheManager
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:6
+1: ����: �Ҳ�������
+            log.error("�ж�key�Ƿ�����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:1
+47: ����: �Ҳ�������
+            log.error("���û����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:1
+69: ����: �Ҳ�������
+            log.error("���û����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:1
+92: ����: �Ҳ�������
+            log.error("���û����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:2
+56: ����: �Ҳ�������
+            log.error("����Hash�����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:2
+77: ����: �Ҳ�������
+            log.error("����Hash�����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:2
+95: ����: �Ҳ�������
+            log.error("����Hash�����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:3
+17: ����: �Ҳ�������
+            log.error("����Hash�����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\cache\RedisUtil.java:3
+54: ����: �Ҳ�������
+            log.error("��ȡSet�����쳣", e);
+            ^
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.base.common.cache.RedisUtil
+[INFO] Delombok complete.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-base ---
+[INFO] Compiling 187 source files with javac [forked debug deprecation target 17] to target\classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.614 s
+[INFO] Finished at: 2025-11-20T00:18:32+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-base: Compilation failure -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

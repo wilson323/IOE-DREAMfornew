@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: sa-visitor-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        file-extension: yml
+        shared-configs:
+          - data-id: common-config-${spring.profiles.active}.yml
+            group: COMMON_GROUP
+            refresh: true
+          - data-id: visitor-config-${spring.profiles.active}.yml
+            group: VISITOR_GROUP
+            refresh: true

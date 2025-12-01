@@ -1,0 +1,1248 @@
+﻿[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-parent ---
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [2/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-support ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-support ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 38 source files with javac [debug target 17] to target\classes
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [3/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-base ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-base ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 187 source files with javac [debug target 17] to target\classes
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-base/src/main/java/net/lab1024/sa/base/common/device/domain/manager/AttendanceCacheManager.java:[159,46] δ������ת��
+  ��Ҫ: T
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-base/src/main/java/net/lab1024/sa/base/common/device/domain/manager/AttendanceCacheManager.java:[167,55] δ������ת��
+  ��Ҫ: T
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-base/src/main/java/net/lab1024/sa/base/common/util/SmartEnumUtil.java:[50,99] ������ vararg ����T�Ķѿ���������Ⱦ
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-base/src/main/java/net/lab1024/sa/base/common/device/domain/entity/AttendanceScheduleEntity.java: ĳЩ�����ļ�ʹ�û򸲸����ѹ�ʱ�� API��
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-base/src/main/java/net/lab1024/sa/base/common/device/domain/entity/AttendanceScheduleEntity.java: �й���ϸ��Ϣ, ��ʹ�� -Xlint:deprecation ���±��롣
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-admin ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 11 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-admin ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 461 source files with javac [debug target 17] to target\classes
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/domain/entity/AttendanceRecordEntity.java: ĳЩ�����ļ�ʹ�û򸲸����ѹ�ʱ�� API��
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/domain/entity/AttendanceRecordEntity.java: �й���ϸ��Ϣ, ��ʹ�� -Xlint:deprecation ���±��롣
+[INFO] ĳЩ��Ϣ�Ѿ�����; ��ʹ�� -Xdiags:verbose ���±����Ի���������
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[350,73] δ������ת��
+  ��Ҫ: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  �ҵ�:    java.util.List
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[410,70] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.util.Map
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[411,74] δ������ת��
+  ��Ҫ: java.util.List<java.lang.String>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeCacheService.java:[208,68] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeCacheService.java:[268,67] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[290,81] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[305,77] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[347,48] δ������ת��
+  ��Ҫ: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[297,81] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[304,79] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[346,48] δ������ת��
+  ��Ҫ: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/SmartMode.java:[243,98] δ������ת��
+  ��Ҫ: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/AdvancedReportManager.java:[259,99] δ������ת��
+  ��Ҫ: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  �ҵ�:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/service/impl/AccessRecordServiceImpl.java:[69,75] δ������ת��
+  ��Ҫ: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.smart.access.domain.entity.AccessRecordEntity>
+  �ҵ�:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#2, �� ?>
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/websocket/WebSocketSessionManager.java:[200,64] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.util.Map
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[103,68] δ������ת��
+  ��Ҫ: java.util.Map<java.lang.String,java.lang.Object>
+  �ҵ�:    java.util.Map
+[INFO] 16 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/config/OperateLogAspectConfig.java:[3,58] �����net.lab1024.sa.base.module.support.operatelog.core������
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/config/OperateLogAspectConfig.java:[23,12] �Ҳ�������
+  ����:   �� OperateLogConfig
+  λ��: �� net.lab1024.sa.admin.config.OperateLogAspectConfig
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[25,47] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: ����� net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[52,62] �Ҳ�������
+  ����: �� AttendanceMapper
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[724,69] �Ҳ�������
+  ����:   �� MakeupPunchRequest
+  λ��: �� net.lab1024.sa.admin.module.attendance.controller.AttendanceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/impl/AdvancedReportServiceImpl.java:[29,51] �˴���Ҫ�ӿ�
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessAreaController.java:[17,47] �����net.lab1024.sa.base.module.support.rbac������
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[17,47] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: ����� net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/controller/BiometricMobileController.java:[25,47] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: ����� net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[28,47] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: ����� net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[43,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[55,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[64,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[73,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[82,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessAreaController.java:[58,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessAreaController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[41,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessRecordController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[50,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessRecordController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[66,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessRecordController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[74,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessRecordController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/controller/BiometricMobileController.java:[53,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.biometric.controller.BiometricMobileController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[48,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[62,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[70,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[79,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[88,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[97,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[105,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[113,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[122,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[131,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[140,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[151,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[159,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[168,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[177,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[186,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[195,6] �Ҳ�������
+  ����:   �� RequireResource
+  λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/config/OperateLogAspectConfig.java:[24,16] �Ҳ�������
+  ����:   ���� OperateLogConfig
+  λ��: �� net.lab1024.sa.admin.config.OperateLogAspectConfig
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[340,76] ���ɱȽϵ�����: java.lang.Boolean��int
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[345,55] �����ݵ�����: java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.lang.String
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[405,45] �Ҳ�������
+  ����:   ���� getDeviceRestrictions()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[498,40] �Ҳ�������
+  ����:   ���� getRuleType()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[503,47] �Ҳ�������
+  ����:   ���� getFaceRecognition()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[504,44] �Ҳ�������
+  ����:   ���� getAutoApproval()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[507,74] �Ҳ�������
+  ����:   ���� trim()
+  λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[508,56] ����readValue(net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig,java.lang.Class<java.util.Map>), �Ҳ������ʵķ���
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.ResolvedType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.DataInput))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.DataInput))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[511,76] �Ҳ�������
+  ����:   ���� trim()
+  λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[512,57] ����readValue(net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig,java.lang.Class<java.util.Map>), �Ҳ������ʵķ���
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.ResolvedType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.DataInput))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.DataInput))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[515,74] �Ҳ�������
+  ����:   ���� trim()
+  λ��: �ӿ� java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[516,56] ����readValue(java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>,java.lang.Class<java.util.List>), �Ҳ������ʵķ���
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.ResolvedType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.File))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.net.URL))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.lang.String))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.Reader))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.InputStream))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.core.type.TypeReference<T>)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊbyte[]))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.DataInput))
+    ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,com.fasterxml.jackson.databind.JavaType)������
+      (�޷��ƶ����ͱ��� T
+        (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.DataInput))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[519,21] �Ҳ�������
+  ����:   ���� getNotificationSettings()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[519,64] �Ҳ�������
+  ����:   ���� getNotificationSettings()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[520,79] �Ҳ�������
+  ����:   ���� getNotificationSettings()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceStatisticsRepository.java:[40,26] �Ҳ�������
+  ����:   ���� getStatisticsId()
+  λ��: ����Ϊnet.lab1024.sa.admin.module.attendance.domain.entity.AttendanceStatisticsEntity�ı��� entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[59,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[79,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[93,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[114,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[128,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[151,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[245,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[278,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[306,13] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[397,9] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[406,9] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[48,16] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� debugӦ�õ���������;
+  ��Ҫ: java.lang.String
+  �ҵ�:    java.lang.String,java.lang.Long
+  ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[51,29] ����������Ч
+  �Ҳ�������
+    ����:   ���� getEmployeeId()
+    λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[53,28] ����������Ч
+  �Ҳ�������
+    ����:   ���� getEnabled()
+    λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[67,16] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� debugӦ�õ���������;
+  ��Ҫ: java.lang.String
+  �ҵ�:    java.lang.String,java.lang.Long
+  ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[72,28] ����������Ч
+  �Ҳ�������
+    ����:   ���� getEnabled()
+    λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[87,16] �Ҳ�������
+  ����:   ���� info(java.lang.String,java.lang.String)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[101,21] �Ҳ�������
+  ����:   ���� getEnabled()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[102,21] �Ҳ�������
+  ����:   ���� setEnabled(boolean)
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[113,20] �Ҳ�������
+  ����:   ���� info(java.lang.String,java.lang.Long,java.lang.String)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[116,20] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� warnӦ�õ���������;
+  ��Ҫ: java.lang.String
+  �ҵ�:    java.lang.String,java.lang.String
+  ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[130,16] �Ҳ�������
+  ����:   ���� info(java.lang.String,java.lang.Long)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[134,20] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� warnӦ�õ���������;
+  ��Ҫ: java.lang.String
+  �ҵ�:    java.lang.String,java.lang.Long
+  ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[145,20] �Ҳ�������
+  ����:   ���� info(java.lang.String,java.lang.Long,java.lang.String)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[160,16] �Ҳ�������
+  ����:   ���� info(java.lang.String,int)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[173,16] �Ҳ�������
+  ����:   ���� info(java.lang.String,int)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[188,28] ����������Ч
+  �Ҳ�������
+    ����:   ���� getEnabled()
+    λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[211,16] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� debugӦ�õ���������;
+  ��Ҫ: java.lang.String
+  �ҵ�:    java.lang.String,java.lang.Long,java.lang.Long
+  ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[229,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getEnabled()
+    λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[236,78] �����ݵ�����: com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#1, �� ?>�޷�ת��Ϊcom.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[239,33] ����convert2PageResult(com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity>), �Ҳ������ʵķ���
+    ���� net.lab1024.sa.base.common.util.SmartPageUtil.<T,E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� T,E
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� net.lab1024.sa.base.common.util.SmartPageUtil.<E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>)������
+      (�޷��ƶ����ͱ��� E
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+    ���� net.lab1024.sa.base.common.util.SmartPageUtil.<E,T>convert2PageResult(net.lab1024.sa.base.common.domain.PageResult<E>,java.lang.Class<T>)������
+      (�޷��ƶ����ͱ��� E,T
+        (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[242,30] �޷����� net.lab1024.sa.base.common.domain.PageResult<T>�еķ��� ofӦ�õ���������;
+  ��Ҫ: java.util.List<T>,long,long,long
+  �ҵ�:    java.lang.Long,java.lang.Long,int,java.util.List<java.lang.Object>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (������ƥ��; java.lang.Long�޷�ת��Ϊjava.util.List<T>)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[256,16] �Ҳ�������
+  ����:   ���� info(java.lang.String,enabled ? [...]7528",java.lang.Long)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[260,20] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� warnӦ�õ���������;
+  ��Ҫ: java.lang.String
+  �ҵ�:    java.lang.String,java.lang.Long
+  ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[264,17] �Ҳ�������
+  ����:   ���� setEnabled(boolean)
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[270,20] �Ҳ�������
+  ����:   ���� info(java.lang.String,java.lang.Long,enabled ? [...]7528")
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[293,16] �Ҳ�������
+  ����:   ���� info(java.lang.String,java.lang.Long,java.lang.String)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[310,24] �Ҳ�������
+  ����:   ���� setEmployeeId(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� newRule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[323,16] �Ҳ�������
+  ����:   ���� info(java.lang.String,java.lang.Long,java.lang.Long)
+  λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[346,21] �Ҳ�������
+  ����:   ���� getEmployeeId()
+  λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[352,20] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� warnӦ�õ���������;
+  ��Ҫ: java.lang.String
+  �ҵ�:    java.lang.String,java.lang.Long
+  ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[59,8] net.lab1024.sa.admin.module.attendance.service.impl.AttendanceServiceImpl���ǳ����, ����δ����net.lab1024.sa.admin.module.attendance.service.IAttendanceService�еĳ��󷽷�applyMakeupPunch(net.lab1024.sa.admin.module.attendance.domain.dto.MakeupPunchRequest)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[92,16] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� debugӦ�õ���������;
+  ��Ҫ: java.lang.String
+  �ҵ�:    java.lang.String,net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordQueryVO,net.lab1024.sa.base.common.domain.PageParam
+  ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[103,34] �Ҳ�������
+  ����:   ���� getAttendanceDateStart()
+  λ��: ����Ϊnet.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordQueryVO�ı��� attendanceQueryVO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[104,93] �Ҳ�������
+  ����:   ���� getAttendanceDateStart()
+  λ��: ����Ϊnet.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordQueryVO�ı��� attendanceQueryVO
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.157 s]
+[INFO] sa-support ......................................... SUCCESS [  3.931 s]
+[INFO] sa-base ............................................ SUCCESS [ 24.531 s]
+[INFO] sa-admin ........................................... FAILURE [ 17.205 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  46.192 s
+[INFO] Finished at: 2025-11-19T17:41:57+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/config/OperateLogAspectConfig.java:[3,58] �����net.lab1024.sa.base.module.support.operatelog.core������
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/config/OperateLogAspectConfig.java:[23,12] �Ҳ�������
+[ERROR]   ����:   �� OperateLogConfig
+[ERROR]   λ��: �� net.lab1024.sa.admin.config.OperateLogAspectConfig
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[25,47] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: ����� net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[52,62] �Ҳ�������
+[ERROR]   ����: �� AttendanceMapper
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceSimpleImpl.java:[724,69] �Ҳ�������
+[ERROR]   ����:   �� MakeupPunchRequest
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.controller.AttendanceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/impl/AdvancedReportServiceImpl.java:[29,51] �˴���Ҫ�ӿ�
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessAreaController.java:[17,47] �����net.lab1024.sa.base.module.support.rbac������
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[17,47] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: ����� net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/controller/BiometricMobileController.java:[25,47] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: ����� net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[28,47] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: ����� net.lab1024.sa.base.module.support.auth
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[43,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[55,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[64,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[73,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/controller/EmployeeController.java:[82,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.controller.EmployeeController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessAreaController.java:[58,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessAreaController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[41,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessRecordController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[50,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessRecordController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[66,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessRecordController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/controller/AccessRecordController.java:[74,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.access.controller.AccessRecordController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/biometric/controller/BiometricMobileController.java:[53,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.biometric.controller.BiometricMobileController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[48,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[62,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[70,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[79,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[88,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[97,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[105,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[113,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[122,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[131,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[140,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[151,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[159,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[168,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[177,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[186,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/controller/SmartDeviceController.java:[195,6] �Ҳ�������
+[ERROR]   ����:   �� RequireResource
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.smart.device.controller.SmartDeviceController
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/config/OperateLogAspectConfig.java:[24,16] �Ҳ�������
+[ERROR]   ����:   ���� OperateLogConfig
+[ERROR]   λ��: �� net.lab1024.sa.admin.config.OperateLogAspectConfig
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[340,76] ���ɱȽϵ�����: java.lang.Boolean��int
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[345,55] �����ݵ�����: java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.lang.String
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[405,45] �Ҳ�������
+[ERROR]   ����:   ���� getDeviceRestrictions()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[498,40] �Ҳ�������
+[ERROR]   ����:   ���� getRuleType()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[503,47] �Ҳ�������
+[ERROR]   ����:   ���� getFaceRecognition()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[504,44] �Ҳ�������
+[ERROR]   ����:   ���� getAutoApproval()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[507,74] �Ҳ�������
+[ERROR]   ����:   ���� trim()
+[ERROR]   λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[508,56] ����readValue(net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig,java.lang.Class<java.util.Map>), �Ҳ������ʵķ���
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.ResolvedType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.DataInput))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.WorkScheduleConfig�޷�ת��Ϊjava.io.DataInput))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[511,76] �Ҳ�������
+[ERROR]   ����:   ���� trim()
+[ERROR]   λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[512,57] ����readValue(net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig,java.lang.Class<java.util.Map>), �Ҳ������ʵķ���
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.ResolvedType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.DataInput))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.OvertimeRulesConfig�޷�ת��Ϊjava.io.DataInput))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[515,74] �Ҳ�������
+[ERROR]   ����:   ���� trim()
+[ERROR]   λ��: �ӿ� java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[516,56] ����readValue(java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>,java.lang.Class<java.util.List>), �Ҳ������ʵķ���
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.core.type.ResolvedType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(com.fasterxml.jackson.core.JsonParser,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊcom.fasterxml.jackson.core.JsonParser))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.File,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.File))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.net.URL,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.net.URL))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.lang.String,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.lang.String))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.Reader,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.Reader))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.InputStream,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.InputStream))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.core.type.TypeReference<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊbyte[]))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(byte[],int,int,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.DataInput))
+[ERROR]     ���� com.fasterxml.jackson.databind.ObjectMapper.<T>readValue(java.io.DataInput,com.fasterxml.jackson.databind.JavaType)������
+[ERROR]       (�޷��ƶ����ͱ��� T
+[ERROR]         (������ƥ��; java.util.List<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity.GpsLocationPoint>�޷�ת��Ϊjava.io.DataInput))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[519,21] �Ҳ�������
+[ERROR]   ����:   ���� getNotificationSettings()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[519,64] �Ҳ�������
+[ERROR]   ����:   ���� getNotificationSettings()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[520,79] �Ҳ�������
+[ERROR]   ����:   ���� getNotificationSettings()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceStatisticsRepository.java:[40,26] �Ҳ�������
+[ERROR]   ����:   ���� getStatisticsId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.admin.module.attendance.domain.entity.AttendanceStatisticsEntity�ı��� entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[59,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[79,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[93,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[114,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[128,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[151,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[245,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[278,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[306,13] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[397,9] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[406,9] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.admin.module.attendance.rule.AttendanceRuleEngine
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[48,16] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� debugӦ�õ���������;
+[ERROR]   ��Ҫ: java.lang.String
+[ERROR]   �ҵ�:    java.lang.String,java.lang.Long
+[ERROR]   ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[51,29] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getEmployeeId()
+[ERROR]     λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[53,28] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getEnabled()
+[ERROR]     λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[67,16] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� debugӦ�õ���������;
+[ERROR]   ��Ҫ: java.lang.String
+[ERROR]   �ҵ�:    java.lang.String,java.lang.Long
+[ERROR]   ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[72,28] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getEnabled()
+[ERROR]     λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[87,16] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,java.lang.String)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[101,21] �Ҳ�������
+[ERROR]   ����:   ���� getEnabled()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[102,21] �Ҳ�������
+[ERROR]   ����:   ���� setEnabled(boolean)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[113,20] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,java.lang.Long,java.lang.String)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[116,20] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� warnӦ�õ���������;
+[ERROR]   ��Ҫ: java.lang.String
+[ERROR]   �ҵ�:    java.lang.String,java.lang.String
+[ERROR]   ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[130,16] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,java.lang.Long)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[134,20] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� warnӦ�õ���������;
+[ERROR]   ��Ҫ: java.lang.String
+[ERROR]   �ҵ�:    java.lang.String,java.lang.Long
+[ERROR]   ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[145,20] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,java.lang.Long,java.lang.String)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[160,16] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,int)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[173,16] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,int)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[188,28] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getEnabled()
+[ERROR]     λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[211,16] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� debugӦ�õ���������;
+[ERROR]   ��Ҫ: java.lang.String
+[ERROR]   �ҵ�:    java.lang.String,java.lang.Long,java.lang.Long
+[ERROR]   ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[229,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getEnabled()
+[ERROR]     λ��: �� net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[236,78] �����ݵ�����: com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#1, �� ?>�޷�ת��Ϊcom.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[239,33] ����convert2PageResult(com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity>), �Ҳ������ʵķ���
+[ERROR]     ���� net.lab1024.sa.base.common.util.SmartPageUtil.<T,E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� T,E
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� net.lab1024.sa.base.common.util.SmartPageUtil.<E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>)������
+[ERROR]       (�޷��ƶ����ͱ��� E
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR]     ���� net.lab1024.sa.base.common.util.SmartPageUtil.<E,T>convert2PageResult(net.lab1024.sa.base.common.domain.PageResult<E>,java.lang.Class<T>)������
+[ERROR]       (�޷��ƶ����ͱ��� E,T
+[ERROR]         (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[242,30] �޷����� net.lab1024.sa.base.common.domain.PageResult<T>�еķ��� ofӦ�õ���������;
+[ERROR]   ��Ҫ: java.util.List<T>,long,long,long
+[ERROR]   �ҵ�:    java.lang.Long,java.lang.Long,int,java.util.List<java.lang.Object>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (������ƥ��; java.lang.Long�޷�ת��Ϊjava.util.List<T>)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[256,16] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,enabled ? [...]7528",java.lang.Long)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[260,20] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� warnӦ�õ���������;
+[ERROR]   ��Ҫ: java.lang.String
+[ERROR]   �ҵ�:    java.lang.String,java.lang.Long
+[ERROR]   ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[264,17] �Ҳ�������
+[ERROR]   ����:   ���� setEnabled(boolean)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[270,20] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,java.lang.Long,enabled ? [...]7528")
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[293,16] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,java.lang.Long,java.lang.String)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[310,24] �Ҳ�������
+[ERROR]   ����:   ���� setEmployeeId(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� newRule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[323,16] �Ҳ�������
+[ERROR]   ����:   ���� info(java.lang.String,java.lang.Long,java.lang.Long)
+[ERROR]   λ��: ����Ϊorg.apache.ibatis.logging.Log�ı��� log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[346,21] �Ҳ�������
+[ERROR]   ����:   ���� getEmployeeId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.base.common.device.domain.entity.AttendanceRuleEntity�ı��� rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[352,20] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� warnӦ�õ���������;
+[ERROR]   ��Ҫ: java.lang.String
+[ERROR]   �ҵ�:    java.lang.String,java.lang.Long
+[ERROR]   ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[59,8] net.lab1024.sa.admin.module.attendance.service.impl.AttendanceServiceImpl���ǳ����, ����δ����net.lab1024.sa.admin.module.attendance.service.IAttendanceService�еĳ��󷽷�applyMakeupPunch(net.lab1024.sa.admin.module.attendance.domain.dto.MakeupPunchRequest)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[92,16] �޷����ӿ� org.apache.ibatis.logging.Log�еķ��� debugӦ�õ���������;
+[ERROR]   ��Ҫ: java.lang.String
+[ERROR]   �ҵ�:    java.lang.String,net.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordQueryVO,net.lab1024.sa.base.common.domain.PageParam
+[ERROR]   ԭ��: ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[103,34] �Ҳ�������
+[ERROR]   ����:   ���� getAttendanceDateStart()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordQueryVO�ı��� attendanceQueryVO
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceServiceImpl.java:[104,93] �Ҳ�������
+[ERROR]   ����:   ���� getAttendanceDateStart()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.admin.module.attendance.domain.vo.AttendanceRecordQueryVO�ı��� attendanceQueryVO
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

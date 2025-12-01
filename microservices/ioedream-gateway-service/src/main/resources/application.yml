@@ -1,0 +1,269 @@
+# IOE-DREAM API网关配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: ioedream-gateway-service
+  profiles:
+    active: dev
+
+  # Cloud Gateway配置
+  cloud:
+    gateway:
+      # 跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+      # 路由配置 - 按优先级排序
+      routes:
+        # 1. 身份认证服务 - 最高优先级
+        - id: auth-service
+          uri: lb://ioedream-auth-service
+          predicates:
+            - Path=/api/auth/**,/api/login/**,/api/logout/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+
+        # 2. 身份管理服务
+        - id: identity-service
+          uri: lb://ioedream-identity-service
+          predicates:
+            - Path=/api/identity/**,/api/user/**,/api/role/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+
+        # 3. 配置中心服务 - 仅限管理员访问
+        - id: config-service
+          uri: lb://ioedream-config-service
+          predicates:
+            - Path=/api/config/**,/api/admin/config/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        # 4. 门禁管理服务
+        - id: access-service
+          uri: lb://ioedream-access-service
+          predicates:
+            - Path=/api/access/**,/api/door/**,/api/permission/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 80
+                redis-rate-limiter.burstCapacity: 160
+
+        # 5. 设备管理服务
+        - id: device-service
+          uri: lb://ioedream-device-service
+          predicates:
+            - Path=/api/device/**,/api/equipment/**,/api/iot/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 60
+                redis-rate-limiter.burstCapacity: 120
+
+        # 6. 考勤管理服务
+        - id: attendance-service
+          uri: lb://ioedream-attendance-service
+          predicates:
+            - Path=/api/attendance/**,/api/checkin/**,/api/schedule/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 40
+                redis-rate-limiter.burstCapacity: 80
+
+        # 7. 视频监控服务
+        - id: video-service
+          uri: lb://ioedream-video-service
+          predicates:
+            - Path=/api/video/**,/api/camera/**,/api/stream/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 30
+                redis-rate-limiter.burstCapacity: 60
+
+        # 8. 消费管理服务
+        - id: consume-service
+          uri: lb://ioedream-consume-service
+          predicates:
+            - Path=/api/consume/**,/api/payment/**,/api/order/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+
+        # 9. 企业服务(OA+HR)
+        - id: enterprise-service
+          uri: lb://ioedream-enterprise-service
+          predicates:
+            - Path=/api/enterprise/**,/api/oa/**,/api/hr/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 40
+                redis-rate-limiter.burstCapacity: 80
+
+        # 10. 通知服务
+        - id: notification-service
+          uri: lb://ioedream-notification-service
+          predicates:
+            - Path=/api/notification/**,/api/message/**,/api/sms/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+
+        # 11. 审计服务
+        - id: audit-service
+          uri: lb://ioedream-audit-service
+          predicates:
+            - Path=/api/audit/**,/api/log/**,/api/operation/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 30
+                redis-rate-limiter.burstCapacity: 60
+
+        # 12. 报表分析服务
+        - id: analytics-service
+          uri: lb://analytics-service
+          predicates:
+            - Path=/api/analytics/**,/api/report/**,/api/dashboard/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+
+        # 13. 监控服务
+        - id: monitor-service
+          uri: lb://ioedream-monitor-service
+          predicates:
+            - Path=/api/monitor/**,/api/metrics/**,/api/alert/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 30
+                redis-rate-limiter.burstCapacity: 60
+
+  # Redis配置 - 用于限流
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+
+# Nacos服务注册发现
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: public
+        group: IOE-DREAM-GROUP
+        weight: 1
+        enabled: true
+        register-enabled: true
+        heart-beat-interval: 5000
+        heart-beat-timeout: 15000
+        ip-delete-timeout: 30000
+
+      config:
+        server-addr: localhost:8848
+        namespace: public
+        group: IOE-DREAM-GROUP
+        file-extension: yml
+        enabled: true
+        refresh-enabled: true
+
+# 日志配置
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    org.springframework.web.reactive: DEBUG
+    reactor.netty: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# 自定义配置
+ioedream:
+  gateway:
+    # 限流配置
+    rate-limit:
+      default-replenish-rate: 50
+      default-burst-capacity: 100
+      timeout-ms: 5000
+
+    # 熔断配置
+    circuit-breaker:
+      failure-rate-threshold: 50
+      wait-duration-in-open-state: 5000
+      sliding-window-size: 10
+      minimum-number-of-calls: 5
+
+    # 重试配置
+    retry:
+      max-attempts: 3
+      backoff-delay: 1000
+
+    # 超时配置
+    timeout:
+      connect-timeout: 5000
+      response-timeout: 30000

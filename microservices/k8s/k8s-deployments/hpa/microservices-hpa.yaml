@@ -1,0 +1,390 @@
+# 微服务水平Pod自动扩缩容配置
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: smart-gateway-hpa
+  namespace: ioedream-prod
+  labels:
+    app: smart-gateway
+    component: hpa
+    environment: production
+    project: ioedream
+  annotations:
+    description: "智能网关服务自动扩缩容"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: smart-gateway
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    # CPU使用率
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    # 内存使用率
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+    # 自定义指标 - HTTP请求数
+    - type: Pods
+      pods:
+        metric:
+          name: http_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "100"
+    # 自定义指标 - 响应时间
+    - type: External
+      external:
+        metric:
+          name: http_request_duration_seconds
+          selector:
+            matchLabels:
+              service: smart-gateway
+        target:
+          type: Value
+          value: "0.5"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 15
+        - type: Pods
+          value: 4
+          periodSeconds: 15
+      selectPolicy: Max
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60
+        - type: Pods
+          value: 2
+          periodSeconds: 60
+      selectPolicy: Min
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ioedream-auth-service-hpa
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-auth-service
+    component: hpa
+    environment: production
+    project: ioedream
+  annotations:
+    description: "认证授权服务自动扩缩容"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ioedream-auth-service
+  minReplicas: 3
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Pods
+      pods:
+        metric:
+          name: authentication_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "50"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ioedream-consume-service-hpa
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-consume-service
+    component: hpa
+    environment: production
+    project: ioedream
+  annotations:
+    description: "消费管理服务自动扩缩容"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ioedream-consume-service
+  minReplicas: 2
+  maxReplicas: 15
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 75
+    - type: Pods
+      pods:
+        metric:
+          name: consumption_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "200"
+    - type: External
+      external:
+        metric:
+          name: database_connections_usage
+        target:
+          type: Value
+          value: "0.8"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+        - type: Percent
+          value: 200
+          periodSeconds: 10
+        - type: Pods
+          value: 8
+          periodSeconds: 10
+      selectPolicy: Max
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 20
+          periodSeconds: 60
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ioedream-access-service-hpa
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-access-service
+    component: hpa
+    environment: production
+    project: ioedream
+  annotations:
+    description: "门禁管理服务自动扩缩容"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ioedream-access-service
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Pods
+      pods:
+        metric:
+          name: access_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "100"
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ioedream-attendance-service-hpa
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-attendance-service
+    component: hpa
+    environment: production
+    project: ioedream
+  annotations:
+    description: "考勤管理服务自动扩缩容"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ioedream-attendance-service
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ioedream-video-service-hpa
+  namespace: ioedream-prod
+  labels:
+    app: ioedream-video-service
+    component: hpa
+    environment: production
+    project: ioedream
+  annotations:
+    description: "视频监控服务自动扩缩容"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ioedream-video-service
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85
+    - type: Pods
+      pods:
+        metric:
+          name: video_streams_count
+        target:
+          type: AverageValue
+          averageValue: "50"
+
+---
+# 预发布环境HPA配置（更保守的扩缩容策略）
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: smart-gateway-hpa-staging
+  namespace: ioedream-staging
+  labels:
+    app: smart-gateway
+    component: hpa
+    environment: staging
+    project: ioedream
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: smart-gateway
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 120
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 30
+    scaleDown:
+      stabilizationWindowSeconds: 600
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ioedream-auth-service-hpa-staging
+  namespace: ioedream-staging
+  labels:
+    app: ioedream-auth-service
+    component: hpa
+    environment: staging
+    project: ioedream
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ioedream-auth-service
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85

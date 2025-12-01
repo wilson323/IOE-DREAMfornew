@@ -1,0 +1,25 @@
+-- 门禁记录表
+CREATE TABLE `t_access_record` (
+  `record_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+  `device_id` bigint(20) NOT NULL COMMENT '设备ID',
+  `user_id` bigint(20) DEFAULT NULL COMMENT '用户ID',
+  `card_no` varchar(50) DEFAULT NULL COMMENT '卡号',
+  `access_type` varchar(20) NOT NULL COMMENT '通行类型(ENTRY-进入,EXIT-退出)',
+  `access_result` varchar(20) NOT NULL COMMENT '通行结果(SUCCESS-成功,FAIL-失败)',
+  `access_time` datetime NOT NULL COMMENT '通行时间',
+  `access_direction` varchar(20) DEFAULT NULL COMMENT '通行方向(IN-入,OUT-出)',
+  `verification_mode` varchar(20) DEFAULT NULL COMMENT '验证方式(CARD-刷卡,FACE-人脸,FINGERPRINT-指纹)',
+  `temperature` decimal(4,1) DEFAULT NULL COMMENT '体温',
+  `photo_url` varchar(500) DEFAULT NULL COMMENT '抓拍照片URL',
+  `fail_reason` varchar(200) DEFAULT NULL COMMENT '失败原因',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0-正常 1-删除',
+  `create_user_id` bigint(20) DEFAULT NULL COMMENT '创建人ID',
+  `update_user_id` bigint(20) DEFAULT NULL COMMENT '更新人ID',
+  PRIMARY KEY (`record_id`),
+  KEY `idx_device_id` (`device_id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_access_time` (`access_time`),
+  KEY `idx_access_result` (`access_result`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='门禁记录表';

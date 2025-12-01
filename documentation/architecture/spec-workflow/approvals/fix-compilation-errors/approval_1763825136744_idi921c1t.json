@@ -1,0 +1,12 @@
+{
+  "id": "approval_1763825136744_idi921c1t",
+  "title": "修复377个编译错误的技术设计方案",
+  "filePath": "fix-compilation-errors/design.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-11-22T15:25:36.744Z",
+  "category": "spec",
+  "categoryName": "fix-compilation-errors",
+  "response": "通过仪表板批准",
+  "respondedAt": "2025-11-25T11:34:38.476Z"
+}

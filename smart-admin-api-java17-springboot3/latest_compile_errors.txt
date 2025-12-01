@@ -1,0 +1,566 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Compiling 175 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\LocalRedissonConfig.java:[47,16] [deprecation] BaseConfig中的setRetryInterval(int)已过时
+  其中, T是类型变量:
+    T扩展已在类 BaseConfig中声明的BaseConfig<T>
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\TransactionConfig.java:[60,15] [deprecation] TransactionInterceptor中的TransactionInterceptor(PlatformTransactionManager,TransactionAttributeSource)已过时
+[INFO] 2 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[80,44] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[121,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[167,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[214,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[259,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[302,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[635,24] 错误: 不兼容的类型: 推论变量 K 具有不兼容的上限
+    等式约束条件：LocalDate
+    下限：LocalDateTime
+  其中, K,T是类型变量:
+    K扩展已在方法 <T,K>groupingBy(Function<? super T,? extends K>)中声明的Object
+    T扩展已在方法 <T,K>groupingBy(Function<? super T,? extends K>)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[662,28] 错误: 对于reduce(BigDecimal,BigDecimal::add), 找不到合适的方法
+    方法 Stream.reduce(Double,BinaryOperator<Double>)不适用
+      (参数不匹配; BigDecimal无法转换为Double)
+    方法 Stream.<U>reduce(U,BiFunction<U,? super Double,U>,BinaryOperator<U>)不适用
+      (无法推断类型变量 U
+        (实际参数列表和形式参数列表长度不同))
+  其中, U,T是类型变量:
+    U扩展已在方法 <U>reduce(U,BiFunction<U,? super T,U>,BinaryOperator<U>)中声明的Object
+    T扩展已在接口 Stream中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceService.java:[547,33] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[79,36] 错误: 找不到符号
+  符号:   方法 insert(AttendanceScheduleEntity)
+  位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[109,36] 错误: 找不到符号
+  符号:   方法 insertBatch(List<AttendanceScheduleEntity>)
+  位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[138,36] 错误: 找不到符号
+  符号:   方法 updateById(AttendanceScheduleEntity)
+  位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[173,36] 错误: 找不到符号
+  符号:   方法 updateById(AttendanceScheduleEntity)
+  位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[233,36] 错误: 找不到符号
+  符号:   方法 selectMonthlySchedule(Long,String)
+  位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[301,72] 错误: 找不到符号
+  符号:   方法 selectTimeConflicts(Long,LocalDate,String,String,Long)
+  位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[553,53] 错误: 找不到符号
+  符号:   方法 isRuleApplicable(AttendanceRuleEntity,LocalDate)
+  位置: 类型为AttendanceRuleDao的变量 attendanceRuleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[609,32] 错误: 找不到符号
+  符号:   类 GpsLocationPoint
+  位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[609,88] 错误: 找不到符号
+  符号:   方法 get(int)
+  位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[629,52] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[678,55] 错误: 找不到符号
+  符号:   方法 getApprovalRequired()
+  位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[680,39] 错误: 找不到符号
+  符号:   方法 getMinOvertimeMinutes()
+  位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[681,88] 错误: 找不到符号
+  符号:   方法 getMinOvertimeMinutes()
+  位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[683,59] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[686,65] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceStatisticsManager.java:[518,77] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceStatisticsManager.java:[522,99] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceStatisticsManager.java:[523,83] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[496,54] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[497,14] 错误: 找不到符号
+  符号:   方法 setDeviceCode(String)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[498,14] 错误: 找不到符号
+  符号:   方法 setDeviceId(Long)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[499,14] 错误: 找不到符号
+  符号:   方法 setVerificationMethod(String)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[504,18] 错误: 找不到符号
+  符号:   方法 setPunchInDateTime(LocalDateTime)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[507,18] 错误: 找不到符号
+  符号:   方法 setPunchOutDatetime(LocalDateTime)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[525,22] 错误: 找不到符号
+  符号:   方法 setRawData(String)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[548,22] 错误: 找不到符号
+  符号:   方法 setDeviceCode(String)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[549,22] 错误: 找不到符号
+  符号:   方法 setDeviceId(Long)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[550,22] 错误: 找不到符号
+  符号:   方法 setVerificationMethod(String)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[555,26] 错误: 找不到符号
+  符号:   方法 setPunchInDateTime(LocalDateTime)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[558,26] 错误: 找不到符号
+  符号:   方法 setPunchOutDatetime(LocalDateTime)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[576,30] 错误: 找不到符号
+  符号:   方法 setRawData(String)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[92,52] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[108,56] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[109,22] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[151,52] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[175,25] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[332,41] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[333,103] 错误: 找不到符号
+  符号:   方法 getGpsRange()
+  位置: 类型为AttendanceRuleEntity的变量 rule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[362,60] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[363,26] 错误: 找不到符号
+  符号:   方法 setVerificationMethod(String)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[364,26] 错误: 找不到符号
+  符号:   方法 setDeviceCode(String)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[372,26] 错误: 找不到符号
+  符号:   方法 setPunchInDateTime(LocalDateTime)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[375,30] 错误: 找不到符号
+  符号:   方法 setPunchInPhotoUrl(String)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[379,26] 错误: 找不到符号
+  符号:   方法 setPunchOutDatetime(LocalDateTime)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[382,30] 错误: 找不到符号
+  符号:   方法 setPunchOutPhotoUrl(String)
+  位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[389,40] 错误: 不兼容的类型: int无法转换为Boolean
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[403,54] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[416,32] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[134,25] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceSyncService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[164,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceSyncService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[322,15] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceSyncService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[335,68] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[336,14] 错误: 找不到符号
+  符号:   方法 setVerificationMethod(String)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[337,14] 错误: 找不到符号
+  符号:   方法 setDeviceCode(String)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[340,57] 错误: 不兼容的类型: Integer无法转换为Boolean
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[344,18] 错误: 找不到符号
+  符号:   方法 setPunchInDateTime(LocalDateTime)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[346,18] 错误: 找不到符号
+  符号:   方法 setPunchInPhotoUrl(String)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[349,18] 错误: 找不到符号
+  符号:   方法 setPunchOutDatetime(LocalDateTime)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[351,18] 错误: 找不到符号
+  符号:   方法 setPunchOutPhotoUrl(String)
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[371,86] 错误: 找不到符号
+  符号:   方法 atTime(LocalTime)
+  位置: 类 LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[372,44] 错误: 找不到符号
+  符号:   方法 atTime(LocalTime)
+  位置: 类 LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[374,41] 错误: 找不到符号
+  符号:   方法 getVerificationMethod()
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[375,33] 错误: 找不到符号
+  符号:   方法 getDeviceCode()
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[378,53] 错误: 不兼容的类型: Boolean无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[380,65] 错误: 找不到符号
+  符号:   方法 getPunchInPhotoUrl()
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[380,95] 错误: 找不到符号
+  符号:   方法 getPunchOutPhotoUrl()
+  位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.java:[332,32] 错误: 找不到符号
+  符号:   类 GpsLocationPoint
+  位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.java:[332,88] 错误: 找不到符号
+  符号:   方法 get(int)
+  位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.java:[336,27] 错误: 找不到符号
+  符号:   方法 getGpsRange()
+  位置: 类型为AttendanceRuleEntity的变量 rule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.java:[336,56] 错误: 找不到符号
+  符号:   方法 getGpsRange()
+  位置: 类型为AttendanceRuleEntity的变量 rule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[73,44] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[89,85] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[92,86] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[124,55] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[145,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[222,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[243,19] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[262,31] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[369,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[394,51] 错误: 找不到符号
+  符号:   变量 attendanceRecordDao
+  位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[419,53] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[422,71] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[425,72] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[430,55] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[431,51] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[440,47] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[461,53] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[464,71] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[467,72] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[472,55] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[473,51] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.003 s]
+[INFO] sa-base ............................................ FAILURE [ 10.138 s]
+[INFO] sa-support ......................................... SKIPPED
+[INFO] sa-admin ........................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.581 s
+[INFO] Finished at: 2025-11-24T16:37:55+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-base: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[80,44] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[121,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[167,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[214,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[259,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[302,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceReportService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[635,24] 错误: 不兼容的类型: 推论变量 K 具有不兼容的上限
+[ERROR]     等式约束条件：LocalDate
+[ERROR]     下限：LocalDateTime
+[ERROR]   其中, K,T是类型变量:
+[ERROR]     K扩展已在方法 <T,K>groupingBy(Function<? super T,? extends K>)中声明的Object
+[ERROR]     T扩展已在方法 <T,K>groupingBy(Function<? super T,? extends K>)中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceReportService.java:[662,28] 错误: 对于reduce(BigDecimal,BigDecimal::add), 找不到合适的方法
+[ERROR]     方法 Stream.reduce(Double,BinaryOperator<Double>)不适用
+[ERROR]       (参数不匹配; BigDecimal无法转换为Double)
+[ERROR]     方法 Stream.<U>reduce(U,BiFunction<U,? super Double,U>,BinaryOperator<U>)不适用
+[ERROR]       (无法推断类型变量 U
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]   其中, U,T是类型变量:
+[ERROR]     U扩展已在方法 <U>reduce(U,BiFunction<U,? super T,U>,BinaryOperator<U>)中声明的Object
+[ERROR]     T扩展已在接口 Stream中声明的Object
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceService.java:[547,33] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[79,36] 错误: 找不到符号
+[ERROR]   符号:   方法 insert(AttendanceScheduleEntity)
+[ERROR]   位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[109,36] 错误: 找不到符号
+[ERROR]   符号:   方法 insertBatch(List<AttendanceScheduleEntity>)
+[ERROR]   位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[138,36] 错误: 找不到符号
+[ERROR]   符号:   方法 updateById(AttendanceScheduleEntity)
+[ERROR]   位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[173,36] 错误: 找不到符号
+[ERROR]   符号:   方法 updateById(AttendanceScheduleEntity)
+[ERROR]   位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[233,36] 错误: 找不到符号
+[ERROR]   符号:   方法 selectMonthlySchedule(Long,String)
+[ERROR]   位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\repository\AttendanceScheduleDao.java:[301,72] 错误: 找不到符号
+[ERROR]   符号:   方法 selectTimeConflicts(Long,LocalDate,String,String,Long)
+[ERROR]   位置: 类型为AttendanceScheduleDao的变量 attendanceScheduleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[553,53] 错误: 找不到符号
+[ERROR]   符号:   方法 isRuleApplicable(AttendanceRuleEntity,LocalDate)
+[ERROR]   位置: 类型为AttendanceRuleDao的变量 attendanceRuleDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[609,32] 错误: 找不到符号
+[ERROR]   符号:   类 GpsLocationPoint
+[ERROR]   位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[609,88] 错误: 找不到符号
+[ERROR]   符号:   方法 get(int)
+[ERROR]   位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[629,52] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[678,55] 错误: 找不到符号
+[ERROR]   符号:   方法 getApprovalRequired()
+[ERROR]   位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[680,39] 错误: 找不到符号
+[ERROR]   符号:   方法 getMinOvertimeMinutes()
+[ERROR]   位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[681,88] 错误: 找不到符号
+[ERROR]   符号:   方法 getMinOvertimeMinutes()
+[ERROR]   位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[683,59] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceRuleEngine.java:[686,65] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceStatisticsManager.java:[518,77] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceStatisticsManager.java:[522,99] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceStatisticsManager.java:[523,83] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[496,54] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[497,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setDeviceCode(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[498,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setDeviceId(Long)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[499,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setVerificationMethod(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[504,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchInDateTime(LocalDateTime)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[507,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchOutDatetime(LocalDateTime)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[525,22] 错误: 找不到符号
+[ERROR]   符号:   方法 setRawData(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[548,22] 错误: 找不到符号
+[ERROR]   符号:   方法 setDeviceCode(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[549,22] 错误: 找不到符号
+[ERROR]   符号:   方法 setDeviceId(Long)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[550,22] 错误: 找不到符号
+[ERROR]   符号:   方法 setVerificationMethod(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[555,26] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchInDateTime(LocalDateTime)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[558,26] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchOutDatetime(LocalDateTime)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\manager\AttendanceDeviceManager.java:[576,30] 错误: 找不到符号
+[ERROR]   符号:   方法 setRawData(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[92,52] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[108,56] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[109,22] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[151,52] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[175,25] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceMobileService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[332,41] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[333,103] 错误: 找不到符号
+[ERROR]   符号:   方法 getGpsRange()
+[ERROR]   位置: 类型为AttendanceRuleEntity的变量 rule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[362,60] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[363,26] 错误: 找不到符号
+[ERROR]   符号:   方法 setVerificationMethod(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[364,26] 错误: 找不到符号
+[ERROR]   符号:   方法 setDeviceCode(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[372,26] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchInDateTime(LocalDateTime)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[375,30] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchInPhotoUrl(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[379,26] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchOutDatetime(LocalDateTime)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[382,30] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchOutPhotoUrl(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 existingRecord
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[389,40] 错误: 不兼容的类型: int无法转换为Boolean
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[403,54] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceMobileService.java:[416,32] 错误: 不兼容的类型: BigDecimal无法转换为Double
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[134,25] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceSyncService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[164,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceSyncService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[322,15] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceSyncService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[335,68] 错误: 不兼容的类型: LocalDate无法转换为LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[336,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setVerificationMethod(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[337,14] 错误: 找不到符号
+[ERROR]   符号:   方法 setDeviceCode(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[340,57] 错误: 不兼容的类型: Integer无法转换为Boolean
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[344,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchInDateTime(LocalDateTime)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[346,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchInPhotoUrl(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[349,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchOutDatetime(LocalDateTime)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[351,18] 错误: 找不到符号
+[ERROR]   符号:   方法 setPunchOutPhotoUrl(String)
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[371,86] 错误: 找不到符号
+[ERROR]   符号:   方法 atTime(LocalTime)
+[ERROR]   位置: 类 LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[372,44] 错误: 找不到符号
+[ERROR]   符号:   方法 atTime(LocalTime)
+[ERROR]   位置: 类 LocalDateTime
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[374,41] 错误: 找不到符号
+[ERROR]   符号:   方法 getVerificationMethod()
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[375,33] 错误: 找不到符号
+[ERROR]   符号:   方法 getDeviceCode()
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[378,53] 错误: 不兼容的类型: Boolean无法转换为Integer
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[380,65] 错误: 找不到符号
+[ERROR]   符号:   方法 getPunchInPhotoUrl()
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceSyncService.java:[380,95] 错误: 找不到符号
+[ERROR]   符号:   方法 getPunchOutPhotoUrl()
+[ERROR]   位置: 类型为AttendanceRecordEntity的变量 record
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.java:[332,32] 错误: 找不到符号
+[ERROR]   符号:   类 GpsLocationPoint
+[ERROR]   位置: 类 AttendanceRuleEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.java:[332,88] 错误: 找不到符号
+[ERROR]   符号:   方法 get(int)
+[ERROR]   位置: 类 String
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.java:[336,27] 错误: 找不到符号
+[ERROR]   符号:   方法 getGpsRange()
+[ERROR]   位置: 类型为AttendanceRuleEntity的变量 rule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceLocationService.java:[336,56] 错误: 找不到符号
+[ERROR]   符号:   方法 getGpsRange()
+[ERROR]   位置: 类型为AttendanceRuleEntity的变量 rule
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[73,44] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[89,85] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[92,86] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[124,55] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[145,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[222,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[243,19] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[262,31] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[369,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[394,51] 错误: 找不到符号
+[ERROR]   符号:   变量 attendanceRecordDao
+[ERROR]   位置: 类 AttendanceQueryService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[419,53] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[422,71] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[425,72] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[430,55] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[431,51] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[440,47] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[461,53] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[464,71] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[467,72] 错误: 不兼容的类型: LocalDateTime无法转换为LocalDate
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[472,55] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\service\AttendanceQueryService.java:[473,51] 错误: 不兼容的类型: Double无法转换为BigDecimal
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-base

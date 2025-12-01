@@ -1,0 +1,26 @@
+-- 操作日志表
+CREATE TABLE `t_operation_log` (
+  `log_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '日志ID',
+  `user_id` bigint(20) DEFAULT NULL COMMENT '操作用户ID',
+  `user_name` varchar(50) DEFAULT NULL COMMENT '操作用户名',
+  `operation_type` varchar(50) NOT NULL COMMENT '操作类型',
+  `operation_desc` varchar(200) NOT NULL COMMENT '操作描述',
+  `request_method` varchar(10) NOT NULL COMMENT '请求方法',
+  `request_url` varchar(500) NOT NULL COMMENT '请求URL',
+  `request_params` json DEFAULT NULL COMMENT '请求参数',
+  `ip_address` varchar(50) DEFAULT NULL COMMENT 'IP地址',
+  `user_agent` varchar(500) DEFAULT NULL COMMENT '用户代理',
+  `execution_time` bigint(20) DEFAULT NULL COMMENT '执行时间(毫秒)',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态 1-成功 0-失败',
+  `error_message` text DEFAULT NULL COMMENT '错误信息',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0-正常 1-删除',
+  `create_user_id` bigint(20) DEFAULT NULL COMMENT '创建人ID',
+  `update_user_id` bigint(20) DEFAULT NULL COMMENT '更新人ID',
+  PRIMARY KEY (`log_id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_create_time` (`create_time`),
+  KEY `idx_operation_type` (`operation_type`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='操作日志表';

@@ -1,0 +1,257 @@
+# ===================================================================
+# IOE-DREAM 生产环境告警管理器配置
+# 版本: v2.0.0
+# 更新时间: 2025-11-29
+# ===================================================================
+
+# 全局配置
+global:
+  # SMTP邮件服务器配置
+  smtp_smarthost: 'smtp.exmail.qq.com:587'
+  smtp_from: 'alert@ioedream.com'
+  smtp_auth_username: 'alert@ioedream.com'
+  smtp_auth_password: 'your-email-password'  # 请替换为实际密码
+
+  # 企业微信机器人配置
+  wechat_api_url: 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=your-wechat-key'  # 请替换为实际key
+
+  # 钉钉机器人配置
+  dingtalk_api_url: 'https://oapi.dingtalk.com/robot/send?access_token=your-dingtalk-token'  # 请替换为实际token
+
+  # 全局默认配置
+  resolve_timeout: 5m        # 告警恢复等待时间
+  http_config:
+    timeout: 10s
+
+# 路由配置 - 告警分发策略
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s          # 等待时间
+  group_interval: 10s      # 分组间隔
+  repeat_interval: 1h      # 重复间隔
+  receiver: 'default'      # 默认接收器
+
+  # 路由规则
+  routes:
+    # 严重告警 - 立即发送多渠道通知
+    - match:
+        severity: critical
+      receiver: 'critical-alerts'
+      group_wait: 0s
+      repeat_interval: 5m
+      routes:
+        # 基础设施严重告警
+        - match:
+            category: infrastructure
+          receiver: 'infrastructure-critical'
+        # 微服务严重告警
+        - match:
+            category: microservice
+          receiver: 'microservice-critical'
+        # 数据库严重告警
+        - match:
+            category: database
+          receiver: 'database-critical'
+
+    # 警告级别告警
+    - match:
+        severity: warning
+      receiver: 'warning-alerts'
+      group_wait: 30s
+      repeat_interval: 30m
+      routes:
+        # JVM警告告警
+        - match:
+            category: jvm
+          receiver: 'jvm-warnings'
+        # 业务警告告警
+        - match:
+            category: business
+          receiver: 'business-warnings'
+
+    # 信息级别告警
+    - match:
+        severity: info
+      receiver: 'info-alerts'
+      group_wait: 2m
+      repeat_interval: 4h
+
+    # 安全告警 - 特殊处理
+    - match:
+        category: security
+      receiver: 'security-alerts'
+      group_wait: 0s
+      repeat_interval: 15m
+
+# 接收器配置 - 告警通知方式
+receivers:
+  # 默认接收器
+  - name: 'default'
+    email_configs:
+      - to: 'admin@ioedream.com'
+        subject: '[IOE-DREAM] {{ .GroupLabels.alertname }} 告警'
+        body: |
+          {{ range .Alerts }}
+          告警名称: {{ .Annotations.summary }}
+          告警描述: {{ .Annotations.description }}
+          告警级别: {{ .Labels.severity }}
+          告警分类: {{ .Labels.category }}
+          开始时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ if .EndsAt }}结束时间: {{ .EndsAt.Format "2006-01-02 15:04:05" }}{{ end }}
+          标签信息:
+          {{ range .Labels.SortedPairs }}  - {{ .Name }}: {{ .Value }}
+          {{ end }}
+          ---
+          {{ end }}
+
+  # 严重告警接收器 - 多渠道通知
+  - name: 'critical-alerts'
+    email_configs:
+      - to: ['admin@ioedream.com', 'ops-team@ioedream.com', 'dev-team@ioedream.com']
+        subject: '[CRITICAL] IOE-DREAM 系统严重告警 - {{ .GroupLabels.alertname }}'
+        body: |
+          🚨 严重告警 🚨
+
+          告警名称: {{ .GroupLabels.alertname }}
+          告警级别: CRITICAL
+
+          详细信息:
+          {{ range .Alerts }}
+          - 描述: {{ .Annotations.description }}
+          - 实例: {{ .Labels.instance }}
+          - 服务: {{ .Labels.service }}
+          - 开始时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+
+          请立即处理此严重告警！
+    wechat_configs:
+      - corp_id: 'your-corp-id'
+        agent_id: 'your-agent-id'
+        api_secret: 'your-api-secret'
+        to_user: '@all'
+        message: |
+          🚨 严重告警 🚨
+
+          {{ range .Alerts }}
+          告警: {{ .Annotations.summary }}
+          详情: {{ .Annotations.description }}
+          时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+    dingtalk_configs:
+      - webhook_url: 'https://oapi.dingtalk.com/robot/send?access_token=your-dingtalk-token'
+        message_type: 'markdown'
+        title: 'IOE-DREAM 严重告警'
+        text: |
+          ## 🚨 严重告警
+
+          {{ range .Alerts }}
+          **告警名称**: {{ .Annotations.summary }}
+          **告警描述**: {{ .Annotations.description }}
+          **告警实例**: {{ .Labels.instance }}
+          **开始时间**: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          ---
+          {{ end }}
+
+          请立即处理！
+
+  # 基础设施严重告警接收器
+  - name: 'infrastructure-critical'
+    email_configs:
+      - to: 'ops-team@ioedream.com'
+        subject: '[CRITICAL][基础设施] {{ .GroupLabels.alertname }}'
+    wechat_configs:
+      - corp_id: 'your-corp-id'
+        agent_id: 'your-agent-id'
+        api_secret: 'your-api-secret'
+        to_user: 'ops-team'
+
+  # 微服务严重告警接收器
+  - name: 'microservice-critical'
+    email_configs:
+      - to: ['dev-team@ioedream.com', 'ops-team@ioedream.com']
+        subject: '[CRITICAL][微服务] {{ .GroupLabels.alertname }}'
+    wechat_configs:
+      - corp_id: 'your-corp-id'
+        agent_id: 'your-agent-id'
+        api_secret: 'your-api-secret'
+        to_user: 'dev-team'
+
+  # 数据库严重告警接收器
+  - name: 'database-critical'
+    email_configs:
+      - to: ['dba-team@ioedream.com', 'ops-team@ioedream.com']
+        subject: '[CRITICAL][数据库] {{ .GroupLabels.alertname }}'
+    wechat_configs:
+      - corp_id: 'your-corp-id'
+        agent_id: 'your-agent-id'
+        api_secret: 'your-api-secret'
+        to_user: 'dba-team'
+
+  # 警告级别告警接收器
+  - name: 'warning-alerts'
+    email_configs:
+      - to: 'ops-team@ioedream.com'
+        subject: '[WARNING] IOE-DREAM 系统告警 - {{ .GroupLabels.alertname }}'
+    wechat_configs:
+      - corp_id: 'your-corp-id'
+        agent_id: 'your-agent-id'
+        api_secret: 'your-api-secret'
+        to_user: 'ops-team'
+
+  # JVM警告告警接收器
+  - name: 'jvm-warnings'
+    email_configs:
+      - to: 'dev-team@ioedream.com'
+        subject: '[WARNING][JVM] {{ .GroupLabels.alertname }}'
+
+  # 业务警告告警接收器
+  - name: 'business-warnings'
+    email_configs:
+      - to: ['product-team@ioedream.com', 'ops-team@ioedream.com']
+        subject: '[WARNING][业务] {{ .GroupLabels.alertname }}'
+
+  # 信息级别告警接收器
+  - name: 'info-alerts'
+    email_configs:
+      - to: 'ops-team@ioedream.com'
+        subject: '[INFO] IOE-DREAM 系统信息 - {{ .GroupLabels.alertname }}'
+
+  # 安全告警接收器
+  - name: 'security-alerts'
+    email_configs:
+      - to: ['security-team@ioedream.com', 'admin@ioedream.com']
+        subject: '[SECURITY] IOE-DREAM 安全告警 - {{ .GroupLabels.alertname }}'
+    wechat_configs:
+      - corp_id: 'your-corp-id'
+        agent_id: 'your-agent-id'
+        api_secret: 'your-api-secret'
+        to_user: 'security-team'
+
+# 抑制规则 - 避免告警风暴
+inhibit_rules:
+  # 如果服务器宕机，抑制该服务器上的其他告警
+  - source_match:
+      alertname: InstanceDown
+      severity: critical
+    target_match_re:
+      instance: (.+)
+    equal: ['instance']
+
+  # 如果微服务不可用，抑制该服务的性能告警
+  - source_match:
+      alertname: MicroserviceDown
+    target_match_re:
+      service: (.+)
+    equal: ['service']
+
+  # 如果CPU过高，抑制内存和磁盘告警
+  - source_match:
+      alertname: HighCpuUsage
+      severity: critical
+    target_match:
+      category: infrastructure
+    equal: ['instance']
+
+# 模板配置
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.oa.document.dao.DocumentShareDao">
+
+  <resultMap id="BaseResultMap"
+    type="net.lab1024.sa.admin.module.oa.document.domain.entity.DocumentShareEntity">
+    <id column="share_id" property="shareId" />
+    <result column="document_id" property="documentId" />
+    <result column="share_token" property="shareToken" />
+    <result column="share_type" property="shareType" />
+    <result column="target_id" property="targetId" />
+    <result column="target_name" property="targetName" />
+    <result column="permission" property="permission" />
+    <result column="share_url" property="shareUrl" />
+    <result column="share_password" property="sharePassword" />
+    <result column="allow_download" property="allowDownload" />
+    <result column="allow_print" property="allowPrint" />
+    <result column="allow_comment" property="allowComment" />
+    <result column="access_count" property="accessCount" />
+    <result column="download_count" property="downloadCount" />
+    <result column="last_access_time" property="lastAccessTime" />
+    <result column="effective_time" property="effectiveTime" />
+    <result column="expire_time" property="expireTime" />
+    <result column="is_permanent" property="isPermanent" />
+    <result column="status" property="status" />
+    <result column="shared_by_id" property="sharedById" />
+    <result column="shared_by_name" property="sharedByName" />
+    <result column="shared_time" property="sharedTime" />
+    <result column="remark" property="remark" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="create_user_id" property="createUserId" />
+    <result column="update_user_id" property="updateUserId" />
+    <result column="deleted_flag" property="deletedFlag" />
+    <result column="version" property="version" />
+  </resultMap>
+
+  <sql id="Base_Column_List"> share_id, document_id, share_token, share_type, target_id,
+    target_name, permission, share_url, share_password, allow_download, allow_print, allow_comment,
+    access_count, download_count, last_access_time, effective_time, expire_time, is_permanent,
+    status, shared_by_id, shared_by_name, shared_time, remark, create_time, update_time,
+    create_user_id, update_user_id, deleted_flag, version </sql>
+
+  <!-- 根据分享令牌查询分享记录 -->
+  <select id="selectByShareToken" resultMap="BaseResultMap"> SELECT <include
+      refid="Base_Column_List" /> FROM t_document_share WHERE share_token = #{shareToken} AND
+    deleted_flag = 0 LIMIT 1 </select>
+
+  <!-- 根据文档ID查询所有分享记录 -->
+  <select id="selectByDocumentId" resultMap="BaseResultMap"> SELECT <include
+      refid="Base_Column_List" /> FROM t_document_share WHERE document_id = #{documentId} AND
+    deleted_flag = 0 ORDER BY shared_time DESC </select>
+
+  <!-- 根据分享类型和目标ID查询分享记录 -->
+  <select id="selectByShareTypeAndTargetId" resultMap="BaseResultMap"> SELECT <include
+      refid="Base_Column_List" /> FROM t_document_share WHERE share_type = #{shareType} AND
+    target_id = #{targetId} AND deleted_flag = 0 ORDER BY shared_time DESC </select>
+
+  <!-- 更新分享状态 -->
+  <update id="updateStatus"> UPDATE t_document_share SET status = #{status}, update_time = NOW()
+    WHERE share_id = #{shareId} AND deleted_flag = 0 </update>
+
+  <!-- 增加访问次数 -->
+  <update id="incrementAccessCount"> UPDATE t_document_share SET access_count = access_count + 1,
+    update_time = NOW() WHERE share_id = #{shareId} AND deleted_flag = 0 </update>
+
+  <!-- 增加下载次数 -->
+  <update id="incrementDownloadCount"> UPDATE t_document_share SET download_count = download_count +
+    1, update_time = NOW() WHERE share_id = #{shareId} AND deleted_flag = 0 </update>
+
+  <!-- 更新最后访问时间 -->
+  <update id="updateLastAccessTime"> UPDATE t_document_share SET last_access_time =
+    #{lastAccessTime}, update_time = NOW() WHERE share_id = #{shareId} AND deleted_flag = 0 </update>
+
+  <!-- 查询已过期的分享记录 -->
+  <select id="selectExpiredShares" resultMap="BaseResultMap"> SELECT <include
+      refid="Base_Column_List" /> FROM t_document_share WHERE status = 'ACTIVE' AND is_permanent = 0
+    AND expire_time IS NOT NULL AND expire_time &lt; #{currentTime} AND deleted_flag = 0 </select>
+
+  <!-- 批量更新过期分享状态 -->
+  <update id="batchUpdateExpiredStatus"> UPDATE t_document_share SET status = 'EXPIRED', update_time
+    = NOW() WHERE share_id IN <foreach collection="shareIds" item="shareId" open="(" separator=","
+      close=")"> #{shareId} </foreach> AND deleted_flag = 0 </update>
+
+</mapper>

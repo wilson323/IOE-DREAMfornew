@@ -1,0 +1,630 @@
+# Grafana配置
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: ioedream-prod
+  labels:
+    app: grafana
+    component: configmap
+    environment: production
+    project: ioedream
+data:
+  grafana.ini: |
+    [server]
+    # HTTP端口
+    http_port = 3000
+    # 域名
+    domain = monitor.ioedream.com
+    # 根URL
+    root_url = https://monitor.ioedream.com/grafana/
+    # 从X-Forwarded-Host头中提供域名
+    enforce_domain = true
+    # 从X-Forwarded-Proto头中提供协议
+    enforce_domain = false
+    # HTTP代理头
+    enable_gzip = true
+    # 离线模式
+    offline_mode = false
+
+    [database]
+    # 数据库类型
+    type = sqlite3
+    # 数据库路径
+    path = /var/lib/grafana/grafana.db
+    # 主机
+    host = 127.0.0.1:3306
+    # 名称
+    name = grafana
+    # 用户
+    user = root
+    # 密码
+    password =
+    # SSL模式
+    ssl_mode = disable
+    # 证书路径
+    ca_cert_path =
+    # 客户端证书路径
+    client_key_path =
+    # 客户端证书
+    client_cert_path =
+    # 服务器证书名称
+    server_cert_name =
+
+    [security]
+    # 管理员用户名
+    admin_user = admin
+    # 管理员密码
+    admin_password = ${GF_SECURITY_ADMIN_PASSWORD}
+    # 管理员邮箱
+    admin_email = admin@ioedream.com
+    # 密钥
+    secret_key = ${GF_SECURITY_SECRET_KEY}
+    # 登录最大生命时间
+    login_maximum_lifetime_duration = 30d
+    # 登录最大不活动时长
+    login_maximum_inactive_lifetime_duration = 7d
+    # 令牌最大生命时间
+    token_maximum_lifetime_duration = 30d
+    # 观看者可以编辑
+    viewers_can_edit = false
+    # 编辑器可以管理员
+    editors_can_admin = false
+    # 禁用拥有者表单
+    disable_gravatar = true
+    # 数据源代理白名单
+    data_source_proxy_whitelist =
+    # 禁用登录表单
+    disable_login_form = false
+    # 禁用登录退出
+    disable_login_exit = false
+    # 禁用签到
+    disable_signout_menu = false
+    # 匿名访问
+    anonymous_enabled = false
+    # 匿名组织名称
+    anonymous_org_name = Main Org.
+    # 匿名角色
+    anonymous_org_role = Viewer
+    # 匿名隐藏版本
+    anonymous_hide_version = false
+    # 签名曲线
+    signing_key =
+    # 签名曲线私钥
+    signing_private_key =
+    # CSR过期
+    csr_expiration =
+    # 引入自动登录
+    embedded_sign_in = false
+    # 角色属性
+    role_attribute_strict = false
+    # 自动分配组织角色
+    auto_assign_org_role = Viewer
+    # 权限属性
+    permissions_attribute_strict = false
+    # 登录提示
+    login_hint =
+    # 密码提示
+    password_hint =
+
+    [users]
+    # 隐藏版本
+    hide_version = false
+    # 默认语言
+    default_theme = light
+    # 分配组织
+    auto_assign_org = true
+    # 角色分配
+    auto_assign_org_role = Editor
+    # 验证邮箱
+    verify_email_enabled = false
+    # 登录背景
+    login_background_url =
+    # 默认UI
+    default_ui = ""
+
+    [auth]
+    # 登录cookie名称
+    login_cookie_name = grafana_session
+    # 登录最大生命时间
+    login_maximum_lifetime_duration = 30d
+    # 登录最大不活动时长
+    login_maximum_inactive_lifetime_duration = 7d
+    # 令牌最大生命时间
+    token_maximum_lifetime_duration = 30d
+    # 提供者配置
+    provider_config =
+    # 禁用登录表单
+    disable_login_form = false
+    # 禁用拥有者表单
+    disable_signout_menu = false
+    # OAuth自动登录
+    oauth_auto_login = false
+    # 签名退回URL
+    signout_redirect_url =
+    # API键最大生命时间
+    api_key_max_seconds_to_live = -1
+    # 引入自动登录
+    embedded_sign_in = false
+
+    [auth.anonymous]
+    # 启用匿名访问
+    enabled = false
+    # 组织名称
+    org_name = Main Org.
+    # 组织角色
+    org_role = Viewer
+
+    [auth.basic]
+    # 启用基本认证
+    enabled = true
+
+    [auth.proxy]
+    # 启用代理认证
+    enabled = false
+    # 头名称
+    header_name = X-WEBAUTH-USER
+    # 头属性
+    header_property = username
+    # 自动注册
+    auto_sign_up = true
+    # 头同步
+    sync_ttl = 60
+    # 白名单
+    whitelist = 127.0.0.1
+    # 头映射
+    headers = Email:X-WEBAUTH-EMAIL Name:X-WEBAUTH-NAME
+    # 头调试
+    headers_debug = false
+    # 角色属性
+    enable_login_token = false
+
+    [auth.ldap]
+    # 启用LDAP认证
+    enabled = false
+    # 配置文件
+    config_file = /etc/grafana/ldap.toml
+    # 允许注册
+    allow_sign_up = true
+
+    [auth.jwt]
+    # 启用JWT认证
+    enabled = false
+    # 头名称
+    header_name = X-JWT-Assertion
+    # 邮箱声明
+    email_claim = sub
+    # 用户名声明
+    username_claim = sub
+    # 组织声明
+    org_claim = org
+    # 角色声明
+    role_claim = role
+    # 键文件
+    jwk_set_file =
+    # 缓存TTL
+    cache_ttl = 60m
+    # 预期声明
+    expected_claims = ""
+    # 角色映射
+    role_attribute_path = "contains(roles[:], 'admin') && 'Admin' || contains(roles[:], 'editor') && 'Editor' || 'Viewer'"
+
+    [smtp]
+    # 启用SMTP
+    enabled = true
+    # 主机
+    host = smtp.gmail.com:587
+    # 用户
+    user = ${GF_SMTP_USER}
+    # 密码
+    password = ${GF_SMTP_PASSWORD}
+    # 证书
+    cert_file =
+    # 密钥
+    key_file =
+    # 跳过验证
+    skip_verify = false
+    # 从地址
+    from_address = admin@ioedream.com
+    # 从名称
+    from_name = Grafana
+    # EHLO标识
+    ehlo_identity = dashboard.ioedream.com
+
+    [emails]
+    # 欢迎邮件模板
+    welcome_email_on_sign_up = false
+    # 模板模式
+    templates_pattern = emails/*.html
+
+    [log]
+    # 模式
+    mode = console
+    # 级别
+    level = info
+    # 格式
+    format = text
+
+    [log.console]
+    # 格式
+    format = text
+
+    [log.file]
+    # 日志级别
+    level = info
+    # 日志轮转
+    log_rotate = true
+    # 每日轮转
+    daily_rotate = true
+    # 最大天数
+    max_days = 7
+    # 最大大小
+    max_size = 100
+
+    [paths]
+    # 数据路径
+    data = /var/lib/grafana
+    # 日志路径
+    logs = /var/log/grafana
+    # 插件路径
+    plugins = /var/lib/grafana/plugins
+    # 临时路径
+    temp_data = /tmp
+
+    [plugin]
+    # 插件目录
+    plugins_dir = /var/lib/grafana/plugins
+
+    [analytics]
+    # 检查更新
+    check_for_updates = true
+    # 谷歌分析ID
+    google_analytics_ua_id =
+    # 谷歌标记管理器ID
+    google_tag_manager_id =
+    # 反馈URL
+    reporting_url = https://stats.grafana.org
+    # 反馈反馈周期
+    reporting_interval_seconds = 86400
+
+    [server]
+    # 协议
+    protocol = http
+    # 域名
+    domain = localhost
+    # HTTP地址
+    http_addr =
+    # HTTP端口
+    http_port = 3000
+    # 根URL
+    root_url = %(protocol)s://%(domain)s:%(http_port)s/
+    # 套接字路径
+    socket =
+    # 静态根路径
+    static_root_path = public
+    # 启用Gzip
+    enable_gzip = false
+    # HTTPS证书
+    cert_file =
+    # HTTPS密钥
+    cert_key =
+    # 证书签名请求
+    client_ca =
+    # 套接字模式
+    socket_gid =
+    # 套接字模式
+    socket_mode =
+
+    [database]
+    # 数据库类型
+    type = sqlite3
+    # 主机
+    host = 127.0.0.1:3306
+    # 名称
+    name = grafana
+    # 用户
+    user = root
+    # 密码
+    password =
+    # SSL模式
+    ssl_mode = disable
+    # 证书路径
+    ca_cert_path =
+    # 客户端证书路径
+    client_key_path =
+    # 客户端证书
+    client_cert_path =
+    # 服务器证书名称
+    server_cert_name =
+    # 路径
+    path = grafana.db
+    # 限制
+    max_idle_conn = 2
+    # 限制
+    max_open_conn = 0
+    # 最大生命时间
+    conn_max_lifetime = 14400
+
+    [remote_cache]
+    # 类型
+    type = database
+    # 连接URL
+    connstr =
+
+    [dataproxy]
+    # 超时
+    timeout = 10
+    # 日志
+    logging = true
+    # TLS跳过验证
+    tls_skip_verify = false
+
+    [dashboards]
+    # 默认主页仪表板
+    default_home_dashboard_path =
+
+    [quota]
+    # 组织配额
+    org = 10
+    # 用户配额
+    user = 10
+    # 数据源配额
+    datasource = 10
+    # 仪表板配额
+    dashboard = 1000
+    # API密钥配额
+    api_key = 10
+    # 会话配额
+    session = 100
+    # 警报配额
+    alert_rule = 1000
+
+    [explore]
+    # 启用
+    enabled = true
+
+    [alerting]
+    # 启用警报引擎
+    enabled = true
+    # 执行超时
+    execute_alerts = true
+    # 警报注释标签
+    error_or_timeout_template = ""
+    # 数据库
+    database_url =
+    # 评估间隔
+    evaluation_interval_seconds = 10
+    # 警报最大年龄
+    notification_timeout_seconds = 30
+
+    [unified_alerting]
+    # 启用
+    enabled = true
+    # 数据库
+    database_url =
+    # 批处理大小
+    ha_listen_address = ""
+    # 等待广告
+    ha_advertise_address = ""
+    # 对等超时
+    ha_peers = ""
+    # 推送间隔
+    ha_push_interval = 3s
+    # 轮询间隔
+    ha_pull_interval = 5s
+    # 拉取超时
+    ha_pull_timeout = 5s
+    # 推送超时
+    ha_push_timeout = 5s
+    # 同步期
+    ha_sync_timeout = 5s
+
+  datasources.yml: |
+    apiVersion: 1
+
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-service:9090
+        isDefault: true
+        editable: true
+        jsonData:
+          timeInterval: "15s"
+          queryTimeout: "60s"
+          httpMethod: "POST"
+        secureJsonData: {}
+
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki-service:3100
+        editable: true
+        jsonData:
+          maxLines: 1000
+        secureJsonData: {}
+
+      - name: MySQL
+        type: mysql
+        access: proxy
+        url: mysql-cluster-ioedream-prod:3306
+        database: ioedream_prod
+        user: grafana
+        jsonData:
+          maxOpenConns: 10
+          maxIdleConns: 5
+          connMaxLifetime: 14400
+        secureJsonData:
+          password: ${GF_DATASOURCE_PASSWORD}
+
+      - name: Redis
+        type: redis-datasource
+        access: proxy
+        url: redis-cluster-ioedream-prod:6379
+        jsonData:
+          client: "standalone"
+          poolSize: 5
+          timeout: 10
+          pingInterval: 30
+          pipelineWindow: 0
+        secureJsonData:
+          password: ${GF_REDIS_PASSWORD}
+
+  dashboards.yml: |
+    apiVersion: 1
+
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10
+        allowUiUpdates: true
+        options:
+          path: /var/lib/grafana/dashboards
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: ioedream-prod
+  labels:
+    app: grafana
+    component: deployment
+    environment: production
+    project: ioedream
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: grafana
+        environment: production
+        component: pod
+        project: ioedream
+    spec:
+      securityContext:
+        runAsUser: 472
+        runAsGroup: 472
+        fsGroup: 472
+
+      containers:
+        - name: grafana
+          image: grafana/grafana:10.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: web
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-secrets
+                  key: admin-password
+            - name: GF_SECURITY_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-secrets
+                  key: secret-key
+            - name: GF_SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-secrets
+                  key: smtp-user
+            - name: GF_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-secrets
+                  key: smtp-password
+            - name: GF_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-secrets
+                  key: database-url
+            - name: GF_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secrets
+                  key: redis-password
+            - name: GF_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: mysql-password
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/grafana/grafana.ini
+              subPath: grafana.ini
+            - name: config-volume
+              mountPath: /etc/grafana/provisioning/datasources/datasources.yml
+              subPath: datasources.yml
+            - name: config-volume
+              mountPath: /etc/grafana/provisioning/dashboards/dashboards.yml
+              subPath: dashboards.yml
+            - name: storage-volume
+              mountPath: /var/lib/grafana
+            - name: dashboards-volume
+              mountPath: /var/lib/grafana/dashboards
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: web
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: web
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: grafana-config
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: grafana-pvc
+        - name: dashboards-volume
+          configMap:
+            name: grafana-dashboards
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+  namespace: ioedream-prod
+  labels:
+    app: grafana
+    component: service
+    environment: production
+    project: ioedream
+  annotations:
+    description: "Grafana可视化服务"
+spec:
+  type: ClusterIP
+  ports:
+    - name: web
+      port: 3000
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    app: grafana
+    environment: production

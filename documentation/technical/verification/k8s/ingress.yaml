@@ -1,0 +1,340 @@
+# ===================================================================
+# IOE-DREAM 微服务Ingress配置
+# 用于外部访问控制，包含路由规则、SSL终止等
+# ===================================================================
+
+# Ingress控制器安装（如果需要）
+# apiVersion: networking.k8s.io/v1
+# kind: IngressClass
+# metadata:
+#   name: nginx
+#   namespace: ioedream
+# spec:
+#   controller: k8s.io/ingress-nginx
+
+# 主Ingress配置
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ioedream-ingress
+  namespace: ioedream
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    # CORS配置
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    # 限流配置
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+spec:
+  rules:
+    # API网关路由
+    - host: api.ioedream.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: smart-gateway
+                port:
+                  number: 8080
+
+    # 认证服务直连（用于特殊情况）
+    - host: auth.ioedream.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ioedream-auth-service
+                port:
+                  number: 8080
+
+    # 监控系统路由
+    - host: prometheus.ioedream.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus
+                port:
+                  number: 9090
+
+    - host: grafana.ioedream.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+
+    - host: alertmanager.ioedream.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: alertmanager
+                port:
+                  number: 9093
+
+    # 服务注册中心
+    - host: nacos.ioedream.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nacos
+                port:
+                  number: 8848
+
+# 带SSL的Ingress配置（生产环境推荐）
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ioedream-ingress-ssl
+  namespace: ioedream
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+spec:
+  tls:
+    - hosts:
+        - api.ioedream.com
+        - auth.ioedream.com
+        - nacos.ioedream.com
+      secretName: ssl-certificates
+  rules:
+    # 生产环境API网关
+    - host: api.ioedream.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: smart-gateway
+                port:
+                  number: 8080
+
+    # 生产环境认证服务
+    - host: auth.ioedream.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ioedream-auth-service
+                port:
+                  number: 8080
+
+    # 生产环境注册中心
+    - host: nacos.ioedream.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nacos
+                port:
+                  number: 8848
+
+# 管理后台Ingress配置
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ioedream-admin-ingress
+  namespace: ioedream
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    # 基础认证
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: admin-credentials
+    nginx.ingress.kubernetes.io/auth-realm: "IOE-DREAM Administration"
+spec:
+  rules:
+    # Grafana管理界面
+    - host: admin.ioedream.local
+      http:
+        paths:
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+          - path: /prometheus
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus
+                port:
+                  number: 9090
+          - path: /alertmanager
+            pathType: Prefix
+            backend:
+              service:
+                name: alertmanager
+                port:
+                  number: 9093
+
+# 网络策略配置
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ioedream-network-policy
+  namespace: ioedream
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # 允许同命名空间内的Pod互相通信
+    - from:
+        - podSelector: {}
+    # 允许Ingress控制器访问
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+    # 允许监控命名空间访问
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+  egress:
+    # 允许DNS解析
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+    # 允许访问外部API
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+    # 允许同命名空间内的Pod互相通信
+    - to:
+        - podSelector: {}
+
+# 水平Pod自动扩缩容配置
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: smart-gateway-hpa
+  namespace: ioedream
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: smart-gateway
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ioedream-auth-service-hpa
+  namespace: ioedream
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ioedream-auth-service
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ioedream-consume-service-hpa
+  namespace: ioedream
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ioedream-consume-service
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

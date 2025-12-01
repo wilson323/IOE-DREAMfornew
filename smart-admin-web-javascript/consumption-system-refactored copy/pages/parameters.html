@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>参数设置 - 消费管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../js/menu.js" defer></script>
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .content-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            margin-bottom: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-utensils fa-lg"></i>
+                <div>
+                    <div class="sidebar-title">消费管理系统</div>
+                    <div class="sidebar-subtitle">Consumption Hub</div>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <!-- 菜单将由 menu.js 自动生成 -->
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 顶部导航栏 -->
+            <header class="header">
+                <h1>参数设置</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-bell"></i>
+                        通知
+                    </button>
+                    <div class="user-info">
+                        <div>
+                            <div style="font-weight: 600;">系统管理员</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">在线</div>
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 主要内容 -->
+            <div class="content">
+                <!-- 参数配置 -->
+                <section class="content-card">
+                    <h2 style="font-size: var(--text-xl); font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-lg);">基础参数</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-xl);">
+                        <div>
+                            <label style="display: block; margin-bottom: var(--space-sm); font-weight: 500; color: var(--gray-700); font-size: var(--text-sm);">单次消费限额</label>
+                            <input type="number" value="100" style="width: 100%; padding: var(--space-sm) var(--space-md); border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: var(--text-sm);">
+                            <p style="margin-top: var(--space-xs); font-size: var(--text-xs); color: var(--gray-500);">用户单次消费的最大金额</p>
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: var(--space-sm); font-weight: 500; color: var(--gray-700); font-size: var(--text-sm);">每日消费限额</label>
+                            <input type="number" value="200" style="width: 100%; padding: var(--space-sm) var(--space-md); border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: var(--text-sm);">
+                            <p style="margin-top: var(--space-xs); font-size: var(--text-xs); color: var(--gray-500);">用户每日累计消费的最大金额</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: var(--space-xl); padding-top: var(--space-xl); border-top: 1px solid var(--gray-200);">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            保存设置
+                        </button>
+                        <button class="btn btn-secondary" style="margin-left: var(--space-md);">
+                            <i class="fas fa-undo"></i>
+                            重置默认
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('参数设置页面加载完成');
+        });
+    </script>
+</body>
+</html>

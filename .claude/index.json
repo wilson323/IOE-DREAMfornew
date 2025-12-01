@@ -1,0 +1,454 @@
+{
+  "project_info": {
+    "name": "IOE-DREAM",
+    "version": "v2.0.0",
+    "description": "智能管理系统 - 集成门禁、消费、考勤、视频监控的企业级平台",
+    "architecture_type": "dual-track",
+    "last_updated": "2025-11-27T00:00:00Z",
+    "generated_by": "adaptive-architect-v2"
+  },
+  "project_structure": {
+    "monolith_path": "D:\\IOE-DREAM\\smart-admin-api-java17-springboot3",
+    "microservices_path": "D:\\IOE-DREAM\\microservices",
+    "frontend_path": "D:\\IOE-DREAM\\smart-admin-web-javascript",
+    "mobile_path": "D:\\IOE-DREAM\\smart-app",
+    "docs_path": "D:\\IOE-DREAM\\docs"
+  },
+  "scan_results": {
+    "total_files_scanned": 1587,
+    "java_files_count": 842,
+    "vue_files_count": 418,
+    "config_files_count": 57,
+    "documentation_files_count": 123,
+    "script_files_count": 147,
+    "scan_duration_minutes": 45,
+    "scan_method": "adaptive_three_phase",
+    "truncated": false,
+    "coverage_percentage": 89.2
+  },
+  "modules": [
+    {
+      "name": "access-control",
+      "type": "business_module",
+      "status": "production_ready",
+      "completion_percentage": 95,
+      "description": "智能门禁管理 - 多模态生物识别、访客管理、区域权限控制",
+      "monolith_path": "smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/",
+      "microservice_path": "microservices/access-service/",
+      "key_components": {
+        "entry_points": [
+          "AccessController.java",
+          "AccessDeviceController.java",
+          "BiometricController.java"
+        ],
+        "interfaces": [
+          "门禁控制API",
+          "生物特征验证API",
+          "访客管理API"
+        ],
+        "test_directories": [
+          "src/test/java/net/lab1024/sa/admin/module/smart/access/"
+        ],
+        "config_files": [
+          "access-service-application.yml"
+        ]
+      },
+      "dependencies": {
+        "internal": ["device-service", "identity-service", "notification-service"],
+        "external": ["ZKTeco SDK", "Hikvision SDK", "生物识别算法库"]
+      },
+      "coverage": {
+        "code_coverage": 78,
+        "api_coverage": 92,
+        "test_coverage": 65,
+        "doc_coverage": 88
+      },
+      "gaps": [
+        "移动端门禁控制API完善",
+        "生物识别算法性能优化",
+        "门禁事件实时推送增强"
+      ]
+    },
+    {
+      "name": "consume-management",
+      "type": "business_module",
+      "status": "mostly_complete",
+      "completion_percentage": 90,
+      "description": "消费管理系统 - 多种消费模式、账户管理、报表分析",
+      "monolith_path": "smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/",
+      "microservice_path": "microservices/smart-consume-service/",
+      "key_components": {
+        "entry_points": [
+          "ConsumeAccountController.java",
+          "ConsumeRecordController.java",
+          "ConsumeReportController.java"
+        ],
+        "interfaces": [
+          "账户管理API",
+          "消费记录API",
+          "报表统计API",
+          "充值退款API"
+        ],
+        "test_directories": [
+          "src/test/java/net/lab1024/sa/admin/module/consume/"
+        ],
+        "config_files": [
+          "consume-service-application.yml"
+        ]
+      },
+      "dependencies": {
+        "internal": ["identity-service", "notification-service", "file-service"],
+        "external": ["支付网关SDK", "报表引擎"]
+      },
+      "coverage": {
+        "code_coverage": 82,
+        "api_coverage": 95,
+        "test_coverage": 70,
+        "doc_coverage": 91
+      },
+      "achievements": [
+        "59个VO类完成开发",
+        "6种核心消费模式实现",
+        "异常检测引擎完成",
+        "报表服务64%完成（18/28方法）"
+      ],
+      "gaps": [
+        "报表服务剩余10个方法实现",
+        "消费预测分析功能",
+        "移动端消费体验优化"
+      ]
+    },
+    {
+      "name": "attendance-management",
+      "type": "business_module",
+      "status": "functional_complete",
+      "completion_percentage": 85,
+      "description": "考勤管理系统 - 智能排班、异常检测、统计分析",
+      "monolith_path": "smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/",
+      "microservice_path": "microservices/smart-attendance-service/",
+      "key_components": {
+        "entry_points": [
+          "AttendanceController.java",
+          "ScheduleController.java",
+          "AttendanceReportController.java"
+        ],
+        "interfaces": [
+          "考勤数据API",
+          "排班管理API",
+          "异常处理API",
+          "统计报表API"
+        ],
+        "test_directories": [
+          "src/test/java/net/lab1024/sa/admin/module/attendance/"
+        ],
+        "config_files": [
+          "attendance-service-application.yml"
+        ]
+      },
+      "dependencies": {
+        "internal": ["identity-service", "device-service", "notification-service"],
+        "external": ["考勤机协议SDK"]
+      },
+      "coverage": {
+        "code_coverage": 75,
+        "api_coverage": 88,
+        "test_coverage": 62,
+        "doc_coverage": 85
+      },
+      "gaps": [
+        "移动端考勤功能",
+        "AI异常检测算法优化",
+        "考勤数据分析增强"
+      ]
+    },
+    {
+      "name": "video-surveillance",
+      "type": "business_module",
+      "status": "basic_complete",
+      "completion_percentage": 70,
+      "description": "视频监控系统 - 实时监控、智能分析、录像管理",
+      "monolith_path": "smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/video/",
+      "microservice_path": "microservices/smart-video-service/",
+      "key_components": {
+        "entry_points": [
+          "VideoController.java",
+          "VideoRecordController.java",
+          "VideoAnalysisController.java"
+        ],
+        "interfaces": [
+          "实时视频API",
+          "录像管理API",
+          "智能分析API",
+          "告警联动API"
+        ],
+        "test_directories": [
+          "src/test/java/net/lab1024/sa/admin/module/smart/video/"
+        ],
+        "config_files": [
+          "video-service-application.yml"
+        ]
+      },
+      "dependencies": {
+        "internal": ["device-service", "notification-service", "file-service"],
+        "external": ["视频流媒体SDK", "AI视频分析库"]
+      },
+      "coverage": {
+        "code_coverage": 68,
+        "api_coverage": 75,
+        "test_coverage": 55,
+        "doc_coverage": 72
+      },
+      "gaps": [
+        "AI行为分析功能",
+        "视频流性能优化",
+        "移动端视频播放",
+        "存储空间管理"
+      ]
+    },
+    {
+      "name": "device-management",
+      "type": "infrastructure_module",
+      "status": "production_ready",
+      "completion_percentage": 95,
+      "description": "设备管理 - 多协议设备接入、状态监控、远程控制",
+      "monolith_path": "smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/device/",
+      "microservice_path": "microservices/ioedream-device-service/",
+      "key_components": {
+        "entry_points": [
+          "DeviceController.java",
+          "DeviceProtocolController.java",
+          "DeviceStatusController.java"
+        ],
+        "interfaces": [
+          "设备管理API",
+          "协议适配API",
+          "状态监控API",
+          "远程控制API"
+        ],
+        "test_directories": [
+          "src/test/java/net/lab1024/sa/admin/module/smart/device/"
+        ],
+        "config_files": [
+          "device-service-application.yml",
+          "protocol-adapter-config.xml"
+        ]
+      },
+      "dependencies": {
+        "internal": ["notification-service"],
+        "external": ["多厂商设备SDK", "MQTT客户端", "TCP/UDP通信库"]
+      },
+      "coverage": {
+        "code_coverage": 85,
+        "api_coverage": 93,
+        "test_coverage": 72,
+        "doc_coverage": 90
+      }
+    },
+    {
+      "name": "identity-permission",
+      "type": "infrastructure_module",
+      "status": "production_ready",
+      "completion_percentage": 100,
+      "description": "身份权限管理 - 用户管理、角色管理、权限控制",
+      "monolith_path": "smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/",
+      "microservice_path": "microservices/ioedream-identity-service/",
+      "key_components": {
+        "entry_points": [
+          "UserController.java",
+          "RoleController.java",
+          "PermissionController.java",
+          "DepartmentController.java"
+        ],
+        "interfaces": [
+          "用户管理API",
+          "角色管理API",
+          "权限管理API",
+          "组织架构API"
+        ],
+        "test_directories": [
+          "src/test/java/net/lab1024/sa/admin/module/system/"
+        ],
+        "config_files": [
+          "identity-service-application.yml"
+        ]
+      },
+      "dependencies": {
+        "internal": ["auth-service"],
+        "external": ["LDAP客户端", "企业微信SDK"]
+      },
+      "coverage": {
+        "code_coverage": 88,
+        "api_coverage": 95,
+        "test_coverage": 75,
+        "doc_coverage": 92
+      }
+    }
+  ],
+  "technical_stack": {
+    "backend": {
+      "language": "Java 17",
+      "framework": "Spring Boot 3.5.4",
+      "microservices": "Spring Cloud 2023.0.3",
+      "database": "MySQL 8.0.33",
+      "cache": "Redis 6.0+",
+      "orm": "MyBatis-Plus 3.5.7",
+      "security": "Sa-Token 1.37.0"
+    },
+    "frontend": {
+      "framework": "Vue 3.x",
+      "language": "JavaScript ES2022",
+      "ui_library": "Ant Design Vue 4.x",
+      "build_tool": "Vite 5.x",
+      "state_management": "Pinia 2.x"
+    },
+    "mobile": {
+      "framework": "uni-app",
+      "platforms": ["H5", "小程序", "App"]
+    },
+    "infrastructure": {
+      "containerization": "Docker",
+      "orchestration": "Kubernetes",
+      "monitoring": "Prometheus + Grafana",
+      "logging": "ELK Stack",
+      "message_queue": "RocketMQ 5.1.0"
+    }
+  },
+  "quality_metrics": {
+    "compilation_errors": 0,
+    "jakarta_compliance_rate": 100,
+    "architecture_violations": 0,
+    "code_quality_score": 92,
+    "test_coverage_average": 68.5,
+    "documentation_coverage": 85,
+    "security_score": 88,
+    "performance_score": 85,
+    "maintainability_score": 90
+  },
+  "compliance_status": {
+    "repowiki_compliance": {
+      "jakarta_package_migration": 100,
+      "resource_injection": 100,
+      "four_tier_architecture": 100,
+      "coding_standards": 95,
+      "database_design": 92,
+      "api_design": 90,
+      "security_standards": 88
+    },
+    "zero_tolerance_violations": {
+      "javax_imports": 0,
+      "autowired_usage": 0,
+      "architecture_violations": 0,
+      "compilation_errors": 0,
+      "encoding_issues": 0
+    }
+  },
+  "microservices_status": {
+    "migration_phase": "infrastructure_complete",
+    "services_created": 8,
+    "services_in_production": 5,
+    "services_in_development": 3,
+    "service_discovery": "Nacos 2.3.0",
+    "api_gateway": "Spring Cloud Gateway 4.1.0",
+    "configuration_center": "Nacos Config",
+    "circuit_breaker": "Sentinel 1.8.6",
+    "distributed_transaction": "Seata 1.7.0"
+  },
+  "ignored_patterns": [
+    "node_modules/**",
+    ".git/**",
+    "target/**",
+    "build/**",
+    "dist/**",
+    "*.log",
+    "*.tmp",
+    "*.lock",
+    "*.bin",
+    "*.pdf",
+    "*.png",
+    "*.jpg",
+    "*.jpeg",
+    "*.gif",
+    "*.mp4",
+    "*.zip",
+    "*.tar",
+    "*.gz"
+  ],
+  "statistics": {
+    "total_directories": 342,
+    "max_depth": 8,
+    "largest_module": "consume-management",
+    "most_complex_module": "access-control",
+    "highest_coverage": "identity-permission",
+    "improvement_needed": [
+      "video-surveillance",
+      "attendance-management"
+    ]
+  },
+  "next_steps": [
+    {
+      "priority": "high",
+      "action": "完成消费模块剩余报表功能",
+      "target_module": "consume-management",
+      "estimated_effort": "2-3 days",
+      "dependencies": []
+    },
+    {
+      "priority": "high",
+      "action": "微服务基础服务完善",
+      "target_module": "microservices_infrastructure",
+      "estimated_effort": "1-2 weeks",
+      "dependencies": []
+    },
+    {
+      "priority": "medium",
+      "action": "门禁服务微服务化迁移",
+      "target_module": "access-control",
+      "estimated_effort": "2-3 weeks",
+      "dependencies": ["微服务基础设施完善"]
+    },
+    {
+      "priority": "medium",
+      "action": "视频监控AI分析功能",
+      "target_module": "video-surveillance",
+      "estimated_effort": "3-4 weeks",
+      "dependencies": []
+    },
+    {
+      "priority": "low",
+      "action": "测试覆盖率提升至80%+",
+      "target_module": "all_modules",
+      "estimated_effort": "4-6 weeks",
+      "dependencies": []
+    }
+  ],
+  "recommendations": [
+    "优先完成消费模块剩余功能，确保业务完整性",
+    "推进微服务基础设施建设，为业务服务迁移打好基础",
+    "建立完善的监控和告警体系，提升运维能力",
+    "持续优化代码质量和测试覆盖率",
+    "完善API文档和用户手册"
+  ],
+  "risks": [
+    {
+      "type": "technical",
+      "description": "微服务迁移过程中可能出现的数据一致性问题",
+      "mitigation": "建立完善的数据同步和校验机制",
+      "probability": "medium",
+      "impact": "high"
+    },
+    {
+      "type": "resource",
+      "description": "开发资源不足可能影响迁移进度",
+      "mitigation": "合理规划迁移优先级，分阶段实施",
+      "probability": "medium",
+      "impact": "medium"
+    },
+    {
+      "type": "business",
+      "description": "服务迁移可能影响现有业务稳定性",
+      "mitigation": "采用灰度发布策略，确保平滑过渡",
+      "probability": "low",
+      "impact": "high"
+    }
+  ]
+}

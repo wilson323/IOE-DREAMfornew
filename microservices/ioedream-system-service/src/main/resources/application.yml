@@ -1,0 +1,142 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ioedream-system-service
+
+  profiles:
+    active: dev
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: ioedream
+        group: DEFAULT_GROUP
+      config:
+        server-addr: localhost:8848
+        namespace: ioedream
+        group: DEFAULT_GROUP
+        file-extension: yml
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/smart_admin_v3?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: SystemServiceHikariCP
+      max-lifetime: 900000
+      connection-timeout: 30000
+
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 3
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+    timeout: 30000ms
+
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterAccess=30m
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: net.lab1024.sa.system.**.domain.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    multiple-result-sets-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    auto-mapping-unknown-column-behavior: warning
+    default-executor-type: simple
+    default-statement-timeout: 25
+    default-fetch-size: 100
+    safe-row-bounds-enabled: false
+    map-nested-result-maps-for-single-result: false
+    local-cache-scope: session
+    jdbc-type-for-null: OTHER
+    lazy-load-trigger-methods: equals,clone,hashCode,toString
+  global-config:
+    db-config:
+      id-type: auto
+      field-strategy: not_empty
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      insert-strategy: not_null
+      update-strategy: not_null
+      select-strategy: not_empty
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    net.lab1024: DEBUG
+    org.springframework: INFO
+    com.zaxxer.hikari: INFO
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
+
+feign:
+  hystrix:
+    enabled: true
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+
+---
+spring:
+  profiles: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+
+---
+spring:
+  profiles: test
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.test.ioedream.com
+      config:
+        server-addr: nacos.test.ioedream.com
+
+---
+spring:
+  profiles: prod
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.ioedream.com
+      config:
+        server-addr: nacos.ioedream.com

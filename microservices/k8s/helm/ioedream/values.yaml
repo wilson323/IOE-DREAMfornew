@@ -1,0 +1,682 @@
+# IOE-DREAM微服务集群配置
+
+# 全局配置
+global:
+  # 镜像仓库
+  imageRegistry: registry.ioedream.com
+  imagePullSecrets:
+    - ioedream-registry-secret
+
+  # 环境配置
+  environment: production
+  namespace: ioedream-prod
+
+  # 资源配置
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+  # 标签
+  labels:
+    project: ioedream
+    managed-by: helm
+
+  # 注解
+  annotations:
+    deployed-by: helm
+    description: "IOE-DREAM微服务集群"
+
+# 命名空间配置
+namespace:
+  name: ioedream-prod
+  create: true
+  labels:
+    environment: production
+    project: ioedream
+
+# 网关服务配置
+gateway:
+  enabled: true
+  name: smart-gateway
+  image:
+    repository: gateway
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+
+  # 副本数
+  replicaCount: 3
+
+  # 端口配置
+  ports:
+    http: 8080
+    management: 8081
+
+  # 资源配置
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+  # 环境变量
+  env:
+    SPRING_PROFILES_ACTIVE: "prod"
+    JAVA_OPTS: "-Xms512m -Xmx1024m -XX:+UseG1GC"
+
+  # 健康检查
+  livenessProbe:
+    httpGet:
+      path: /actuator/health/liveness
+      port: management
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 10
+
+  readinessProbe:
+    httpGet:
+      path: /actuator/health/readiness
+      port: management
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+  # 服务配置
+  service:
+    type: ClusterIP
+    ports:
+      http: 8080
+      management: 8081
+
+  # HPA配置
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+  # Ingress配置
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/rate-limit-requests-per-second: "100"
+    hosts:
+      - host: api.ioedream.com
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: Prefix
+            service: smart-gateway
+            port: 8080
+    tls:
+      - secretName: ioedream-tls-secret
+        hosts:
+          - api.ioedream.com
+
+# 认证服务配置
+auth:
+  enabled: true
+  name: ioedream-auth-service
+  image:
+    repository: auth-service
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+
+  replicaCount: 3
+
+  ports:
+    http: 8081
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+  env:
+    SPRING_PROFILES_ACTIVE: "prod"
+    JAVA_OPTS: "-Xms512m -Xmx1024m -XX:+UseG1GC"
+
+  service:
+    type: ClusterIP
+    ports:
+      http: 8081
+
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 75
+
+# 身份服务配置
+identity:
+  enabled: true
+  name: ioedream-identity-service
+  image:
+    repository: identity-service
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+
+  replicaCount: 2
+  ports:
+    http: 8082
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+  service:
+    type: ClusterIP
+    ports:
+      http: 8082
+
+# 设备服务配置
+device:
+  enabled: true
+  name: ioedream-device-service
+  image:
+    repository: device-service
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+
+  replicaCount: 2
+  ports:
+    http: 8083
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+  service:
+    type: ClusterIP
+    ports:
+      http: 8083
+
+# 业务服务配置
+business:
+  # 门禁服务
+  access:
+    enabled: true
+    name: ioedream-access-service
+    image:
+      repository: access-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8084
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+
+  # 消费服务
+  consume:
+    enabled: true
+    name: ioedream-consume-service
+    image:
+      repository: consume-service
+      tag: v1.0.0
+    replicaCount: 3
+    ports:
+      http: 8085
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "500m"
+      limits:
+        memory: "1Gi"
+        cpu: "1000m"
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 15
+      targetCPUUtilizationPercentage: 70
+
+  # 考勤服务
+  attendance:
+    enabled: true
+    name: ioedream-attendance-service
+    image:
+      repository: attendance-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8086
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+
+  # 视频服务
+  video:
+    enabled: true
+    name: ioedream-video-service
+    image:
+      repository: video-service
+      tag: v1.0.0
+    replicaCount: 1
+    ports:
+      http: 8087
+      rtsp: 8554
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "1000m"
+      limits:
+        memory: "2Gi"
+        cpu: "2000m"
+
+  # OA服务
+  oa:
+    enabled: true
+    name: ioedream-oa-service
+    image:
+      repository: oa-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8088
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+
+# 支撑服务配置
+support:
+  # 系统服务
+  system:
+    enabled: true
+    name: ioedream-system-service
+    image:
+      repository: system-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8089
+
+  # 监控服务
+  monitor:
+    enabled: true
+    name: ioedream-monitor-service
+    image:
+      repository: monitor-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8090
+
+  # 文件服务
+  file:
+    enabled: true
+    name: ioedream-file-service
+    image:
+      repository: file-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8091
+
+  # 通知服务
+  notification:
+    enabled: true
+    name: ioedream-notification-service
+    image:
+      repository: notification-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8092
+
+  # 访客服务
+  visitor:
+    enabled: true
+    name: ioedream-visitor-service
+    image:
+      repository: visitor-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8093
+
+  # HR服务
+  hr:
+    enabled: true
+    name: ioedream-hr-service
+    image:
+      repository: hr-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8094
+
+  # 报表服务
+  report:
+    enabled: true
+    name: ioedream-report-service
+    image:
+      repository: report-service
+      tag: v1.0.0
+    replicaCount: 2
+    ports:
+      http: 8095
+
+# 数据库配置
+mysql:
+  enabled: true
+  architecture: replication
+  primary:
+    persistence:
+      enabled: true
+      size: 100Gi
+      storageClass: fast-ssd
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1000m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+  secondary:
+    replicaCount: 2
+    persistence:
+      enabled: true
+      size: 100Gi
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"
+  auth:
+    rootPassword: "ioedream_root_password"
+    database: "ioedream_prod"
+    username: "ioedream_user"
+    password: "ioedream_password"
+
+# Redis配置
+redis:
+  enabled: true
+  architecture: replication
+  master:
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: fast-ssd
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"
+  replica:
+    replicaCount: 3
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+  auth:
+    enabled: true
+    password: "ioedream_redis_password"
+
+# Nacos配置
+nacos:
+  enabled: true
+  image:
+    tag: 2.2.3
+  replicaCount: 3
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClass: fast-ssd
+  auth:
+    enabled: true
+    adminUser: nacos
+    adminPassword: "ioedream_nacos_password"
+  mysql:
+    auth:
+      rootPassword: "ioedream_nacos_mysql_password"
+      database: "nacos"
+      username: "nacos"
+      password: "ioedream_nacos_password"
+
+# 监控配置
+prometheus:
+  enabled: true
+  server:
+    replicaCount: 1
+    retention: "30d"
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: fast-ssd
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1000m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+
+grafana:
+  enabled: true
+  replicaCount: 1
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: fast-ssd
+  adminPassword: "ioedream_grafana_password"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  sidecar:
+    datasources:
+      enabled: true
+      label: grafana_datasource
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+
+elasticsearch:
+  enabled: true
+  replicas: 3
+  minimumMasterNodes: 2
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 100Gi
+    storageClassName: fast-ssd
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "1000m"
+    limits:
+      memory: "4Gi"
+      cpu: "2000m"
+
+# 日志收集配置
+fluent-bit:
+  enabled: true
+  image:
+    tag: "2.2.0"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+
+# 网络策略
+networkPolicy:
+  enabled: true
+  ingress:
+    enabled: true
+    namespaceSelector: {}
+    podSelector: {}
+  egress:
+    enabled: true
+    namespaceSelector: {}
+    podSelector: {}
+
+# Pod安全策略
+podSecurityPolicy:
+  enabled: true
+  fsGroup:
+    rule: RunAsAny
+  runAsUser:
+    rule: MustRunAsNonRoot
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+
+# 安全上下文
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+# 服务账户配置
+serviceAccount:
+  create: true
+  annotations:
+    iam.amazonaws.com/role: "ioedream-k8s-role"
+
+# 节点选择器
+nodeSelector: {}
+
+# 容忍度
+tolerations: []
+
+# 亲和性
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - smart-gateway
+          topologyKey: kubernetes.io/hostname
+
+# 额外标签
+commonLabels: {}
+
+# 额外注解
+commonAnnotations: {}
+
+# 额外环境变量
+extraEnv: []
+
+# 额外卷挂载
+extraVolumes: []
+
+# 额外卷挂载配置
+extraVolumeMounts: []
+
+# Pod调度优先级
+priorityClassName: ""
+
+# 测试配置
+tests:
+  enabled: true
+  image:
+    repository: curlimages/curl
+    tag: latest
+    pullPolicy: IfNotPresent
+
+# 升级策略
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
+# 钩子配置
+preInstall:
+  enabled: false
+  image:
+    repository: busybox
+    tag: latest
+    command: []
+    args: []
+
+postInstall:
+  enabled: false
+  image:
+    repository: busybox
+    tag: latest
+    command: []
+    args: []
+
+preDelete:
+  enabled: false
+  image:
+    repository: busybox
+    tag: latest
+    command: []
+    args: []
+
+postDelete:
+  enabled: false
+  image:
+    repository: busybox
+    tag: latest
+    command: []
+    args: []

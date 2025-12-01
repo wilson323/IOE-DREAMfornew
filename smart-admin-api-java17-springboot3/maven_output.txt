@@ -1,0 +1,762 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-parent ---
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-base ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-base ---
+[INFO] Compiling 187 source files with javac [forked debug deprecation target 17] to target\classes
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[248,26] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceScheduleEntity.java:[247,64] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[384,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[384,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[400,67] [deprecation] BigDecimal中的ROUND_HALF_UP已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\common\device\domain\entity\AttendanceStatisticsEntity.java:[400,16] [deprecation] BigDecimal中的divide(BigDecimal,int,int)已过时
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\LocalRedissonConfig.java:[47,16] [deprecation] BaseConfig中的setRetryInterval(int)已过时
+  其中, T是类型变量:
+    T扩展已在类 BaseConfig中声明的BaseConfig<T>
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-base\src\main\java\net\lab1024\sa\base\config\TransactionConfig.java:[60,15] [deprecation] TransactionInterceptor中的TransactionInterceptor(PlatformTransactionManager,TransactionAttributeSource)已过时
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [3/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-support ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-support ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 49 source files with javac [debug target 17] to target\classes
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ sa-admin ---
+[INFO] Deleting D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 12 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ sa-admin ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 528 source files with javac [debug target 17] to target\classes
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/domain/entity/AttendanceRecordEntity.java: 某些输入文件使用或覆盖了已过时的 API。
+[INFO] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/domain/entity/AttendanceRecordEntity.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[477,128] 未经检查的转换
+  需要: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity>
+  找到:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#2, 共 ?>
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[490,128] 未经检查的转换
+  需要: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity>
+  找到:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#3, 共 ?>
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/websocket/WebSocketSessionManager.java:[200,64] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.util.Map
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeCacheService.java:[209,68] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeCacheService.java:[269,67] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[290,81] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[305,77] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/OrderingMode.java:[347,48] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[297,81] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[304,79] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/ProductMode.java:[346,48] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/engine/mode/impl/SmartMode.java:[243,98] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/manager/AdvancedReportManager.java:[259,99] 未经检查的转换
+  需要: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/manager/AccessAreaManager.java:[434,43] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.util.Map
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/access/service/impl/AccessRecordServiceImpl.java:[69,75] 未经检查的转换
+  需要: com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.smart.access.domain.entity.AccessRecordEntity>
+  找到:    com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#4, 共 ?>
+[WARNING] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[122,68] 未经检查的转换
+  需要: java.util.Map<java.lang.String,java.lang.Object>
+  找到:    java.util.Map
+[INFO] 16 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[96,5] 找不到符号
+  符号:   类 AccountFreezeInfo
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[132,10] 找不到符号
+  符号:   类 AccountFreezeHistory
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[141,59] 找不到符号
+  符号:   类 AccountFreezeRequest
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[141,5] 找不到符号
+  符号:   类 BatchSecurityResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[151,61] 找不到符号
+  符号:   类 AccountUnfreezeRequest
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[151,5] 找不到符号
+  符号:   类 BatchSecurityResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[163,47] 找不到符号
+  符号:   类 AutoFreezeRule
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[172,10] 找不到符号
+  符号:   类 AutoFreezeRule
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[193,78] 找不到符号
+  符号:   类 AutoFreezeRule
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[203,5] 找不到符号
+  符号:   类 AccountSecurityStatus
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[211,5] 找不到符号
+  符号:   类 AccountSecurityScore
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[220,66] 找不到符号
+  符号:   类 AccountSecurityEvent
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[240,5] 找不到符号
+  符号:   类 AccountSecurityConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[249,67] 找不到符号
+  符号:   类 AccountSecurityConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[259,5] 找不到符号
+  符号:   类 AccountSecurityReport
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[269,10] 找不到符号
+  符号:   类 AccountRiskInfo
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[279,5] 找不到符号
+  符号:   类 OperationPermissionResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[288,42] 找不到符号
+  符号:   类 AccountSecurityEvent
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[298,10] 找不到符号
+  符号:   类 AccountSecurityEvent
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[308,72] 找不到符号
+  符号:   类 EmergencyContact
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[316,10] 找不到符号
+  符号:   类 EmergencyContact
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[31,5] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[39,5] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[47,5] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[55,5] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[65,65] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[75,67] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[85,69] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[97,5] 找不到符号
+  符号:   类 LimitValidationResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[106,5] 找不到符号
+  符号:   类 ConsumeStatistics
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[115,5] 找不到符号
+  符号:   类 LimitCheckResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[137,64] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[147,10] 找不到符号
+  符号:   类 LimitChangeHistory
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[156,54] 找不到符号
+  符号:   类 BatchLimitSetting
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[156,5] 找不到符号
+  符号:   类 BatchLimitSetResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[163,5] 找不到符号
+  符号:   类 GlobalLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[171,43] 找不到符号
+  符号:   类 GlobalLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[187,5] 找不到符号
+  符号:   类 LimitUsageReport
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[196,82] 找不到符号
+  符号:   类 ConsumeLimitConfig
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[196,5] 找不到符号
+  符号:   类 LimitConflictCheckResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[32,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[44,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[56,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[69,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[119,76] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[148,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[157,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[186,5] 找不到符号
+  符号:   类 PaymentPasswordResult
+  位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/ReconciliationServiceImpl.java:[40,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/impl/AdvancedReportServiceImpl.java:[29,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[13,19] 程序包jakarta.sql不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[62,13] 找不到符号
+  符号:   类 DataSource
+  位置: 类 net.lab1024.sa.admin.module.smart.monitor.service.impl.AccessMonitorServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[518,45] 找不到符号
+  符号:   方法 getPhotoRequired()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[519,47] 找不到符号
+  符号:   方法 getFaceRecognition()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[520,44] 找不到符号
+  符号:   方法 getAutoApproval()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[531,21] 找不到符号
+  符号:   方法 getOvertimeRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[531,57] 找不到符号
+  符号:   方法 getOvertimeRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[534,29] 找不到符号
+  符号:   方法 getOvertimeRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[547,21] 找不到符号
+  符号:   方法 getNotificationSettings()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[547,64] 找不到符号
+  符号:   方法 getNotificationSettings()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[550,29] 找不到符号
+  符号:   方法 getNotificationSettings()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[40,26] 找不到符号
+  符号:   方法 getExceptionId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceExceptionEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[42,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[56,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[69,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[85,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[98,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[111,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceStatisticsRepository.java:[42,26] 找不到符号
+  符号:   方法 getStatisticsId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceStatisticsEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[543,37] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[543,72] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[547,33] 找不到符号
+  符号:   方法 getHolidayRules()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[252,78] 不兼容的类型: com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#1, 共 ?>无法转换为com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[255,33] 对于convert2PageResult(com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>,java.util.List<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>), 找不到合适的方法
+    方法 net.lab1024.sa.base.common.util.SmartPageUtil.<T,E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>,java.lang.Class<T>)不适用
+      (无法推断类型变量 T,E
+        (实际参数列表和形式参数列表长度不同))
+    方法 net.lab1024.sa.base.common.util.SmartPageUtil.<E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>)不适用
+      (无法推断类型变量 E
+        (参数不匹配; com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>无法转换为com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>))
+    方法 net.lab1024.sa.base.common.util.SmartPageUtil.<E,T>convert2PageResult(net.lab1024.sa.base.common.domain.PageResult<E>,java.lang.Class<T>)不适用
+      (无法推断类型变量 E,T
+        (参数不匹配; com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>无法转换为net.lab1024.sa.base.common.domain.PageResult<E>))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[258,30] 无法将类 net.lab1024.sa.base.common.domain.PageResult<T>中的方法 of应用到给定类型;
+  需要: java.util.List<T>,long,long,long
+  找到:    java.lang.Long,java.lang.Long,long,java.util.List<java.lang.Object>
+  原因: 无法推断类型变量 T
+    (参数不匹配; java.lang.Long无法转换为java.util.List<T>)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[60,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[75,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[94,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[111,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[122,9] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[143,9] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[55,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,java.time.LocalDate,java.time.LocalDate
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[75,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,java.time.LocalDate,java.time.LocalDate
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[97,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[109,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[124,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,int,int
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[139,16] 找不到符号
+  符号:   方法 info(java.lang.String,java.lang.Long,java.time.LocalDate)
+  位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[144,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,java.time.LocalDate,java.lang.String
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[151,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[174,20] 找不到符号
+  符号:   方法 info(java.lang.String,java.lang.Long,java.lang.Long,java.time.LocalDate)
+  位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[177,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[191,16] 找不到符号
+  符号:   方法 info(java.lang.String,java.lang.Long)
+  位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[195,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[206,20] 找不到符号
+  符号:   方法 info(java.lang.String,java.lang.Long,java.lang.Long,java.time.LocalDate)
+  位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[221,16] 找不到符号
+  符号:   方法 info(java.lang.String,int)
+  位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[234,16] 找不到符号
+  符号:   方法 info(java.lang.String,int)
+  位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[245,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[262,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[304,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+  需要: java.lang.String
+  找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[310,25] 找不到符号
+  符号:   方法 getShiftId()
+  位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.143 s]
+[INFO] sa-base ............................................ SUCCESS [  8.653 s]
+[INFO] sa-support ......................................... SUCCESS [  3.794 s]
+[INFO] sa-admin ........................................... FAILURE [  5.921 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  18.805 s
+[INFO] Finished at: 2025-11-22T16:25:39+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[96,5] 找不到符号
+[ERROR]   符号:   类 AccountFreezeInfo
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[132,10] 找不到符号
+[ERROR]   符号:   类 AccountFreezeHistory
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[141,59] 找不到符号
+[ERROR]   符号:   类 AccountFreezeRequest
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[141,5] 找不到符号
+[ERROR]   符号:   类 BatchSecurityResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[151,61] 找不到符号
+[ERROR]   符号:   类 AccountUnfreezeRequest
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[151,5] 找不到符号
+[ERROR]   符号:   类 BatchSecurityResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[163,47] 找不到符号
+[ERROR]   符号:   类 AutoFreezeRule
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[172,10] 找不到符号
+[ERROR]   符号:   类 AutoFreezeRule
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[193,78] 找不到符号
+[ERROR]   符号:   类 AutoFreezeRule
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[203,5] 找不到符号
+[ERROR]   符号:   类 AccountSecurityStatus
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[211,5] 找不到符号
+[ERROR]   符号:   类 AccountSecurityScore
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[220,66] 找不到符号
+[ERROR]   符号:   类 AccountSecurityEvent
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[240,5] 找不到符号
+[ERROR]   符号:   类 AccountSecurityConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[249,67] 找不到符号
+[ERROR]   符号:   类 AccountSecurityConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[259,5] 找不到符号
+[ERROR]   符号:   类 AccountSecurityReport
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[269,10] 找不到符号
+[ERROR]   符号:   类 AccountRiskInfo
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[279,5] 找不到符号
+[ERROR]   符号:   类 OperationPermissionResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[288,42] 找不到符号
+[ERROR]   符号:   类 AccountSecurityEvent
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[298,10] 找不到符号
+[ERROR]   符号:   类 AccountSecurityEvent
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[308,72] 找不到符号
+[ERROR]   符号:   类 EmergencyContact
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/AccountSecurityService.java:[316,10] 找不到符号
+[ERROR]   符号:   类 EmergencyContact
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.AccountSecurityService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[31,5] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[39,5] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[47,5] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[55,5] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[65,65] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[75,67] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[85,69] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[97,5] 找不到符号
+[ERROR]   符号:   类 LimitValidationResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[106,5] 找不到符号
+[ERROR]   符号:   类 ConsumeStatistics
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[115,5] 找不到符号
+[ERROR]   符号:   类 LimitCheckResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[137,64] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[147,10] 找不到符号
+[ERROR]   符号:   类 LimitChangeHistory
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[156,54] 找不到符号
+[ERROR]   符号:   类 BatchLimitSetting
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[156,5] 找不到符号
+[ERROR]   符号:   类 BatchLimitSetResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[163,5] 找不到符号
+[ERROR]   符号:   类 GlobalLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[171,43] 找不到符号
+[ERROR]   符号:   类 GlobalLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[187,5] 找不到符号
+[ERROR]   符号:   类 LimitUsageReport
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[196,82] 找不到符号
+[ERROR]   符号:   类 ConsumeLimitConfig
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/ConsumeLimitConfigService.java:[196,5] 找不到符号
+[ERROR]   符号:   类 LimitConflictCheckResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.ConsumeLimitConfigService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[32,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[44,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[56,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[69,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[119,76] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[148,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[157,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/PaymentPasswordService.java:[186,5] 找不到符号
+[ERROR]   符号:   类 PaymentPasswordResult
+[ERROR]   位置: 接口 net.lab1024.sa.admin.module.consume.service.PaymentPasswordService
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/impl/ReconciliationServiceImpl.java:[40,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/consume/service/report/impl/AdvancedReportServiceImpl.java:[29,51] 此处需要接口
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[13,19] 程序包jakarta.sql不存在
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/smart/monitor/service/impl/AccessMonitorServiceImpl.java:[62,13] 找不到符号
+[ERROR]   符号:   类 DataSource
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.smart.monitor.service.impl.AccessMonitorServiceImpl
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[518,45] 找不到符号
+[ERROR]   符号:   方法 getPhotoRequired()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[519,47] 找不到符号
+[ERROR]   符号:   方法 getFaceRecognition()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[520,44] 找不到符号
+[ERROR]   符号:   方法 getAutoApproval()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[531,21] 找不到符号
+[ERROR]   符号:   方法 getOvertimeRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[531,57] 找不到符号
+[ERROR]   符号:   方法 getOvertimeRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[534,29] 找不到符号
+[ERROR]   符号:   方法 getOvertimeRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[547,21] 找不到符号
+[ERROR]   符号:   方法 getNotificationSettings()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[547,64] 找不到符号
+[ERROR]   符号:   方法 getNotificationSettings()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/manager/AttendanceRuleEngine.java:[550,29] 找不到符号
+[ERROR]   符号:   方法 getNotificationSettings()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[40,26] 找不到符号
+[ERROR]   符号:   方法 getExceptionId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceExceptionEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[42,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[56,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[69,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[85,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[98,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceExceptionRepository.java:[111,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.admin.module.attendance.repository.AttendanceExceptionRepository
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/repository/AttendanceStatisticsRepository.java:[42,26] 找不到符号
+[ERROR]   符号:   方法 getStatisticsId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceStatisticsEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[543,37] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[543,72] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/rule/AttendanceRuleEngine.java:[547,33] 找不到符号
+[ERROR]   符号:   方法 getHolidayRules()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity的变量 rule
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[252,78] 不兼容的类型: com.baomidou.mybatisplus.extension.plugins.pagination.Page<capture#1, 共 ?>无法转换为com.baomidou.mybatisplus.extension.plugins.pagination.Page<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[255,33] 对于convert2PageResult(com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>,java.util.List<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>), 找不到合适的方法
+[ERROR]     方法 net.lab1024.sa.base.common.util.SmartPageUtil.<T,E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>,java.lang.Class<T>)不适用
+[ERROR]       (无法推断类型变量 T,E
+[ERROR]         (实际参数列表和形式参数列表长度不同))
+[ERROR]     方法 net.lab1024.sa.base.common.util.SmartPageUtil.<E>convert2PageResult(com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>,java.util.List<E>)不适用
+[ERROR]       (无法推断类型变量 E
+[ERROR]         (参数不匹配; com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>无法转换为com.baomidou.mybatisplus.extension.plugins.pagination.Page<?>))
+[ERROR]     方法 net.lab1024.sa.base.common.util.SmartPageUtil.<E,T>convert2PageResult(net.lab1024.sa.base.common.domain.PageResult<E>,java.lang.Class<T>)不适用
+[ERROR]       (无法推断类型变量 E,T
+[ERROR]         (参数不匹配; com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceRuleEntity>无法转换为net.lab1024.sa.base.common.domain.PageResult<E>))
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceRuleServiceImpl.java:[258,30] 无法将类 net.lab1024.sa.base.common.domain.PageResult<T>中的方法 of应用到给定类型;
+[ERROR]   需要: java.util.List<T>,long,long,long
+[ERROR]   找到:    java.lang.Long,java.lang.Long,long,java.util.List<java.lang.Object>
+[ERROR]   原因: 无法推断类型变量 T
+[ERROR]     (参数不匹配; java.lang.Long无法转换为java.util.List<T>)
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[60,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[75,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[94,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[111,13] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[122,9] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/system/department/manager/DepartmentCacheManager.java:[143,9] log 在 net.lab1024.sa.base.common.manager.BaseCacheManager 中是 private 访问控制
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[55,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,java.time.LocalDate,java.time.LocalDate
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[75,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,java.time.LocalDate,java.time.LocalDate
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[97,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[109,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[124,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,int,int
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[139,16] 找不到符号
+[ERROR]   符号:   方法 info(java.lang.String,java.lang.Long,java.time.LocalDate)
+[ERROR]   位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[144,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,java.time.LocalDate,java.lang.String
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[151,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[174,20] 找不到符号
+[ERROR]   符号:   方法 info(java.lang.String,java.lang.Long,java.lang.Long,java.time.LocalDate)
+[ERROR]   位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[177,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[191,16] 找不到符号
+[ERROR]   符号:   方法 info(java.lang.String,java.lang.Long)
+[ERROR]   位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[195,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[206,20] 找不到符号
+[ERROR]   符号:   方法 info(java.lang.String,java.lang.Long,java.lang.Long,java.time.LocalDate)
+[ERROR]   位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[221,16] 找不到符号
+[ERROR]   符号:   方法 info(java.lang.String,int)
+[ERROR]   位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[234,16] 找不到符号
+[ERROR]   符号:   方法 info(java.lang.String,int)
+[ERROR]   位置: 类型为org.apache.ibatis.logging.Log的变量 log
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[245,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[262,16] 无法将接口 org.apache.ibatis.logging.Log中的方法 debug应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[304,20] 无法将接口 org.apache.ibatis.logging.Log中的方法 warn应用到给定类型;
+[ERROR]   需要: java.lang.String
+[ERROR]   找到:    java.lang.String,java.lang.Long,java.time.LocalDate
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/smart-admin-api-java17-springboot3/sa-admin/src/main/java/net/lab1024/sa/admin/module/attendance/service/impl/AttendanceScheduleServiceImpl.java:[310,25] 找不到符号
+[ERROR]   符号:   方法 getShiftId()
+[ERROR]   位置: 类型为net.lab1024.sa.admin.module.attendance.domain.entity.AttendanceScheduleEntity的变量 schedule
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

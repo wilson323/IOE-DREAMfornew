@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.oa.document.dao.DocumentPermissionDao">
+
+    <!-- 基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.oa.document.domain.entity.DocumentPermissionEntity">
+        <id column="permission_id" property="permissionId" jdbcType="BIGINT"/>
+        <result column="document_id" property="documentId" jdbcType="BIGINT"/>
+        <result column="permission_type" property="permissionType" jdbcType="VARCHAR"/>
+        <result column="target_id" property="targetId" jdbcType="BIGINT"/>
+        <result column="permission" property="permission" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="access_count" property="accessCount" jdbcType="INTEGER"/>
+        <result column="last_access_time" property="lastAccessTime" jdbcType="TIMESTAMP"/>
+        <result column="created_by" property="createdBy" jdbcType="BIGINT"/>
+        <result column="created_by_name" property="createdByName" jdbcType="VARCHAR"/>
+        <result column="revoked" property="revoked" jdbcType="TINYINT"/>
+        <result column="revoked_by" property="revokedBy" jdbcType="BIGINT"/>
+        <result column="revoked_by_name" property="revokedByName" jdbcType="VARCHAR"/>
+        <result column="revoked_time" property="revokedTime" jdbcType="TIMESTAMP"/>
+        <result column="revoke_reason" property="revokeReason" jdbcType="VARCHAR"/>
+        <result column="notes" property="notes" jdbcType="VARCHAR"/>
+        <result column="deleted_flag" property="deletedFlag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 查询文档的所有权限 -->
+    <select id="selectByDocumentId" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND revoked = 0
+        AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询用户的文档权限 -->
+    <select id="selectByDocumentAndUser" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND permission_type = 'USER'
+        AND target_id = #{userId}
+        AND revoked = 0
+        AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询用户拥有的文档权限 -->
+    <select id="selectByUserAndPermission" resultMap="BaseResultMap">
+        SELECT dp.* FROM t_oa_document_permission dp
+        INNER JOIN t_oa_document d ON dp.document_id = d.document_id
+        WHERE dp.permission_type = 'USER'
+        AND dp.target_id = #{userId}
+        AND dp.permission = #{permission}
+        AND dp.revoked = 0
+        AND dp.deleted_flag = 0
+        AND d.deleted_flag = 0
+        ORDER BY dp.create_time DESC
+    </select>
+
+    <!-- 查询用户可访问的文档ID -->
+    <select id="selectAccessibleDocumentIds" resultType="java.lang.Long">
+        SELECT DISTINCT dp.document_id
+        FROM t_oa_document_permission dp
+        INNER JOIN t_oa_document d ON dp.document_id = d.document_id
+        WHERE dp.permission_type = 'USER'
+        AND dp.target_id = #{userId}
+        AND dp.permission = #{permission}
+        AND dp.revoked = 0
+        AND dp.deleted_flag = 0
+        AND d.deleted_flag = 0
+        <if test="permission == 'VIEW' or permission == 'EDIT'">
+            AND (dp.end_time IS NULL OR dp.end_time > NOW())
+        </if>
+    </select>
+
+    <!-- 检查用户是否有指定文档的指定权限 -->
+    <select id="checkUserPermission" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0
+        FROM t_oa_document_permission dp
+        WHERE dp.document_id = #{documentId}
+        AND dp.permission_type = 'USER'
+        AND dp.target_id = #{userId}
+        AND dp.permission = #{permission}
+        AND dp.revoked = 0
+        AND dp.deleted_flag = 0
+        AND (dp.end_time IS NULL OR dp.end_time > NOW())
+        LIMIT 1
+    </select>
+
+    <!-- 查询用户的文档权限总数 -->
+    <select id="countByUserId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_oa_document_permission dp
+        WHERE dp.permission_type = 'USER'
+        AND dp.target_id = #{userId}
+        AND dp.revoked = 0
+        AND dp.deleted_flag = 0
+    </select>
+
+    <!-- 查询文档的权限数量 -->
+    <select id="countByDocumentId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND revoked = 0
+        AND deleted_flag = 0
+    </select>
+
+    <!-- 查询按权限类型分组的统计 -->
+    <select id="countByPermissionType" resultType="java.lang.Object">
+        SELECT
+            permission as permission,
+            COUNT(*) as count
+        FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND revoked = 0
+        AND deleted_flag = 0
+        GROUP BY permission
+        ORDER BY count DESC
+    </select>
+
+    <!-- 查询过期的权限 -->
+    <select id="selectExpiredPermissions" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_permission
+        WHERE end_time IS NOT NULL
+        AND end_time &lt;= #{currentTime}
+        AND revoked = 0
+        AND deleted_flag = 0
+        ORDER BY end_time ASC
+    </select>
+
+    <!-- 查询即将过期的权限 -->
+    <select id="selectExpiringPermissions" resultMap="BaseResultMap">
+        SELECT dp.*, d.title as documentTitle
+        FROM t_oa_document_permission dp
+        INNER JOIN t_oa_document d ON dp.document_id = d.document_id
+        WHERE dp.end_time IS NOT NULL
+        AND dp.end_time &lt;= DATE_ADD(NOW(), INTERVAL #{hours} HOUR)
+        AND dp.end_time > NOW()
+        AND dp.revoked = 0
+        AND dp.deleted_flag = 0
+        AND d.deleted_flag = 0
+        ORDER BY dp.end_time ASC
+    </select>
+
+    <!-- 查询被撤销的权限 -->
+    <select id="selectRevokedPermissions" resultMap="BaseResultMap">
+        SELECT dp.*, d.title as documentTitle
+        FROM t_oa_document_permission dp
+        INNER JOIN t_oa_document d ON dp.document_id = d.document_id
+        WHERE dp.revoked = 1
+        AND dp.deleted_flag = 0
+        <if test="documentId != null">
+            AND dp.document_id = #{documentId}
+        </if>
+        ORDER BY dp.revoked_time DESC
+    </select>
+
+    <!-- 批量撤销权限 -->
+    <update id="batchRevokePermissions">
+        UPDATE t_oa_document_permission
+        SET revoked = 1,
+            revoked_by = #{revokedById},
+            revoked_by_name = #{revokedByName},
+            revoked_time = #{revokedTime},
+            revoke_reason = #{revokeReason}
+        WHERE permission_id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND revoked = 0
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 批量更新权限有效期 -->
+    <update id="batchUpdateEffectiveTime">
+        UPDATE t_oa_document_permission
+        SET start_time = #{startTime},
+            end_time = #{endTime}
+        WHERE permission_id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND revoked = 0
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 查询部门权限 -->
+    <select id="selectByDepartment" resultMap="BaseResultMap">
+        SELECT dp.* FROM t_oa_document_permission dp
+        INNER JOIN t_employee e ON e.dept_id = dp.target_id
+        WHERE dp.document_id = #{documentId}
+        AND dp.permission_type = 'DEPT'
+        AND dp.target_id = #{deptId}
+        AND dp.revoked = 0
+        AND dp.deleted_flag = 0
+        ORDER BY dp.create_time DESC
+    </select>
+
+    <!-- 查询角色权限 -->
+    <select id="selectByRole" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND permission_type = 'ROLE'
+        AND target_id = #{roleId}
+        AND revoked = 0
+        AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询自定义权限 -->
+    <select id="selectByCustomType" resultMap="BaseResultMap">
+        SELECT * FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND permission_type NOT IN ('USER', 'DEPT', 'ROLE')
+        AND revoked = 0
+        AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 检查权限冲突 -->
+    <select id="hasPermissionConflict" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0
+        FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND permission_type = #{permissionType}
+        AND target_id = #{targetId}
+        AND permission = #{permission}
+        AND revoked = 0
+        AND deleted_flag = 0
+        <if test="excludePermissionId != null">
+            AND permission_id != #{excludePermissionId}
+        </if>
+        LIMIT 1
+    </select>
+
+    <!-- 获取权限统计 -->
+    <select id="getPermissionStatistics" resultType="java.lang.Object">
+        SELECT
+            dp.permission_type as permissionType,
+            dp.permission as permission,
+            COUNT(*) as count,
+            COUNT(CASE WHEN dp.end_time IS NOT NULL AND dp.end_time > NOW() THEN 1 END) as activeCount,
+            COUNT(CASE WHEN dp.end_time IS NOT NULL AND dp.end_time &lt;= NOW() THEN 1 END) as expiredCount
+        FROM t_oa_document_permission dp
+        <where>
+            dp.deleted_flag = 0
+            <if test="documentId != null">
+                AND dp.document_id = #{documentId}
+            </if>
+            <if test="userId != null">
+                AND dp.permission_type = 'USER'
+                AND dp.target_id = #{userId}
+            </if>
+        </where>
+        GROUP BY dp.permission_type, dp.permission
+        ORDER BY count DESC
+    </select>
+
+    <!-- 查询权限活动日志 -->
+    <select id="selectPermissionActivityLog" resultType="java.lang.Object">
+        SELECT
+            permission_id as permissionId,
+            document_id as documentId,
+            permission_type as permissionType,
+            target_id as targetId,
+            permission as permission,
+            'CREATE' as action,
+            created_by_name as operatorName,
+            create_time as operationTime,
+            NULL as notes
+        FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND create_time >= #{startTime}
+        AND create_time &lt;= #{endTime}
+        AND deleted_flag = 0
+
+        UNION ALL
+
+        SELECT
+            permission_id as permissionId,
+            document_id as documentId,
+            permission_type as permissionType,
+            target_id as targetId,
+            permission as permission,
+            'REVOKE' as action,
+            revoked_by_name as operatorName,
+            revoked_time as operationTime,
+            revoke_reason as notes
+        FROM t_oa_document_permission
+        WHERE document_id = #{documentId}
+        AND revoked_time >= #{startTime}
+        AND revoked_time &lt;= #{endTime}
+        AND revoked = 1
+        AND deleted_flag = 0
+
+        ORDER BY operationTime DESC
+    </select>
+
+    <!-- 更新权限访问信息 -->
+    <update id="updateAccessInfo">
+        UPDATE t_oa_document_permission
+        SET access_count = IFNULL(access_count, 0) + #{accessCount},
+            last_access_time = #{lastAccessTime}
+        WHERE permission_id = #{permissionId}
+        AND revoked = 0
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 批量删除文档的所有权限 -->
+    <update id="deleteByDocumentId">
+        UPDATE t_oa_document_permission
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE document_id = #{documentId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 删除用户的所有权限 -->
+    <update id="deleteByUserId">
+        UPDATE t_oa_document_permission
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE permission_type = 'USER'
+        AND target_id = #{userId}
+        AND deleted_flag = 0
+    </update>
+
+    <!-- 清理过期的权限缓存标记 -->
+    <update id="cleanExpiredPermissionCache">
+        UPDATE t_oa_document_permission
+        SET cache_version = NULL
+        WHERE deleted_flag = 0
+        AND update_time &lt; DATE_SUB(NOW(), INTERVAL #{expireDays} DAY)
+        AND cache_version IS NOT NULL
+    </update>
+
+    <!-- 生成权限报告 -->
+    <select id="generatePermissionReport" resultType="java.lang.Object">
+        SELECT
+            d.document_id as documentId,
+            d.title as documentTitle,
+            d.status as documentStatus,
+            dp.permission_type as permissionType,
+            CASE dp.permission_type
+                WHEN 'USER' THEN (SELECT real_name FROM t_employee WHERE employee_id = dp.target_id)
+                WHEN 'DEPT' THEN (SELECT dept_name FROM t_department WHERE dept_id = dp.target_id)
+                WHEN 'ROLE' THEN (SELECT role_name FROM t_role WHERE role_id = dp.target_id)
+                ELSE dp.target_id::VARCHAR
+            END as targetName,
+            dp.permission as permission,
+            dp.access_count as accessCount,
+            dp.last_access_time as lastAccessTime,
+            CASE
+                WHEN dp.revoked = 1 THEN '已撤销'
+                WHEN dp.end_time IS NOT NULL AND dp.end_time &lt;= NOW() THEN '已过期'
+                ELSE '有效'
+            END as status,
+            dp.create_time as createTime,
+            dp.created_by_name as createdByName,
+            CASE
+                WHEN dp.revoked = 1 THEN dp.revoked_time
+                ELSE NULL
+            END as revokedTime,
+            CASE
+                WHEN dp.revoked = 1 THEN dp.revoked_by_name
+                ELSE NULL
+            END as revokedByName
+        FROM t_oa_document_permission dp
+        INNER JOIN t_oa_document d ON dp.document_id = d.document_id
+        WHERE dp.document_id = #{documentId}
+        AND dp.deleted_flag = 0
+        AND d.deleted_flag = 0
+        ORDER BY dp.create_time DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,11 @@
+===============================================
+服务: ioedream-access-service 测试覆盖率报告
+生成时间: 2025年11月29日  7:05:53
+===============================================
+源文件数量: 61
+测试文件数量: 1
+测试方法数量: 45
+预估覆盖率: 73%
+
+详细文件列表:
+/d/IOE-DREAM/microservices/ioedream-access-service/src/test/java/net/lab1024/sa/access/controller/AccessDeviceControllerTest.java

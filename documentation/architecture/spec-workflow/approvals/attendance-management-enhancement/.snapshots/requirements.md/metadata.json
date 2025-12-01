@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/attendance-management-enhancement/requirements.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-11-25T08:48:50.290Z",
+      "trigger": "initial",
+      "approvalId": "approval_1764060530274_2zy4ifwry",
+      "approvalTitle": "考勤模块管理功能增强需求文档"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2025-11-25T11:34:36.947Z",
+      "trigger": "approved",
+      "approvalId": "approval_1764060530274_2zy4ifwry",
+      "approvalTitle": "考勤模块管理功能增强需求文档"
+    }
+  ]
+}

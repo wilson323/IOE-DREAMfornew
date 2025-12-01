@@ -1,0 +1,329 @@
+# ===================================================================
+# IOE-DREAM 微服务架构运维监控系统配置
+# Prometheus配置文件 - 生产环境版本
+# 版本: v2.0.0
+# 更新时间: 2025-11-29
+# ===================================================================
+
+# 全局配置
+global:
+  scrape_interval: 15s                # 采集间隔15秒
+  evaluation_interval: 15s            # 评估间隔15秒
+  external_labels:
+    cluster: 'ioedream-production'    # 集群标识
+    environment: 'production'         # 环境标识
+    datacenter: 'dc-1'               # 数据中心标识
+    region: 'asia-east1'             # 区域标识
+
+# 规则文件
+rule_files:
+  - "rules/*.yml"
+  - "rules/*.rules"
+
+# 告警管理器配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# 数据抓取配置
+scrape_configs:
+  # Prometheus自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 5s
+    metrics_path: /metrics
+    honor_labels: true
+
+  # API网关监控
+  - job_name: 'ioedream-gateway'
+    static_configs:
+      - targets: ['localhost:8080']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'gateway-1'
+
+  # 认证服务监控
+  - job_name: 'ioedream-auth-service'
+    static_configs:
+      - targets: ['localhost:8081']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'auth-service-1'
+
+  # 身份服务监控
+  - job_name: 'ioedream-identity-service'
+    static_configs:
+      - targets: ['localhost:8082']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'identity-service-1'
+
+  # 设备服务监控
+  - job_name: 'ioedream-device-service'
+    static_configs:
+      - targets: ['localhost:8083']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'device-service-1'
+
+  # 门禁服务监控
+  - job_name: 'ioedream-access-service'
+    static_configs:
+      - targets: ['localhost:8084']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'access-service-1'
+
+  # 消费服务监控
+  - job_name: 'ioedream-consume-service'
+    static_configs:
+      - targets: ['localhost:8085']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'consume-service-1'
+
+  # 考勤服务监控
+  - job_name: 'ioedream-attendance-service'
+    static_configs:
+      - targets: ['localhost:8086']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'attendance-service-1'
+
+  # 视频服务监控
+  - job_name: 'ioedream-video-service'
+    static_configs:
+      - targets: ['localhost:8087']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'video-service-1'
+
+  # 访客服务监控
+  - job_name: 'ioedream-visitor-service'
+    static_configs:
+      - targets: ['localhost:8088']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'visitor-service-1'
+
+  # OA服务监控
+  - job_name: 'ioedream-oa-service'
+    static_configs:
+      - targets: ['localhost:8089']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'oa-service-1'
+
+  # 系统服务监控
+  - job_name: 'ioedream-system-service'
+    static_configs:
+      - targets: ['localhost:8090']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'system-service-1'
+
+  # 监控服务监控
+  - job_name: 'ioedream-monitor-service'
+    static_configs:
+      - targets: ['localhost:8091']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'monitor-service-1'
+
+  # 文件服务监控
+  - job_name: 'ioedream-file-service'
+    static_configs:
+      - targets: ['localhost:8092']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'file-service-1'
+
+  # 通知服务监控
+  - job_name: 'ioedream-notification-service'
+    static_configs:
+      - targets: ['localhost:8093']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'notification-service-1'
+
+  # 人力资源服务监控
+  - job_name: 'ioedream-hr-service'
+    static_configs:
+      - targets: ['localhost:8094']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'hr-service-1'
+
+  # 智能服务监控
+  - job_name: 'ioedream-smart-service'
+    static_configs:
+      - targets: ['localhost:8095']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'smart-service-1'
+
+  # JMeter性能测试监控
+  - job_name: 'jmeter-performance-test'
+    static_configs:
+      - targets: ['localhost:9428']
+    metrics_path: '/metrics'
+    scrape_interval: 2s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'jmeter-master'
+
+  # 系统资源监控 (Node Exporter)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+    scrape_interval: 5s
+    honor_labels: true
+
+  # 数据库监控 (MySQL Exporter)
+  - job_name: 'mysql-exporter'
+    static_configs:
+      - targets: ['localhost:9104']
+    scrape_interval: 10s
+    honor_labels: true
+
+  # Redis监控 (Redis Exporter)
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['localhost:9121']
+    scrape_interval: 10s
+    honor_labels: true
+
+  # JVM监控 (通过Spring Boot Actuator)
+  - job_name: 'jvm-metrics'
+    static_configs:
+      - targets:
+        - 'localhost:8081'  # auth-service
+        - 'localhost:8082'  # identity-service
+        - 'localhost:8083'  # device-service
+        - 'localhost:8084'  # access-service
+        - 'localhost:8085'  # consume-service
+        - 'localhost:8086'  # attendance-service
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: service
+        regex: 'localhost:(\d+)'
+        replacement: 'service-$1'
+
+# 远程写入配置 (可选，用于长期存储)
+# remote_write:
+#   - url: "http://remote-storage:9009/api/v1/write"
+#     queue_config:
+#       max_samples_per_send: 1000
+#       max_shards: 200
+#       capacity: 2500
+
+# 远程读取配置 (可选)
+# remote_read:
+#   - url: "http://remote-storage:9009/api/v1/read"
+#     read_recent: true
+
+# 存储配置
+storage:
+  tsdb:
+    path: ./data
+    retention.time: 7d        # 数据保留7天
+    retention.size: 10GB       # 最大存储10GB
+    wal.compression: true
+    max-block-duration: 2h
+
+# 压缩配置
+tsdb:
+  compression:
+    enabled: true
+
+# Web UI配置
+web:
+  enable_admin_api: true
+  page_title: "IOE-DREAM Performance Monitoring"
+  external_url: "http://localhost:9090"
+
+# 查询日志配置
+query_log:
+  enabled: true
+
+# 渲染配置
+render:
+  max_concurrent: 6
+
+# 跟踪配置
+tracing:
+  type: agent
+  endpoint: "localhost:6831"
+  timeout: 5s

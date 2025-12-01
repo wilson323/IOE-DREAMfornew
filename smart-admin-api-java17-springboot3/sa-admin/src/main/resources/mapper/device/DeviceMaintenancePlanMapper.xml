@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.device.dao.DeviceMaintenancePlanDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.admin.module.device.domain.entity.DeviceMaintenancePlanEntity">
+        <id column="plan_id" property="planId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="plan_status" property="planStatus"/>
+        <result column="trigger_reason" property="triggerReason"/>
+        <result column="plan_type" property="planType"/>
+        <result column="priority_level" property="priorityLevel"/>
+        <result column="score_on_create" property="scoreOnCreate"/>
+        <result column="assigned_to" property="assignedTo"/>
+        <result column="schedule_start" property="scheduleStart"/>
+        <result column="schedule_end" property="scheduleEnd"/>
+        <result column="actual_start" property="actualStart"/>
+        <result column="actual_end" property="actualEnd"/>
+        <result column="estimated_duration" property="estimatedDuration"/>
+        <result column="description" property="description"/>
+        <result column="result_note" property="resultNote"/>
+        <result column="cost_amount" property="costAmount"/>
+        <result column="parts_used" property="partsUsed"/>
+        <result column="completion_rate" property="completionRate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+    </resultMap>
+
+    <!-- 统计结果映射 -->
+    <resultMap id="MaintenanceStatisticsMap" type="net.lab1024.sa.admin.module.device.dao.DeviceMaintenancePlanDao$MaintenanceStatistics">
+        <result column="total_plans" property="totalPlans"/>
+        <result column="completed_plans" property="completedPlans"/>
+        <result column="pending_plans" property="pendingPlans"/>
+        <result column="in_progress_plans" property="inProgressPlans"/>
+        <result column="cancelled_plans" property="cancelledPlans"/>
+        <result column="completion_rate" property="completionRate"/>
+        <result column="on_time_completion_rate" property="onTimeCompletionRate"/>
+    </resultMap>
+
+    <!-- 工作负载结果映射 -->
+    <resultMap id="MaintenanceWorkloadMap" type="net.lab1024.sa.admin.module.device.dao.DeviceMaintenancePlanDao$MaintenanceWorkload">
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="pending_count" property="pendingCount"/>
+        <result column="in_progress_count" property="inProgressCount"/>
+        <result column="completed_count" property="completedCount"/>
+        <result column="avg_completion_time" property="avgCompletionTime"/>
+    </resultMap>
+
+    <!-- 获取设备当前有效的维护计划 -->
+    <select id="getActivePlansByDeviceId" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_maintenance_plan
+        WHERE device_id = #{deviceId}
+          AND plan_status IN ('pending', 'in-progress', 'on-hold')
+          AND deleted_flag = 0
+        ORDER BY priority_level ASC, schedule_start ASC
+    </select>
+
+    <!-- 获取待处理的维护计划 -->
+    <select id="getPendingPlans" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_maintenance_plan
+        WHERE plan_status = 'pending'
+          AND deleted_flag = 0
+        <if test="assignedTo != null">
+          AND assigned_to = #{assignedTo}
+        </if>
+        ORDER BY priority_level DESC, schedule_start ASC
+    </select>
+
+    <!-- 获取超期的维护计划 -->
+    <select id="getOverduePlans" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_maintenance_plan
+        WHERE plan_status IN ('pending', 'on-hold')
+          AND schedule_start &lt; #{currentTime}
+          AND deleted_flag = 0
+        ORDER BY schedule_start ASC
+    </select>
+
+    <!-- 获取指定时间范围内的维护计划 -->
+    <select id="getPlansByTimeRange" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_maintenance_plan
+        WHERE (schedule_start BETWEEN #{startTime} AND #{endTime}
+               OR actual_start BETWEEN #{startTime} AND #{endTime}
+               OR actual_end BETWEEN #{startTime} AND #{endTime})
+          AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 获取维护计划统计信息 -->
+    <select id="getMaintenanceStatistics" resultMap="MaintenanceStatisticsMap">
+        SELECT
+            COUNT(*) as total_plans,
+            SUM(CASE WHEN plan_status = 'done' THEN 1 ELSE 0 END) as completed_plans,
+            SUM(CASE WHEN plan_status = 'pending' THEN 1 ELSE 0 END) as pending_plans,
+            SUM(CASE WHEN plan_status = 'in-progress' THEN 1 ELSE 0 END) as in_progress_plans,
+            SUM(CASE WHEN plan_status = 'cancelled' THEN 1 ELSE 0 END) as cancelled_plans,
+            ROUND(
+                SUM(CASE WHEN plan_status = 'done' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2
+            ) as completion_rate,
+            ROUND(
+                SUM(CASE WHEN plan_status = 'done' AND actual_end &lt;= schedule_end THEN 1 ELSE 0 END) * 100.0 /
+                NULLIF(SUM(CASE WHEN plan_status = 'done' THEN 1 ELSE 0 END), 0), 2
+            ) as on_time_completion_rate
+        FROM t_device_maintenance_plan
+        WHERE deleted_flag = 0
+          <if test="startTime != null">
+          AND create_time >= #{startTime}
+          </if>
+          <if test="endTime != null">
+          AND create_time &lt;= #{endTime}
+          </if>
+    </select>
+
+    <!-- 更新维护计划状态 -->
+    <update id="updatePlanStatus">
+        UPDATE t_device_maintenance_plan
+        SET plan_status = #{newStatus},
+            update_time = NOW(),
+            update_user_id = #{updateUserId}
+        WHERE plan_id = #{planId}
+          AND plan_status = #{oldStatus}
+          AND deleted_flag = 0
+    </update>
+
+    <!-- 获取维护人员工作负载 -->
+    <select id="getMaintenanceWorkload" resultMap="MaintenanceWorkloadMap">
+        SELECT
+            u.user_id,
+            u.actual_name as user_name,
+            COALESCE(pending_count, 0) as pending_count,
+            COALESCE(in_progress_count, 0) as in_progress_count,
+            COALESCE(completed_count, 0) as completed_count,
+            COALESCE(avg_completion_time, 0) as avg_completion_time
+        FROM t_employee u
+        LEFT JOIN (
+            SELECT
+                assigned_to,
+                SUM(CASE WHEN plan_status = 'pending' THEN 1 ELSE 0 END) as pending_count,
+                SUM(CASE WHEN plan_status = 'in-progress' THEN 1 ELSE 0 END) as in_progress_count,
+                SUM(CASE WHEN plan_status = 'done' THEN 1 ELSE 0 END) as completed_count,
+                AVG(TIMESTAMPDIFF(MINUTE, actual_start, actual_end)) as avg_completion_time
+            FROM t_device_maintenance_plan
+            WHERE deleted_flag = 0
+              AND assigned_to IS NOT NULL
+              <if test="startTime != null">
+              AND create_time >= #{startTime}
+              </if>
+              <if test="endTime != null">
+              AND create_time &lt;= #{endTime}
+              </if>
+            GROUP BY assigned_to
+        ) stats ON u.user_id = stats.assigned_to
+        WHERE u.deleted_flag = 0
+        ORDER BY pending_count DESC, in_progress_count DESC
+    </select>
+
+    <!-- 获取设备维护历史 -->
+    <select id="getMaintenanceHistory" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_device_maintenance_plan
+        WHERE device_id = #{deviceId}
+          AND deleted_flag = 0
+        ORDER BY create_time DESC
+        <if test="limit != null and limit > 0">
+        LIMIT #{limit}
+        </if>
+    </select>
+
+</mapper>

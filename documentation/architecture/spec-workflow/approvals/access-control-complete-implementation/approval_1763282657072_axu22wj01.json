@@ -1,0 +1,12 @@
+{
+  "id": "approval_1763282657072_axu22wj01",
+  "title": "门禁系统完整实现任务清单审批",
+  "filePath": ".spec-workflow/specs/access-control-complete-implementation/tasks.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-11-16T08:44:17.072Z",
+  "category": "spec",
+  "categoryName": "access-control-complete-implementation",
+  "response": "通过仪表板批准",
+  "respondedAt": "2025-11-25T11:34:41.573Z"
+}

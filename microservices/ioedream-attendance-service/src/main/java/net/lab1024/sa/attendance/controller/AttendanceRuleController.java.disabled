@@ -1,0 +1,263 @@
+package net.lab1024.sa.attendance.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import net.lab1024.sa.attendance.domain.entity.AttendanceRuleEntity;
+import net.lab1024.sa.attendance.domain.SimpleObject;
+import net.lab1024.sa.attendance.domain.SimpleObject;
+import net.lab1024.sa.common.domain.ResponseDTO;
+// TEMP: RAC module not yet available
+import net.lab1024.sa.attendance.service.AttendanceRuleService;
+
+import java.util.List;
+
+/**
+ * 考勤规则管理Controller
+ *
+ * <p>
+ * 桥接现有的AttendanceRuleService，提供完整的考勤规则管理API
+ * 严格遵循repowiki编码规范：使用jakarta包名、@Resource注入、SLF4J日志
+ * 100%复用现有Service层业务逻辑，不重复开发
+ * </p>
+ *
+ * @author SmartAdmin Team
+ * @version 3.0.0
+ * @since 2025-11-25
+ */
+@RestController
+@RequestMapping("/api/attendance/rules")
+@Tag(name = "考勤规则管理", description = "考勤规则配置、管理相关接口")
+@Validated
+public class AttendanceRuleController {
+    private static final Logger log = LoggerFactory.getLogger(AttendanceRuleController.class);
+
+    @Resource
+    private AttendanceRuleService attendanceRuleService;
+
+    /**
+     * 创建考勤规则
+     */
+    @PostMapping("")
+    @Operation(summary = "创建考勤规则", description = "创建新的考勤规则配置")
+    @SaCheckLogin
+    @SaCheckPermission("attendance:rule:create")
+    @RequireResource(resource = "attendance:rule", action = "WRITE", message = "您没有权限创建考勤规则")
+    public ResponseDTO<Long> createRule(@Valid @RequestBody AttendanceRuleEntity rule) {
+        log.info("创建考勤规则请求: 规则名称={}, 公司ID={}", rule.getRuleName(), rule.getCompanyId());
+
+        try {
+            // 直接调用现有Service层保存逻辑
+            boolean success = attendanceRuleService.saveOrUpdateRule(rule);
+            if (success) {
+                log.info("考勤规则创建成功: 规则ID={}, 规则名称={}", rule.getRuleId(), rule.getRuleName());
+                return ResponseDTO.ok(rule.getRuleId());
+            } else {
+                log.warn("考勤规则创建失败: 规则名称={}", rule.getRuleName());
+                return ResponseDTO.error("创建考勤规则失败");
+            }
+        } catch (Exception e) {
+            log.error("创建考勤规则异常: 规则名称" + rule.getRuleName(), e);
+            return ResponseDTO.error("创建考勤规则异常：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 更新考勤规则
+     */
+    @PutMapping("/{ruleId}")
+    @Operation(summary = "更新考勤规则", description = "更新指定的考勤规则配置")
+    @SaCheckLogin
+    @SaCheckPermission("attendance:rule:update")
+    @RequireResource(resource = "attendance:rule", action = "WRITE", message = "您没有权限更新考勤规则")
+    public ResponseDTO<Boolean> updateRule(@PathVariable Long ruleId, @Valid @RequestBody AttendanceRuleEntity rule) {
+        log.info("更新考勤规则请求: 规则ID={}, 规则名称={}", ruleId, rule.getRuleName());
+
+        try {
+            // 设置规则ID
+            rule.setRuleId(ruleId);
+
+            // 调用现有Service层更新逻辑
+            boolean success = attendanceRuleService.saveOrUpdateRule(rule);
+            if (success) {
+                log.info("考勤规则更新成功: 规则ID={}, 规则名称={}", ruleId, rule.getRuleName());
+                return ResponseDTO.ok(true);
+            } else {
+                log.warn("考勤规则更新失败: 规则ID={}", ruleId);
+                return ResponseDTO.error("更新考勤规则失败");
+            }
+        } catch (Exception e) {
+            log.error("更新考勤规则异常: 规则ID" + ruleId, e);
+            return ResponseDTO.error("更新考勤规则异常：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 删除考勤规则
+     */
+    @DeleteMapping("/{ruleId}")
+    @Operation(summary = "删除考勤规则", description = "删除指定的考勤规则")
+    @SaCheckLogin
+    @SaCheckPermission("attendance:rule:delete")
+    @RequireResource(resource = "attendance:rule", action = "DELETE", message = "您没有权限删除考勤规则")
+    public ResponseDTO<Boolean> deleteRule(@PathVariable Long ruleId) {
+        log.info("删除考勤规则请求: 规则ID={}", ruleId);
+
+        try {
+            // 调用现有Service层删除逻辑
+            boolean success = attendanceRuleService.deleteRule(ruleId);
+            if (success) {
+                log.info("考勤规则删除成功: 规则ID={}", ruleId);
+                return ResponseDTO.ok(true);
+            } else {
+                log.warn("考勤规则删除失败: 规则ID={}", ruleId);
+                return ResponseDTO.error("删除考勤规则失败");
+            }
+        } catch (Exception e) {
+            log.error("删除考勤规则异常: 规则ID" + ruleId, e);
+            return ResponseDTO.error("删除考勤规则异常：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 批量删除考勤规则
+     */
+    @DeleteMapping("/batch")
+    @Operation(summary = "批量删除考勤规则", description = "批量删除指定的考勤规则")
+    @SaCheckLogin
+    @SaCheckPermission("attendance:rule:batch-delete")
+    @RequireResource(resource = "attendance:rule", action = "DELETE", message = "您没有权限批量删除考勤规则")
+    public ResponseDTO<Integer> batchDeleteRules(@RequestBody List<Long> ruleIds) {
+        log.info("批量删除考勤规则请求: 规则数量={}", ruleIds.size());
+
+        try {
+            // 调用现有Service层批量删除逻辑
+            int deletedCount = attendanceRuleService.batchDeleteRules(ruleIds);
+            log.info("批量删除考勤规则成功: 删除数量={}", deletedCount);
+            return ResponseDTO.ok(deletedCount);
+        } catch (Exception e) {
+            log.error("批量删除考勤规则异常: 规则数量" + ruleIds.size(), e);
+            return ResponseDTO.error("批量删除考勤规则异常：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取考勤规则详情
+     */
+    @GetMapping("/{ruleId}")
+    @Operation(summary = "获取考勤规则详情", description = "查询指定考勤规则的详细信息")
+    @SaCheckLogin
+    @SaCheckPermission("attendance:rule:query")
+    @RequireResource(resource = "attendance:rule", action = "READ", message = "您没有权限查询考勤规则")
+    public ResponseDTO<AttendanceRuleEntity> getRuleById(@PathVariable Long ruleId) {
+        log.debug("查询考勤规则详情: 规则ID={}", ruleId);
+
+        try {
+            // 通过现有Service获取所有有效规则，然后筛选
+            List<AttendanceRuleEntity> allRules = attendanceRuleService.getAllValidRules();
+            AttendanceRuleEntity rule = allRules.stream()
+                .filter(r -> ruleId.equals(r.getRuleId()))
+                .findFirst()
+                .orElse(null);
+
+            if (rule != null) {
+                log.debug("查询考勤规则详情成功: 规则ID={}, 规则名称={}", ruleId, rule.getRuleName());
+                return ResponseDTO.ok(rule);
+            } else {
+                log.warn("考勤规则不存在: 规则ID={}", ruleId);
+                return ResponseDTO.error("考勤规则不存在");
+            }
+        } catch (Exception e) {
+            log.error("查询考勤规则详情异常: 规则ID" + ruleId, e);
+            return ResponseDTO.error("查询考勤规则异常：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取所有有效的考勤规则
+     */
+    @GetMapping("")
+    @Operation(summary = "获取所有考勤规则", description = "查询所有有效的考勤规则列表")
+    @SaCheckLogin
+    @SaCheckPermission("attendance:rule:list")
+    @RequireResource(resource = "attendance:rule", action = "READ", message = "您没有权限查询考勤规则")
+    public ResponseDTO<List<AttendanceRuleEntity>> getAllRules() {
+        log.debug("查询所有有效的考勤规则");
+
+        try {
+            // 直接调用现有Service层获取所有有效规则
+            List<AttendanceRuleEntity> rules = attendanceRuleService.getAllValidRules();
+            log.debug("查询所有有效考勤规则成功: 规则数量={}", rules.size());
+            return ResponseDTO.ok(rules);
+        } catch (Exception e) {
+            log.error("查询所有有效考勤规则异常", e);
+            return ResponseDTO.error("查询考勤规则异常：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据员工ID获取考勤规则
+     */
+    @GetMapping("/employee/{employeeId}")
+    @Operation(summary = "获取员工考勤规则", description = "查询指定员工适用的考勤规则")
+    @SaCheckLogin
+    @SaCheckPermission("attendance:rule:query")
+    @RequireResource(resource = "attendance:rule", action = "READ", message = "您没有权限查询员工考勤规则")
+    public ResponseDTO<AttendanceRuleEntity> getRuleByEmployeeId(@PathVariable Long employeeId) {
+        log.debug("查询员工考勤规则: 员工ID={}", employeeId);
+
+        try {
+            // 调用现有Service层获取员工规则
+            AttendanceRuleEntity rule = attendanceRuleService.getRuleByEmployeeId(employeeId);
+            if (rule != null) {
+                log.debug("查询员工考勤规则成功: 员工ID={}, 规则名称={}", employeeId, rule.getRuleName());
+                return ResponseDTO.ok(rule);
+            } else {
+                log.warn("员工考勤规则不存在: 员工ID={}", employeeId);
+                return ResponseDTO.error("员工考勤规则不存在");
+            }
+        } catch (Exception e) {
+            log.error("查询员工考勤规则异常: 员工ID" + employeeId, e);
+            return ResponseDTO.error("查询员工考勤规则异常：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据部门ID获取考勤规则列表
+     */
+    @GetMapping("/department/{departmentId}")
+    @Operation(summary = "获取部门考勤规则", description = "查询指定部门的考勤规则列表")
+    @SaCheckLogin
+    @SaCheckPermission("attendance:rule:query")
+    @RequireResource(resource = "attendance:rule", action = "READ", message = "您没有权限查询部门考勤规则")
+    public ResponseDTO<List<AttendanceRuleEntity>> getRulesByDepartmentId(@PathVariable Long departmentId) {
+        log.debug("查询部门考勤规则: 部门ID={}", departmentId);
+
+        try {
+            // 调用现有Service层获取部门规则
+            List<AttendanceRuleEntity> rules = attendanceRuleService.getRulesByDepartmentId(departmentId);
+            log.debug("查询部门考勤规则成功: 部门ID={}, 规则数量={}", departmentId, rules.size());
+            return ResponseDTO.ok(rules);
+        } catch (Exception e) {
+            log.error("查询部门考勤规则异常: 部门ID" + departmentId, e);
+            return ResponseDTO.error("查询部门考勤规则异常：" + e.getMessage());
+        }
+    }
+}

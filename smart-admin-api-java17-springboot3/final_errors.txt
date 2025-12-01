@@ -1,0 +1,733 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sa-parent                                                          [pom]
+[INFO] sa-base                                                            [jar]
+[INFO] sa-support                                                         [jar]
+[INFO] sa-admin                                                           [jar]
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-parent >------------------------
+[INFO] Building sa-parent 3.0.0                                           [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-base >-------------------------
+[INFO] Building sa-base 3.0.0                                             [2/4]
+[INFO]   from sa-base\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-base ---
+[INFO] Copying 44 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-base ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] -----------------------< net.lab1024:sa-support >-----------------------
+[INFO] Building sa-support 3.0.0                                          [3/4]
+[INFO]   from sa-support\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-support ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-support\src\main\resources\dev
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-support ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] ------------------------< net.lab1024:sa-admin >------------------------
+[INFO] Building sa-admin 3.0.0                                            [4/4]
+[INFO]   from sa-admin\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ sa-admin ---
+[INFO] Copying 12 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources\dev to target\classes
+[INFO] Copying 2 resources from src\main\resources\dev to target\classes
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ sa-admin ---
+[INFO] Compiling 372 source files to D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[395,80] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[410,76] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[459,47] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\manager\AccessAreaManager.java:[434,42] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\SmartMode.java:[260,20] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\MeteringMode.java:[582,47] [unchecked] 未经检查的转换
+  需要: List<Map<String,Object>>
+  找到:    Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[70,63] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[127,63] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[201,64] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\system\device\manager\impl\UnifiedDeviceManagerImpl.java:[528,64] [unchecked] 未经检查的转换
+  需要: Map<String,Object>
+  找到:    Map
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceScheduleServiceImpl.java:[482,127] [unchecked] 未经检查的转换
+  需要: Page<AttendanceScheduleEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\attendance\service\impl\AttendanceScheduleServiceImpl.java:[495,127] [unchecked] 未经检查的转换
+  需要: Page<AttendanceScheduleEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[WARNING] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\access\service\impl\AccessRecordServiceImpl.java:[74,74] [unchecked] 未经检查的转换
+  需要: Page<AccessRecordEntity>
+  找到:    Page<CAP#1>
+  其中, CAP#1是新类型变量:
+    CAP#1从?的捕获扩展Object
+[INFO] 13 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\domain\entity\VideoRecordingEntity.java:[26,7] 错误: 类 VideoRecordingingEntity 是公共的, 应在名为 VideoRecordingingEntity.java 的文件中声明
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoRecordingManager.java:[16,7] 错误: 接口 VideoRecordingingManager 是公共的, 应在名为 VideoRecordingingManager.java 的文件中声明
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoRecordingManagerImpl.java:[31,7] 错误: 类 VideoRecordingingManagerImpl 是公共的, 应在名为 VideoRecordingingManagerImpl.java 的文件中声明
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[22,7] 错误: 接口 VideoRecordingDao 是公共的, 应在名为 VideoRecordingDao.java 的文件中声明
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[10,47] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 程序包 net.lab1024.sa.base.common.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[22,54] 错误: 找不到符号
+  符号: 类 VideoRecordingEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[31,69] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[31,15] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[64,9] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[73,9] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[83,9] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[94,9] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[33,1] 错误: 找不到符号
+  符号: 类 Slf4j
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[447,19] 错误: 已在类 OrderingMode中定义了方法 isApplicableToDevice(Long)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\SmartMode.java:[299,19] 错误: 已在类 SmartMode中定义了方法 isApplicableToDevice(Long)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoSurveillanceService.java:[6,47] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 程序包 net.lab1024.sa.base.common.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoSurveillanceService.java:[89,15] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 接口 VideoSurveillanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoSurveillanceService.java:[97,4] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 接口 VideoSurveillanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalyticsServiceImpl.java:[19,1] 错误: 找不到符号
+  符号: 类 Slf4j
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPreviewServiceImpl.java:[34,1] 错误: 找不到符号
+  符号: 类 Slf4j
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoSurveillanceServiceImpl.java:[18,47] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 程序包 net.lab1024.sa.base.common.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoSurveillanceServiceImpl.java:[32,1] 错误: 找不到符号
+  符号: 类 Slf4j
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoSurveillanceServiceImpl.java:[178,22] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 类 VideoSurveillanceServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoSurveillanceServiceImpl.java:[202,11] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 类 VideoSurveillanceServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[24,47] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 程序包 net.lab1024.sa.base.common.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[489,12] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 类 VideoDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[502,60] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 类 VideoDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[519,59] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 类 VideoDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[548,38] 错误: 找不到符号
+  符号:   类 VideoRecordingEntity
+  位置: 类 VideoDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[60,15] 错误: 找不到符号
+  符号:   方法 info(String,Long,LocalDateTime,LocalDateTime,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[72,15] 错误: 找不到符号
+  符号:   方法 info(String,Long)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[76,15] 错误: 对于error(String,Long,String,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[90,64] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[92,16] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[97,90] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[99,67] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[103,83] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[107,75] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[123,89] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[125,16] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[135,74] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[137,82] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[141,100] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[156,60] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[158,16] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[163,74] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[165,79] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[169,71] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[183,62] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[185,16] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[190,84] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[192,91] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[196,73] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[213,99] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[216,16] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[226,68] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[228,99] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[233,84] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[247,57] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[249,16] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[254,69] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[256,86] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[260,68] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[277,97] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[280,16] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[289,75] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[291,94] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[295,82] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[310,15] 错误: 找不到符号
+  符号:   方法 info(String,int,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[329,15] 错误: 找不到符号
+  符号:   方法 info(String,int,String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[334,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[348,15] 错误: 找不到符号
+  符号:   方法 info(String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[357,15] 错误: 找不到符号
+  符号:   方法 info(String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[361,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[376,15] 错误: 找不到符号
+  符号:   方法 info(String,int,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[395,15] 错误: 找不到符号
+  符号:   方法 info(String,int,String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[400,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[414,15] 错误: 找不到符号
+  符号:   方法 info(String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[423,15] 错误: 找不到符号
+  符号:   方法 info(String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[427,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[442,15] 错误: 找不到符号
+  符号:   方法 info(String,int,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[461,15] 错误: 找不到符号
+  符号:   方法 info(String,int,String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[466,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[480,15] 错误: 找不到符号
+  符号:   方法 info(String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[489,15] 错误: 找不到符号
+  符号:   方法 info(String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[493,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[509,88] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[511,16] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[526,66] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[528,87] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[532,84] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[546,15] 错误: 找不到符号
+  符号:   方法 info(String,String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[555,15] 错误: 找不到符号
+  符号:   方法 info(String,String,boolean)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[559,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[575,15] 错误: 找不到符号
+  符号:   方法 info(String,Long,LocalDateTime,LocalDateTime)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[588,15] 错误: 找不到符号
+  符号:   方法 info(String,Long)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[592,15] 错误: 对于error(String,Long,LocalDateTime,LocalDateTime,Exception), 找不到合适的方法
+    方法 Log.error(String,Throwable)不适用
+      (实际参数列表和形式参数列表长度不同)
+    方法 Log.error(String)不适用
+      (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[606,15] 错误: 找不到符号
+  符号:   方法 info(String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[611,15] 错误: 找不到符号
+  符号:   方法 info(String)
+  位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[65,95] 错误: 找不到符号
+  符号:   变量 recordingId
+  位置: 类 VideoPlaybackManager
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sa-parent 3.0.0:
+[INFO] 
+[INFO] sa-parent .......................................... SUCCESS [  0.006 s]
+[INFO] sa-base ............................................ SUCCESS [  5.401 s]
+[INFO] sa-support ......................................... SUCCESS [  0.627 s]
+[INFO] sa-admin ........................................... FAILURE [ 21.742 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  28.697 s
+[INFO] Finished at: 2025-11-23T17:39:51+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile (default-compile) on project sa-admin: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\domain\entity\VideoRecordingEntity.java:[26,7] 错误: 类 VideoRecordingingEntity 是公共的, 应在名为 VideoRecordingingEntity.java 的文件中声明
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoRecordingManager.java:[16,7] 错误: 接口 VideoRecordingingManager 是公共的, 应在名为 VideoRecordingingManager.java 的文件中声明
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoRecordingManagerImpl.java:[31,7] 错误: 类 VideoRecordingingManagerImpl 是公共的, 应在名为 VideoRecordingingManagerImpl.java 的文件中声明
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[22,7] 错误: 接口 VideoRecordingDao 是公共的, 应在名为 VideoRecordingDao.java 的文件中声明
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[10,47] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.base.common.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[22,54] 错误: 找不到符号
+[ERROR]   符号: 类 VideoRecordingEntity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[31,69] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[31,15] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[64,9] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[73,9] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[83,9] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\dao\VideoRecordDao.java:[94,9] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 接口 VideoRecordingDao
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalysisServiceImpl.java:[33,1] 错误: 找不到符号
+[ERROR]   符号: 类 Slf4j
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\OrderingMode.java:[447,19] 错误: 已在类 OrderingMode中定义了方法 isApplicableToDevice(Long)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\consume\engine\mode\impl\SmartMode.java:[299,19] 错误: 已在类 SmartMode中定义了方法 isApplicableToDevice(Long)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoSurveillanceService.java:[6,47] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.base.common.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoSurveillanceService.java:[89,15] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 接口 VideoSurveillanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\VideoSurveillanceService.java:[97,4] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 接口 VideoSurveillanceService
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoAnalyticsServiceImpl.java:[19,1] 错误: 找不到符号
+[ERROR]   符号: 类 Slf4j
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPreviewServiceImpl.java:[34,1] 错误: 找不到符号
+[ERROR]   符号: 类 Slf4j
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoSurveillanceServiceImpl.java:[18,47] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.base.common.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoSurveillanceServiceImpl.java:[32,1] 错误: 找不到符号
+[ERROR]   符号: 类 Slf4j
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoSurveillanceServiceImpl.java:[178,22] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 类 VideoSurveillanceServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoSurveillanceServiceImpl.java:[202,11] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 类 VideoSurveillanceServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[24,47] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.base.common.domain.entity
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[489,12] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 类 VideoDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[502,60] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 类 VideoDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[519,59] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 类 VideoDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoDeviceManager.java:[548,38] 错误: 找不到符号
+[ERROR]   符号:   类 VideoRecordingEntity
+[ERROR]   位置: 类 VideoDeviceManager
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[60,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,Long,LocalDateTime,LocalDateTime,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[72,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,Long)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[76,15] 错误: 对于error(String,Long,String,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[90,64] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[92,16] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[97,90] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[99,67] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[103,83] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[107,75] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[123,89] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[125,16] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[135,74] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[137,82] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[141,100] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[156,60] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[158,16] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[163,74] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[165,79] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[169,71] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[183,62] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[185,16] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[190,84] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[192,91] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[196,73] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[213,99] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[216,16] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[226,68] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[228,99] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[233,84] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[247,57] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[249,16] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[254,69] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[256,86] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[260,68] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[277,97] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[280,16] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[289,75] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[291,94] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[295,82] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[310,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,int,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[329,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,int,String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[334,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[348,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[357,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[361,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[376,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,int,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[395,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,int,String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[400,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[414,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[423,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[427,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[442,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,int,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[461,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,int,String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[466,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[480,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[489,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[493,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[509,88] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[511,16] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[526,66] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[528,87] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[532,84] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackServiceImpl
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[546,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[555,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,String,boolean)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[559,15] 错误: 对于error(String,String,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[575,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,Long,LocalDateTime,LocalDateTime)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[588,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String,Long)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[592,15] 错误: 对于error(String,Long,LocalDateTime,LocalDateTime,Exception), 找不到合适的方法
+[ERROR]     方法 Log.error(String,Throwable)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR]     方法 Log.error(String)不适用
+[ERROR]       (实际参数列表和形式参数列表长度不同)
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[606,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\service\impl\VideoPlaybackServiceImpl.java:[611,15] 错误: 找不到符号
+[ERROR]   符号:   方法 info(String)
+[ERROR]   位置: 类型为Log的变量 log
+[ERROR] D:\IOE-DREAM\smart-admin-api-java17-springboot3\sa-admin\src\main\java\net\lab1024\sa\admin\module\smart\video\manager\VideoPlaybackManager.java:[65,95] 错误: 找不到符号
+[ERROR]   符号:   变量 recordingId
+[ERROR]   位置: 类 VideoPlaybackManager
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :sa-admin

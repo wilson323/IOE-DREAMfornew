@@ -1,0 +1,233 @@
+# IOE-DREAM Identity Service 微服务配置
+# 基于现有sa-base.yaml重构，适配Identity Service微服务架构
+#
+# @author IOE-DREAM Team
+# @since 2025-11-27 (基于原sa-base.yaml重构)
+
+server:
+  port: 8081
+  servlet:
+    context-path: /
+  tomcat:
+    basedir: ${project.log-directory}/tomcat-logs
+    accesslog:
+      enabled: true
+      max-days: 7
+      pattern: "%t %{X-Forwarded-For}i %a %r %s (%D ms) %I (%B byte)"
+
+spring:
+  application:
+    name: ioedream-identity-service
+
+  # 数据库连接信息（基于现有配置）
+  datasource:
+    url: jdbc:p6spy:mysql://localhost:3306/smart_admin_v3?autoReconnect=true&useServerPreparedStmts=false&rewriteBatchedStatements=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root1234
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    initial-size: 2
+    min-idle: 2
+    max-active: 10
+    max-wait: 60000
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    filters: stat
+    druid:
+      username: druid
+      password: 1024
+      login:
+        enabled: false
+      method:
+        pointcut: net.lab1024.identity..*Service.*
+
+  # JPA/Hibernate配置（基于现有数据库模式）
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+  # redis 连接池配置信息（基于现有配置）
+  data:
+    redis:
+      database: 1
+      host: 127.0.0.1
+      port: 6379
+      password: zkteco3100
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 5
+          min-idle: 1
+          max-idle: 3
+          max-wait: 30000ms
+
+  # 缓存实现类型（基于现有配置）
+  cache:
+    type: redis
+
+  # json序列化相关配置（基于现有配置）
+  jackson:
+    serialization:
+      write-enums-using-to-string: true
+      write-dates-as-timestamps: false
+    deserialization:
+      read-enums-using-to-string: true
+      fail-on-unknown-properties: false
+    default-property-inclusion: always
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+  # 上传文件和请求大小（基于现有配置）
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 10MB
+
+  # 邮件配置（基于现有配置）
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: lab1024@163.com
+    password: LAB1024LAB
+    test-connection: false
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            socketFactory:
+              class: com.sun.mail.util.MailSSLSocketFactory
+              fallback: false
+        debug: false
+
+# Spring Cloud Alibaba 配置
+cloud:
+  nacos:
+    discovery:
+      server-addr: localhost:8848
+      namespace: identity-service
+      group: DEFAULT_GROUP
+      service: ioedream-identity-service
+      enabled: true
+    config:
+      server-addr: localhost:8848
+      namespace: identity-service
+      group: DEFAULT_GROUP
+      file-extension: yml
+      enabled: true
+      refresh-enabled: true
+
+# 健康检查（基于现有配置）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  health:
+    mail:
+      enabled: false
+    redis:
+      enabled: true
+    db:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# 跨域配置（基于现有配置）
+access-control-allow-origin: '*'
+
+# JWT配置（Identity Service专用）
+jwt:
+  secret: ioedream-identity-service-jwt-secret-key-2025-very-long-and-secure
+  expiration: 7200  # 2小时
+  refresh-expiration: 604800  # 7天
+
+# 认证配置（Identity Service专用）
+auth:
+  password:
+    max-attempts: 5  # 最大尝试次数
+    lock-duration: 30  # 锁定时间（分钟）
+
+# Sa-Token 配置（基于现有配置，适配Identity Service）
+sa-token:
+  token-name: Authorization
+  token-prefix: Bearer
+  timeout: 7200  # 2小时
+  active-timeout: 1800  # 30分钟无操作自动过期
+  is-concurrent: false
+  is-share: false
+  token-style: simple-uuid
+  auto-renew: true
+  is-log: true
+  log-level: info
+  is-print: false
+  is-read-cookie: false
+  jwt-secret-key: ioedream-identity-service-satoken-jwt-secret-2025
+
+# 文件上传 配置（基于现有配置）
+file:
+  storage:
+    type: local
+    mode: local
+    local:
+      upload-path: D:/Progect/mart-admin-master/upload/identity/
+      url-prefix: /api/file/
+    cloud:
+      region: oss-cn-hangzhou
+      endpoint: oss-cn-hangzhou.aliyuncs.com
+      bucket-name: 1024lab-smart-admin
+      access-key:
+      secret-key:
+      url-prefix: https://${file.storage.cloud.bucket-name}.${file.storage.cloud.endpoint}/
+      private-url-expire-seconds: 3600
+
+# OpenAPI配置（基于现有配置）
+springdoc:
+  swagger-ui:
+    enabled: true
+    doc-expansion: none
+    tags-sorter: alpha
+    server-base-url: /
+  api-docs:
+    enabled: true
+  packages-to-scan: net.lab1024.identity.controller
+
+knife4j:
+  enable: true
+  basic:
+    enable: false
+    username: api
+    password: 1024
+
+# RestTemplate 请求配置（基于现有配置）
+http:
+  pool:
+    max-total: 20
+    connect-timeout: 50000
+    read-timeout: 50000
+    write-timeout: 50000
+    keep-alive: 300000
+
+# 心跳配置（基于现有配置）
+heart-beat:
+  interval-seconds: 300
+
+# 日志配置
+logging:
+  level:
+    net.lab1024.identity: INFO
+    org.springframework.security: DEBUG
+    com.alibaba.nacos: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

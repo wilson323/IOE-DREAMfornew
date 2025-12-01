@@ -1,0 +1,174 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: ioedream-auth-service
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: AUTH_GROUP
+        weight: 1
+        heart-beat-interval: 5000
+        heart-beat-timeout: 15000
+        ip-delete-timeout: 30000
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: AUTH_GROUP
+        file-extension: yml
+        shared-configs:
+          - data-id: auth-service-database.yml
+            group: CONFIG_GROUP
+            refresh: true
+          - data-id: auth-service-redis.yml
+            group: CONFIG_GROUP
+            refresh: true
+          - data-id: auth-service-jwt.yml
+            group: CONFIG_GROUP
+            refresh: true
+
+    sentinel:
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:localhost:8858}
+        port: 8719
+        client-ip: ${SENTINEL_CLIENT_IP:localhost}
+      datasource:
+        auth-flow:
+          nacos:
+            server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+            data-id: ${spring.application.name}-sentinel-flow-rules
+            group: SENTINEL_GROUP
+            rule-type: flow
+
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/identity_service?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:password1234}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 900000
+      leak-detection-threshold: 60000
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.SnakeCasePhysicalNamingStrategy
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        use_sql_comments: true
+
+  # Redis配置
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: 1
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 10
+        min-idle: 5
+        max-wait: 2000ms
+
+  # 缓存配置
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # 30分钟
+      key-prefix: auth:
+      use-key-prefix: true
+      cache-null-values: false
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:ioedream-auth-service-secret-key-2025-very-long-string-for-security}
+  expiration: ${JWT_EXPIRATION:86400}  # 24小时
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800}  # 7天
+  issuer: ${JWT_ISSUER:IOE-DREAM}
+
+# 安全配置
+security:
+  permit-urls:
+    - /actuator/**
+    - /auth/login
+    - /auth/register
+    - /auth/refresh
+    - /auth/logout
+    - /error
+    - /swagger-ui/**
+    - /v3/api-docs/**
+
+# 管理端点配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  health:
+    redis:
+      enabled: true
+    db:
+      enabled: true
+
+# 日志配置
+logging:
+  level:
+    net.lab1024.auth: INFO
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: ${SHOW_SQL:false ? WARN : DEBUG}
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 自定义配置
+auth:
+  # 密码策略
+  password:
+    min-length: 8
+    require-uppercase: true
+    require-lowercase: true
+    require-digit: true
+    require-special: true
+    max-attempts: 5
+    lock-duration: 1800  # 30分钟
+
+  # 用户默认设置
+  default:
+    user-status: 1
+    role-code: USER
+    avatar-url: /static/images/default-avatar.png
+
+  # 登录限制
+  login:
+    max-sessions: 3
+    session-timeout: 3600  # 1小时
+    remember-me-duration: 604800  # 7天
+
+  # 权限缓存
+  permission:
+    cache-enabled: true
+    cache-duration: 300  # 5分钟
+    refresh-interval: 60  # 1分钟

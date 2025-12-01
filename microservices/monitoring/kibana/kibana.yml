@@ -1,0 +1,57 @@
+# ===================================================================
+# IOE-DREAM 生产环境 Kibana 配置
+# 版本: v2.0.0
+# 更新时间: 2025-11-29
+# ===================================================================
+
+# 服务器配置
+server.host: "0.0.0.0"
+server.port: 5601
+
+# Elasticsearch配置
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+elasticsearch.preserveHost: true
+
+# 索引配置
+kibana.index: ".kibana"
+
+# 语言配置
+i18n.locale: "zh-CN"
+
+# 安全配置
+xpack.security.enabled: true
+
+# 监控配置
+monitoring.ui.container.elasticsearch.enabled: true
+
+# 日志配置
+logging.dest: stdout
+logging.silent: false
+logging.quiet: false
+logging.verbose: false
+
+# 高级设置
+elasticsearch.requestTimeout: 30000
+elasticsearch.pingTimeout: 3000
+elasticsearch.startupTimeout: 5000
+
+# 搜索配置
+search.maxBucketsLimit: 10000
+
+# 地图配置
+map.includeElasticMapsService: true
+
+# 新平台设置
+xpack.legacy.redirect: true
+
+# 安全策略
+csp.rules: [{ "script-src": ["'self'", "'unsafe-eval'"], "connect-src": ["'self'", "'https:'"] }]
+
+# 品牌设置
+server.name: "IOE-DREAM日志分析平台"
+
+# 默认应用
+kibana.defaultAppId: "discover"
+
+# 仪表板设置
+dashboard.defaultDarkTheme: true

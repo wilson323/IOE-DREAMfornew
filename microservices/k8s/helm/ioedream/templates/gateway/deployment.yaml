@@ -1,0 +1,231 @@
+{{/*
+Gateway Service Deployment Template
+*/}}
+{{- if .Values.gateway.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.gateway.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ioedream.deploymentLabels" . | nindent 4 }}
+    app: {{ .Values.gateway.name }}
+    component: deployment
+    environment: {{ .Values.global.environment }}
+    project: {{ .Values.global.project }}
+    version: {{ .Chart.AppVersion }}
+  annotations:
+    {{- include "ioedream.annotations" . | nindent 4 }}
+    description: "IOE-DREAM智能网关服务部署"
+    deployment.kubernetes.io/revision: "1"
+spec:
+  replicas: {{ .Values.gateway.replicaCount }}
+  strategy:
+    type: {{ .Values.global.strategy.type | default "RollingUpdate" }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.global.strategy.rollingUpdate.maxUnavailable | default 1 }}
+      maxSurge: {{ .Values.global.strategy.rollingUpdate.maxSurge | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.gateway.name }}
+      environment: {{ .Values.global.environment }}
+      component: pod
+  template:
+    metadata:
+      labels:
+        {{- include "ioedream.podLabels" . | nindent 8 }}
+        app: {{ .Values.gateway.name }}
+        component: pod
+        environment: {{ .Values.global.environment }}
+        project: {{ .Values.global.project }}
+        version: {{ .Chart.AppVersion }}
+      annotations:
+        {{- include "ioedream.annotations" . | nindent 8 }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.gateway.ports.management }}"
+        prometheus.io/path: "/actuator/prometheus"
+        {{- if .Values.global.istio.enabled }}
+        sidecar.istio.io/inject: "true"
+        {{- end }}
+    spec:
+      # 安全配置
+      securityContext:
+        {{- include "ioedream.securityContext" . | nindent 8 }}
+
+      # 服务账户
+      serviceAccountName: {{ include "ioedream.serviceAccountName" . }}
+
+      # 调度配置
+      {{- include "ioedream.scheduling" . | nindent 6 }}
+
+      # 镜像拉取密钥
+      {{- include "ioedream.imagePullSecrets" . | nindent 6 }}
+
+      # 优先级类
+      {{- include "ioedream.priorityClassName" . | nindent 6 }}
+
+      # 初始化容器
+      initContainers:
+        - name: wait-for-dependencies
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              echo "等待依赖服务启动..."
+              {{- if .Values.mysql.enabled }}
+              until nc -z {{ .Values.mysql.primary.service.host }} {{ .Values.mysql.primary.service.ports.mysql }}; do
+                echo "等待MySQL启动..."
+                sleep 2
+              done
+              echo "MySQL已启动"
+              {{- end }}
+              {{- if .Values.redis.enabled }}
+              until nc -z {{ .Values.redis.master.service.host }} {{ .Values.redis.master.service.ports.redis }}; do
+                echo "等待Redis启动..."
+                sleep 2
+              done
+              echo "Redis已启动"
+              {{- end }}
+              {{- if .Values.nacos.enabled }}
+              until nc -z {{ .Values.nacos.service.host }} {{ .Values.nacos.service.ports.server }}; do
+                echo "等待Nacos启动..."
+                sleep 2
+              done
+              echo "Nacos已启动"
+              {{- end }}
+              echo "所有依赖服务已就绪"
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "50m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+
+      # 主容器
+      containers:
+        - name: {{ .Values.gateway.name }}
+          image: {{ include "ioedream.image" .Values.gateway }}
+          imagePullPolicy: {{ .Values.gateway.image.pullPolicy | default .Values.global.imagePullPolicy | default "IfNotPresent" }}
+
+          # 端口配置
+          ports:
+            {{- include "ioedream.containerPorts" .Values.gateway | nindent 12 }}
+
+          # 环境变量
+          env:
+            {{- include "ioedream.envVars" .Values.gateway | nindent 12 }}
+            {{- if .Values.mysql.enabled }}
+            # 数据库配置
+            - name: SPRING_DATASOURCE_URL
+              value: {{ include "ioedream.databaseURL" $ | quote }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: {{ .Values.mysql.auth.username | quote }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mysql.auth.existingSecret | default (printf "%s-mysql" .Release.Name) }}
+                  key: {{ .Values.mysql.auth.existingSecretPasswordKey | default "mysql-password" }}
+            {{- end }}
+            {{- if .Values.redis.enabled }}
+            # Redis配置
+            - name: SPRING_DATA_REDIS_HOST
+              value: {{ .Values.redis.master.service.host | quote }}
+            - name: SPRING_DATA_REDIS_PORT
+              value: {{ .Values.redis.master.service.ports.redis | quote }}
+            {{- if .Values.redis.auth.enabled }}
+            - name: SPRING_DATA_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.redis.auth.existingSecret | default (printf "%s-redis" .Release.Name) }}
+                  key: {{ .Values.redis.auth.existingSecretPasswordKey | default "redis-password" }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.nacos.enabled }}
+            # Nacos配置
+            - name: NACOS_SERVER_ADDR
+              value: {{ include "ioedream.nacosServerAddr" $ | quote }}
+            - name: NACOS_NAMESPACE
+              value: {{ .Values.global.environment | quote }}
+            {{- end }}
+            # 等待依赖服务配置
+            - name: WAIT_FOR_SERVICES
+              value: {{- if .Values.mysql.enabled }}{{ .Values.mysql.primary.service.host }}:{{ .Values.mysql.primary.service.ports.mysql }},{{- end }}{{- if .Values.redis.enabled }}{{ .Values.redis.master.service.host }}:{{ .Values.redis.master.service.ports.redis }},{{- end }}{{- if .Values.nacos.enabled }}{{ .Values.nacos.service.host }}:{{ .Values.nacos.service.ports.server }}{{- end }}
+
+            {{- include "ioedream.extraEnv" .Values.gateway | nindent 12 }}
+
+          # 资源配置
+          {{- include "ioedream.resources" .Values.gateway | nindent 10 }}
+
+          # 健康检查
+          {{- include "ioedream.healthChecks" .Values.gateway | nindent 10 }}
+
+          # 安全上下文
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+
+          # 卷挂载
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+            - name: logs-volume
+              mountPath: /app/logs
+            - name: tmp-volume
+              mountPath: /tmp
+            {{- if .Values.gateway.extraVolumeMounts }}
+            {{- include "ioedream.extraVolumeMounts" .Values.gateway | nindent 12 }}
+            {{- end }}
+
+        {{- if .Values.fluent-bit.enabled }}
+        # 日志收集Sidecar
+        - name: log-collector
+          image: {{ .Values.fluent-bit.image.repository }}:{{ .Values.fluent-bit.image.tag }}
+          imagePullPolicy: {{ .Values.fluent-bit.image.pullPolicy | default "IfNotPresent" }}
+          command:
+            - /fluent-bit/bin/fluent-bit
+            - --config=/fluent-bit/etc/fluent-bit.conf
+          volumeMounts:
+            - name: logs-volume
+              mountPath: /app/logs
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc
+              readOnly: true
+          {{- include "ioedream.resources" .Values.fluent-bit | nindent 10 }}
+        {{- end }}
+
+      # 卷配置
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Values.gateway.name }}-config
+        - name: logs-volume
+          emptyDir: {}
+          # 在生产环境中应使用持久卷
+          # persistentVolumeClaim:
+          #   claimName: {{ .Values.gateway.name }}-logs-pvc
+        - name: tmp-volume
+          emptyDir: {}
+        {{- if .Values.fluent-bit.enabled }}
+        - name: fluent-bit-config
+          configMap:
+            name: fluent-bit-config
+        {{- end }}
+        {{- if .Values.gateway.extraVolumes }}
+        {{- include "ioedream.extraVolumes" .Values.gateway | nindent 8 }}
+        {{- end }}
+
+      # 重启策略
+      restartPolicy: Always
+
+      # 终止宽限期
+      terminationGracePeriodSeconds: 120
+
+{{- end }}

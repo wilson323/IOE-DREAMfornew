@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.system.role.dao.RoleDao">
+
+    <!-- 角色基础结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.system.role.domain.entity.RoleEntity">
+        <id column="role_id" property="roleId"/>
+        <result column="role_name" property="roleName"/>
+        <result column="role_code" property="roleCode"/>
+        <result column="role_sort" property="roleSort"/>
+        <result column="data_scope" property="dataScope"/>
+        <remark" property="remark"/>
+        <status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+    </resultMap>
+
+    <!-- 扩展结果映射 -->
+    <resultMap id="DetailResultMap" type="net.lab1024.sa.system.role.domain.vo.RoleVO" extends="BaseResultMap">
+        <result column="user_count" property="userCount"/>
+        <result column="menu_count" property="menuCount"/>
+        <result column="permission_count" property="permissionCount"/>
+        <result column="user_list" property="userList"/>
+        <result column="menu_list" property="menuList"/>
+        <result column="permission_list" property="permissionList"/>
+        <result column="department_data_scope" property="departmentDataScope"/>
+    </resultMap>
+
+    <!-- 关联用户角色结果映射 -->
+    <resultMap id="RoleWithUserResultMap" type="net.lab1024.sa.system.role.domain.vo.RoleVO" extends="DetailResultMap">
+        <collection property="userList" ofType="net.lab1024.sa.system.employee.domain.vo.EmployeeVO">
+            <id column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="real_name" property="realName"/>
+            <result column="phone" property="phone"/>
+            <result column="gender" property="gender"/>
+            <result column="avatar" property="avatar"/>
+            <result column="email" property="email"/>
+            <result column="status" property="status"/>
+            <result column="department_id" property="departmentId"/>
+            <result column="department_name" property="departmentName"/>
+            <result column="position_name" property="positionName"/>
+        </collection>
+    </resultMap>
+
+    <!-- 关联菜单角色结果映射 -->
+    <resultMap id="RoleWithMenuResultMap" type="net.lab1024.sa.system.role.domain.vo.RoleVO" extends="DetailResultMap">
+        <collection property="menuList" ofType="net.lab1024.sa.system.menu.domain.vo.MenuVO">
+            <id column="menu_id" property="menuId"/>
+            <result column="menu_name" property="menuName"/>
+            <result column="menu_code" property="menuCode"/>
+            <result column="menu_icon" property="menuIcon"/>
+            <result column="menu_url" property="menuUrl"/>
+            <result column="permission" property="permission"/>
+            <result column="menu_type" property="menuType"/>
+            <result column="sort_order" property="sortOrder"/>
+            <result column="status" property="status"/>
+        </collection>
+    </resultMap>
+
+    <!-- 关联权限角色结果映射 -->
+    <resultMap id="RoleWithPermissionResultMap" type="net.lab1024.sa.system.role.domain.vo.RoleVO" extends="DetailResultMap">
+        <collection property="permissionList" ofType="java.lang.String">
+            <result column="permission" property="permission"/>
+        </collection>
+    </resultMap>
+
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        role_id, role_name, role_code, role_sort, data_scope, remark, status,
+        create_time, update_time, create_user_id, update_user_id
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Query_Condition">
+        <where>
+            <if test="roleName != null and roleName != ''">
+                AND role_name LIKE CONCAT('%', #{roleName}, '%')
+            </if>
+            <if test="roleCode != null and roleCode != ''">
+                AND role_code = #{roleCode}
+            </if>
+            <if test="dataScope != null">
+                AND data_scope = #{dataScope}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+            <if test="departmentId != null">
+                AND role_id IN (
+                    SELECT role_id FROM t_system_user_role ur
+                    JOIN t_system_user u ON ur.user_id = u.user_id
+                    WHERE u.department_id = #{departmentId} AND ur.deleted_flag = 0 AND u.deleted_flag = 0
+                )
+            </if>
+            <if test="userId != null">
+                AND role_id IN (
+                    SELECT role_id FROM t_system_user_role ur
+                    WHERE ur.user_id = #{userId} AND ur.deleted_flag = 0
+                )
+            </if>
+        </where>
+    </sql>
+
+    <!-- 排序条件 -->
+    <sql id="Order_By_Condition">
+        ORDER BY role_sort ASC, role_id ASC
+    </sql>
+
+    <!-- 插入角色 -->
+    <insert id="insert" parameterType="net.lab1024.sa.system.role.domain.entity.RoleEntity" useGeneratedKeys="true" keyProperty="roleId">
+        INSERT INTO t_system_role (
+            role_name, role_code, role_sort, data_scope, remark, status,
+            create_time, update_time, create_user_id, update_user_id
+        ) VALUES (
+            #{roleName}, #{roleCode}, #{roleSort}, #{dataScope}, #{remark}, #{status},
+            #{createTime}, #{updateTime}, #{createUserId}, #{updateUserId}
+        )
+    </insert>
+
+    <!-- 批量插入角色 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO t_system_role (
+            role_name, role_code, role_sort, data_scope, remark, status,
+            create_time, update_time, create_user_id, update_user_id
+        ) VALUES
+        <foreach collection="list" item="role" separator=",">
+            (#{role.roleName}, #{role.roleCode}, #{role.roleSort}, #{role.dataScope}, #{role.remark}, #{role.status},
+             #{role.createTime}, #{role.updateTime}, #{role.createUserId}, #{role.updateUserId})
+        </foreach>
+    </insert>
+
+    <!-- 更新角色 -->
+    <update id="update" parameterType="net.lab1024.sa.system.role.domain.entity.RoleEntity">
+        UPDATE t_system_role
+        <set>
+            <if test="roleName != null and roleName != ''">role_name = #{roleName},</if>
+            <if test="roleCode != null and roleCode != ''">role_code = #{roleCode},</if>
+            <if test="roleSort != null">role_sort = #{roleSort},</if>
+            <if test="dataScope != null">data_scope = #{dataScope},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUserId != null">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE role_id = #{roleId}
+    </update>
+
+    <!-- 批量更新角色 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        UPDATE t_system_role
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUserId != null">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE role_id IN
+        <foreach collection="list" item="role" separator=",">
+            #{role.roleId}
+        </foreach>
+    </update>
+
+    <!-- 删除角色 -->
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM t_system_role
+        WHERE role_id = #{roleId}
+    </delete>
+
+    <!-- 批量删除角色 -->
+    <delete id="batchDelete" parameterType="java.util.List">
+        DELETE FROM t_system_role
+        WHERE role_id IN
+        <foreach collection="roleIds" item="roleId" separator=",">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <!-- 根据ID查询角色 -->
+    <select id="getById" resultMap="DetailResultMap" parameterType="java.lang.Long">
+        SELECT
+            r.*,
+            (
+                SELECT COUNT(DISTINCT ur.user_id)
+                FROM t_system_user_role ur
+                WHERE ur.role_id = r.role_id
+                AND ur.deleted_flag = 0
+            ) as user_count,
+            (
+                SELECT COUNT(DISTINCT rm.menu_id)
+                FROM t_system_role_menu rm
+                WHERE rm.role_id = r.role_id
+                AND rm.deleted_flag = 0
+            ) as menu_count,
+            (
+                SELECT COUNT(DISTINCT rm.permission)
+                FROM t_system_role_menu rm
+                WHERE rm.role_id = r.role_id
+                AND rm.deleted_flag = 0
+                AND rm.permission IS NOT NULL
+                AND rm.permission != ''
+            ) as permission_count
+        FROM t_system_role r
+        WHERE r.role_id = #{roleId}
+    </select>
+
+    <!-- 分页查询角色 -->
+    <select id="queryPage" resultMap="DetailResultMap">
+        SELECT
+            r.*,
+            (
+                SELECT COUNT(DISTINCT ur.user_id)
+                FROM t_system_user_role ur
+                WHERE ur.role_id = r.role_id
+                AND ur.deleted_flag = 0
+            ) as user_count,
+            (
+                SELECT COUNT(DISTINCT rm.menu_id)
+                FROM t_system_role_menu rm
+                WHERE rm.role_id = r.role_id
+                AND rm.deleted_flag = 0
+            ) as menu_count,
+            (
+                SELECT COUNT(DISTINCT rm.permission)
+                FROM t_system_role_menu rm
+                WHERE rm.role_id = r.role_id
+                AND rm.deleted_flag = 0
+                AND rm.permission IS NOT NULL
+                AND rm.permission != ''
+            ) as permission_count
+        FROM t_system_role r
+        <include refid="Query_Condition"/>
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询所有角色 -->
+    <select id="getAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_system_role
+        <include refid="Query_Condition"/>
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询所有角色（详细） -->
+    <select id="getAllDetail" resultMap="DetailResultMap">
+        SELECT
+            r.*,
+            (
+                SELECT COUNT(DISTINCT ur.user_id)
+                FROM t_system_user_role ur
+                WHERE ur.role_id = r.role_id
+                AND ur.deleted_flag = 0
+            ) as user_count,
+            (
+                SELECT COUNT(DISTINCT rm.menu_id)
+                FROM t_system_role_menu rm
+                WHERE rm.role_id = r.role_id
+                AND rm.deleted_flag = 0
+            ) as menu_count,
+            (
+                SELECT COUNT(DISTINCT rm.permission)
+                FROM t_system_role_menu rm
+                WHERE rm.role_id = r.role_id
+                AND rm.deleted_flag = 0
+                AND rm.permission IS NOT NULL
+                AND rm.permission != ''
+            ) as permission_count
+        FROM t_system_role r
+        <include refid="Query_Cension"/>
+        <include refid="Order_By_Condition"/>
+    </select>
+
+    <!-- 查询角色关联用户 -->
+    <select id="getRoleWithUsers" resultMap="RoleWithUserResultMap" parameterType="java.lang.Long">
+        SELECT
+            r.*,
+            ur.user_id,
+            u.user_name,
+            u.real_name,
+            u.phone,
+            u.gender,
+            u.avatar,
+            u.email,
+            u.status,
+            u.department_id,
+            d.department_name,
+            p.position_name
+        FROM t_system_role r
+        JOIN t_system_user_role ur ON r.role_id = ur.role_id
+        JOIN t_system_user u ON ur.user_id = u.user_id
+        LEFT JOIN t_system_department d ON u.department_id = d.department_id
+        LEFT JOIN t_system_position p ON u.position_id = p.position_id
+        WHERE r.role_id = #{roleId}
+        AND ur.deleted_flag = 0
+        AND u.deleted_flag = 0
+        ORDER BY u.user_name
+    </select>
+
+    <!-- 查询角色关联菜单 -->
+    <select id="getRoleWithMenus" resultMap="RoleWithMenuResultMap" parameterType="java.lang.Long">
+        SELECT
+            r.*,
+            m.menu_id,
+            m.menu_name,
+            m.menu_code,
+            m.menu_icon,
+            m.menu_url,
+            m.permission,
+            m.menu_type,
+            m.sort_order,
+            m.status
+        FROM t_system_role r
+        JOIN t_system_role_menu rm ON r.role_id = rm.role_id
+        JOIN t_system_menu m ON rm.menu_id = m.menu_id AND m.deleted_flag = 0
+        WHERE r.role_id = #{roleId}
+        AND rm.deleted_flag = 0
+        ORDER BY m.sort_order ASC, m.menu_id ASC
+    </select>
+
+    <!-- 查询角色关联权限 -->
+    <select id="getRoleWithPermissions" resultMap="RoleWithPermissionResultMap" parameterType="java.lang.Long">
+        SELECT
+            r.*,
+            rm.permission
+        FROM t_system_role r
+        JOIN t_system_role_menu rm ON r.role_id = rm.role_id
+        WHERE r.role_id = #{roleId}
+            AND rm.deleted_flag = 0
+            AND rm.permission IS NOT NULL
+            AND rm.permission != ''
+        ORDER BY rm.permission
+    </select>
+
+    <!-- 检查角色名称是否存在 -->
+    <select id="checkRoleNameExist" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_system_role
+        WHERE role_name = #{roleName}
+        <if test="excludeId != null">
+            AND role_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 检查角色编码是否存在 -->
+    <select id="checkRoleCodeExist" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_system_role
+        WHERE role_code = #{roleCode}
+        <if test="excludeId != null">
+            AND role_id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 分配权限给角色 -->
+    <insert id="assignPermissionsToRole" parameterType="java.util.Map">
+        INSERT INTO t_system_role_menu (role_id, menu_id, permission, create_time, update_time, create_user_id, update_user_id, deleted_flag)
+        SELECT
+            #{roleId} as role_id,
+            menu_id,
+            permission,
+            NOW() as create_time,
+            NOW() as update_time,
+            #{createUserId} as create_user_id,
+            #{updateUserId} as update_user_id,
+            0 as deleted_flag
+        FROM (
+            SELECT menu_id, permission
+            FROM t_system_menu
+            WHERE deleted_flag = 0
+            AND status = 1
+            AND (menu_id IN
+                <foreach collection="menuIds" item="menuId" separator=",">
+                    #{menuId}
+                </foreach>
+                OR permission IN
+                <foreach collection="permissions" item="permission" separator=",">
+                    #{permission}
+                </foreach>
+            )
+        ) temp_table
+    </insert>
+
+    <!-- 移除角色权限 -->
+    <delete id="removePermissionsFromRole" parameterType="java.util.Map">
+        DELETE FROM t_system_role_menu
+        WHERE role_id = #{roleId}
+        AND (
+            menu_id IN
+            <foreach collection="menuIds" item="menuId" separator=",">
+                #{menuId}
+            </foreach>
+            OR permission IN
+            <foreach collection="permissions" item="permission" separator=",">
+                #{permission}
+            </foreach>
+        )
+    </delete>
+
+    <!-- 清除角色所有权限 -->
+    <delete id="clearRolePermissions" parameterType="java.lang.Long">
+        DELETE FROM t_system_role_menu
+        WHERE role_id = #{roleId}
+    </delete>
+
+    <!-- 查询角色权限 -->
+    <select id="getRolePermissions" resultType="java.util.List" parameterType="java.lang.Long">
+        SELECT DISTINCT menu_id, permission
+        FROM t_system_role_menu
+        WHERE role_id = #{roleId}
+        AND deleted_flag = 0
+        ORDER BY menu_id ASC, permission
+    </select>
+
+    <!-- 分配角色给用户 -->
+    <insert id="assignUsersToRole" parameterType="java.util.Map">
+        INSERT INTO t_system_user_role (user_id, role_id, create_time, create_user_id, deleted_flag)
+        SELECT
+            #{userId} as user_id,
+            #{roleId} as role_id,
+            NOW() as create_time,
+            #{createUserId} as create_user_id,
+            0 as deleted_flag
+        FROM (
+            SELECT user_id
+            FROM t_system_user
+            WHERE user_id IN
+            <foreach collection="userIds" item="userId" separator=",">
+                #{userId}
+            </foreach>
+        ) temp_table
+    </insert>
+
+    <!-- 移除用户角色 -->
+    <delete id="removeUsersFromRole" parameterType="java.util.Map">
+        DELETE FROM t_system_user_role
+        WHERE role_id = #{roleId}
+        AND user_id IN
+        <foreach collection="userIds" item="userId" separator=",">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <!-- 清除用户所有角色 -->
+    <delete id="clearUserRoles" parameterType="java.lang.Long">
+        DELETE FROM t_system_user_role
+        WHERE user_id = #{userId}
+    </delete>
+
+    <!-- 查询用户角色 -->
+    <select id="getUserRoles" resultType="java.util.List" parameterType="java.lang.Long">
+        SELECT r.*
+        FROM t_system_role r
+        JOIN t_system_user_role ur ON r.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+        AND ur.deleted_flag = 0
+        ORDER BY r.role_sort ASC, r.role_id ASC
+    </select>
+
+    <!-- 检查用户是否拥有角色 -->
+    <select id="checkUserHasRole" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM t_system_user_role ur
+        JOIN t_system_role r ON ur.role_id = r.role_id
+        WHERE ur.user_id = #{userId}
+        AND r.role_id = #{roleId}
+        AND ur.deleted_flag = 0
+    </select>
+
+    <!-- 查询角色的用户数量 -->
+    <select id="getUserCountByRole" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM t_system_user_role ur
+        WHERE ur.role_id = #{roleId}
+        AND ur.deleted_flag = 0
+    </select>
+
+    <!-- 更新角色状态 -->
+    <update id="updateStatus" parameterType="java.util.List">
+        UPDATE t_system_role
+        SET status = #{status}, update_time = NOW()
+        WHERE role_id IN
+        <foreach collection="roleIds" item="roleId" separator=",">
+            #{roleId}
+        </foreach>
+    </update>
+
+    <!-- 获取角色统计 -->
+    <select id="getRoleStatistics" resultType="java.util.Map">
+        SELECT
+            COUNT(*) as total_count,
+            COUNT(CASE WHEN status = 1 THEN 1 END) as enabled_count,
+            COUNT(CASE WHEN status = 0 THEN 1 END) as disabled_count,
+            COUNT(CASE WHEN data_scope = 'ALL' THEN 1 END) as all_data_scope_count,
+            COUNT(CASE WHEN data_scope = 'CUSTOM' THEN 1 END) as custom_data_scope_count,
+            COUNT(CASE WHEN data_scope = 'DEPT' THEN 1 END) as dept_data_scope_count,
+            COUNT(CASE WHEN data_scope = 'DEPT_AND_CHILD' THEN 1 END) as dept_child_data_scope_count,
+            COUNT(CASE WHEN data_scope = 'SELF' THEN 1 END) as self_data_scope_count
+        FROM t_system_role
+    </select>
+
+    <!-- 根据数据范围获取部门ID列表 -->
+    <select id="getDepartmentIdsByDataScope" resultType="java.util.List" parameterType="java.lang.Long">
+        SELECT department_id
+        FROM t_system_employee
+        WHERE deleted_flag = 0
+        <choose>
+            <when test="dataScope == 'ALL'">
+                SELECT department_id FROM t_system_department WHERE deleted_flag = 0
+            </when>
+            <when test="dataScope == 'CUSTOM'">
+                SELECT department_id FROM t_system_role_department WHERE role_id = #{roleId} AND deleted_flag = 0
+            </when>
+            <when test="dataScope == 'DEPT'">
+                SELECT department_id FROM t_system_employee WHERE deleted_flag = 0 AND department_id = #{departmentId}
+            </when test="dataScope == 'DEPT_AND_CHILD'">
+                WITH RECURSIVE_DEPT(department_id, department_path) AS (
+                    SELECT department_id, CONCAT(department_path, '/', department_id)
+                    FROM t_system_department
+                    WHERE parent_id = #{departmentId} AND deleted_flag = 0
+                ) SELECT department_id FROM RECURSIVE_DEPT
+            </when>
+            <when test="dataScope == 'SELF'">
+                SELECT department_id FROM t_system_employee WHERE deleted_flag = 0 AND employee_id = #{employeeId}
+            </when>
+        </choose>
+    </select>
+
+</mapper>
