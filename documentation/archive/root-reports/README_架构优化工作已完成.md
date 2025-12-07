@@ -1,4 +1,4 @@
-# 构建说明
+# IOE-DREAM全局架构优化工作已完成
 
 此文档已归档到documentation/archive/root-reports目录。
 

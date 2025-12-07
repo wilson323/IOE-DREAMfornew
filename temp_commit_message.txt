@@ -1,0 +1,16 @@
+feat(common): 添加 microservices-common 模块完整实现
+
+- 添加监控管理模块 (LogManagementManager, MetricsCollectorManager, PerformanceMonitorManager, SystemMonitorManager)
+- 添加通知管理模块 (NotificationConfig, NotificationTemplate, NotificationManager)
+- 添加组织架构模块 (Area, Device, Employee, AreaPerson)
+- 添加 RBAC 权限管理模块 (Role, RbacResource, UserRole, RoleResource)
+- 添加工作流管理模块 (WorkflowDefinition, WorkflowInstance, WorkflowTask, ApprovalConfig)
+- 添加系统配置和字典管理模块 (SystemConfig, SystemDict)
+- 添加工具类 (AESUtil, DataMaskUtil, JsonUtil, RedisUtil, SmartRedisUtil, SmartStringUtil)
+- 添加访客管理相关实体 (Driver, Vehicle, ElectronicPass)
+- 添加调度任务模块 (ScheduledJob, GenericJob)
+- 添加推荐引擎模块 (RecommendationEngine)
+- 更新 .gitignore 添加 Windows 保留名称和压缩文件忽略规则
+- 添加相关测试文件和配置文件
+- 添加前端和移动端相关功能模块
+- 添加文档和脚本文件

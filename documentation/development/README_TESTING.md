@@ -70,27 +70,4 @@ mvn jacoco:report
 
 ---
 
-## 📁 相关文档
-
-- [全局测试计划](./GLOBAL_TEST_PLAN.md)
-- [测试执行总结](./TEST_EXECUTION_SUMMARY.md)
-- [测试完成报告](./TEST_COMPLETION_REPORT.md)
-- [前端测试配置指南](./smart-admin-web-javascript/TEST_SETUP_GUIDE.md)
-
----
-
-## ✅ 测试检查清单
-
-- [x] 测试计划制定完成
-- [x] 前端测试配置完成
-- [x] 移动端测试配置完成
-- [x] 后端测试配置完成
-- [x] 测试脚本创建完成
-- [x] 测试用例创建完成
-- [ ] 执行测试生成报告
-- [ ] 分析测试结果
-- [ ] 优化测试覆盖率
-
----
-
 **测试负责人**: IOE-DREAM Team
