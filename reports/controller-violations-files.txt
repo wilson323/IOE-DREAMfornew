@@ -1,0 +1,5 @@
+﻿D:\IOE-DREAM\microservices\archive\deprecated-services\ioedream-system-service\src\main\java\net\lab1024\sa\system\controller\CacheController.java
+D:\IOE-DREAM\microservices\ioedream-attendance-service\src\main\java\net\lab1024\sa\attendance\controller\AttendanceReportController.java
+D:\IOE-DREAM\microservices\ioedream-common-core\src\main\java\net\lab1024\sa\common\system\cache\controller\CacheController.java
+D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\system\cache\controller\CacheController.java
+D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\controller\ConsistencyValidationController.java
