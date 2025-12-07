@@ -1,0 +1,79 @@
+  /**
+     * 设备制造商（从扩展属性中获取）
+     */
+    public String getManufacturer() {
+        if (extendedAttributes == null || extendedAttributes.trim().isEmpty()) {
+            return "UNKNOWN";
+        }
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> map = mapper.readValue(extendedAttributes, java.util.Map.class);
+            Object manufacturer = map.get("manufacturer");
+            return manufacturer != null ? manufacturer.toString() : "UNKNOWN";
+        } catch (Exception e) {
+            return "UNKNOWN";
+        }
+    }
+
+    /**
+     * 协议类型（从扩展属性中获取）
+     */
+    public String getProtocolType() {
+        if (extendedAttributes == null || extendedAttributes.trim().isEmpty()) {
+            return "HTTP";
+        }
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> map = mapper.readValue(extendedAttributes, java.util.Map.class);
+            Object protocolType = map.get("protocolType");
+            return protocolType != null ? protocolType.toString() : "HTTP";
+        } catch (Exception e) {
+            return "HTTP";
+        }
+    }
+
+    /**
+     * 门禁设备类型（从扩展属性中获取）
+     */
+    public String getAccessDeviceType() {
+        if (extendedAttributes == null || extendedAttributes.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> map = mapper.readValue(extendedAttributes, java.util.Map.class);
+            Object accessDeviceType = map.get("accessDeviceType");
+            return accessDeviceType != null ? accessDeviceType.toString() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * 开门方式（从扩展属性中获取）
+     */
+    public String getOpenMethod() {
+        if (extendedAttributes == null || extendedAttributes.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new.fasterxml.jackson.databind.ObjectMapper();
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> map = mapper.readValue(extendedAttributes, java.util.Map.class);
+            Object openMethod = map.get("openMethod");
+            return openMethod != null ? openMethod.toString() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * 扩展配置（从扩展属性中获取）
+     */
+    public String getExtensionConfig() {
+        return extendedAttributes;
+    }
+}

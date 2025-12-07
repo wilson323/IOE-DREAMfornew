@@ -1,0 +1,224 @@
+﻿[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for net.lab1024.sa:ioedream-common-service:jar:1.0.0
+[WARNING] 'build.plugins.plugin.version' for org.springframework.boot:spring-boot-maven-plugin is missing. @ line 207, column 15
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-common-service >---------------
+[INFO] Building IOE-DREAM Common Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ ioedream-common-service ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-common-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-common-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-common-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 181 source files with javac [debug target 17] to target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/notification/domain/entity/NotificationTemplateEntity.java:[25,1] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[INFO] 1 warning
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/scheduler/service/SchedulerService.java:[87,17] �Ҳ�������
+  ����:   �� Map
+  λ��: �ӿ� net.lab1024.sa.common.scheduler.service.SchedulerService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/audit/service/AuditService.java:[65,17] �Ҳ�������
+  ����:   �� List
+  λ��: �ӿ� net.lab1024.sa.common.audit.service.AuditService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/audit/service/AuditService.java:[70,17] �Ҳ�������
+  ����:   �� List
+  λ��: �ӿ� net.lab1024.sa.common.audit.service.AuditService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[43,13] �Ҳ�������
+  ����:   �� EmailNotificationManager
+  λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[46,13] �Ҳ�������
+  ����:   �� SmsNotificationManager
+  λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[49,13] �Ҳ�������
+  ����:   �� WebSocketNotificationManager
+  λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[52,13] �Ҳ�������
+  ����:   �� WechatNotificationManager
+  λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[55,13] �Ҳ�������
+  ����:   �� DingTalkNotificationManager
+  λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[58,13] �Ҳ�������
+  ����:   �� WebhookNotificationManager
+  λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/notification/domain/dto/NotificationSendDTO.java:[74,13] �Ҳ�������
+  ����:   �� Map
+  λ��: �� net.lab1024.sa.common.notification.domain.dto.NotificationSendDTO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/notification/domain/dto/NotificationSendDTO.java:[74,33] �Ҳ�������
+  ����:   �� Map
+  λ��: �� net.lab1024.sa.common.notification.domain.dto.NotificationSendDTO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/notification/domain/dto/NotificationSendDTO.java:[19,1] �Ҳ�������
+  ����:   �� Map
+  λ��: �� net.lab1024.sa.common.notification.domain.dto.NotificationSendDTO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/monitor/manager/PerformanceMonitorManager.java:[144,58] �Ҳ�������
+  ����:   �� AlertEntity
+  λ��: �� net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/monitor/manager/PerformanceMonitorManager.java:[144,18] �Ҳ�������
+  ����:   �� NotificationEntity
+  λ��: �� net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/monitor/manager/PerformanceMonitorManager.java:[152,44] �Ҳ�������
+  ����:   �� NotificationEntity
+  λ��: �� net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[14,38] �Ҳ�������
+  ����:   �� RbacResourceDao
+  λ��: ����� net.lab1024.sa.common.rbac.dao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[15,38] �Ҳ�������
+  ����:   �� UserRoleDao
+  λ��: ����� net.lab1024.sa.common.rbac.dao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[16,38] �Ҳ�������
+  ����:   �� RoleResourceDao
+  λ��: ����� net.lab1024.sa.common.rbac.dao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[17,48] �Ҳ�������
+  ����:   �� RbacResourceEntity
+  λ��: ����� net.lab1024.sa.common.rbac.domain.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[18,48] �Ҳ�������
+  ����:   �� UserRoleEntity
+  λ��: ����� net.lab1024.sa.common.rbac.domain.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[19,48] �Ҳ�������
+  ����:   �� RoleResourceEntity
+  λ��: ����� net.lab1024.sa.common.rbac.domain.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[42,13] �Ҳ�������
+  ����:   �� RbacResourceDao
+  λ��: �� net.lab1024.sa.common.rbac.manager.RbacRoleManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[45,13] �Ҳ�������
+  ����:   �� UserRoleDao
+  λ��: �� net.lab1024.sa.common.rbac.manager.RbacRoleManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[48,13] �Ҳ�������
+  ����:   �� RoleResourceDao
+  λ��: �� net.lab1024.sa.common.rbac.manager.RbacRoleManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[4,24] �Ҳ�������
+  ����:   �� SaTokenInfo
+  λ��: ����� cn.dev33.satoken
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[8,28] �����cn.dev33.satoken.jwt������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[13,24] �����com.google.zxing������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[14,24] �����com.google.zxing������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[15,36] �����com.google.zxing.client.j2se������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[16,31] �����com.google.zxing.qrcode������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[17,39] �����com.google.zxing.qrcode.decoder������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/OperationLogManager.java:[21,34] �Ҳ�������
+  ����:   �� SmartRedisUtil
+  λ��: ����� net.lab1024.sa.common.util
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/OperationLogManager.java:[48,13] �Ҳ�������
+  ����:   �� SmartRedisUtil
+  λ��: �� net.lab1024.sa.common.manager.OperationLogManager
+[INFO] 33 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.706 s
+[INFO] Finished at: 2025-12-02T16:11:27+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-common-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/scheduler/service/SchedulerService.java:[87,17] �Ҳ�������
+[ERROR]   ����:   �� Map
+[ERROR]   λ��: �ӿ� net.lab1024.sa.common.scheduler.service.SchedulerService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/audit/service/AuditService.java:[65,17] �Ҳ�������
+[ERROR]   ����:   �� List
+[ERROR]   λ��: �ӿ� net.lab1024.sa.common.audit.service.AuditService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/audit/service/AuditService.java:[70,17] �Ҳ�������
+[ERROR]   ����:   �� List
+[ERROR]   λ��: �ӿ� net.lab1024.sa.common.audit.service.AuditService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[43,13] �Ҳ�������
+[ERROR]   ����:   �� EmailNotificationManager
+[ERROR]   λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[46,13] �Ҳ�������
+[ERROR]   ����:   �� SmsNotificationManager
+[ERROR]   λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[49,13] �Ҳ�������
+[ERROR]   ����:   �� WebSocketNotificationManager
+[ERROR]   λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[52,13] �Ҳ�������
+[ERROR]   ����:   �� WechatNotificationManager
+[ERROR]   λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[55,13] �Ҳ�������
+[ERROR]   ����:   �� DingTalkNotificationManager
+[ERROR]   λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/NotificationManager.java:[58,13] �Ҳ�������
+[ERROR]   ����:   �� WebhookNotificationManager
+[ERROR]   λ��: �� net.lab1024.sa.common.manager.NotificationManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/notification/domain/dto/NotificationSendDTO.java:[74,13] �Ҳ�������
+[ERROR]   ����:   �� Map
+[ERROR]   λ��: �� net.lab1024.sa.common.notification.domain.dto.NotificationSendDTO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/notification/domain/dto/NotificationSendDTO.java:[74,33] �Ҳ�������
+[ERROR]   ����:   �� Map
+[ERROR]   λ��: �� net.lab1024.sa.common.notification.domain.dto.NotificationSendDTO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/notification/domain/dto/NotificationSendDTO.java:[19,1] �Ҳ�������
+[ERROR]   ����:   �� Map
+[ERROR]   λ��: �� net.lab1024.sa.common.notification.domain.dto.NotificationSendDTO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/monitor/manager/PerformanceMonitorManager.java:[144,58] �Ҳ�������
+[ERROR]   ����:   �� AlertEntity
+[ERROR]   λ��: �� net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/monitor/manager/PerformanceMonitorManager.java:[144,18] �Ҳ�������
+[ERROR]   ����:   �� NotificationEntity
+[ERROR]   λ��: �� net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/monitor/manager/PerformanceMonitorManager.java:[152,44] �Ҳ�������
+[ERROR]   ����:   �� NotificationEntity
+[ERROR]   λ��: �� net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[14,38] �Ҳ�������
+[ERROR]   ����:   �� RbacResourceDao
+[ERROR]   λ��: ����� net.lab1024.sa.common.rbac.dao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[15,38] �Ҳ�������
+[ERROR]   ����:   �� UserRoleDao
+[ERROR]   λ��: ����� net.lab1024.sa.common.rbac.dao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[16,38] �Ҳ�������
+[ERROR]   ����:   �� RoleResourceDao
+[ERROR]   λ��: ����� net.lab1024.sa.common.rbac.dao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[17,48] �Ҳ�������
+[ERROR]   ����:   �� RbacResourceEntity
+[ERROR]   λ��: ����� net.lab1024.sa.common.rbac.domain.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[18,48] �Ҳ�������
+[ERROR]   ����:   �� UserRoleEntity
+[ERROR]   λ��: ����� net.lab1024.sa.common.rbac.domain.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[19,48] �Ҳ�������
+[ERROR]   ����:   �� RoleResourceEntity
+[ERROR]   λ��: ����� net.lab1024.sa.common.rbac.domain.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[42,13] �Ҳ�������
+[ERROR]   ����:   �� RbacResourceDao
+[ERROR]   λ��: �� net.lab1024.sa.common.rbac.manager.RbacRoleManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[45,13] �Ҳ�������
+[ERROR]   ����:   �� UserRoleDao
+[ERROR]   λ��: �� net.lab1024.sa.common.rbac.manager.RbacRoleManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/rbac/manager/RbacRoleManager.java:[48,13] �Ҳ�������
+[ERROR]   ����:   �� RoleResourceDao
+[ERROR]   λ��: �� net.lab1024.sa.common.rbac.manager.RbacRoleManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[4,24] �Ҳ�������
+[ERROR]   ����:   �� SaTokenInfo
+[ERROR]   λ��: ����� cn.dev33.satoken
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[8,28] �����cn.dev33.satoken.jwt������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[13,24] �����com.google.zxing������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[14,24] �����com.google.zxing������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[15,36] �����com.google.zxing.client.j2se������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[16,31] �����com.google.zxing.qrcode������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/service/impl/AuthServiceImpl.java:[17,39] �����com.google.zxing.qrcode.decoder������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/OperationLogManager.java:[21,34] �Ҳ�������
+[ERROR]   ����:   �� SmartRedisUtil
+[ERROR]   λ��: ����� net.lab1024.sa.common.util
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/manager/OperationLogManager.java:[48,13] �Ҳ�������
+[ERROR]   ����:   �� SmartRedisUtil
+[ERROR]   λ��: �� net.lab1024.sa.common.manager.OperationLogManager
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

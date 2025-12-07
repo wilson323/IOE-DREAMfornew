@@ -1,0 +1,305 @@
+# ============================================================
+# APM监控配置文件
+# 
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-05
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+# 
+# 监控组件：
+# - Prometheus（指标收集）
+# - Grafana（可视化）
+# - Micrometer（度量库）
+# - Spring Boot Actuator（健康检查）
+# ============================================================
+
+# ==================== Spring Boot Actuator ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        # 暴露所有监控端点
+        include: '*'
+      base-path: /actuator
+      cors:
+        allowed-origins: '*'
+        allowed-methods: GET,POST
+  
+  endpoint:
+    health:
+      show-details: always  # 显示详细健康信息
+      probes:
+        enabled: true  # 启用Kubernetes探针
+    
+    metrics:
+      enabled: true
+    
+    prometheus:
+      enabled: true
+    
+    info:
+      enabled: true
+  
+  # 健康检查配置
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+    redis:
+      enabled: true
+    db:
+      enabled: true
+
+# ==================== Micrometer Prometheus ====================
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 10s  # 采集间隔
+        descriptions: true
+    
+    distribution:
+      # HTTP请求分布统计
+      percentiles-histogram:
+        http.server.requests: true
+      
+      # 百分位统计（P50, P90, P95, P99）
+      percentiles:
+        http.server.requests: 0.5, 0.9, 0.95, 0.99
+      
+      # SLA边界
+      sla:
+        http.server.requests: 10ms, 50ms, 100ms, 200ms, 500ms, 1s, 2s
+    
+    tags:
+      # 全局标签
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:dev}
+      instance: ${HOSTNAME:localhost}
+      region: ${REGION:cn-north-1}
+
+# ==================== 自定义业务指标 ====================
+metrics:
+  business:
+    enabled: true
+    
+    # 门禁指标
+    access:
+      - name: access_total_count
+        description: 门禁通行总数
+        type: counter
+      
+      - name: access_success_rate
+        description: 门禁通行成功率
+        type: gauge
+      
+      - name: access_response_time
+        description: 门禁响应时间
+        type: timer
+    
+    # 考勤指标
+    attendance:
+      - name: attendance_punch_count
+        description: 考勤打卡总数
+        type: counter
+      
+      - name: attendance_late_count
+        description: 迟到人数
+        type: counter
+      
+      - name: attendance_leave_count
+        description: 请假人数
+        type: gauge
+    
+    # 消费指标
+    consume:
+      - name: consume_transaction_count
+        description: 消费交易总数
+        type: counter
+      
+      - name: consume_amount_total
+        description: 消费金额总计
+        type: counter
+      
+      - name: consume_avg_amount
+        description: 平均消费金额
+        type: gauge
+      
+      - name: consume_success_rate
+        description: 消费成功率
+        type: gauge
+    
+    # 访客指标
+    visitor:
+      - name: visitor_appointment_count
+        description: 访客预约数
+        type: counter
+      
+      - name: visitor_checkin_count
+        description: 访客签到数
+        type: counter
+      
+      - name: visitor_onsite_count
+        description: 当前在场访客数
+        type: gauge
+
+# ==================== 告警规则配置 ====================
+alerting:
+  rules:
+    # 系统级告警
+    - name: high_cpu_usage
+      expr: system_cpu_usage > 0.8
+      duration: 5m
+      severity: warning
+      message: "CPU使用率超过80%"
+    
+    - name: high_memory_usage
+      expr: jvm_memory_used_bytes / jvm_memory_max_bytes > 0.85
+      duration: 5m
+      severity: warning
+      message: "内存使用率超过85%"
+    
+    - name: high_gc_time
+      expr: jvm_gc_pause_seconds_sum > 1
+      duration: 1m
+      severity: critical
+      message: "GC暂停时间超过1秒"
+    
+    # 业务级告警
+    - name: low_access_success_rate
+      expr: access_success_rate < 0.95
+      duration: 10m
+      severity: warning
+      message: "门禁通行成功率低于95%"
+    
+    - name: high_consume_failure_rate
+      expr: (1 - consume_success_rate) > 0.05
+      duration: 5m
+      severity: warning
+      message: "消费失败率超过5%"
+    
+    - name: slow_api_response
+      expr: http_server_requests_seconds_p99 > 2
+      duration: 5m
+      severity: warning
+      message: "API P99响应时间超过2秒"
+    
+    # 数据库告警
+    - name: high_db_connection_usage
+      expr: hikaricp_connections_active / hikaricp_connections_max > 0.9
+      duration: 5m
+      severity: critical
+      message: "数据库连接池使用率超过90%"
+    
+    - name: slow_sql_query
+      expr: spring_data_repository_invocations_seconds_max > 5
+      duration: 1m
+      severity: warning
+      message: "SQL查询超过5秒"
+    
+    # Redis告警
+    - name: redis_connection_failure
+      expr: up{job="redis"} == 0
+      duration: 1m
+      severity: critical
+      message: "Redis连接失败"
+
+# ==================== Grafana仪表盘配置 ====================
+grafana:
+  dashboards:
+    # 系统监控仪表盘
+    - name: system-overview
+      panels:
+        - title: CPU使用率
+          metric: system_cpu_usage
+          type: graph
+        
+        - title: 内存使用率
+          metric: jvm_memory_used_bytes
+          type: graph
+        
+        - title: GC统计
+          metric: jvm_gc_pause_seconds_count
+          type: stat
+    
+    # 业务监控仪表盘
+    - name: business-metrics
+      panels:
+        - title: 今日通行量
+          metric: access_total_count
+          type: stat
+        
+        - title: 今日消费额
+          metric: consume_amount_total
+          type: stat
+        
+        - title: 在场访客数
+          metric: visitor_onsite_count
+          type: gauge
+        
+        - title: API响应时间分布
+          metric: http_server_requests_seconds
+          type: heatmap
+
+# ==================== 日志聚合配置 ====================
+logging:
+  pattern:
+    # 结构化日志格式（JSON）
+    console: '{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","level":"%level","thread":"%thread","logger":"%logger{36}","message":"%msg","traceId":"%X{traceId}","userId":"%X{userId}"}%n'
+  
+  level:
+    root: INFO
+    net.lab1024.sa: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    
+    # 第三方库日志级别
+    com.alibaba: WARN
+    io.lettuce: WARN
+
+# ==================== 链路追踪配置（可选） ====================
+spring:
+  sleuth:
+    enabled: true
+    sampler:
+      probability: 1.0  # 100%采样率
+  
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: false  # 默认禁用，生产环境开启
+
+# ==================== 生产环境建议 ====================
+# 
+# 📊 Prometheus部署：
+# docker run -d -p 9090:9090 \
+#   -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml \
+#   prom/prometheus
+# 
+# 📈 Grafana部署：
+# docker run -d -p 3000:3000 \
+#   -e GF_SECURITY_ADMIN_PASSWORD=admin \
+#   grafana/grafana
+# 
+# 🔍 Zipkin部署（可选）：
+# docker run -d -p 9411:9411 openzipkin/zipkin
+# 
+# 📝 Prometheus配置示例（prometheus.yml）：
+# scrape_configs:
+#   - job_name: 'ioedream-services'
+#     metrics_path: '/actuator/prometheus'
+#     static_configs:
+#       - targets:
+#         - 'gateway:8080'
+#         - 'common-service:8088'
+#         - 'access-service:8090'
+#         - 'attendance-service:8091'
+#         - 'consume-service:8094'
+# 
+# 🎨 Grafana仪表盘导入：
+# - JVM Micrometer Dashboard: ID 4701
+# - Spring Boot Dashboard: ID 12900
+# - 自定义业务仪表盘：使用项目提供的JSON模板
+# 
+# ============================================================
+

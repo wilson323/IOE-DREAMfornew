@@ -1,0 +1,333 @@
+# IOE-DREAM GitLab CI/CD Pipeline
+# 严格遵循CLAUDE.md架构规范的自动化检查流水线
+
+stages:
+  - compliance     # 架构合规性检查
+  - build         # 编译构建
+  - test          # 测试验证
+  - package       # 打包
+  - deploy        # 部署
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
+# 缓存Maven依赖
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .m2/repository/
+
+# ====================================
+# 阶段1: 架构合规性检查（P0级）
+# ====================================
+
+compliance:repository-check:
+  stage: compliance
+  image: openjdk:17-slim
+  script:
+    - echo "=== 检查@Repository违规 ==="
+    - |
+      if grep -r "import org\.springframework\.stereotype\.Repository" --include="*.java" microservices/; then
+        echo "❌ 发现@Repository违规！必须使用@Mapper"
+        exit 1
+      fi
+    - echo "✅ @Repository检查通过"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+compliance:autowired-check:
+  stage: compliance
+  image: openjdk:17-slim
+  script:
+    - echo "=== 检查@Autowired违规 ==="
+    - |
+      if grep -r "import org\.springframework\.beans\.factory\.annotation\.Autowired" --include="*.java" microservices/; then
+        echo "❌ 发现@Autowired违规！必须使用@Resource"
+        exit 1
+      fi
+    - echo "✅ @Autowired检查通过"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+compliance:javax-check:
+  stage: compliance
+  image: openjdk:17-slim
+  script:
+    - echo "=== 检查javax包名违规 ==="
+    - |
+      if grep -r "import javax\.validation" --include="*.java" microservices/; then
+        echo "❌ 发现javax.validation违规！必须使用jakarta.validation"
+        exit 1
+      fi
+    - |
+      if grep -r "import javax\.annotation" --include="*.java" microservices/; then
+        echo "❌ 发现javax.annotation违规！必须使用jakarta.annotation"
+        exit 1
+      fi
+    - echo "✅ javax包名检查通过"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+compliance:hikari-check:
+  stage: compliance
+  image: alpine:latest
+  script:
+    - echo "=== 检查HikariCP配置违规 ==="
+    - apk add --no-cache grep
+    - |
+      if grep -r "hikari:" --include="application*.yml" microservices/; then
+        echo "❌ 发现HikariCP配置！必须使用Druid连接池"
+        exit 1
+      fi
+    - |
+      if grep -r "HikariDataSource" --include="application*.yml" microservices/; then
+        echo "❌ 发现HikariCP配置！必须使用Druid连接池"
+        exit 1
+      fi
+    - echo "✅ 连接池配置检查通过"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+compliance:dao-naming-check:
+  stage: compliance
+  image: openjdk:17-slim
+  script:
+    - echo "=== 检查DAO命名规范 ==="
+    - |
+      # 检查是否有Repository后缀的接口
+      if find microservices/ -type f -name "*Repository.java" | grep -v "\.backup"; then
+        echo "❌ 发现Repository后缀文件！必须使用Dao后缀"
+        exit 1
+      fi
+    - echo "✅ DAO命名规范检查通过"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+compliance:password-check:
+  stage: compliance
+  image: alpine:latest
+  script:
+    - echo "=== 检查明文密码（P0安全问题） ==="
+    - apk add --no-cache grep
+    - |
+      if grep -r "password:.*['\"].*['\"]" --include="application*.yml" microservices/ | grep -v "ENC(" | grep -v "\${"; then
+        echo "⚠️  发现疑似明文密码！建议使用Nacos加密配置"
+        # 暂时不阻断流水线，只警告
+      fi
+    - echo "✅ 密码安全检查完成"
+  allow_failure: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ====================================
+# 阶段2: 编译构建
+# ====================================
+
+# 强制先构建 microservices-common（P0级要求）
+build:common:
+  stage: build
+  image: maven:3.9-openjdk-17
+  script:
+    - echo "=== 构建 microservices-common（强制先构建） ==="
+    - mvn $MAVEN_CLI_OPTS clean install -pl microservices/microservices-common -am -DskipTests
+    - echo "=== 验证JAR文件 ==="
+    - |
+      JAR_PATH="$HOME/.m2/repository/net/lab1024/sa/microservices-common/1.0.0/microservices-common-1.0.0.jar"
+      if [ ! -f "$JAR_PATH" ]; then
+        echo "❌ JAR文件不存在: $JAR_PATH"
+        exit 1
+      fi
+      echo "✅ JAR文件存在: $JAR_PATH"
+      jar -tf "$JAR_PATH" | grep -q "DeviceEntity.class" && echo "✅ 关键类存在" || (echo "❌ 关键类缺失" && exit 1)
+  artifacts:
+    paths:
+      - "$HOME/.m2/repository/net/lab1024/sa/microservices-common/"
+    expire_in: 1 day
+  dependencies:
+    - compliance:repository-check
+    - compliance:autowired-check
+    - compliance:javax-check
+    - compliance:hikari-check
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+build:all-services:
+  stage: build
+  image: maven:3.9-openjdk-17
+  script:
+    - echo "=== Maven编译构建（所有服务） ==="
+    - mvn $MAVEN_CLI_OPTS clean compile -DskipTests -T 4
+  artifacts:
+    paths:
+      - "*/target/*.jar"
+    expire_in: 1 day
+  dependencies:
+    - build:common
+  needs:
+    - build:common
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ====================================
+# 阶段3: 测试验证
+# ====================================
+
+test:unit:
+  stage: test
+  image: maven:3.9-openjdk-17
+  script:
+    - echo "=== 单元测试 ==="
+    - mvn $MAVEN_CLI_OPTS test -Dtest=*Test
+  coverage: '/Total.*?([0-9]{1,3})%/'
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - "*/target/surefire-reports/TEST-*.xml"
+    paths:
+      - "*/target/site/jacoco/"
+    expire_in: 7 days
+  dependencies:
+    - build:all-services
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+test:integration:
+  stage: test
+  image: maven:3.9-openjdk-17
+  services:
+    - mysql:8.0
+    - redis:latest
+  variables:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: ioe_dream_test
+    REDIS_HOST: redis
+  script:
+    - echo "=== 集成测试 ==="
+    - mvn $MAVEN_CLI_OPTS verify -DskipUnitTests -P integration-test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - "*/target/failsafe-reports/TEST-*.xml"
+    expire_in: 7 days
+  dependencies:
+    - build:compile
+  allow_failure: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ====================================
+# 阶段4: 打包
+# ====================================
+
+package:jar:
+  stage: package
+  image: maven:3.9-openjdk-17
+  script:
+    - echo "=== Maven打包 ==="
+    - mvn $MAVEN_CLI_OPTS package -DskipTests -T 4
+  artifacts:
+    paths:
+      - "microservices/*/target/*.jar"
+    expire_in: 30 days
+  dependencies:
+    - build:all-services
+    - test:unit
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
+
+package:docker:
+  stage: package
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "=== Docker镜像构建 ==="
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - |
+      for service in microservices/ioedream-*-service; do
+        service_name=$(basename $service)
+        docker build -t $CI_REGISTRY_IMAGE/$service_name:$CI_COMMIT_SHORT_SHA $service
+        docker push $CI_REGISTRY_IMAGE/$service_name:$CI_COMMIT_SHORT_SHA
+      done
+  dependencies:
+    - package:jar
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
+
+# ====================================
+# 阶段5: 部署
+# ====================================
+
+deploy:dev:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - echo "=== 部署到开发环境 ==="
+    - kubectl config use-context dev
+    - kubectl apply -f deploy/kubernetes/dev/
+    - kubectl rollout status deployment -n ioe-dream-dev
+  environment:
+    name: development
+    url: https://dev.ioedream.com
+  dependencies:
+    - package:docker
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      when: manual
+
+deploy:prod:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - echo "=== 部署到生产环境 ==="
+    - kubectl config use-context prod
+    - kubectl apply -f deploy/kubernetes/prod/
+    - kubectl rollout status deployment -n ioe-dream-prod
+  environment:
+    name: production
+    url: https://ioedream.com
+  dependencies:
+    - package:docker
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+    - if: '$CI_COMMIT_TAG'
+      when: manual
+
+# ====================================
+# 通知配置
+# ====================================
+
+.notify_on_failure:
+  after_script:
+    - |
+      if [ "$CI_JOB_STATUS" == "failed" ]; then
+        echo "流水线失败，发送告警通知..."
+        # 可以集成企业微信、钉钉等通知
+      fi
+

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Redis服务
+  redis:
+    image: redis:7-alpine
+    container_name: ioedream-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+
+  # Nacos服务
+  nacos:
+    image: nacos/nacos-server:v2.3.0
+    container_name: ioedream-nacos
+    environment:
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=host.docker.internal
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_DB_NAME=nacos
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=root
+    ports:
+      - "8848:8848"
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+
+volumes:
+  redis_data:
+
+networks:
+  ioedream-network:
+    external: true
+    name: ioe-dream_smart-admin-network

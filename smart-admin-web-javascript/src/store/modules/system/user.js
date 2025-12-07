@@ -15,6 +15,7 @@ import { MENU_TYPE_ENUM } from '/@/constants/system/menu-const';
 import { messageApi } from '/@/api/support/message-api.js';
 import { smartSentry } from '/@/lib/smart-sentry.js';
 import { localRead, localSave, localRemove } from '/@/utils/local-util';
+import { closeWorkflowWebSocketConnection } from '/@/utils/workflow-websocket-init';
 
 
 export const useUserStore = defineStore({
@@ -117,6 +118,14 @@ export const useUserStore = defineStore({
 
   actions: {
     logout() {
+      // 关闭工作流WebSocket连接
+      try {
+        closeWorkflowWebSocketConnection();
+      } catch (err) {
+        // WebSocket关闭失败不影响退出登录流程
+        console.warn('关闭工作流WebSocket连接失败:', err);
+      }
+      
       this.token = '';
       this.menuList = [];
       this.tagNav = [];

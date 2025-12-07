@@ -1,0 +1,7 @@
+﻿ioedream-common-service: 212 errors
+ioedream-device-comm-service: 212 errors
+ioedream-oa-service: 212 errors
+ioedream-attendance-service: 212 errors
+ioedream-consume-service: 212 errors
+ioedream-visitor-service: 0 errors
+ioedream-video-service: 0 errors

@@ -1,0 +1,209 @@
+# ============================================================
+# IOE-DREAM Device Communication Service 配置文件
+# 
+# @Author:    IOE-DREAM Team
+# @Date:      2025-01-30
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+# 
+# 服务信息:
+# - 服务名称: ioedream-device-comm-service
+# - 服务端口: 8087
+# - 服务职责: 设备通讯微服务，提供设备协议、连接管理等业务API
+# ============================================================
+
+# ==================== 服务基本信息 ====================
+spring:
+  application:
+    name: ioedream-device-comm-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  # ==================== Nacos服务发现配置 ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        enabled: true
+        register-enabled: true
+      # Nacos配置中心（Spring Cloud Alibaba标准配置）
+      # 注意：IDE可能显示"Unknown property"警告，但这是Spring Cloud Alibaba的标准配置，可以忽略
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        file-extension: yaml
+        enabled: true
+  # ==================== RabbitMQ消息队列配置 ====================
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
+    # 连接池配置
+    listener:
+      simple:
+        acknowledge-mode: auto
+        concurrency: 5
+        max-concurrency: 10
+        prefetch: 10
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          multiplier: 2
+
+# ==================== 服务器配置 ====================
+server:
+  port: 8087
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    cache-enabled: true
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: net.lab1024.sa.common.entity,net.lab1024.sa.common.domain.entity,net.lab1024.sa.device.entity
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    root: INFO
+    "[net.lab1024.sa]": DEBUG  # 使用方括号转义包含特殊字符的键
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+
+# ==================== Actuator监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  # Prometheus监控配置（使用新版本配置格式）
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  # Micrometer指标配置
+  # 注意：management.metrics.export.prometheus.enabled已废弃，已使用上面的新格式
+  metrics:
+    distribution:
+      # 注意：包含特殊字符的键（如protocol.message.process）在YAML中建议使用方括号转义
+      percentiles-histogram:
+        "[protocol.message.process]": true
+      percentiles:
+        "[protocol.message.process]": 0.5,0.9,0.95,0.99
+  # 分布式追踪配置（Micrometer Tracing）
+  # Spring Boot 3.x使用Micrometer Tracing替代Spring Cloud Sleuth
+  # 注意：IDE可能显示"Unknown property 'management.tracing.zipkin'"警告，
+  # 但这是Spring Boot 3.x的标准配置，可以忽略
+  tracing:
+    zipkin:
+      endpoint: ${ZIPKIN_BASE_URL:http://localhost:9411}/api/v2/spans
+    sampling:
+      probability: ${SLEUTH_SAMPLER_PROBABILITY:1.0}
+
+# ==================== Resilience4j服务降级和熔断配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      access-service:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 2s
+      attendance-service:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 2s
+      consume-service:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 2s
+      common-service:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 2s
+  retry:
+    instances:
+      protocol-service:
+        maxAttempts: 3
+        waitDuration: 1000
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException
+  timelimiter:
+    instances:
+      access-service:
+        timeoutDuration: 5s
+      attendance-service:
+        timeoutDuration: 5s
+      consume-service:
+        timeoutDuration: 5s
+      common-service:
+        timeoutDuration: 5s
+  ratelimiter:
+    instances:
+      protocol-push:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0
+
+# ==================== 设备协议配置（自定义配置）====================
+# 注意：这是自定义配置属性，通过@ConfigurationProperties绑定到Java类
+# IDE可能显示"Unknown property 'device'"警告，但这是正常的，不影响运行
+# 配置类：net.lab1024.sa.devicecomm.config.DeviceProtocolProperties
+device:
+  protocol:
+    # TCP推送服务器端口（用于接收设备推送数据）
+    tcp:
+      port: ${DEVICE_PROTOCOL_TCP_PORT:8088}
+    # UDP推送服务器端口（可选）
+    udp:
+      port: ${DEVICE_PROTOCOL_UDP_PORT:8089}
+    # 协议处理线程池大小（动态配置）
+    # 注意：IDE可能显示"Unknown property 'device.protocol.thread-pool.keep-alive-seconds'"警告，
+    # 但这是通过@ConfigurationProperties绑定的自定义配置，可以忽略
+    thread-pool:
+      core-size: ${DEVICE_PROTOCOL_THREAD_POOL_CORE_SIZE:10}
+      max-size: ${DEVICE_PROTOCOL_THREAD_POOL_MAX_SIZE:50}
+      queue-capacity: ${DEVICE_PROTOCOL_THREAD_POOL_QUEUE_CAPACITY:1000}
+      keep-alive-seconds: ${DEVICE_PROTOCOL_THREAD_POOL_KEEP_ALIVE:60}
