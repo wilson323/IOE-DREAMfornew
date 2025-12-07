@@ -1,4 +1,4 @@
-# 构建说明
+# Resilience4J依赖修复
 
 此文档已归档到documentation/archive/root-reports目录。
 

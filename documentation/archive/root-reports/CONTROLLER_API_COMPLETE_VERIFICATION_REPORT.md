@@ -1,4 +1,4 @@
-# 构建说明
+# Controller API完整验证报告
 
 此文档已归档到documentation/archive/root-reports目录。
 
