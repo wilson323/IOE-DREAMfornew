@@ -1,0 +1,450 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< net.lab1024.sa:ioedream-common-core >-----------------
+[INFO] Building IOE-DREAM Common Core Module 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ ioedream-common-core ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-common-core\target
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ ioedream-common-core ---
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-common-core\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-common-core\target\generated-sources\annotations added.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-common-core ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-common-core ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 257 source files with javac [debug target 17] to target\classes
+[INFO] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/util/JwtTokenUtil.java: D:\IOE-DREAM\microservices\ioedream-common-core\src\main\java\net\lab1024\sa\common\auth\util\JwtTokenUtil.javaʹ�û򸲸����ѹ�ʱ�� API��
+[INFO] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/util/JwtTokenUtil.java: �й���ϸ��Ϣ, ��ʹ�� -Xlint:deprecation ���±��롣
+[INFO] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java: ĳЩ�����ļ�ʹ����δ�����򲻰�ȫ�Ĳ�����
+[INFO] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java: �й���ϸ��Ϣ, ��ʹ�� -Xlint:unchecked ���±��롣
+[INFO] ĳЩ��Ϣ�Ѿ�����; ��ʹ�� -Xdiags:verbose ���±����Ի���������
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/gateway/GatewayConfiguration.java:[32,17] org.springframework.boot.web.client.RestTemplateBuilder �е� setConnectTimeout(java.time.Duration) �ѹ�ʱ, �ұ��Ϊ��ɾ��
+[WARNING] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/gateway/GatewayConfiguration.java:[33,17] org.springframework.boot.web.client.RestTemplateBuilder �е� setReadTimeout(java.time.Duration) �ѹ�ʱ, �ұ��Ϊ��ɾ��
+[INFO] 2 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/UserDetailVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/UserDetailVO.java:[17,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/RoleDetailVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/RoleDetailVO.java:[17,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/PermissionTreeVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/PermissionTreeVO.java:[16,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[4,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[9,37] �����net.lab1024.sa.common.swagger������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[22,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/organization/manager/DeviceManager.java:[12,33] �����net.lab1024.sa.common.dto������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/cache/BaseCacheManager.java:[8,42] �����com.github.benmanes.caffeine.cache������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/cache/BaseCacheManager.java:[9,42] �����com.github.benmanes.caffeine.cache������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/cache/BaseCacheManager.java:[44,19] �Ҳ�������
+  ����:   �� Cache
+  λ��: �� net.lab1024.sa.common.cache.BaseCacheManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/scheduler/controller/SchedulerController.java:[3,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/scheduler/controller/SchedulerController.java:[4,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/scheduler/controller/SchedulerController.java:[35,2] �Ҳ�������
+  ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/domain/PageParam.java:[5,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[3,45] �����io.github.resilience4j.circuitbreaker������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[4,45] �����io.github.resilience4j.circuitbreaker������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[5,45] �����io.github.resilience4j.circuitbreaker������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[6,36] �����io.github.resilience4j.retry������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[7,36] �����io.github.resilience4j.retry������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[8,36] �����io.github.resilience4j.retry������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[9,42] �����io.github.resilience4j.timelimiter������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[10,42] �����io.github.resilience4j.timelimiter������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[11,42] �����io.github.resilience4j.timelimiter������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[50,12] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[58,12] �Ҳ�������
+  ����:   �� RetryRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[66,12] �Ҳ�������
+  ����:   �� TimeLimiterRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[74,52] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[74,12] �Ҳ�������
+  ����:   �� CircuitBreaker
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[91,50] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[91,12] �Ҳ�������
+  ����:   �� CircuitBreaker
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[108,53] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[108,12] �Ҳ�������
+  ����:   �� CircuitBreaker
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[125,34] �Ҳ�������
+  ����:   �� RetryRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[125,12] �Ҳ�������
+  ����:   �� Retry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[139,32] �Ҳ�������
+  ����:   �� RetryRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[139,12] �Ҳ�������
+  ����:   �� Retry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[153,46] �Ҳ�������
+  ����:   �� TimeLimiterRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[153,12] �Ҳ�������
+  ����:   �� TimeLimiter
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[166,44] �Ҳ�������
+  ����:   �� TimeLimiterRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[166,12] �Ҳ�������
+  ����:   �� TimeLimiter
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[179,47] �Ҳ�������
+  ����:   �� TimeLimiterRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[179,12] �Ҳ�������
+  ����:   �� TimeLimiter
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[192,46] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[201,37] �Ҳ�������
+  ����:   �� RetryRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[210,43] �Ҳ�������
+  ����:   �� TimeLimiterRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[226,47] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[227,47] �Ҳ�������
+  ����:   �� RetryRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[228,47] �Ҳ�������
+  ����:   �� TimeLimiterRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[242,43] �Ҳ�������
+  ����:   �� CircuitBreaker
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[258,60] �Ҳ�������
+  ����:   �� CircuitBreaker
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[258,26] �����CircuitBreaker������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[267,12] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[281,12] �Ҳ�������
+  ����:   �� RetryRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[295,13] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[296,13] �Ҳ�������
+  ����:   �� RetryRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[297,13] �Ҳ�������
+  ����:   �� TimeLimiterRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[318,13] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[319,13] �Ҳ�������
+  ����:   �� RetryRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[331,49] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[353,43] �Ҳ�������
+  ����:   �� CircuitBreakerRegistry
+  λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/controller/AuditController.java:[3,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/controller/AuditController.java:[4,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/controller/AuditController.java:[36,2] �Ҳ�������
+  ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/domain/entity/AuditLogEntity.java:[4,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/domain/entity/AuditLogEntity.java:[29,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/dto/LoginRequestDTO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/dto/LoginRequestDTO.java:[16,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/vo/LoginResponseVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/vo/LoginResponseVO.java:[23,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/dto/RefreshTokenRequestDTO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/dto/RefreshTokenRequestDTO.java:[16,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/vo/UserInfoVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/vo/UserInfoVO.java:[23,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/system/employee/controller/EmployeeController.java:[15,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/system/employee/controller/EmployeeController.java:[16,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/system/employee/controller/EmployeeController.java:[17,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/system/employee/controller/EmployeeController.java:[47,2] �Ҳ�������
+  ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/domain/entity/NotificationEntity.java:[4,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/domain/entity/NotificationEntity.java:[28,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/controller/SystemHealthController.java:[14,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/controller/SystemHealthController.java:[15,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/controller/SystemHealthController.java:[39,2] �Ҳ�������
+  ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/dto/PermissionAssignDTO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/dto/PermissionAssignDTO.java:[18,2] �Ҳ�������
+  ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/notification/controller/NotificationController.java:[3,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/notification/controller/NotificationController.java:[4,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/notification/controller/NotificationController.java:[40,2] �Ҳ�������
+  ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/organization/manager/PersonManager.java:[11,33] �����net.lab1024.sa.common.dto������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClientStandardImpl.java:[4,33] �����net.lab1024.sa.common.dto������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClientStandardImpl.java:[28,58] �˴���Ҫ�ӿ�
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClientStandardImpl.java:[229,34] �Ҳ�������
+  ����:   �� ResponseDTO
+  λ��: �� net.lab1024.sa.common.gateway.GatewayServiceClientStandardImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/service/impl/AuthServiceImpl.java:[14,43] �����net.lab1024.sa.common.domain.entity������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[4,43] �����net.lab1024.sa.common.domain.entity������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[28,45] �Ҳ�������
+  ����: �� UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[34,5] �Ҳ�������
+  ����:   �� UserEntity
+  λ��: �ӿ� net.lab1024.sa.common.auth.dao.UserDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[40,5] �Ҳ�������
+  ����:   �� UserEntity
+  λ��: �ӿ� net.lab1024.sa.common.auth.dao.UserDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[46,5] �Ҳ�������
+  ����:   �� UserEntity
+  λ��: �ӿ� net.lab1024.sa.common.auth.dao.UserDao
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.711 s
+[INFO] Finished at: 2025-12-02T18:05:24+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-common-core: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/UserDetailVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/UserDetailVO.java:[17,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/RoleDetailVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/RoleDetailVO.java:[17,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/PermissionTreeVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/vo/PermissionTreeVO.java:[16,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[4,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[9,37] �����net.lab1024.sa.common.swagger������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[22,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/organization/manager/DeviceManager.java:[12,33] �����net.lab1024.sa.common.dto������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/cache/BaseCacheManager.java:[8,42] �����com.github.benmanes.caffeine.cache������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/cache/BaseCacheManager.java:[9,42] �����com.github.benmanes.caffeine.cache������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/cache/BaseCacheManager.java:[44,19] �Ҳ�������
+[ERROR]   ����:   �� Cache
+[ERROR]   λ��: �� net.lab1024.sa.common.cache.BaseCacheManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/scheduler/controller/SchedulerController.java:[3,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/scheduler/controller/SchedulerController.java:[4,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/scheduler/controller/SchedulerController.java:[35,2] �Ҳ�������
+[ERROR]   ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/domain/PageParam.java:[5,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[3,45] �����io.github.resilience4j.circuitbreaker������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[4,45] �����io.github.resilience4j.circuitbreaker������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[5,45] �����io.github.resilience4j.circuitbreaker������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[6,36] �����io.github.resilience4j.retry������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[7,36] �����io.github.resilience4j.retry������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[8,36] �����io.github.resilience4j.retry������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[9,42] �����io.github.resilience4j.timelimiter������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[10,42] �����io.github.resilience4j.timelimiter������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[11,42] �����io.github.resilience4j.timelimiter������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[50,12] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[58,12] �Ҳ�������
+[ERROR]   ����:   �� RetryRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[66,12] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiterRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[74,52] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[74,12] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreaker
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[91,50] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[91,12] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreaker
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[108,53] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[108,12] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreaker
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[125,34] �Ҳ�������
+[ERROR]   ����:   �� RetryRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[125,12] �Ҳ�������
+[ERROR]   ����:   �� Retry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[139,32] �Ҳ�������
+[ERROR]   ����:   �� RetryRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[139,12] �Ҳ�������
+[ERROR]   ����:   �� Retry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[153,46] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiterRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[153,12] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiter
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[166,44] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiterRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[166,12] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiter
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[179,47] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiterRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[179,12] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiter
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[192,46] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[201,37] �Ҳ�������
+[ERROR]   ����:   �� RetryRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[210,43] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiterRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[226,47] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[227,47] �Ҳ�������
+[ERROR]   ����:   �� RetryRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[228,47] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiterRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[242,43] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreaker
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[258,60] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreaker
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[258,26] �����CircuitBreaker������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[267,12] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[281,12] �Ҳ�������
+[ERROR]   ����:   �� RetryRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[295,13] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[296,13] �Ҳ�������
+[ERROR]   ����:   �� RetryRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[297,13] �Ҳ�������
+[ERROR]   ����:   �� TimeLimiterRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[318,13] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[319,13] �Ҳ�������
+[ERROR]   ����:   �� RetryRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[331,49] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/config/ResilienceConfig.java:[353,43] �Ҳ�������
+[ERROR]   ����:   �� CircuitBreakerRegistry
+[ERROR]   λ��: �� net.lab1024.sa.common.config.ResilienceConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/controller/AuditController.java:[3,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/controller/AuditController.java:[4,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/controller/AuditController.java:[36,2] �Ҳ�������
+[ERROR]   ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/domain/entity/AuditLogEntity.java:[4,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/audit/domain/entity/AuditLogEntity.java:[29,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/dto/LoginRequestDTO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/dto/LoginRequestDTO.java:[16,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/vo/LoginResponseVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/vo/LoginResponseVO.java:[23,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/dto/RefreshTokenRequestDTO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/dto/RefreshTokenRequestDTO.java:[16,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/vo/UserInfoVO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/domain/vo/UserInfoVO.java:[23,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/system/employee/controller/EmployeeController.java:[15,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/system/employee/controller/EmployeeController.java:[16,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/system/employee/controller/EmployeeController.java:[17,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/system/employee/controller/EmployeeController.java:[47,2] �Ҳ�������
+[ERROR]   ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/domain/entity/NotificationEntity.java:[4,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/domain/entity/NotificationEntity.java:[28,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/controller/SystemHealthController.java:[14,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/controller/SystemHealthController.java:[15,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/monitor/controller/SystemHealthController.java:[39,2] �Ҳ�������
+[ERROR]   ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/dto/PermissionAssignDTO.java:[3,43] �����io.swagger.v3.oas.annotations.media������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/identity/domain/dto/PermissionAssignDTO.java:[18,2] �Ҳ�������
+[ERROR]   ����: �� Schema
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/notification/controller/NotificationController.java:[3,37] �����io.swagger.v3.oas.annotations������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/notification/controller/NotificationController.java:[4,42] �����io.swagger.v3.oas.annotations.tags������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/notification/controller/NotificationController.java:[40,2] �Ҳ�������
+[ERROR]   ����: �� Tag
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/organization/manager/PersonManager.java:[11,33] �����net.lab1024.sa.common.dto������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClientStandardImpl.java:[4,33] �����net.lab1024.sa.common.dto������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClientStandardImpl.java:[28,58] �˴���Ҫ�ӿ�
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClientStandardImpl.java:[229,34] �Ҳ�������
+[ERROR]   ����:   �� ResponseDTO
+[ERROR]   λ��: �� net.lab1024.sa.common.gateway.GatewayServiceClientStandardImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/service/impl/AuthServiceImpl.java:[14,43] �����net.lab1024.sa.common.domain.entity������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[4,43] �����net.lab1024.sa.common.domain.entity������
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[28,45] �Ҳ�������
+[ERROR]   ����: �� UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[34,5] �Ҳ�������
+[ERROR]   ����:   �� UserEntity
+[ERROR]   λ��: �ӿ� net.lab1024.sa.common.auth.dao.UserDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[40,5] �Ҳ�������
+[ERROR]   ����:   �� UserEntity
+[ERROR]   λ��: �ӿ� net.lab1024.sa.common.auth.dao.UserDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-common-core/src/main/java/net/lab1024/sa/common/auth/dao/UserDao.java:[46,5] �Ҳ�������
+[ERROR]   ����:   �� UserEntity
+[ERROR]   λ��: �ӿ� net.lab1024.sa.common.auth.dao.UserDao
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

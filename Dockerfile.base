@@ -1,0 +1,46 @@
+# IOE-DREAM微服务基础镜像
+# 使用多阶段构建减小镜像体积
+
+# ===== 构建阶段 =====
+FROM maven:3.9.5-eclipse-temurin-17 AS builder
+
+# 设置工作目录
+WORKDIR /build
+
+# 复制父POM和microservices-common
+COPY microservices/pom.xml ./microservices/pom.xml
+COPY microservices/microservices-common ./microservices/microservices-common
+
+# 预下载依赖（利用Docker缓存）
+RUN cd microservices && mvn dependency:go-offline -B
+
+# 先构建并安装microservices-common
+RUN cd microservices/microservices-common && mvn clean install -DskipTests
+
+# ===== 运行阶段 =====
+FROM eclipse-temurin:17-jre-alpine
+
+# 安装必要工具
+RUN apk add --no-cache curl tzdata && \
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone && \
+    apk del tzdata
+
+# 创建应用用户
+RUN addgroup -S spring && adduser -S spring -G spring
+
+# 设置工作目录
+WORKDIR /app
+
+# 切换到应用用户
+USER spring:spring
+
+# 健康检查配置（子镜像需覆盖）
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# 启动参数
+ENV JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+
+# 默认入口（子镜像需覆盖JAR路径）
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

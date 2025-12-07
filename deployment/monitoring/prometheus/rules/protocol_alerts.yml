@@ -1,0 +1,140 @@
+groups:
+  - name: protocol_alerts
+    interval: 30s
+    rules:
+      # 协议处理失败率告警
+      - alert: ProtocolMessageFailureRateHigh
+        expr: |
+          rate(protocol_message_process_total{status="error"}[5m]) 
+          / 
+          rate(protocol_message_process_total[5m]) 
+          > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: device-comm-service
+          alert_type: protocol_failure
+        annotations:
+          summary: "协议消息处理失败率过高"
+          description: "协议消息处理失败率超过10%，当前值: {{ $value | humanizePercentage }}"
+          runbook_url: "https://wiki.company.com/runbook/protocol-failure-rate"
+
+      # 协议处理失败率严重告警
+      - alert: ProtocolMessageFailureRateCritical
+        expr: |
+          rate(protocol_message_process_total{status="error"}[5m]) 
+          / 
+          rate(protocol_message_process_total[5m]) 
+          > 0.3
+        for: 2m
+        labels:
+          severity: critical
+          service: device-comm-service
+          alert_type: protocol_failure
+        annotations:
+          summary: "协议消息处理失败率严重过高"
+          description: "协议消息处理失败率超过30%，当前值: {{ $value | humanizePercentage }}"
+          runbook_url: "https://wiki.company.com/runbook/protocol-failure-rate-critical"
+
+      # 协议处理延迟告警（P99延迟超过阈值）
+      - alert: ProtocolMessageDurationHigh
+        expr: |
+          histogram_quantile(0.99, 
+            rate(protocol_message_process_duration_seconds_bucket[5m])
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: device-comm-service
+          alert_type: protocol_performance
+        annotations:
+          summary: "协议消息处理延迟过高"
+          description: "协议消息P99处理延迟超过2秒，当前值: {{ $value }}秒"
+          runbook_url: "https://wiki.company.com/runbook/protocol-duration-high"
+
+      # 协议处理延迟严重告警（P99延迟超过阈值）
+      - alert: ProtocolMessageDurationCritical
+        expr: |
+          histogram_quantile(0.99, 
+            rate(protocol_message_process_duration_seconds_bucket[5m])
+          ) > 5
+        for: 2m
+        labels:
+          severity: critical
+          service: device-comm-service
+          alert_type: protocol_performance
+        annotations:
+          summary: "协议消息处理延迟严重过高"
+          description: "协议消息P99处理延迟超过5秒，当前值: {{ $value }}秒"
+          runbook_url: "https://wiki.company.com/runbook/protocol-duration-critical"
+
+      # 消息队列积压告警
+      - alert: ProtocolQueueBacklogHigh
+        expr: |
+          rabbitmq_queue_messages > 5000
+        for: 5m
+        labels:
+          severity: warning
+          service: device-comm-service
+          alert_type: queue_backlog
+        annotations:
+          summary: "协议消息队列积压过多"
+          description: "消息队列积压超过5000条，当前值: {{ $value }}条"
+          runbook_url: "https://wiki.company.com/runbook/protocol-queue-backlog"
+
+      # 消息队列积压严重告警
+      - alert: ProtocolQueueBacklogCritical
+        expr: |
+          rabbitmq_queue_messages > 10000
+        for: 2m
+        labels:
+          severity: critical
+          service: device-comm-service
+          alert_type: queue_backlog
+        annotations:
+          summary: "协议消息队列积压严重过多"
+          description: "消息队列积压超过10000条，当前值: {{ $value }}条"
+          runbook_url: "https://wiki.company.com/runbook/protocol-queue-backlog-critical"
+
+      # 服务熔断告警
+      - alert: ProtocolCircuitBreakerOpen
+        expr: |
+          resilience4j_circuitbreaker_state{name=~"access-service|attendance-service|consume-service|common-service"} == 1
+        for: 1m
+        labels:
+          severity: critical
+          service: device-comm-service
+          alert_type: circuit_breaker
+        annotations:
+          summary: "协议服务熔断器已打开"
+          description: "服务 {{ $labels.name }} 的熔断器已打开，服务不可用"
+          runbook_url: "https://wiki.company.com/runbook/protocol-circuit-breaker"
+
+      # 限流触发告警
+      - alert: ProtocolRateLimitTriggered
+        expr: |
+          rate(protocol_message_error_total{error_type="RATE_LIMIT"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: device-comm-service
+          alert_type: rate_limit
+        annotations:
+          summary: "协议接口限流频繁触发"
+          description: "协议接口限流触发频率过高，5分钟内超过10次"
+          runbook_url: "https://wiki.company.com/runbook/protocol-rate-limit"
+
+      # 缓存命中率告警
+      - alert: ProtocolCacheHitRateLow
+        expr: |
+          (cache_hits_total / cache_requests_total) < 0.7
+        for: 10m
+        labels:
+          severity: warning
+          service: device-comm-service
+          alert_type: cache_performance
+        annotations:
+          summary: "协议缓存命中率过低"
+          description: "协议缓存命中率低于70%，当前值: {{ $value | humanizePercentage }}"
+          runbook_url: "https://wiki.company.com/runbook/protocol-cache-hit-rate"
+

@@ -33,6 +33,7 @@ import LocalStorageKeyConst from '/@/constants/local-storage-key-const.js';
 import '/@/utils/ployfill';
 import { useDictStore } from '/@/store/modules/system/dict.js';
 import { dictApi } from '/@/api/support/dict-api.js';
+import { initWorkflowWebSocketConnection } from '/@/utils/workflow-websocket-init';
 
 /*
  * -------------------- ※ 着重 解释说明下main.js的初始化逻辑 begin ※ --------------------
@@ -62,7 +63,27 @@ async function getLoginInfo() {
     // 初始化数据字典
     useDictStore().initData(dictRes.data);
     //更新用户信息到pinia
-    useUserStore().setUserLoginInfo(res.data);
+    const userStore = useUserStore();
+    userStore.setUserLoginInfo(res.data);
+    
+    // ==================== 初始化工作流WebSocket连接 ====================
+    // 在用户登录成功后初始化WebSocket连接，用于接收实时任务通知
+    try {
+      const wsUrl = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws/workflow';
+      const token = userStore.getToken();
+      
+      if (token && wsUrl) {
+        // 使用STOMP协议初始化WebSocket连接（自动降级到原生WebSocket）
+        // 注意：确保后端WebSocket服务已启动且地址正确
+        initWorkflowWebSocketConnection(wsUrl, token, true);
+        console.log('工作流WebSocket初始化完成');
+      }
+    } catch (wsError) {
+      // WebSocket初始化失败不影响主流程，只记录错误
+      console.warn('工作流WebSocket初始化失败，将使用轮询方式获取任务更新:', wsError);
+      smartSentry.captureError(wsError);
+    }
+    // ==================== WebSocket初始化结束 ====================
   } catch (e) {
     message.error(e.data ? e.data.msg : e.message);
     smartSentry.captureError(e);
@@ -98,9 +119,11 @@ async function initVue() {
   app.mount('#app');
 }
 //不需要获取用户信息、用户菜单、用户菜单动态路由，直接初始化vue即可
-let token = localRead(LocalStorageKeyConst.USER_TOKEN);
-if (!token) {
-  await initVue();
-} else {
-  await getLoginInfo();
-}
+(async () => {
+  let token = localRead(LocalStorageKeyConst.USER_TOKEN);
+  if (!token) {
+    await initVue();
+  } else {
+    await getLoginInfo();
+  }
+})();

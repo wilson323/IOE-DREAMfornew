@@ -1,0 +1,357 @@
+# IOE-DREAM 项目 Cursor Rules
+# 版本: v1.0.0
+# 更新日期: 2025-12-02
+# 适用范围: IOE-DREAM智能管理系统全部代码
+
+## 🎯 核心架构原则
+
+### 1. 七微服务架构 (强制)
+```
+保留的7个核心微服务:
+- ioedream-gateway-service (8080) - API网关
+- ioedream-common-service (8088) - 公共业务服务
+- ioedream-device-comm-service (8087) - 设备通讯服务
+- ioedream-access-service (8090) - 门禁服务
+- ioedream-attendance-service (8091) - 考勤服务
+- ioedream-consume-service (8094) - 消费服务
+- ioedream-visitor-service (8095) - 访客服务
+- ioedream-video-service (8092) - 视频服务
+
+公共JAR库:
+- microservices-common - 被所有微服务依赖
+```
+
+### 2. 四层架构 (强制)
+```
+Controller → Service → Manager → DAO
+
+- Controller: 接收请求、参数验证、返回响应
+- Service: 核心业务逻辑、事务管理
+- Manager: 复杂流程编排、缓存管理、第三方集成
+- DAO: 数据库访问、继承BaseMapper
+```
+
+### 3. 禁止事项
+```
+❌ 禁止跨层访问 (Controller直接调用DAO)
+❌ 禁止使用 @Autowired (统一使用 @Resource)
+❌ 禁止使用 @Repository (统一使用 @Mapper)
+❌ 禁止使用 Repository 后缀 (统一使用 Dao)
+❌ 禁止使用 javax.* 包 (统一使用 jakarta.*)
+❌ 禁止使用 HikariCP (统一使用 Druid)
+❌ 禁止使用 FeignClient 直连 (统一通过 GatewayServiceClient)
+❌ 禁止直接访问其他服务数据库
+❌ 禁止在Controller中处理事务
+❌ 禁止在DAO中包含业务逻辑
+```
+
+## 📝 代码规范
+
+### Java编码规范
+
+#### 类命名
+```java
+// Entity: XxxEntity
+public class UserEntity extends BaseEntity { }
+
+// DAO: XxxDao + @Mapper
+@Mapper
+public interface UserDao extends BaseMapper<UserEntity> { }
+
+// Service接口: XxxService
+public interface UserService { }
+
+// Service实现: XxxServiceImpl
+@Service
+public class UserServiceImpl implements UserService { }
+
+// Manager: XxxManager (在microservices-common中不使用Spring注解)
+// 注意：Manager类在microservices-common中是纯Java类，不使用@Component
+// Manager实例在微服务中通过Service层手动创建或通过配置类注册为Spring Bean
+public class UserManager {
+    // 通过构造函数注入依赖
+    private final UserDao userDao;
+    
+    public UserManager(UserDao userDao) {
+        this.userDao = userDao;
+    }
+}
+
+// Controller: XxxController
+@RestController
+public class UserController { }
+
+// Form: XxxAddForm, XxxUpdateForm, XxxQueryForm
+public class UserAddForm { }
+
+// VO: XxxVO, XxxDetailVO
+public class UserVO { }
+```
+
+#### 依赖注入
+```java
+// ✅ 正确
+@Resource
+private UserDao userDao;
+
+// ❌ 错误
+@Autowired
+private UserDao userDao;
+```
+
+#### 事务管理
+```java
+// Service层写操作
+@Service
+@Transactional(rollbackFor = Exception.class)
+public class UserServiceImpl implements UserService { }
+
+// DAO层查询
+@Transactional(readOnly = true)
+List<UserEntity> selectByCondition(Wrapper<UserEntity> wrapper);
+```
+
+#### 包引用
+```java
+// ✅ 正确 - Jakarta EE 3.0+
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+
+// ❌ 错误 - 旧版javax
+import javax.annotation.Resource;
+import javax.validation.Valid;
+```
+
+### API设计规范
+
+#### RESTful设计
+```java
+// ✅ 正确
+@GetMapping("/api/v1/users/{id}")      // 查询
+@PostMapping("/api/v1/users")          // 创建
+@PutMapping("/api/v1/users/{id}")      // 更新
+@DeleteMapping("/api/v1/users/{id}")   // 删除
+
+// ❌ 错误
+@PostMapping("/getUserInfo")           // 查询不应用POST
+@PostMapping("/updateUser")            // 缺少路径参数
+```
+
+#### 响应格式
+```java
+// 统一使用 ResponseDTO
+@GetMapping("/{id}")
+public ResponseDTO<UserVO> getById(@PathVariable Long id) {
+    return ResponseDTO.ok(userService.getById(id));
+}
+
+// 分页使用 PageResult
+@GetMapping("/page")
+public ResponseDTO<PageResult<UserVO>> page(@Valid UserQueryForm form) {
+    return ResponseDTO.ok(userService.queryPage(form));
+}
+```
+
+### 数据库规范
+
+#### 表命名
+```sql
+-- 公共表: t_common_
+t_common_user, t_common_department
+
+-- 业务表: t_{module}_
+t_access_record, t_attendance_record, t_consume_record
+```
+
+#### 必需字段
+```sql
+id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+create_time     DATETIME NOT NULL,
+update_time     DATETIME NOT NULL,
+deleted_flag    TINYINT DEFAULT 0,
+version         INT DEFAULT 0
+```
+
+#### 索引命名
+```sql
+-- 主键: pk_{表名}
+-- 唯一索引: uk_{表名}_{字段}
+-- 普通索引: idx_{表名}_{字段}
+```
+
+### MyBatis-Plus规范
+
+#### LambdaQueryWrapper使用
+```java
+// ✅ 正确 - 使用Lambda表达式
+LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>();
+wrapper.eq(UserEntity::getStatus, 1)
+       .orderByDesc(UserEntity::getCreateTime);
+
+// ❌ 错误 - 使用字符串
+QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
+wrapper.eq("status", 1)
+       .orderByDesc("create_time");
+```
+
+#### 分页查询
+```java
+// ✅ 正确 - 使用PageHelper或MyBatis-Plus分页
+Page<UserEntity> page = new Page<>(pageNum, pageSize);
+IPage<UserEntity> result = userDao.selectPage(page, wrapper);
+
+// ❌ 错误 - 深度分页
+SELECT * FROM user LIMIT 100000, 20;
+```
+
+## 🔒 安全规范
+
+### 参数验证
+```java
+// Controller层使用@Valid
+@PostMapping
+public ResponseDTO<Long> add(@Valid @RequestBody UserAddForm form) { }
+
+// Form类使用验证注解
+public class UserAddForm {
+    @NotBlank(message = "用户名不能为空")
+    @Size(max = 50, message = "用户名最长50字符")
+    private String username;
+}
+```
+
+### 数据脱敏
+```java
+// 敏感字段脱敏输出
+@JsonSerialize(using = PhoneMaskSerializer.class)
+private String phone;
+
+@JsonSerialize(using = IdCardMaskSerializer.class)
+private String idCard;
+```
+
+### SQL注入防护
+```java
+// ✅ 正确 - 参数化查询
+@Select("SELECT * FROM user WHERE username = #{username}")
+UserEntity selectByUsername(@Param("username") String username);
+
+// ❌ 错误 - 字符串拼接
+@Select("SELECT * FROM user WHERE username = '" + username + "'")
+```
+
+## 📊 日志规范
+
+### 日志格式
+```java
+@Slf4j
+public class UserServiceImpl {
+
+    public void createUser(UserAddForm form) {
+        // ✅ 正确 - 使用占位符
+        log.info("[用户创建] 开始创建用户, username={}", form.getUsername());
+
+        // ❌ 错误 - 字符串拼接
+        log.info("创建用户: " + form.getUsername());
+    }
+}
+```
+
+### 日志级别
+```
+ERROR: 系统错误、异常捕获
+WARN:  警告信息、潜在问题
+INFO:  业务关键节点
+DEBUG: 调试信息
+```
+
+## ✅ 代码质量标准
+
+### 质量指标
+```
+- 代码覆盖率 ≥ 80%
+- 重复代码率 ≤ 3%
+- 圈复杂度 ≤ 10
+- 方法行数 ≤ 50
+- 类行数 ≤ 500
+```
+
+### 提交前检查
+```
+[ ] 遵循四层架构
+[ ] 使用@Resource注入
+[ ] 使用@Mapper + Dao命名
+[ ] 使用jakarta.*包
+[ ] 无硬编码配置
+[ ] 有完整日志记录
+[ ] 有参数验证
+[ ] 无SQL注入风险
+[ ] 编译0错误0警告
+```
+
+## 🚀 微服务调用规范
+
+### 通过网关调用
+```java
+// ✅ 正确 - 使用GatewayServiceClient
+@Resource
+private GatewayServiceClient gatewayServiceClient;
+
+public UserVO getUser(Long userId) {
+    return gatewayServiceClient.callCommonService(
+        "/api/v1/users/" + userId,
+        HttpMethod.GET,
+        null,
+        UserVO.class
+    );
+}
+
+// ❌ 错误 - 直接使用FeignClient
+@FeignClient(name = "ioedream-common-service")
+public interface UserClient { }
+```
+
+## 📁 文件组织规范
+
+### microservices-common (公共JAR)
+```
+允许: Entity, DAO, Manager, Form, VO, Config, Constant, Enum, Exception, Util
+禁止: @Service实现, @RestController, spring-boot-starter-web
+```
+
+### ioedream-common-service (微服务)
+```
+允许: Controller, Service接口, ServiceImpl, 服务配置
+依赖: microservices-common
+```
+
+### 业务微服务
+```
+允许: 业务特定的Controller, Service, Manager, Entity
+依赖: microservices-common
+调用: 通过GatewayServiceClient调用其他服务
+```
+
+## 🔧 IDE配置建议
+
+### 代码格式化
+```
+- 使用UTF-8编码 (无BOM)
+- 缩进: 4空格
+- 行宽: 120字符
+- 导入排序: java, jakarta, org, com, net
+```
+
+### 自动检查
+```
+- 保存时自动格式化
+- 提交前运行lint检查
+- 编译时检查未使用的导入
+```
+
+## 📚 参考文档
+
+- CLAUDE.md - 项目核心架构规范
+- documentation/architecture/OPTIMAL_ARCHITECTURE_DESIGN.md - 最优架构设计
+- documentation/architecture/ARCHITECTURE_REFACTORING_PLAN.md - 重构计划
+

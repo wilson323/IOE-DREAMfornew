@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.common.workflow.dao.ApprovalNodeConfigDao">
+
+    <!-- 根据审批配置ID查询所有节点配置 -->
+    <select id="selectByApprovalConfigId" resultType="net.lab1024.sa.common.workflow.entity.ApprovalNodeConfigEntity">
+        SELECT *
+        FROM t_common_approval_node_config
+        WHERE approval_config_id = #{approvalConfigId}
+          AND deleted_flag = 0
+        ORDER BY node_order ASC, sort_order ASC
+    </select>
+
+    <!-- 根据审批配置ID和节点顺序查询节点配置 -->
+    <select id="selectByApprovalConfigIdAndOrder" resultType="net.lab1024.sa.common.workflow.entity.ApprovalNodeConfigEntity">
+        SELECT *
+        FROM t_common_approval_node_config
+        WHERE approval_config_id = #{approvalConfigId}
+          AND node_order = #{nodeOrder}
+          AND deleted_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 删除审批配置的所有节点配置 -->
+    <update id="deleteByApprovalConfigId">
+        UPDATE t_common_approval_node_config
+        SET deleted_flag = 1,
+            update_time = NOW()
+        WHERE approval_config_id = #{approvalConfigId}
+          AND deleted_flag = 0
+    </update>
+
+</mapper>

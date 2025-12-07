@@ -1,0 +1,1037 @@
+package net.lab1024.sa.consume.service.impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.consume.dao.AccountDao;
+import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.consume.domain.form.AccountAddForm;
+import net.lab1024.sa.consume.domain.form.AccountUpdateForm;
+import net.lab1024.sa.consume.manager.AccountManager;
+import net.lab1024.sa.consume.service.AccountService;
+
+/**
+ * 账户服务实现类
+ * <p>
+ * 提供账户管理相关业务功能
+ * 严格遵循CLAUDE.md规范：
+ * - Service实现类使用@Service注解
+ * - 使用@Resource注入依赖
+ * - 使用@Transactional管理事务
+ * - 遵循四层架构：Controller → Service → Manager → DAO
+ * </p>
+ * <p>
+ * 业务场景：
+ * - 账户创建、查询、更新、删除
+ * - 账户余额管理（增加、扣减、冻结、解冻）
+ * - 账户状态管理（启用、禁用、冻结、解冻、关闭）
+ * - 账户查询和统计
+ * </p>
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-01-30
+ */
+@Slf4j
+@Service
+public class AccountServiceImpl implements AccountService {
+
+    @Resource
+    private AccountDao accountDao;
+
+    @Resource
+    private AccountManager accountManager;
+
+    // 账户状态常量
+    private static final Integer STATUS_NORMAL = 1;  // 正常
+    private static final Integer STATUS_FROZEN = 2;   // 冻结
+    private static final Integer STATUS_CLOSED = 3;  // 注销
+
+    /**
+     * 创建账户
+     *
+     * @param form 账户创建表单
+     * @return 账户ID
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long createAccount(AccountAddForm form) {
+        log.info("[账户服务] 创建账户，userId={}, accountKindId={}", 
+                form.getUserId(), form.getAccountKindId());
+
+        try {
+            // 1. 参数验证
+            validateAccountAddForm(form);
+
+            // 2. 检查账户是否已存在
+            AccountEntity existing = accountDao.selectByUserId(form.getUserId());
+            if (existing != null) {
+                log.warn("[账户服务] 账户已存在，userId={}, accountId={}", 
+                        form.getUserId(), existing.getId());
+                throw new BusinessException("该用户账户已存在");
+            }
+
+            // 3. 构建账户实体
+            AccountEntity account = new AccountEntity();
+            account.setUserId(form.getUserId());
+            account.setAccountKindId(form.getAccountKindId());
+            
+            // 设置初始余额（转换为分）
+            BigDecimal initialBalance = form.getInitialBalance() != null 
+                    ? form.getInitialBalance() : BigDecimal.ZERO;
+            account.setBalance(initialBalance.multiply(BigDecimal.valueOf(100)).longValue());
+            account.setAllowanceBalance(0L);
+            account.setFrozenBalance(0L);
+            account.setStatus(STATUS_NORMAL);
+            account.setVersion(0);
+
+            // 4. 保存账户
+            accountDao.insert(account);
+
+            log.info("[账户服务] 账户创建成功，accountId={}, userId={}", 
+                    account.getId(), form.getUserId());
+
+            return account.getId();
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 创建账户业务异常，userId={}, error={}", 
+                    form.getUserId(), e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 创建账户系统异常，userId={}", form.getUserId(), e);
+            throw new BusinessException("账户创建失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 更新账户信息
+     *
+     * @param form 账户更新表单
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateAccount(AccountUpdateForm form) {
+        log.info("[账户服务] 更新账户，accountId={}", form.getAccountId());
+
+        try {
+            // 1. 参数验证
+            validateAccountUpdateForm(form);
+
+            // 2. 查询账户
+            AccountEntity account = accountDao.selectById(form.getAccountId());
+            if (account == null) {
+                log.warn("[账户服务] 账户不存在，accountId={}", form.getAccountId());
+                throw new BusinessException("账户不存在");
+            }
+
+            // 3. 更新账户信息
+            if (form.getAccountKindId() != null) {
+                account.setAccountKindId(form.getAccountKindId());
+            }
+            if (form.getStatus() != null) {
+                account.setStatus(form.getStatus());
+            }
+
+            // 4. 保存更新
+            int result = accountDao.updateById(account);
+
+            log.info("[账户服务] 账户更新成功，accountId={}, result={}", 
+                    form.getAccountId(), result > 0);
+
+            return result > 0;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 更新账户业务异常，accountId={}, error={}", 
+                    form.getAccountId(), e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 更新账户系统异常，accountId={}", form.getAccountId(), e);
+            throw new BusinessException("账户更新失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 删除账户（软删除）
+     *
+     * @param accountId 账户ID
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteAccount(Long accountId) {
+        log.info("[账户服务] 删除账户，accountId={}", accountId);
+
+        try {
+            // 1. 参数验证
+            if (accountId == null) {
+                throw new BusinessException("账户ID不能为空");
+            }
+
+            // 2. 查询账户
+            AccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                log.warn("[账户服务] 账户不存在，accountId={}", accountId);
+                throw new BusinessException("账户不存在");
+            }
+
+            // 3. 软删除：更新状态为注销
+            account.setStatus(STATUS_CLOSED);
+            int result = accountDao.updateById(account);
+
+            log.info("[账户服务] 账户删除成功，accountId={}, result={}", accountId, result > 0);
+
+            return result > 0;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 删除账户业务异常，accountId={}, error={}", accountId, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 删除账户系统异常，accountId={}", accountId, e);
+            throw new BusinessException("账户删除失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据账户ID查询账户
+     *
+     * @param accountId 账户ID
+     * @return 账户信息
+     */
+    @Override
+    public AccountEntity getById(Long accountId) {
+        log.debug("[账户服务] 根据账户ID查询账户，accountId={}", accountId);
+
+        try {
+            if (accountId == null) {
+                throw new BusinessException("账户ID不能为空");
+            }
+
+            // 使用AccountManager查询（带缓存）
+            AccountEntity account = accountManager.getAccountById(accountId);
+            if (account == null) {
+                log.warn("[账户服务] 账户不存在，accountId={}", accountId);
+                throw new BusinessException("账户不存在");
+            }
+
+            return account;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 查询账户业务异常，accountId={}, error={}", accountId, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 查询账户系统异常，accountId={}", accountId, e);
+            throw new BusinessException("查询账户失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据用户ID查询账户
+     *
+     * @param userId 用户ID
+     * @return 账户信息
+     */
+    @Override
+    public AccountEntity getByUserId(Long userId) {
+        log.debug("[账户服务] 根据用户ID查询账户，userId={}", userId);
+
+        try {
+            if (userId == null) {
+                throw new BusinessException("用户ID不能为空");
+            }
+
+            // 使用AccountManager查询（带缓存）
+            AccountEntity account = accountManager.getAccountByUserId(userId);
+            if (account == null) {
+                log.warn("[账户服务] 账户不存在，userId={}", userId);
+                throw new BusinessException("账户不存在");
+            }
+
+            return account;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 查询账户业务异常，userId={}, error={}", userId, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 查询账户系统异常，userId={}", userId, e);
+            throw new BusinessException("查询账户失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 分页查询账户列表
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @param keyword 关键词（账户ID、用户ID、用户姓名）
+     * @param accountKindId 账户类别ID（可选）
+     * @param status 账户状态（可选）
+     * @return 账户列表
+     */
+    @Override
+    public PageResult<AccountEntity> pageAccounts(Integer pageNum, Integer pageSize, 
+            String keyword, Long accountKindId, Integer status) {
+        log.debug("[账户服务] 分页查询账户列表，pageNum={}, pageSize={}, keyword={}, accountKindId={}, status={}", 
+                pageNum, pageSize, keyword, accountKindId, status);
+
+        try {
+            // 1. 参数验证和默认值
+            if (pageNum == null || pageNum < 1) {
+                pageNum = 1;
+            }
+            if (pageSize == null || pageSize < 1) {
+                pageSize = 20;
+            }
+
+            // 2. 构建查询条件
+            LambdaQueryWrapper<AccountEntity> queryWrapper = new LambdaQueryWrapper<>();
+            
+            // 关键词搜索（账户ID或用户ID）
+            if (StringUtils.hasText(keyword)) {
+                try {
+                    Long accountId = Long.parseLong(keyword);
+                    queryWrapper.eq(AccountEntity::getId, accountId)
+                            .or()
+                            .eq(AccountEntity::getUserId, accountId);
+                } catch (NumberFormatException e) {
+                    // 如果不是数字，只按用户ID搜索
+                    queryWrapper.eq(AccountEntity::getUserId, keyword);
+                }
+            }
+
+            // 账户类别筛选
+            if (accountKindId != null) {
+                queryWrapper.eq(AccountEntity::getAccountKindId, accountKindId);
+            }
+
+            // 状态筛选
+            if (status != null) {
+                queryWrapper.eq(AccountEntity::getStatus, status);
+            }
+
+            // 排序：按创建时间倒序
+            queryWrapper.orderByDesc(AccountEntity::getCreateTime);
+
+            // 3. 分页查询
+            Page<AccountEntity> page = new Page<>(pageNum, pageSize);
+            IPage<AccountEntity> pageResult = accountDao.selectPage(page, queryWrapper);
+
+            // 4. 构建返回结果
+            PageResult<AccountEntity> result = new PageResult<>();
+            result.setList(pageResult.getRecords());
+            result.setTotal(pageResult.getTotal());
+            result.setPageNum(pageNum);
+            result.setPageSize(pageSize);
+            result.setPages((int) pageResult.getPages());
+
+            log.debug("[账户服务] 分页查询账户列表成功，total={}, pageNum={}, pageSize={}", 
+                    pageResult.getTotal(), pageNum, pageSize);
+
+            return result;
+
+        } catch (Exception e) {
+            log.error("[账户服务] 分页查询账户列表失败", e);
+            throw new BusinessException("查询账户列表失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 查询账户列表（不分页）
+     *
+     * @param accountKindId 账户类别ID（可选）
+     * @param status 账户状态（可选）
+     * @return 账户列表
+     */
+    @Override
+    public List<AccountEntity> listAccounts(Long accountKindId, Integer status) {
+        log.debug("[账户服务] 查询账户列表，accountKindId={}, status={}", accountKindId, status);
+
+        try {
+            // 构建查询条件
+            LambdaQueryWrapper<AccountEntity> queryWrapper = new LambdaQueryWrapper<>();
+
+            if (accountKindId != null) {
+                queryWrapper.eq(AccountEntity::getAccountKindId, accountKindId);
+            }
+
+            if (status != null) {
+                queryWrapper.eq(AccountEntity::getStatus, status);
+            }
+
+            // 排序：按创建时间倒序
+            queryWrapper.orderByDesc(AccountEntity::getCreateTime);
+
+            return accountDao.selectList(queryWrapper);
+
+        } catch (Exception e) {
+            log.error("[账户服务] 查询账户列表失败", e);
+            throw new BusinessException("查询账户列表失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取账户详情（包含统计信息）
+     *
+     * @param accountId 账户ID
+     * @return 账户详情
+     */
+    @Override
+    public AccountEntity getAccountDetail(Long accountId) {
+        log.debug("[账户服务] 获取账户详情，accountId={}", accountId);
+
+        try {
+            // 目前直接返回账户信息
+            // 如果需要统计信息，可以在这里添加查询逻辑
+            return getById(accountId);
+
+        } catch (Exception e) {
+            log.error("[账户服务] 获取账户详情失败，accountId={}", accountId, e);
+            throw new BusinessException("获取账户详情失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 增加账户余额
+     *
+     * @param accountId 账户ID
+     * @param amount 增加金额（单位：元）
+     * @param reason 增加原因
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean addBalance(Long accountId, BigDecimal amount, String reason) {
+        log.info("[账户服务] 增加账户余额，accountId={}, amount={}, reason={}", 
+                accountId, amount, reason);
+
+        try {
+            // 1. 参数验证
+            if (accountId == null) {
+                throw new BusinessException("账户ID不能为空");
+            }
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessException("增加金额必须大于0");
+            }
+
+            // 2. 使用AccountManager增加余额
+            boolean success = accountManager.addBalance(accountId, amount);
+            if (!success) {
+                log.warn("[账户服务] 增加账户余额失败，accountId={}, amount={}", accountId, amount);
+                throw new BusinessException("增加账户余额失败");
+            }
+
+            log.info("[账户服务] 增加账户余额成功，accountId={}, amount={}", accountId, amount);
+            return true;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 增加账户余额业务异常，accountId={}, amount={}, error={}", 
+                    accountId, amount, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 增加账户余额系统异常，accountId={}, amount={}", accountId, amount, e);
+            throw new BusinessException("增加账户余额失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 扣减账户余额
+     *
+     * @param accountId 账户ID
+     * @param amount 扣减金额（单位：元）
+     * @param reason 扣减原因
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deductBalance(Long accountId, BigDecimal amount, String reason) {
+        log.info("[账户服务] 扣减账户余额，accountId={}, amount={}, reason={}", 
+                accountId, amount, reason);
+
+        try {
+            // 1. 参数验证
+            if (accountId == null) {
+                throw new BusinessException("账户ID不能为空");
+            }
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessException("扣减金额必须大于0");
+            }
+
+            // 2. 验证余额是否充足
+            boolean sufficient = accountManager.checkBalanceSufficient(accountId, amount);
+            if (!sufficient) {
+                log.warn("[账户服务] 账户余额不足，accountId={}, amount={}", accountId, amount);
+                throw new BusinessException("账户余额不足");
+            }
+
+            // 3. 使用AccountManager扣减余额
+            boolean success = accountManager.deductBalance(accountId, amount);
+            if (!success) {
+                log.warn("[账户服务] 扣减账户余额失败，accountId={}, amount={}", accountId, amount);
+                throw new BusinessException("扣减账户余额失败");
+            }
+
+            log.info("[账户服务] 扣减账户余额成功，accountId={}, amount={}", accountId, amount);
+            return true;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 扣减账户余额业务异常，accountId={}, amount={}, error={}", 
+                    accountId, amount, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 扣减账户余额系统异常，accountId={}, amount={}", accountId, amount, e);
+            throw new BusinessException("扣减账户余额失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 冻结账户金额
+     *
+     * @param accountId 账户ID
+     * @param amount 冻结金额（单位：元）
+     * @param reason 冻结原因
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean freezeAmount(Long accountId, BigDecimal amount, String reason) {
+        log.info("[账户服务] 冻结账户金额，accountId={}, amount={}, reason={}", 
+                accountId, amount, reason);
+
+        try {
+            // 1. 参数验证
+            if (accountId == null) {
+                throw new BusinessException("账户ID不能为空");
+            }
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessException("冻结金额必须大于0");
+            }
+
+            // 2. 查询账户（加锁）
+            AccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw new BusinessException("账户不存在");
+            }
+
+            // 3. 验证余额是否充足
+            BigDecimal availableBalance = account.getBalanceAmount()
+                    .subtract(account.getFrozenBalanceAmount());
+            if (availableBalance.compareTo(amount) < 0) {
+                log.warn("[账户服务] 可用余额不足，accountId={}, availableBalance={}, amount={}", 
+                        accountId, availableBalance, amount);
+                throw new BusinessException("可用余额不足");
+            }
+
+            // 4. 增加冻结余额
+            Long amountInCents = amount.multiply(BigDecimal.valueOf(100)).longValue();
+            Long newFrozenBalance = account.getFrozenBalance() + amountInCents;
+            account.setFrozenBalance(newFrozenBalance);
+            account.setVersion(account.getVersion() + 1);
+
+            // 5. 保存更新
+            int result = accountDao.updateById(account);
+
+            log.info("[账户服务] 冻结账户金额成功，accountId={}, amount={}, newFrozenBalance={}", 
+                    accountId, amountInCents, newFrozenBalance);
+
+            return result > 0;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 冻结账户金额业务异常，accountId={}, amount={}, error={}", 
+                    accountId, amount, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 冻结账户金额系统异常，accountId={}, amount={}", accountId, amount, e);
+            throw new BusinessException("冻结账户金额失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 解冻账户金额
+     *
+     * @param accountId 账户ID
+     * @param amount 解冻金额（单位：元）
+     * @param reason 解冻原因
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean unfreezeAmount(Long accountId, BigDecimal amount, String reason) {
+        log.info("[账户服务] 解冻账户金额，accountId={}, amount={}, reason={}", 
+                accountId, amount, reason);
+
+        try {
+            // 1. 参数验证
+            if (accountId == null) {
+                throw new BusinessException("账户ID不能为空");
+            }
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessException("解冻金额必须大于0");
+            }
+
+            // 2. 查询账户（加锁）
+            AccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw new BusinessException("账户不存在");
+            }
+
+            // 3. 验证冻结余额是否充足
+            Long amountInCents = amount.multiply(BigDecimal.valueOf(100)).longValue();
+            if (account.getFrozenBalance() < amountInCents) {
+                log.warn("[账户服务] 冻结余额不足，accountId={}, frozenBalance={}, amount={}", 
+                        accountId, account.getFrozenBalance(), amountInCents);
+                throw new BusinessException("冻结余额不足");
+            }
+
+            // 4. 减少冻结余额
+            Long newFrozenBalance = account.getFrozenBalance() - amountInCents;
+            account.setFrozenBalance(newFrozenBalance);
+            account.setVersion(account.getVersion() + 1);
+
+            // 5. 保存更新
+            int result = accountDao.updateById(account);
+
+            log.info("[账户服务] 解冻账户金额成功，accountId={}, amount={}, newFrozenBalance={}", 
+                    accountId, amountInCents, newFrozenBalance);
+
+            return result > 0;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 解冻账户金额业务异常，accountId={}, amount={}, error={}", 
+                    accountId, amount, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 解冻账户金额系统异常，accountId={}, amount={}", accountId, amount, e);
+            throw new BusinessException("解冻账户金额失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 验证账户余额是否充足
+     *
+     * @param accountId 账户ID
+     * @param amount 需要金额（单位：元）
+     * @return 是否充足
+     */
+    @Override
+    public boolean validateBalance(Long accountId, BigDecimal amount) {
+        log.debug("[账户服务] 验证账户余额，accountId={}, amount={}", accountId, amount);
+
+        try {
+            if (accountId == null) {
+                throw new BusinessException("账户ID不能为空");
+            }
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessException("验证金额必须大于0");
+            }
+
+            // 使用AccountManager验证余额
+            return accountManager.checkBalanceSufficient(accountId, amount);
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 验证账户余额业务异常，accountId={}, amount={}, error={}", 
+                    accountId, amount, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 验证账户余额系统异常，accountId={}, amount={}", accountId, amount, e);
+            throw new BusinessException("验证账户余额失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 启用账户
+     *
+     * @param accountId 账户ID
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean enableAccount(Long accountId) {
+        log.info("[账户服务] 启用账户，accountId={}", accountId);
+
+        try {
+            return updateAccountStatus(accountId, STATUS_NORMAL, "账户启用");
+
+        } catch (Exception e) {
+            log.error("[账户服务] 启用账户失败，accountId={}", accountId, e);
+            throw new BusinessException("启用账户失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 禁用账户
+     *
+     * @param accountId 账户ID
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean disableAccount(Long accountId) {
+        log.info("[账户服务] 禁用账户，accountId={}", accountId);
+
+        try {
+            return updateAccountStatus(accountId, STATUS_FROZEN, "账户禁用");
+
+        } catch (Exception e) {
+            log.error("[账户服务] 禁用账户失败，accountId={}", accountId, e);
+            throw new BusinessException("禁用账户失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 冻结账户
+     *
+     * @param accountId 账户ID
+     * @param reason 冻结原因
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean freezeAccount(Long accountId, String reason) {
+        log.info("[账户服务] 冻结账户，accountId={}, reason={}", accountId, reason);
+
+        try {
+            return updateAccountStatus(accountId, STATUS_FROZEN, reason != null ? reason : "账户冻结");
+
+        } catch (Exception e) {
+            log.error("[账户服务] 冻结账户失败，accountId={}", accountId, e);
+            throw new BusinessException("冻结账户失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 解冻账户
+     *
+     * @param accountId 账户ID
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean unfreezeAccount(Long accountId) {
+        log.info("[账户服务] 解冻账户，accountId={}", accountId);
+
+        try {
+            return updateAccountStatus(accountId, STATUS_NORMAL, "账户解冻");
+
+        } catch (Exception e) {
+            log.error("[账户服务] 解冻账户失败，accountId={}", accountId, e);
+            throw new BusinessException("解冻账户失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 关闭账户
+     *
+     * @param accountId 账户ID
+     * @param reason 关闭原因
+     * @return 是否成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean closeAccount(Long accountId, String reason) {
+        log.info("[账户服务] 关闭账户，accountId={}, reason={}", accountId, reason);
+
+        try {
+            return updateAccountStatus(accountId, STATUS_CLOSED, reason != null ? reason : "账户关闭");
+
+        } catch (Exception e) {
+            log.error("[账户服务] 关闭账户失败，accountId={}", accountId, e);
+            throw new BusinessException("关闭账户失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 批量更新账户状态
+     *
+     * @param accountIds 账户ID列表
+     * @param status 目标状态
+     * @return 成功更新的数量
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchUpdateStatus(List<Long> accountIds, Integer status) {
+        log.info("[账户服务] 批量更新账户状态，accountIds={}, status={}", accountIds, status);
+
+        try {
+            // 1. 参数验证
+            if (accountIds == null || accountIds.isEmpty()) {
+                throw new BusinessException("账户ID列表不能为空");
+            }
+            if (status == null) {
+                throw new BusinessException("账户状态不能为空");
+            }
+
+            // 2. 批量更新
+            int successCount = 0;
+            for (Long accountId : accountIds) {
+                try {
+                    boolean success = updateAccountStatus(accountId, status, "批量更新状态");
+                    if (success) {
+                        successCount++;
+                    }
+                } catch (Exception e) {
+                    log.warn("[账户服务] 批量更新账户状态失败，accountId={}, error={}", 
+                            accountId, e.getMessage());
+                }
+            }
+
+            log.info("[账户服务] 批量更新账户状态完成，total={}, success={}", 
+                    accountIds.size(), successCount);
+
+            return successCount;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 批量更新账户状态业务异常，error={}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 批量更新账户状态系统异常", e);
+            throw new BusinessException("批量更新账户状态失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 批量创建账户
+     *
+     * @param forms 账户创建表单列表
+     * @return 成功创建的账户ID列表
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Long> batchCreateAccounts(List<AccountAddForm> forms) {
+        log.info("[账户服务] 批量创建账户，count={}", forms != null ? forms.size() : 0);
+
+        try {
+            // 1. 参数验证
+            if (forms == null || forms.isEmpty()) {
+                throw new BusinessException("账户创建表单列表不能为空");
+            }
+
+            // 2. 批量创建
+            List<Long> accountIds = new ArrayList<>();
+            for (AccountAddForm form : forms) {
+                try {
+                    Long accountId = createAccount(form);
+                    accountIds.add(accountId);
+                } catch (Exception e) {
+                    log.warn("[账户服务] 批量创建账户失败，userId={}, error={}", 
+                            form.getUserId(), e.getMessage());
+                    // 继续处理下一个，不中断批量操作
+                }
+            }
+
+            log.info("[账户服务] 批量创建账户完成，total={}, success={}", 
+                    forms.size(), accountIds.size());
+
+            return accountIds;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 批量创建账户业务异常，error={}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 批量创建账户系统异常", e);
+            throw new BusinessException("批量创建账户失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取账户余额
+     *
+     * @param accountId 账户ID
+     * @return 账户余额（单位：元）
+     */
+    @Override
+    public BigDecimal getBalance(Long accountId) {
+        log.debug("[账户服务] 获取账户余额，accountId={}", accountId);
+
+        try {
+            AccountEntity account = getById(accountId);
+            return account.getBalanceAmount();
+
+        } catch (Exception e) {
+            log.error("[账户服务] 获取账户余额失败，accountId={}", accountId, e);
+            throw new BusinessException("获取账户余额失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取账户统计信息
+     *
+     * @param accountKindId 账户类别ID（可选）
+     * @return 统计信息
+     */
+    @Override
+    public Map<String, Object> getAccountStatistics(Long accountKindId) {
+        log.debug("[账户服务] 获取账户统计信息，accountKindId={}", accountKindId);
+
+        try {
+            // 1. 查询账户列表
+            List<AccountEntity> accounts = listAccounts(accountKindId, null);
+
+            // 2. 统计计算
+            long totalCount = accounts.size();
+            long normalCount = accounts.stream()
+                    .filter(a -> STATUS_NORMAL.equals(a.getStatus()))
+                    .count();
+            long frozenCount = accounts.stream()
+                    .filter(a -> STATUS_FROZEN.equals(a.getStatus()))
+                    .count();
+            long closedCount = accounts.stream()
+                    .filter(a -> STATUS_CLOSED.equals(a.getStatus()))
+                    .count();
+
+            BigDecimal totalBalance = accounts.stream()
+                    .map(AccountEntity::getBalanceAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal totalFrozenBalance = accounts.stream()
+                    .map(AccountEntity::getFrozenBalanceAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            // 3. 构建统计结果
+            Map<String, Object> statistics = new HashMap<>();
+            statistics.put("totalCount", totalCount);
+            statistics.put("normalCount", normalCount);
+            statistics.put("frozenCount", frozenCount);
+            statistics.put("closedCount", closedCount);
+            statistics.put("totalBalance", totalBalance);
+            statistics.put("totalFrozenBalance", totalFrozenBalance);
+            statistics.put("availableBalance", totalBalance.subtract(totalFrozenBalance));
+
+            log.debug("[账户服务] 账户统计信息查询成功，totalCount={}, totalBalance={}", 
+                    totalCount, totalBalance);
+
+            return statistics;
+
+        } catch (Exception e) {
+            log.error("[账户服务] 获取账户统计信息失败，accountKindId={}", accountKindId, e);
+            throw new BusinessException("获取账户统计信息失败：" + e.getMessage());
+        }
+    }
+
+    // ==================== 私有辅助方法 ====================
+
+    /**
+     * 验证账户创建表单
+     *
+     * @param form 账户创建表单
+     */
+    private void validateAccountAddForm(AccountAddForm form) {
+        if (form == null) {
+            throw new BusinessException("账户创建表单不能为空");
+        }
+        if (form.getUserId() == null) {
+            throw new BusinessException("用户ID不能为空");
+        }
+        if (form.getAccountKindId() == null) {
+            throw new BusinessException("账户类别ID不能为空");
+        }
+        if (form.getInitialBalance() != null && form.getInitialBalance().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException("初始余额不能为负数");
+        }
+    }
+
+    /**
+     * 验证账户更新表单
+     *
+     * @param form 账户更新表单
+     */
+    private void validateAccountUpdateForm(AccountUpdateForm form) {
+        if (form == null) {
+            throw new BusinessException("账户更新表单不能为空");
+        }
+        if (form.getAccountId() == null) {
+            throw new BusinessException("账户ID不能为空");
+        }
+    }
+
+    /**
+     * 更新账户状态
+     *
+     * @param accountId 账户ID
+     * @param status 目标状态
+     * @param reason 更新原因
+     * @return 是否成功
+     */
+    private boolean updateAccountStatus(Long accountId, Integer status, String reason) {
+        try {
+            // 1. 查询账户
+            AccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw new BusinessException("账户不存在");
+            }
+
+            // 2. 更新状态
+            account.setStatus(status);
+            account.setVersion(account.getVersion() + 1);
+
+            // 3. 保存更新
+            int result = accountDao.updateById(account);
+
+            log.info("[账户服务] 更新账户状态成功，accountId={}, status={}, reason={}", 
+                    accountId, status, reason);
+
+            return result > 0;
+
+        } catch (BusinessException e) {
+            log.error("[账户服务] 更新账户状态业务异常，accountId={}, status={}, error={}", 
+                    accountId, status, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 更新账户状态系统异常，accountId={}, status={}", accountId, status, e);
+            throw new BusinessException("更新账户状态失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 批量查询账户信息
+     * <p>
+     * 使用MyBatis-Plus的selectBatchIds方法，性能优于循环查询
+     * </p>
+     *
+     * @param accountIds 账户ID列表
+     * @return 账户列表
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<AccountEntity> getAccountsByIds(List<Long> accountIds) {
+        log.debug("[账户服务] 批量查询账户信息，accountIds={}", accountIds);
+        
+        try {
+            // 参数验证
+            if (accountIds == null || accountIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            // 使用MyBatis-Plus的selectList方法进行批量查询（selectBatchIds已废弃）
+            // 性能优化：使用IN查询，比循环查询效率高
+            LambdaQueryWrapper<AccountEntity> wrapper = new LambdaQueryWrapper<>();
+            wrapper.in(AccountEntity::getId, accountIds);
+            List<AccountEntity> accounts = accountDao.selectList(wrapper);
+            
+            log.debug("[账户服务] 批量查询账户信息成功，查询数量={}, 返回数量={}", 
+                    accountIds.size(), accounts != null ? accounts.size() : 0);
+            
+            return accounts != null ? accounts : new ArrayList<>();
+            
+        } catch (Exception e) {
+            log.error("[账户服务] 批量查询账户信息失败，accountIds={}", accountIds, e);
+            // 降级：返回空列表
+            return new ArrayList<>();
+        }
+    }
+}
+

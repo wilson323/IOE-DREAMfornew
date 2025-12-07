@@ -22,6 +22,7 @@
     "@wangeditor-next/editor-for-vue": "5.1.14",
     "ant-design-vue": "4.2.5",
     "axios": "1.6.8",
+    "bpmn-js": "^18.9.1",
     "clipboard": "2.0.11",
     "crypto-js": "4.1.1",
     "dayjs": "1.11.13",

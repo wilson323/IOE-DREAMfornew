@@ -1,0 +1,263 @@
+﻿[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] IOE-DREAM Common Service                                           [jar]
+[INFO] IOE-DREAM �豸ͨѶ΢����                                                  [jar]
+[INFO] IOE-DREAM OA΢����                                                    [jar]
+[INFO] ioedream-access-service                                            [jar]
+[INFO] attendance-service                                                 [jar]
+[INFO] ioe-dream-video-service                                            [jar]
+[INFO] ioedream-consume-service                                           [jar]
+[INFO] ioedream-visitor-service                                           [jar]
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-common-service >---------------
+[INFO] Building IOE-DREAM Common Service 1.0.0                            [1/8]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ ioedream-common-service ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-common-service\target
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ ioedream-common-service ---
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-common-service\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-common-service\target\generated-sources\annotations added.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-common-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-common-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 219 source files with javac [forked debug target 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[32,48] ����: ��Ҫ')'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[71,39] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[74,41] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[77,40] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[80,40] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[83,40] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[20,7] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[23,9] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[25,11] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B8)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[27,9] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE591)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[31,37] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[39,17] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[39,36] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE681)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[81,15] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE688)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[199,49] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[199,84] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[201,43] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[201,44] ����: ��Ҫ'('
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[201,88] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[201,94] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[202,8] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[202,29] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[202,45] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[207,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[208,79] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[209,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[212,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[213,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[217,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[219,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[220,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[224,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[225,80] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[226,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[227,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[231,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[232,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[236,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[237,83] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[238,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[239,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[243,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[244,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[248,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[250,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[251,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\scheduler\controller\SchedulerController.java:[106,54] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[23,11] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE7B1)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[27,42] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[46,48] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[49,22] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[76,44] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[89,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[98,24] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[101,52] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE794)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[113,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[121,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[133,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[144,57] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[147,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[150,26] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE6B6)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[155,44] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[167,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[176,29] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[183,44] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[191,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[195,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[200,50] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5A7)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[205,52] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5A7)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[210,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[212,26] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5A7)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[216,28] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[229,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[240,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[242,26] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE69D)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[247,44] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[255,28] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8A1)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[257,31] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8A1)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[262,31] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[270,29] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[283,32] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[300,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[317,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[349,48] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[357,26] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[361,48] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[366,28] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE58A)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[370,29] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[379,28] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[384,30] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE58A)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[388,31] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[409,48] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[428,32] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[436,14] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[439,27] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BD)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[46,41] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[76,37] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[89,41] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[101,45] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[121,37] ����: δ�������ַ�������
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for IOE-DREAM Common Service 1.0.0:
+[INFO] 
+[INFO] IOE-DREAM Common Service ........................... FAILURE [  3.313 s]
+[INFO] IOE-DREAM �豸ͨѶ΢���� .................................. SKIPPED
+[INFO] IOE-DREAM OA΢���� .................................... SKIPPED
+[INFO] ioedream-access-service ............................ SKIPPED
+[INFO] attendance-service ................................. SKIPPED
+[INFO] ioe-dream-video-service ............................ SKIPPED
+[INFO] ioedream-consume-service ........................... SKIPPED
+[INFO] ioedream-visitor-service ........................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.882 s
+[INFO] Finished at: 2025-12-04T10:36:57+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-common-service: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[32,48] ����: ��Ҫ')'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[71,39] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[74,41] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[77,40] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[80,40] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\ServiceHealthDTO.java:[83,40] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[20,7] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[23,9] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[25,11] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B8)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[27,9] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE591)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[31,37] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[39,17] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[39,36] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE681)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\audit\service\AuditService.java:[81,15] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE688)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[199,49] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[199,84] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[201,43] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[201,44] ����: ��Ҫ'('
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[201,88] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[201,94] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[202,8] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[202,29] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[202,45] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[207,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[208,79] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[209,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[212,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[213,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[217,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[219,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[220,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[224,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[225,80] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[226,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[227,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[231,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[232,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[236,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[237,83] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[238,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[239,77] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[243,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[244,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[248,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[250,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricMonitorController.java:[251,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\scheduler\controller\SchedulerController.java:[106,54] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[23,11] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE7B1)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[27,42] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[46,48] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[49,22] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[76,44] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[89,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[98,24] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[101,52] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE794)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[113,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[121,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[133,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[144,57] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[147,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[150,26] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE6B6)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[155,44] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[167,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[176,29] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[183,44] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[191,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[195,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[200,50] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5A7)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[205,52] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5A7)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[210,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[212,26] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5A7)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[216,28] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[229,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE59C)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[240,25] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BA)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[242,26] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE69D)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[247,44] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[255,28] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8A1)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[257,31] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8A1)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[262,31] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[270,29] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[283,32] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[300,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[317,46] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[349,48] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[357,26] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[361,48] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[366,28] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE58A)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[370,29] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[379,28] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8AE)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[384,30] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE58A)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[388,31] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[409,48] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xEFBC)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[428,32] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE8B4)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[436,14] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE680)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[439,27] ����: ���� UTF-8 �Ĳ���ӳ���ַ� (0xE5BD)
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[46,41] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[76,37] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[89,41] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[101,45] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\meeting\service\impl\MeetingManagementServiceImpl.java:[121,37] ����: δ�������ַ�������
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+

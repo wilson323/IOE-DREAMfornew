@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.common.workflow.dao.ApprovalStatisticsDao">
+
+    <!-- 根据业务类型和统计日期查询统计 -->
+    <select id="selectByBusinessTypeAndDate" resultType="net.lab1024.sa.common.workflow.entity.ApprovalStatisticsEntity">
+        SELECT *
+        FROM t_common_approval_statistics
+        WHERE business_type = #{businessType}
+          AND statistics_date = #{statisticsDate}
+          AND statistics_dimension = #{statisticsDimension}
+          AND deleted_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 根据业务类型和时间范围查询统计列表 -->
+    <select id="selectByBusinessTypeAndDateRange" resultType="net.lab1024.sa.common.workflow.entity.ApprovalStatisticsEntity">
+        SELECT *
+        FROM t_common_approval_statistics
+        WHERE business_type = #{businessType}
+          AND statistics_date BETWEEN #{startDate} AND #{endDate}
+          AND statistics_dimension = #{statisticsDimension}
+          AND deleted_flag = 0
+        ORDER BY statistics_date ASC
+    </select>
+
+</mapper>

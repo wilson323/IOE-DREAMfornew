@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.common.workflow.dao.ApprovalTemplateDao">
+
+    <!-- 根据模板编码查询模板 -->
+    <select id="selectByTemplateCode" resultType="net.lab1024.sa.common.workflow.entity.ApprovalTemplateEntity">
+        SELECT *
+        FROM t_common_approval_template
+        WHERE template_code = #{templateCode}
+          AND deleted_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 检查模板编码是否存在 -->
+    <select id="existsByTemplateCode" resultType="int">
+        SELECT COUNT(1)
+        FROM t_common_approval_template
+        WHERE template_code = #{templateCode}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 增加模板使用次数 -->
+    <update id="incrementUsageCount">
+        UPDATE t_common_approval_template
+        SET usage_count = usage_count + 1,
+            update_time = NOW()
+        WHERE id = #{id}
+          AND deleted_flag = 0
+    </update>
+
+</mapper>
