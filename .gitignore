@@ -54,3 +54,8 @@ LPT7
 LPT8
 LPT9
 smart-admin-api-java17-springboot3.zip
+
+### MCP Generated Files ###
+# MCP服务器生成的索引文件，体积很大且自动生成，不应提交到版本控制
+.mcp-class-index.json
+*.mcp-cache
