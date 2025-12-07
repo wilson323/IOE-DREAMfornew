@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.consume.dao.ConsumeTransactionDao">
+
+    <!-- 分页查询交易记录 -->
+    <select id="queryTransactions" resultType="net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity">
+        SELECT
+            id,
+            transaction_no,
+            user_id,
+            user_name,
+            dept_id,
+            account_id,
+            account_kind_id,
+            is_attendance_consume,
+            area_id,
+            area_name,
+            area_manage_mode,
+            area_sub_type,
+            meal_id,
+            meal_category_id,
+            meal_name,
+            device_id,
+            device_name,
+            consume_money,
+            discount_money,
+            final_money,
+            balance_before,
+            balance_after,
+            allowance_used,
+            cash_used,
+            consume_mode,
+            consume_type,
+            fixed_value_rule_id,
+            fixed_value_times,
+            consume_time,
+            transaction_time,
+            transaction_status,
+            status,
+            product_id,
+            product_name,
+            create_time,
+            update_time,
+            create_user,
+            update_user
+        FROM consume_transaction
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="areaId != null and areaId != ''">
+                AND area_id = #{areaId}
+            </if>
+            <if test="startTime != null">
+                AND consume_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND consume_time &lt;= #{endTime}
+            </if>
+            <if test="consumeMode != null and consumeMode != ''">
+                AND consume_mode = #{consumeMode}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY consume_time DESC
+    </select>
+
+</mapper>

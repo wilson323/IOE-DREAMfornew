@@ -165,6 +165,224 @@
 				"enablePullDownRefresh" : false,
 				"navigationBarBackgroundColor": "#fff"
 			}
+		},
+		{
+			"path" : "pages/workflow/pending-task-list",
+			"style" :
+			{
+				"navigationBarTitleText" : "待办任务",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/workflow/completed-task-list",
+			"style" :
+			{
+				"navigationBarTitleText" : "已办任务",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/workflow/task-detail",
+			"style" :
+			{
+				"navigationBarTitleText" : "任务详情",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/workflow/task-approval",
+			"style" :
+			{
+				"navigationBarTitleText" : "任务审批",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/workflow/instance-list",
+			"style" :
+			{
+				"navigationBarTitleText" : "流程实例",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/workflow/instance-detail",
+			"style" :
+			{
+				"navigationBarTitleText" : "流程详情",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/video/monitor",
+			"style" :
+			{
+				"navigationBarTitleText" : "实时监控",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#000",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path" : "pages/video/ptz",
+			"style" :
+			{
+				"navigationBarTitleText" : "云台控制",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/video/playback",
+			"style" :
+			{
+				"navigationBarTitleText" : "录像回放",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#000",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path" : "pages/video/device",
+			"style" :
+			{
+				"navigationBarTitleText" : "设备管理",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/video/alert",
+			"style" :
+			{
+				"navigationBarTitleText" : "告警管理",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/access/device",
+			"style" :
+			{
+				"navigationBarTitleText" : "设备管理",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/access/monitor",
+			"style" :
+			{
+				"navigationBarTitleText" : "实时监控",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/access/permission",
+			"style" :
+			{
+				"navigationBarTitleText" : "权限管理",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/access/record",
+			"style" :
+			{
+				"navigationBarTitleText" : "访问记录",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/access/area",
+			"style" :
+			{
+				"navigationBarTitleText" : "区域管理",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/consume/index",
+			"style" :
+			{
+				"navigationBarTitleText" : "智能消费",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/consume/account",
+			"style" :
+			{
+				"navigationBarTitleText" : "账户管理",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/consume/transaction",
+			"style" :
+			{
+				"navigationBarTitleText" : "消费交易",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/consume/payment",
+			"style" :
+			{
+				"navigationBarTitleText" : "支付",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/consume/qrcode",
+			"style" :
+			{
+				"navigationBarTitleText" : "扫码支付",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/consume/recharge",
+			"style" :
+			{
+				"navigationBarTitleText" : "账户充值",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/consume/record",
+			"style" :
+			{
+				"navigationBarTitleText" : "消费记录",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/consume/refund",
+			"style" :
+			{
+				"navigationBarTitleText" : "退款申请",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor": "#fff"
+			}
 		}
 	],
 	"globalStyle": {

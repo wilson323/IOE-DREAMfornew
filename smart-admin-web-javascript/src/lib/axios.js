@@ -26,6 +26,14 @@ const smartAxios = axios.create({
 
 // 退出系统
 function logout() {
+  // 关闭工作流WebSocket连接
+  try {
+    closeWorkflowWebSocketConnection();
+  } catch (err) {
+    // WebSocket关闭失败不影响退出登录流程
+    console.warn('关闭工作流WebSocket连接失败:', err);
+  }
+  
   useUserStore().logout();
   location.href = '/';
 }

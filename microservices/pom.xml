@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.lab1024.sa</groupId>
+    <artifactId>ioedream-microservices-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    
+    <name>IOE-DREAM Microservices Parent</name>
+    <description>IOE-DREAM微服务父POM，统一管理所有微服务的依赖版本和配置</description>
+
+    <properties>
+        <!-- Maven编译配置 -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version>
+        
+        <!-- 统一依赖版本管理 -->
+        <!-- Spring Boot版本 -->
+        <spring-boot.version>3.5.8</spring-boot.version>
+        
+        <!-- MyBatis-Plus版本 -->
+        <mybatis-plus.version>3.5.15</mybatis-plus.version>
+        
+        <!-- Lombok版本 -->
+        <lombok.version>1.18.42</lombok.version>
+        
+        <!-- Jakarta Validation版本 -->
+        <jakarta-validation.version>3.1.1</jakarta-validation.version>
+        
+        <!-- Jackson版本（已升级到最新稳定版） -->
+        <jackson.version>2.20.1</jackson.version>
+        
+        <!-- Caffeine版本（已升级到最新稳定版） -->
+        <caffeine.version>3.2.3</caffeine.version>
+        
+        <!-- Swagger版本（已升级到最新稳定版） -->
+        <swagger.version>2.2.41</swagger.version>
+        
+        <!-- EasyExcel版本 -->
+        <easyexcel.version>4.0.3</easyexcel.version>
+        
+        <!-- iText PDF版本 -->
+        <itextpdf.version>9.4.0</itextpdf.version>
+        
+        <!-- JWT版本 -->
+        <jjwt.version>0.13.0</jjwt.version>
+        
+        <!-- Micrometer版本 -->
+        <micrometer.version>1.16.0</micrometer.version>
+        
+        <!-- Spring Cloud版本 -->
+        <!-- Spring Boot 3.5.8 兼容 Spring Cloud 2025.0.x -->
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+        
+        <!-- Spring Cloud Alibaba版本 -->
+        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        
+        <!-- JUnit测试版本 -->
+        <junit.version>5.11.0</junit.version>
+        <mockito.version>5.20.0</mockito.version>
+        
+        <!-- Sa-Token版本 -->
+        <sa-token.version>1.44.0</sa-token.version>
+        
+        <!-- ZXing版本 -->
+        <zxing.version>3.5.4</zxing.version>
+        
+        <!-- 阿里云SDK版本 -->
+        <aliyun-dysmsapi.version>4.3.0</aliyun-dysmsapi.version>
+        
+        <!-- 腾讯云SDK版本 -->
+        <tencentcloud-ocr.version>3.1.1373</tencentcloud-ocr.version>
+        
+        <!-- Redisson版本（分布式锁和缓存） -->
+        <redisson.version>3.24.3</redisson.version>
+    </properties>
+
+    <!-- 依赖版本统一管理 -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot BOM（统一管理Spring Boot依赖版本） -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- Spring Cloud Alibaba BOM（统一管理Spring Cloud Alibaba依赖版本） -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- Spring Cloud BOM（统一管理Spring Cloud依赖版本，包括Gateway） -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- 所有微服务模块 -->
+    <modules>
+        <module>microservices-common</module>
+        <module>ioedream-gateway-service</module>
+        <module>ioedream-common-service</module>
+        <module>ioedream-device-comm-service</module>
+        <module>ioedream-oa-service</module>
+        <module>ioedream-access-service</module>
+        <module>ioedream-attendance-service</module>
+        <module>ioedream-video-service</module>
+        <module>ioedream-consume-service</module>
+        <module>ioedream-visitor-service</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Spring Boot Maven Plugin -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                
+                <!-- Maven Compiler Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

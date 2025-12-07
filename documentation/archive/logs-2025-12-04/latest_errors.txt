@@ -1,0 +1,439 @@
+﻿[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Smart Admin Microservices                                          [pom]
+[INFO] microservices-common                                               [jar]
+[INFO] ioedream-access-service                                            [jar]
+[INFO] 
+[INFO] --------------< net.lab1024.sa:smart-admin-microservices >--------------
+[INFO] Building Smart Admin Microservices 1.0.0                           [1/3]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ smart-admin-microservices ---
+[INFO] Source directory: D:\IOE-DREAM\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\target\generated-sources\annotations added.
+[INFO] 
+[INFO] ----------------< net.lab1024.sa:microservices-common >-----------------
+[INFO] Building microservices-common 1.0.0                                [2/3]
+[INFO]   from microservices\microservices-common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ microservices-common ---
+[INFO] Source directory: D:\IOE-DREAM\microservices\microservices-common\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\microservices\microservices-common\target\generated-sources\annotations added.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ microservices-common ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-access-service >---------------
+[INFO] Building ioedream-access-service 1.0.0                             [3/3]
+[INFO]   from microservices\ioedream-access-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ ioedream-access-service ---
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-access-service\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-access-service\target\generated-sources\annotations added.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-access-service ---
+[INFO] Copying 10 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-access-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 148 source files with javac [forked debug target 17] to target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\domain\query\AccessAreaQuery.java:[13] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[INFO] 1 warning
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventPublisher.java:[140,20] ����: �Ҳ�������
+  ����:   ���� permissionStatus(String)
+  λ��: �� PermissionChangeEventBuilder
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventPublisher.java:[289,24] ����: �Ҳ�������
+  ����:   ���� permissionStatus(String)
+  λ��: �� PermissionChangeEventBuilder
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[165,16] ����: �Ҳ�������
+  ����:   ���� setRuleType(String)
+  λ��: ����ΪLinkageRuleEntity�ı��� rule
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[171,27] ����: �����ݵ�����: String�޷�ת��ΪLinkageStatus
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[207,31] ����: �����ݵ�����: String�޷�ת��ΪLinkageStatus
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[253,37] ����: �����ݵ�����: �������ʽ�е����ʹ���
+    String�޷�ת��ΪLinkageStatus
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[376,47] ����: �Ҳ�������
+  ����:   ���� getRuleType()
+  λ��: ����ΪLinkageRuleEntity�ı��� rule
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[511,49] ����: �Ҳ�������
+  ����:   ���� getRuleType()
+  λ��: ����ΪLinkageRuleEntity�ı��� rule
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[615,36] ����: �Ҳ�������
+  ����:   ���� callDeviceCommService(String,HttpMethod,Object,Class<String>)
+  λ��: ����ΪGatewayServiceClient�ı��� gatewayServiceClient
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[204,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[228,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[249,32] ����: �޷����� GatewayServiceClient�еķ��� callAuthServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callAuthService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[289,32] ����: �Ҳ�������
+  ����:   ���� callVisitorService(String,HttpMethod,Map<String,Object>,Class<Void>)
+  λ��: ����ΪGatewayServiceClient�ı��� gatewayServiceClient
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[311,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[333,32] ����: �޷����� GatewayServiceClient�еķ��� callConfigServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callConfigService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[358,32] ����: �޷����� GatewayServiceClient�еķ��� callAuditServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callAuditService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[384,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[408,32] ����: �޷����� GatewayServiceClient�еķ��� callNotificationServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callNotificationService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[434,32] ����: �޷����� GatewayServiceClient�еķ��� callAuditServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callAuditService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[457,32] ����: �޷����� GatewayServiceClient�еķ��� callDeviceServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callDeviceService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[479,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[503,32] ����: �޷����� GatewayServiceClient�еķ��� callNotificationServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callNotificationService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[524,32] ����: �޷����� GatewayServiceClient�еķ��� callAuthServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callAuthService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[548,32] ����: �޷����� GatewayServiceClient�еķ��� callAuthServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callAuthService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[570,32] ����: �޷����� GatewayServiceClient�еķ��� callDeviceServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callDeviceService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[594,32] ����: �޷����� GatewayServiceClient�еķ��� callAuditServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callAuditService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[620,32] ����: �޷����� GatewayServiceClient�еķ��� callAuthServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callAuthService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[642,32] ����: �޷����� GatewayServiceClient�еķ��� callDeviceServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callDeviceService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[666,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[687,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[708,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[730,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+  ��Ҫ: String,Class<T>
+  �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+  ԭ��: �޷��ƶ����ͱ��� T
+    (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+  ����, T�����ͱ���:
+    T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[INFO] 32 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Smart Admin Microservices 1.0.0:
+[INFO] 
+[INFO] Smart Admin Microservices .......................... SUCCESS [  0.211 s]
+[INFO] microservices-common ............................... SUCCESS [  1.975 s]
+[INFO] ioedream-access-service ............................ FAILURE [  9.371 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  12.114 s
+[INFO] Finished at: 2025-12-04T02:14:17+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-access-service: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventPublisher.java:[140,20] ����: �Ҳ�������
+[ERROR]   ����:   ���� permissionStatus(String)
+[ERROR]   λ��: �� PermissionChangeEventBuilder
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventPublisher.java:[289,24] ����: �Ҳ�������
+[ERROR]   ����:   ���� permissionStatus(String)
+[ERROR]   λ��: �� PermissionChangeEventBuilder
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[165,16] ����: �Ҳ�������
+[ERROR]   ����:   ���� setRuleType(String)
+[ERROR]   λ��: ����ΪLinkageRuleEntity�ı��� rule
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[171,27] ����: �����ݵ�����: String�޷�ת��ΪLinkageStatus
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[207,31] ����: �����ݵ�����: String�޷�ת��ΪLinkageStatus
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[253,37] ����: �����ݵ�����: �������ʽ�е����ʹ���
+[ERROR]     String�޷�ת��ΪLinkageStatus
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[376,47] ����: �Ҳ�������
+[ERROR]   ����:   ���� getRuleType()
+[ERROR]   λ��: ����ΪLinkageRuleEntity�ı��� rule
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[511,49] ����: �Ҳ�������
+[ERROR]   ����:   ���� getRuleType()
+[ERROR]   λ��: ����ΪLinkageRuleEntity�ı��� rule
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\manager\impl\LinkageRuleManagerImpl.java:[615,36] ����: �Ҳ�������
+[ERROR]   ����:   ���� callDeviceCommService(String,HttpMethod,Object,Class<String>)
+[ERROR]   λ��: ����ΪGatewayServiceClient�ı��� gatewayServiceClient
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[204,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[228,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[249,32] ����: �޷����� GatewayServiceClient�еķ��� callAuthServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callAuthService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[289,32] ����: �Ҳ�������
+[ERROR]   ����:   ���� callVisitorService(String,HttpMethod,Map<String,Object>,Class<Void>)
+[ERROR]   λ��: ����ΪGatewayServiceClient�ı��� gatewayServiceClient
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[311,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[333,32] ����: �޷����� GatewayServiceClient�еķ��� callConfigServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callConfigService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[358,32] ����: �޷����� GatewayServiceClient�еķ��� callAuditServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callAuditService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[384,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[408,32] ����: �޷����� GatewayServiceClient�еķ��� callNotificationServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callNotificationService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[434,32] ����: �޷����� GatewayServiceClient�еķ��� callAuditServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callAuditService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[457,32] ����: �޷����� GatewayServiceClient�еķ��� callDeviceServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callDeviceService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[479,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[503,32] ����: �޷����� GatewayServiceClient�еķ��� callNotificationServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callNotificationService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[524,32] ����: �޷����� GatewayServiceClient�еķ��� callAuthServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callAuthService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[548,32] ����: �޷����� GatewayServiceClient�еķ��� callAuthServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callAuthService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[570,32] ����: �޷����� GatewayServiceClient�еķ��� callDeviceServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callDeviceService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[594,32] ����: �޷����� GatewayServiceClient�еķ��� callAuditServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callAuditService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[620,32] ����: �޷����� GatewayServiceClient�еķ��� callAuthServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callAuthService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[642,32] ����: �޷����� GatewayServiceClient�еķ��� callDeviceServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callDeviceService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[666,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[687,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[708,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] D:\IOE-DREAM\microservices\ioedream-access-service\src\main\java\net\lab1024\sa\access\event\AccessEventListener.java:[730,32] ����: �޷����� GatewayServiceClient�еķ��� callMonitorServiceӦ�õ���������;
+[ERROR]   ��Ҫ: String,Class<T>
+[ERROR]   �ҵ�:    String,HttpMethod,Map<String,Object>,Class<Void>
+[ERROR]   ԭ��: �޷��ƶ����ͱ��� T
+[ERROR]     (ʵ�ʲ����б����ʽ�����б���Ȳ�ͬ)
+[ERROR]   ����, T�����ͱ���:
+[ERROR]     T��չ���ڷ��� <T>callMonitorService(String,Class<T>)��������Object
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :ioedream-access-service
