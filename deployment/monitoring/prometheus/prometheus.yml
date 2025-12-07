@@ -1,0 +1,98 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'ioedream'
+    environment: 'production'
+
+# Alertmanager配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# 告警规则文件
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+# 服务发现配置
+scrape_configs:
+  # 设备通讯服务
+  - job_name: 'device-comm-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['device-comm-service:8080']
+        labels:
+          service: 'device-comm-service'
+          application: 'ioedream-device-comm-service'
+
+  # 网关服务
+  - job_name: 'gateway-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['gateway-service:8080']
+        labels:
+          service: 'gateway-service'
+          application: 'ioedream-gateway-service'
+
+  # 消费服务
+  - job_name: 'consume-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['consume-service:8080']
+        labels:
+          service: 'consume-service'
+          application: 'ioedream-consume-service'
+
+  # 门禁服务
+  - job_name: 'access-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['access-service:8080']
+        labels:
+          service: 'access-service'
+          application: 'ioedream-access-service'
+
+  # 考勤服务
+  - job_name: 'attendance-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['attendance-service:8080']
+        labels:
+          service: 'attendance-service'
+          application: 'ioedream-attendance-service'
+
+  # 访客服务
+  - job_name: 'visitor-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['visitor-service:8080']
+        labels:
+          service: 'visitor-service'
+          application: 'ioedream-visitor-service'
+
+  # 视频服务
+  - job_name: 'video-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['video-service:8080']
+        labels:
+          service: 'video-service'
+          application: 'ioedream-video-service'
+
+  # RabbitMQ监控
+  - job_name: 'rabbitmq'
+    metrics_path: '/api/metrics'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+        labels:
+          service: 'rabbitmq'
+
+  # Node Exporter（系统监控）
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'
+

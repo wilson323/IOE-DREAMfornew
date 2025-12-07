@@ -1,0 +1,74 @@
+# ============================================================
+# IOE-DREAM Gateway Service 配置文件
+# 
+# @Author:    IOE-DREAM Team
+# @Date:      2025-01-30
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+# 
+# 服务信息:
+# - 服务名称: ioedream-gateway-service
+# - 服务端口: 8080
+# - 服务职责: API网关服务，提供路由转发、负载均衡、限流熔断等
+# ============================================================
+
+# ==================== 服务基本信息 ====================
+spring:
+  application:
+    name: ioedream-gateway-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+# ==================== Nacos服务发现配置 ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        enabled: true
+        register-enabled: true
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        file-extension: yaml
+        enabled: true
+
+# ==================== 服务器配置 ====================
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    root: INFO
+    net.lab1024.sa: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+
+# ==================== Actuator监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+    gateway:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true

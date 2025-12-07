@@ -1,0 +1,284 @@
+﻿[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Smart Admin Microservices                                          [pom]
+[INFO] microservices-common                                               [jar]
+[INFO] ioedream-consume-service                                           [jar]
+[INFO] 
+[INFO] --------------< net.lab1024.sa:smart-admin-microservices >--------------
+[INFO] Building Smart Admin Microservices 1.0.0                           [1/3]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ smart-admin-microservices ---
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ smart-admin-microservices ---
+[INFO] Source directory: D:\IOE-DREAM\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\target\generated-sources\annotations added.
+[INFO] 
+[INFO] ----------------< net.lab1024.sa:microservices-common >-----------------
+[INFO] Building microservices-common 1.0.0                                [2/3]
+[INFO]   from microservices\microservices-common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ microservices-common ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common\target
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ microservices-common ---
+[INFO] Source directory: D:\IOE-DREAM\microservices\microservices-common\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\microservices\microservices-common\target\generated-sources\annotations added.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ microservices-common ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 259 source files with javac [forked debug target 17] to target\classes
+[INFO] 
+[INFO] --------------< net.lab1024.sa:ioedream-consume-service >---------------
+[INFO] Building ioedream-consume-service 1.0.0                            [3/3]
+[INFO]   from microservices\ioedream-consume-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ ioedream-consume-service ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-consume-service\target
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ ioedream-consume-service ---
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-consume-service\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-consume-service\target\generated-sources\annotations added.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-consume-service ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-consume-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 351 source files with javac [forked debug target 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[56,53] ����: ��Ҫ')'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[56,69] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[60,20] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[60,21] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[61,12] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[61,40] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[61,41] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[61,83] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[65,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[66,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[68,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[70,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[70,81] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[76,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[76,95] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[80,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[81,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[85,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[87,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[90,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[91,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[94,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[98,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[101,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[103,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[109,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[110,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[112,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[117,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[119,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[121,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[122,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[126,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[127,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[131,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[132,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[133,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[134,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[135,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[136,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[137,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[139,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[140,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[142,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[143,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[147,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[151,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[152,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[153,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[154,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[155,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[157,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[159,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[161,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[161,92] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[166,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[171,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[172,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[174,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[177,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[180,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[181,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[183,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[184,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[186,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[187,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[189,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[190,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[192,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[193,23] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[195,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[196,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[200,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[203,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[206,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[207,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[209,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[210,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[214,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[219,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[223,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[225,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[228,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[230,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[232,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[233,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[240,14] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[246,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[248,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[251,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[254,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[257,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[260,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[263,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[266,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[272,14] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[274,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[275,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[276,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[277,8] ����: ��Ҫ class��interface��enum �� record
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Smart Admin Microservices 1.0.0:
+[INFO] 
+[INFO] Smart Admin Microservices .......................... SUCCESS [  0.218 s]
+[INFO] microservices-common ............................... SUCCESS [ 14.039 s]
+[INFO] ioedream-consume-service ........................... FAILURE [  1.958 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  16.608 s
+[INFO] Finished at: 2025-12-04T15:29:35+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-consume-service: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[56,53] ����: ��Ҫ')'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[56,69] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[60,20] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[60,21] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[61,12] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[61,40] ����: ��Ҫ<��ʶ��>
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[61,41] ����: �Ƿ������Ϳ�ʼ
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[61,83] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[65,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[66,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[68,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[70,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[70,81] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[76,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[76,95] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[80,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[81,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[85,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[87,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[90,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[91,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[94,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[98,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[101,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[103,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[109,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[110,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[112,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[117,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[119,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[121,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[122,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[126,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[127,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[131,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[132,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[133,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[134,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[135,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[136,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[137,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[139,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[140,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[142,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[143,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[147,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[151,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[152,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[153,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[154,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[155,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[157,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[159,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[161,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[161,92] ����: δ�������ַ�������
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[166,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[171,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[172,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[174,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[177,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[180,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[181,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[183,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[184,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[186,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[187,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[189,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[190,16] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[192,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[193,23] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[195,20] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[196,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[200,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[203,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[206,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[207,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[209,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[210,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[214,11] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[219,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[223,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[225,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[228,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[230,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[232,12] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[233,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[240,14] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[246,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[248,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[251,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[254,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[257,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[260,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[263,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[266,4] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[272,14] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[274,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[275,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[276,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-consume-service\src\main\java\net\lab1024\sa\consume\strategy\impl\IntelligenceModeStrategy.java:[277,8] ����: ��Ҫ class��interface��enum �� record
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :ioedream-consume-service

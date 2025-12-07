@@ -1,0 +1,120 @@
+{
+  "properties": [
+    {
+      "name": "spring.datasource.druid.initial-size",
+      "type": "java.lang.Integer",
+      "description": "Druid连接池初始连接数"
+    },
+    {
+      "name": "spring.datasource.druid.min-idle",
+      "type": "java.lang.Integer",
+      "description": "Druid连接池最小空闲连接数"
+    },
+    {
+      "name": "spring.datasource.druid.max-active",
+      "type": "java.lang.Integer",
+      "description": "Druid连接池最大活跃连接数"
+    },
+    {
+      "name": "spring.datasource.druid.max-wait",
+      "type": "java.lang.Long",
+      "description": "Druid连接池获取连接最大等待时间（毫秒）"
+    },
+    {
+      "name": "spring.datasource.druid.validation-query",
+      "type": "java.lang.String",
+      "description": "Druid连接池验证查询SQL"
+    },
+    {
+      "name": "spring.datasource.druid.test-while-idle",
+      "type": "java.lang.Boolean",
+      "description": "Druid连接池空闲时检测连接有效性"
+    },
+    {
+      "name": "spring.datasource.druid.test-on-borrow",
+      "type": "java.lang.Boolean",
+      "description": "Druid连接池借用时检测连接有效性"
+    },
+    {
+      "name": "spring.datasource.druid.test-on-return",
+      "type": "java.lang.Boolean",
+      "description": "Druid连接池归还时检测连接有效性"
+    },
+    {
+      "name": "spring.datasource.druid.time-between-eviction-runs-millis",
+      "type": "java.lang.Long",
+      "description": "Druid连接池连接回收间隔（毫秒）"
+    },
+    {
+      "name": "spring.datasource.druid.min-evictable-idle-time-millis",
+      "type": "java.lang.Long",
+      "description": "Druid连接池连接最小空闲时间（毫秒）"
+    },
+    {
+      "name": "spring.datasource.druid.pool-prepared-statements",
+      "type": "java.lang.Boolean",
+      "description": "Druid连接池是否开启预编译语句池"
+    },
+    {
+      "name": "spring.datasource.druid.max-pool-prepared-statement-per-connection-size",
+      "type": "java.lang.Integer",
+      "description": "Druid连接池每个连接最大预编译语句数"
+    },
+    {
+      "name": "spring.datasource.druid.stat-view-servlet.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Druid监控页面是否启用"
+    },
+    {
+      "name": "spring.datasource.druid.stat-view-servlet.url-pattern",
+      "type": "java.lang.String",
+      "description": "Druid监控页面URL模式"
+    },
+    {
+      "name": "spring.datasource.druid.stat-view-servlet.login-username",
+      "type": "java.lang.String",
+      "description": "Druid监控页面登录用户名"
+    },
+    {
+      "name": "spring.datasource.druid.stat-view-servlet.login-password",
+      "type": "java.lang.String",
+      "description": "Druid监控页面登录密码"
+    },
+    {
+      "name": "spring.datasource.druid.stat-view-servlet.reset-enable",
+      "type": "java.lang.Boolean",
+      "description": "Druid监控页面是否允许重置"
+    },
+    {
+      "name": "spring.datasource.druid.filter.stat.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Druid统计过滤器是否启用"
+    },
+    {
+      "name": "spring.datasource.druid.filter.stat.slow-sql-millis",
+      "type": "java.lang.Long",
+      "description": "Druid慢查询阈值（毫秒）"
+    },
+    {
+      "name": "spring.datasource.druid.filter.stat.log-slow-sql",
+      "type": "java.lang.Boolean",
+      "description": "Druid是否记录慢SQL"
+    },
+    {
+      "name": "spring.datasource.druid.filter.stat.merge-sql",
+      "type": "java.lang.Boolean",
+      "description": "Druid是否合并相同SQL统计"
+    },
+    {
+      "name": "spring.datasource.druid.filter.wall.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Druid SQL防火墙是否启用"
+    },
+    {
+      "name": "spring.datasource.druid.filter.wall.config.multi-statement-allow",
+      "type": "java.lang.Boolean",
+      "description": "Druid SQL防火墙是否允许多语句执行"
+    }
+  ]
+}
+

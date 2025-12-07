@@ -28,3 +28,34 @@ target/
 .claude/mcp.json
 .claude/settings.local.json
 
+### Windows Reserved Names ###
+# Windows 保留的设备名称，不能用作文件名
+# 这些名称在 Windows 中是特殊设备，会导致 Git 操作失败
+nul
+CON
+PRN
+AUX
+COM1
+COM2
+COM3
+COM4
+COM5
+COM6
+COM7
+COM8
+COM9
+LPT1
+LPT2
+LPT3
+LPT4
+LPT5
+LPT6
+LPT7
+LPT8
+LPT9
+smart-admin-api-java17-springboot3.zip
+
+### MCP Generated Files ###
+# MCP服务器生成的索引文件，体积很大且自动生成，不应提交到版本控制
+.mcp-class-index.json
+*.mcp-cache

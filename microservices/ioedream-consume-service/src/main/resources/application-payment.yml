@@ -1,0 +1,156 @@
+# ============================================================
+# 支付服务配置文件
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-05
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+#
+# 配置说明：
+# - 微信支付配置（生产环境必须配置真实值）
+# - 支付宝配置（生产环境必须配置真实值）
+# - 所有敏感信息必须通过环境变量或Nacos配置
+# ============================================================
+
+# ==================== 微信支付配置 ====================
+wechat:
+  pay:
+    # 是否启用微信支付（开发环境默认false，生产环境设为true）
+    enabled: ${WECHAT_PAY_ENABLED:false}
+
+    # 微信公众号/小程序AppID
+    app-id: ${WECHAT_APP_ID:}
+
+    # 微信支付商户号
+    mch-id: ${WECHAT_MCH_ID:}
+
+    # 微信支付API密钥（API v3密钥）
+    api-key: ${WECHAT_API_KEY:}
+
+    # 微信支付证书路径（用于退款等敏感操作）
+    cert-path: ${WECHAT_CERT_PATH:/opt/cert/apiclient_cert.p12}
+
+    # 支付回调通知URL
+    notify-url: ${WECHAT_NOTIFY_URL:https://api.ioedream.com/api/v1/consume/payment/wechat/notify}
+
+    # API v3证书序列号
+    cert-serial-no: ${WECHAT_CERT_SERIAL_NO:}
+
+    # API v3私钥路径
+    private-key-path: ${WECHAT_PRIVATE_KEY_PATH:/opt/cert/apiclient_key.pem}
+
+# ==================== 支付宝配置 ====================
+alipay:
+  # 是否启用支付宝支付
+  enabled: ${ALIPAY_ENABLED:false}
+
+  # 支付宝应用AppID
+  app-id: ${ALIPAY_APP_ID:}
+
+  # 支付宝应用私钥（RSA2私钥，PKCS8格式）
+  private-key: ${ALIPAY_PRIVATE_KEY:}
+
+  # 支付宝公钥（RSA2公钥，从支付宝开放平台获取）
+  public-key: ${ALIPAY_PUBLIC_KEY:}
+
+  # 支付宝网关地址
+  gateway-url: ${ALIPAY_GATEWAY_URL:https://openapi.alipay.com/gateway.do}
+
+  # 支付回调通知URL
+  notify-url: ${ALIPAY_NOTIFY_URL:https://api.ioedream.com/api/v1/consume/payment/alipay/notify}
+
+  # 签名类型（RSA2）
+  sign-type: RSA2
+
+  # 字符集
+  charset: UTF-8
+
+  # 数据格式
+  format: json
+
+# ==================== 支付业务配置 ====================
+payment:
+  # 订单超时时间（分钟）
+  order-timeout: 30
+
+  # 退款超时时间（天）
+  refund-timeout: 15
+
+  # 最小支付金额（元）
+  min-amount: 0.01
+
+  # 最大支付金额（元）
+  max-amount: 10000.00
+
+  # 是否允许部分退款
+  allow-partial-refund: true
+
+  # 自动关闭未支付订单（分钟）
+  auto-close-timeout: 30
+
+# ==================== 开发环境配置示例 ====================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+wechat:
+  pay:
+    enabled: false  # 开发环境禁用
+    app-id: wx1234567890abcdef
+    mch-id: 1234567890
+    # 开发环境使用沙箱环境或模拟数据
+
+alipay:
+  enabled: false  # 开发环境禁用
+  app-id: 2021000000000000
+  gateway-url: https://openapi.alipaydev.com/gateway.do  # 沙箱环境
+
+# ==================== 生产环境配置示例 ====================
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+# 生产环境配置通过环境变量或Nacos动态配置
+# 禁止在配置文件中硬编码敏感信息！
+
+wechat:
+  pay:
+    enabled: true
+    # 以下配置必须通过环境变量注入
+    # WECHAT_APP_ID=wx_real_app_id
+    # WECHAT_MCH_ID=real_mch_id
+    # WECHAT_API_KEY=real_api_key (32位)
+    # WECHAT_CERT_SERIAL_NO=real_serial_no
+    # WECHAT_PRIVATE_KEY_PATH=/opt/cert/apiclient_key.pem
+
+alipay:
+  enabled: true
+  # 以下配置必须通过环境变量注入
+  # ALIPAY_APP_ID=real_app_id
+  # ALIPAY_PRIVATE_KEY=real_private_key (PKCS8格式)
+  # ALIPAY_PUBLIC_KEY=real_public_key
+  gateway-url: https://openapi.alipay.com/gateway.do
+
+# ==================== 安全提示 ====================
+#
+# 🔒 敏感信息安全规范：
+# 1. 所有密钥必须通过环境变量或Nacos加密配置管理
+# 2. 禁止将真实密钥提交到Git仓库
+# 3. 证书文件必须妥善保管，权限设为600
+# 4. 定期轮换API密钥（建议每季度一次）
+# 5. 生产环境必须启用HTTPS
+# 6. 回调URL必须验证签名
+#
+# 📝 申请支付账号：
+# - 微信支付：https://pay.weixin.qq.com
+# - 支付宝：https://open.alipay.com
+#
+# 📚 技术文档：
+# - 微信支付API v3: https://pay.weixin.qq.com/wiki/doc/apiv3/
+# - 支付宝开放平台: https://opendocs.alipay.com/
+#
+# ============================================================
+

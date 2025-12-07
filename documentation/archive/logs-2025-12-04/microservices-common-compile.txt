@@ -1,0 +1,765 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< net.lab1024.sa:microservices-common >-----------------
+[INFO] Building microservices-common 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ microservices-common ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ microservices-common ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 135 source files with javac [debug target 17] to target\classes
+[INFO] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java: ĳЩ�����ļ�ʹ����δ�����򲻰�ȫ�Ĳ�����
+[INFO] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java: �й���ϸ��Ϣ, ��ʹ�� -Xlint:unchecked ���±��롣
+[INFO] ĳЩ��Ϣ�Ѿ�����; ��ʹ�� -Xdiags:verbose ���±����Ի���������
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/gateway/GatewayConfiguration.java:[32,17] org.springframework.boot.web.client.RestTemplateBuilder �е� setConnectTimeout(java.time.Duration) �ѹ�ʱ, �ұ��Ϊ��ɾ��
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/gateway/GatewayConfiguration.java:[33,17] org.springframework.boot.web.client.RestTemplateBuilder �е� setReadTimeout(java.time.Duration) �ѹ�ʱ, �ұ��Ϊ��ɾ��
+[INFO] 2 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClientStandardImpl.java:[28,58] �˴���Ҫ�ӿ�
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[32,44] �Ҳ�������
+  ����:   ���� getPageNum()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[32,68] �Ҳ�������
+  ����:   ���� getPageSize()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[34,22] �Ҳ�������
+  ����:   ���� getSearchCount()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[35,42] �Ҳ�������
+  ����:   ���� getSearchCount()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[38,58] �Ҳ�������
+  ����:   ���� getSortItemList()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[47,49] �Ҳ�������
+  ����:   ���� getColumn()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[51,49] �Ҳ�������
+  ����:   ���� getColumn()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[52,17] �Ҳ�������
+  ����:   ���� log
+  λ��: �� net.lab1024.sa.common.util.SmartPageUtil
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[52,54] �Ҳ�������
+  ����:   ���� getColumn()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[55,39] �Ҳ�������
+  ����:   ���� getIsAsc()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[55,75] �Ҳ�������
+  ����:   ���� getColumn()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[55,114] �Ҳ�������
+  ����:   ���� getColumn()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[87,44] �Ҳ�������
+  ����:   ���� getPageNum()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageResult<E>�ı��� pageResult
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[88,45] �Ҳ�������
+  ����:   ���� getPageSize()
+  λ��: ����Ϊnet.lab1024.sa.common.domain.PageResult<E>�ı��� pageResult
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[63,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getMobile()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[83,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getEmail()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[99,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getStatus()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[101,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUpdateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[145,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUserType()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[147,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getCreateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[161,27] ����������Ч
+  �Ҳ�������
+    ����:   ���� getRoleIds()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[163,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUpdateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[186,29] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUserId()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[203,34] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUpdateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[210,23] ����������Ч
+  �Ҳ�������
+    ����:   ���� getRealName()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[212,23] ����������Ч
+  �Ҳ�������
+    ����:   ���� getMobile()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[214,23] ����������Ч
+  �Ҳ�������
+    ����:   ���� getEmail()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[216,23] ����������Ч
+  �Ҳ�������
+    ����:   ���� getDescription()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[218,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUpdateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[234,44] ����������Ч
+  �Ҳ�������
+    ����:   ���� getLastLoginTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[235,38] ����������Ч
+  �Ҳ�������
+    ����:   ���� getLastLoginTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[237,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getLastLoginTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[250,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getMfaEnabled()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[252,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUpdateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[265,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPasswordResetRequired()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[267,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUpdateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[283,44] ����������Ч
+  �Ҳ�������
+    ����:   ���� getCreateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[284,38] ����������Ч
+  �Ҳ�������
+    ����:   ���� getCreateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[286,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getCreateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[299,17] �����ݵ�����: java.lang.String�޷�ת��Ϊcom.baomidou.mybatisplus.core.conditions.Wrapper<net.lab1024.sa.common.security.entity.UserEntity>
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[313,17] �����ݵ�����: java.lang.String�޷�ת��Ϊcom.baomidou.mybatisplus.core.conditions.Wrapper<net.lab1024.sa.common.security.entity.UserEntity>
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[328,29] ����������Ч
+  �Ҳ�������
+    ����:   ���� getCreateTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[342,29] ����������Ч
+  �Ҳ�������
+    ����:   ���� getLastLoginTime()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[361,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getUsername()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[392,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getMobile()
+    λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[51,55] �Ҳ�������
+  ����:   ���� intValue()
+  λ��: �� java.lang.Object
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[59,55] �Ҳ�������
+  ����:   ���� intValue()
+  λ��: �� java.lang.Object
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[72,55] �Ҳ�������
+  ����:   ���� intValue()
+  λ��: �� java.lang.Object
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/workflow/enumeration/ApprovalTypeEnum.java:[92,21] �Ҳ�������
+  ����:   ���� getCode()
+  λ��: ����Ϊnet.lab1024.sa.common.workflow.enumeration.ApprovalTypeEnum�ı��� type
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/workflow/enumeration/ApprovalTypeEnum.java:[107,21] �Ҳ�������
+  ����:   ���� getName()
+  λ��: ����Ϊnet.lab1024.sa.common.workflow.enumeration.ApprovalTypeEnum�ı��� type
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[102,36] �Ҳ�������
+  ����:   ���� builder()
+  λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[131,36] �Ҳ�������
+  ����:   ���� builder()
+  λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[158,36] �Ҳ�������
+  ����:   ���� builder()
+  λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[185,36] �Ҳ�������
+  ����:   ���� builder()
+  λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[213,36] �Ҳ�������
+  ����:   ���� builder()
+  λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[239,36] �Ҳ�������
+  ����:   ���� builder()
+  λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[39,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[41,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAccessLevel()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[42,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[60,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[62,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAccessLevel()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[63,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[77,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAccessLevel()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[79,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[80,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[94,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getStatus()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[96,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[97,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[123,32] ����������Ч
+  �Ҳ�������
+    ����:   ���� getExpireTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[124,30] ����������Ч
+  �Ҳ�������
+    ����:   ���� getExpireTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[125,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getStatus()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[127,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getExpireTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[142,32] ����������Ч
+  �Ҳ�������
+    ����:   ���� getExpireTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[143,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getExpireTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[145,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getExpireTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[158,29] ����������Ч
+  �Ҳ�������
+    ����:   ���� getExpireTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[159,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getStatus()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[161,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[162,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[181,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[182,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[202,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAuthorizedBy()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[204,34] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAuthorizedTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[205,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[220,44] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAuthorizedTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[221,42] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAuthorizedTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[223,34] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAuthorizedTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[239,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[240,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[245,27] ����������Ч
+  �Ҳ�������
+    ����:   ���� getRemark()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[247,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[248,33] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[266,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getAreaId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[267,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getStatus()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[286,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getPersonId()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[287,25] ����������Ч
+  �Ҳ�������
+    ����:   ���� getStatus()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[301,13] �����ݵ�����: java.lang.String�޷�ת��Ϊcom.baomidou.mybatisplus.core.conditions.Wrapper<net.lab1024.sa.common.organization.entity.AreaPersonEntity>
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[316,13] �����ݵ�����: java.lang.String�޷�ת��Ϊcom.baomidou.mybatisplus.core.conditions.Wrapper<net.lab1024.sa.common.organization.entity.AreaPersonEntity>
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[334,32] ����������Ч
+  �Ҳ�������
+    ����:   ���� getExpireTime()
+    λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.404 s
+[INFO] Finished at: 2025-12-02T18:23:23+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project microservices-common: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClientStandardImpl.java:[28,58] �˴���Ҫ�ӿ�
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[32,44] �Ҳ�������
+[ERROR]   ����:   ���� getPageNum()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[32,68] �Ҳ�������
+[ERROR]   ����:   ���� getPageSize()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[34,22] �Ҳ�������
+[ERROR]   ����:   ���� getSearchCount()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[35,42] �Ҳ�������
+[ERROR]   ����:   ���� getSearchCount()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[38,58] �Ҳ�������
+[ERROR]   ����:   ���� getSortItemList()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam�ı��� pageParam
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[47,49] �Ҳ�������
+[ERROR]   ����:   ���� getColumn()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[51,49] �Ҳ�������
+[ERROR]   ����:   ���� getColumn()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[52,17] �Ҳ�������
+[ERROR]   ����:   ���� log
+[ERROR]   λ��: �� net.lab1024.sa.common.util.SmartPageUtil
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[52,54] �Ҳ�������
+[ERROR]   ����:   ���� getColumn()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[55,39] �Ҳ�������
+[ERROR]   ����:   ���� getIsAsc()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[55,75] �Ҳ�������
+[ERROR]   ����:   ���� getColumn()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[55,114] �Ҳ�������
+[ERROR]   ����:   ���� getColumn()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageParam.SortItem�ı��� sortItem
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[87,44] �Ҳ�������
+[ERROR]   ����:   ���� getPageNum()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageResult<E>�ı��� pageResult
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/SmartPageUtil.java:[88,45] �Ҳ�������
+[ERROR]   ����:   ���� getPageSize()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.domain.PageResult<E>�ı��� pageResult
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[63,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getMobile()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[83,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getEmail()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[99,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getStatus()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[101,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUpdateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[145,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUserType()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[147,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getCreateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[161,27] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getRoleIds()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[163,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUpdateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[186,29] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUserId()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[203,34] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUpdateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[210,23] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getRealName()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[212,23] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getMobile()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[214,23] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getEmail()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[216,23] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getDescription()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[218,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUpdateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[234,44] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getLastLoginTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[235,38] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getLastLoginTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[237,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getLastLoginTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[250,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getMfaEnabled()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[252,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUpdateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[265,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPasswordResetRequired()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[267,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUpdateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[283,44] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getCreateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[284,38] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getCreateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[286,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getCreateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[299,17] �����ݵ�����: java.lang.String�޷�ת��Ϊcom.baomidou.mybatisplus.core.conditions.Wrapper<net.lab1024.sa.common.security.entity.UserEntity>
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[313,17] �����ݵ�����: java.lang.String�޷�ת��Ϊcom.baomidou.mybatisplus.core.conditions.Wrapper<net.lab1024.sa.common.security.entity.UserEntity>
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[328,29] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getCreateTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[342,29] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getLastLoginTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[361,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getUsername()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/security/dao/UserDao.java:[392,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getMobile()
+[ERROR]     λ��: �� net.lab1024.sa.common.security.entity.UserEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[51,55] �Ҳ�������
+[ERROR]   ����:   ���� intValue()
+[ERROR]   λ��: �� java.lang.Object
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[59,55] �Ҳ�������
+[ERROR]   ����:   ���� intValue()
+[ERROR]   λ��: �� java.lang.Object
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/domain/ResponseDTO.java:[72,55] �Ҳ�������
+[ERROR]   ����:   ���� intValue()
+[ERROR]   λ��: �� java.lang.Object
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/workflow/enumeration/ApprovalTypeEnum.java:[92,21] �Ҳ�������
+[ERROR]   ����:   ���� getCode()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.workflow.enumeration.ApprovalTypeEnum�ı��� type
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/workflow/enumeration/ApprovalTypeEnum.java:[107,21] �Ҳ�������
+[ERROR]   ����:   ���� getName()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.workflow.enumeration.ApprovalTypeEnum�ı��� type
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[102,36] �Ҳ�������
+[ERROR]   ����:   ���� builder()
+[ERROR]   λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[131,36] �Ҳ�������
+[ERROR]   ����:   ���� builder()
+[ERROR]   λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[158,36] �Ҳ�������
+[ERROR]   ����:   ���� builder()
+[ERROR]   λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[185,36] �Ҳ�������
+[ERROR]   ����:   ���� builder()
+[ERROR]   λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[213,36] �Ҳ�������
+[ERROR]   ����:   ���� builder()
+[ERROR]   λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/device/DeviceConnectionTest.java:[239,36] �Ҳ�������
+[ERROR]   ����:   ���� builder()
+[ERROR]   λ��: �� net.lab1024.sa.common.device.DeviceConnectionTest
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[39,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[41,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAccessLevel()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[42,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[60,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[62,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAccessLevel()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[63,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[77,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAccessLevel()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[79,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[80,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[94,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getStatus()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[96,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[97,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[123,32] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getExpireTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[124,30] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getExpireTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[125,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getStatus()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[127,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getExpireTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[142,32] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getExpireTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[143,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getExpireTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[145,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getExpireTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[158,29] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getExpireTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[159,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getStatus()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[161,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[162,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[181,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[182,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[202,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAuthorizedBy()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[204,34] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAuthorizedTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[205,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[220,44] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAuthorizedTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[221,42] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAuthorizedTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[223,34] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAuthorizedTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[239,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[240,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[245,27] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getRemark()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[247,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[248,33] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[266,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getAreaId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[267,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getStatus()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[286,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getPersonId()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[287,25] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getStatus()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[301,13] �����ݵ�����: java.lang.String�޷�ת��Ϊcom.baomidou.mybatisplus.core.conditions.Wrapper<net.lab1024.sa.common.organization.entity.AreaPersonEntity>
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[316,13] �����ݵ�����: java.lang.String�޷�ת��Ϊcom.baomidou.mybatisplus.core.conditions.Wrapper<net.lab1024.sa.common.organization.entity.AreaPersonEntity>
+[ERROR] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/organization/dao/AreaPersonDao.java:[334,32] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getExpireTime()
+[ERROR]     λ��: �� net.lab1024.sa.common.organization.entity.AreaPersonEntity
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

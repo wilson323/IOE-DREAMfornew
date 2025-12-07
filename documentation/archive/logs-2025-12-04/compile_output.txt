@@ -1,0 +1,262 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] IOE-DREAM Common Service                                           [jar]
+[INFO] IOE-DREAM 设备通讯微服务                                                  [jar]
+[INFO] IOE-DREAM OA微服务                                                    [jar]
+[INFO] ioedream-access-service                                            [jar]
+[INFO] attendance-service                                                 [jar]
+[INFO] ioe-dream-video-service                                            [jar]
+[INFO] ioedream-consume-service                                           [jar]
+[INFO] ioedream-visitor-service                                           [jar]
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-common-service >---------------
+[INFO] Building IOE-DREAM Common Service 1.0.0                            [1/8]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ ioedream-common-service ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-common-service\target
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated-sources) @ ioedream-common-service ---
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-common-service\target\generated-sources\delombok added.
+[INFO] Source directory: D:\IOE-DREAM\microservices\ioedream-common-service\target\generated-sources\annotations added.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-common-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-common-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 219 source files with javac [forked debug target 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[70,36] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[71,27] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[71,52] 错误: 需要';'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[87,36] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[88,27] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[88,42] 错误: 需要';'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[105,36] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[106,52] 错误: 需要';'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[122,36] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[123,43] 错误: 需要';'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\PageParam.java:[21,36] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\PageParam.java:[21,51] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\PageParam.java:[25,38] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\PageParam.java:[25,54] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[107,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[120,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[128,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[156,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[185,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[197,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[220,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[231,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[242,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[264,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[276,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[287,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[309,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[321,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[329,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[343,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[356,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[367,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[372,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[379,21] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[383,22] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[406,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[417,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[430,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[475,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[502,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[45,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[66,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[79,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[85,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[101,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[112,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[116,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[131,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[146,22] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[163,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[180,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[194,52] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[207,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[225,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[248,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[268,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[287,22] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[308,22] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[434,72] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[442,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[443,61] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[444,60] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[447,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[454,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[456,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[457,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[458,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[459,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[460,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[461,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[462,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[463,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[464,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[465,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[466,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[467,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[468,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[469,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[470,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[471,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[472,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[473,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[474,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[475,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[476,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[477,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[478,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[479,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[480,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[481,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[482,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[483,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[484,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[485,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[486,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[491,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[493,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[494,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[495,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[496,8] 错误: 需要 class、interface、enum 或 record
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for IOE-DREAM Common Service 1.0.0:
+[INFO] 
+[INFO] IOE-DREAM Common Service ........................... FAILURE [  3.188 s]
+[INFO] IOE-DREAM 设备通讯微服务 .................................. SKIPPED
+[INFO] IOE-DREAM OA微服务 .................................... SKIPPED
+[INFO] ioedream-access-service ............................ SKIPPED
+[INFO] attendance-service ................................. SKIPPED
+[INFO] ioe-dream-video-service ............................ SKIPPED
+[INFO] ioedream-consume-service ........................... SKIPPED
+[INFO] ioedream-visitor-service ........................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.564 s
+[INFO] Finished at: 2025-12-04T10:27:04+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-common-service: Compilation failure: Compilation failure: 
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[70,36] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[71,27] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[71,52] 错误: 需要';'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[87,36] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[88,27] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[88,42] 错误: 需要';'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[105,36] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[106,52] 错误: 需要';'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[122,36] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\biometric\controller\BiometricVerifyController.java:[123,43] 错误: 需要';'
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\PageParam.java:[21,36] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\PageParam.java:[21,51] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\PageParam.java:[25,38] 错误: 非法的类型开始
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\domain\PageParam.java:[25,54] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[107,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[120,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[128,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[156,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[185,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[197,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[220,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[231,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[242,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[264,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[276,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[287,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[309,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[321,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[329,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[343,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[356,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[367,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[372,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[379,21] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[383,22] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[406,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[417,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[430,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[475,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\service\impl\DocumentServiceImpl.java:[502,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[45,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[66,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[79,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[85,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[101,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[112,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[116,41] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[131,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[146,22] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[163,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[180,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[194,52] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[207,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[225,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[248,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[268,37] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[287,22] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\workflow\service\impl\ApprovalProcessServiceImpl.java:[308,22] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[434,72] 错误: 未结束的字符串文字
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[442,11] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[443,61] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[444,60] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[447,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[454,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[456,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[457,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[458,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[459,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[460,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[461,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[462,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[463,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[464,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[465,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[466,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[467,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[468,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[469,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[470,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[471,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[472,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[473,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[474,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[475,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[476,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[477,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[478,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[479,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[480,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[481,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[482,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[483,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[484,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[485,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[486,4] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[491,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[493,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[494,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[495,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\document\controller\DocumentController.java:[496,8] 错误: 需要 class、interface、enum 或 record
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

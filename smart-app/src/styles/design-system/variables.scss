@@ -1,0 +1,109 @@
+/**
+ * 移动端设计系统变量
+ *
+ * @Author:    IOE-DREAM Team
+ * @Date:      2025-12-04
+ * @Copyright  IOE-DREAM智慧园区一卡通管理平台
+ */
+
+// ==================== 色彩系统 ====================
+
+// 主色调
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$error-color: #f5222d;
+$info-color: #1890ff;
+
+// 中性色
+$text-primary: rgba(0, 0, 0, 0.85);
+$text-secondary: rgba(0, 0, 0, 0.65);
+$text-tertiary: rgba(0, 0, 0, 0.45);
+$text-disabled: rgba(0, 0, 0, 0.25);
+
+$bg-color: #f5f5f5;
+$bg-white: #ffffff;
+$border-color: #e8e8e8;
+$divider-color: #f0f0f0;
+
+// ==================== 间距系统（rpx单位） ====================
+
+$spacing-xs: 8rpx;      // 4px
+$spacing-sm: 16rpx;     // 8px
+$spacing-md: 32rpx;     // 16px（默认）
+$spacing-lg: 48rpx;     // 24px
+$spacing-xl: 64rpx;     // 32px
+
+// ==================== 字体系统（rpx单位） ====================
+
+$font-size-xs: 24rpx;   // 12px - 辅助文字
+$font-size-sm: 26rpx;   // 13px - 小文字
+$font-size-base: 28rpx; // 14px - 正文（默认）
+$font-size-md: 32rpx;   // 16px - 小标题
+$font-size-lg: 36rpx;   // 18px - 中标题
+$font-size-xl: 40rpx;   // 20px - 大标题
+$font-size-xxl: 48rpx;  // 24px - 超大标题
+
+// 字体粗细
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 600;
+
+// ==================== 圆角系统（rpx单位） ====================
+
+$border-radius-sm: 8rpx;    // 4px - 小圆角
+$border-radius-md: 12rpx;   // 6px - 中圆角
+$border-radius-base: 16rpx; // 8px - 默认圆角
+$border-radius-lg: 24rpx;   // 12px - 大圆角
+$border-radius-xl: 32rpx;   // 16px - 超大圆角
+$border-radius-circle: 50%; // 圆形
+
+// ==================== 组件尺寸（rpx单位） ====================
+
+// 按钮
+$btn-height-small: 64rpx;   // 32px
+$btn-height-default: 88rpx; // 44px
+$btn-height-large: 96rpx;   // 48px
+
+// 输入框
+$input-height-small: 64rpx;   // 32px
+$input-height-default: 88rpx; // 44px
+$input-height-large: 96rpx;   // 48px
+
+// 头像
+$avatar-size-small: 64rpx;    // 32px
+$avatar-size-default: 80rpx;  // 40px
+$avatar-size-large: 120rpx;   // 60px
+
+// 触摸区域最小尺寸
+$touch-area-min: 88rpx;  // 44px（Apple HIG标准）
+
+// ==================== 阴影系统 ====================
+
+$shadow-sm: 0 2rpx 4rpx rgba(0, 0, 0, 0.04);
+$shadow-base: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+
+// ==================== 动画时长 ====================
+
+$animation-duration-fast: 0.1s;
+$animation-duration-base: 0.2s;
+$animation-duration-slow: 0.3s;
+
+// ==================== Z-index ====================
+
+$z-index-dropdown: 100;
+$z-index-modal: 200;
+$z-index-popup: 300;
+$z-index-toast: 400;
+
+// ==================== 导出 ====================
+
+:export {
+  primaryColor: $primary-color;
+  successColor: $success-color;
+  warningColor: $warning-color;
+  errorColor: $error-color;
+}
+
