@@ -74,7 +74,8 @@ public class OpenApiConfig {
 
                         ## 技术栈
                         - Spring Boot 3.5.8
-                        - Spring Cloud 2023.0.0
+                        - Spring Cloud 2025.0.0
+                        - Spring Cloud Alibaba 2025.0.0.0
                         - Sa-Token + JWT认证
                         - MyBatis-Plus
                         - Redis缓存

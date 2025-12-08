@@ -18,6 +18,7 @@
   "type": "module",
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
+    "@stomp/stompjs": "^7.2.1",
     "@wangeditor-next/editor": "5.6.34",
     "@wangeditor-next/editor-for-vue": "5.1.14",
     "ant-design-vue": "4.2.5",
@@ -37,6 +38,7 @@
     "nprogress": "0.2.0",
     "pinia": "2.1.7",
     "sm-crypto": "0.3.13",
+    "sockjs-client": "^1.6.1",
     "sortablejs": "1.15.0",
     "ua-parser-js": "1.0.35",
     "uuid": "^11.1.0",

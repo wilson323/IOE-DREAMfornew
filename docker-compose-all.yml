@@ -10,7 +10,7 @@ services:
     image: mysql:8.0
     container_name: ioedream-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root1234}
       MYSQL_DATABASE: ioedream
       TZ: Asia/Shanghai
     ports:
@@ -20,7 +20,7 @@ services:
       - ./deployment/mysql/init:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root1234}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,7 +39,8 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      # 修复：健康检查需要提供Redis密码
+      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD:-redis123} ping || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -48,38 +49,116 @@ services:
     networks:
       - ioedream-network
 
+  # 数据库自动初始化服务
+  # 按顺序执行 deployment/mysql/init/ 目录下的所有SQL文件
+  db-init:
+    image: mysql:8.0
+    container_name: ioedream-db-init
+    environment:
+      MYSQL_PWD: ${MYSQL_ROOT_PASSWORD:-root1234}
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        echo '=========================================='
+        echo '  IOE-DREAM 数据库初始化服务'
+        echo '=========================================='
+        echo ''
+        echo '[1/3] 等待MySQL服务就绪...'
+        max_retries=30
+        retry_count=0
+        until mysql -h mysql -uroot -e 'SELECT 1' > /dev/null 2>&1; do
+          retry_count=$$((retry_count + 1))
+          if [ $$retry_count -ge $$max_retries ]; then
+            echo '错误: MySQL连接超时!'
+            exit 1
+          fi
+          echo "  等待MySQL... ($$retry_count/$$max_retries)"
+          sleep 3
+        done
+        echo '  MySQL已就绪 ✓'
+        echo ''
+        echo '[2/3] 执行数据库初始化脚本...'
+        for sql_file in /init-sql/*.sql; do
+          if [ -f "$$sql_file" ]; then
+            echo "  执行: $$(basename $$sql_file)"
+            mysql -h mysql -uroot < "$$sql_file"
+            echo "    完成 ✓"
+          fi
+        done
+        echo ''
+        echo '[3/3] 验证数据库状态...'
+        echo '  检查ioedream数据库:'
+        IOEDREAM_TABLES=$$(mysql -h mysql -uroot -N -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='ioedream';" 2>/dev/null || echo '0')
+        echo "    表数量: $$IOEDREAM_TABLES"
+        echo '  检查nacos数据库:'
+        NACOS_TABLES=$$(mysql -h mysql -uroot -N -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='nacos';" 2>/dev/null || echo '0')
+        echo "    表数量: $$NACOS_TABLES"
+        if [ "$$NACOS_TABLES" -lt 10 ]; then
+          echo '警告: Nacos表数量不足，可能初始化不完整!'
+        fi
+        echo ''
+        echo '=========================================='
+        echo '  数据库初始化完成!'
+        echo '=========================================='
+    volumes:
+      - ./deployment/mysql/init:/init-sql:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - ioedream-network
+    restart: "no"
+
   # Nacos注册中心
   nacos:
     image: nacos/nacos-server:v2.3.0
     container_name: ioedream-nacos
     environment:
+      # 运行模式
       - MODE=standalone
+      # 数据库配置 - 与MySQL服务保持一致
       - SPRING_DATASOURCE_PLATFORM=mysql
       - MYSQL_SERVICE_HOST=mysql
       - MYSQL_SERVICE_PORT=3306
       - MYSQL_SERVICE_DB_NAME=nacos
       - MYSQL_SERVICE_USER=root
-      - MYSQL_SERVICE_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_SERVICE_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      # 内置数据库连接池优化（解决启动缓慢问题）
+      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+      # 认证配置
       - NACOS_AUTH_ENABLE=true
       - NACOS_AUTH_TOKEN=${NACOS_AUTH_TOKEN:-SecretKey012345678901234567890123456789012345678901234567890123456789}
       - NACOS_AUTH_IDENTITY_KEY=nacos
       - NACOS_AUTH_IDENTITY_VALUE=nacos
+      # JVM配置优化（增加内存以避免OOM）
+      - JVM_XMS=512m
+      - JVM_XMX=1024m
+      - JVM_XMN=256m
       - TZ=Asia/Shanghai
+    mem_limit: 1536m
+    mem_reservation: 1024m
     ports:
       - "8848:8848"
       - "9848:9848"
+      - "9849:9849"
     volumes:
       - nacos_data:/home/nacos/data
       - nacos_logs:/home/nacos/logs
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/v1/console/health/readiness"]
+      # 修复：使用TCP端口检查（Nacos镜像不包含wget/curl，但支持TCP检查）
+      # Nacos 2.3.0 健康检查：检查8848端口是否可访问
+      # 如果端口开放且Nacos进程运行，则认为健康
+      test: ["CMD-SHELL", "timeout 3 bash -c '</dev/tcp/localhost/8848' || exit 1"]
       interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
     depends_on:
       mysql:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     restart: unless-stopped
     networks:
       - ioedream-network
@@ -96,8 +175,12 @@ services:
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-gateway-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -105,7 +188,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8080:8080"
@@ -136,8 +219,12 @@ services:
     environment:
       - SERVER_PORT=8088
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-common-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -145,7 +232,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8088:8088"
@@ -176,8 +263,12 @@ services:
     environment:
       - SERVER_PORT=8087
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-device-comm-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -185,7 +276,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8087:8087"
@@ -218,8 +309,12 @@ services:
     environment:
       - SERVER_PORT=8089
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-oa-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -227,7 +322,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8089:8089"
@@ -260,8 +355,12 @@ services:
     environment:
       - SERVER_PORT=8090
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-access-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -269,7 +368,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8090:8090"
@@ -302,8 +401,12 @@ services:
     environment:
       - SERVER_PORT=8091
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-attendance-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -311,7 +414,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8091:8091"
@@ -344,8 +447,12 @@ services:
     environment:
       - SERVER_PORT=8092
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-video-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -353,7 +460,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8092:8092"
@@ -386,8 +493,12 @@ services:
     environment:
       - SERVER_PORT=8094
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-consume-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -395,7 +506,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8094:8094"
@@ -428,8 +539,12 @@ services:
     environment:
       - SERVER_PORT=8095
       - SPRING_PROFILES_ACTIVE=docker
+      # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
+      # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-visitor-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
@@ -437,7 +552,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
       - TZ=Asia/Shanghai
     ports:
       - "8095:8095"

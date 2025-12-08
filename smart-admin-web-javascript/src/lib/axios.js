@@ -28,10 +28,12 @@ const smartAxios = axios.create({
 function logout() {
   // 关闭工作流WebSocket连接
   try {
-    closeWorkflowWebSocketConnection();
+    if (typeof window !== 'undefined' && window.closeWorkflowWebSocketConnection) {
+      window.closeWorkflowWebSocketConnection();
+    }
   } catch (err) {
     // WebSocket关闭失败不影响退出登录流程
-    console.warn('关闭工作流WebSocket连接失败:', err);
+    console.warn('关闭WebSocket连接失败:', err);
   }
   
   useUserStore().logout();
@@ -83,7 +85,10 @@ smartAxios.interceptors.response.use(
     }
 
     const res = response.data;
-    if (res.code && res.code !== 1) {
+    // 兼容两种成功码: code=1 (旧版) 或 code=200 (企业级标准) 或 success=true
+    const isSuccess = res.code === 1 || res.code === 200 || res.success === true;
+    
+    if (!isSuccess && res.code) {
       // `token` 过期或者账号已在别处登录
       if (res.code === 30007 || res.code === 30008) {
         message.destroy();
@@ -96,7 +101,7 @@ smartAxios.interceptors.response.use(
       if (res.code === 30010 || res.code === 30011) {
         Modal.error({
           title: '重要提醒',
-          content: res.msg,
+          content: res.msg || res.message,
         });
         return Promise.reject(response);
       }
@@ -105,14 +110,14 @@ smartAxios.interceptors.response.use(
       if (res.code === 30012) {
         Modal.error({
           title: '重要提醒',
-          content: res.msg,
+          content: res.msg || res.message,
           onOk: logout,
         });
         setTimeout(logout, 3000);
         return Promise.reject(response);
       }
       message.destroy();
-      message.error(res.msg);
+      message.error(res.msg || res.message || '请求失败');
       return Promise.reject(response);
     } else {
       return Promise.resolve(res);
@@ -159,6 +164,28 @@ export const postRequest = (url, data) => {
     data,
     url,
     method: 'post',
+  });
+};
+
+/**
+ * put请求
+ */
+export const putRequest = (url, data) => {
+  return request({
+    data,
+    url,
+    method: 'put',
+  });
+};
+
+/**
+ * delete请求
+ */
+export const deleteRequest = (url, params) => {
+  return request({
+    url,
+    params,
+    method: 'delete',
   });
 };
 

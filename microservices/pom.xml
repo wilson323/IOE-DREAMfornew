@@ -59,7 +59,19 @@
         <spring-cloud.version>2025.0.0</spring-cloud.version>
         
         <!-- Spring Cloud Alibaba版本 -->
-        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <!-- 
+        版本兼容性说明：
+        - 2023.0.3.4: 需要Spring Boot 3.2.x + Spring Cloud 2023.0.x（需要降级）
+        - 2025.0.0.0: 兼容Spring Boot 3.5.8 + Spring Cloud 2025.0.0（推荐）
+        
+        根据用户要求"确保全局一致性、可用性、功能完善、依赖兼容"，
+        推荐使用2025.0.0.0（完全兼容当前技术栈，无需降级）
+        
+        如果必须使用2023.0.3.4，需要同时降级：
+        - Spring Boot: 3.5.8 → 3.2.4
+        - Spring Cloud: 2025.0.0 → 2023.0.1
+        -->
+        <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
         
         <!-- JUnit测试版本 -->
         <junit.version>5.11.0</junit.version>
@@ -67,6 +79,9 @@
         
         <!-- Sa-Token版本 -->
         <sa-token.version>1.44.0</sa-token.version>
+        
+        <!-- Druid数据源版本 -->
+        <druid.version>1.2.25</druid.version>
         
         <!-- ZXing版本 -->
         <zxing.version>3.5.4</zxing.version>
@@ -151,9 +166,12 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.11.0</version>
                     <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
+                        <!-- 使用 release 替代 source 和 target，自动设置系统模块位置 -->
+                        <release>${java.version}</release>
                         <encoding>${project.build.sourceEncoding}</encoding>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
