@@ -1,83 +1,435 @@
-### **SmartAdmin**
+# 🏢 IOE-DREAM 智慧园区一卡通管理平台
 
-**SmartAdmin** 由 **中国·洛阳** [1024创新实验室](https://www.1024lab.net/) 基于SpringBoot2/3+Sa-Token+Mybatis-Plus 和 Vue3+Ant Design Vue+Uni-App+Uni-UI，并以 <font color="#DC143C">**「高质量代码」为核心，「简洁、高效、安全」**</font>的快速开发平台。
+<div align="center">
 
-**<font color="#DC143C">国内首个满足《网络安全-三级等保》、《数据安全》</font>** 功能要求，支持登录限制、接口国产加解密、数据脱敏等一系列安全要求。
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Java](https://img.shields.io/badge/Java-17-orange.svg)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.8-brightgreen.svg)
+![Vue](https://img.shields.io/badge/Vue-3.4-4FC08D.svg)
+![Status](https://img.shields.io/badge/status-Enterprise%20Ready-success.svg)
 
-**<font color="#DC143C">支持国产数据库：【达梦、金仓、南大通用、海量数据、神州通用、OceanBase、GaussDB 高斯、阿里PolarDB、GoldenDB】等，主流数据库：【Mysql, PostgreSQL】等</font>**
+**企业级智慧安防管理平台 | 多模态生物识别 + 一卡通 + 智能安防一体化解决方案**
 
- **<font color="#DC143C">前端提供JavaScript和TypeScript双版本，后端提供Java8+SpringBoot2.X和Java17+SpringBoot3.X 双版本</font>**。
+[项目文档](documentation/) | [快速开始](#-快速开始) | [架构设计](documentation/architecture/) | [API文档](documentation/api/)
 
-同时 **<font color="#DC143C">重磅开源</font>** 开源六年来 **<font color="#DC143C">千余家企业验证过且正在使用</font>** 的代码规范: **<font color="#DC143C">《高质量代码思想》、《Vue3规范》、《Java规范》</font>** ，让大家在这浮躁的世界里感受到一股把代码写好的清流！同时又能节省大量时间，减少加班，快乐工作，保持谦逊，保持学习，**<font color="#DC143C">热爱代码，更热爱生活</font>** ！
-### **技术体系**
+</div>
 
-- 前端：JavaScript/TypeScript + Vue3 + Vite5 + Pinia + Ant Design Vue 4.X
-- 移动端：uniapp (vue3版本) + uni-ui + （同时支持APP、小程序、H5）
-- 后端：Java8/17 + SpringBoot2/3 + Sa Token + Mybatis-plus + 主流数据库/国产数据库
-- 官方文档：[https://smartadmin.vip](https://smartadmin.vip)
-- 电脑在线预览：[https://preview.smartadmin.vip](https://preview.smartadmin.vip)
-- 移动端在线预览：[https://app.smartadmin.vip](https://app.smartadmin.vip/#/pages/login/login)
-### **理念与思想**
+---
 
-- 我们分享的不是徒劳无功的各种功能，而是必须有的功能，如：数据变动记录、系统说明文档、版本更新记录、意见反馈、日志、心跳、单号生成器等等。
-- 我们分享的还有经过上百家公司验证过的前端、后端、vue3等代码规范，好的规范能让我敲下的每行代码更铿锵有力！
-- **我们推崇高质量的代码，身为开发，代码即利剑，键盘上一套行云流水，宛如侠客，事了拂衣去，深藏身与名。**
-- **我们推崇团队的高度配合默契、互相帮助，从不加班，而不是一看到别人的代码就头皮发麻，留其 [996.ICU](https://baike.baidu.com/item/996.ICU) 加班。**
-- **我们主动思考，保持谦逊，保持学习，热爱代码，更热爱生活。**
-- **<font color="#DC143C">我们希望你，希望你能花费3分钟认真阅读下面的每一个点，让你感受从未有过的技术体验！</font>**
+## 📋 项目简介
 
-### **功能亮点图**
+**IOE-DREAM**（Intelligent Operations & Enterprise - Digital Resource & Enterprise Application Management）是基于 **SmartAdmin** 框架构建的新一代**智慧园区一卡通管理平台**。
 
-<table>
-<tr>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-admin-v3/login/login-bg.png"/></td>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-admin-v3/cut/home.png"/></td>
-</tr>
-<tr>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-admin-v3/login/login-fail-log.png"/></td>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-admin-v3/cut/doc.png"/></td>
-</tr>
-<tr>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-admin-v3/cut/code.png"/></td>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-admin-v3/cut/git-diff.png"/></td>
-</tr>
-<tr>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-app/app1.png"/></td>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-app/app2.png"/></td>
-</tr>
-<tr>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-admin-v3/cut/front.png"/></td>
-  <td><img src="https://img.smartadmin.1024lab.net/smart-admin-v3/cut/back.png"/></td>
-</tr>
-</table>
+该平台专注于园区一卡通和生物识别安全管理，是国内首个集成多种生物识别技术（人脸、指纹、掌纹、虹膜、声纹等）并满足《网络安全-三级等保》、《数据安全》功能要求的企业级解决方案。
 
-### **功能亮点**
+### ✨ 核心特性
 
-- **<font color="#DC143C">安全体系</font>**：满足国家三级等保要求，如双因子登录、密码加密、密码复杂度要求、登录错误次数锁定、登录超时退出、数据脱敏等网络安全和数据安全功能
-- **<font color="#DC143C">接口加解密</font>**：支持请求参数和返回内容进行加解密操作，支持国产加密算法和其他国外加密算法
-- **表格自定义列**：支持用户自定义列，并能将用户自定义列持久化到数据库
-- **数据变更记录**：支持基于git diff插件的数据变更记录，查看数据变化更直观方便
-- **在线文档**：支持右侧帮助文档（类似阿里云控制台右侧帮助文档效果）、支持意见反馈、版本记录 等功能
-- **OA办公**：公司信息（发票、银行、员工等）、通知公告（阅读记录、次数等）
-- **日志、监控**：服务器心跳日志、登录日志、操作日志（IP、浏览器、操作系统等设备信息）
-- **系统功能**：员工、部门、角色、权限、菜单、水印、文件管理、系统参数、数据字典、单号生成 等
-- **代码生成**： 基于每个表的配置、在线预览代码、下载 等
-- **以上只是一些举例，更多灿若繁星的惊喜和细节，等待着你的发现！**：[SmartAdmin 业内独有功能亮点](https://smartadmin.vip)
+- 🔐 **多模态生物识别**: 支持人脸、指纹、掌纹、虹膜、声纹等多种识别方式
+- 🚪 **智能门禁控制**: 多层级权限管理，实时通行记录，异常行为检测
+- 💳 **无感消费结算**: 刷脸/刷卡/手机NFC秒级支付，支持离线消费
+- ⏰ **自动考勤管理**: 生物识别打卡，灵活排班，自动统计
+- 👥 **智能访客管理**: 在线预约，审批流程，轨迹追踪
+- 📹 **视频监控联动**: AI智能分析，异常检测，多系统联动
+- 🛡️ **三级等保合规**: 满足国家网络安全等级保护要求
+- 🏗️ **微服务架构**: 7个核心微服务，支持高并发、高可用、水平扩展
 
+---
 
-### **代码亮点**
+## 🏗️ 技术架构
 
-- **【前端-双版本】：** 提供 js 和 ts 双版本，目录结构及其清晰
-- **【前端-常量维护】：** vue-enum，拒绝出现魔法数字，常量枚举不可维护的现象
-- **【前端-命名】：** 业内最好的api、常量等命名和写法
-- **【前端-多环境支持】：** 独有的本地、开发、测试、预发布、生产 5个env环境配置文件
-- **【前端-layout代码】：** 业内代码最清晰的layout布局写法，小白都能看懂
-- **【前端-main.js】：** 业内可能只有我们把main.js中的router加载方式写对了
-- ----华丽前后端分割线----
-- **【后端-独有目录结构】：** 业内独有的高质量的 Java代码分包结构，适合大、中、小型项目，结构非常清晰
-- **【后端-公共配置文件】：** 业内独有的共用配置文件维护，简化共同配置
-- **【后端-返回码维护】：** 业内独创的请求返回码维护，非常值得一看
-- **【后端-四层架构】：** 四层架构（controller, service, manager, dao），为什么要有四层
-- **【后端-多环境】：** maven多环境：开发、测试、预发布、生产 环境配置
-- **【后端-系统钩子】：** smart-reload，为系统预留钩子，动态加载，在不重启程序前提下执行一些代码
-- 以上只是沧海一粟，更多的细节等待你的发现！[去查看](https://smartadmin.vip)
+### 技术栈
+
+#### 后端技术栈
+- **框架**: Spring Boot 3.5.8 + Spring Cloud 2025.0.0
+- **语言**: Java 17 (LTS)
+- **认证**: Sa-Token 1.44.0
+- **ORM**: MyBatis-Plus 3.5.15
+- **数据库**: MySQL 8.0+ / 国产数据库（达梦、金仓等）
+- **缓存**: Redis + Caffeine（多级缓存）
+- **消息队列**: RabbitMQ / RocketMQ
+- **服务注册**: Nacos
+- **API文档**: Swagger / Knife4j
+
+#### 前端技术栈
+- **框架**: Vue 3.4 + Vite 5
+- **UI组件**: Ant Design Vue 4.2
+- **状态管理**: Pinia 2.1
+- **路由**: Vue Router 4.3
+- **HTTP客户端**: Axios 1.6
+- **图表**: ECharts 5.4
+
+#### 移动端技术栈
+- **框架**: uni-app 3.0 (Vue 3)
+- **支持平台**: H5、微信小程序、支付宝小程序、iOS、Android
+
+### 微服务架构
+
+| 微服务 | 端口 | 职责 | 状态 |
+|--------|------|------|------|
+| **ioedream-gateway-service** | 8080 | API网关，统一入口 | ✅ |
+| **ioedream-common-service** | 8088 | 公共业务服务（用户、权限、字典等） | ✅ |
+| **ioedream-device-comm-service** | 8087 | 设备通讯服务（协议适配、连接管理） | ✅ |
+| **ioedream-oa-service** | 8089 | OA办公服务（工作流、通知等） | ✅ |
+| **ioedream-access-service** | 8090 | 门禁管理服务 | ✅ |
+| **ioedream-attendance-service** | 8091 | 考勤管理服务 | ✅ |
+| **ioedream-video-service** | 8092 | 视频监控服务 | ✅ |
+| **ioedream-consume-service** | 8094 | 消费管理服务 | ✅ |
+| **ioedream-visitor-service** | 8095 | 访客管理服务 | ✅ |
+
+### 项目结构
+
+```
+IOE-DREAM/
+├── microservices/              # 微服务模块
+│   ├── microservices-common/  # 公共JAR库（Entity、DAO、Manager等）
+│   ├── ioedream-gateway-service/      # API网关
+│   ├── ioedream-common-service/       # 公共业务服务
+│   ├── ioedream-device-comm-service/  # 设备通讯服务
+│   ├── ioedream-oa-service/           # OA办公服务
+│   ├── ioedream-access-service/       # 门禁服务
+│   ├── ioedream-attendance-service/   # 考勤服务
+│   ├── ioedream-video-service/        # 视频服务
+│   ├── ioedream-consume-service/      # 消费服务
+│   └── ioedream-visitor-service/      # 访客服务
+├── smart-admin-web-javascript/ # 前端管理后台（Vue3）
+├── smart-app/                  # 移动端应用（uni-app）
+├── documentation/              # 项目文档
+│   ├── architecture/          # 架构设计文档
+│   ├── api/                   # API接口文档
+│   ├── business/              # 业务需求文档
+│   ├── technical/             # 技术文档
+│   └── deployment/            # 部署文档
+├── database-scripts/           # 数据库脚本
+├── scripts/                    # 自动化脚本
+├── docker/                     # Docker配置
+└── deployment/                 # 部署配置
+```
+
+---
+
+## 🚀 快速开始
+
+> **💡 快速启动**: 
+> - [开发环境快速启动](DEVELOPMENT_QUICK_START.md) ⭐ **推荐阅读**
+> - [3步快速启动](QUICK_START.md)
+> - [详细启动指南](documentation/technical/DEVELOPMENT_STARTUP_GUIDE.md)
+
+### 环境要求
+
+- **JDK**: 17+
+- **Maven**: 3.8+
+- **Node.js**: 18+
+- **MySQL**: 8.0+
+- **Redis**: 6.0+
+- **Nacos**: 2.2.0+
+- **Docker**: 20.10+
+- **Docker Compose**: 2.0+
+
+### 一键部署（自动检测并初始化数据库）
+
+```powershell
+# 方法1: 使用自动化部署脚本（推荐 - 自动检测并初始化数据库）
+.\scripts\deploy.ps1
+
+# 方法2: 使用专用自动化部署脚本
+.\scripts\deploy-auto.ps1
+
+# 方法3: 使用Docker Compose（需要手动初始化数据库）
+docker-compose -f docker-compose-all.yml up -d
+.\scripts\init-nacos-database.ps1  # 手动初始化数据库
+```
+
+**重要提示**: 
+- ✅ `deploy.ps1` 和 `deploy-auto.ps1` **会自动检测并初始化nacos数据库**
+- ⚠️ 如果使用 `docker-compose` 直接启动，需要先执行 `.\scripts\init-nacos-database.ps1`
+
+### 1. 克隆项目
+
+```bash
+git clone https://github.com/wilson323/IOE-DREAMfornew.git
+cd IOE-DREAM
+```
+
+### 2. 数据库初始化
+
+```bash
+# 创建数据库
+mysql -u root -p
+CREATE DATABASE ioedream DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+# 导入数据库脚本
+mysql -u root -p ioedream < database-scripts/common-service/00-database-init.sql
+```
+
+### 3. 配置Nacos
+
+1. 启动Nacos服务
+2. 导入配置到Nacos（配置文件在 `deployment/nacos/` 目录）
+
+### 4. 启动后端服务
+
+```powershell
+# Windows PowerShell
+cd microservices
+mvn clean install -DskipTests
+
+# 启动网关服务
+cd ioedream-gateway-service
+mvn spring-boot:run
+
+# 启动其他微服务（按顺序）
+# 1. ioedream-common-service
+# 2. ioedream-device-comm-service
+# 3. ioedream-oa-service
+# 4. 业务服务（可并行启动）
+```
+
+### 5. 启动前端
+
+```bash
+cd smart-admin-web-javascript
+npm install
+npm run localhost  # 或 npm run dev
+```
+
+### 6. 启动移动端（可选）
+
+```bash
+cd smart-app
+npm install
+# 使用HBuilderX或uni-app CLI运行
+```
+
+### 一键启动脚本
+
+```powershell
+# 方式一：完整启动脚本（推荐，功能最全面）
+# ✅ 自动检测并启动MySQL/Redis/Nacos（如果未运行）
+.\scripts\start-all-complete.ps1                    # 启动所有服务
+.\scripts\start-all-complete.ps1 -BackendOnly       # 仅启动后端
+.\scripts\start-all-complete.ps1 -FrontendOnly      # 仅启动前端
+.\scripts\start-all-complete.ps1 -MobileOnly        # 仅启动移动端
+.\scripts\start-all-complete.ps1 -CheckOnly         # 仅检查服务状态
+
+# 方式二：快速启动脚本（简化版）
+.\scripts\quick-start.ps1                           # 启动所有服务
+.\scripts\quick-start.ps1 -Backend                  # 仅启动后端
+.\scripts\quick-start.ps1 -Frontend                 # 仅启动前端
+.\scripts\quick-start.ps1 -Mobile                   # 仅启动移动端
+```
+
+**详细使用说明**: 
+- [启动脚本使用说明](scripts/README_START.md)
+- [开发环境启动指南](documentation/technical/DEVELOPMENT_STARTUP_GUIDE.md) ⭐ **推荐阅读**
+
+---
+
+## 📚 文档导航
+
+### 🎯 快速导航
+
+- **📖 [项目快速开始](documentation/technical/00-快速开始/)** - 新手入门指南
+- **🏗️ [架构设计文档](documentation/architecture/)** - 系统架构详解
+- **💻 [开发规范](documentation/technical/repowiki/zh/content/开发规范体系/)** - 编码规范和最佳实践
+- **🔗 [API文档](documentation/api/)** - 接口文档和示例
+- **🚀 [部署指南](documentation/deployment/)** - 部署和运维文档
+
+### 📋 核心文档
+
+- **[CLAUDE.md](CLAUDE.md)** - 项目核心指导文档（架构规范、开发规范）
+- **[项目状态](documentation/project/README_PROJECT_STATUS.md)** - 项目完成度和状态
+- **[开发规范](documentation/technical/UNIFIED_DEVELOPMENT_STANDARDS.md)** - 统一开发标准
+
+### 🔍 按模块查找
+
+- **🚪 [门禁模块](documentation/03-业务模块/门禁/)** - 门禁系统文档
+- **⏰ [考勤模块](documentation/business/)** - 考勤系统文档
+- **💳 [消费模块](documentation/business/)** - 消费系统文档
+- **👥 [访客模块](documentation/business/)** - 访客系统文档
+- **📹 [视频模块](documentation/business/)** - 视频监控文档
+- **🏢 [OA工作流](documentation/03-业务模块/OA工作流/)** - OA系统文档
+
+---
+
+## 🎯 核心功能
+
+### 1. 智能门禁系统
+- 多模态生物识别（人脸、指纹、卡片）
+- 多层级权限管理
+- 实时通行记录
+- 异常行为检测和报警
+
+### 2. 消费管理系统
+- 无感支付（刷脸/刷卡/NFC）
+- 离线消费支持
+- 账户管理和充值
+- 消费统计和报表
+
+### 3. 考勤管理系统
+- 生物识别打卡
+- 灵活排班管理
+- 自动考勤统计
+- 异常考勤分析
+
+### 4. 访客管理系统
+- 在线预约和审批
+- 人脸识别登记
+- 临时权限发放
+- 访客轨迹追踪
+
+### 5. 视频监控系统
+- AI智能分析
+- 异常行为检测
+- 多系统联动
+- 录像回放和检索
+
+### 6. OA办公系统
+- 工作流引擎
+- 通知公告
+- 企业信息管理
+- 审批流程
+
+---
+
+## 🏆 项目亮点
+
+### 企业级特性
+
+- ✅ **高可用架构**: 微服务架构，支持水平扩展
+- ✅ **多级缓存**: L1本地缓存 + L2 Redis缓存 + L3网关缓存
+- ✅ **分布式事务**: SAGA模式，确保数据一致性
+- ✅ **服务降级熔断**: 完善的容错机制
+- ✅ **监控告警**: 完整的监控和告警体系
+- ✅ **安全合规**: 满足三级等保要求
+
+### 代码质量
+
+- ✅ **四层架构**: Controller → Service → Manager → DAO
+- ✅ **统一规范**: 严格的编码规范和代码审查
+- ✅ **高测试覆盖率**: 单元测试覆盖率 ≥ 80%
+- ✅ **完整文档**: 详细的开发文档和API文档
+
+### 开发体验
+
+- ✅ **快速开发**: 基于SmartAdmin框架，开箱即用
+- ✅ **代码生成**: 支持在线代码生成
+- ✅ **多环境支持**: 开发、测试、预发布、生产环境
+- ✅ **热更新**: 前端支持热更新，后端支持热部署
+
+---
+
+## 🔧 开发规范
+
+### 架构规范
+
+- **四层架构**: 严格遵循 Controller → Service → Manager → DAO
+- **依赖注入**: 统一使用 `@Resource`，禁止使用 `@Autowired`
+- **DAO命名**: 统一使用 `Dao` 后缀，禁止使用 `Repository`
+- **事务管理**: 事务边界在Service层，使用 `@Transactional`
+
+### 代码规范
+
+- **Java编码**: 遵循PEP 8和项目规范
+- **Vue3规范**: 使用Composition API，遵循Vue3最佳实践
+- **命名规范**: 统一的命名约定和代码风格
+- **注释规范**: 完整的函数级注释和文档
+
+详细规范请查看: [开发规范文档](documentation/technical/UNIFIED_DEVELOPMENT_STANDARDS.md)
+
+---
+
+## 🚀 部署
+
+### Docker部署（自动数据库初始化）
+
+```powershell
+# 一键部署（推荐 - 自动检测并初始化数据库）
+.\scripts\deploy.ps1
+
+# 或使用专用自动化部署脚本
+.\scripts\deploy-auto.ps1
+
+# 手动部署（需要手动初始化数据库）
+docker-compose -f docker-compose-all.yml build
+docker-compose -f docker-compose-all.yml up -d mysql redis
+.\scripts\init-nacos-database.ps1  # 手动初始化数据库
+docker-compose -f docker-compose-all.yml up -d
+```
+
+**自动化功能**:
+- ✅ 自动检测MySQL容器状态
+- ✅ 自动检测nacos数据库是否存在
+- ✅ 自动检测nacos数据库表结构是否已初始化
+- ✅ 如果未初始化，自动执行初始化
+- ✅ 验证初始化结果
+
+### Kubernetes部署
+
+```bash
+# 部署到K8s
+kubectl apply -f deployment/k8s/
+```
+
+详细部署文档: [部署指南](documentation/deployment/)
+
+---
+
+## 🤝 贡献指南
+
+欢迎贡献代码！请遵循以下步骤：
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+### 代码提交规范
+
+- `feat`: 新功能
+- `fix`: 修复bug
+- `docs`: 文档更新
+- `style`: 代码格式调整
+- `refactor`: 代码重构
+- `test`: 测试相关
+- `chore`: 构建/工具相关
+
+---
+
+## 📄 许可证
+
+本项目基于 [MIT License](LICENSE) 开源。
+
+---
+
+## 👥 团队
+
+- **架构师团队**: 老王 + 技术专家团队
+- **开发团队**: IOE-DREAM开发团队
+- **基于**: [SmartAdmin](https://smartadmin.vip) by 1024创新实验室
+
+---
+
+## 📞 联系方式
+
+- **项目地址**: https://github.com/wilson323/IOE-DREAMfornew
+- **问题反馈**: [GitHub Issues](https://github.com/wilson323/IOE-DREAMfornew/issues)
+- **文档中心**: [项目文档](documentation/)
+
+---
+
+## 🙏 致谢
+
+- 感谢 [SmartAdmin](https://smartadmin.vip) 提供优秀的开发框架
+- 感谢 [1024创新实验室](https://www.1024lab.net/) 的开源贡献
+- 感谢所有贡献者的支持
+
+---
+
+<div align="center">
+
+**⭐ 如果这个项目对你有帮助，请给一个Star支持一下！**
+
+Made with ❤️ by IOE-DREAM Team
+
+</div>

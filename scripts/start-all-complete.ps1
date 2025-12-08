@@ -57,7 +57,7 @@ $frontendConfig = @{
     Name = "前端管理后台"
     Port = 3000
     Path = "$ProjectRoot\smart-admin-web-javascript"
-    StartCommand = "npm run dev"
+    StartCommand = "npm run localhost"  # 使用localhost模式，连接本地后端
     CheckUrl = "http://localhost:3000"
 }
 
@@ -212,35 +212,225 @@ function Start-BackendServices {
         return $false
     }
     
-    # 检查依赖服务（Nacos、MySQL、Redis）
+    # 检查并自动启动依赖服务（MySQL、Redis、Nacos）
     Write-Host "  检查依赖服务..." -ForegroundColor Gray
-    $nacosRunning = Test-ServiceStatus -Name "Nacos" -Port 8848
-    $mysqlRunning = Test-ServiceStatus -Name "MySQL" -Port 3306
-    $redisRunning = Test-ServiceStatus -Name "Redis" -Port 6379
     
-    if (-not $nacosRunning) {
-        Write-Host "    ❌ Nacos未运行 (端口8848)！" -ForegroundColor Red
-        Write-Host "    警告: 服务将无法注册到注册中心，请先启动Nacos" -ForegroundColor Yellow
-        Write-Host "    是否继续启动？(Y/N): " -ForegroundColor Yellow -NoNewline
-        $continue = Read-Host
-        if ($continue -ne "Y" -and $continue -ne "y") {
-            Write-Host "    已取消启动" -ForegroundColor Gray
-            return $false
+    # 检查Docker是否可用
+    $dockerAvailable = $false
+    try {
+        $dockerCheck = Get-Command docker -ErrorAction SilentlyContinue
+        if ($dockerCheck) {
+            $dockerInfo = docker info 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                $dockerAvailable = $true
+                Write-Host "    ✓ Docker已安装并运行" -ForegroundColor Green
+            }
         }
-    } else {
-        Write-Host "    ✓ Nacos运行中" -ForegroundColor Green
+    } catch {
+        # Docker不可用，忽略
     }
     
+    # 检查MySQL
+    $mysqlRunning = Test-ServiceStatus -Name "MySQL" -Port 3306
     if (-not $mysqlRunning) {
-        Write-Host "    ⚠️  MySQL未运行 (端口3306)，服务可能无法连接数据库" -ForegroundColor Yellow
+        Write-Host "    ⚠️  MySQL未运行 (端口3306)" -ForegroundColor Yellow
+        if ($dockerAvailable) {
+            Write-Host "    正在尝试通过Docker启动MySQL..." -ForegroundColor Yellow
+            try {
+                $composeFile = "$ProjectRoot\docker-compose-all.yml"
+                if (Test-Path $composeFile) {
+                    # 检查MySQL容器是否存在
+                    $mysqlContainer = docker ps -a --filter "name=ioedream-mysql" --format "{{.Names}}" 2>&1
+                    if ($mysqlContainer -match "ioedream-mysql") {
+                        # 启动现有容器
+                        docker start ioedream-mysql 2>&1 | Out-Null
+                        Write-Host "    ✓ 已启动MySQL容器" -ForegroundColor Green
+                    } else {
+                        # 创建并启动MySQL容器
+                        Set-Location $ProjectRoot
+                        docker-compose -f docker-compose-all.yml up -d mysql 2>&1 | Out-Null
+                        Write-Host "    ✓ 已创建并启动MySQL容器" -ForegroundColor Green
+                    }
+                    # 等待MySQL就绪
+                    Write-Host "    等待MySQL就绪（30秒）..." -ForegroundColor Gray
+                    Start-Sleep -Seconds 30
+                    
+                    # 检查MySQL健康状态
+                    $maxWait = 60
+                    $waited = 0
+                    $mysqlHealthy = $false
+                    while ($waited -lt $maxWait) {
+                        $healthStatus = docker inspect ioedream-mysql --format='{{.State.Health.Status}}' 2>&1
+                        if ($healthStatus -eq "healthy") {
+                            $mysqlHealthy = $true
+                            break
+                        }
+                        Start-Sleep -Seconds 5
+                        $waited += 5
+                    }
+                    
+                    $mysqlRunning = Test-ServiceStatus -Name "MySQL" -Port 3306
+                    if ($mysqlRunning -and $mysqlHealthy) {
+                        Write-Host "    ✓ MySQL已就绪" -ForegroundColor Green
+                        
+                        # 自动初始化nacos数据库
+                        Write-Host "    检查并初始化nacos数据库..." -ForegroundColor Gray
+                        $nacosSchema = "$ProjectRoot\deployment\mysql\init\nacos-schema.sql"
+                        if (Test-Path $nacosSchema) {
+                            try {
+                                # 检查nacos数据库是否存在
+                                $dbCheck = docker exec ioedream-mysql mysql -uroot -proot -e 'SHOW DATABASES LIKE ''nacos'';' 2>&1
+                                $nacosDbExists = $dbCheck | Select-String -Pattern 'nacos'
+                                
+                                if (-not $nacosDbExists) {
+                                    Write-Host "      创建nacos数据库..." -ForegroundColor Gray
+                                    docker exec ioedream-mysql mysql -uroot -proot -e 'CREATE DATABASE IF NOT EXISTS nacos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;' 2>&1 | Out-Null
+                                }
+                                
+                                # 检查表数量
+                                $tableCheck = docker exec ioedream-mysql mysql -uroot -proot -e 'SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=''nacos'';' 2>&1
+                                $tableCount = [regex]::Match($tableCheck, '\d+').Value
+                                
+                                if (-not $tableCount -or [int]$tableCount -eq 0) {
+                                    Write-Host "      初始化nacos数据库表结构..." -ForegroundColor Gray
+                                    Get-Content $nacosSchema -Raw | docker exec -i ioedream-mysql mysql -uroot -proot nacos 2>&1 | Out-Null
+                                    if ($LASTEXITCODE -eq 0) {
+                                        Write-Host "      ✓ nacos数据库初始化成功" -ForegroundColor Green
+                                    } else {
+                                        Write-Host "      ⚠️  nacos数据库初始化可能失败，请检查日志" -ForegroundColor Yellow
+                                    }
+                                } else {
+                                    Write-Host "      ✓ nacos数据库已初始化 (表数量: $tableCount)" -ForegroundColor Green
+                                }
+                            } catch {
+                                Write-Host "      ⚠️  初始化nacos数据库时出错: $_" -ForegroundColor Yellow
+                            }
+                        } else {
+                            Write-Host "      ⚠️  未找到nacos-schema.sql文件" -ForegroundColor Yellow
+                        }
+                    } else {
+                        Write-Host "    ⚠️  MySQL启动中，可能需要更多时间" -ForegroundColor Yellow
+                    }
+                } else {
+                    Write-Host "    ⚠️  未找到docker-compose-all.yml，无法自动启动MySQL" -ForegroundColor Yellow
+                }
+            } catch {
+                Write-Host "    ⚠️  Docker启动MySQL失败: $_" -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "    ⚠️  Docker不可用，无法自动启动MySQL" -ForegroundColor Yellow
+            Write-Host "    请手动启动MySQL或安装Docker" -ForegroundColor Yellow
+        }
     } else {
         Write-Host "    ✓ MySQL运行中" -ForegroundColor Green
     }
     
+    # 检查Redis
+    $redisRunning = Test-ServiceStatus -Name "Redis" -Port 6379
     if (-not $redisRunning) {
-        Write-Host "    ⚠️  Redis未运行 (端口6379)，缓存功能可能不可用" -ForegroundColor Yellow
+        Write-Host "    ⚠️  Redis未运行 (端口6379)" -ForegroundColor Yellow
+        if ($dockerAvailable) {
+            Write-Host "    正在尝试通过Docker启动Redis..." -ForegroundColor Yellow
+            try {
+                $composeFile = "$ProjectRoot\docker-compose-all.yml"
+                if (Test-Path $composeFile) {
+                    $redisContainer = docker ps -a --filter "name=ioedream-redis" --format "{{.Names}}" 2>&1
+                    if ($redisContainer -match "ioedream-redis") {
+                        docker start ioedream-redis 2>&1 | Out-Null
+                        Write-Host "    ✓ 已启动Redis容器" -ForegroundColor Green
+                    } else {
+                        Set-Location $ProjectRoot
+                        docker-compose -f docker-compose-all.yml up -d redis 2>&1 | Out-Null
+                        Write-Host "    ✓ 已创建并启动Redis容器" -ForegroundColor Green
+                    }
+                    Start-Sleep -Seconds 5
+                    $redisRunning = Test-ServiceStatus -Name "Redis" -Port 6379
+                    if ($redisRunning) {
+                        Write-Host "    ✓ Redis已就绪" -ForegroundColor Green
+                    }
+                }
+            } catch {
+                Write-Host "    ⚠️  Docker启动Redis失败: $_" -ForegroundColor Yellow
+            }
+        }
     } else {
         Write-Host "    ✓ Redis运行中" -ForegroundColor Green
+    }
+    
+    # 检查Nacos
+    $nacosRunning = Test-ServiceStatus -Name "Nacos" -Port 8848
+    if (-not $nacosRunning) {
+        Write-Host "    ⚠️  Nacos未运行 (端口8848)" -ForegroundColor Yellow
+        if ($dockerAvailable) {
+            Write-Host "    正在尝试通过Docker启动Nacos..." -ForegroundColor Yellow
+            try {
+                $composeFile = "$ProjectRoot\docker-compose-all.yml"
+                if (Test-Path $composeFile) {
+                    $nacosContainer = docker ps -a --filter "name=ioedream-nacos" --format "{{.Names}}" 2>&1
+                    if ($nacosContainer -match "ioedream-nacos") {
+                        docker start ioedream-nacos 2>&1 | Out-Null
+                        Write-Host "    ✓ 已启动Nacos容器" -ForegroundColor Green
+                    } else {
+                        Set-Location $ProjectRoot
+                        docker-compose -f docker-compose-all.yml up -d nacos 2>&1 | Out-Null
+                        Write-Host "    ✓ 已创建并启动Nacos容器" -ForegroundColor Green
+                    }
+                    Write-Host "    等待Nacos就绪（30秒）..." -ForegroundColor Gray
+                    Start-Sleep -Seconds 30
+                    
+                    # 如果Nacos启动失败，尝试初始化数据库后重启
+                    $nacosRunning = Test-ServiceStatus -Name "Nacos" -Port 8848
+                    if (-not $nacosRunning) {
+                        Write-Host "    Nacos未就绪，尝试初始化数据库后重启..." -ForegroundColor Yellow
+                        $nacosSchema = "$ProjectRoot\deployment\mysql\init\nacos-schema.sql"
+                        if (Test-Path $nacosSchema) {
+                            try {
+                                $dbCheck = docker exec ioedream-mysql mysql -uroot -proot -e 'SHOW DATABASES LIKE ''nacos'';' 2>&1
+                                $nacosDbExists = $dbCheck | Select-String -Pattern 'nacos'
+                                
+                                if (-not $nacosDbExists) {
+                                    docker exec ioedream-mysql mysql -uroot -proot -e 'CREATE DATABASE IF NOT EXISTS nacos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;' 2>&1 | Out-Null
+                                }
+                                
+                                $tableCheck = docker exec ioedream-mysql mysql -uroot -proot -e 'SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=''nacos'';' 2>&1
+                                $tableCount = [regex]::Match($tableCheck, '\d+').Value
+                                
+                                if (-not $tableCount -or [int]$tableCount -eq 0) {
+                                    Get-Content $nacosSchema -Raw | docker exec -i ioedream-mysql mysql -uroot -proot nacos 2>&1 | Out-Null
+                                }
+                                
+                                # 重启Nacos
+                                docker restart ioedream-nacos 2>&1 | Out-Null
+                                Start-Sleep -Seconds 20
+                            } catch {
+                                Write-Host "    数据库初始化失败: $_" -ForegroundColor Yellow
+                            }
+                        }
+                    }
+                    
+                    $nacosRunning = Test-ServiceStatus -Name "Nacos" -Port 8848
+                    if ($nacosRunning) {
+                        Write-Host "    ✓ Nacos已就绪" -ForegroundColor Green
+                    } else {
+                        Write-Host "    ⚠️  Nacos启动中，可能需要更多时间" -ForegroundColor Yellow
+                        Write-Host "    警告: 服务将无法注册到注册中心，请等待Nacos完全启动" -ForegroundColor Yellow
+                    }
+                }
+            } catch {
+                Write-Host "    ⚠️  Docker启动Nacos失败: $_" -ForegroundColor Yellow
+                Write-Host "    警告: 服务将无法注册到注册中心，请先启动Nacos" -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "    警告: 服务将无法注册到注册中心，请先启动Nacos" -ForegroundColor Yellow
+            Write-Host "    是否继续启动？(Y/N): " -ForegroundColor Yellow -NoNewline
+            $continue = Read-Host
+            if ($continue -ne "Y" -and $continue -ne "y") {
+                Write-Host "    已取消启动" -ForegroundColor Gray
+                return $false
+            }
+        }
+    } else {
+        Write-Host "    ✓ Nacos运行中" -ForegroundColor Green
     }
     
     Write-Host ""
@@ -375,8 +565,18 @@ function Start-FrontendApp {
     $startCommand = $frontendConfig.StartCommand
     $tempScript = [System.IO.Path]::GetTempFileName() + ".ps1"
     $scriptContent = @"
+# 设置编码
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+`$OutputEncoding = [System.Text.Encoding]::UTF8
+chcp 65001 | Out-Null
+
 Set-Location '$frontendPath'
+Write-Host '========================================' -ForegroundColor Cyan
 Write-Host 'Starting Frontend Admin...' -ForegroundColor Cyan
+Write-Host 'Port: 3000' -ForegroundColor Gray
+Write-Host 'Path: $frontendPath' -ForegroundColor Gray
+Write-Host '========================================' -ForegroundColor Cyan
+Write-Host ''
 $startCommand
 "@
     [System.IO.File]::WriteAllText($tempScript, $scriptContent, [System.Text.Encoding]::UTF8)
@@ -433,8 +633,18 @@ function Start-MobileApp {
     $mobileStartCommand = $mobileConfig.StartCommand
     $tempScript = [System.IO.Path]::GetTempFileName() + ".ps1"
     $scriptContent = @"
+# 设置编码
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+`$OutputEncoding = [System.Text.Encoding]::UTF8
+chcp 65001 | Out-Null
+
 Set-Location '$mobilePath'
-Write-Host 'Starting Mobile App...' -ForegroundColor Cyan
+Write-Host '========================================' -ForegroundColor Cyan
+Write-Host 'Starting Mobile App (H5)...' -ForegroundColor Cyan
+Write-Host 'Port: 8081' -ForegroundColor Gray
+Write-Host 'Path: $mobilePath' -ForegroundColor Gray
+Write-Host '========================================' -ForegroundColor Cyan
+Write-Host ''
 $mobileStartCommand
 "@
     [System.IO.File]::WriteAllText($tempScript, $scriptContent, [System.Text.Encoding]::UTF8)

@@ -50,15 +50,16 @@ management:
     db:
       enabled: true
 
-# ==================== Micrometer Prometheus ====================
-management:
-  metrics:
-    export:
-      prometheus:
+  # ==================== Micrometer Prometheus ====================
+  prometheus:
+    metrics:
+      export:
         enabled: true
         step: 10s  # 采集间隔
         descriptions: true
-    
+  
+  # ==================== Micrometer Metrics配置 ====================
+  metrics:
     distribution:
       # HTTP请求分布统计
       percentiles-histogram:
@@ -79,168 +80,172 @@ management:
       instance: ${HOSTNAME:localhost}
       region: ${REGION:cn-north-1}
 
-# ==================== 自定义业务指标 ====================
-metrics:
-  business:
-    enabled: true
-    
-    # 门禁指标
-    access:
-      - name: access_total_count
-        description: 门禁通行总数
-        type: counter
-      
-      - name: access_success_rate
-        description: 门禁通行成功率
-        type: gauge
-      
-      - name: access_response_time
-        description: 门禁响应时间
-        type: timer
-    
-    # 考勤指标
-    attendance:
-      - name: attendance_punch_count
-        description: 考勤打卡总数
-        type: counter
-      
-      - name: attendance_late_count
-        description: 迟到人数
-        type: counter
-      
-      - name: attendance_leave_count
-        description: 请假人数
-        type: gauge
-    
-    # 消费指标
-    consume:
-      - name: consume_transaction_count
-        description: 消费交易总数
-        type: counter
-      
-      - name: consume_amount_total
-        description: 消费金额总计
-        type: counter
-      
-      - name: consume_avg_amount
-        description: 平均消费金额
-        type: gauge
-      
-      - name: consume_success_rate
-        description: 消费成功率
-        type: gauge
-    
-    # 访客指标
-    visitor:
-      - name: visitor_appointment_count
-        description: 访客预约数
-        type: counter
-      
-      - name: visitor_checkin_count
-        description: 访客签到数
-        type: counter
-      
-      - name: visitor_onsite_count
-        description: 当前在场访客数
-        type: gauge
+# ==================== 自定义业务指标（文档说明，非Spring Boot配置） ====================
+# 注意：以下配置仅作为业务指标定义的文档说明，不是Spring Boot实际使用的配置
+# 实际业务指标应在代码中使用Micrometer API注册
+# metrics:
+#   business:
+#     enabled: true
+#     
+#     # 门禁指标
+#     access:
+#       - name: access_total_count
+#         description: 门禁通行总数
+#         type: counter
+#       
+#       - name: access_success_rate
+#         description: 门禁通行成功率
+#         type: gauge
+#       
+#       - name: access_response_time
+#         description: 门禁响应时间
+#         type: timer
+#     
+#     # 考勤指标
+#     attendance:
+#       - name: attendance_punch_count
+#         description: 考勤打卡总数
+#         type: counter
+#       
+#       - name: attendance_late_count
+#         description: 迟到人数
+#         type: counter
+#       
+#       - name: attendance_leave_count
+#         description: 请假人数
+#         type: gauge
+#     
+#     # 消费指标
+#     consume:
+#       - name: consume_transaction_count
+#         description: 消费交易总数
+#         type: counter
+#       
+#       - name: consume_amount_total
+#         description: 消费金额总计
+#         type: counter
+#       
+#       - name: consume_avg_amount
+#         description: 平均消费金额
+#         type: gauge
+#       
+#       - name: consume_success_rate
+#         description: 消费成功率
+#         type: gauge
+#     
+#     # 访客指标
+#     visitor:
+#       - name: visitor_appointment_count
+#         description: 访客预约数
+#         type: counter
+#       
+#       - name: visitor_checkin_count
+#         description: 访客签到数
+#         type: counter
+#       
+#       - name: visitor_onsite_count
+#         description: 当前在场访客数
+#         type: gauge
 
-# ==================== 告警规则配置 ====================
-alerting:
-  rules:
-    # 系统级告警
-    - name: high_cpu_usage
-      expr: system_cpu_usage > 0.8
-      duration: 5m
-      severity: warning
-      message: "CPU使用率超过80%"
-    
-    - name: high_memory_usage
-      expr: jvm_memory_used_bytes / jvm_memory_max_bytes > 0.85
-      duration: 5m
-      severity: warning
-      message: "内存使用率超过85%"
-    
-    - name: high_gc_time
-      expr: jvm_gc_pause_seconds_sum > 1
-      duration: 1m
-      severity: critical
-      message: "GC暂停时间超过1秒"
-    
-    # 业务级告警
-    - name: low_access_success_rate
-      expr: access_success_rate < 0.95
-      duration: 10m
-      severity: warning
-      message: "门禁通行成功率低于95%"
-    
-    - name: high_consume_failure_rate
-      expr: (1 - consume_success_rate) > 0.05
-      duration: 5m
-      severity: warning
-      message: "消费失败率超过5%"
-    
-    - name: slow_api_response
-      expr: http_server_requests_seconds_p99 > 2
-      duration: 5m
-      severity: warning
-      message: "API P99响应时间超过2秒"
-    
-    # 数据库告警
-    - name: high_db_connection_usage
-      expr: hikaricp_connections_active / hikaricp_connections_max > 0.9
-      duration: 5m
-      severity: critical
-      message: "数据库连接池使用率超过90%"
-    
-    - name: slow_sql_query
-      expr: spring_data_repository_invocations_seconds_max > 5
-      duration: 1m
-      severity: warning
-      message: "SQL查询超过5秒"
-    
-    # Redis告警
-    - name: redis_connection_failure
-      expr: up{job="redis"} == 0
-      duration: 1m
-      severity: critical
-      message: "Redis连接失败"
+# ==================== 告警规则配置（文档说明，非Spring Boot配置） ====================
+# 注意：以下配置仅作为Prometheus告警规则的文档说明，实际告警规则应在Prometheus配置文件中定义
+# alerting:
+#   rules:
+#     # 系统级告警
+#     - name: high_cpu_usage
+#       expr: system_cpu_usage > 0.8
+#       duration: 5m
+#       severity: warning
+#       message: "CPU使用率超过80%"
+#     
+#     - name: high_memory_usage
+#       expr: jvm_memory_used_bytes / jvm_memory_max_bytes > 0.85
+#       duration: 5m
+#       severity: warning
+#       message: "内存使用率超过85%"
+#     
+#     - name: high_gc_time
+#       expr: jvm_gc_pause_seconds_sum > 1
+#       duration: 1m
+#       severity: critical
+#       message: "GC暂停时间超过1秒"
+#     
+#     # 业务级告警
+#     - name: low_access_success_rate
+#       expr: access_success_rate < 0.95
+#       duration: 10m
+#       severity: warning
+#       message: "门禁通行成功率低于95%"
+#     
+#     - name: high_consume_failure_rate
+#       expr: (1 - consume_success_rate) > 0.05
+#       duration: 5m
+#       severity: warning
+#       message: "消费失败率超过5%"
+#     
+#     - name: slow_api_response
+#       expr: http_server_requests_seconds_p99 > 2
+#       duration: 5m
+#       severity: warning
+#       message: "API P99响应时间超过2秒"
+#     
+#     # 数据库告警
+#     - name: high_db_connection_usage
+#       expr: hikaricp_connections_active / hikaricp_connections_max > 0.9
+#       duration: 5m
+#       severity: critical
+#       message: "数据库连接池使用率超过90%"
+#     
+#     - name: slow_sql_query
+#       expr: spring_data_repository_invocations_seconds_max > 5
+#       duration: 1m
+#       severity: warning
+#       message: "SQL查询超过5秒"
+#     
+#     # Redis告警
+#     - name: redis_connection_failure
+#       expr: up{job="redis"} == 0
+#       duration: 1m
+#       severity: critical
+#       message: "Redis连接失败"
 
-# ==================== Grafana仪表盘配置 ====================
-grafana:
-  dashboards:
-    # 系统监控仪表盘
-    - name: system-overview
-      panels:
-        - title: CPU使用率
-          metric: system_cpu_usage
-          type: graph
-        
-        - title: 内存使用率
-          metric: jvm_memory_used_bytes
-          type: graph
-        
-        - title: GC统计
-          metric: jvm_gc_pause_seconds_count
-          type: stat
-    
-    # 业务监控仪表盘
-    - name: business-metrics
-      panels:
-        - title: 今日通行量
-          metric: access_total_count
-          type: stat
-        
-        - title: 今日消费额
-          metric: consume_amount_total
-          type: stat
-        
-        - title: 在场访客数
-          metric: visitor_onsite_count
-          type: gauge
-        
-        - title: API响应时间分布
-          metric: http_server_requests_seconds
-          type: heatmap
+# ==================== Grafana仪表盘配置（文档说明，非Spring Boot配置） ====================
+# 注意：以下配置仅作为Grafana仪表盘设计的文档说明，实际仪表盘应在Grafana中配置
+# grafana:
+#   dashboards:
+#     # 系统监控仪表盘
+#     - name: system-overview
+#       panels:
+#         - title: CPU使用率
+#           metric: system_cpu_usage
+#           type: graph
+#         
+#         - title: 内存使用率
+#           metric: jvm_memory_used_bytes
+#           type: graph
+#         
+#         - title: GC统计
+#           metric: jvm_gc_pause_seconds_count
+#           type: stat
+#     
+#     # 业务监控仪表盘
+#     - name: business-metrics
+#       panels:
+#         - title: 今日通行量
+#           metric: access_total_count
+#           type: stat
+#         
+#         - title: 今日消费额
+#           metric: consume_amount_total
+#           type: stat
+#         
+#         - title: 在场访客数
+#           metric: visitor_onsite_count
+#           type: gauge
+#         
+#         - title: API响应时间分布
+#           metric: http_server_requests_seconds
+#           type: heatmap
 
 # ==================== 日志聚合配置 ====================
 logging:
@@ -250,24 +255,26 @@ logging:
   
   level:
     root: INFO
-    net.lab1024.sa: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
+    "net.lab1024.sa": DEBUG
+    "org.springframework.web": DEBUG
+    "org.hibernate.SQL": DEBUG
     
     # 第三方库日志级别
     com.alibaba: WARN
     io.lettuce: WARN
 
 # ==================== 链路追踪配置（可选） ====================
-spring:
-  sleuth:
-    enabled: true
-    sampler:
-      probability: 1.0  # 100%采样率
-  
-  zipkin:
-    base-url: http://localhost:9411
-    enabled: false  # 默认禁用，生产环境开启
+# 注意：Spring Boot 3.x 使用 Micrometer Tracing 替代 Spring Cloud Sleuth
+# 配置应在 management 节点下，而不是 spring 节点下
+# management:
+#   tracing:
+#     enabled: true
+#     sampling:
+#       probability: 1.0  # 100%采样率
+#   zipkin:
+#     tracing:
+#       endpoint: http://localhost:9411/api/v2/spans
+#       enabled: false  # 默认禁用，生产环境开启
 
 # ==================== 生产环境建议 ====================
 # 

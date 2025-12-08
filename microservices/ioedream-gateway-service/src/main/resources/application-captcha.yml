@@ -1,0 +1,34 @@
+# ============================================================
+# 验证码配置
+# ============================================================
+
+captcha:
+  # 基础配置
+  enabled: true                  # 是否启用验证码验证
+  length: 4                      # 验证码长度
+  expire-seconds: 300            # 过期时间（秒）- 5分钟
+  case-sensitive: false          # 是否区分大小写
+  
+  # 字符配置
+  chars: "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz"  # 排除易混淆字符
+  
+  # 图片配置
+  image-width: 100               # 图片宽度（像素）
+  image-height: 40               # 图片高度（像素）
+  font-size: 28                  # 字体大小
+  font-name: "Arial"             # 字体名称
+  
+  # 颜色配置
+  background-color:              # 背景色RGB
+    - 240
+    - 240
+    - 240
+  text-color-max: 150            # 文字颜色RGB最大值
+  interference-line-color-max: 200  # 干扰线颜色RGB最大值
+  
+  # 样式配置
+  interference-line-count: 5     # 干扰线数量
+  rotation-degree: 14            # 字符旋转角度范围（±度数）
+  
+  # Redis配置
+  redis-key-prefix: "captcha:"   # Redis键前缀

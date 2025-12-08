@@ -627,13 +627,6 @@ const getHistoryColor = (status) => {
   return colorMap[status] || 'gray';
 };
 
-/**
- * 格式化时间
- */
-const formatTime = (time) => {
-  return formatDateTime(time);
-};
-
 // 生命周期
 onMounted(async () => {
   await refreshData();

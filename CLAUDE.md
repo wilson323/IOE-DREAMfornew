@@ -21,7 +21,7 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 > **项目定位**: 企业级智慧安防管理平台  
 > **核心价值**: 多模态生物识别 + 一卡通 + 智能安防一体化解决方案  
-> **技术架构**: Spring Boot 3.5.8 + Vue3 + 微服务架构  
+> **技术架构**: Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Spring Cloud Alibaba 2025.0.0.0 + Vue3 + 微服务架构  
 > **安全等级**: 国家三级等保合规 + 金融级安全防护
 
 ---
@@ -30,7 +30,7 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 ### 项目简介
 
-**IOE-DREAM**（Intelligent Operations & Enterprise - Digital Resource & Enterprise Application Management）是IOE基于Spring Boot 3.5.8 + Sa-Token + MyBatis-Plus和Vue3 + Ant Design Vue + Uni-App构建的新一代**智慧园区一卡通管理平台**。
+**IOE-DREAM**（Intelligent Operations & Enterprise - Digital Resource & Enterprise Application Management）是IOE基于Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Spring Cloud Alibaba 2025.0.0.0 + Sa-Token + MyBatis-Plus和Vue3 + Ant Design Vue + Uni-App构建的新一代**智慧园区一卡通管理平台**。
 
 该平台专注于园区一卡通和生物识别安全管理，是国内首个集成多种生物识别技术（人脸、指纹、掌纹、虹膜、声纹等）并满足《网络安全-三级等保》、《数据安全》功能要求的开源项目，支持多模态身份认证、智能门禁控制、无感消费结算、自动考勤管理、智能访客管理、视频监控联动等一系列智慧安防功能。
 
@@ -236,11 +236,13 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 ### 技术栈优势
 
 - **Spring Boot 3.5.8**: 现代化框架，支持虚拟线程，性能优异
+- **Spring Cloud 2025.0.0**: 最新微服务框架，完全兼容Spring Boot 3.5.8
+- **Spring Cloud Alibaba 2025.0.0.0**: 最新稳定版，完全兼容当前技术栈，支持完整的`optional:nacos:`功能
 - **Java 17**: LTS版本，长期支持，性能优化
 - **Vue3 + Vite5**: 前端现代化，开发体验优秀
 - **多级缓存**: L1本地缓存 + L2 Redis缓存 + L3网关缓存
 - **分布式事务**: SAGA模式，确保数据一致性
-- **微服务治理**: Nacos注册中心 + 配置中心
+- **微服务治理**: Nacos注册中心 + 配置中心（支持可选配置加载）
 
 ---
 

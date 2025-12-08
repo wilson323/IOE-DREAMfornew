@@ -53,9 +53,10 @@ import net.lab1024.sa.devicecomm.protocol.router.MessageRouter;
 public class TcpPushServer {
 
     /**
-     * TCP服务器端口（从配置文件读取，默认8087）
+     * TCP服务器端口（从配置文件读取，默认18087）
+     * 注意：使用18087避免与common-service的8088端口冲突
      */
-    @Value("${device.protocol.tcp.port:8087}")
+    @Value("${device.protocol.tcp.port:18087}")
     private int tcpPort;
 
     /**

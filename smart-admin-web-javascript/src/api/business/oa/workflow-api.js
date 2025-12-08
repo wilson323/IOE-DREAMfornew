@@ -1,13 +1,26 @@
 /**
- * 工作流引擎API - 移动端版本
- * 基于uni-app框架的企业级工作流移动端接口
+ * 工作流引擎API - 前端版本
+ * 企业级工作流前端接口
  *
  * @Author: IOE-DREAM Team
  * @Date: 2025-01-30
  * @Copyright: IOE-DREAM (https://ioe-dream.net), Since 2025
  */
 
-import request from '@/utils/request'
+import { getRequest, postRequest, putRequest } from '/@/lib/axios';
+
+// 封装请求方法
+const request = {
+  get: (url, params) => getRequest(url, params),
+  post: (url, data) => postRequest(url, data),
+  put: (url, data, config) => {
+    if (config && config.params) {
+      const queryString = new URLSearchParams(config.params).toString();
+      url = queryString ? `${url}?${queryString}` : url;
+    }
+    return putRequest(url, data);
+  }
+}
 
 // ==================== 流程定义管理 ====================
 
@@ -327,7 +340,8 @@ export const getUserWorkloadStatistics = (userId, params) => {
 
 // ==================== 导出默认对象 ====================
 
-export default {
+// 导出 workflowApi 对象（供外部使用）
+export const workflowApi = {
   // 流程定义管理
   deployProcess,
   pageDefinitions,
@@ -362,4 +376,6 @@ export default {
   getProcessHistory,
   getProcessStatistics,
   getUserWorkloadStatistics
-}
+};
+
+export default workflowApi;

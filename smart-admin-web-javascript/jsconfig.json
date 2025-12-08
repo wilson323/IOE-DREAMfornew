@@ -4,6 +4,7 @@
         "jsx": "preserve",
         "module": "commonjs",
         "allowSyntheticDefaultImports": true,
+        "ignoreDeprecations": "6.0",
         "baseUrl": "./",
         "paths": {
             "/@/*": [
