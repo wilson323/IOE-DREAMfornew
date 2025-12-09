@@ -207,7 +207,12 @@ public class CaptchaService {
      * 保存验证码到Redis
      */
     private void saveCaptchaToRedis(String captchaUuid, String captchaText) {
-        String key = captchaConfig.getRedisKeyPrefix() + captchaUuid;
+        if (captchaUuid == null || captchaText == null) {
+            log.warn("验证码UUID或文本为空，跳过保存");
+            return;
+        }
+        String prefix = captchaConfig.getRedisKeyPrefix() != null ? captchaConfig.getRedisKeyPrefix() : "captcha:";
+        String key = prefix + captchaUuid;
         redisTemplate.opsForValue().set(key, captchaText, captchaConfig.getExpireSeconds(), TimeUnit.SECONDS);
         log.debug("验证码已存储到Redis，key: {}", key);
     }
