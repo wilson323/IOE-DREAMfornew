@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import net.lab1024.sa.common.cache.CacheService;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.consume.dao.ConsumeRecordDao;
+import net.lab1024.sa.common.consume.manager.MobileConsumeStatisticsManager;
+import net.lab1024.sa.common.consume.manager.MobileAccountInfoManager;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.consume.dao.AccountDao;
 import net.lab1024.sa.consume.dao.ConsumeAreaDao;
@@ -55,6 +58,9 @@ public class ManagerConfiguration {
 
     @Resource
     private GatewayServiceClient gatewayServiceClient;
+
+    @Resource
+    private ConsumeRecordDao consumeRecordDao;
 
     @Resource
     private ObjectMapper objectMapper;
@@ -206,6 +212,26 @@ public class ManagerConfiguration {
                 creditLimitEnabled,
                 defaultCreditLimit
         );
+    }
+
+    /**
+     * 注册移动端消费统计Manager为Spring Bean
+     *
+     * @return MobileConsumeStatisticsManager实例
+     */
+    @Bean
+    public MobileConsumeStatisticsManager mobileConsumeStatisticsManager() {
+        return new MobileConsumeStatisticsManager(gatewayServiceClient);
+    }
+
+    /**
+     * 注册移动端账户信息Manager为Spring Bean
+     *
+     * @return MobileAccountInfoManager实例
+     */
+    @Bean
+    public MobileAccountInfoManager mobileAccountInfoManager() {
+        return new MobileAccountInfoManager(gatewayServiceClient);
     }
 
     /**

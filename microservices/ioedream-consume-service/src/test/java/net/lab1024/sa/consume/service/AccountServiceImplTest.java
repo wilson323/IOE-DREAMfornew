@@ -57,10 +57,10 @@ class AccountServiceImplTest {
         addForm.setInitialBalance(new BigDecimal("100.00"));
 
         accountEntity = new AccountEntity();
-        accountEntity.setId(2001L);
+        accountEntity.setAccountId(2001L);
         accountEntity.setUserId(1001L);
         accountEntity.setAccountKindId(1L);
-        accountEntity.setBalance(10000L); // 100.00元，以分为单位
+        accountEntity.setBalance(new BigDecimal("100.00")); // 使用BigDecimal类型
         accountEntity.setStatus(1); // 正常状态
     }
 
@@ -71,7 +71,7 @@ class AccountServiceImplTest {
         when(accountDao.selectByUserId(1001L)).thenReturn(null);
         when(accountDao.insert(any(AccountEntity.class))).thenAnswer(invocation -> {
             AccountEntity entity = invocation.getArgument(0);
-            entity.setId(2001L);
+            entity.setAccountId(2001L);
             return 1;
         });
 
