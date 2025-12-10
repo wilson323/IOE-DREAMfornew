@@ -264,7 +264,7 @@ public class AuditManager {
      */
     private List<Object> convertToExcelRow(AuditLogEntity log) {
         List<Object> row = new ArrayList<>();
-        row.add(log.getLogId() != null ? log.getLogId() : "");
+        row.add(log.getId() != null ? log.getId() : "");
         row.add(getOperationTypeName(log.getOperationType()));
         row.add(log.getModuleName() != null ? log.getModuleName() : "");
         row.add(log.getOperationDesc() != null ? log.getOperationDesc() : "");
@@ -411,7 +411,7 @@ public class AuditManager {
      * @param normalFont 普通字体
      */
     private void addPdfTableRow(Table table, AuditLogEntity log, PdfFont normalFont) {
-        table.addCell(new Cell().add(new Paragraph(log.getLogId() != null ? String.valueOf(log.getLogId()) : "").setFont(normalFont)));
+        table.addCell(new Cell().add(new Paragraph(log.getId() != null ? String.valueOf(log.getId()) : "").setFont(normalFont)));
         table.addCell(new Cell().add(new Paragraph(getOperationTypeName(log.getOperationType())).setFont(normalFont)));
         table.addCell(new Cell().add(new Paragraph(log.getModuleName() != null ? log.getModuleName() : "").setFont(normalFont)));
         table.addCell(new Cell().add(new Paragraph(log.getOperationDesc() != null ? log.getOperationDesc() : "").setFont(normalFont)));
@@ -440,7 +440,7 @@ public class AuditManager {
 
             // 2. 添加数据行
             for (AuditLogEntity log : logs) {
-                csvContent.append(log.getLogId() != null ? log.getLogId() : "").append(",");
+                csvContent.append(log.getId() != null ? log.getId() : "").append(",");
                 csvContent.append(escapeCsvValue(getOperationTypeName(log.getOperationType()))).append(",");
                 csvContent.append(escapeCsvValue(log.getModuleName())).append(",");
                 csvContent.append(escapeCsvValue(log.getOperationDesc())).append(",");
@@ -536,7 +536,7 @@ public class AuditManager {
             // 6. 创建归档记录并存储到数据库归档表
             LocalDateTime archiveEndTime = LocalDateTime.now();
             long archiveDuration = System.currentTimeMillis() - startTimeMillis;
-            createArchiveRecord(beforeTime, logs.size(), zipFilePath.toString(), 
+            createArchiveRecord(beforeTime, logs.size(), zipFilePath.toString(),
                     archiveStartTime, archiveEndTime, archiveDuration);
 
             // 7. 删除已归档的日志（根据业务需求决定是否删除）

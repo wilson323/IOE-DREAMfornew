@@ -1,10 +1,10 @@
 # ============================================================
 # IOE-DREAM OA Service 配置文件
-# 
+#
 # @Author:    IOE-DREAM Team
 # @Date:      2025-01-30
 # @Copyright  IOE-DREAM智慧园区一卡通管理平台
-# 
+#
 # 服务信息:
 # - 服务名称: ioedream-oa-service
 # - 服务端口: 8089
@@ -32,7 +32,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD}
         enabled: true
         register-enabled: true
       config:
@@ -40,7 +40,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD}
         file-extension: yaml
         enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
         import-check:
@@ -48,7 +48,7 @@ spring:
 
 # ==================== 服务器配置 ====================
 server:
-  port: 8089
+  port: ${OA_SERVICE_PORT:8089}
   servlet:
     context-path: /
     encoding:

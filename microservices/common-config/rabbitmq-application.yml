@@ -1,0 +1,348 @@
+# ============================================================
+# IOE-DREAM 微服务消息队列统一配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: 基于RabbitMQ的消息队列配置，包含异步处理、事件驱动、可靠投递
+# ============================================================
+
+spring:
+  # ============================================================
+  # RabbitMQ 基础配置
+  # ============================================================
+  rabbitmq:
+    # 连接配置
+    host: ${RABBITMQ_HOST:127.0.0.1}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:ENC(AES256:encrypted_rabbitmq_password)}
+    virtual-host: ${RABBITMQ_VHOST:ioedream}
+
+    # 连接池配置
+    connection-timeout: 15000                           # 连接超时15秒
+    publisher-confirm-type: correlated                   # 发布确认模式
+    publisher-returns: true                             # 发布返回
+    template:
+      retry:
+        enabled: true
+        initial-interval: 1000ms                        # 初始重试间隔1秒
+        max-attempts: 3                                 # 最大重试3次
+        max-interval: 10000ms                           # 最大重试间隔10秒
+        multiplier: 2.0                                 # 间隔倍数
+    listener:
+      simple:
+        acknowledge-mode: manual                        # 手动确认模式
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          max-attempts: 3
+          max-interval: 10000ms
+          multiplier: 2.0
+        default-requeue-rejected: false                  # 拒绝的消息不重新入队
+
+    # SSL配置（生产环境推荐）
+    ssl:
+      enabled: ${RABBITMQ_SSL_ENABLED:false}
+      key-store: ${RABBITMQ_SSL_KEYSTORE:}
+      key-store-password: ${RABBITMQ_SSL_KEYSTORE_PASSWORD:}
+      trust-store: ${RABBITMQ_SSL_TRUSTSTORE:}
+      trust-store-password: ${RABBITMQ_SSL_TRUSTSTORE_PASSWORD:}
+      algorithm: ${RABBITMQ_SSL_ALGORITHM:TLSv1.2}
+
+# ============================================================
+# IOE-DREAM 业务队列配置
+# ============================================================
+ioedream:
+  rabbitmq:
+    # 队列配置
+    queues:
+      # 设备通讯队列
+      device:
+        command:
+          name: ioedream.device.command
+          routing-key: device.command
+          durable: true
+          auto-delete: false
+        response:
+          name: ioedream.device.response
+          routing-key: device.response
+          durable: true
+          auto-delete: false
+        heartbeat:
+          name: ioedream.device.heartbeat
+          routing-key: device.heartbeat
+          durable: false
+          auto-delete: true
+          ttl: 60000                                   # 心跳消息1分钟过期
+
+      # 门禁事件队列
+      access:
+        event:
+          name: ioedream.access.event
+          routing-key: access.event
+          durable: true
+          auto-delete: false
+        record:
+          name: ioedream.access.record
+          routing-key: access.record
+          durable: true
+          auto-delete: false
+        alarm:
+          name: ioedream.access.alarm
+          routing-key: access.alarm
+          durable: true
+          auto-delete: false
+          priority: 10                                 # 告警消息高优先级
+
+      # 考勤事件队列
+      attendance:
+        record:
+          name: ioedream.attendance.record
+          routing-key: attendance.record
+          durable: true
+          auto-delete: false
+        calculation:
+          name: ioedream.attendance.calculation
+          routing-key: attendance.calculation
+          durable: true
+          auto-delete: false
+        exception:
+          name: ioedream.attendance.exception
+          routing-key: attendance.exception
+          durable: true
+          auto-delete: false
+
+      # 消费事件队列
+      consume:
+        transaction:
+          name: ioedream.consume.transaction
+          routing-key: consume.transaction
+          durable: true
+          auto-delete: false
+        refund:
+          name: ioedream.consume.refund
+          routing-key: consume.refund
+          durable: true
+          auto-delete: false
+        notification:
+          name: ioedream.consume.notification
+          routing-key: consume.notification
+          durable: false
+          auto-delete: true
+
+      # 访客事件队列
+      visitor:
+        registration:
+          name: ioedream.visitor.registration
+          routing-key: visitor.registration
+          durable: true
+          auto-delete: false
+        appointment:
+          name: ioedream.visitor.appointment
+          routing-key: visitor.appointment
+          durable: true
+          auto-delete: false
+        notification:
+          name: ioedream.visitor.notification
+          routing-key: visitor.notification
+          durable: false
+          auto-delete: true
+
+      # 视频事件队列
+      video:
+        stream:
+          name: ioedream.video.stream
+          routing-key: video.stream
+          durable: false
+          auto-delete: true
+          ttl: 300000                                 # 视频流消息5分钟过期
+        recording:
+          name: ioedream.video.recording
+          routing-key: video.recording
+          durable: true
+          auto-delete: false
+        analysis:
+          name: ioedream.video.analysis
+          routing-key: video.analysis
+          durable: true
+          auto-delete: false
+
+      # OA事件队列
+      oa:
+        workflow:
+          name: ioedream.oa.workflow
+          routing-key: oa.workflow
+          durable: true
+          auto-delete: false
+        document:
+          name: ioedream.oa.document
+          routing-key: oa.document
+          durable: true
+          auto-delete: false
+        notification:
+          name: ioedream.oa.notification
+          routing-key: oa.notification
+          durable: false
+          auto-delete: true
+
+    # 交换机配置
+    exchanges:
+      # 设备通讯交换机
+      device:
+        name: ioedream.device.exchange
+        type: topic
+        durable: true
+        auto-delete: false
+
+      # 门禁事件交换机
+      access:
+        name: ioedream.access.exchange
+        type: topic
+        durable: true
+        auto-delete: false
+
+      # 考勤事件交换机
+      attendance:
+        name: ioedream.attendance.exchange
+        type: topic
+        durable: true
+        auto-delete: false
+
+      # 消费事件交换机
+      consume:
+        name: ioedream.consume.exchange
+        type: topic
+        durable: true
+        auto-delete: false
+
+      # 访客事件交换机
+      visitor:
+        name: ioedream.visitor.exchange
+        type: topic
+        durable: true
+        auto-delete: false
+
+      # 视频事件交换机
+      video:
+        name: ioedream.video.exchange
+        type: topic
+        durable: true
+        auto-delete: false
+
+      # OA事件交换机
+      oa:
+        name: ioedream.oa.exchange
+        type: topic
+        durable: true
+        auto-delete: false
+
+      # 系统事件交换机（通用）
+      system:
+        name: ioedream.system.exchange
+        type: fanout
+        durable: true
+        auto-delete: false
+
+    # 死信队列配置
+    dead-letter:
+      exchange: ioedream.dlx.exchange
+      routing-key: dlx
+      queue-ttl: 86400000                            # 死信队列消息保留24小时
+
+    # 延迟队列配置
+    delayed:
+      exchange: ioedream.delayed.exchange
+      type: x-delayed-message
+
+# ============================================================
+# RabbitMQ 监控配置
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,rabbitmq
+  endpoint:
+    health:
+      show-details: always
+    rabbitmq:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      component: rabbitmq
+    distribution:
+      percentiles-histogram:
+        spring.rabbitmq: true
+      percentiles:
+        spring.rabbitmq: 0.5,0.9,0.95,0.99
+
+# ============================================================
+# 日志配置
+# ============================================================
+logging:
+  level:
+    org.springframework.amqp: DEBUG
+    org.springframework.rabbit: DEBUG
+    com.rabbitmq: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+
+# ============================================================
+# 生产环境优化配置
+# ============================================================
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+spring:
+  rabbitmq:
+    # 生产环境连接优化
+    connection-timeout: 10000
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true                               # 强制路由检查
+      retry:
+        enabled: true
+        initial-interval: 2000ms
+        max-attempts: 5
+        max-interval: 30000ms
+        multiplier: 2.0
+    listener:
+      simple:
+        acknowledge-mode: manual
+        concurrency: 2                                # 初始消费者数量
+        max-concurrency: 10                           # 最大消费者数量
+        prefetch: 5                                  # 预取消息数量
+        retry:
+          enabled: true
+          initial-interval: 2000ms
+          max-attempts: 5
+          max-interval: 30000ms
+          multiplier: 2.0
+        default-requeue-rejected: false
+
+# 生产环境队列配置优化
+ioedream:
+  rabbitmq:
+    # 消息持久化配置
+    message:
+      persistent: true
+      priority-support: true
+
+    # 死信队列配置
+    dead-letter:
+      enabled: true
+      queue-ttl: 43200000                           # 12小时
+
+    # 延迟队列配置
+    delayed:
+      enabled: true
+      max-delay: 259200000                          # 最大延迟3天

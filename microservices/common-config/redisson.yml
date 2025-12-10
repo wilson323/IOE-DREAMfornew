@@ -1,0 +1,268 @@
+# ============================================================
+# IOE-DREAM Redisson分布式配置
+# 规模: 单企业、1000台设备、20000人员
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: 基于1000台设备、20000人规模的Redis分布式锁和缓存配置
+# ============================================================
+
+# Redisson 集群配置 - 适合中等规模企业
+clusterServersConfig:
+  # Redis集群节点配置
+  nodeAddresses:
+    - "redis://redis1:6379"
+    - "redis://redis2:6379"
+    - "redis://redis3:6379"
+    - "redis://redis4:6379"
+    - "redis://redis5:6379"
+    - "redis://redis6:6379"
+
+  # 集群扫描间隔
+  scanInterval: 2000
+
+  # 连接池配置 - 针对20000人并发优化
+  slaveConnectionPoolSize: 128          # 从节点连接池大小
+  masterConnectionPoolSize: 64          # 主节点连接池大小
+  idleConnectionTimeout: 15000         # 空闲连接超时
+  connectTimeout: 10000                # 连接超时
+  timeout: 5000                        # 命令超时
+  retryAttempts: 3                     # 重试次数
+  retryInterval: 2000                  # 重试间隔
+
+  # 数据库配置
+  database: 0
+
+  # 密码配置
+  password: ${REDIS_PASSWORD:}
+
+  # 负载均衡策略
+  loadBalancer: org.redisson.connection.balancer.RoundRobinLoadBalancer
+
+  # 订阅连接配置
+  subscriptionConnectionPoolSize: 50   # 订阅连接池大小
+  subscriptionConnectionMinimumIdleSize: 10
+
+  # SSL配置（生产环境推荐）
+  sslEnableEndpointIdentification: false
+  sslProvider: JDK
+
+  # 监控和统计
+  enableTensorFlow: false
+  enableRedissonReferenceSupport: true
+  enableTcpNoDelay: true
+  keepAlive: true
+
+  # 编解码器
+  codec: org.redisson.codec.JsonJacksonCodec
+
+  # 传输模式
+  transportMode: NIO
+
+  # 锁相关配置
+  lockWatchdogTimeout: 30000           # 看门狗超时时间（30秒）
+  keepPubSubOrder: true
+
+  # 线程池配置
+  threads: 64                         # 基于CPU核心数的2倍，适合20000人并发
+  nettyThreads: 32
+
+# 单服务器配置（开发环境）
+singleServerConfig:
+  address: "redis://127.0.0.1:6379"
+  database: 0
+  password: ${REDIS_PASSWORD:}
+
+  # 连接池配置
+  connectionPoolSize: 64               # 连接池大小
+  connectionMinimumIdleSize: 10        # 最小空闲连接数
+  idleConnectionTimeout: 15000
+  connectTimeout: 10000
+  timeout: 5000
+  retryAttempts: 3
+  retryInterval: 2000
+
+  # 订阅配置
+  subscriptionConnectionPoolSize: 25
+  subscriptionConnectionMinimumIdleSize: 5
+
+  # 配置项
+  keepAlive: true
+  tcpNoDelay: true
+  enableTensorFlow: false
+  enableRedissonReferenceSupport: true
+
+  # 编码器
+  codec: org.redisson.codec.JsonJacksonCodec
+
+  # 线程池
+  threads: 16
+  nettyThreads: 8
+
+# 哨兵模式配置（高可用环境）
+sentinelServersConfig:
+  sentinelAddresses:
+    - "redis://sentinel1:26379"
+    - "redis://sentinel2:26379"
+    - "redis://sentinel3:26379"
+
+  masterName: "ioedream-master"
+  database: 0
+  password: ${REDIS_PASSWORD:}
+
+  # 连接池配置
+  slaveConnectionPoolSize: 100
+  masterConnectionPoolSize: 50
+  idleConnectionTimeout: 15000
+  connectTimeout: 10000
+  timeout: 5000
+  retryAttempts: 3
+  retryInterval: 2000
+
+  # 订阅配置
+  subscriptionConnectionPoolSize: 40
+  subscriptionConnectionMinimumIdleSize: 8
+
+  # 其他配置
+  keepAlive: true
+  tcpNoDelay: true
+  enableTensorFlow: false
+  enableRedissonReferenceSupport: true
+
+  # 编码器
+  codec: org.redisson.codec.JsonJacksonCodec
+
+  # 线程池
+  threads: 32
+  nettyThreads: 16
+
+# 自定义配置
+maps:
+  # 用户映射配置 - 20000人规模
+  userMap:
+    # 缓存配置
+    cacheSize: 50000                 # 缓存大小（2.5倍用户数）
+    idleTime: 3600000                # 空闲时间（1小时）
+
+  # 设备映射配置 - 1000台设备规模
+  deviceMap:
+    # 缓存配置
+    cacheSize: 3000                  # 缓存大小（3倍设备数）
+    idleTime: 1800000                # 空闲时间（30分钟）
+
+  # 权限映射配置
+  permissionMap:
+    # 缓存配置
+    cacheSize: 10000                 # 缓存大小
+    idleTime: 7200000                # 空闲时间（2小时）
+
+  # 会话映射配置
+  sessionMap:
+    # 缓存配置
+    cacheSize: 25000                 # 缓存大小（1.25倍用户数）
+    idleTime: 1800000                # 空闲时间（30分钟）
+
+  # 分布式锁配置
+  distributedLock:
+    # 锁等待时间
+    lockWaitTimeout: 10000           # 10秒
+    # 锁自动释放时间
+    lockLeaseTime: 30000             # 30秒
+    # 锁续期时间
+    watchdogTimeout: 10000           # 10秒
+
+# 性能调优配置
+performance:
+  # JVM优化
+  jvm:
+    -Xms2g
+    -Xmx4g
+    -XX:+UseG1GC
+    -XX:MaxGCPauseMillis=200
+    -XX:+UnlockExperimentalVMOptions
+    -XX:+UseG1NewSizePercent=30
+    -XX:+G1HeapRegionSize=8m
+
+  # Netty优化
+  netty:
+    workerThreads: 16                # 工作线程数
+    bossThreads: 4                   # Boss线程数
+    soBacklog: 128                   # 连接队列长度
+
+  # Redis优化
+  redis:
+    # 连接池调优
+    connectionPool:
+      maxTotal: 200                  # 最大连接数
+      maxIdle: 50                    # 最大空闲连接数
+      minIdle: 10                    # 最小空闲连接数
+      testOnBorrow: false            # 借用时测试（false提升性能）
+      testOnReturn: false            # 返回时测试（false提升性能）
+      testWhileIdle: true            # 空闲时测试
+
+    # 连接超时配置
+    timeout:
+      connect: 10000                 # 连接超时10秒
+      socket: 5000                   # Socket超时5秒
+
+    # 序列化优化
+    serialization:
+      compress: true                 # 启用压缩
+      compressThreshold: 1024        # 压缩阈值
+
+# 监控配置
+monitoring:
+  # 启用监控
+  enabled: true
+
+  # 指标收集
+  metrics:
+    # JVM指标
+    jvm:
+      enabled: true
+
+    # Redisson指标
+    redisson:
+      enabled: true
+
+    # 自定义业务指标
+    custom:
+      enabled: true
+      interval: 60                   # 收集间隔60秒
+
+  # 告警配置
+  alerts:
+    # 连接池告警
+    connectionPool:
+      activeThreshold: 150           # 活跃连接数告警阈值
+      idleThreshold: 40              # 空闲连接数告警阈值
+
+    # 内存使用告警
+    memory:
+      usageThreshold: 0.8           # 内存使用率告警阈值
+
+    # 锁竞争告警
+    lock:
+      waitTimeThreshold: 5000       # 锁等待时间告警阈值
+
+# 故障恢复配置
+faultTolerance:
+  # 重试策略
+  retry:
+    enabled: true
+    maxAttempts: 3
+    backoffMultiplier: 2
+    initialDelay: 1000
+
+  # 熔断策略
+  circuitBreaker:
+    enabled: true
+    failureThreshold: 5
+    timeoutThreshold: 10000
+    halfOpenMaxCalls: 3
+
+  # 降级策略
+  fallback:
+    enabled: true
+    cacheFallback: true
+    defaultFallbackTimeout: 5000

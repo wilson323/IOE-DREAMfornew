@@ -44,10 +44,14 @@ import net.lab1024.sa.common.entity.BaseEntity;
 public class AreaEntity extends BaseEntity {
 
     /**
-     * 区域ID
+     * 区域ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列area_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
-    @TableId(type = IdType.AUTO)
-    private Long areaId;
+    @TableId(value = "area_id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 区域编码
@@ -132,4 +136,25 @@ public class AreaEntity extends BaseEntity {
      */
     @TableField("status")
     private Integer status;
+
+    /**
+     * 子区域列表（仅用于树形结构构建，不持久化）
+     */
+    @TableField(exist = false)
+    private java.util.List<AreaEntity> children;
+
+    /**
+     * 获取GPS位置信息（格式：经度,纬度）
+     * <p>
+     * 用于消费推荐服务等场景
+     * </p>
+     *
+     * @return GPS位置字符串，格式为"经度,纬度"，如果经纬度为空则返回null
+     */
+    public String getGpsLocation() {
+        if (longitude != null && latitude != null) {
+            return longitude + "," + latitude;
+        }
+        return null;
+    }
 }

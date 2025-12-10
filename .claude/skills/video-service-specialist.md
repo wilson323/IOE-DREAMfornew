@@ -3,9 +3,10 @@
 
 **🎯 技能定位**: IOE-DREAM智慧园区视频监控业务专家，精通视频流处理、智能分析、存储管理、实时监控等核心业务
 
-**⚡ 技能等级**: ★★★★★ (顶级专家)
+**⚡ 技能等级**: ★★★★★★ (顶级专家)
 **🎯 适用场景**: 视频服务开发、智能监控系统建设、视频分析优化、存储架构设计
 **📊 技能覆盖**: 视频流处理 | 智能分析 | 存储管理 | 实时监控 | AI分析 | 告警系统
+**🔧 技术栈**: Spring Boot 3.5.8 + FFmpeg + OpenCV + MinIO + Kafka + Redis
 
 ---
 
@@ -32,21 +33,414 @@
 
 ### 📹 视频流处理
 ```java
+// 视频流处理 (Jakarta EE 3.0+)
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import jakarta.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.websocket.Session;
+import jakarta.websocket.server.PathParam;
+import jakarta.websocket.server.ServerEndpoint;
+
+// Controller层 - REST接口
+@RestController
+@RequestMapping("/api/v1/video/stream")
+@Tag(name = "视频流处理", description = "视频流接入和处理管理")
+public class VideoStreamController {
+
+    @Resource
+    private VideoStreamService videoStreamService;
+
+    /**
+     * 开始视频流处理
+     */
+    @PostMapping("/start")
+    @RateLimiter(name = "video-stream-start", fallbackMethod = "startStreamFallback")
+    @ApiOperation(value = "开始视频流", notes = "启动视频流接入和处理")
+    public ResponseDTO<StreamStartResultDTO> startVideoStream(
+            @Valid @RequestBody StreamStartRequestDTO request,
+            HttpServletRequest httpRequest) {
+
+        log.info("[视频流] 开始处理, deviceId={}, streamType={}",
+                request.getDeviceId(), request.getStreamType());
+
+        validateRequestSource(httpRequest);
+
+        StreamStartResultDTO result = videoStreamService.startVideoStream(request);
+
+        log.info("[视频流] 处理启动完成, deviceId={}, streamId={}",
+                request.getDeviceId(), result.getStreamId());
+
+        return ResponseDTO.ok(result);
+    }
+
+    /**
+     * 停止视频流处理
+     */
+    @PostMapping("/stop")
+    @ApiOperation(value = "停止视频流", notes = "停止视频流处理")
+    public ResponseDTO<Void> stopVideoStream(@Valid @RequestBody StreamStopRequestDTO request) {
+        log.info("[视频流] 停止处理, streamId={}", request.getStreamId());
+
+        videoStreamService.stopVideoStream(request.getStreamId());
+
+        return ResponseDTO.ok();
+    }
+
+    // 服务降级处理
+    public ResponseDTO<StreamStartResultDTO> startStreamFallback(StreamStartRequestDTO request, Exception ex) {
+        log.error("[视频流] 服务降级, deviceId={}", request.getDeviceId(), ex);
+        return ResponseDTO.error("SERVICE_DEGRADED", "系统繁忙，请稍后重试");
+    }
+}
+
+// WebSocket端点 - 实时视频流推送
+@ServerEndpoint(value = "/api/v1/video/stream/live/{deviceId}")
+@Component
+public class VideoStreamWebSocketEndpoint {
+
+    private static VideoStreamManager streamManager;
+    private static final Map<String, Session> sessions = new ConcurrentHashMap<>();
+
+    @Resource
+    public void setStreamManager(VideoStreamManager streamManager) {
+        VideoStreamWebSocketEndpoint.streamManager = streamManager;
+    }
+
+    @OnOpen
+    public void onOpen(Session session, @PathParam("deviceId") String deviceId) {
+        log.info("[视频流WebSocket] 客户端连接, deviceId={}, sessionId={}", deviceId, session.getId());
+
+        sessions.put(session.getId(), session);
+        streamManager.addClient(deviceId, session.getId());
+
+        // 发送连接确认
+        sendMessage(session, "{\"type\":\"connected\",\"deviceId\":\"" + deviceId + "\"}");
+    }
+
+    @OnMessage
+    public void onMessage(String message, Session session, @PathParam("deviceId") String deviceId) {
+        log.debug("[视频流WebSocket] 收到消息, deviceId={}, message={}", deviceId, message);
+
+        try {
+            // 解析客户端消息
+            JSONObject jsonMessage = JSON.parseObject(message);
+            String type = jsonMessage.getString("type");
+
+            switch (type) {
+                case "REQUEST_FRAME":
+                    // 请求视频帧
+                    streamManager.requestFrame(deviceId, session.getId());
+                    break;
+                case "STREAM_CONTROL":
+                    // 流控制命令
+                    handleStreamControl(deviceId, jsonMessage);
+                    break;
+                default:
+                    log.warn("[视频流WebSocket] 未知消息类型, type={}", type);
+            }
+        } catch (Exception e) {
+            log.error("[视频流WebSocket] 消息处理异常", e);
+        }
+    }
+
+    @OnClose
+    public void onClose(Session session, @PathParam("deviceId") String deviceId) {
+        log.info("[视频流WebSocket] 客户端断开, deviceId={}, sessionId={}", deviceId, session.getId());
+
+        sessions.remove(session.getId());
+        streamManager.removeClient(deviceId, session.getId());
+    }
+
+    @OnError
+    public void onError(Session session, Throwable error, @PathParam("deviceId") String deviceId) {
+        log.error("[视频流WebSocket] 连接异常, deviceId={}, sessionId={}", deviceId, session.getId(), error);
+
+        sessions.remove(session.getId());
+        streamManager.removeClient(deviceId, session.getId());
+    }
+
+    private void sendMessage(Session session, String message) {
+        if (session != null && session.isOpen()) {
+            try {
+                session.getBasicRemote().sendText(message);
+            } catch (Exception e) {
+                log.error("[视频流WebSocket] 发送消息失败", e);
+            }
+        }
+    }
+}
+
+// Service层 - 业务逻辑实现
 @Service
-public class VideoStreamService {
+@Transactional(rollbackFor = Exception.class)
+public class VideoStreamServiceImpl implements VideoStreamService {
 
     @Resource
-    private StreamProcessor streamProcessor;
+    private VideoStreamManager videoStreamManager;
 
-    @Resource
-    private VideoTranscoder transcoder;
+    @Override
+    public StreamStartResultDTO startVideoStream(StreamStartRequestDTO request) {
+        try {
+            validateStreamStartRequest(request);
 
-    @Resource
-    private StreamDistributor distributor;
+            StreamStartResult result = videoStreamManager.startVideoStream(request);
 
-    public StreamProcessingResult processVideoStream(StreamRequest request) {
-        // 1. 视频流接入
-        VideoInputStream inputStream = streamProcessor.ingestStream(request);
+            return convertToDTO(result);
+        } catch (BusinessException e) {
+            log.warn("[视频流] 业务异常, deviceId={}, error={}", request.getDeviceId(), e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[视频流] 系统异常, deviceId={}", request.getDeviceId(), e);
+            throw new BusinessException("VIDEO_STREAM_START_ERROR", "视频流启动失败");
+        }
+    }
+
+    @Override
+    public void stopVideoStream(String streamId) {
+        try {
+            if (StringUtils.isEmpty(streamId)) {
+                throw new BusinessException("STREAM_ID_REQUIRED", "流ID不能为空");
+            }
+
+            videoStreamManager.stopVideoStream(streamId);
+        } catch (Exception e) {
+            log.error("[视频流] 停止失败, streamId={}", streamId, e);
+            throw new BusinessException("VIDEO_STREAM_STOP_ERROR", "视频流停止失败");
+        }
+    }
+
+    private void validateStreamStartRequest(StreamStartRequestDTO request) {
+        if (request.getDeviceId() == null) {
+            throw new BusinessException("DEVICE_ID_REQUIRED", "设备ID不能为空");
+        }
+        if (request.getStreamType() == null) {
+            throw new BusinessException("STREAM_TYPE_REQUIRED", "流类型不能为空");
+        }
+    }
+}
+
+// Manager层 - 复杂业务流程编排
+public class VideoStreamManagerImpl implements VideoStreamManager {
+
+    private final StreamProcessor streamProcessor;
+    private final VideoTranscoder videoTranscoder;
+    private final StreamDistributor streamDistributor;
+    private final VideoStreamDao videoStreamDao;
+    private final DeviceManager deviceManager;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    // 构造函数注入依赖
+    public VideoStreamManagerImpl(
+            StreamProcessor streamProcessor,
+            VideoTranscoder videoTranscoder,
+            StreamDistributor streamDistributor,
+            VideoStreamDao videoStreamDao,
+            DeviceManager deviceManager,
+            RedisTemplate<String, Object> redisTemplate) {
+        this.streamProcessor = streamProcessor;
+        this.videoTranscoder = videoTranscoder;
+        this.streamDistributor = streamDistributor;
+        this.videoStreamDao = videoStreamDao;
+        this.deviceManager = deviceManager;
+        this.redisTemplate = redisTemplate;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public StreamStartResult startVideoStream(StreamStartRequestDTO request) {
+        // 1. 验证设备有效性
+        DeviceEntity device = validateDevice(request.getDeviceId());
+
+        // 2. 视频流接入
+        VideoInputStream inputStream = streamProcessor.ingestStream(request, device);
+
+        // 3. 视频转码处理
+        TranscodingResult transcodingResult = videoTranscoder.transcodeStream(inputStream, request);
+
+        // 4. 流分发处理
+        DistributionResult distributionResult = streamDistributor.distributeStream(
+            transcodingResult, request);
+
+        // 5. 流信息持久化
+        VideoStreamEntity streamEntity = saveStreamInfo(request, device, transcodingResult, distributionResult);
+
+        // 6. 启动实时推送
+        startRealTimePush(streamEntity.getId(), distributionResult);
+
+        return buildStreamStartResult(streamEntity, transcodingResult, distributionResult);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void stopVideoStream(String streamId) {
+        // 1. 获取流信息
+        VideoStreamEntity streamEntity = getStreamInfo(streamId);
+        if (streamEntity == null) {
+            throw new BusinessException("STREAM_NOT_FOUND", "视频流不存在");
+        }
+
+        // 2. 停止流处理器
+        streamProcessor.stopStream(streamId);
+
+        // 3. 停止转码器
+        videoTranscoder.stopTranscoding(streamId);
+
+        // 4. 停止分发器
+        streamDistributor.stopDistribution(streamId);
+
+        // 5. 停止实时推送
+        stopRealTimePush(streamId);
+
+        // 6. 更新流状态
+        updateStreamStatus(streamId, "STOPPED");
+    }
+
+    private DeviceEntity validateDevice(Long deviceId) {
+        // 通过网关调用设备通讯服务验证设备
+        ResponseDTO<DeviceEntity> result = deviceManager.getDeviceInfo(deviceId);
+
+        if (result.getCode() != 200 || result.getData() == null) {
+            throw new BusinessException("DEVICE_NOT_FOUND", "设备不存在或离线");
+        }
+
+        DeviceEntity device = result.getData();
+        if (device.getStatus() != 1) {
+            throw new BusinessException("DEVICE_OFFLINE", "设备离线");
+        }
+
+        return device;
+    }
+
+    private VideoStreamEntity saveStreamInfo(StreamStartRequestDTO request, DeviceEntity device,
+                                           TranscodingResult transcodingResult, DistributionResult distributionResult) {
+        VideoStreamEntity streamEntity = VideoStreamEntity.builder()
+            .deviceId(request.getDeviceId())
+            .streamId(generateStreamId())
+            .streamType(request.getStreamType())
+            .streamUrl(transcodingResult.getStreamUrl())
+            .rtmpUrl(distributionResult.getRtmpUrl())
+            .hlsUrl(distributionResult.getHlsUrl())
+            .flvUrl(distributionResult.getFlvUrl())
+            .resolution(transcodingResult.getResolution())
+            .bitrate(transcodingResult.getBitrate())
+            .fps(transcodingResult.getFps())
+            .status("ACTIVE")
+            .startTime(LocalDateTime.now())
+            .build();
+
+        videoStreamDao.insert(streamEntity);
+
+        // 缓存流信息
+        redisTemplate.opsForValue().set(
+            "video:stream:" + streamEntity.getStreamId(),
+            streamEntity,
+            Duration.ofMinutes(30)
+        );
+
+        return streamEntity;
+    }
+
+    private void startRealTimePush(String streamId, DistributionResult distributionResult) {
+        // 异步启动实时推送
+        CompletableFuture.runAsync(() -> {
+            try {
+                streamDistributor.startRealTimePush(streamId, distributionResult);
+            } catch (Exception e) {
+                log.error("[实时推送] 启动失败, streamId={}", streamId, e);
+            }
+        });
+    }
+}
+
+// DAO层 - 数据访问
+@Mapper
+public interface VideoStreamDao extends BaseMapper<VideoStreamEntity> {
+
+    @Transactional(readOnly = true)
+    VideoStreamEntity selectByStreamId(@Param("streamId") String streamId);
+
+    @Transactional(readOnly = true)
+    List<VideoStreamEntity> selectByDeviceId(@Param("deviceId") Long deviceId);
+
+    @Transactional(readOnly = true)
+    List<VideoStreamEntity> selectByStatus(@Param("status") String status);
+
+    @Transactional(rollbackFor = Exception.class)
+    int updateStreamStatus(@Param("streamId") String streamId, @Param("status") String status);
+
+    @Transactional(rollbackFor = Exception.class)
+    int updateStreamEndTime(@Param("streamId") String streamId, @Param("endTime") LocalDateTime endTime);
+}
+
+// 实体类 - 视频流信息
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("t_video_stream")
+public class VideoStreamEntity extends BaseEntity {
+
+    @TableId(type = IdType.ASSIGN_ID)
+    private String streamId;
+
+    @TableField("device_id")
+    private Long deviceId;
+
+    @TableField("stream_type")
+    private Integer streamType;  // 1-主码流 2-子码流 3-移动码流
+
+    @TableField("stream_url")
+    private String streamUrl;
+
+    @TableField("rtmp_url")
+    private String rtmpUrl;
+
+    @TableField("hls_url")
+    private String hlsUrl;
+
+    @TableField("flv_url")
+    private String flvUrl;
+
+    @TableField("resolution")
+    private String resolution;  // 分辨率，如 1920x1080
+
+    @TableField("bitrate")
+    private Long bitrate;  // 码率(bps)
+
+    @TableField("fps")
+    private Integer fps;  // 帧率
+
+    @TableField("codec")
+    private String codec;  // 编码格式
+
+    @TableField("status")
+    private String status;  // ACTIVE, STOPPED, ERROR
+
+    @TableField("start_time")
+    private LocalDateTime startTime;
+
+    @TableField("end_time")
+    private LocalDateTime endTime;
+
+    @TableField("duration")
+    private Long duration;  // 持续时间(秒)
+
+    @TableField("client_count")
+    private Integer clientCount;  // 连接客户端数量
+
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+
+    @TableLogic
+    @TableField("deleted_flag")
+    private Integer deletedFlag;
+
+    @Version
+    private Integer version;
+}
+```
 
         // 2. 视频转码
         TranscodedStream transcodedStream = transcoder.transcode(inputStream, request.getTargetFormat());

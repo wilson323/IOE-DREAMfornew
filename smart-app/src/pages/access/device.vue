@@ -36,53 +36,49 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import accessApi from '@/api/access.js'
 
-export default {
-  name: 'AccessDevice',
-  setup() {
-    const deviceList = ref([])
-    const loading = ref(false)
+// 响应式数据
+const deviceList = ref([])
+const loading = ref(false)
 
-    // 加载设备列表
-    const loadDevices = async () => {
-      loading.value = true
-      try {
-        const result = await accessApi.getDeviceInfo()
-        if (result.success && result.data) {
-          deviceList.value = result.data
-        }
-      } catch (error) {
-        console.error('加载设备列表失败:', error)
-      } finally {
-        loading.value = false
-      }
+// 页面生命周期
+onMounted(() => {
+  loadDevices()
+})
+
+onShow(() => {
+  // 页面显示时可以刷新设备列表
+})
+
+onPullDownRefresh(() => {
+  loadDevices()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const loadDevices = async () => {
+  loading.value = true
+  try {
+    const result = await accessApi.getDeviceInfo()
+    if (result.success && result.data) {
+      deviceList.value = result.data
     }
-
-    // 查看设备详情
-    const viewDeviceDetail = (device) => {
-      uni.navigateTo({ url: `/pages/device/device-detail?id=${device.deviceId}` })
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 初始化
-    onMounted(() => {
-      loadDevices()
-    })
-
-    return {
-      deviceList,
-      loading,
-      viewDeviceDetail,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载设备列表失败:', error)
+  } finally {
+    loading.value = false
   }
+}
+
+const viewDeviceDetail = (device) => {
+  uni.navigateTo({ url: `/pages/device/device-detail?id=${device.deviceId}` })
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

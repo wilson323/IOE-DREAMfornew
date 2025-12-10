@@ -89,10 +89,10 @@ public class WorkflowTimeoutReminderJob {
                         // 发送提醒通知
                         sendApprovalReminder(task);
                         log.info("已发送审批超时提醒，任务ID: {}, 审批人ID: {}, 任务名称: {}",
-                                task.getTaskId(), task.getAssigneeId(), task.getTaskName());
+                                task.getId(), task.getAssigneeId(), task.getTaskName());
                     }
                 } catch (Exception e) {
-                    log.error("发送审批超时提醒失败，任务ID: {}", task.getTaskId(), e);
+                    log.error("发送审批超时提醒失败，任务ID: {}", task.getId(), e);
                 }
             }
 
@@ -123,7 +123,7 @@ public class WorkflowTimeoutReminderJob {
                     // 根据超时策略处理：自动转交、升级、自动通过等
                     handleTimeoutTask(task);
                 } catch (Exception e) {
-                    log.error("处理超时任务失败，任务ID: {}", task.getTaskId(), e);
+                    log.error("处理超时任务失败，任务ID: {}", task.getId(), e);
                 }
             }
 
@@ -181,13 +181,13 @@ public class WorkflowTimeoutReminderJob {
             LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
             if (lastReminderTime.isAfter(oneHourAgo)) {
                 log.debug("上次提醒时间在1小时内，不重复发送，任务ID: {}, 上次提醒时间: {}",
-                        task.getTaskId(), lastReminderTime);
+                        task.getId(), lastReminderTime);
                 return false;
             }
 
             return true;
         } catch (Exception e) {
-            log.warn("判断是否需要发送提醒失败，任务ID: {}, 默认发送提醒", task.getTaskId(), e);
+            log.warn("判断是否需要发送提醒失败，任务ID: {}, 默认发送提醒", task.getId(), e);
             // 异常情况下，默认发送提醒
             return true;
         }
@@ -233,9 +233,9 @@ public class WorkflowTimeoutReminderJob {
             // 更新任务变量中的上次提醒时间
             updateLastReminderTime(task);
 
-            log.info("审批超时提醒发送成功，任务ID: {}, 审批人ID: {}", task.getTaskId(), task.getAssigneeId());
+            log.info("审批超时提醒发送成功，任务ID: {}, 审批人ID: {}", task.getId(), task.getAssigneeId());
         } catch (Exception e) {
-            log.error("发送审批超时提醒异常，任务ID: {}", task.getTaskId(), e);
+            log.error("发送审批超时提醒异常，任务ID: {}", task.getId(), e);
             throw e;
         }
     }
@@ -263,9 +263,9 @@ public class WorkflowTimeoutReminderJob {
             task.setVariables(objectMapper.writeValueAsString(variables));
             workflowTaskDao.updateById(task);
 
-            log.debug("更新上次提醒时间成功，任务ID: {}", task.getTaskId());
+            log.debug("更新上次提醒时间成功，任务ID: {}", task.getId());
         } catch (Exception e) {
-            log.warn("更新上次提醒时间失败，任务ID: {}", task.getTaskId(), e);
+            log.warn("更新上次提醒时间失败，任务ID: {}", task.getId(), e);
             // 不影响主流程，仅记录警告
         }
     }
@@ -283,7 +283,7 @@ public class WorkflowTimeoutReminderJob {
         String timeoutStrategy = extractTimeoutStrategy(task);
 
         if (timeoutStrategy == null || timeoutStrategy.isEmpty()) {
-            log.warn("任务没有配置超时策略，任务ID: {}, 使用默认策略: AUTO_TRANSFER", task.getTaskId());
+            log.warn("任务没有配置超时策略，任务ID: {}, 使用默认策略: AUTO_TRANSFER", task.getId());
             timeoutStrategy = "AUTO_TRANSFER"; // 默认策略：自动转交
         }
 
@@ -301,7 +301,7 @@ public class WorkflowTimeoutReminderJob {
                 escalateTask(task);
                 break;
             default:
-                log.warn("未知的超时策略: {}, 任务ID: {}, 使用默认策略: AUTO_TRANSFER", timeoutStrategy, task.getTaskId());
+                log.warn("未知的超时策略: {}, 任务ID: {}, 使用默认策略: AUTO_TRANSFER", timeoutStrategy, task.getId());
                 transferToSupervisor(task);
         }
     }
@@ -312,14 +312,14 @@ public class WorkflowTimeoutReminderJob {
      * @param task 任务实体
      */
     private void transferToSupervisor(WorkflowTaskEntity task) {
-        log.info("自动转交超时任务给上级，任务ID: {}, 当前审批人ID: {}", task.getTaskId(), task.getAssigneeId());
+        log.info("自动转交超时任务给上级，任务ID: {}, 当前审批人ID: {}", task.getId(), task.getAssigneeId());
 
         try {
             // 1. 获取审批人的上级
             Long supervisorId = getSupervisorId(task.getAssigneeId());
             if (supervisorId == null) {
-                log.warn("无法获取审批人的上级，任务ID: {}, 审批人ID: {}, 尝试升级处理", 
-                        task.getTaskId(), task.getAssigneeId());
+                log.warn("无法获取审批人的上级，任务ID: {}, 审批人ID: {}, 尝试升级处理",
+                        task.getId(), task.getAssigneeId());
                 // 如果没有上级，尝试升级处理
                 escalateTask(task);
                 return;
@@ -327,21 +327,21 @@ public class WorkflowTimeoutReminderJob {
 
             // 2. 通过网关调用OA服务转交任务
             ResponseDTO<String> response = gatewayServiceClient.callOAService(
-                    "/api/v1/workflow/engine/task/" + task.getTaskId() + "/transfer?targetUserId=" + supervisorId,
+                    "/api/v1/workflow/engine/task/" + task.getId() + "/transfer?targetUserId=" + supervisorId,
                     HttpMethod.PUT,
                     null,
                     String.class
             );
 
             if (response != null && response.isSuccess()) {
-                log.info("自动转交超时任务成功，任务ID: {}, 原审批人ID: {}, 新审批人ID: {}", 
-                        task.getTaskId(), task.getAssigneeId(), supervisorId);
+                log.info("自动转交超时任务成功，任务ID: {}, 原审批人ID: {}, 新审批人ID: {}",
+                        task.getId(), task.getAssigneeId(), supervisorId);
             } else {
-                log.error("自动转交超时任务失败，任务ID: {}, 错误: {}", 
-                        task.getTaskId(), response != null ? response.getMessage() : "响应为空");
+                log.error("自动转交超时任务失败，任务ID: {}, 错误: {}",
+                        task.getId(), response != null ? response.getMessage() : "响应为空");
             }
         } catch (Exception e) {
-            log.error("自动转交超时任务异常，任务ID: {}", task.getTaskId(), e);
+            log.error("自动转交超时任务异常，任务ID: {}", task.getId(), e);
         }
     }
 
@@ -391,7 +391,7 @@ public class WorkflowTimeoutReminderJob {
      * @param task 任务实体
      */
     private void autoApprove(WorkflowTaskEntity task) {
-        log.info("自动通过超时任务，任务ID: {}, 任务名称: {}", task.getTaskId(), task.getTaskName());
+        log.info("自动通过超时任务，任务ID: {}, 任务名称: {}", task.getId(), task.getTaskName());
 
         try {
             // 构建自动通过的审批意见
@@ -403,20 +403,20 @@ public class WorkflowTimeoutReminderJob {
             requestParams.put("comment", comment);
 
             ResponseDTO<String> response = gatewayServiceClient.callOAService(
-                    "/api/v1/workflow/engine/task/" + task.getTaskId() + "/complete",
+                    "/api/v1/workflow/engine/task/" + task.getId() + "/complete",
                     HttpMethod.POST,
                     requestParams,
                     String.class
             );
 
             if (response != null && response.isSuccess()) {
-                log.info("自动通过超时任务成功，任务ID: {}", task.getTaskId());
+                log.info("自动通过超时任务成功，任务ID: {}", task.getId());
             } else {
-                log.error("自动通过超时任务失败，任务ID: {}, 错误: {}", 
-                        task.getTaskId(), response != null ? response.getMessage() : "响应为空");
+                log.error("自动通过超时任务失败，任务ID: {}, 错误: {}",
+                        task.getId(), response != null ? response.getMessage() : "响应为空");
             }
         } catch (Exception e) {
-            log.error("自动通过超时任务异常，任务ID: {}", task.getTaskId(), e);
+            log.error("自动通过超时任务异常，任务ID: {}", task.getId(), e);
         }
     }
 
@@ -426,24 +426,24 @@ public class WorkflowTimeoutReminderJob {
      * @param task 任务实体
      */
     private void escalateTask(WorkflowTaskEntity task) {
-        log.info("升级超时任务，任务ID: {}, 任务名称: {}", task.getTaskId(), task.getTaskName());
+        log.info("升级超时任务，任务ID: {}, 任务名称: {}", task.getId(), task.getTaskName());
 
         try {
             // 1. 获取更高层级的审批人（通常是部门负责人或更高级别）
             Long escalatedUserId = getEscalatedUserId(task.getAssigneeId());
             if (escalatedUserId == null) {
-                log.warn("无法获取更高层级的审批人，任务ID: {}, 仅发送升级通知", task.getTaskId());
+                log.warn("无法获取更高层级的审批人，任务ID: {}, 仅发送升级通知", task.getId());
             } else {
                 // 转交给更高层级的审批人
                 ResponseDTO<String> transferResponse = gatewayServiceClient.callOAService(
-                        "/api/v1/workflow/engine/task/" + task.getTaskId() + "/transfer?targetUserId=" + escalatedUserId,
+                        "/api/v1/workflow/engine/task/" + task.getId() + "/transfer?targetUserId=" + escalatedUserId,
                         HttpMethod.PUT,
                         null,
                         String.class
                 );
 
                 if (transferResponse != null && transferResponse.isSuccess()) {
-                    log.info("升级转交成功，任务ID: {}, 升级审批人ID: {}", task.getTaskId(), escalatedUserId);
+                    log.info("升级转交成功，任务ID: {}, 升级审批人ID: {}", task.getId(), escalatedUserId);
                 }
             }
 
@@ -473,9 +473,9 @@ public class WorkflowTimeoutReminderJob {
             // 保存通知记录（由定时任务处理发送）
             notificationDao.insert(notification);
 
-            log.info("升级处理完成，任务ID: {}", task.getTaskId());
+            log.info("升级处理完成，任务ID: {}", task.getId());
         } catch (Exception e) {
-            log.error("升级超时任务异常，任务ID: {}", task.getTaskId(), e);
+            log.error("升级超时任务异常，任务ID: {}", task.getId(), e);
         }
     }
 
@@ -525,8 +525,8 @@ public class WorkflowTimeoutReminderJob {
                 if (timeoutStrategyObj != null) {
                     String timeoutStrategy = timeoutStrategyObj.toString();
                     if (!timeoutStrategy.isEmpty()) {
-                        log.debug("从任务变量中获取超时策略，任务ID: {}, 策略: {}", 
-                                task.getTaskId(), timeoutStrategy);
+                        log.debug("从任务变量中获取超时策略，任务ID: {}, 策略: {}",
+                                task.getId(), timeoutStrategy);
                         return timeoutStrategy;
                     }
                 }
@@ -534,11 +534,11 @@ public class WorkflowTimeoutReminderJob {
 
             // 2. 如果任务变量中没有，尝试从流程定义中获取
             // 注意：这里需要查询流程定义，暂时返回null，使用默认策略
-            log.debug("任务变量中未找到超时策略，任务ID: {}, 使用默认策略", task.getTaskId());
+            log.debug("任务变量中未找到超时策略，任务ID: {}, 使用默认策略", task.getId());
             return null; // 返回null，使用默认策略（AUTO_TRANSFER）
 
         } catch (Exception e) {
-            log.warn("从任务变量中提取超时策略失败，任务ID: {}, 使用默认策略", task.getTaskId(), e);
+            log.warn("从任务变量中提取超时策略失败，任务ID: {}, 使用默认策略", task.getId(), e);
             return null; // 异常情况下，使用默认策略
         }
     }

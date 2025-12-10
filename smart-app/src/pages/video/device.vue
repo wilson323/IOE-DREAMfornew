@@ -118,200 +118,174 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, onMounted } from 'vue'
 import videoApi from '@/api/business/video/video-api'
 
-export default {
-  name: 'VideoDevice',
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
 
-  setup() {
-    // 系统信息
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+// 页面状态
+const loading = ref(false)
+const refreshing = ref(false)
+const hasMore = ref(true)
+const searchKeyword = ref('')
 
-    // 页面状态
-    const loading = ref(false)
-    const refreshing = ref(false)
-    const hasMore = ref(true)
-    const searchKeyword = ref('')
+// 数据
+const statistics = reactive({
+  totalCount: 0,
+  onlineCount: 0,
+  offlineCount: 0,
+  faultCount: 0
+})
+const deviceList = ref([])
+const pageNum = ref(1)
+const pageSize = ref(20)
 
-    // 数据
-    const statistics = reactive({
-      totalCount: 0,
-      onlineCount: 0,
-      offlineCount: 0,
-      faultCount: 0
-    })
-    const deviceList = ref([])
-    const pageNum = ref(1)
-    const pageSize = ref(20)
+// 页面生命周期
+onMounted(() => {
+  init()
+})
 
-    // 页面生命周期
-    onMounted(() => {
-      init()
-    })
+// 初始化
+const init = async () => {
+  await loadDevices()
+  await loadStatistics()
+}
 
-    // 初始化
-    const init = async () => {
-      await loadDevices()
-      await loadStatistics()
-    }
+// 加载设备列表
+const loadDevices = async (append = false) => {
+  try {
+    loading.value = true
 
-    // 加载设备列表
-    const loadDevices = async (append = false) => {
-      try {
-        loading.value = true
+    const res = await videoApi.getMobileDevices(false)  // 显示所有设备
 
-        const res = await videoApi.getMobileDevices(false)  // 显示所有设备
+    if (res.code === 1 && res.data) {
+      const newDevices = res.data.devices || []
 
-        if (res.code === 1 && res.data) {
-          const newDevices = res.data.devices || []
-
-          if (append) {
-            deviceList.value = [...deviceList.value, ...newDevices]
-          } else {
-            deviceList.value = newDevices
-          }
-
-          hasMore.value = newDevices.length >= pageSize.value
-        }
-      } catch (error) {
-        console.error('加载设备列表失败:', error)
-        uni.showToast({ title: '加载失败', icon: 'none' })
-      } finally {
-        loading.value = false
-        refreshing.value = false
-      }
-    }
-
-    // 加载统计信息
-    const loadStatistics = async () => {
-      try {
-        const res = await videoApi.getDeviceStatistics()
-        if (res.code === 1 && res.data) {
-          statistics.totalCount = res.data.totalCount || 0
-          statistics.onlineCount = res.data.onlineCount || 0
-          statistics.offlineCount = res.data.offlineCount || 0
-          statistics.faultCount = res.data.faultCount || 0
-        }
-      } catch (error) {
-        console.error('加载统计信息失败:', error)
-      }
-    }
-
-    // 查看设备详情
-    const viewDeviceDetail = (device) => {
-      uni.navigateTo({
-        url: `/pages/video/device-detail?deviceId=${device.deviceId}`
-      })
-    }
-
-    // 快速预览
-    const quickPreview = (device) => {
-      uni.navigateTo({
-        url: `/pages/video/monitor?deviceId=${device.deviceId}`
-      })
-    }
-
-    // 快速控制
-    const quickControl = (device) => {
-      if (!device.ptzEnabled) {
-        uni.showToast({ title: '该设备不支持云台', icon: 'none' })
-        return
+      if (append) {
+        deviceList.value = [...deviceList.value, ...newDevices]
+      } else {
+        deviceList.value = newDevices
       }
 
-      uni.navigateTo({
-        url: `/pages/video/ptz?deviceId=${device.deviceId}`
-      })
+      hasMore.value = newDevices.length >= pageSize.value
     }
-
-    // 同步设备
-    const syncDevices = async () => {
-      await loadDevices()
-      await loadStatistics()
-      uni.showToast({ title: '同步成功', icon: 'success' })
-    }
-
-    // 搜索
-    const handleSearch = () => {
-      // 实现搜索逻辑
-      const keyword = searchKeyword.value.toLowerCase()
-      if (!keyword) {
-        loadDevices()
-        return
-      }
-
-      deviceList.value = deviceList.value.filter(device =>
-        device.deviceName.toLowerCase().includes(keyword) ||
-        device.location?.toLowerCase().includes(keyword)
-      )
-    }
-
-    // 清除搜索
-    const clearSearch = () => {
-      searchKeyword.value = ''
-      loadDevices()
-    }
-
-    // 下拉刷新
-    const onRefresh = async () => {
-      refreshing.value = true
-      pageNum.value = 1
-      await loadDevices(false)
-    }
-
-    // 加载更多
-    const loadMore = () => {
-      if (hasMore.value && !loading.value) {
-        pageNum.value++
-        loadDevices(true)
-      }
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 获取状态文本
-    const getStatusText = (status) => {
-      const map = {
-        online: '在线',
-        offline: '离线',
-        fault: '故障',
-        recording: '录像中'
-      }
-      return map[status] || '未知'
-    }
-
-    return {
-      statusBarHeight,
-      loading,
-      refreshing,
-      hasMore,
-      searchKeyword,
-      statistics,
-      deviceList,
-      viewDeviceDetail,
-      quickPreview,
-      quickControl,
-      syncDevices,
-      handleSearch,
-      clearSearch,
-      onRefresh,
-      loadMore,
-      goBack,
-      getStatusText
-    }
+  } catch (error) {
+    console.error('加载设备列表失败:', error)
+    uni.showToast({ title: '加载失败', icon: 'none' })
+  } finally {
+    loading.value = false
+    refreshing.value = false
   }
+}
+
+// 加载统计信息
+const loadStatistics = async () => {
+  try {
+    const res = await videoApi.getDeviceStatistics()
+    if (res.code === 1 && res.data) {
+      statistics.totalCount = res.data.totalCount || 0
+      statistics.onlineCount = res.data.onlineCount || 0
+      statistics.offlineCount = res.data.offlineCount || 0
+      statistics.faultCount = res.data.faultCount || 0
+    }
+  } catch (error) {
+    console.error('加载统计信息失败:', error)
+  }
+}
+
+// 查看设备详情
+const viewDeviceDetail = (device) => {
+  uni.navigateTo({
+    url: `/pages/video/device-detail?deviceId=${device.deviceId}`
+  })
+}
+
+// 快速预览
+const quickPreview = (device) => {
+  uni.navigateTo({
+    url: `/pages/video/monitor?deviceId=${device.deviceId}`
+  })
+}
+
+// 快速控制
+const quickControl = (device) => {
+  if (!device.ptzEnabled) {
+    uni.showToast({ title: '该设备不支持云台', icon: 'none' })
+    return
+  }
+
+  uni.navigateTo({
+    url: `/pages/video/ptz?deviceId=${device.deviceId}`
+  })
+}
+
+// 同步设备
+const syncDevices = async () => {
+  await loadDevices()
+  await loadStatistics()
+  uni.showToast({ title: '同步成功', icon: 'success' })
+}
+
+// 搜索
+const handleSearch = () => {
+  // 实现搜索逻辑
+  const keyword = searchKeyword.value.toLowerCase()
+  if (!keyword) {
+    loadDevices()
+    return
+  }
+
+  deviceList.value = deviceList.value.filter(device =>
+    device.deviceName.toLowerCase().includes(keyword) ||
+    device.location?.toLowerCase().includes(keyword)
+  )
+}
+
+// 清除搜索
+const clearSearch = () => {
+  searchKeyword.value = ''
+  loadDevices()
+}
+
+// 下拉刷新
+const onRefresh = async () => {
+  refreshing.value = true
+  pageNum.value = 1
+  await loadDevices(false)
+}
+
+// 加载更多
+const loadMore = () => {
+  if (hasMore.value && !loading.value) {
+    pageNum.value++
+    loadDevices(true)
+  }
+}
+
+// 返回
+const goBack = () => {
+  uni.navigateBack()
+}
+
+// 获取状态文本
+const getStatusText = (status) => {
+  const map = {
+    online: '在线',
+    offline: '离线',
+    fault: '故障',
+    recording: '录像中'
+  }
+  return map[status] || '未知'
 }
 </script>
 
 <style lang="scss" scoped>
 .video-device-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .status-bar {

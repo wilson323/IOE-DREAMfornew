@@ -149,314 +149,284 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import videoApi from '@/api/business/video/video-api'
 import { useWebSocket } from '@/utils/websocket'
+import { useUserStore } from '@/store/user'
 
-export default {
-  name: 'VideoAlert',
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
 
-  setup() {
-    // 系统信息
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+  // 页面状态
+const loading = ref(false)
+const refreshing = ref(false)
+const hasMore = ref(true)
+const showFilterModal = ref(false)
 
-    // 页面状态
-    const loading = ref(false)
-    const refreshing = ref(false)
-    const hasMore = ref(true)
-    const showFilterModal = ref(false)
+// 筛选条件
+const filterLevel = ref('all')
+const filterStatus = ref('all')
 
-    // 筛选条件
-    const filterLevel = ref('all')
-    const filterStatus = ref('all')
+// 数据
+const overview = reactive({
+  totalCount: 0,
+  criticalCount: 0,
+  highCount: 0,
+  activeCount: 0
+})
+const alarmList = ref([])
+const pageNum = ref(1)
+const pageSize = ref(20)
 
-    // 数据
-    const overview = reactive({
-      totalCount: 0,
-      criticalCount: 0,
-      highCount: 0,
-      activeCount: 0
-    })
-    const alarmList = ref([])
-    const pageNum = ref(1)
-    const pageSize = ref(20)
+// 选项
+const levelOptions = [
+  { value: 'all', label: '全部' },
+  { value: 'CRITICAL', label: '紧急' },
+  { value: 'HIGH', label: '重要' },
+  { value: 'MEDIUM', label: '一般' },
+  { value: 'LOW', label: '低' }
+]
 
-    // 选项
-    const levelOptions = [
-      { value: 'all', label: '全部' },
-      { value: 'CRITICAL', label: '紧急' },
-      { value: 'HIGH', label: '重要' },
-      { value: 'MEDIUM', label: '一般' },
-      { value: 'LOW', label: '低' }
-    ]
+const statusOptions = [
+  { value: 'all', label: '全部' },
+  { value: 'ACTIVE', label: '活跃' },
+  { value: 'CONFIRMED', label: '已确认' },
+  { value: 'RESOLVED', label: '已解决' }
+]
 
-    const statusOptions = [
-      { value: 'all', label: '全部' },
-      { value: 'ACTIVE', label: '活跃' },
-      { value: 'CONFIRMED', label: '已确认' },
-      { value: 'RESOLVED', label: '已解决' }
-    ]
+// WebSocket
+const wsClient = ref(null)
 
-    // WebSocket
-    const wsClient = ref(null)
+// 页面生命周期
+onMounted(() => {
+  init()
+})
 
-    // 页面生命周期
-    onMounted(() => {
-      init()
-    })
+onUnmounted(() => {
+  cleanup()
+})
 
-    onUnmounted(() => {
-      cleanup()
-    })
+// 初始化
+const init = async () => {
+  await loadOverview()
+  await loadAlarms()
+  initWebSocket()
+}
 
-    // 初始化
-    const init = async () => {
-      await loadOverview()
-      await loadAlarms()
-      initWebSocket()
+// 加载告警概览
+const loadOverview = async () => {
+  try {
+    const res = await videoApi.getAlarmOverview()
+    if (res.code === 1 && res.data) {
+      Object.assign(overview, res.data)
     }
+  } catch (error) {
+    console.error('加载告警概览失败:', error)
+  }
+}
 
-    // 加载告警概览
-    const loadOverview = async () => {
-      try {
-        const res = await videoApi.getAlarmOverview()
-        if (res.code === 1 && res.data) {
-          Object.assign(overview, res.data)
-        }
-      } catch (error) {
-        console.error('加载告警概览失败:', error)
-      }
-    }
+// 加载告警列表
+const loadAlarms = async (append = false) => {
+  try {
+    loading.value = true
 
-    // 加载告警列表
-    const loadAlarms = async (append = false) => {
-      try {
-        loading.value = true
+    const res = await videoApi.getActiveAlarms(pageSize.value)
 
-        const res = await videoApi.getActiveAlarms(pageSize.value)
+    if (res.code === 1 && res.data) {
+      const newAlarms = res.data || []
 
-        if (res.code === 1 && res.data) {
-          const newAlarms = res.data || []
-
-          if (append) {
-            alarmList.value = [...alarmList.value, ...newAlarms]
-          } else {
-            alarmList.value = newAlarms
-          }
-
-          hasMore.value = newAlarms.length >= pageSize.value
-        }
-      } catch (error) {
-        console.error('加载告警列表失败:', error)
-        uni.showToast({ title: '加载失败', icon: 'none' })
-      } finally {
-        loading.value = false
-        refreshing.value = false
-      }
-    }
-
-    // 初始化WebSocket
-    const initWebSocket = () => {
-      const wsUrl = `wss://${import.meta.env.VITE_APP_API_URL.replace('https://', '')}/ws/video/alarm`
-
-      wsClient.value = useWebSocket({
-        url: wsUrl,
-        heartbeatInterval: 30000
-      })
-
-      // 订阅新告警
-      wsClient.value.subscribe('new_alarm', handleNewAlarm)
-
-      // 订阅告警状态更新
-      wsClient.value.subscribe('alarm_status_update', handleAlarmStatusUpdate)
-
-      wsClient.value.connect()
-    }
-
-    // 处理新告警
-    const handleNewAlarm = (message) => {
-      const newAlarm = message.data
-
-      // 添加到列表顶部
-      alarmList.value.unshift(newAlarm)
-
-      // 更新统计
-      overview.totalCount++
-      if (newAlarm.alarmLevel === 'CRITICAL') {
-        overview.criticalCount++
-      } else if (newAlarm.alarmLevel === 'HIGH') {
-        overview.highCount++
-      }
-
-      // 震动提醒
-      uni.vibrateShort()
-
-      // 声音提醒（如果是紧急告警）
-      if (newAlarm.alarmLevel === 'CRITICAL') {
-        uni.showToast({
-          title: '紧急告警！',
-          icon: 'none',
-          duration: 2000
-        })
-      }
-    }
-
-    // 处理告警状态更新
-    const handleAlarmStatusUpdate = (message) => {
-      const { alarmId, status } = message.data
-      const alarm = alarmList.value.find(a => a.alarmId === alarmId)
-      if (alarm) {
-        alarm.status = status
-      }
-    }
-
-    // 处理告警
-    const handleAlarm = async (alarm, action) => {
-      try {
-        const userStore = useUserStore()
-        const userId = userStore.userId
-
-        const res = await videoApi.processMobileAlarm(alarm.alarmId, action, userId)
-
-        if (res.code === 1) {
-          uni.showToast({ title: '处理成功', icon: 'success' })
-
-          // 更新告警状态
-          alarm.status = action === 'CONFIRM' ? 'CONFIRMED' : 'IGNORED'
-
-          // 震动反馈
-          uni.vibrateShort()
-        }
-      } catch (error) {
-        console.error('处理告警失败:', error)
-        uni.showToast({ title: '处理失败', icon: 'none' })
-      }
-    }
-
-    // 查看告警详情
-    const viewAlarmDetail = (alarm) => {
-      uni.navigateTo({
-        url: `/pages/video/alert-detail?alarmId=${alarm.alarmId}`
-      })
-    }
-
-    // 刷新告警
-    const refreshAlarms = async () => {
-      pageNum.value = 1
-      await Promise.all([
-        loadOverview(),
-        loadAlarms(false)
-      ])
-      uni.showToast({ title: '刷新成功', icon: 'success' })
-    }
-
-    // 下拉刷新
-    const onRefresh = async () => {
-      refreshing.value = true
-      pageNum.value = 1
-      await loadAlarms(false)
-    }
-
-    // 加载更多
-    const loadMore = () => {
-      if (hasMore.value && !loading.value) {
-        pageNum.value++
-        loadAlarms(true)
-      }
-    }
-
-    // 应用筛选
-    const applyFilter = async () => {
-      showFilterModal.value = false
-      pageNum.value = 1
-      await loadAlarms(false)
-    }
-
-    // 重置筛选
-    const resetFilter = () => {
-      filterLevel.value = 'all'
-      filterStatus.value = 'all'
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 格式化时间
-    const formatTime = (time) => {
-      if (!time) return ''
-      const date = new Date(time)
-      const now = new Date()
-      const diff = now - date
-
-      if (diff < 60000) {
-        return '刚刚'
-      } else if (diff < 3600000) {
-        return `${Math.floor(diff / 60000)}分钟前`
-      } else if (diff < 86400000) {
-        return `${Math.floor(diff / 3600000)}小时前`
+      if (append) {
+        alarmList.value = [...alarmList.value, ...newAlarms]
       } else {
-        return `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`
+        alarmList.value = newAlarms
       }
-    }
 
-    // 获取紧急程度文本
-    const getUrgencyText = (urgency) => {
-      const map = {
-        URGENT: '紧急',
-        HIGH: '重要',
-        MEDIUM: '一般',
-        LOW: '低',
-        INFO: '信息'
-      }
-      return map[urgency] || '未知'
+      hasMore.value = newAlarms.length >= pageSize.value
     }
+  } catch (error) {
+    console.error('加载告警列表失败:', error)
+    uni.showToast({ title: '加载失败', icon: 'none' })
+  } finally {
+    loading.value = false
+    refreshing.value = false
+  }
+}
 
-    // 获取状态文本
-    const getStatusText = (status) => {
-      const map = {
-        ACTIVE: '活跃',
-        CONFIRMED: '已确认',
-        RESOLVED: '已解决',
-        IGNORED: '已忽略'
-      }
-      return map[status] || '未知'
-    }
+// 初始化WebSocket
+const initWebSocket = () => {
+  const wsUrl = `wss://${import.meta.env.VITE_APP_API_URL.replace('https://', '')}/ws/video/alarm`
 
-    // 清理资源
-    const cleanup = () => {
-      if (wsClient.value) {
-        wsClient.value.disconnect()
-      }
-    }
+  wsClient.value = useWebSocket({
+    url: wsUrl,
+    heartbeatInterval: 30000
+  })
 
-    return {
-      statusBarHeight,
-      loading,
-      refreshing,
-      hasMore,
-      showFilterModal,
-      filterLevel,
-      filterStatus,
-      overview,
-      alarmList,
-      levelOptions,
-      statusOptions,
-      handleAlarm,
-      viewAlarmDetail,
-      refreshAlarms,
-      onRefresh,
-      loadMore,
-      applyFilter,
-      resetFilter,
-      goBack,
-      formatTime,
-      getUrgencyText,
-      getStatusText
+  // 订阅新告警
+  wsClient.value.subscribe('new_alarm', handleNewAlarm)
+
+  // 订阅告警状态更新
+  wsClient.value.subscribe('alarm_status_update', handleAlarmStatusUpdate)
+
+  wsClient.value.connect()
+}
+
+// 处理新告警
+const handleNewAlarm = (message) => {
+  const newAlarm = message.data
+
+  // 添加到列表顶部
+  alarmList.value.unshift(newAlarm)
+
+  // 更新统计
+  overview.totalCount++
+  if (newAlarm.alarmLevel === 'CRITICAL') {
+    overview.criticalCount++
+  } else if (newAlarm.alarmLevel === 'HIGH') {
+    overview.highCount++
+  }
+
+  // 震动提醒
+  uni.vibrateShort()
+
+  // 声音提醒（如果是紧急告警）
+  if (newAlarm.alarmLevel === 'CRITICAL') {
+    uni.showToast({
+      title: '紧急告警！',
+      icon: 'none',
+      duration: 2000
+    })
+  }
+}
+
+// 处理告警状态更新
+const handleAlarmStatusUpdate = (message) => {
+  const { alarmId, status } = message.data
+  const alarm = alarmList.value.find(a => a.alarmId === alarmId)
+  if (alarm) {
+    alarm.status = status
+  }
+}
+
+// 处理告警
+const handleAlarm = async (alarm, action) => {
+  try {
+    const userStore = useUserStore()
+    const userId = userStore.userId
+
+    const res = await videoApi.processMobileAlarm(alarm.alarmId, action, userId)
+
+    if (res.code === 1) {
+      uni.showToast({ title: '处理成功', icon: 'success' })
+
+      // 更新告警状态
+      alarm.status = action === 'CONFIRM' ? 'CONFIRMED' : 'IGNORED'
+
+      // 震动反馈
+      uni.vibrateShort()
     }
+  } catch (error) {
+    console.error('处理告警失败:', error)
+    uni.showToast({ title: '处理失败', icon: 'none' })
+  }
+}
+
+// 查看告警详情
+const viewAlarmDetail = (alarm) => {
+  uni.navigateTo({
+    url: `/pages/video/alert-detail?alarmId=${alarm.alarmId}`
+  })
+}
+
+// 刷新告警
+const refreshAlarms = async () => {
+  pageNum.value = 1
+  await Promise.all([
+    loadOverview(),
+    loadAlarms(false)
+  ])
+  uni.showToast({ title: '刷新成功', icon: 'success' })
+}
+
+// 下拉刷新
+const onRefresh = async () => {
+  refreshing.value = true
+  pageNum.value = 1
+  await loadAlarms(false)
+}
+
+// 加载更多
+const loadMore = () => {
+  if (hasMore.value && !loading.value) {
+    pageNum.value++
+    loadAlarms(true)
+  }
+}
+
+// 应用筛选
+const applyFilter = async () => {
+  showFilterModal.value = false
+  pageNum.value = 1
+  await loadAlarms(false)
+}
+
+// 重置筛选
+const resetFilter = () => {
+  filterLevel.value = 'all'
+  filterStatus.value = 'all'
+}
+
+// 返回
+const goBack = () => {
+  uni.navigateBack()
+}
+
+// 格式化时间
+const formatTime = (time) => {
+  if (!time) return ''
+  const date = new Date(time)
+  const now = new Date()
+  const diff = now - date
+
+  if (diff < 60000) {
+    return '刚刚'
+  } else if (diff < 3600000) {
+    return `${Math.floor(diff / 60000)}分钟前`
+  } else if (diff < 86400000) {
+    return `${Math.floor(diff / 3600000)}小时前`
+  } else {
+    return `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`
+  }
+}
+
+// 获取紧急程度文本
+const getUrgencyText = (urgency) => {
+  const map = {
+    URGENT: '紧急',
+    HIGH: '重要',
+    MEDIUM: '一般',
+    LOW: '低',
+    INFO: '信息'
+  }
+  return map[urgency] || '未知'
+}
+
+// 获取状态文本
+const getStatusText = (status) => {
+  const map = {
+    ACTIVE: '活跃',
+    CONFIRMED: '已确认',
+    RESOLVED: '已解决',
+    IGNORED: '已忽略'
+  }
+  return map[status] || '未知'
+}
+
+// 清理资源
+const cleanup = () => {
+  if (wsClient.value) {
+    wsClient.value.disconnect()
   }
 }
 </script>
@@ -464,7 +434,7 @@ export default {
 <style lang="scss" scoped>
 .video-alert-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .status-bar {

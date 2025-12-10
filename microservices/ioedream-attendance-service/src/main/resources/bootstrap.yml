@@ -1,0 +1,285 @@
+# ============================================================
+# IOE-DREAM Attendance Service Bootstrap 配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+#
+# 服务信息:
+# - 服务名称: ioedream-attendance-service
+# - 服务端口: 8091
+# - 服务职责: 考勤管理微服务，提供考勤打卡、排班管理、异常处理等功能
+# ============================================================
+
+# ==================== 应用基础配置 ====================
+spring:
+  application:
+    name: ${SERVICE_NAME:ioedream-attendance-service}
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # ==================== Nacos服务发现配置 ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+        enabled: true
+        register-enabled: true
+        # 服务注册元数据
+        metadata:
+          version: ${SERVICE_VERSION:1.0.0}
+          zone: ${ZONE:dev}
+          cluster: ${CLUSTER:default}
+          environment: ${ENVIRONMENT:dev}
+          attendance-types: "face,fingerprint,card,qr-code,location"
+          schedule-engine: "quartz"
+          report-generator: "jasper"
+
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+        file-extension: yaml
+        enabled: true
+        refresh-enabled: true
+        # 配置文件导入顺序
+        import-check:
+          enabled: true
+        # 共享配置 - 所有服务共享
+        shared-configs:
+          - data-id: common-database.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-redis.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-monitoring.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-security.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: attendance-config.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+        # 扩展配置 - 服务特定配置
+        extension-configs:
+          - data-id: ioedream-attendance-service-ext.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: ${spring.application.name}-${spring.profiles.active:dev}.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+  # ==================== 配置文件导入 ====================
+  config:
+    import:
+      - "optional:nacos:${spring.application.name}.yaml"
+      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:common-config.yaml"
+      - "optional:nacos:attendance-schedule-config.yaml"
+
+# ==================== 加密配置 ====================
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    key-obtention-iterations: 1000
+    pool-size: 1
+    provider-name: SunJCE
+    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
+    string-output-type: base64
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    property:
+      prefix: ENC(
+      suffix: )
+
+# ==================== JVM配置 ====================
+java:
+  # 考勤服务JVM优化参数（批量处理）
+  opts:
+    - "-server"
+    - "-Xms1g"
+    - "-Xmx2g"
+    - "-XX:+UseG1GC"
+    - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+HeapDumpOnOutOfMemoryError"
+    - "-XX:HeapDumpPath=/var/log/ioedream/attendance-service"
+    - "-XX:+PrintGCDetails"
+    - "-XX:+PrintGCTimeStamps"
+    - "-Dfile.encoding=UTF-8"
+    - "-Duser.timezone=Asia/Shanghai"
+
+# ==================== 日志配置启动参数 ====================
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    net.lab1024.sa.attendance: DEBUG
+    org.springframework: INFO
+
+# ==================== 考勤服务特定配置 ====================
+attendance:
+  clock:
+    # 打卡配置
+    methods:
+      face:
+        enabled: ${ATTENDANCE_FACE_ENABLED:true}
+        liveness-check: ${ATTENDANCE_FACE_LIVENESS:true}
+        confidence-threshold: ${ATTENDANCE_FACE_CONFIDENCE:0.8}
+
+      fingerprint:
+        enabled: ${ATTENDANCE_FINGERPRINT_ENABLED:true}
+        template-quality: ${ATTENDANCE_FINGERPRINT_QUALITY:60}
+        match-score: ${ATTENDANCE_FINGERPRINT_MATCH:75}
+
+      card:
+        enabled: ${ATTENDANCE_CARD_ENABLED:true}
+        verify-luhn: ${ATTENDANCE_CARD_VERIFY_LUHN:true}
+
+      qr-code:
+        enabled: ${ATTENDANCE_QRCODE_ENABLED:true}
+        dynamic-refresh: ${ATTENDANCE_QRCODE_DYNAMIC:true}
+        refresh-interval: ${ATTENDANCE_QRCODE_REFRESH:30}
+
+    # 位置验证
+    location:
+      enabled: ${ATTENDANCE_LOCATION_ENABLED:true}
+      accuracy-meters: ${ATTENDANCE_LOCATION_ACCURACY:100}
+      wifi-enabled: ${ATTENDANCE_WIFI_ENABLED:true}
+      bluetooth-enabled: ${ATTENDANCE_BLUETOOTH_ENABLED:false}
+
+    # 防代打卡
+    anti-cheating:
+      enabled: ${ATTENDANCE_ANTI_CHEATING_ENABLED:true}
+      photo-capture: ${ATTENDANCE_PHOTO_CAPTURE:true}
+      location-verify: ${ATTENDANCE_LOCATION_VERIFY:true}
+      time-window-minutes: ${ATTENDANCE_TIME_WINDOW:5}
+
+  schedule:
+    # 排班管理
+    shift:
+      # 班次配置
+      types: ${ATTENDANCE_SHIFT_TYPES:normal,overtime,weekend,holiday}
+      default-duration: ${ATTENDANCE_DEFAULT_DURATION:480}  # 8小时
+      break-duration: ${ATTENDANCE_BREAK_DURATION:60}     # 1小时
+
+    # 弹性时间
+    flexible:
+      enabled: ${ATTENDANCE_FLEXIBLE_ENABLED:true}
+      grace-minutes: ${ATTENDANCE_GRACE_MINUTES:10}
+      max-late-minutes: ${ATTENDANCE_MAX_LATE_MINUTES:30}
+      max-early-minutes: ${ATTENDANCE_MAX_EARLY_MINUTES:30}
+
+    # 轮班配置
+    rotation:
+      enabled: ${ATTENDANCE_ROTATION_ENABLED:false}
+      cycle-weeks: ${ATTENDANCE_ROTATION_CYCLE:2}
+      auto-switch: ${ATTENDANCE_AUTO_SWITCH:true}
+
+  calculation:
+    # 考勤计算
+    rules:
+      # 迟到早退
+      late-threshold-minutes: ${ATTENDANCE_LATE_THRESHOLD:5}
+      early-leave-threshold-minutes: ${ATTENDANCE_EARLY_LEAVE_THRESHOLD:30}
+
+      # 缺卡
+      absent-threshold-hours: ${ATTENDANCE_ABSENT_THRESHOLD:4}
+
+      # 加班计算
+      overtime:
+        enabled: ${ATTENDANCE_OVERTIME_ENABLED:true}
+        min-minutes: ${ATTENDANCE_OVERTIME_MIN:30}
+        approval-required: ${ATTENDANCE_OVERTIME_APPROVAL:true}
+        weekend-rate: ${ATTENDANCE_OVERTIME_WEEKEND_RATE:2.0}
+        holiday-rate: ${ATTENDANCE_OVERTIME_HOLIDAY_RATE:3.0}
+
+    # 假期管理
+    leave:
+      types: ${ATTENDANCE_LEAVE_TYPES:annual,sick,maternity,paternity,marriage,bereavement}
+      approval-workflow: ${ATTENDANCE_LEAVE_APPROVAL:true}
+      auto-deduct: ${ATTENDANCE_LEAVE_AUTO_DEDUCT:true}
+
+  exception:
+    # 异常处理
+    detection:
+      enabled: ${ATTENDANCE_EXCEPTION_ENABLED:true}
+      check-interval-minutes: ${ATTENDANCE_EXCEPTION_CHECK:30}
+
+    # 异常类型
+    types:
+      missed-clock: ${ATTENDANCE_MISSED_CLOCK:true}
+      late: ${ATTENDANCE_LATE_EXCEPTION:true}
+      early-leave: ${ATTENDANCE_EARLY_LEAVE_EXCEPTION:true}
+      absent: ${ATTENDANCE_ABSENT_EXCEPTION:true}
+      overtime: ${ATTENDANCE_OVERTIME_EXCEPTION:false}
+
+    # 自动处理
+    auto-process:
+      enabled: ${ATTENDANCE_AUTO_PROCESS:false}
+      auto-fill-missed: ${ATTENDANCE_AUTO_FILL_MISSED:false}
+      auto-approve-overtime: ${ATTENDANCE_AUTO_APPROVE_OVERTIME:false}
+
+  report:
+    # 报表生成
+    daily:
+      enabled: ${ATTENDANCE_DAILY_REPORT_ENABLED:true}
+      generate-time: ${ATTENDANCE_DAILY_REPORT_TIME:00:30}
+
+    weekly:
+      enabled: ${ATTENDANCE_WEEKLY_REPORT_ENABLED:true}
+      generate-day: ${ATTENDANCE_WEEKLY_REPORT_DAY:monday}
+      generate-time: ${ATTENDANCE_WEEKLY_REPORT_TIME:01:00}
+
+    monthly:
+      enabled: ${ATTENDANCE_MONTHLY_REPORT_ENABLED:true}
+      generate-day: ${ATTENDANCE_MONTHLY_REPORT_DAY:1}
+      generate-time: ${ATTENDANCE_MONTHLY_REPORT_TIME:02:00}
+
+  integration:
+    # 集成配置
+    access:
+      enabled: ${ATTENDANCE_ACCESS_INTEGRATION_ENABLED:true}
+      auto-clock-in: ${ATTENDANCE_AUTO_CLOCK_IN:true}
+      sync-interval: ${ATTENDANCE_SYNC_INTERVAL:60}
+
+    hr:
+      enabled: ${ATTENDANCE_HR_INTEGRATION_ENABLED:true}
+      employee-sync: ${ATTENDANCE_EMPLOYEE_SYNC:true}
+      department-sync: ${ATTENDANCE_DEPARTMENT_SYNC:true}
+
+  cache:
+    # 缓存配置
+    user-schedule:
+      ttl: ${ATTENDANCE_SCHEDULE_TTL:1800}      # 30分钟
+      max-size: ${ATTENDANCE_SCHEDULE_MAX_SIZE:20000}
+
+    clock-records:
+      ttl: ${ATTENDANCE_RECORDS_TTL:300}        # 5分钟
+      max-size: ${ATTENDANCE_RECORDS_MAX_SIZE:10000}
+
+    calculation-results:
+      ttl: ${ATTENDANCE_CALCULATION_TTL:900}    # 15分钟
+      max-size: ${ATTENDANCE_CALCULATION_MAX_SIZE:5000}
+
+  notification:
+    # 通知配置
+    reminders:
+      clock-in:
+        enabled: ${ATTENDANCE_CLOCK_IN_REMINDER:true}
+        time: ${ATTENDANCE_CLOCK_IN_REMINDER_TIME:08:30}
+
+      clock-out:
+        enabled: ${ATTENDANCE_CLOCK_OUT_REMINDER:true}
+        time: ${ATTENDANCE_CLOCK_OUT_REMINDER_TIME:17:30}
+
+    exceptions:
+      enabled: ${ATTENDANCE_EXCEPTION_NOTIFICATION:true}
+      channels: ${ATTENDANCE_NOTIFICATION_CHANNELS:system,email}

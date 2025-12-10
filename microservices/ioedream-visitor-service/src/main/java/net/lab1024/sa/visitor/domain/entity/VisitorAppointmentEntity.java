@@ -106,6 +106,11 @@ public class VisitorAppointmentEntity extends BaseEntity {
     private LocalDateTime approvalTime;
 
     /**
+     * 签到时间
+     */
+    private LocalDateTime checkInTime;
+
+    /**
      * 备注
      */
     private String remark;

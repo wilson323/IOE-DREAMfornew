@@ -1,0 +1,361 @@
+# =====================================================
+# IOE-DREAM JVM性能深度调优配置
+# 针对高并发场景的JVM参数优化
+# 支持不同环境的性能调优策略
+# =====================================================
+
+# ===========================================
+# 生产环境JVM启动参数 (通过环境变量设置)
+# ===========================================
+# JAVA_OPTS="-Xms2g -Xmx4g -Xmn1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/app/"
+
+# ===========================================
+# Spring Boot JVM优化配置
+# ===========================================
+spring:
+  # ===========================================
+  # JVM性能优化配置
+  # ===========================================
+  jvm:
+    # 内存配置 (单位: MB)
+    memory:
+      initial: 2048    # 初始堆内存 2GB
+      maximum: 4096    # 最大堆内存 4GB
+      young: 1024      # 年轻代 1GB
+      metaspace: 512   # 元空间 512MB
+      direct: 256     # 直接内存 256MB
+
+    # GC配置
+    gc:
+      # 使用G1垃圾收集器
+      collector: "G1"
+      # GC目标暂停时间 (毫秒)
+      pause-time-target: 200
+      # 并行GC线程数 (自动计算)
+      parallel-threads: 4
+      # 并发GC线程数 (自动计算)
+      concurrent-threads: 2
+
+    # 性能调优
+    performance:
+      # 是否启用JIT编译优化
+      jit-optimization: true
+      # 是否启用分层编译
+      tiered-compilation: true
+      # 是否启用压缩指针
+      compressed-oops: true
+      # 是否启用字符串去重
+      string-deduplication: true
+
+    # 监控配置
+    monitoring:
+      # 是否启用GC日志
+      gc-logging: true
+      # GC日志文件路径
+      gc-log-file: "./logs/gc.log"
+      # GC日志轮转策略
+      gc-log-rotation: "daily"
+      # 是否启用JFR (Java Flight Recorder)
+      jfr-enabled: false
+      # JFR文件路径
+      jfr-file: "./logs/jfr.jfr"
+
+# ===========================================
+# 环境特定JVM配置
+# ===========================================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  # 开发环境JVM配置 (较小内存，快速启动)
+  jvm:
+    memory:
+      initial: 512     # 512MB
+      maximum: 1024    # 1GB
+      young: 256       # 256MB
+      metaspace: 128   # 128MB
+      direct: 64      # 64MB
+
+    gc:
+      pause-time-target: 100  # 更短的暂停时间
+
+    performance:
+      # 开发环境启用详细诊断
+      jit-optimization: false  # 关闭优化便于调试
+      tiered-compilation: false
+
+    monitoring:
+      # 开发环境启用详细日志
+      gc-logging: true
+      jfr-enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  # 测试环境JVM配置 (中等资源配置)
+  jvm:
+    memory:
+      initial: 1024    # 1GB
+      maximum: 2048    # 2GB
+      young: 512       # 512MB
+      metaspace: 256   # 256MB
+      direct: 128      # 128MB
+
+    gc:
+      pause-time-target: 150
+
+    performance:
+      jit-optimization: true
+      tiered-compilation: true
+
+    monitoring:
+      gc-logging: true
+      jfr-enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  # 生产环境JVM配置 (高并发优化)
+  jvm:
+    memory:
+      initial: 4096    # 4GB
+      maximum: 8192    # 8GB
+      young: 2048      # 2GB
+      metaspace: 1024  # 1GB
+      direct: 512     # 512MB
+
+    gc:
+      collector: "G1"
+      pause-time-target: 100  # 生产环境更严格的暂停时间
+      parallel-threads: 8     # 生产环境更多并行线程
+      concurrent-threads: 4
+
+    performance:
+      jit-optimization: true
+      tiered-compilation: true
+      compressed-oops: true
+      string-deduplication: true
+
+    monitoring:
+      gc-logging: true
+      gc-log-file: "/var/log/app/gc.log"
+      jfr-enabled: true
+      jfr-file: "/var/log/app/jfr.jfr"
+
+# ===========================================
+# JVM性能监控集成
+# ===========================================
+management:
+  # JVM指标监控
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,threaddump,heapdump,env
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      jmx:
+        enabled: true
+      prometheus:
+        enabled: true
+
+# ===========================================
+# 高并发场景专项优化配置
+# ===========================================
+high-concurrency:
+  # 线程池配置
+  thread-pools:
+    # 业务线程池
+    business:
+      core-size: 50
+      max-size: 200
+      queue-capacity: 1000
+      keep-alive-time: 60s
+      thread-name-prefix: "business-"
+
+    # 异步任务线程池
+    async:
+      core-size: 20
+      max-size: 100
+      queue-capacity: 500
+      keep-alive-time: 30s
+      thread-name-prefix: "async-"
+
+    # 定时任务线程池
+    scheduled:
+      core-size: 10
+      max-size: 50
+      keep-alive-time: 60s
+      thread-name-prefix: "scheduled-"
+
+  # 连接池优化
+  connection-pools:
+    # 数据库连接池
+    datasource:
+      initial-size: 10
+      min-idle: 10
+      max-active: 50
+      max-wait: 60000
+      validation-query: "SELECT 1"
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+
+    # Redis连接池
+    redis:
+      max-active: 20
+      max-idle: 10
+      min-idle: 5
+      max-wait: 3000
+      time-between-eviction-runs: 10000
+
+  # 缓存优化
+  cache:
+    # 本地缓存配置
+    local:
+      maximum-size: 10000
+      expire-after-write: 300s
+      record-stats: true
+      weak-keys: false
+      soft-values: false
+
+    # 缓存预热
+    warmup:
+      enabled: true
+      thread-pool-size: 4
+      timeout: 30s
+
+# ===========================================
+# JVM调优建议和最佳实践
+# ===========================================
+jvm-tuning-guide:
+  # 内存调优建议
+  memory-tuning:
+    heap-ratio: "Xmn / Xmx = 0.25-0.3"  # 年轻代占堆内存比例
+    metaspace-ratio: "Metaspace / Xmx = 0.1-0.15"  # 元空间占堆内存比例
+    direct-memory-ratio: "DirectMemory / Xmx = 0.1-0.2"  # 直接内存占堆内存比例
+
+  # GC调优建议
+  gc-tuning:
+    pause-time-target: "100-200ms (生产环境)"  # GC暂停时间目标
+    throughput-target: "99% (高并发场景)"  # 吞吐量目标
+    g1-region-size: "16-32MB (根据堆大小调整)"  # G1区域大小
+
+  # 性能调优建议
+  performance-tuning:
+    jit-optimization: "生产环境启用"  # JIT编译优化
+    tiered-compilation: "启用分层编译"  # 分层编译
+    compressed-oops: "启用压缩指针"  # 压缩普通对象指针
+    string-deduplication: "启用字符串去重"  # 字符串去重
+
+# ===========================================
+# 监控和诊断配置
+# ===========================================
+monitoring:
+  # 性能监控
+  performance:
+    # JVM性能指标
+    jvm:
+      memory-usage-threshold: 0.8     # 内存使用率阈值
+      gc-pause-time-threshold: 200    # GC暂停时间阈值
+      gc-frequency-threshold: 10      # GC频率阈值 (次/分钟)
+
+    # 线程监控
+    thread:
+      active-count-threshold: 200     # 活跃线程数阈值
+      blocked-count-threshold: 10     # 阻塞线程数阈值
+
+    # 连接池监控
+    connection-pool:
+      usage-threshold: 0.8            # 连接池使用率阈值
+      wait-time-threshold: 1000       # 等待连接时间阈值
+
+  # 告警配置
+  alerts:
+    # 内存告警
+    memory:
+      heap-usage-high:
+        enabled: true
+        threshold: 0.85
+        message: "堆内存使用率过高"
+
+      metaspace-usage-high:
+        enabled: true
+        threshold: 0.9
+        message: "元空间使用率过高"
+
+    # GC告警
+    gc:
+      pause-time-long:
+        enabled: true
+        threshold: 300
+        message: "GC暂停时间过长"
+
+      frequency-high:
+        enabled: true
+        threshold: 20
+        message: "GC频率过高"
+
+    # 线程告警
+    thread:
+      deadlock-detected:
+        enabled: true
+        message: "检测到线程死锁"
+
+      active-count-high:
+        enabled: true
+        threshold: 500
+        message: "活跃线程数过高"
+
+# ===========================================
+# 故障排查和诊断工具
+# ===========================================
+diagnostics:
+  # 内存分析
+  memory-analysis:
+    heap-dump:
+      enabled: true
+      trigger: "OutOfMemoryError"
+      path: "/var/log/app/dumps/"
+
+    class-histogram:
+      enabled: true
+      interval: "1h"
+
+    object-statistics:
+      enabled: true
+      interval: "30m"
+
+  # GC分析
+  gc-analysis:
+    gc-logs:
+      enabled: true
+      rotation: "daily"
+      retention: "7d"
+
+    gc-summary:
+      enabled: true
+      interval: "1h"
+
+  # 线程分析
+  thread-analysis:
+    thread-dump:
+      enabled: true
+      trigger: "deadlock"
+      interval: "5m"
+
+    cpu-profiling:
+      enabled: false  # 生产环境默认关闭
+      duration: "30s"

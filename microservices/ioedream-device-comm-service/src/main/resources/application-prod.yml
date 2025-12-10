@@ -1,0 +1,356 @@
+# ============================================================
+# IOE-DREAM Device Communication Service 生产环境配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8087}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 400
+    min-spare-threads: 50
+    accept-count: 200
+
+# ==================== Spring配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  # ==================== 数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 连接池配置（高并发优化）
+      initial-size: 50
+      min-idle: 50
+      max-active: 200
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+
+      # SQL监控
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 500
+          log-slow-sql: true
+        wall:
+          enabled: true
+
+  # ==================== Redis配置 ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 50
+        max-idle: 25
+        min-idle: 10
+        max-wait: 1000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 缓存配置 ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000  # 5分钟
+      cache-null-values: false
+      key-prefix: device_cache_
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    default-executor-type: reuse
+    default-statement-timeout: 10
+    default-fetch-size: 500
+    jdbc-type-for-null: other
+
+  global-config:
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+
+# ==================== Zipkin分布式追踪配置 ====================
+  sleuth:
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      enabled: ${ZIPKIN_ENABLED:true}
+    sampler:
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      device-comm-service:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        sliding-window-type: count_based
+
+  ratelimiter:
+    instances:
+      device-comm-service:
+        limit-for-period: 500
+        limit-refresh-period: 60s
+        timeout-duration: 5s
+        register-health-indicator: true
+
+  retry:
+    instances:
+      device-comm-service:
+        max-attempts: 3
+        wait-duration: 500ms
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - java.io.IOException
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    net.lab1024.sa.device: INFO
+    io.netty: INFO
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# ==================== 设备通讯特定配置 ====================
+device:
+  communication:
+    # TCP服务器配置
+    tcp:
+      enabled: ${TCP_SERVER_ENABLED:true}
+      port: ${TCP_SERVER_PORT:8801}
+      boss-threads: ${TCP_BOSS_THREADS:2}
+      worker-threads: ${TCP_WORKER_THREADS:20}
+      so-backlog: ${TCP_BACKLOG:1024}
+      so-keepalive: ${TCP_KEEPALIVE:true}
+      tcp-nodelay: ${TCP_NODELAY:true}
+      idle-timeout: ${TCP_IDLE_TIMEOUT:300}
+
+    # UDP服务器配置
+    udp:
+      enabled: ${UDP_SERVER_ENABLED:true}
+      port: ${UDP_SERVER_PORT:8802}
+      worker-threads: ${UDP_WORKER_THREADS:10}
+      receive-buffer-size: ${UDP_BUFFER_SIZE:8192}
+      broadcast: ${UDP_BROADCAST:false}
+
+    # MQTT客户端配置
+    mqtt:
+      enabled: ${MQTT_CLIENT_ENABLED:true}
+      broker-url: ${MQTT_BROKER_URL:tcp://mqtt-prod:1883}
+      username: ${MQTT_USERNAME:ENC(AES256:encrypted_mqtt_username)}
+      password: ${MQTT_PASSWORD:ENC(AES256:encrypted_mqtt_password)}
+      client-id-prefix: ${MQTT_CLIENT_PREFIX:ioedream-device}
+      clean-session: ${MQTT_CLEAN_SESSION:true}
+      auto-reconnect: ${MQTT_AUTO_RECONNECT:true}
+      reconnect-interval: ${MQTT_RECONNECT_INTERVAL:5000}
+      connection-timeout: ${MQTT_CONNECT_TIMEOUT:30000}
+      keep-alive-interval: ${MQTT_KEEP_ALIVE:60}
+
+      # MQTT主题配置
+      topics:
+        device-status: ${MQTT_TOPIC_DEVICE_STATUS:device/status/+}
+        device-data: ${MQTT_TOPIC_DEVICE_DATA:device/data/+}
+        device-command: ${MQTT_TOPIC_DEVICE_COMMAND:device/command/+}
+        system-alert: ${MQTT_TOPIC_SYSTEM_ALERT:system/alert}
+
+    # WebSocket服务器配置
+    websocket:
+      enabled: ${WEBSOCKET_SERVER_ENABLED:true}
+      port: ${WEBSOCKET_PORT:8803}
+      max-frame-size: ${WEBSOCKET_MAX_FRAME:65536}
+      max-text-message-buffer-size: ${WEBSOCKET_TEXT_BUFFER:8192}
+      max-binary-message-buffer-size: ${WEBSOCKET_BINARY_BUFFER:8192}
+      heartbeat-interval: ${WEBSOCKET_HEARTBEAT:30}
+      allow-extensions: ${WEBSOCKET_EXTENSIONS:permessage-deflate,client_max_window_bits}
+
+    # 设备连接管理
+    connection:
+      max-connections: ${MAX_DEVICE_CONNECTIONS:10000}
+      connection-timeout: ${DEVICE_CONNECTION_TIMEOUT:30000}
+      heartbeat-interval: ${DEVICE_HEARTBEAT:60}
+      idle-timeout: ${DEVICE_IDLE_TIMEOUT:300}
+      reconnect-attempts: ${DEVICE_RECONNECT_ATTEMPTS:5}
+      reconnect-interval: ${DEVICE_RECONNECT_INTERVAL:10000}
+
+    # 数据处理配置
+    data-processing:
+      batch-size: ${DATA_BATCH_SIZE:1000}
+      batch-timeout: ${DATA_BATCH_TIMEOUT:5000}
+      max-retry-attempts: ${DATA_RETRY_ATTEMPTS:3}
+      retry-interval: ${DATA_RETRY_INTERVAL:1000}
+      compression-enabled: ${DATA_COMPRESSION:true}
+      encryption-enabled: ${DATA_ENCRYPTION:false}
+
+    # 协议适配器配置
+    protocol-adapters:
+      default-protocol: ${DEFAULT_PROTOCOL:TCP}
+      support-protocols: ${SUPPORT_PROTOCOLS:TCP,UDP,HTTP,Websocket,MQTT}
+      adapter-thread-pool-size: ${ADAPTER_THREAD_POOL:20}
+      protocol-handshake-timeout: ${PROTOCOL_HANDSHAKE_TIMEOUT:30000}
+
+  # 协议配置
+  protocol:
+    # 自定义协议配置
+    custom:
+      version: ${PROTOCOL_VERSION:1.0}
+      checksum-algorithm: ${CHECKSUM_ALGORITHM:CRC16}
+      encoding: ${PROTOCOL_ENCODING:UTF-8}
+      end-of-message: ${EOM_MARKER:\r\n}
+
+    # 设备发现配置
+    discovery:
+      enabled: ${DEVICE_DISCOVERY_ENABLED:true}
+      broadcast-port: ${DISCOVERY_PORT:8804}
+      discovery-interval: ${DISCOVERY_INTERVAL:60}
+      device-timeout: ${DEVICE_TIMEOUT:300}
+
+  # 缓存配置
+  cache:
+    device-status:
+      ttl: ${DEVICE_STATUS_TTL:60}         # 1分钟
+      max-size: ${DEVICE_STATUS_MAX_SIZE:10000}
+
+    device-data:
+      ttl: ${DEVICE_DATA_TTL:300}          # 5分钟
+      max-size: ${DEVICE_DATA_MAX_SIZE:50000}
+
+    protocol-config:
+      ttl: ${PROTOCOL_CONFIG_TTL:1800}     # 30分钟
+      max-size: ${PROTOCOL_CONFIG_MAX_SIZE:1000}
+
+  # 监控配置
+  monitoring:
+    # 设备健康监控
+    health-check:
+      enabled: ${DEVICE_HEALTH_CHECK_ENABLED:true}
+      check-interval: ${HEALTH_CHECK_INTERVAL:60}
+      offline-threshold: ${OFFLINE_THRESHOLD:180}
+
+    # 性能监控
+    performance:
+      enabled: ${PERFORMANCE_MONITORING_ENABLED:true}
+      metrics-collection-interval: ${METRICS_INTERVAL:30}
+      alert-thresholds:
+        connection-count: ${ALERT_CONNECTION_THRESHOLD:8000}
+        message-throughput: ${ALERT_THROUGHPUT_THRESHOLD:10000}
+        error-rate: ${ALERT_ERROR_RATE_THRESHOLD:0.05}
+
+    # 告警配置
+    alert:
+      enabled: ${DEVICE_ALERT_ENABLED:true}
+      notification-channels: ${ALERT_CHANNELS:system,email,sms}
+      escalation-rules: ${ALERT_ESCALATION:true}
+      alert-cooldown: ${ALERT_COOLDOWN:300}
+
+  # 安全配置
+  security:
+    # 设备认证
+    authentication:
+      enabled: ${DEVICE_AUTH_ENABLED:true}
+      token-expire: ${DEVICE_TOKEN_EXPIRE:3600}
+      device-whitelist: ${DEVICE_WHITELIST_ENABLED:true}
+      ip-whitelist: ${IP_WHITELIST_ENABLED:true}
+
+    # 数据加密
+    encryption:
+      enabled: ${DATA_ENCRYPTION_ENABLED:false}
+      algorithm: ${ENCRYPTION_ALGORITHM:AES-256}
+      key-rotation-hours: ${KEY_ROTATION_HOURS:24}
+
+    # 访问控制
+    access-control:
+      device-access-level: ${DEVICE_ACCESS_LEVEL:operator}
+      command-authorization: ${COMMAND_AUTH:true}
+
+# ==================== Netty优化配置 ====================
+netty:
+  # 内存优化
+  allocator:
+    type: ${NETTY_ALLOCATOR:pooled}
+    prefer-direct: ${NETTY_PREFER_DIRECT:true}
+
+  # 线程优化
+  event-executor:
+    default-boss-threads: ${NETTY_BOSS_THREADS:2}
+    default-worker-threads: ${NETTY_WORKER_THREADS:16}
+    max-tasks-per-pinch: ${NETTY_MAX_TASKS:1024}
+
+  # 缓冲区优化
+  buffer:
+    receive-buffer-size: ${NETTY_RECEIVE_BUFFER:65536}
+    send-buffer-size: ${NETTY_SEND_BUFFER:65536}

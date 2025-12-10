@@ -124,8 +124,8 @@ public class MonitorServiceImpl implements MonitorService {
             // 5. 保存到数据库
             alertRuleDao.insert(alertRule);
 
-            log.info("告警规则创建成功，规则ID：{}，规则名称：{}", alertRule.getRuleId(), alertRule.getRuleName());
-            return ResponseDTO.ok(alertRule.getRuleId());
+            log.info("告警规则创建成功，规则ID：{}，规则名称：{}", alertRule.getId(), alertRule.getRuleName());
+            return ResponseDTO.ok(alertRule.getId());
 
         } catch (Exception e) {
             log.error("创建告警规则失败，规则名称：{}", ruleVO != null ? ruleVO.getRuleName() : "未知", e);
@@ -350,7 +350,7 @@ public class MonitorServiceImpl implements MonitorService {
             List<Map<String, Object>> alertList = alerts.stream()
                     .map(alert -> {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("id", alert.getAlertId() != null ? alert.getAlertId() : 0L);
+                        map.put("id", alert.getId() != null ? alert.getId() : 0L);
                         map.put("alertType", alert.getAlertType() != null ? alert.getAlertType() : "");
                         map.put("alertDescription",
                                 alert.getAlertDescription() != null ? alert.getAlertDescription() : "");

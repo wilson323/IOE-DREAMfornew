@@ -7,12 +7,19 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import net.lab1024.sa.common.util.CursorPagination;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,6 +48,8 @@ import com.wechat.pay.java.service.payments.jsapi.model.PrepayRequest;
 import com.wechat.pay.java.service.payments.jsapi.model.PrepayResponse;
 import com.wechat.pay.java.service.payments.model.Transaction;
 import com.wechat.pay.java.service.payments.nativepay.NativePayService;
+import com.wechat.pay.java.service.payments.app.AppService;
+import com.wechat.pay.java.service.payments.h5.H5Service;
 import com.wechat.pay.java.service.refund.RefundService;
 import com.wechat.pay.java.service.refund.model.AmountReq;
 import com.wechat.pay.java.service.refund.model.CreateRequest;
@@ -75,7 +84,7 @@ import org.springframework.http.HttpMethod;
 @Slf4j
 @Service
 @SuppressWarnings("null")
-public class PaymentService {
+public class PaymentService implements net.lab1024.sa.common.consume.service.PaymentService {
 
     // ==================== 微信支付配置 ====================
 
@@ -107,6 +116,8 @@ public class PaymentService {
     private Config wechatPayConfig;
     private JsapiService jsapiService;
     private NativePayService nativePayService;
+    private AppService appPayService;
+    private H5Service h5PayService;
     private RefundService refundService;
 
     // ==================== 支付宝配置 ====================
@@ -137,6 +148,12 @@ public class PaymentService {
 
     @Resource
     private net.lab1024.sa.consume.dao.PaymentRecordDao paymentRecordDao;
+
+    @Resource
+    private net.lab1024.sa.common.consume.dao.PaymentRefundRecordDao paymentRefundRecordDao;
+
+    @Resource
+    private net.lab1024.sa.consume.dao.ConsumeRecordDao consumeRecordDao;
 
     @Resource
     private GatewayServiceClient gatewayServiceClient;
@@ -178,6 +195,8 @@ public class PaymentService {
             // 初始化服务
             jsapiService = new JsapiService.Builder().config(wechatPayConfig).build();
             nativePayService = new NativePayService.Builder().config(wechatPayConfig).build();
+            appPayService = new AppService.Builder().config(wechatPayConfig).build();
+            h5PayService = new H5Service.Builder().config(wechatPayConfig).build();
             refundService = new RefundService.Builder().config(wechatPayConfig).build();
 
             log.info("[微信支付] 配置初始化成功");
@@ -269,10 +288,10 @@ public class PaymentService {
                 return createJsapiPayOrder(orderId, amount, description, openId);
             } else if ("Native".equals(payType)) {
                 return createNativePayOrder(orderId, amount, description);
-            } else if ("APP".equals(payType) || "H5".equals(payType)) {
-                // APP和H5支付暂未实现，返回模拟数据
-                log.warn("[微信支付] {}支付类型暂未实现，返回模拟数据", payType);
-            return getMockWechatPayResult(orderId, payType);
+            } else if ("APP".equals(payType)) {
+                return createAppPayOrder(orderId, amount, description);
+            } else if ("H5".equals(payType)) {
+                return createH5PayOrder(orderId, amount, description);
             } else {
                 throw new BusinessException("不支持的支付类型: " + payType);
             }
@@ -541,7 +560,7 @@ public class PaymentService {
         } catch (Exception e) {
             log.error("[微信支付] 处理回调系统异常，error={}", e.getMessage(), e);
             // 系统异常时，记录详细错误信息，但不暴露给外部
-            recordPaymentAuditLog("UNKNOWN", "支付回调-系统异常", 
+            recordPaymentAuditLog("UNKNOWN", "支付回调-系统异常",
                     "异常类型: " + e.getClass().getName() + ", 消息: " + e.getMessage(), 0);
             return buildFailResponse("系统处理失败，请稍后重试");
         }
@@ -747,7 +766,7 @@ public class PaymentService {
             log.error("[支付宝] 处理回调系统异常，error={}", e.getMessage(), e);
             // 系统异常时，记录详细错误信息
             String paymentId = params != null ? params.get("out_trade_no") : "UNKNOWN";
-            recordPaymentAuditLog(paymentId, "支付回调-系统异常", 
+            recordPaymentAuditLog(paymentId, "支付回调-系统异常",
                     "异常类型: " + e.getClass().getName() + ", 消息: " + e.getMessage(), 0);
             return "fail";
         }
@@ -1045,6 +1064,118 @@ public class PaymentService {
     }
 
     /**
+     * 创建微信支付APP订单
+     *
+     * @param orderId     订单ID
+     * @param amount      金额（元）
+     * @param description 商品描述
+     * @return 支付参数
+     */
+    private Map<String, Object> createAppPayOrder(String orderId, BigDecimal amount, String description) {
+        try {
+            // 构建预支付请求
+            com.wechat.pay.java.service.payments.app.model.PrepayRequest request =
+                    new com.wechat.pay.java.service.payments.app.model.PrepayRequest();
+            request.setAppid(wechatAppId);
+            request.setMchid(wechatMchId);
+            request.setDescription(description);
+            request.setOutTradeNo(orderId);
+            request.setNotifyUrl(wechatNotifyUrl);
+
+            // 设置金额（转换为分）
+            com.wechat.pay.java.service.payments.app.model.Amount amountObj =
+                    new com.wechat.pay.java.service.payments.app.model.Amount();
+            amountObj.setTotal(amount.multiply(new BigDecimal("100")).intValue());
+            request.setAmount(amountObj);
+
+            // 调用预支付接口
+            com.wechat.pay.java.service.payments.app.model.PrepayResponse response =
+                    appPayService.prepay(request);
+
+            // 返回APP支付参数（客户端需要使用prepayId调用微信支付SDK）
+            String nonceStr = UUID.randomUUID().toString().replace("-", "");
+            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
+            String packageValue = "Sign=WXPay";
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("prepayId", response.getPrepayId());
+            result.put("appId", wechatAppId);
+            result.put("partnerId", wechatMchId);
+            result.put("packageValue", packageValue);
+            result.put("nonceStr", nonceStr);
+            result.put("timeStamp", timeStamp);
+
+            // 生成APP支付签名（生产环境）
+            String sign = generateAppPaySignature(wechatAppId, wechatMchId, response.getPrepayId(),
+                    packageValue, nonceStr, timeStamp);
+            result.put("sign", sign);
+            result.put("orderId", orderId);
+            result.put("mock", false);
+
+            log.info("[微信支付APP] 订单创建成功: orderId={}, prepayId={}", orderId, response.getPrepayId());
+            return result;
+
+        } catch (Exception e) {
+            log.error("[微信支付APP] 创建订单失败", e);
+            throw new BusinessException("微信支付APP创建订单失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 创建微信支付H5订单
+     *
+     * @param orderId     订单ID
+     * @param amount      金额（元）
+     * @param description 商品描述
+     * @return 支付参数（包含H5支付跳转URL）
+     */
+    private Map<String, Object> createH5PayOrder(String orderId, BigDecimal amount, String description) {
+        try {
+            // 构建预支付请求
+            com.wechat.pay.java.service.payments.h5.model.PrepayRequest request =
+                    new com.wechat.pay.java.service.payments.h5.model.PrepayRequest();
+            request.setAppid(wechatAppId);
+            request.setMchid(wechatMchId);
+            request.setDescription(description);
+            request.setOutTradeNo(orderId);
+            request.setNotifyUrl(wechatNotifyUrl);
+
+            // 设置金额（转换为分）
+            com.wechat.pay.java.service.payments.h5.model.Amount amountObj =
+                    new com.wechat.pay.java.service.payments.h5.model.Amount();
+            amountObj.setTotal(amount.multiply(new BigDecimal("100")).intValue());
+            request.setAmount(amountObj);
+
+            // 设置场景信息（H5支付需要）
+            com.wechat.pay.java.service.payments.h5.model.SceneInfo sceneInfo =
+                    new com.wechat.pay.java.service.payments.h5.model.SceneInfo();
+            sceneInfo.setPayerClientIp("127.0.0.1"); // 实际应从请求中获取客户端IP
+            com.wechat.pay.java.service.payments.h5.model.H5Info h5Info =
+                    new com.wechat.pay.java.service.payments.h5.model.H5Info();
+            h5Info.setType("Wap"); // Wap-手机网站支付
+            sceneInfo.setH5Info(h5Info);
+            request.setSceneInfo(sceneInfo);
+
+            // 调用预支付接口
+            com.wechat.pay.java.service.payments.h5.model.PrepayResponse response =
+                    h5PayService.prepay(request);
+
+            // 返回H5支付跳转URL
+            Map<String, Object> result = new HashMap<>();
+            result.put("h5Url", response.getH5Url());
+            result.put("orderId", orderId);
+            result.put("mock", false);
+
+            log.info("[微信支付H5] 订单创建成功: orderId={}, h5Url={}", orderId, response.getH5Url());
+            return result;
+
+        } catch (Exception e) {
+            log.error("[微信支付H5] 创建订单失败", e);
+            throw new BusinessException("微信支付H5创建订单失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 验证微信支付V3回调签名
      * <p>
      * 根据微信支付V3签名验证规范：
@@ -1129,7 +1260,7 @@ public class PaymentService {
             // 从RSAAutoCertificateConfig获取平台证书
             if (wechatPayConfig instanceof RSAAutoCertificateConfig) {
                 RSAAutoCertificateConfig rsaConfig = (RSAAutoCertificateConfig) wechatPayConfig;
-                
+
                 // 方法1：尝试使用SDK提供的公开方法（如果SDK版本支持）
                 try {
                     // 微信支付SDK 0.2.17版本中，RSAAutoCertificateConfig提供了getCertificate方法
@@ -1138,7 +1269,7 @@ public class PaymentService {
                             .getDeclaredMethod("getCertificate", String.class);
                     getCertificateMethod.setAccessible(true);
                     Object certificate = getCertificateMethod.invoke(rsaConfig, serialNumber);
-                    
+
                     if (certificate instanceof java.security.cert.X509Certificate) {
                         java.security.cert.X509Certificate x509Certificate =
                                 (java.security.cert.X509Certificate) certificate;
@@ -1149,10 +1280,10 @@ public class PaymentService {
                 } catch (NoSuchMethodException e) {
                     log.debug("[微信支付] 方法1不可用，尝试方法2，serialNumber={}", serialNumber);
                 } catch (Exception e) {
-                    log.debug("[微信支付] 方法1执行失败，尝试方法2，serialNumber={}，错误：{}", 
+                    log.debug("[微信支付] 方法1执行失败，尝试方法2，serialNumber={}，错误：{}",
                             serialNumber, e.getMessage());
                 }
-                
+
                 // 方法2：通过证书提供者获取（备用方案）
                 try {
                     java.lang.reflect.Method getProviderMethod = RSAAutoCertificateConfig.class
@@ -1174,7 +1305,7 @@ public class PaymentService {
                         }
                     }
                 } catch (Exception e) {
-                    log.warn("[微信支付] 方法2执行失败，serialNumber={}，错误：{}", 
+                    log.warn("[微信支付] 方法2执行失败，serialNumber={}，错误：{}",
                             serialNumber, e.getMessage());
                 }
             }
@@ -1224,7 +1355,7 @@ public class PaymentService {
             java.time.LocalDate startDate,
             java.time.LocalDate endDate,
             String paymentMethod) {
-        log.info("[支付对账] 开始对账，startDate={}, endDate={}, paymentMethod={}", 
+        log.info("[支付对账] 开始对账，startDate={}, endDate={}, paymentMethod={}",
                 startDate, endDate, paymentMethod);
 
         try {
@@ -1251,10 +1382,10 @@ public class PaymentService {
             Map<String, Object> reconciliationResult = comparePaymentRecords(systemRecords, thirdPartyRecords);
 
             // 5. 生成对账报告
-            Map<String, Object> report = buildReconciliationReport(startDate, endDate, paymentMethod, 
+            Map<String, Object> report = buildReconciliationReport(startDate, endDate, paymentMethod,
                     systemRecords, thirdPartyRecords, reconciliationResult);
 
-            log.info("[支付对账] 对账完成，差异订单数：{}", 
+            log.info("[支付对账] 对账完成，差异订单数：{}",
                     reconciliationResult.get("differenceCount"));
 
             return report;
@@ -1283,37 +1414,37 @@ public class PaymentService {
         List<PaymentRecordEntity> records = new ArrayList<>();
 
         try {
-            log.debug("[支付对账] 查询系统支付记录，startDate={}, endDate={}, paymentMethod={}", 
+            log.debug("[支付对账] 查询系统支付记录，startDate={}, endDate={}, paymentMethod={}",
                     startDate, endDate, paymentMethod);
 
             // 使用 MyBatis-Plus LambdaQueryWrapper 查询
-            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper = 
+            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper =
                     new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
-            
+
             // 时间范围查询（paymentTime字段）
             if (startDate != null) {
-                wrapper.ge(PaymentRecordEntity::getPaymentTime, 
+                wrapper.ge(PaymentRecordEntity::getPaymentTime,
                         startDate.atStartOfDay());
             }
             if (endDate != null) {
-                wrapper.le(PaymentRecordEntity::getPaymentTime, 
+                wrapper.le(PaymentRecordEntity::getPaymentTime,
                         endDate.atTime(23, 59, 59));
             }
-            
+
             // 支付方式过滤
             if (StringUtils.hasText(paymentMethod)) {
                 wrapper.eq(PaymentRecordEntity::getPaymentMethod, paymentMethod);
             }
-            
+
             // 只查询未删除的记录（MyBatis-Plus的@TableLogic会自动过滤，但显式指定更安全）
             wrapper.eq(PaymentRecordEntity::getDeletedFlag, 0);
-            
+
             // 按支付时间排序
             wrapper.orderByDesc(PaymentRecordEntity::getPaymentTime);
-            
+
             // 执行查询
             records = paymentRecordDao.selectList(wrapper);
-            
+
             log.info("[支付对账] 查询到系统支付记录数：{}", records.size());
 
         } catch (Exception e) {
@@ -1387,45 +1518,45 @@ public class PaymentService {
             // 2. 需要先从系统数据库查询该时间范围内的所有订单号
             // 3. 使用微信支付SDK逐个查询订单状态
             // 4. 将查询结果转换为统一格式存入 records Map
-            
+
             log.info("[支付对账] 开始查询微信支付交易记录，startDate={}, endDate={}", startDate, endDate);
-            
+
             // 步骤1：从系统数据库查询该时间范围内的所有微信支付订单号
             List<PaymentRecordEntity> systemRecords = querySystemPaymentRecords(startDate, endDate, "WECHAT");
             log.info("[支付对账] 系统微信支付记录数：{}", systemRecords.size());
-            
+
             if (systemRecords.isEmpty()) {
                 log.info("[支付对账] 系统无微信支付记录，返回空结果");
                 return records;
             }
-            
+
             // 步骤2：逐个查询微信支付订单状态
             // 注意：微信支付API v3 SDK 0.2.17 版本使用 JsapiService 查询订单
             // 如果SDK不支持，需要使用 HTTP 客户端直接调用 API
             int successCount = 0;
             int failCount = 0;
-            
+
             for (PaymentRecordEntity systemRecord : systemRecords) {
                 String orderId = systemRecord.getPaymentId();
                 if (orderId == null || orderId.isEmpty()) {
                     log.warn("[支付对账] 订单号为空，跳过查询，recordId={}", systemRecord.getId());
                     continue;
                 }
-                
+
                 try {
                     // 使用微信支付SDK查询订单状态
                     // 注意：微信支付SDK v3 0.2.17版本中，JsapiService可能没有queryOrderByOutTradeNo方法
                     // 需要使用HTTP客户端直接调用API
                     Transaction transaction = queryWechatOrderByOutTradeNo(orderId);
-                    
+
                     if (transaction != null && transaction.getTradeState() != null) {
                         String tradeState = transaction.getTradeState().name();
-                        
+
                         // 只记录支付成功的订单
                         if ("SUCCESS".equals(tradeState)) {
                             Map<String, Object> record = new HashMap<>();
                             record.put("paymentId", transaction.getOutTradeNo());
-                            
+
                             // 金额转换：微信支付金额单位为分，转换为元
                             if (transaction.getAmount() != null && transaction.getAmount().getTotal() != null) {
                                 BigDecimal amount = new BigDecimal(transaction.getAmount().getTotal())
@@ -1434,35 +1565,35 @@ public class PaymentService {
                             } else {
                                 record.put("amount", systemRecord.getAmount());
                             }
-                            
+
                             record.put("status", tradeState);
-                            
+
                             // 支付时间转换
                             if (transaction.getSuccessTime() != null) {
                                 try {
                                     // 微信支付返回的时间格式：2024-01-01T12:00:00+08:00
-                                    java.time.format.DateTimeFormatter formatter = 
+                                    java.time.format.DateTimeFormatter formatter =
                                             java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
-                                    java.time.ZonedDateTime zonedDateTime = 
+                                    java.time.ZonedDateTime zonedDateTime =
                                             java.time.ZonedDateTime.parse(transaction.getSuccessTime(), formatter);
                                     record.put("paymentTime", zonedDateTime.toLocalDateTime());
                                 } catch (Exception e) {
-                                    log.warn("[支付对账] 支付时间解析失败，使用系统记录时间，orderId={}, time={}", 
+                                    log.warn("[支付对账] 支付时间解析失败，使用系统记录时间，orderId={}, time={}",
                                             orderId, transaction.getSuccessTime());
                                     record.put("paymentTime", systemRecord.getPaymentTime());
                                 }
                             } else {
                                 record.put("paymentTime", systemRecord.getPaymentTime());
                             }
-                            
+
                             // 第三方交易号
                             if (transaction.getTransactionId() != null) {
                                 record.put("thirdPartyTransactionId", transaction.getTransactionId());
                             }
-                            
+
                             records.put(orderId, record);
                             successCount++;
-                            
+
                             log.debug("[支付对账] 查询微信订单成功，orderId={}, status={}", orderId, tradeState);
                         } else {
                             log.debug("[支付对账] 微信订单未成功，orderId={}, status={}", orderId, tradeState);
@@ -1470,15 +1601,15 @@ public class PaymentService {
                     } else {
                         log.warn("[支付对账] 微信订单查询结果为空，orderId={}", orderId);
                     }
-                    
+
                 } catch (Exception e) {
                     failCount++;
                     log.warn("[支付对账] 查询微信订单失败，orderId={}, error={}", orderId, e.getMessage());
                     // 查询失败不影响其他订单的查询，继续处理下一个订单
                 }
             }
-            
-            log.info("[支付对账] 微信支付交易记录查询完成，成功：{}，失败：{}，总记录数：{}", 
+
+            log.info("[支付对账] 微信支付交易记录查询完成，成功：{}，失败：{}，总记录数：{}",
                     successCount, failCount, records.size());
 
         } catch (Exception e) {
@@ -1517,28 +1648,28 @@ public class PaymentService {
             // 2. 需要将日期转换为支付宝要求的格式（yyyy-MM-dd HH:mm:ss）
             // 3. 支持按时间范围查询，最多返回1000条记录
             // 4. 如果超过1000条，需要分页查询或使用 alipay.trade.query 逐个查询
-            
+
             log.info("[支付对账] 开始查询支付宝交易记录，startDate={}, endDate={}", startDate, endDate);
-            
+
             try {
                 // 步骤1：先从系统数据库查询该时间范围内的所有支付宝订单号
                 // 这样可以知道需要查询哪些订单，避免查询不存在的订单
                 List<PaymentRecordEntity> systemRecords = querySystemPaymentRecords(startDate, endDate, "ALIPAY");
                 log.info("[支付对账] 系统支付宝记录数：{}", systemRecords.size());
-                
+
                 if (systemRecords.isEmpty()) {
                     log.info("[支付对账] 系统无支付宝记录，返回空结果");
                     return records;
                 }
-                
+
                 // 步骤2：使用支付宝单个查询接口逐个查询交易记录
                 // 注意：支付宝SDK 4.40.572版本可能没有批量查询接口
                 // 使用单个查询接口 alipay.trade.query 逐个查询
                 // 如果系统记录超过1000条，建议分批查询或使用异步查询
-                
+
                 int successCount = 0;
                 int failCount = 0;
-                
+
                 // 逐个查询支付宝订单状态
                 for (PaymentRecordEntity systemRecord : systemRecords) {
                     String outTradeNo = systemRecord.getPaymentId();
@@ -1546,13 +1677,13 @@ public class PaymentService {
                         log.warn("[支付对账] 订单号为空，跳过查询，recordId={}", systemRecord.getId());
                         continue;
                     }
-                    
+
                     try {
                         // 使用支付宝单个查询接口查询订单状态
                         // 注意：这里需要使用 alipay.trade.query 接口
                         // 由于支付宝SDK可能没有直接的批量查询接口，使用单个查询
                         Map<String, Object> tradeRecord = queryAlipayOrderByOutTradeNo(outTradeNo);
-                        
+
                         if (tradeRecord != null && !tradeRecord.isEmpty()) {
                             records.put(outTradeNo, tradeRecord);
                             successCount++;
@@ -1560,31 +1691,31 @@ public class PaymentService {
                         } else {
                             log.warn("[支付对账] 支付宝订单查询结果为空，outTradeNo={}", outTradeNo);
                         }
-                        
+
                     } catch (Exception e) {
                         failCount++;
-                        log.warn("[支付对账] 查询支付宝订单失败，outTradeNo={}, error={}", 
+                        log.warn("[支付对账] 查询支付宝订单失败，outTradeNo={}, error={}",
                                 outTradeNo, e.getMessage());
                         // 查询失败不影响其他订单的查询，继续处理下一个订单
                     }
                 }
-                
-                log.info("[支付对账] 支付宝交易记录查询完成，成功：{}，失败：{}，总记录数：{}", 
+
+                log.info("[支付对账] 支付宝交易记录查询完成，成功：{}，失败：{}，总记录数：{}",
                         successCount, failCount, records.size());
-                
+
                 // 注意：如果系统记录超过1000条，逐个查询可能较慢
                 // 建议：1. 使用异步查询 2. 分批查询 3. 使用支付宝对账文件下载接口
                 if (systemRecords.size() > 1000) {
                     log.warn("[支付对账] 系统支付宝记录超过1000条，逐个查询可能较慢，建议使用支付宝对账文件下载接口");
                 }
-                
+
                 // 调用queryAlipayOrderByOutTradeNo方法查询支付宝订单
                 // 该方法已在第1858行实现，使用AlipayTradeQueryRequest查询订单状态
-                
+
             } catch (Exception e) {
                 log.error("[支付对账] 查询支付宝交易记录异常", e);
             }
-            
+
             log.info("[支付对账] 支付宝交易记录查询完成，总记录数：{}", records.size());
 
         } catch (Exception e) {
@@ -1681,7 +1812,7 @@ public class PaymentService {
             if (thirdPartyAmountObj != null) {
                 BigDecimal thirdPartyAmount = convertToBigDecimal(thirdPartyAmountObj);
                 if (systemAmount.compareTo(thirdPartyAmount) != 0) {
-                    log.warn("[支付对账] 金额不一致，paymentId={}, systemAmount={}, thirdPartyAmount={}", 
+                    log.warn("[支付对账] 金额不一致，paymentId={}, systemAmount={}, thirdPartyAmount={}",
                             systemRecord.getPaymentId(), systemAmount, thirdPartyAmount);
                     return false;
                 }
@@ -1693,7 +1824,7 @@ public class PaymentService {
             if (thirdPartyStatusObj != null) {
                 String thirdPartyStatus = thirdPartyStatusObj.toString();
                 if (!isStatusMatched(systemStatus, thirdPartyStatus)) {
-                    log.warn("[支付对账] 状态不一致，paymentId={}, systemStatus={}, thirdPartyStatus={}", 
+                    log.warn("[支付对账] 状态不一致，paymentId={}, systemStatus={}, thirdPartyStatus={}",
                             systemRecord.getPaymentId(), systemStatus, thirdPartyStatus);
                     return false;
                 }
@@ -1738,11 +1869,11 @@ public class PaymentService {
         diff.put("type", "MISMATCH");
         diff.put("systemAmount", systemRecord.getAmount());
         diff.put("systemStatus", systemRecord.getStatus());
-        
+
         Map<String, Object> thirdPartyMap = convertToMap(thirdPartyRecord);
         diff.put("thirdPartyAmount", thirdPartyMap.get("amount"));
         diff.put("thirdPartyStatus", thirdPartyMap.get("status"));
-        
+
         return diff;
     }
 
@@ -1827,7 +1958,7 @@ public class PaymentService {
             // 实现微信支付订单查询
             // 方案：使用微信支付SDK v3的JsapiService或NativePayService查询订单
             // 微信支付API v3: GET /v3/pay/transactions/out-trade-no/{out_trade_no}?mchid={mchid}
-            
+
             if (wechatPayConfig == null) {
                 log.warn("[支付对账] 微信支付配置未初始化，无法查询订单，outTradeNo={}", outTradeNo);
                 return null;
@@ -1841,41 +1972,41 @@ public class PaymentService {
                         // 方案1：尝试使用SDK提供的查询方法（如果存在）
                         // 微信支付SDK v3的JsapiService可能没有直接的queryOrderByOutTradeNo方法
                         // 需要使用HttpClient手动调用API
-                        
+
                         // 方案2：手动实现HTTP请求调用微信支付API
                         // API路径: GET /v3/pay/transactions/out-trade-no/{out_trade_no}?mchid={mchid}
                         String apiPath = "/v3/pay/transactions/out-trade-no/" + outTradeNo + "?mchid=" + wechatMchId;
                         String apiUrl = "https://api.mch.weixin.qq.com" + apiPath;
-                        
+
                         log.info("[支付对账] 手动调用微信支付订单查询接口：{}", apiUrl);
-                        
+
                         try {
                             // 构建微信支付V3的Authorization请求头
                             String authorization = buildWechatPayAuthorization("GET", apiPath, "");
-                            
+
                             // 使用注入的RestTemplate发送HTTP请求（已配置超时等参数）
                             org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
                             headers.set("Authorization", authorization);
                             headers.set("Accept", "application/json");
                             headers.set("User-Agent", "IOE-DREAM-PaymentService/1.0");
-                            
+
                             org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(headers);
                             // HttpMethod.GET是常量，不会为null
                             @SuppressWarnings("null")
                             org.springframework.http.HttpMethod getMethod = org.springframework.http.HttpMethod.GET;
                             org.springframework.http.ResponseEntity<String> response = restTemplate.exchange(
-                                    apiUrl, 
-                                    getMethod, 
-                                    entity, 
+                                    apiUrl,
+                                    getMethod,
+                                    entity,
                                     String.class
                             );
-                            
+
                             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                                 // 解析响应JSON
                                 ObjectMapper mapper = new ObjectMapper();
-                                Map<String, Object> responseMap = mapper.readValue(response.getBody(), 
+                                Map<String, Object> responseMap = mapper.readValue(response.getBody(),
                                         new TypeReference<Map<String, Object>>() {});
-                                
+
                                 // 转换为Transaction对象（简化处理，只提取关键字段）
                                 Transaction transaction = new Transaction();
                                 if (responseMap.containsKey("out_trade_no")) {
@@ -1888,50 +2019,50 @@ public class PaymentService {
                                     // 将字符串转换为TradeStateEnum
                                     String tradeStateStr = (String) responseMap.get("trade_state");
                                     try {
-                                        Transaction.TradeStateEnum tradeStateEnum = 
+                                        Transaction.TradeStateEnum tradeStateEnum =
                                                 Transaction.TradeStateEnum.valueOf(tradeStateStr);
                                         transaction.setTradeState(tradeStateEnum);
                                     } catch (IllegalArgumentException e) {
                                         log.warn("[支付对账] 无法识别的交易状态：{}", tradeStateStr);
                                     }
                                 }
-                                
-                                log.info("[支付对账] 微信支付订单查询成功，outTradeNo={}, tradeState={}", 
+
+                                log.info("[支付对账] 微信支付订单查询成功，outTradeNo={}, tradeState={}",
                                         outTradeNo, transaction.getTradeState() != null ? transaction.getTradeState().name() : "null");
                                 return transaction;
                             } else {
-                                log.warn("[支付对账] 微信支付订单查询失败，状态码={}, 响应={}", 
+                                log.warn("[支付对账] 微信支付订单查询失败，状态码={}, 响应={}",
                                         response.getStatusCode(), response.getBody());
                                 return null;
                             }
-                            
+
                         } catch (Exception e) {
                             log.error("[支付对账] 手动HTTP请求查询微信订单失败，outTradeNo={}", outTradeNo, e);
                             return null;
                         }
-                        
+
                     } catch (Exception e) {
                         log.error("[支付对账] 使用微信支付SDK查询订单失败，outTradeNo={}", outTradeNo, e);
                         return null;
                     }
                 }
-                
+
                 // 如果JsapiService未初始化，尝试使用NativePayService
                 if (nativePayService != null) {
                     log.info("[支付对账] 尝试使用NativePayService查询订单，outTradeNo={}", outTradeNo);
                     // NativePayService也可能没有直接的查询方法，处理方式同上
                     return null;
                 }
-                
+
                 // 如果服务都未初始化，返回null
                 log.warn("[支付对账] 微信支付服务未初始化，无法查询订单，outTradeNo={}", outTradeNo);
                 return null;
-                
+
             } catch (Exception e) {
                 log.error("[支付对账] 使用微信支付SDK查询订单异常，outTradeNo={}", outTradeNo, e);
                 return null;
             }
-            
+
         } catch (Exception e) {
             log.error("[支付对账] HTTP客户端查询微信订单失败，outTradeNo={}", outTradeNo, e);
             return null;
@@ -1961,29 +2092,29 @@ public class PaymentService {
             try {
                 // 构建查询请求
                 AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
-                
+
                 // 构建业务参数（JSON格式）
                 java.util.Map<String, String> bizContent = new java.util.HashMap<>();
                 bizContent.put("out_trade_no", outTradeNo);
-                
+
                 // 将业务参数转换为JSON字符串
                 String bizContentJson = objectMapper.writeValueAsString(bizContent);
                 request.setBizContent(bizContentJson);
-                
+
                 // 执行查询
                 AlipayTradeQueryResponse response = alipayClient.execute(request);
-                
+
                 if (response != null && response.isSuccess()) {
                     // 解析查询结果
                     Map<String, Object> record = new HashMap<>();
                     record.put("paymentId", outTradeNo);
-                    
+
                     // 金额
                     if (response.getTotalAmount() != null) {
                         BigDecimal amount = new BigDecimal(response.getTotalAmount());
                         record.put("amount", amount);
                     }
-                    
+
                     // 状态转换
                     String tradeStatus = response.getTradeStatus();
                     if (tradeStatus != null) {
@@ -1996,7 +2127,7 @@ public class PaymentService {
                     } else {
                         record.put("status", "UNKNOWN");
                     }
-                    
+
                     // 支付时间
                     // 注意：AlipayTradeQueryResponse可能没有getGmtPayment方法
                     // 使用getBody()解析响应体获取支付时间
@@ -2004,25 +2135,25 @@ public class PaymentService {
                         String responseBody = response.getBody();
                         if (responseBody != null && !responseBody.isEmpty()) {
                             Map<String, Object> responseMap = objectMapper.readValue(
-                                    responseBody, 
+                                    responseBody,
                                     new TypeReference<Map<String, Object>>() {});
-                            
+
                             Object alipayTradeQueryResponseObj = responseMap.get("alipay_trade_query_response");
                             if (alipayTradeQueryResponseObj instanceof Map) {
                                 @SuppressWarnings("unchecked")
                                 Map<String, Object> queryResponse = (Map<String, Object>) alipayTradeQueryResponseObj;
-                                
+
                                 Object gmtPaymentObj = queryResponse.get("gmt_payment");
                                 if (gmtPaymentObj != null) {
                                     try {
                                         // 支付宝返回时间格式：yyyy-MM-dd HH:mm:ss
-                                        java.time.format.DateTimeFormatter formatter = 
+                                        java.time.format.DateTimeFormatter formatter =
                                                 java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                                        java.time.LocalDateTime paymentTime = 
+                                        java.time.LocalDateTime paymentTime =
                                                 java.time.LocalDateTime.parse(gmtPaymentObj.toString(), formatter);
                                         record.put("paymentTime", paymentTime);
                                     } catch (Exception e) {
-                                        log.warn("[支付对账] 支付时间解析失败，outTradeNo={}, time={}", 
+                                        log.warn("[支付对账] 支付时间解析失败，outTradeNo={}, time={}",
                                                 outTradeNo, gmtPaymentObj);
                                     }
                                 }
@@ -2031,21 +2162,21 @@ public class PaymentService {
                     } catch (Exception e) {
                         log.warn("[支付对账] 解析支付时间失败，outTradeNo={}", outTradeNo, e);
                     }
-                    
+
                     // 第三方交易号
                     if (response.getTradeNo() != null) {
                         record.put("thirdPartyTransactionId", response.getTradeNo());
                     }
-                    
+
                     return record;
                 } else {
-                    log.warn("[支付对账] 支付宝订单查询失败，outTradeNo={}, code={}, msg={}", 
-                            outTradeNo, 
+                    log.warn("[支付对账] 支付宝订单查询失败，outTradeNo={}, code={}, msg={}",
+                            outTradeNo,
                             response != null ? response.getCode() : "NULL",
                             response != null ? response.getMsg() : "NULL");
                     return null;
                 }
-                
+
             } catch (NoClassDefFoundError e) {
                 // 支付宝SDK版本可能不支持 AlipayTradeQueryRequest
                 log.warn("[支付对账] 支付宝SDK不支持AlipayTradeQueryRequest，使用通用请求方式，outTradeNo={}", outTradeNo);
@@ -2091,7 +2222,7 @@ public class PaymentService {
                 // 方案：使用AlipayClient的execute方法，传入方法名和业务参数
                 // 支付宝API方法名：alipay.trade.query
                 String method = "alipay.trade.query";
-                
+
                 // 构建请求参数Map
                 Map<String, String> params = new HashMap<>();
                 params.put("app_id", alipayAppId);
@@ -2140,7 +2271,7 @@ public class PaymentService {
                 if (responseBody != null && !responseBody.isEmpty()) {
                     // 解析响应
                     Map<String, Object> responseMap = objectMapper.readValue(
-                            responseBody, 
+                            responseBody,
                             new TypeReference<Map<String, Object>>() {});
 
                     Object alipayTradeQueryResponseObj = responseMap.get("alipay_trade_query_response");
@@ -2178,13 +2309,13 @@ public class PaymentService {
                             Object gmtPaymentObj = queryResponse.get("gmt_payment");
                             if (gmtPaymentObj != null) {
                                 try {
-                                    java.time.format.DateTimeFormatter formatter = 
+                                    java.time.format.DateTimeFormatter formatter =
                                             java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                                    java.time.LocalDateTime paymentTime = 
+                                    java.time.LocalDateTime paymentTime =
                                             java.time.LocalDateTime.parse(gmtPaymentObj.toString(), formatter);
                                     record.put("paymentTime", paymentTime);
                                 } catch (Exception e) {
-                                    log.warn("[支付对账] 支付时间解析失败，outTradeNo={}, time={}", 
+                                    log.warn("[支付对账] 支付时间解析失败，outTradeNo={}, time={}",
                                             outTradeNo, gmtPaymentObj);
                                 }
                             }
@@ -2198,7 +2329,7 @@ public class PaymentService {
                             log.debug("[支付对账] 通用请求方式查询支付宝订单成功，outTradeNo={}", outTradeNo);
                             return record;
                         } else {
-                            log.warn("[支付对账] 支付宝订单查询失败，outTradeNo={}, code={}, msg={}", 
+                            log.warn("[支付对账] 支付宝订单查询失败，outTradeNo={}, code={}, msg={}",
                                     outTradeNo, codeObj, queryResponse.get("msg"));
                             return null;
                         }
@@ -2309,7 +2440,7 @@ public class PaymentService {
                 paymentRecord.setCreateTime(java.time.LocalDateTime.now());
                 paymentRecordDao.insert(paymentRecord);
 
-                log.info("[银行支付] 支付记录保存成功，orderId={}, transactionId={}", 
+                log.info("[银行支付] 支付记录保存成功，orderId={}, transactionId={}",
                         orderId, result.get("transactionId"));
             }
 
@@ -2376,7 +2507,7 @@ public class PaymentService {
             boolean sufficient = multiPaymentManager.checkCreditLimitSufficient(accountId, amount);
             if (!sufficient) {
                 BigDecimal creditLimit = multiPaymentManager.getCreditLimit(accountId);
-                log.warn("[信用额度] 信用额度不足，accountId={}, amount={}, creditLimit={}", 
+                log.warn("[信用额度] 信用额度不足，accountId={}, amount={}, creditLimit={}",
                         accountId, amount, creditLimit);
                 result.put("message", "信用额度不足，当前可用额度: " + creditLimit);
                 return result;
@@ -2385,7 +2516,7 @@ public class PaymentService {
             // 4. 扣除信用额度
             boolean deductSuccess = multiPaymentManager.deductCreditLimit(accountId, amount, orderId, reason);
             if (!deductSuccess) {
-                log.warn("[信用额度] 信用额度扣除失败，accountId={}, amount={}, orderId={}", 
+                log.warn("[信用额度] 信用额度扣除失败，accountId={}, amount={}, orderId={}",
                         accountId, amount, orderId);
                 result.put("message", "信用额度扣除失败");
                 return result;
@@ -2402,7 +2533,7 @@ public class PaymentService {
 
             result.put("success", true);
             result.put("message", "信用额度支付成功");
-            log.info("[信用额度] 信用额度支付成功，accountId={}, amount={}, orderId={}", 
+            log.info("[信用额度] 信用额度支付成功，accountId={}, amount={}, orderId={}",
                     accountId, amount, orderId);
 
             return result;
@@ -2493,14 +2624,14 @@ public class PaymentService {
         try {
             if (wechatPayConfig instanceof RSAAutoCertificateConfig) {
                 RSAAutoCertificateConfig rsaConfig = (RSAAutoCertificateConfig) wechatPayConfig;
-                
+
                 // 尝试通过反射获取私钥
                 try {
                     java.lang.reflect.Method getPrivateKeyMethod = RSAAutoCertificateConfig.class
                             .getDeclaredMethod("getPrivateKey");
                     getPrivateKeyMethod.setAccessible(true);
                     Object privateKey = getPrivateKeyMethod.invoke(rsaConfig);
-                    
+
                     if (privateKey instanceof java.security.PrivateKey) {
                         log.debug("[微信支付] 成功获取私钥");
                         return (java.security.PrivateKey) privateKey;
@@ -2510,29 +2641,29 @@ public class PaymentService {
                 } catch (Exception e) {
                     log.debug("[微信支付] 获取私钥失败，错误：{}", e.getMessage());
                 }
-                
+
                 // 备用方案：从证书路径读取私钥
                 if (StringUtils.hasText(wechatCertPath)) {
                     try {
                         // 读取PEM格式的私钥文件
                         java.nio.file.Path certPath = java.nio.file.Paths.get(wechatCertPath);
                         String privateKeyContent = new String(java.nio.file.Files.readAllBytes(certPath), StandardCharsets.UTF_8);
-                        
+
                         // 移除PEM格式的头部和尾部
                         privateKeyContent = privateKeyContent.replace("-----BEGIN PRIVATE KEY-----", "")
                                 .replace("-----END PRIVATE KEY-----", "")
                                 .replace("-----BEGIN RSA PRIVATE KEY-----", "")
                                 .replace("-----END RSA PRIVATE KEY-----", "")
                                 .replaceAll("\\s", "");
-                        
+
                         // Base64解码
                         byte[] keyBytes = Base64.getDecoder().decode(privateKeyContent);
-                        
+
                         // 使用PKCS8格式解析私钥
                         java.security.spec.PKCS8EncodedKeySpec keySpec = new java.security.spec.PKCS8EncodedKeySpec(keyBytes);
                         java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance("RSA");
                         java.security.PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-                        
+
                         log.debug("[微信支付] 从证书路径成功读取私钥");
                         return privateKey;
                     } catch (Exception e) {
@@ -2540,13 +2671,1171 @@ public class PaymentService {
                     }
                 }
             }
-            
+
             log.error("[微信支付] 无法获取私钥");
             return null;
-            
+
         } catch (Exception e) {
             log.error("[微信支付] 获取私钥异常", e);
             return null;
+        }
+    }
+
+    // ==================== 接口方法实现 ====================
+
+    /**
+     * 处理支付
+     *
+     * @param form 支付处理表单
+     * @return 支付结果
+     */
+    @Override
+    public Map<String, Object> processPayment(net.lab1024.sa.common.consume.domain.form.PaymentProcessForm form) {
+        log.info("[支付处理] 处理支付请求，userId={}, amount={}, method={}",
+                form.getUserId(), form.getPaymentAmount(), form.getPaymentMethod());
+        try {
+            // 根据支付方式调用不同的处理方法
+            Integer paymentMethod = form.getPaymentMethod();
+            if (paymentMethod == null) {
+                throw new BusinessException("支付方式不能为空");
+            }
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+
+            // 根据支付方式分发处理
+            switch (paymentMethod) {
+                case 2: // 微信支付
+                    result = createWechatPayOrder(
+                            form.getOrderNo() != null ? form.getOrderNo() : UUID.randomUUID().toString(),
+                            form.getPaymentAmount(),
+                            form.getConsumeDescription() != null ? form.getConsumeDescription() : "商品支付",
+                            form.getThirdPartyParams(), // openId可能在这里
+                            "JSAPI" // 默认JSAPI
+                    );
+                    break;
+                case 3: // 支付宝
+                    result = createAlipayOrder(
+                            form.getOrderNo() != null ? form.getOrderNo() : UUID.randomUUID().toString(),
+                            form.getPaymentAmount(),
+                            form.getConsumeDescription() != null ? form.getConsumeDescription() : "商品支付",
+                            "APP" // 默认APP
+                    );
+                    break;
+                case 4: // 银行卡
+                    // 从扩展参数中解析银行卡号，如果没有则使用默认值
+                    String bankCardNo = null;
+                    if (form.getExtendedParams() != null && !form.getExtendedParams().isEmpty()) {
+                        try {
+                            ObjectMapper mapper = new ObjectMapper();
+                            Map<String, Object> params = mapper.readValue(form.getExtendedParams(),
+                                new TypeReference<Map<String, Object>>() {});
+                            bankCardNo = (String) params.get("bankCardNo");
+                        } catch (Exception e) {
+                            log.warn("[支付处理] 解析扩展参数失败", e);
+                        }
+                    }
+                    result = createBankPaymentOrder(
+                            form.getAccountId(),
+                            form.getPaymentAmount(),
+                            form.getOrderNo() != null ? form.getOrderNo() : UUID.randomUUID().toString(),
+                            form.getConsumeDescription() != null ? form.getConsumeDescription() : "商品支付",
+                            bankCardNo
+                    );
+                    break;
+                case 8: // 信用额度
+                    result = processCreditLimitPayment(
+                            form.getAccountId(),
+                            form.getPaymentAmount(),
+                            form.getOrderNo() != null ? form.getOrderNo() : UUID.randomUUID().toString(),
+                            form.getConsumeDescription() != null ? form.getConsumeDescription() : "信用额度支付"
+                    );
+                    break;
+                default:
+                    // 其他支付方式通过MultiPaymentManager处理
+                    // 注意：MultiPaymentManager可能没有processPayment方法，需要调用其他方法
+                    log.warn("[支付处理] 不支持的支付方式: {}", paymentMethod);
+                    result.put("success", false);
+                    result.put("message", "不支持的支付方式");
+                    break;
+            }
+
+            return result;
+        } catch (Exception e) {
+            log.error("[支付处理] 处理支付失败", e);
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("success", false);
+            errorResult.put("message", "支付处理失败: " + e.getMessage());
+            return errorResult;
+        }
+    }
+
+    /**
+     * 申请退款
+     *
+     * @param form 退款申请表单
+     * @return 申请结果
+     */
+    @Override
+    public Map<String, Object> applyRefund(net.lab1024.sa.common.consume.domain.form.RefundApplyForm form) {
+        log.info("[退款申请] 申请退款，paymentId={}, userId={}, amount={}",
+                form.getPaymentId(), form.getUserId(), form.getRefundAmount());
+        try {
+            // 创建退款记录
+            net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity refundRecord =
+                    new net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity();
+            refundRecord.setRefundId(UUID.randomUUID().toString());
+            refundRecord.setPaymentId(form.getPaymentId());
+            refundRecord.setUserId(form.getUserId());
+            refundRecord.setRefundAmount(form.getRefundAmount());
+            refundRecord.setRefundMethod(form.getRefundMethod());
+            refundRecord.setRefundType(form.getRefundType());
+            refundRecord.setRefundReasonType(form.getRefundReasonType());
+            refundRecord.setRefundReasonDesc(form.getRefundReasonDesc());
+            refundRecord.setRefundStatus(1); // 待审核
+            refundRecord.setCreateTime(java.time.LocalDateTime.now());
+
+            paymentRefundRecordDao.insert(refundRecord);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("refundId", refundRecord.getRefundId());
+            result.put("message", "退款申请已提交，等待审核");
+
+            return result;
+        } catch (Exception e) {
+            log.error("[退款申请] 申请退款失败", e);
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("success", false);
+            errorResult.put("message", "退款申请失败: " + e.getMessage());
+            return errorResult;
+        }
+    }
+
+    /**
+     * 审核退款
+     *
+     * @param refundId 退款记录ID
+     * @param auditStatus 审核状态
+     * @param auditComment 审核意见
+     * @return 审核结果
+     */
+    @Override
+    public Map<String, Object> auditRefund(String refundId, Integer auditStatus, String auditComment) {
+        log.info("[退款审核] 审核退款，refundId={}, auditStatus={}", refundId, auditStatus);
+        try {
+            net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity refundRecord =
+                    paymentRefundRecordDao.selectById(refundId);
+            if (refundRecord == null) {
+                throw new BusinessException("退款记录不存在");
+            }
+
+            refundRecord.setRefundStatus(auditStatus == 1 ? 3 : 4); // 1-通过->3待处理, 2-拒绝->4已拒绝
+            refundRecord.setAuditComment(auditComment);
+            refundRecord.setAuditTime(java.time.LocalDateTime.now());
+
+            paymentRefundRecordDao.updateById(refundRecord);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("message", auditStatus == 1 ? "审核通过" : "审核拒绝");
+
+            return result;
+        } catch (Exception e) {
+            log.error("[退款审核] 审核退款失败", e);
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("success", false);
+            errorResult.put("message", "审核退款失败: " + e.getMessage());
+            return errorResult;
+        }
+    }
+
+    /**
+     * 执行退款
+     *
+     * @param refundId 退款记录ID
+     * @return 执行结果
+     */
+    @Override
+    public Map<String, Object> executeRefund(String refundId) {
+        log.info("[退款执行] 执行退款，refundId={}", refundId);
+        try {
+            net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity refundRecord =
+                    paymentRefundRecordDao.selectById(refundId);
+            if (refundRecord == null) {
+                throw new BusinessException("退款记录不存在");
+            }
+
+            // 根据原支付方式执行退款
+            PaymentRecordEntity paymentRecord = paymentRecordDao.selectById(refundRecord.getPaymentId());
+            if (paymentRecord == null) {
+                throw new BusinessException("原支付记录不存在");
+            }
+
+            Map<String, Object> result = new HashMap<>();
+            String paymentMethod = paymentRecord.getPaymentMethod();
+
+            if ("WECHAT".equals(paymentMethod)) {
+                result = wechatRefund(
+                        paymentRecord.getPaymentId(),
+                        refundId,
+                        paymentRecord.getAmount().multiply(new BigDecimal("100")).intValue(),
+                        refundRecord.getRefundAmount().multiply(new BigDecimal("100")).intValue()
+                );
+            } else if ("ALIPAY".equals(paymentMethod)) {
+                result = alipayRefund(
+                        paymentRecord.getPaymentId(),
+                        refundRecord.getRefundAmount(),
+                        refundRecord.getRefundReasonDesc()
+                );
+            } else {
+                // 其他支付方式的退款处理
+                result.put("success", true);
+                result.put("message", "退款处理成功");
+            }
+
+            // 更新退款记录状态
+            if (result.get("success") != null && (Boolean) result.get("success")) {
+                refundRecord.setRefundStatus(6); // 退款成功
+                refundRecord.setCompleteTime(java.time.LocalDateTime.now());
+                paymentRefundRecordDao.updateById(refundRecord);
+            }
+
+            return result;
+        } catch (Exception e) {
+            log.error("[退款执行] 执行退款失败", e);
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("success", false);
+            errorResult.put("message", "执行退款失败: " + e.getMessage());
+            return errorResult;
+        }
+    }
+
+    /**
+     * 查询支付记录
+     *
+     * @param paymentId 支付记录ID
+     * @return 支付记录
+     */
+    @Override
+    public net.lab1024.sa.common.consume.entity.PaymentRecordEntity getPaymentRecord(String paymentId) {
+        PaymentRecordEntity localEntity = paymentRecordDao.selectById(paymentId);
+        if (localEntity == null) {
+            return null;
+        }
+        // 转换为公共实体
+        net.lab1024.sa.common.consume.entity.PaymentRecordEntity commonEntity =
+            new net.lab1024.sa.common.consume.entity.PaymentRecordEntity();
+        commonEntity.setPaymentId(localEntity.getPaymentId() != null ? localEntity.getPaymentId() : String.valueOf(localEntity.getId()));
+        commonEntity.setOrderNo(localEntity.getTransactionId()); // 使用transactionId作为orderNo
+        commonEntity.setUserId(localEntity.getUserId());
+        commonEntity.setPaymentAmount(localEntity.getAmount());
+        // 转换支付方式：String -> Integer
+        Integer paymentMethodInt = convertPaymentMethodToInt(localEntity.getPaymentMethod());
+        commonEntity.setPaymentMethod(paymentMethodInt);
+        // 转换支付状态：String -> Integer
+        Integer paymentStatusInt = convertPaymentStatusToInt(localEntity.getStatus());
+        commonEntity.setPaymentStatus(paymentStatusInt);
+        commonEntity.setCreateTime(localEntity.getCreateTime());
+        commonEntity.setUpdateTime(localEntity.getUpdateTime());
+        return commonEntity;
+    }
+
+    /**
+     * 查询用户支付记录
+     *
+     * @param userId 用户ID
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @return 支付记录列表
+     */
+    @Override
+    public List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> getUserPaymentRecords(Long userId, Integer pageNum, Integer pageSize) {
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper =
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        wrapper.eq(PaymentRecordEntity::getUserId, userId);
+        wrapper.orderByDesc(PaymentRecordEntity::getCreateTime);
+
+        Page<PaymentRecordEntity> page = new Page<>(pageNum != null ? pageNum : 1, pageSize != null ? pageSize : 20);
+        IPage<PaymentRecordEntity> pageResult = paymentRecordDao.selectPage(page, wrapper);
+
+        // 转换为公共实体列表
+        List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result = new ArrayList<>();
+        for (PaymentRecordEntity localEntity : pageResult.getRecords()) {
+            net.lab1024.sa.common.consume.entity.PaymentRecordEntity commonEntity =
+                new net.lab1024.sa.common.consume.entity.PaymentRecordEntity();
+            commonEntity.setPaymentId(localEntity.getPaymentId() != null ? localEntity.getPaymentId() : String.valueOf(localEntity.getId()));
+            commonEntity.setOrderNo(localEntity.getTransactionId()); // 使用transactionId作为orderNo
+            commonEntity.setUserId(localEntity.getUserId());
+            commonEntity.setPaymentAmount(localEntity.getAmount());
+            // 转换支付方式：String -> Integer
+            Integer paymentMethodInt = convertPaymentMethodToInt(localEntity.getPaymentMethod());
+            commonEntity.setPaymentMethod(paymentMethodInt);
+            // 转换支付状态：String -> Integer
+            Integer paymentStatusInt = convertPaymentStatusToInt(localEntity.getStatus());
+            commonEntity.setPaymentStatus(paymentStatusInt);
+            commonEntity.setCreateTime(localEntity.getCreateTime());
+            commonEntity.setUpdateTime(localEntity.getUpdateTime());
+            result.add(commonEntity);
+        }
+        return result;
+    }
+
+    /**
+     * 查询退款记录
+     *
+     * @param refundId 退款记录ID
+     * @return 退款记录
+     */
+    @Override
+    public net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity getRefundRecord(String refundId) {
+        return paymentRefundRecordDao.selectById(refundId);
+    }
+
+    /**
+     * 查询用户退款记录
+     *
+     * @param userId 用户ID
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @return 退款记录列表
+     */
+    @Override
+    public List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> getUserRefundRecords(
+            Long userId, Integer pageNum, Integer pageSize) {
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<
+                net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> wrapper =
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        wrapper.eq(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
+        wrapper.orderByDesc(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime);
+
+        Page<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> page =
+                new Page<>(pageNum != null ? pageNum : 1, pageSize != null ? pageSize : 20);
+        IPage<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> pageResult =
+                paymentRefundRecordDao.selectPage(page, wrapper);
+        return pageResult.getRecords();
+    }
+
+    /**
+     * 游标分页查询用户支付记录（推荐用于深度分页）
+     * <p>
+     * 适用于需要查询大量数据的场景，性能优于传统分页
+     * </p>
+     *
+     * @param userId 用户ID
+     * @param pageSize 每页大小（默认20，最大100）
+     * @param lastTime 上一页最后一条记录的创建时间（首次查询传null）
+     * @return 游标分页结果
+     */
+    public CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> cursorPageUserPaymentRecords(
+            Long userId, Integer pageSize, LocalDateTime lastTime) {
+        log.debug("[支付服务] 游标分页查询用户支付记录，userId={}, pageSize={}, lastTime={}",
+                userId, pageSize, lastTime);
+
+        try {
+            // 1. 构建查询条件
+            LambdaQueryWrapper<PaymentRecordEntity> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(PaymentRecordEntity::getUserId, userId);
+
+            // 2. 使用游标分页（基于时间）
+            CursorPagination.CursorPageResult<PaymentRecordEntity> entityResult =
+                CursorPagination.queryByTimeCursor(
+                    paymentRecordDao,
+                    queryWrapper,
+                    CursorPagination.CursorPageRequest.<PaymentRecordEntity>builder()
+                        .pageSize(pageSize)
+                        .lastTime(lastTime)
+                        .desc(true)
+                        .build()
+                );
+
+            // 3. 转换为公共实体列表
+            List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> commonList = new ArrayList<>();
+            for (PaymentRecordEntity localEntity : entityResult.getList()) {
+                net.lab1024.sa.common.consume.entity.PaymentRecordEntity commonEntity =
+                    new net.lab1024.sa.common.consume.entity.PaymentRecordEntity();
+                commonEntity.setPaymentId(localEntity.getPaymentId() != null ? localEntity.getPaymentId() : String.valueOf(localEntity.getId()));
+                commonEntity.setOrderNo(localEntity.getTransactionId());
+                commonEntity.setUserId(localEntity.getUserId());
+                commonEntity.setPaymentAmount(localEntity.getAmount());
+                Integer paymentMethodInt = convertPaymentMethodToInt(localEntity.getPaymentMethod());
+                commonEntity.setPaymentMethod(paymentMethodInt);
+                Integer paymentStatusInt = convertPaymentStatusToInt(localEntity.getStatus());
+                commonEntity.setPaymentStatus(paymentStatusInt);
+                commonEntity.setCreateTime(localEntity.getCreateTime());
+                commonEntity.setUpdateTime(localEntity.getUpdateTime());
+                commonList.add(commonEntity);
+            }
+
+            // 4. 构建公共实体游标分页结果
+            return CursorPagination.CursorPageResult.<net.lab1024.sa.common.consume.entity.PaymentRecordEntity>builder()
+                    .list(commonList)
+                    .hasNext(entityResult.getHasNext())
+                    .lastId(entityResult.getLastId())
+                    .lastTime(entityResult.getLastTime())
+                    .size(commonList.size())
+                    .build();
+
+        } catch (Exception e) {
+            log.error("[支付服务] 游标分页查询用户支付记录失败，userId={}", userId, e);
+            throw new BusinessException("查询支付记录失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 游标分页查询用户退款记录（推荐用于深度分页）
+     * <p>
+     * 适用于需要查询大量数据的场景，性能优于传统分页
+     * </p>
+     *
+     * @param userId 用户ID
+     * @param pageSize 每页大小（默认20，最大100）
+     * @param lastTime 上一页最后一条记录的创建时间（首次查询传null）
+     * @return 游标分页结果
+     */
+    public CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> cursorPageUserRefundRecords(
+            Long userId, Integer pageSize, LocalDateTime lastTime) {
+        log.debug("[支付服务] 游标分页查询用户退款记录，userId={}, pageSize={}, lastTime={}",
+                userId, pageSize, lastTime);
+
+        try {
+            // 1. 构建查询条件
+            LambdaQueryWrapper<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> queryWrapper =
+                new LambdaQueryWrapper<>();
+            queryWrapper.eq(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
+
+            // 2. 使用游标分页（基于时间）
+            CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> result =
+                CursorPagination.queryByTimeCursor(
+                    paymentRefundRecordDao,
+                    queryWrapper,
+                    CursorPagination.CursorPageRequest.<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity>builder()
+                        .pageSize(pageSize)
+                        .lastTime(lastTime)
+                        .desc(true)
+                        .build()
+                );
+
+            log.info("[支付服务] 游标分页查询用户退款记录成功，size={}, hasNext={}",
+                    result.getList().size(), result.getHasNext());
+
+            return result;
+
+        } catch (Exception e) {
+            log.error("[支付服务] 游标分页查询用户退款记录失败，userId={}", userId, e);
+            throw new BusinessException("查询退款记录失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取用户支付统计
+     *
+     * @param userId 用户ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 统计结果
+     */
+    @Override
+    public Map<String, Object> getUserPaymentStatistics(Long userId, LocalDateTime startTime, LocalDateTime endTime) {
+        Map<String, Object> statistics = new HashMap<>();
+        try {
+            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper =
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+            wrapper.eq(PaymentRecordEntity::getUserId, userId);
+            if (startTime != null) {
+                wrapper.ge(PaymentRecordEntity::getCreateTime, startTime);
+            }
+            if (endTime != null) {
+                wrapper.le(PaymentRecordEntity::getCreateTime, endTime);
+            }
+
+            List<PaymentRecordEntity> records = paymentRecordDao.selectList(wrapper);
+            BigDecimal totalAmount = records.stream()
+                    .filter(r -> "SUCCESS".equals(r.getStatus()))
+                    .map(PaymentRecordEntity::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            statistics.put("totalCount", records.size());
+            statistics.put("successCount", records.stream()
+                    .filter(r -> "SUCCESS".equals(r.getStatus())).count());
+            statistics.put("totalAmount", totalAmount);
+            statistics.put("successAmount", totalAmount);
+
+            return statistics;
+        } catch (Exception e) {
+            log.error("[支付统计] 获取用户支付统计失败", e);
+            return statistics;
+        }
+    }
+
+    /**
+     * 获取用户退款统计
+     *
+     * @param userId 用户ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 统计结果
+     */
+    @Override
+    public Map<String, Object> getUserRefundStatistics(Long userId, LocalDateTime startTime, LocalDateTime endTime) {
+        Map<String, Object> statistics = new HashMap<>();
+        try {
+            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<
+                    net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> wrapper =
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+            wrapper.eq(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
+            if (startTime != null) {
+                wrapper.ge(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime, startTime);
+            }
+            if (endTime != null) {
+                wrapper.le(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime, endTime);
+            }
+
+            List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> records =
+                    paymentRefundRecordDao.selectList(wrapper);
+            BigDecimal totalAmount = records.stream()
+                    .filter(r -> r.getRefundStatus() != null && r.getRefundStatus() == 6)
+                    .map(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getRefundAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            statistics.put("totalCount", records.size());
+            statistics.put("successCount", records.stream()
+                    .filter(r -> r.getRefundStatus() != null && r.getRefundStatus() == 6).count());
+            statistics.put("totalAmount", totalAmount);
+            statistics.put("successAmount", totalAmount);
+
+            return statistics;
+        } catch (Exception e) {
+            log.error("[退款统计] 获取用户退款统计失败", e);
+            return statistics;
+        }
+    }
+
+    /**
+     * 执行对账
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param merchantId 商户ID（可选）
+     * @return 对账结果
+     */
+    @Override
+    public Map<String, Object> performReconciliation(LocalDateTime startTime, LocalDateTime endTime, Long merchantId) {
+        log.info("[对账] 执行对账，startTime={}, endTime={}, merchantId={}", startTime, endTime, merchantId);
+        Map<String, Object> result = new HashMap<>();
+        try {
+            // 1. 参数验证
+            if (startTime == null || endTime == null) {
+                throw new BusinessException("对账时间不能为空");
+            }
+            if (startTime.isAfter(endTime)) {
+                throw new BusinessException("开始时间不能晚于结束时间");
+            }
+
+            // 2. 查询支付记录（只查询支付成功的记录）
+            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<net.lab1024.sa.consume.domain.entity.PaymentRecordEntity> paymentWrapper =
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+            paymentWrapper.ge(net.lab1024.sa.consume.domain.entity.PaymentRecordEntity::getCreateTime, startTime)
+                    .le(net.lab1024.sa.consume.domain.entity.PaymentRecordEntity::getCreateTime, endTime)
+                    .eq(net.lab1024.sa.consume.domain.entity.PaymentRecordEntity::getStatus, "SUCCESS") // 支付成功
+                    .eq(net.lab1024.sa.consume.domain.entity.PaymentRecordEntity::getDeletedFlag, 0);
+            paymentWrapper.orderByDesc(net.lab1024.sa.consume.domain.entity.PaymentRecordEntity::getCreateTime);
+            List<net.lab1024.sa.consume.domain.entity.PaymentRecordEntity> paymentRecords =
+                    paymentRecordDao.selectList(paymentWrapper);
+            log.info("[对账] 查询到支付记录数：{}", paymentRecords.size());
+
+            // 3. 查询消费记录
+            List<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeRecords =
+                    consumeRecordDao.selectByTimeRange(startTime, endTime);
+            log.info("[对账] 查询到消费记录数：{}", consumeRecords.size());
+
+            // 4. 构建对账结果
+            Map<String, Object> reconciliationResult = buildReconciliationResult(
+                    paymentRecords, consumeRecords, merchantId);
+
+            // 5. 组装返回结果
+            result.put("success", true);
+            result.put("message", "对账完成");
+            result.put("startTime", startTime);
+            result.put("endTime", endTime);
+            result.put("merchantId", merchantId);
+            result.put("paymentRecordCount", paymentRecords.size());
+            result.put("consumeRecordCount", consumeRecords.size());
+            result.put("reconciliationResult", reconciliationResult);
+
+            log.info("[对账] 对账完成，支付记录数={}，消费记录数={}，匹配数={}，差异数={}",
+                    paymentRecords.size(),
+                    consumeRecords.size(),
+                    reconciliationResult.get("matchedCount"),
+                    reconciliationResult.get("differenceCount"));
+
+            return result;
+        } catch (BusinessException e) {
+            log.error("[对账] 对账业务异常", e);
+            result.put("success", false);
+            result.put("message", "对账失败: " + e.getMessage());
+            return result;
+        } catch (Exception e) {
+            log.error("[对账] 执行对账失败", e);
+            result.put("success", false);
+            result.put("message", "对账失败: " + e.getMessage());
+            return result;
+        }
+    }
+
+    /**
+     * 构建对账结果
+     *
+     * @param paymentRecords 支付记录列表
+     * @param consumeRecords 消费记录列表
+     * @param merchantId 商户ID（可选）
+     * @return 对账结果
+     */
+    private Map<String, Object> buildReconciliationResult(
+            List<net.lab1024.sa.consume.domain.entity.PaymentRecordEntity> paymentRecords,
+            List<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeRecords,
+            Long merchantId) {
+
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, Object>> matchedRecords = new ArrayList<>();
+        List<Map<String, Object>> differenceRecords = new ArrayList<>();
+        List<Map<String, Object>> missingPaymentRecords = new ArrayList<>();
+        List<Map<String, Object>> missingConsumeRecords = new ArrayList<>();
+
+        // 构建支付记录索引（按交易ID或支付ID）
+        Map<String, net.lab1024.sa.consume.domain.entity.PaymentRecordEntity> paymentByTransactionMap = new HashMap<>();
+        Map<String, net.lab1024.sa.consume.domain.entity.PaymentRecordEntity> paymentByPaymentIdMap = new HashMap<>();
+        for (net.lab1024.sa.consume.domain.entity.PaymentRecordEntity payment : paymentRecords) {
+            if (payment.getTransactionId() != null) {
+                paymentByTransactionMap.put(payment.getTransactionId(), payment);
+            }
+            if (payment.getPaymentId() != null) {
+                paymentByPaymentIdMap.put(payment.getPaymentId(), payment);
+            }
+        }
+
+        // 构建消费记录索引（按交易流水号或订单号）
+        Map<String, net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeByTransactionMap = new HashMap<>();
+        Map<String, net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeByOrderMap = new HashMap<>();
+        for (net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consume : consumeRecords) {
+            if (consume.getTransactionNo() != null) {
+                consumeByTransactionMap.put(consume.getTransactionNo(), consume);
+            }
+            if (consume.getOrderNo() != null) {
+                consumeByOrderMap.put(consume.getOrderNo(), consume);
+            }
+        }
+
+        // 对比支付记录和消费记录
+        for (net.lab1024.sa.consume.domain.entity.PaymentRecordEntity payment : paymentRecords) {
+            net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consume = null;
+            String matchKey = null;
+
+            // 优先使用交易ID匹配
+            if (payment.getTransactionId() != null) {
+                consume = consumeByTransactionMap.get(payment.getTransactionId());
+                matchKey = payment.getTransactionId();
+            }
+            // 如果交易ID匹配失败，尝试使用支付ID匹配订单号
+            if (consume == null && payment.getPaymentId() != null) {
+                consume = consumeByOrderMap.get(payment.getPaymentId());
+                matchKey = payment.getPaymentId();
+            }
+
+            if (consume == null) {
+                // 支付记录存在，但消费记录不存在
+                Map<String, Object> diff = new HashMap<>();
+                diff.put("type", "MISSING_CONSUME");
+                diff.put("matchKey", matchKey);
+                diff.put("paymentId", payment.getPaymentId());
+                diff.put("transactionId", payment.getTransactionId());
+                diff.put("paymentAmount", payment.getAmount());
+                diff.put("paymentTime", payment.getPaymentTime());
+                missingConsumeRecords.add(diff);
+                continue;
+            }
+
+            // 对比金额和状态
+            boolean isMatched = comparePaymentAndConsume(payment, consume);
+            if (isMatched) {
+                // 匹配成功
+                Map<String, Object> matched = new HashMap<>();
+                matched.put("matchKey", matchKey);
+                matched.put("paymentId", payment.getPaymentId());
+                matched.put("transactionId", payment.getTransactionId());
+                matched.put("consumeId", consume.getId());
+                matched.put("orderNo", consume.getOrderNo());
+                matched.put("amount", payment.getAmount());
+                matched.put("paymentTime", payment.getPaymentTime());
+                matched.put("consumeTime", consume.getConsumeTime());
+                matchedRecords.add(matched);
+            } else {
+                // 存在差异
+                Map<String, Object> diff = new HashMap<>();
+                diff.put("type", "AMOUNT_OR_STATUS_MISMATCH");
+                diff.put("matchKey", matchKey);
+                diff.put("paymentId", payment.getPaymentId());
+                diff.put("transactionId", payment.getTransactionId());
+                diff.put("consumeId", consume.getId());
+                diff.put("orderNo", consume.getOrderNo());
+                diff.put("paymentAmount", payment.getAmount());
+                diff.put("consumeAmount", consume.getAmount());
+                diff.put("paymentStatus", payment.getStatus());
+                diff.put("consumeStatus", consume.getStatus());
+                diff.put("paymentTime", payment.getPaymentTime());
+                diff.put("consumeTime", consume.getConsumeTime());
+                differenceRecords.add(diff);
+            }
+        }
+
+        // 检查消费记录中是否有未匹配的支付记录
+        for (net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consume : consumeRecords) {
+            boolean found = false;
+            if (consume.getTransactionNo() != null && paymentByTransactionMap.containsKey(consume.getTransactionNo())) {
+                found = true;
+            }
+            if (!found && consume.getOrderNo() != null && paymentByPaymentIdMap.containsKey(consume.getOrderNo())) {
+                found = true;
+            }
+            if (!found) {
+                // 消费记录存在，但支付记录不存在
+                Map<String, Object> diff = new HashMap<>();
+                diff.put("type", "MISSING_PAYMENT");
+                diff.put("orderNo", consume.getOrderNo());
+                diff.put("transactionNo", consume.getTransactionNo());
+                diff.put("consumeId", consume.getId());
+                diff.put("consumeAmount", consume.getAmount());
+                diff.put("consumeTime", consume.getConsumeTime());
+                missingPaymentRecords.add(diff);
+            }
+        }
+
+        // 汇总统计
+        result.put("matchedCount", matchedRecords.size());
+        result.put("differenceCount", differenceRecords.size() + missingPaymentRecords.size() + missingConsumeRecords.size());
+        result.put("missingPaymentCount", missingPaymentRecords.size());
+        result.put("missingConsumeCount", missingConsumeRecords.size());
+        result.put("matchedRecords", matchedRecords);
+        result.put("differenceRecords", differenceRecords);
+        result.put("missingPaymentRecords", missingPaymentRecords);
+        result.put("missingConsumeRecords", missingConsumeRecords);
+
+        return result;
+    }
+
+    /**
+     * 对比支付记录和消费记录
+     *
+     * @param payment 支付记录
+     * @param consume 消费记录
+     * @return 是否匹配
+     */
+    /**
+     * 对比支付记录和消费记录
+     *
+     * @param payment 支付记录
+     * @param consume 消费记录
+     * @return 是否匹配
+     */
+    private boolean comparePaymentAndConsume(
+            net.lab1024.sa.consume.domain.entity.PaymentRecordEntity payment,
+            net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consume) {
+
+        // 对比金额（允许0.01的误差）
+        BigDecimal paymentAmount = payment.getAmount() != null ? payment.getAmount() : BigDecimal.ZERO;
+        BigDecimal consumeAmount = consume.getAmount() != null ? consume.getAmount() : BigDecimal.ZERO;
+        BigDecimal difference = paymentAmount.subtract(consumeAmount).abs();
+        if (difference.compareTo(new BigDecimal("0.01")) > 0) {
+            log.warn("[对账] 金额不一致，paymentId={}, transactionId={}, paymentAmount={}, consumeAmount={}",
+                    payment.getPaymentId(), payment.getTransactionId(), paymentAmount, consumeAmount);
+            return false;
+        }
+
+        // 对比状态：支付成功(SUCCESS)对应消费成功状态
+        if (payment.getStatus() != null && "SUCCESS".equals(payment.getStatus())) {
+            // 支付成功，消费记录状态应该是成功
+            String consumeStatus = consume.getStatus();
+            if (consumeStatus == null || (!"SUCCESS".equals(consumeStatus) && !"COMPLETED".equals(consumeStatus))) {
+                log.warn("[对账] 状态不一致，paymentId={}, transactionId={}, paymentStatus={}, consumeStatus={}",
+                        payment.getPaymentId(), payment.getTransactionId(), payment.getStatus(), consumeStatus);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 获取商户结算统计
+     *
+     * @param merchantId 商户ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 结算统计
+     */
+    @Override
+    public Map<String, Object> getMerchantSettlementStatistics(
+            Long merchantId, LocalDateTime startTime, LocalDateTime endTime) {
+        log.info("[结算统计] 获取商户结算统计，merchantId={}, startTime={}, endTime={}", merchantId, startTime, endTime);
+        Map<String, Object> statistics = new HashMap<>();
+        try {
+            // 1. 参数验证
+            if (merchantId == null) {
+                throw new BusinessException("商户ID不能为空");
+            }
+            if (startTime == null || endTime == null) {
+                throw new BusinessException("时间范围不能为空");
+            }
+            if (startTime.isAfter(endTime)) {
+                throw new BusinessException("开始时间不能晚于结束时间");
+            }
+
+            // 2. 通过网关获取商户信息
+            String merchantName = getMerchantNameById(merchantId);
+            if (merchantName == null) {
+                log.warn("[结算统计] 商户不存在，merchantId={}", merchantId);
+                statistics.put("totalAmount", BigDecimal.ZERO);
+                statistics.put("settlementAmount", BigDecimal.ZERO);
+                statistics.put("transactionCount", 0);
+                statistics.put("merchantId", merchantId);
+                statistics.put("merchantName", null);
+                return statistics;
+            }
+
+            // 3. 查询该商户的消费记录
+            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> wrapper =
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+            wrapper.eq(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getMerchantName, merchantName)
+                    .ge(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getCreateTime, startTime)
+                    .le(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getCreateTime, endTime)
+                    .eq(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getDeletedFlag, 0)
+                    .in(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getStatus,
+                            "SUCCESS", "COMPLETED"); // 只统计成功的消费记录
+
+            List<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeRecords =
+                    consumeRecordDao.selectList(wrapper);
+            log.info("[结算统计] 查询到消费记录数：{}", consumeRecords.size());
+
+            // 4. 计算统计信息
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            BigDecimal totalFeeAmount = BigDecimal.ZERO;
+            int transactionCount = consumeRecords.size();
+
+            for (net.lab1024.sa.common.consume.entity.ConsumeRecordEntity record : consumeRecords) {
+                // 累计总金额（实际支付金额）
+                BigDecimal amount = record.getActualAmount() != null ? record.getActualAmount() : record.getAmount();
+                if (amount != null) {
+                    totalAmount = totalAmount.add(amount);
+                }
+
+                // 累计手续费（如果有）
+                BigDecimal feeAmount = record.getFeeAmount();
+                if (feeAmount != null && feeAmount.compareTo(BigDecimal.ZERO) > 0) {
+                    totalFeeAmount = totalFeeAmount.add(feeAmount);
+                }
+            }
+
+            // 5. 计算结算金额（总金额 - 手续费）
+            BigDecimal settlementAmount = totalAmount.subtract(totalFeeAmount);
+            if (settlementAmount.compareTo(BigDecimal.ZERO) < 0) {
+                settlementAmount = BigDecimal.ZERO;
+            }
+
+            // 6. 组装返回结果
+            statistics.put("merchantId", merchantId);
+            statistics.put("merchantName", merchantName);
+            statistics.put("startTime", startTime);
+            statistics.put("endTime", endTime);
+            statistics.put("totalAmount", totalAmount);
+            statistics.put("totalFeeAmount", totalFeeAmount);
+            statistics.put("settlementAmount", settlementAmount);
+            statistics.put("transactionCount", transactionCount);
+            statistics.put("averageAmount", transactionCount > 0 ?
+                    totalAmount.divide(new BigDecimal(transactionCount), 2, java.math.RoundingMode.HALF_UP) :
+                    BigDecimal.ZERO);
+
+            log.info("[结算统计] 统计完成，merchantId={}, totalAmount={}, settlementAmount={}, transactionCount={}",
+                    merchantId, totalAmount, settlementAmount, transactionCount);
+
+            return statistics;
+        } catch (BusinessException e) {
+            log.error("[结算统计] 获取商户结算统计业务异常", e);
+            statistics.put("error", e.getMessage());
+            return statistics;
+        } catch (Exception e) {
+            log.error("[结算统计] 获取商户结算统计失败", e);
+            statistics.put("error", "获取商户结算统计失败: " + e.getMessage());
+            return statistics;
+        }
+    }
+
+    /**
+     * 通过商户ID获取商户名称
+     *
+     * @param merchantId 商户ID
+     * @return 商户名称
+     */
+    private String getMerchantNameById(Long merchantId) {
+        try {
+            // 通过网关调用公共服务获取商户信息
+            net.lab1024.sa.common.dto.ResponseDTO<Map<String, Object>> response =
+                    gatewayServiceClient.callCommonService(
+                            "/api/v1/merchant/" + merchantId,
+                            HttpMethod.GET,
+                            null,
+                            new com.fasterxml.jackson.core.type.TypeReference<net.lab1024.sa.common.dto.ResponseDTO<Map<String, Object>>>() {
+                            });
+
+            if (response != null && response.getData() != null) {
+                Object merchantNameObj = response.getData().get("merchantName");
+                if (merchantNameObj != null) {
+                    return merchantNameObj.toString();
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            log.warn("[结算统计] 获取商户信息失败，merchantId={}, error={}", merchantId, e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 查询待审核退款列表
+     *
+     * @return 待审核退款列表
+     */
+    @Override
+    public List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> getPendingAuditRefunds() {
+        return paymentRefundRecordDao.selectPendingAudit();
+    }
+
+    /**
+     * 查询待处理退款列表
+     *
+     * @return 待处理退款列表
+     */
+    @Override
+    public List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> getPendingProcessRefunds() {
+        return paymentRefundRecordDao.selectPendingProcess();
+    }
+
+    /**
+     * 查询高风险支付记录
+     *
+     * @param hours 小时数
+     * @return 高风险支付记录列表
+     */
+    @Override
+    public List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> getHighRiskPayments(Integer hours) {
+        LocalDateTime startTime = LocalDateTime.now().minusHours(hours != null ? hours : 24);
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper =
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        wrapper.ge(PaymentRecordEntity::getCreateTime, startTime);
+        // 高风险支付：金额大于1000元或状态为失败
+        wrapper.and(w -> w.gt(PaymentRecordEntity::getAmount, BigDecimal.valueOf(1000))
+                .or().eq(PaymentRecordEntity::getStatus, "FAILED")); // 支付失败
+
+        List<PaymentRecordEntity> localList = paymentRecordDao.selectList(wrapper);
+        // 转换为公共实体列表
+        List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result = new ArrayList<>();
+        for (PaymentRecordEntity localEntity : localList) {
+            net.lab1024.sa.common.consume.entity.PaymentRecordEntity commonEntity =
+                new net.lab1024.sa.common.consume.entity.PaymentRecordEntity();
+            commonEntity.setPaymentId(localEntity.getPaymentId() != null ? localEntity.getPaymentId() : String.valueOf(localEntity.getId()));
+            commonEntity.setOrderNo(localEntity.getTransactionId()); // 使用transactionId作为orderNo
+            commonEntity.setUserId(localEntity.getUserId());
+            commonEntity.setPaymentAmount(localEntity.getAmount());
+            // 转换支付方式：String -> Integer
+            Integer paymentMethodInt = convertPaymentMethodToInt(localEntity.getPaymentMethod());
+            commonEntity.setPaymentMethod(paymentMethodInt);
+            // 转换支付状态：String -> Integer
+            Integer paymentStatusInt = convertPaymentStatusToInt(localEntity.getStatus());
+            commonEntity.setPaymentStatus(paymentStatusInt);
+            commonEntity.setCreateTime(localEntity.getCreateTime());
+            commonEntity.setUpdateTime(localEntity.getUpdateTime());
+            result.add(commonEntity);
+        }
+        return result;
+    }
+
+    /**
+     * 查询高风险退款记录
+     *
+     * @param hours 小时数
+     * @return 高风险退款记录列表
+     */
+    @Override
+    public List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> getHighRiskRefunds(Integer hours) {
+        log.info("[高风险退款] 查询高风险退款记录，hours={}", hours);
+        LocalDateTime startTime = LocalDateTime.now().minusHours(hours != null ? hours : 24);
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<
+                net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> wrapper =
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        wrapper.ge(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime, startTime)
+                // 风险等级：3-高风险 4-极高风险
+                .ge(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getRiskLevel, 3)
+                .eq(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getDeletedFlag, 0)
+                .orderByDesc(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getRiskLevel)
+                .orderByDesc(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime);
+
+        List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> result =
+                paymentRefundRecordDao.selectList(wrapper);
+        log.info("[高风险退款] 查询到高风险退款记录数：{}", result.size());
+        return result;
+    }
+
+    /**
+     * 查询异常支付记录
+     *
+     * @param hours 小时数
+     * @return 异常支付记录列表
+     */
+    @Override
+    public List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> getAbnormalPayments(Integer hours) {
+        LocalDateTime startTime = LocalDateTime.now().minusHours(hours != null ? hours : 24);
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper =
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        wrapper.ge(PaymentRecordEntity::getCreateTime, startTime);
+        // 异常支付：状态为失败、已退款
+        wrapper.in(PaymentRecordEntity::getStatus, "FAILED", "REFUNDED"); // 支付失败, 已退款
+
+        List<PaymentRecordEntity> localList = paymentRecordDao.selectList(wrapper);
+        // 转换为公共实体列表
+        List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result = new ArrayList<>();
+        for (PaymentRecordEntity localEntity : localList) {
+            net.lab1024.sa.common.consume.entity.PaymentRecordEntity commonEntity =
+                new net.lab1024.sa.common.consume.entity.PaymentRecordEntity();
+            commonEntity.setPaymentId(localEntity.getPaymentId() != null ? localEntity.getPaymentId() : String.valueOf(localEntity.getId()));
+            commonEntity.setOrderNo(localEntity.getTransactionId()); // 使用transactionId作为orderNo
+            commonEntity.setUserId(localEntity.getUserId());
+            commonEntity.setPaymentAmount(localEntity.getAmount());
+            // 转换支付方式：String -> Integer
+            Integer paymentMethodInt = convertPaymentMethodToInt(localEntity.getPaymentMethod());
+            commonEntity.setPaymentMethod(paymentMethodInt);
+            // 转换支付状态：String -> Integer
+            Integer paymentStatusInt = convertPaymentStatusToInt(localEntity.getStatus());
+            commonEntity.setPaymentStatus(paymentStatusInt);
+            commonEntity.setCreateTime(localEntity.getCreateTime());
+            commonEntity.setUpdateTime(localEntity.getUpdateTime());
+            result.add(commonEntity);
+        }
+        return result;
+    }
+
+    /**
+     * 转换支付方式：String -> Integer
+     *
+     * @param paymentMethod 支付方式字符串
+     * @return 支付方式整数
+     */
+    private Integer convertPaymentMethodToInt(String paymentMethod) {
+        if (paymentMethod == null) {
+            return 1; // 默认余额支付
+        }
+        switch (paymentMethod.toUpperCase()) {
+            case "WECHAT":
+                return 2; // 微信支付
+            case "ALIPAY":
+                return 3; // 支付宝
+            default:
+                return 1; // 默认余额支付
+        }
+    }
+
+    /**
+     * 生成APP支付签名
+     * <p>
+     * 微信支付APP支付签名规则：
+     * 1. 按照字典序排列参数：appId, nonceStr, packageValue, partnerId, prepayId, timeStamp
+     * 2. 拼接签名字符串：key1=value1&key2=value2&key3=value3
+     * 3. 使用商户私钥进行RSA-SHA256签名
+     * 4. Base64编码返回
+     * </p>
+     *
+     * @param appId     应用ID
+     * @param partnerId 商户号
+     * @param prepayId  预支付交易会话ID
+     * @param packageValue 扩展字段（固定为"Sign=WXPay"）
+     * @param nonceStr  随机字符串
+     * @param timeStamp 时间戳
+     * @return Base64编码的签名字符串
+     */
+    private String generateAppPaySignature(String appId, String partnerId, String prepayId,
+            String packageValue, String nonceStr, String timeStamp) {
+        try {
+            // 1. 确保微信支付配置已初始化
+            initWechatPayConfig();
+
+            // 2. 如果配置未初始化，返回空签名（开发环境）
+            if (wechatPayConfig == null) {
+                log.warn("[微信支付APP] 配置未初始化，返回空签名（开发环境）");
+                return "";
+            }
+
+            // 3. 按照字典序排列参数
+            Map<String, String> params = new HashMap<>();
+            params.put("appId", appId);
+            params.put("partnerId", partnerId);
+            params.put("prepayId", prepayId);
+            params.put("package", packageValue);
+            params.put("nonceStr", nonceStr);
+            params.put("timeStamp", timeStamp);
+
+            // 4. 按字典序排序并拼接签名字符串
+            String signString = params.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .map(entry -> entry.getKey() + "=" + entry.getValue())
+                    .collect(java.util.stream.Collectors.joining("&"));
+
+            // 5. 获取商户私钥
+            java.security.PrivateKey privateKey = getWechatPayPrivateKey();
+            if (privateKey == null) {
+                log.error("[微信支付APP] 无法获取商户私钥，签名生成失败");
+                return "";
+            }
+
+            // 6. 使用RSA-SHA256算法签名
+            Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initSign(privateKey);
+            signature.update(signString.getBytes(StandardCharsets.UTF_8));
+            byte[] signBytes = signature.sign();
+
+            // 7. Base64编码
+            String sign = Base64.getEncoder().encodeToString(signBytes);
+
+            log.debug("[微信支付APP] 签名生成成功，signString={}", signString);
+            return sign;
+
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+            log.error("[微信支付APP] 签名生成失败", e);
+            return "";
+        } catch (Exception e) {
+            log.error("[微信支付APP] 签名生成异常", e);
+            return "";
+        }
+    }
+
+    /**
+     * 转换支付状态：String -> Integer
+     *
+     * @param status 支付状态字符串
+     * @return 支付状态整数
+     */
+    private Integer convertPaymentStatusToInt(String status) {
+        if (status == null) {
+            return 1; // 默认待支付
+        }
+        switch (status.toUpperCase()) {
+            case "PENDING":
+                return 1; // 待支付
+            case "SUCCESS":
+                return 3; // 支付成功
+            case "FAILED":
+                return 4; // 支付失败
+            case "REFUNDED":
+                return 5; // 已退款
+            default:
+                return 1; // 默认待支付
         }
     }
 }

@@ -23,15 +23,15 @@ import java.time.LocalDateTime;
 @Schema(description = "审批配置表单")
 public class ApprovalConfigForm {
 
-    @Schema(description = "业务类型（唯一标识）", example = "CUSTOM_APPROVAL_001", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "业务类型（唯一标识）", example = "CUSTOM_APPROVAL_001")
     @NotBlank(message = "业务类型不能为空")
     private String businessType;
 
-    @Schema(description = "业务类型名称", example = "自定义审批", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "业务类型名称", example = "自定义审批")
     @NotBlank(message = "业务类型名称不能为空")
     private String businessTypeName;
 
-    @Schema(description = "所属模块", example = "自定义模块", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "所属模块", example = "自定义模块")
     @NotBlank(message = "所属模块不能为空")
     private String module;
 

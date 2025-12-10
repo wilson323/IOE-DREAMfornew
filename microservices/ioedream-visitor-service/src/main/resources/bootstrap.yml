@@ -1,0 +1,324 @@
+# ============================================================
+# IOE-DREAM Visitor Service Bootstrap 配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+#
+# 服务信息:
+# - 服务名称: ioedream-visitor-service
+# - 服务端口: 8095
+# - 服务职责: 访客管理微服务，提供访客预约、登记管理、通行控制等功能
+# ============================================================
+
+# ==================== 应用基础配置 ====================
+spring:
+  application:
+    name: ${SERVICE_NAME:ioedream-visitor-service}
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # ==================== Nacos服务发现配置 ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+        enabled: true
+        register-enabled: true
+        # 服务注册元数据
+        metadata:
+          version: ${SERVICE_VERSION:1.0.0}
+          zone: ${ZONE:dev}
+          cluster: ${CLUSTER:default}
+          environment: ${ENVIRONMENT:dev}
+          registration-methods: "online,onsite,invited"
+          biometric-auth: "face,id-card"
+          integration-support: "access-control,video-surveillance"
+
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+        file-extension: yaml
+        enabled: true
+        refresh-enabled: true
+        # 配置文件导入顺序
+        import-check:
+          enabled: true
+        # 共享配置 - 所有服务共享
+        shared-configs:
+          - data-id: common-database.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-redis.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-monitoring.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-security.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: visitor-management-config.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+        # 扩展配置 - 服务特定配置
+        extension-configs:
+          - data-id: ioedream-visitor-service-ext.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: ${spring.application.name}-${spring.profiles.active:dev}.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+  # ==================== 配置文件导入 ====================
+  config:
+    import:
+      - "optional:nacos:${spring.application.name}.yaml"
+      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:common-config.yaml"
+      - "optional:nacos:visitor-appointment-config.yaml"
+
+# ==================== 加密配置 ====================
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    key-obtention-iterations: 1000
+    pool-size: 1
+    provider-name: SunJCE
+    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
+    string-output-type: base64
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    property:
+      prefix: ENC(
+      suffix: )
+
+# ==================== JVM配置 ====================
+java:
+  # 访客服务JVM优化参数（预约处理）
+  opts:
+    - "-server"
+    - "-Xms1g"
+    - "-Xmx2g"
+    - "-XX:+UseG1GC"
+    - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+HeapDumpOnOutOfMemoryError"
+    - "-XX:HeapDumpPath=/var/log/ioedream/visitor-service"
+    - "-XX:+PrintGCDetails"
+    - "-XX:+PrintGCTimeStamps"
+    - "-Dfile.encoding=UTF-8"
+    - "-Duser.timezone=Asia/Shanghai"
+
+# ==================== 日志配置启动参数 ====================
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    net.lab1024.sa.visitor: DEBUG
+    org.springframework: INFO
+
+# ==================== 访客服务特定配置 ====================
+visitor:
+  registration:
+    # 访客登记
+    methods:
+      online:
+        enabled: ${VISITOR_ONLINE_ENABLED:true}
+        pre-registration-required: ${VISITOR_PRE_REGISTRATION:true}
+        min-advance-hours: ${VISITOR_MIN_ADVANCE:2}
+        max-advance-days: ${VISITOR_MAX_ADVANCE:30}
+
+      onsite:
+        enabled: ${VISITOR_ONSITE_ENABLED:true}
+        auto-photo-capture: ${VISITOR_AUTO_PHOTO:true}
+        id-card-scanner: ${VISITOR_ID_CARD_SCANNER:true}
+
+      invited:
+        enabled: ${VISITOR_INVITED_ENABLED:true}
+        qr-code-invitation: ${VISITOR_QR_INVITATION:true}
+        sms-invitation: ${VISITOR_SMS_INVITATION:true}
+
+    # 身份验证
+    authentication:
+      methods: ${VISITOR_AUTH_METHODS:face,id-card,phone,id-passport}
+      face-recognition:
+        enabled: ${VISITOR_FACE_AUTH_ENABLED:true}
+        liveness-check: ${VISITOR_FACE_LIVENESS:true}
+        confidence-threshold: ${VISITOR_FACE_CONFIDENCE:0.85}
+
+      id-card:
+        enabled: ${VISITOR_ID_CARD_ENABLED:true}
+        ocr-verification: ${VISITOR_ID_OCR:true}
+        blacklist-check: ${VISITOR_ID_BLACKLIST:true}
+
+      phone:
+        enabled: ${VISITOR_PHONE_AUTH_ENABLED:true}
+        sms-verification: ${VISITOR_SMS_VERIFY:true}
+        verification-code-length: ${VISITOR_SMS_LENGTH:6}
+
+  appointment:
+    # 预约管理
+    workflow:
+      enabled: ${VISITOR_WORKFLOW_ENABLED:true}
+      approval-required: ${VISITOR_APPROVAL_REQUIRED:true}
+      auto-approval-conditions: ${VISITOR_AUTO_APPROVAL:}
+
+    # 审批流程
+    approval:
+      levels: ${VISITOR_APPROVAL_LEVELS:2}
+      timeout-hours: ${VISITOR_APPROVAL_TIMEOUT:24}
+      reminder-interval: ${VISITOR_REMINDER_INTERVAL:6}
+
+    # 访问权限
+    access:
+      default-access-level: ${VISITOR_DEFAULT_ACCESS:public}
+      area-restrictions: ${VISITOR_AREA_RESTRICTIONS:true}
+      time-restrictions: ${VISITOR_TIME_RESTRICTIONS:true}
+
+  access-control:
+    # 通行控制
+    check-in:
+      auto-check-out: ${VISITOR_AUTO_CHECKOUT:true}
+      check-out-hours: ${VISITOR_CHECKOUT_HOURS:8}
+      grace-period-minutes: ${VISITOR_GRACE_PERIOD:30}
+
+    # 通行凭证
+    credentials:
+      qr-code:
+        enabled: ${VISITOR_QR_ENABLED:true}
+        encryption: ${VISITOR_QR_ENCRYPTION:AES}
+        validity-hours: ${VISITOR_QR_VALIDITY:24}
+
+      face:
+        enabled: ${VISITOR_FACE_ACCESS_ENABLED:true}
+        template-storage-days: ${VISITOR_FACE_STORAGE:7}
+
+      visitor-card:
+        enabled: ${VISITOR_CARD_ENABLED:false}
+        card-activation: ${VISITOR_CARD_ACTIVATION:check-in}
+
+    # 访问监控
+    monitoring:
+      real-time-tracking: ${VISITOR_REAL_TIME_TRACKING:true}
+      area-violation-detection: ${VISITOR_VIOLATION_DETECTION:true}
+      escort-required-monitoring: ${VISITOR_ESCORT_MONITOR:true}
+
+  host:
+    # 接待人管理
+    notification:
+      pre-arrival-hours: ${VISITOR_PRE_ARRIVAL:2}
+      check-in-notification: ${VISITOR_CHECK_IN_NOTIFY:true}
+      check-out-notification: ${VISITOR_CHECK_OUT_NOTIFY:true}
+
+    # 接待人权限
+    permissions:
+      max-daily-visitors: ${VISITOR_MAX_DAILY:10}
+      can-approve-visitors: ${VISITOR_CAN_APPROVE:true}
+      can-extend-visits: ${VISITOR_CAN_EXTEND:true}
+
+  security:
+    # 安全管理
+    blacklist:
+      enabled: ${VISITOR_BLACKLIST_ENABLED:true}
+      auto-update: ${VISITOR_BLACKLIST_AUTO:true}
+      sync-sources: ${VISITOR_BLACKLIST_SOURCES:police,internal}
+
+    risk-assessment:
+      enabled: ${VISITOR_RISK_ASSESSMENT_ENABLED:true}
+      factors: ${VISITOR_RISK_FACTORS:blacklist,frequency,pattern}
+      risk-threshold: ${VISITOR_RISK_THRESHOLD:70}
+
+    # 访客记录
+    audit:
+      full-logging: ${VISITOR_AUDIT_LOG:true}
+      retention-days: ${VISITOR_AUDIT_RETENTION:365}
+      compliance-mode: ${VISITOR_COMPLIANCE_MODE:false}
+
+  notification:
+    # 通知系统
+    visitor:
+      pre-visit-reminder: ${VISITOR_PRE_VISIT_REMINDER:true}
+      check-in-confirm: ${VISITOR_CHECK_IN_CONFIRM:true}
+      access-instructions: ${VISITOR_ACCESS_INSTRUCTIONS:true}
+
+    host:
+      appointment-confirm: ${VISITOR_APPOINTMENT_CONFIRM:true}
+      visitor-arrival: ${VISITOR_VISITOR_ARRIVAL:true}
+      overstay-alert: ${VISITOR_OVERSTAY_ALERT:true}
+
+    security:
+      blacklist-alert: ${VISITOR_BLACKLIST_ALERT:true}
+      violation-alert: ${VISITOR_VIOLATION_ALERT:true}
+      emergency-alert: ${VISITOR_EMERGENCY_ALERT:true}
+
+  integration:
+    # 第三方集成
+    access-control:
+      enabled: ${VISITOR_ACCESS_INTEGRATION_ENABLED:true}
+      automatic-access-grant: ${VISITOR_AUTO_ACCESS:true}
+      access-revocation: ${VISITOR_ACCESS_REVOKE:true}
+
+    video-surveillance:
+      enabled: ${VISITOR_VIDEO_INTEGRATION_ENABLED:true}
+      visitor-face-detection: ${VISITOR_FACE_DETECTION:true}
+      tracking-recording: ${VISITOR_TRACKING_RECORD:true}
+
+    external-systems:
+      hr-system:
+        enabled: ${VISITOR_HR_INTEGRATION:false}
+        employee-validation: ${VISITOR_EMPLOYEE_VALIDATE:true}
+
+      security-system:
+        enabled: ${VISITOR_SECURITY_INTEGRATION:true}
+        police-database-check: ${VISITOR_POLICE_CHECK:false}
+
+  cache:
+    # 缓存配置
+    visitor-information:
+      ttl: ${VISITOR_INFO_TTL:1800}           # 30分钟
+      max-size: ${VISITOR_INFO_MAX_SIZE:10000}
+
+    appointment-status:
+      ttl: ${VISITOR_APPOINTMENT_TTL:600}      # 10分钟
+      max-size: ${VISITOR_APPOINTMENT_MAX_SIZE:5000}
+
+    access-credentials:
+      ttl: ${VISITOR_CREDENTIALS_TTL:900}      # 15分钟
+      max-size: ${VISITOR_CREDENTIALS_MAX_SIZE:20000}
+
+  reporting:
+    # 报表统计
+    real-time:
+      enabled: ${VISITOR_REAL_TIME_REPORTING:true}
+      current-visitors: ${VISITOR_CURRENT_VISITORS:true}
+
+    periodic:
+      daily-summary: ${VISITOR_DAILY_SUMMARY:true}
+      weekly-analysis: ${VISITOR_WEEKLY_ANALYSIS:true}
+      monthly-report: ${VISITOR_MONTHLY_REPORT:true}
+
+    # 统计维度
+    dimensions:
+      time-based: ${VISITOR_TIME_ANALYSIS:true}
+      host-based: ${VISITOR_HOST_ANALYSIS:true}
+      purpose-based: ${VISITOR_PURPOSE_ANALYSIS:true}
+      access-based: ${VISITOR_ACCESS_ANALYSIS:true}
+
+  compliance:
+    # 合规管理
+    data-protection:
+      privacy-policy: ${VISITOR_PRIVACY_POLICY:true}
+      data-retention: ${VISITOR_DATA_RETENTION:true}
+      consent-management: ${VISITOR_CONSENT_MANAGEMENT:true}
+
+    regulatory:
+      gdpr-compliance: ${VISITOR_GDPR_COMPLIANCE:false}
+      audit-trail: ${VISITOR_AUDIT_TRAIL:true}
+      reporting-standards: ${VISITOR_REPORTING_STANDARDS:true}

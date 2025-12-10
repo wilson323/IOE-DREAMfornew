@@ -426,7 +426,7 @@ public class TcpPushServer {
             );
 
             if (response != null && response.isSuccess() && response.getData() != null) {
-                return response.getData().getDeviceId();
+                return response.getData().getId();
             }
         } catch (Exception e) {
             log.debug("[TCP服务器] 根据IP查找设备ID失败，clientIp={}, error={}", clientIp, e.getMessage());

@@ -1,0 +1,211 @@
+# ============================================================
+# IOE-DREAM 微服务消息队列备选配置 (RocketMQ)
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: 基于RocketMQ的消息队列配置，作为RabbitMQ的备选方案
+# ============================================================
+
+# ============================================================
+# RocketMQ 配置
+# ============================================================
+rocketmq:
+  # NameServer配置
+  name-server: ${ROCKETMQ_NAME_SERVER:127.0.0.1:9876}
+
+  # 生产者配置
+  producer:
+    group: ${spring.application.name}-producer-group
+    send-message-timeout: 3000                      # 发送超时3秒
+    retry-times-when-send-failed: 2                # 同步发送失败重试次数
+    retry-times-when-send-async-failed: 2          # 异步发送失败重试次数
+    max-message-size: 4194304                      # 最大消息4MB
+    compress-message-body-threshold: 4096          # 消息压缩阈值4KB
+    retry-next-server: true                        # 失败重试下一个Broker
+    enable-msg-trace: true                         # 启用消息轨迹
+    customized-trace-topic: RMQ_SYS_TRACE_TOPIC     # 自定义轨迹主题
+
+  # 消费者配置
+  consumer:
+    group: ${spring.application.name}-consumer-group
+    consume-mode: orderly                          # 顺序消费模式
+    consume-thread-min: 2                          # 最小消费线程数
+    consume-thread-max: 10                         # 最大消费线程数
+    pull-batch-size: 32                           # 拉取消息批量大小
+    consume-timeout: 15                           # 消费超时15分钟
+    max-reconsume-times: 3                        # 最大重试消费次数
+    auto-commit: true                             # 自动提交消费偏移量
+    suspend-current-queue-time-millis: 1000       # 消息暂停时间
+    pull-time-for-millis: 10000                   # 消息拉取超时
+    pull-threshold-for-all: 50000                 # 消息拉取阈值
+    pull-threshold-for-topic: 5000               # 主题消息拉取阈值
+    pull-threshold-size-for-topic: 100           # 主题消息大小拉取阈值
+    pull-threshold-interval-for-topic: 30000     # 主题消息拉取间隔
+
+# ============================================================
+# IOE-DREAM 业务主题配置
+# ============================================================
+ioedream:
+  rocketmq:
+    # 主题配置
+    topics:
+      # 设备通讯主题
+      device:
+        command-topic: IOEDREAM-DEVICE-COMMAND
+        response-topic: IOEDREAM-DEVICE-RESPONSE
+        heartbeat-topic: IOEDREAM-DEVICE-HEARTBEAT
+
+      # 门禁事件主题
+      access:
+        event-topic: IOEDREAM-ACCESS-EVENT
+        record-topic: IOEDREAM-ACCESS-RECORD
+        alarm-topic: IOEDREAM-ACCESS-ALARM
+
+      # 考勤事件主题
+      attendance:
+        record-topic: IOEDREAM-ATTENDANCE-RECORD
+        calculation-topic: IOEDREAM-ATTENDANCE-CALCULATION
+        exception-topic: IOEDREAM-ATTENDANCE-EXCEPTION
+
+      # 消费事件主题
+      consume:
+        transaction-topic: IOEDREAM-CONSUME-TRANSACTION
+        refund-topic: IOEDREAM-CONSUME-REFUND
+        notification-topic: IOEDREAM-CONSUME-NOTIFICATION
+
+      # 访客事件主题
+      visitor:
+        registration-topic: IOEDREAM-VISITOR-REGISTRATION
+        appointment-topic: IOEDREAM-VISITOR-APPOINTMENT
+        notification-topic: IOEDREAM-VISITOR-NOTIFICATION
+
+      # 视频事件主题
+      video:
+        stream-topic: IOEDREAM-VIDEO-STREAM
+        recording-topic: IOEDREAM-VIDEO-RECORDING
+        analysis-topic: IOEDREAM-VIDEO-ANALYSIS
+
+      # OA事件主题
+      oa:
+        workflow-topic: IOEDREAM-OA-WORKFLOW
+        document-topic: IOEDREAM-OA-DOCUMENT
+        notification-topic: IOEDREAM-OA-NOTIFICATION
+
+      # 系统事件主题
+      system:
+        event-topic: IOEDREAM-SYSTEM-EVENT
+        audit-topic: IOEDREAM-SYSTEM-AUDIT
+        notification-topic: IOEDREAM-SYSTEM-NOTIFICATION
+
+    # 标签配置
+    tags:
+      device:
+        command: command
+        response: response
+        heartbeat: heartbeat
+      access:
+        event: event
+        record: record
+        alarm: alarm
+      attendance:
+        record: record
+        calculation: calculation
+        exception: exception
+      consume:
+        transaction: transaction
+        refund: refund
+        notification: notification
+      visitor:
+        registration: registration
+        appointment: appointment
+        notification: notification
+      video:
+        stream: stream
+        recording: recording
+        analysis: analysis
+      oa:
+        workflow: workflow
+        document: document
+        notification: notification
+      system:
+        event: event
+        audit: audit
+        notification: notification
+
+# ============================================================
+# RocketMQ 监控配置
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,rocketmq
+  endpoint:
+    health:
+      show-details: always
+    rocketmq:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      component: rocketmq
+
+# ============================================================
+# 日志配置
+# ============================================================
+logging:
+  level:
+    org.apache.rocketmq: INFO
+    org.apache.rocketmq.client: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+
+# ============================================================
+# 生产环境优化配置
+# ============================================================
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+rocketmq:
+  # 生产环境生产者优化
+  producer:
+    send-message-timeout: 5000
+    retry-times-when-send-failed: 3
+    retry-times-when-send-async-failed: 3
+    max-message-size: 2097152                      # 生产环境限制2MB
+    enable-msg-trace: true
+    compress-message-body-threshold: 1024         # 降低压缩阈值
+
+  # 生产环境消费者优化
+  consumer:
+    consume-mode: concurrently                      # 生产环境使用并发消费
+    consume-thread-min: 4
+    consume-thread-max: 20
+    pull-batch-size: 64
+    consume-timeout: 30
+    max-reconsume-times: 5
+    suspend-current-queue-time-millis: 500
+    pull-time-for-millis: 15000
+    auto-commit: false                            # 生产环境手动提交
+
+# 生产环境主题配置优化
+ioedream:
+  rocketmq:
+    # 消息配置
+    message:
+      enable-compression: true
+      enable-trace: true
+      max-retry-times: 3
+
+    # 死信队列配置
+    dead-letter:
+      enabled: true
+      max-reconsume-times: 3
+      dead-letter-topic-suffix: "-DLQ"

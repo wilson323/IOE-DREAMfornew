@@ -53,7 +53,7 @@ class VideoDeviceServiceImplTest {
     void setUp() {
         // 准备测试数据
         mockDevice = new DeviceEntity();
-        mockDevice.setDeviceId(1001L);
+        mockDevice.setId(1001L);
         mockDevice.setDeviceCode("CAM001");
         mockDevice.setDeviceName("摄像头001");
         mockDevice.setDeviceType("CAMERA");
@@ -155,7 +155,7 @@ class VideoDeviceServiceImplTest {
     void testGetDeviceDetail_WrongType() {
         // Given
         DeviceEntity nonCameraDevice = new DeviceEntity();
-        nonCameraDevice.setDeviceId(1002L);
+        nonCameraDevice.setId(1002L);
         nonCameraDevice.setDeviceType("ACCESS_CONTROL"); // 非摄像头设备
 
         when(deviceDao.selectById(1002L)).thenReturn(nonCameraDevice);

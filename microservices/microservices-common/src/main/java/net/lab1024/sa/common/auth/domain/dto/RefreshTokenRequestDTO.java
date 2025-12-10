@@ -16,7 +16,7 @@ import lombok.Data;
 @Schema(description = "刷新令牌请求")
 public class RefreshTokenRequestDTO {
 
-    @Schema(description = "刷新令牌", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "刷新令牌")
     @NotBlank(message = "刷新令牌不能为空")
     private String refreshToken;
 }

@@ -1,0 +1,290 @@
+# ============================================================
+# IOE-DREAM 公共安全配置
+#
+# 供所有微服务使用的安全相关配置
+# 包含认证授权、接口安全、加密解密、防护措施等配置
+# ============================================================
+
+# ============================================================
+# Sa-Token认证配置
+# ============================================================
+sa-token:
+  # Token名称（同时也是Cookie名称）
+  token-name: ${SA_TOKEN_NAME:Authorization}
+
+  # Token有效期（单位：秒） - 默认30天
+  timeout: ${SA_TOKEN_TIMEOUT:2592000}
+
+  # Token临时有效期（指定时间内无操作掉线，单位：秒） - 默认-1代表不限制
+  active-timeout: ${SA_TOKEN_ACTIVE_TIMEOUT:7200}
+
+  # 是否允许同一账号并发登录
+  is-concurrent: ${SA_TOKEN_IS_CONCURRENT:true}
+
+  # 在多人登录同一账号时，是否共用一个token
+  is-share: ${SA_TOKEN_IS_SHARE:false}
+
+  # Token风格
+  token-style: ${SA_TOKEN_STYLE:uuid}
+
+  # 是否输出操作日志
+  is-log: ${SA_TOKEN_IS_LOG:true}
+
+  # Cookie配置
+  cookie:
+    # 是否在Cookie中读取Token
+    is-read-cookie: ${SA_TOKEN_COOKIE_IS_READ:false}
+    # 是否在Header中读取Token
+    is-read-header: ${SA_TOKEN_COOKIE_IS_READ_HEADER:true}
+
+  # JWT密钥 - 生产环境必须使用强密钥
+  jwt-secret-key: ${SA_TOKEN_JWT_SECRET_KEY:ENC(I8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y2Z)}
+
+# ============================================================
+# JWT配置
+# ============================================================
+jwt:
+  # JWT密钥（生产环境必须加密）
+  secret: ${JWT_SECRET:ENC(I8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y2Z)}
+
+  # JWT有效期（单位：毫秒）
+  expiration: ${JWT_EXPIRATION:7200000}
+
+  # JWT刷新令牌有效期（单位：毫秒）
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
+  # JWT发行者
+  issuer: ${JWT_ISSUER:IOE-DREAM}
+
+  # JWT主题
+  subject: ${JWT_SUBJECT:IOE-DREAM Authentication}
+
+  # JWT签名算法
+  algorithm: ${JWT_ALGORITHM:HS256}
+
+  # JWT Claims配置
+  claims:
+    # 用户ID字段名
+    user-id: ${JWT_CLAIMS_USER_ID:userId}
+    # 用户名字段名
+    username: ${JWT_CLAIMS_USERNAME:username}
+    # 角色字段名
+    roles: ${JWT_CLAIMS_ROLES:roles}
+    # 权限字段名
+    permissions: ${JWT_CLAIMS_PERMISSIONS:permissions}
+
+# ============================================================
+# 密码加密配置
+# ============================================================
+password:
+  # 密码加密算法
+  algorithm: ${PASSWORD_ALGORITHM:BCrypt}
+
+  # 加密强度（4-31，默认10）
+  strength: ${PASSWORD_STRENGTH:10}
+
+  # 密码策略
+  policy:
+    # 最小长度
+    min-length: ${PASSWORD_POLICY_MIN_LENGTH:8}
+    # 最大长度
+    max-length: ${PASSWORD_POLICY_MAX_LENGTH:20}
+    # 是否包含大写字母
+    require-uppercase: ${PASSWORD_POLICY_REQUIRE_UPPERCASE:true}
+    # 是否包含小写字母
+    require-lowercase: ${PASSWORD_POLICY_REQUIRE_LOWERCASE:true}
+    # 是否包含数字
+    require-digit: ${PASSWORD_POLICY_REQUIRE_DIGIT:true}
+    # 是否包含特殊字符
+    require-special: ${PASSWORD_POLICY_REQUIRE_SPECIAL:true}
+    # 禁止的密码列表
+    forbidden-passwords: ${PASSWORD_POLICY_FORBIDDEN:"123456,password,admin,root"}
+
+# ============================================================
+# 接口安全配置
+# ============================================================
+security:
+  # 跨域配置
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:"*"}
+    allowed-methods: ${CORS_ALLOWED_METHODS:"GET,POST,PUT,DELETE,OPTIONS"}
+    allowed-headers: ${CORS_ALLOWED_HEADERS:"*"}
+    exposed-headers: ${CORS_EXPOSED_HEADERS:"Authorization,Content-Type,X-Total-Count"}
+    allow-credentials: ${CORS_ALLOW_CREDENTIALS:true}
+    max-age: ${CORS_MAX_AGE:3600}
+
+  # CSRF保护
+  csrf:
+    enabled: ${CSRF_ENABLED:false}
+
+  # XSS防护
+  xss:
+    enabled: ${XSS_ENABLED:true}
+    # XSS过滤器
+    filter-enabled: ${XSS_FILTER_ENABLED:true}
+
+  # SQL注入防护
+  sql-injection:
+    enabled: ${SQL_INJECTION_ENABLED:true}
+
+  # 接口限流
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    # 默认限流策略
+    default-limits:
+      - path: ${RATE_LIMIT_DEFAULT_PATH:"/**"}
+        rate: ${RATE_LIMIT_DEFAULT_RATE:100}
+        interval: ${RATE_LIMIT_DEFAULT_INTERVAL:60}
+        type: ${RATE_LIMIT_DEFAULT_TYPE:window}
+        block-time: ${RATE_LIMIT_DEFAULT_BLOCK_TIME:300}
+
+  # 接口签名
+  signature:
+    enabled: ${SIGNATURE_ENABLED:false}
+    algorithm: ${SIGNATURE_ALGORITHM:HMAC-SHA256}
+    secret-key: ${SIGNATURE_SECRET_KEY:ENC(J9K0L1M2N3O4P5Q6R7S8T9U0V1W2X3Y)}
+    expire-time: ${SIGNATURE_EXPIRE_TIME:300}
+
+# ============================================================
+# 数据加密配置
+# ============================================================
+encryption:
+  # AES加密配置
+  aes:
+    key: ${ENCRYPTION_AES_KEY:ENC(K0L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5)}
+    iv: ${ENCRYPTION_AES_IV:ENC(L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A6)}
+    algorithm: ${ENCRYPTION_AES_ALGORITHM:AES/CBC/PKCS5Padding}
+
+  # RSA加密配置
+  rsa:
+    private-key: ${ENCRYPTION_RSA_PRIVATE_KEY:ENC(M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A6B7)}
+    public-key: ${ENCRYPTION_RSA_PUBLIC_KEY:ENC(N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A6B7C8)}
+    algorithm: ${ENCRYPTION_RSA_ALGORITHM:RSA}
+
+# ============================================================
+# 安全审计配置
+# ============================================================
+audit:
+  # 审计日志
+  logging:
+    enabled: ${AUDIT_LOGGING_ENABLED:true}
+    # 审计日志级别
+    level: ${AUDIT_LOGGING_LEVEL:INFO}
+    # 审计事件类型
+    events:
+      - ${AUDIT_EVENT_LOGIN:login}
+      - ${AUDIT_EVENT_LOGOUT:logout}
+      - ${AUDIT_EVENT_PERMISSION_CHECK:permission_check}
+      - ${AUDIT_EVENT_DATA_ACCESS:data_access}
+      - ${AUDIT_EVENT_SYSTEM_CONFIG:system_config}
+      - ${AUDIT_EVENT_SECURITY_INCIDENT:security_incident}
+
+  # 审计存储
+  storage:
+    # 存储类型
+    type: ${AUDIT_STORAGE_TYPE:database}
+    # 存储周期（天）
+    retention-days: ${AUDIT_STORAGE_RETENTION_DAYS:365}
+
+# ============================================================
+# 敏感数据处理配置
+# ============================================================
+sensitive-data:
+  # 数据脱敏
+  masking:
+    enabled: ${MASKING_ENABLED:true}
+    # 手机号脱敏
+    phone: ${MASKING_PHONE:}
+    # 身份证号脱敏
+    id-card: ${MASKING_ID_CARD:}
+    # 邮箱脱敏
+    email: ${MASKING_EMAIL:}
+    # 银行卡脱敏
+    bank-card: ${MASKING_BANK_CARD:}
+
+  # 敏感字段标识
+  sensitive-fields: ${MASKING_SENSITIVE_FIELDS:"password,token,secret,key"}
+
+# ============================================================
+# HTTPS配置
+# ============================================================
+server:
+  # SSL配置
+  ssl:
+    enabled: ${SERVER_SSL_ENABLED:false}
+    key-store: ${SERVER_SSL_KEY_STORE:}
+    key-store-password: ${SERVER_SSL_KEY_STORE_PASSWORD:ENC(O4P5Q6R7S8T9U0V1W2X3Y4Z5A6B7C8D9)}
+    key-store-type: ${SERVER_SSL_KEY_STORE_TYPE:PKCS12}
+    key-alias: ${SERVER_SSL_KEY_ALIAS:ioedream}
+
+  # 安全头配置
+  servlet:
+    context-parameters:
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: DENY
+      X-XSS-Protection: "1; mode=block"
+      Strict-Transport-Security: max-age=31536000; includeSubDomains
+      Referrer-Policy: strict-origin-when-cross-origin
+
+# ============================================================
+# 环境特定配置
+# ============================================================
+
+# 开发环境
+---
+spring:
+  config:
+    activate:
+      profile: dev
+
+security:
+  cors:
+    allowed-origins: "*"
+  rate-limit:
+    enabled: false
+audit:
+  logging:
+    level: DEBUG
+
+# 测试环境
+---
+spring:
+  config:
+    activate:
+      profile: test
+
+security:
+  rate-limit:
+    default-limits:
+      - path: "/**"
+        rate: 50
+        interval: 60
+        type: window
+        block-time: 180
+
+audit:
+  storage:
+    retention-days: 90
+
+# 生产环境
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+security:
+  cors:
+    allowed-origins: "${FRONTEND_DOMAINS:}"
+  rate-limit:
+    enabled: true
+  signature:
+    enabled: true
+
+server:
+  ssl:
+    enabled: true
+
+audit:
+  storage:
+    retention-days: 1825

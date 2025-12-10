@@ -1,12 +1,12 @@
 <template>
   <view class="visitor-qrcode-page">
+    <!-- 状态栏占位 -->
+    <view class="status-bar" :style="{ paddingTop: statusBarHeight + 'px' }"></view>
+
     <!-- 导航栏 -->
-    <view class="custom-navbar">
-      <view class="nav-left" @click="goBack">
-        <text class="iconfont icon-back">←</text>
-      </view>
-      <view class="nav-title">访客二维码</view>
-      <view class="nav-right"></view>
+    <view class="nav-bar">
+      <text class="nav-title">访客二维码</text>
+      <text class="nav-subtitle">用于访客签到验证</text>
     </view>
 
     <!-- 页面内容 -->
@@ -41,85 +41,94 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import visitorApi from '@/api/business/visitor/visitor-api.js'
 
-export default {
-  name: 'VisitorQRCode',
-  setup() {
-    const appointmentCode = ref('')
-    const expireTime = ref(null)
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
 
-    // 加载二维码信息
-    const loadQRCodeInfo = async (appointmentId) => {
+// 响应式数据
+const appointmentCode = ref('')
+const expireTime = ref(null)
+
+// 页面生命周期
+onMounted(() => {
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  const appointmentId = currentPage.options.id
+  if (appointmentId) {
+    loadQRCodeInfo(appointmentId)
+  }
+})
+
+onShow(() => {
+  // 页面显示时可以刷新二维码信息
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  const appointmentId = currentPage.options.id
+  if (appointmentId) {
+    loadQRCodeInfo(appointmentId)
+  }
+})
+
+onPullDownRefresh(() => {
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  const appointmentId = currentPage.options.id
+  if (appointmentId) {
+    loadQRCodeInfo(appointmentId)
+  }
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const loadQRCodeInfo = async (appointmentId) => {
+  try {
+    const result = await visitorApi.getAppointmentDetail(appointmentId)
+    if (result.success && result.data) {
+      appointmentCode.value = result.data.appointmentCode
+      expireTime.value = result.data.appointmentTime
+    }
+  } catch (error) {
+    console.error('加载二维码信息失败:', error)
+  }
+}
+
+const scanQRCode = () => {
+  uni.scanCode({
+    success: async (res) => {
       try {
-        const result = await visitorApi.getAppointmentDetail(appointmentId)
-        if (result.success && result.data) {
-          appointmentCode.value = result.data.appointmentCode
-          expireTime.value = result.data.appointmentTime
+        const result = await visitorApi.checkInByQRCode(res.result)
+        if (result.success) {
+          uni.showToast({ title: '签到成功', icon: 'success' })
+        } else {
+          uni.showToast({ title: result.msg || '签到失败', icon: 'none' })
         }
       } catch (error) {
-        console.error('加载二维码信息失败:', error)
+        uni.showToast({ title: '签到失败', icon: 'none' })
       }
+    },
+    fail: (error) => {
+      uni.showToast({ title: '扫码失败', icon: 'none' })
     }
+  })
+}
 
-    // 扫描二维码
-    const scanQRCode = () => {
-      uni.scanCode({
-        success: async (res) => {
-          try {
-            const result = await visitorApi.checkInByQRCode(res.result)
-            if (result.success) {
-              uni.showToast({ title: '签到成功', icon: 'success' })
-            } else {
-              uni.showToast({ title: result.msg || '签到失败', icon: 'none' })
-            }
-          } catch (error) {
-            uni.showToast({ title: '签到失败', icon: 'none' })
-          }
-        },
-        fail: (error) => {
-          uni.showToast({ title: '扫码失败', icon: 'none' })
-        }
-      })
-    }
+const formatDateTime = (datetime) => {
+  if (!datetime) return '-'
+  const date = new Date(datetime)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}`
+}
 
-    // 格式化日期时间
-    const formatDateTime = (datetime) => {
-      if (!datetime) return '-'
-      const date = new Date(datetime)
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      return `${year}-${month}-${day} ${hours}:${minutes}`
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 初始化
-    onMounted(() => {
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
-      const appointmentId = currentPage.options.id
-      if (appointmentId) {
-        loadQRCodeInfo(appointmentId)
-      }
-    })
-
-    return {
-      appointmentCode,
-      expireTime,
-      scanQRCode,
-      formatDateTime,
-      goBack
-    }
-  }
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

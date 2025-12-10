@@ -2,7 +2,7 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0">
   <mirrors>
     <mirror>
-      <id>aliyunmaven</id>
+      <id>aliyun-maven</id>
       <mirrorOf>*</mirrorOf>
       <name>Aliyun Maven Central</name>
       <url>https://maven.aliyun.com/repository/public</url>

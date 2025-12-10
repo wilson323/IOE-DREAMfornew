@@ -106,14 +106,14 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 4. 检查并发登录限制
-            if (authManager.isConcurrentLoginExceeded(user.getUserId())) {
-                log.warn("用户并发登录超限，用户ID: {}", user.getUserId());
+            if (authManager.isConcurrentLoginExceeded(user.getId())) {
+                log.warn("用户并发登录超限，用户ID: {}", user.getId());
                 // 企业级策略：可以选择拒绝登录或强制下线旧会话
             }
 
             // 5. 查询用户权限和角色
-            List<String> permissionList = userDao.selectUserPermissions(user.getUserId());
-            List<String> roleList = userDao.selectUserRoles(user.getUserId());
+            List<String> permissionList = userDao.selectUserPermissions(user.getId());
+            List<String> roleList = userDao.selectUserRoles(user.getId());
             Set<String> permissionSet = new HashSet<>(permissionList);
             Set<String> roleSet = new HashSet<>(roleList);
             List<String> permissions = new ArrayList<>(permissionSet);
@@ -121,22 +121,22 @@ public class AuthServiceImpl implements AuthService {
 
             // 6. 生成JWT令牌
             String accessToken = jwtTokenUtil.generateAccessToken(
-                    user.getUserId(),
+                    user.getId(),
                     user.getUsername(),
                     roles,
                     permissions);
             String refreshToken = jwtTokenUtil.generateRefreshToken(
-                    user.getUserId(),
+                    user.getId(),
                     user.getUsername());
 
             // 7. 管理用户会话（Manager层处理复杂流程）
-            authManager.manageUserSession(user.getUserId(), accessToken, request.getDeviceInfo());
+            authManager.manageUserSession(user.getId(), accessToken, request.getDeviceInfo());
 
             // 8. 清除登录失败记录
             authManager.clearLoginFailure(request.getUsername());
 
             // 9. 更新最后登录信息
-            userDao.updateLastLogin(user.getUserId(), LocalDateTime.now(), request.getLoginIp());
+            userDao.updateLastLogin(user.getId(), LocalDateTime.now(), request.getLoginIp());
 
             // 10. 构建响应
             LoginResponseVO response = LoginResponseVO.builder()
@@ -145,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
                     .tokenType("Bearer")
                     .expiresIn(jwtTokenUtil.getRemainingExpiration(accessToken))
                     .refreshExpiresIn(jwtTokenUtil.getRemainingExpiration(refreshToken))
-                    .userId(user.getUserId())
+                    .userId(user.getId())
                     .username(user.getUsername())
                     .nickname(user.getRealName())
                     .avatarUrl(user.getAvatar())
@@ -153,7 +153,7 @@ public class AuthServiceImpl implements AuthService {
                     .roles(roles)
                     .build();
 
-            log.info("用户登录成功，用户名: {}, 用户ID: {}", request.getUsername(), user.getUserId());
+            log.info("用户登录成功，用户名: {}, 用户ID: {}", request.getUsername(), user.getId());
             return response;
 
         } catch (Exception e) {
@@ -199,8 +199,8 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 5. 查询用户权限和角色
-            List<String> permissionList = userDao.selectUserPermissions(user.getUserId());
-            List<String> roleList = userDao.selectUserRoles(user.getUserId());
+            List<String> permissionList = userDao.selectUserPermissions(user.getId());
+            List<String> roleList = userDao.selectUserRoles(user.getId());
             Set<String> permissionSet = new HashSet<>(permissionList);
             Set<String> roleSet = new HashSet<>(roleList);
             List<String> permissions = new ArrayList<>(permissionSet);
@@ -220,7 +220,7 @@ public class AuthServiceImpl implements AuthService {
                     .tokenType("Bearer")
                     .expiresIn(jwtTokenUtil.getRemainingExpiration(newAccessToken))
                     .refreshExpiresIn(jwtTokenUtil.getRemainingExpiration(newRefreshToken))
-                    .userId(user.getUserId())
+                    .userId(user.getId())
                     .username(user.getUsername())
                     .nickname(user.getRealName())
                     .avatarUrl(user.getAvatar())
@@ -332,7 +332,7 @@ public class AuthServiceImpl implements AuthService {
             }
 
             return UserInfoVO.builder()
-                    .userId(user.getUserId())
+                    .userId(user.getId())
                     .username(user.getUsername())
                     .realName(user.getRealName())
                     .nickname(user.getRealName())

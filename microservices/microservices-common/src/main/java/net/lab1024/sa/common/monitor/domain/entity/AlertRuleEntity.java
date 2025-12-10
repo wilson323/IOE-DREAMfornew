@@ -28,10 +28,14 @@ import net.lab1024.sa.common.entity.BaseEntity;
 public class AlertRuleEntity extends BaseEntity {
 
     /**
-     * 规则ID
+     * 规则ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列rule_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
-    @TableId(type = IdType.AUTO)
-    private Long ruleId;
+    @TableId(value = "rule_id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 规则名称

@@ -111,228 +111,212 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import consumeApi from '@/api/business/consume/consume-api.js'
 import { useUserStore } from '@/store/modules/system/user'
 
-export default {
-  name: 'ConsumeTransaction',
-  
-  setup() {
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
-    const userStore = useUserStore()
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+const userStore = useUserStore()
 
-    const loading = ref(false)
-    const refreshing = ref(false)
-    const hasMore = ref(true)
-    const showFilter = ref(false)
-    const transactionType = ref('all')  // all/recharge/refund
+// 页面状态
+const loading = ref(false)
+const refreshing = ref(false)
+const hasMore = ref(true)
+const showFilter = ref(false)
+const transactionType = ref('all')  // all/recharge/refund
 
-    const statistics = reactive({
-      totalCount: 0,
-      totalAmount: 0
-    })
+// 统计数据
+const statistics = reactive({
+  totalCount: 0,
+  totalAmount: 0
+})
 
-    const transactionList = ref([])
-    const pageNum = ref(1)
-    const pageSize = ref(20)
+// 交易列表
+const transactionList = ref([])
+const pageNum = ref(1)
+const pageSize = ref(20)
 
-    const filterType = ref('all')
-    const filterStatus = ref('all')
+// 筛选条件
+const filterType = ref('all')
+const filterStatus = ref('all')
 
-    const typeOptions = [
-      { value: 'all', label: '全部' },
-      { value: 'recharge', label: '充值' },
-      { value: 'refund', label: '退款' }
-    ]
+// 选项配置
+const typeOptions = [
+  { value: 'all', label: '全部' },
+  { value: 'recharge', label: '充值' },
+  { value: 'refund', label: '退款' }
+]
 
-    const statusOptions = [
-      { value: 'all', label: '全部' },
-      { value: 'pending', label: '处理中' },
-      { value: 'success', label: '成功' },
-      { value: 'failed', label: '失败' }
-    ]
+const statusOptions = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '处理中' },
+  { value: 'success', label: '成功' },
+  { value: 'failed', label: '失败' }
+]
 
-    const pageTitle = computed(() => {
-      if (transactionType.value === 'recharge') return '充值记录'
-      if (transactionType.value === 'refund') return '退款记录'
-      return '交易记录'
-    })
+// 计算页面标题
+const pageTitle = computed(() => {
+  if (transactionType.value === 'recharge') return '充值记录'
+  if (transactionType.value === 'refund') return '退款记录'
+  return '交易记录'
+})
 
-    onMounted(() => {
-      init()
-    })
+// 页面生命周期
+onMounted(() => {
+  init()
+})
 
-    const init = async () => {
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
-      if (currentPage.options.type) {
-        transactionType.value = currentPage.options.type
-      }
+onShow(() => {
+  // 页面显示时可以刷新数据
+})
 
-      await loadTransactions()
-      await loadStatistics()
-    }
-
-    const loadTransactions = async (append = false) => {
-      try {
-        loading.value = true
-        
-        const params = {
-          userId: userStore.userId,
-          pageNum: pageNum.value,
-          pageSize: pageSize.value,
-          type: filterType.value !== 'all' ? filterType.value : undefined,
-          status: filterStatus.value !== 'all' ? filterStatus.value : undefined
-        }
-
-        const res = await consumeApi.getTransactionHistory(params)
-        
-        if (res.code === 1 && res.data) {
-          const newList = res.data.list || res.data || []
-          
-          if (append) {
-            transactionList.value = [...transactionList.value, ...newList]
-          } else {
-            transactionList.value = newList
-          }
-          
-          hasMore.value = newList.length >= pageSize.value
-        }
-      } catch (error) {
-        console.error('加载交易记录失败:', error)
-        uni.showToast({ title: '加载失败', icon: 'none' })
-      } finally {
-        loading.value = false
-        refreshing.value = false
-      }
-    }
-
-    const loadStatistics = async () => {
-      try {
-        // 从用户store获取用户ID
-        const userId = userStore.employeeId
-        if (!userId) {
-          return
-        }
-        
-        // 尝试调用统计API（如果后端已实现）
-        try {
-          const result = await consumeApi.statsApi.getUserStats(userId)
-          if (result.success && result.data) {
-            statistics.totalCount = result.data.totalCount || 0
-            statistics.totalAmount = result.data.totalAmount || 0
-            return
-          }
-        } catch (apiError) {
-          // API未实现或调用失败，使用降级方案
-          console.warn('统计API调用失败，使用降级方案:', apiError)
-        }
-        
-        // 降级方案：从交易列表计算统计信息
-        statistics.totalCount = transactionList.value.length
-        statistics.totalAmount = transactionList.value.reduce((sum, item) => {
-          return sum + Number(item.amount || 0)
-        }, 0)
-      } catch (error) {
-        console.error('加载统计信息失败:', error)
-      }
-    }
-
-    const viewDetail = (item) => {
-      uni.navigateTo({
-        url: `/pages/consume/transaction-detail?id=${item.id}`
-      })
-    }
-
-    const onRefresh = async () => {
-      refreshing.value = true
-      pageNum.value = 1
-      await loadTransactions(false)
-    }
-
-    const loadMore = () => {
-      if (hasMore.value && !loading.value) {
-        pageNum.value++
-        loadTransactions(true)
-      }
-    }
-
-    const applyFilter = async () => {
-      showFilter.value = false
-      pageNum.value = 1
-      await loadTransactions(false)
-    }
-
-    const resetFilter = () => {
-      filterType.value = 'all'
-      filterStatus.value = 'all'
-    }
-
-    const getStatusText = (status) => {
-      const map = {
-        pending: '处理中',
-        success: '成功',
-        failed: '失败'
-      }
-      return map[status] || '未知'
-    }
-
-    const getTypeText = (type) => {
-      const map = {
-        recharge: '充值',
-        refund: '退款',
-        consume: '消费'
-      }
-      return map[type] || '交易'
-    }
-
-    const formatAmount = (amount) => {
-      if (!amount && amount !== 0) return '0.00'
-      return Number(amount).toFixed(2)
-    }
-
-    const formatDateTime = (datetime) => {
-      if (!datetime) return ''
-      const date = new Date(datetime)
-      const month = date.getMonth() + 1
-      const day = date.getDate()
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      return `${month}-${day} ${hours}:${minutes}`
-    }
-
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    return {
-      statusBarHeight,
-      loading,
-      refreshing,
-      hasMore,
-      showFilter,
-      pageTitle,
-      statistics,
-      transactionList,
-      filterType,
-      filterStatus,
-      typeOptions,
-      statusOptions,
-      viewDetail,
-      onRefresh,
-      loadMore,
-      applyFilter,
-      resetFilter,
-      getStatusText,
-      getTypeText,
-      formatAmount,
-      formatDateTime,
-      goBack
-    }
+  // 方法实现
+const init = async () => {
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  if (currentPage.options.type) {
+    transactionType.value = currentPage.options.type
   }
+
+  await Promise.all([
+    loadTransactions(),
+    loadStatistics()
+  ])
+}
+
+const loadTransactions = async (append = false) => {
+  try {
+    loading.value = true
+
+    const params = {
+      userId: userStore.userId || userStore.employeeId,
+      pageNum: pageNum.value,
+      pageSize: pageSize.value,
+      type: filterType.value !== 'all' ? filterType.value : undefined,
+      status: filterStatus.value !== 'all' ? filterStatus.value : undefined
+    }
+
+    const res = await consumeApi.getTransactionHistory(params)
+
+    if (res.code === 1 && res.data) {
+      const newList = res.data.list || res.data || []
+
+      if (append) {
+        transactionList.value = [...transactionList.value, ...newList]
+      } else {
+        transactionList.value = newList
+      }
+
+      hasMore.value = newList.length >= pageSize.value
+    }
+  } catch (error) {
+    console.error('加载交易记录失败:', error)
+    uni.showToast({ title: '加载失败', icon: 'none' })
+  } finally {
+    loading.value = false
+    refreshing.value = false
+  }
+}
+
+const loadStatistics = async () => {
+  try {
+    // 从用户store获取用户ID
+    const userId = userStore.employeeId
+    if (!userId) {
+      return
+    }
+
+    // 尝试调用统计API（如果后端已实现）
+    try {
+      const result = await consumeApi.statsApi.getUserStats(userId)
+      if (result.success && result.data) {
+        statistics.totalCount = result.data.totalCount || 0
+        statistics.totalAmount = result.data.totalAmount || 0
+        return
+      }
+    } catch (apiError) {
+      // API未实现或调用失败，使用降级方案
+      console.warn('统计API调用失败，使用降级方案:', apiError)
+    }
+
+    // 降级方案：从交易列表计算统计信息
+    statistics.totalCount = transactionList.value.length
+    statistics.totalAmount = transactionList.value.reduce((sum, item) => {
+      return sum + Number(item.amount || 0)
+    }, 0)
+  } catch (error) {
+    console.error('加载统计信息失败:', error)
+  }
+}
+
+const viewDetail = (item) => {
+  uni.navigateTo({
+    url: `/pages/consume/transaction-detail?id=${item.id}`
+  })
+}
+
+const onRefresh = async () => {
+  refreshing.value = true
+  pageNum.value = 1
+  await loadTransactions(false)
+}
+
+const loadMore = () => {
+  if (hasMore.value && !loading.value) {
+    pageNum.value++
+    loadTransactions(true)
+  }
+}
+
+const applyFilter = async () => {
+  showFilter.value = false
+  pageNum.value = 1
+  await loadTransactions(false)
+}
+
+const resetFilter = () => {
+  filterType.value = 'all'
+  filterStatus.value = 'all'
+}
+
+const getStatusText = (status) => {
+  const map = {
+    pending: '处理中',
+    success: '成功',
+    failed: '失败'
+  }
+  return map[status] || '未知'
+}
+
+const getTypeText = (type) => {
+  const map = {
+    recharge: '充值',
+    refund: '退款',
+    consume: '消费'
+  }
+  return map[type] || '交易'
+}
+
+const formatAmount = (amount) => {
+  if (!amount && amount !== 0) return '0.00'
+  return Number(amount).toFixed(2)
+}
+
+const formatDateTime = (datetime) => {
+  if (!datetime) return ''
+  const date = new Date(datetime)
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${month}-${day} ${hours}:${minutes}`
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

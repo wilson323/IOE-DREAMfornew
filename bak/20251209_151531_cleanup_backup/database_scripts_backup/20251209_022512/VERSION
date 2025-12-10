@@ -1,0 +1,28 @@
+[version]
+major = 1
+minor = 0
+patch = 1
+environment = prod
+build_time = 2025-12-08 10:30:00
+git_commit = 3f772fca
+
+[scripts]
+total_scripts = 15
+last_script = data/business-data-fixed.sql
+last_update = 2025-12-08 10:30:00
+
+[dependencies]
+mysql_version = 8.0+
+redis_version = 6.0+
+java_version = 17+
+
+[compatibility]
+spring_boot_version = 3.5.8+
+mybatis_plus_version = 3.5.5+
+
+[fix_records]
+fix_version = 1.0.1-FIX
+fix_date = 2025-12-08
+fix_description = 修复实体类与数据库表一致性问题
+fixed_entities = 4
+fixed_tables = 8

@@ -31,9 +31,13 @@ public class UserSessionEntity {
 
     /**
      * 会话ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列session_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
-    @TableId(type = IdType.AUTO)
-    private Long sessionId;
+    @TableId(value = "session_id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 用户ID

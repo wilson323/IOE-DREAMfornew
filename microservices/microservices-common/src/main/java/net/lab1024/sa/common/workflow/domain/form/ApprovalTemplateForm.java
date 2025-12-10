@@ -21,11 +21,11 @@ import lombok.Data;
 @Schema(description = "审批模板表单")
 public class ApprovalTemplateForm {
 
-    @Schema(description = "模板名称", example = "请假审批模板", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "模板名称", example = "请假审批模板")
     @NotBlank(message = "模板名称不能为空")
     private String templateName;
 
-    @Schema(description = "模板编码（唯一标识）", example = "TEMPLATE_LEAVE_001", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "模板编码（唯一标识）", example = "TEMPLATE_LEAVE_001")
     @NotBlank(message = "模板编码不能为空")
     private String templateCode;
 

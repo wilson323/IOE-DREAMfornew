@@ -1,0 +1,206 @@
+# ============================================================
+# IOE-DREAM Zipkin分布式追踪系统部署配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: Zipkin服务器和Elasticsearch存储的Docker Compose配置
+# ============================================================
+
+version: '3.8'
+
+services:
+  # Zipkin服务器
+  zipkin:
+    image: openzipkin/zipkin:2.24.1
+    container_name: ioedream-zipkin
+    hostname: zipkin
+    ports:
+      - "9411:9411"  # Zipkin Web UI端口
+      - "9410:9410"  # Zipkin API端口
+    environment:
+      # 使用Elasticsearch作为存储后端
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=elasticsearch:9200
+      - ES_INDEX=zipkin
+      - ES_INDEX_SHARDS=3
+      - ES_INDEX_REPLICAS=1
+      # 连接配置
+      - ES_HTTP_LOGGING_BODY=body
+      - ES_HTTP_LOGGING_HEADERS=headers
+      # 健康检查配置
+      - JAVA_OPTS=-Xms512m -Xmx1024m -Djava.security.egd=file:/dev/./urandom
+    restart: unless-stopped
+    depends_on:
+      - elasticsearch
+    networks:
+      - zipkin-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9411/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    volumes:
+      - zipkin-logs:/var/log/zipkin
+    labels:
+      - "ioe-dream.service=zipkin"
+      - "ioe-dream.environment=production"
+
+  # Elasticsearch存储
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    container_name: ioedream-zipkin-elasticsearch
+    hostname: elasticsearch
+    ports:
+      - "9200:9200"  # Elasticsearch HTTP端口
+      - "9300:9300"  # Elasticsearch Transport端口
+    environment:
+      # 集群配置
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx1024m -Djava.security.egd=file:/dev/./urandom
+      # 索引配置
+      - xpack.security.enabled=false
+      - xpack.monitoring.collection.enabled=true
+      # 内存配置
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - elasticsearch-logs:/usr/share/elasticsearch/logs
+    restart: unless-stopped
+    networks:
+      - zipkin-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "ioe-dream.service=elasticsearch"
+      - "ioe-dream.environment=production"
+
+  # Elasticsearch插件和工具
+  elasticsearch-head:
+    image: mobz/elasticsearch-head:5
+    container_name: ioedream-elasticsearch-head
+    hostname: elasticsearch-head
+    ports:
+      - "9100:9100"  # Elasticsearch Head端口
+    environment:
+      - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    networks:
+      - zipkin-network
+    labels:
+      - "ioe-dream.service=elasticsearch-head"
+      - "ioe-dream.environment=production"
+
+  # Kibana可视化工具
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.9
+    container_name: ioedream-zipkin-kibana
+    hostname: kibana
+    ports:
+      - "5601:5601"  # Kibana端口
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=ioedream-zipkin-kibana
+      - SERVER_HOST=0.0.0.0
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    networks:
+      - zipkin-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "ioe-dream.service=kibana"
+      - "ioe-dream.environment=production"
+
+  # Prometheus收集器
+  zipkin-prometheus-collector:
+    image: openzipkin/zipkin-prometheus-collector:2.24.1
+    container_name: ioedream-zipkin-prometheus
+    hostname: prometheus-collector
+    ports:
+      - "9943:9943"  # Prometheus端口
+      - "9412:9412"  # Metrics端口
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=elasticsearch:9200
+      - ES_INDEX=zipkin
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - COLLECTOR_PROMETHEUS_ENABLED=true
+      - COLLECTOR_PROMETHEUS_PORT=9943
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    networks:
+      - zipkin-network
+    labels:
+      - "ioe-dream.service=prometheus-collector"
+      - "ioe-dream.environment=production"
+
+  # 日志聚合器（可选）
+  fluentd:
+    image: fluent/fluentd:v1.15-1
+    container_name: ioedream-zipkin-fluentd
+    hostname: fluentd
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+      - zipkin-logs:/var/log/zipkin
+    ports:
+      - "24224:24224"  # Fluentd端口
+    environment:
+      - FLUENTD_CONF=fluent.conf
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    networks:
+      - zipkin-network
+    labels:
+      - "ioe-dream.service=fluentd"
+      - "ioe-dream.environment=production"
+
+networks:
+  zipkin-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+
+volumes:
+  # Elasticsearch数据
+  elasticsearch-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/ioedream/data/elasticsearch-data
+
+  # Elasticsearch日志
+  elasticsearch-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/ioedream/logs/elasticsearch
+
+  # Zipkin日志
+  zipkin-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/ioedream/logs/zipkin

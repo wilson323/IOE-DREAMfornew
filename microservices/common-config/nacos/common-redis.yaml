@@ -1,0 +1,223 @@
+# ============================================================
+# IOE-DREAM 公共Redis配置
+#
+# 供所有微服务使用的Redis缓存配置
+# 包含连接池、序列化、多级缓存策略等配置
+# ============================================================
+
+# ============================================================
+# Redis基础配置
+# ============================================================
+spring:
+  data:
+    redis:
+      # Redis服务器连接配置
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:ENC(H7K8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y)}
+      database: ${REDIS_DATABASE:0}
+      timeout: ${REDIS_TIMEOUT:3000}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT:3000}
+      client-type: ${REDIS_CLIENT_TYPE:lettuce}
+
+      # Lettuce连接池配置
+      lettuce:
+        pool:
+          # 连接池配置
+          enabled: ${REDIS_LETTUCE_POOL_ENABLED:true}
+          max-active: ${REDIS_LETTUCE_POOL_MAX_ACTIVE:8}
+          max-idle: ${REDIS_LETTUCE_POOL_MAX_IDLE:8}
+          min-idle: ${REDIS_LETTUCE_POOL_MIN_IDLE:0}
+          max-wait: ${REDIS_LETTUCE_POOL_MAX_WAIT:-1}
+
+          # 连接超时配置
+          time-between-eviction-runs: ${REDIS_LETTUCE_TIME_BETWEEN_EVICTION_RUNS:30000}
+          min-evictable-idle-time: ${REDIS_LETTUCE_MIN_EVICTABLE_IDLE_TIME:60000}
+          max-evictable-idle-time: ${REDIS_LETTUCE_MAX_EVICTABLE_IDLE_TIME:180000}
+
+          # 连接验证
+          test-on-borrow: ${REDIS_LETTUCE_TEST_ON_BORROW:false}
+          test-on-return: ${REDIS_LETTUCE_TEST_ON_RETURN:false}
+          test-while-idle: ${REDIS_LETTUCE_TEST_WHILE_IDLE:true}
+
+        # 集群配置（如果使用Redis集群）
+        cluster:
+          refresh:
+            adaptive: ${REDIS_CLUSTER_REFRESH_ADAPTIVE:false}
+            period: ${REDIS_CLUSTER_REFRESH_PERIOD:30000}
+
+# ============================================================
+# Redis缓存配置
+# ============================================================
+spring:
+  cache:
+    # 缓存类型
+    type: ${CACHE_TYPE:redis}
+
+    # Redis缓存配置
+    redis:
+      # 缓存过期时间（默认10分钟）
+      time-to-live: ${CACHE_REDIS_TIME_TO_LIVE:600000}
+
+      # 缓存键前缀
+      key-prefix: ${CACHE_REDIS_KEY_PREFIX:ioedream:cache:}
+
+      # 是否缓存空值
+      cache-null-values: ${CACHE_REDIS_CACHE_NULL_VALUES:false}
+
+      # 键序列化策略
+      key-serializer: ${CACHE_REDIS_KEY_SERIALIZER:org.springframework.data.redis.serializer.StringRedisSerializer}
+
+      # 值序列化策略
+      value-serializer: ${CACHE_REDIS_VALUE_SERIALIZER:org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer}
+
+      # 哈希键序列化策略
+      hash-key-serializer: ${CACHE_REDIS_HASH_KEY_SERIALIZER:org.springframework.data.redis.serializer.StringRedisSerializer}
+
+      # 哈希值序列化策略
+      hash-value-serializer: ${CACHE_REDIS_HASH_VALUE_SERIALIZER:org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer}
+
+# ============================================================
+# Redisson分布式锁配置
+# ============================================================
+spring:
+  redisson:
+    # Redisson配置文件路径
+    config: ${REDISSON_CONFIG:classpath:redisson.yml}
+
+    # 或者直接配置
+    # single-server-config:
+    #   address: redis://${REDIS_HOST:127.0.0.1}:${REDIS_PORT:6379}
+    #   password: ${REDIS_PASSWORD:ENC(H7K8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y)}
+    #   database: ${REDIS_DATABASE:0}
+    #   timeout: ${REDISSON_TIMEOUT:3000}
+    #   connectionPoolSize: ${REDISSON_CONNECTION_POOL_SIZE:64}
+    #   connectionMinimumIdleSize: ${REDISSON_CONNECTION_MINIMUM_IDLE_SIZE:10}
+    #   idleConnectionTimeout: ${REDISSON_IDLE_CONNECTION_TIMEOUT:10000}
+
+# ============================================================
+# 多级缓存配置
+# ============================================================
+
+# 本地缓存配置（Caffeine）
+caffeine:
+  cache:
+    # 默认缓存配置
+    spec: ${CAFFEINE_CACHE_SPEC:maximumSize=1000,expireAfterWrite=5m}
+
+    # 具体缓存配置
+    user-cache: ${CAFFEINE_USER_CACHE:maximumSize=5000,expireAfterWrite=30m}
+    role-cache: ${CAFFEINE_ROLE_CACHE:maximumSize=1000,expireAfterWrite=60m}
+    dict-cache: ${CAFFEINE_DICT_CACHE:maximumSize=2000,expireAfterWrite=120m}
+    config-cache: ${CAFFEINE_CONFIG_CACHE:maximumSize=500,expireAfterWrite=10m}
+
+# 缓存管理器配置
+cache:
+  manager:
+    # 是否启用多级缓存
+    multi-level-enabled: ${CACHE_MULTI_LEVEL_ENABLED:true}
+
+    # 本地缓存实现
+    local-cache-type: ${CACHE_LOCAL_CACHE_TYPE:caffeine}
+
+    # 缓存同步策略
+    sync-strategy: ${CACHE_SYNC_STRATEGY:redis-pub-sub}
+
+    # 缓存预热
+    warm-up-enabled: ${CACHE_WARM_UP_ENABLED:true}
+
+    # 缓存击穿防护
+    breakdown-protection-enabled: ${CACHE_BREAKDOWN_PROTECTION_ENABLED:true}
+
+# ============================================================
+# Redis监控配置
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,redis,redisson
+  endpoint:
+    health:
+      redis:
+        enabled: true
+      redisson:
+        enabled: true
+
+# ============================================================
+# Redis序列化配置
+# ============================================================
+spring:
+  jackson:
+    # JSON序列化配置
+    default-property-inclusion: ${JACKSON_DEFAULT_PROPERTY_INCLUSION:non_null}
+    serialization:
+      write-dates-as-timestamps: ${JACKSON_WRITE_DATES_AS_TIMESTAMPS:false}
+      fail-on-empty-beans: ${JACKSON_FAIL_ON_EMPTY_BEANS:false}
+    deserialization:
+      fail-on-unknown-properties: ${JACKSON_FAIL_ON_UNKNOWN_PROPERTIES:false}
+
+# ============================================================
+# 环境特定配置
+# ============================================================
+
+# 开发环境
+---
+spring:
+  config:
+    activate:
+      profile: dev
+
+spring:
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 4
+          max-idle: 4
+          min-idle: 0
+
+caffeine:
+  cache:
+    spec: maximumSize=500,expireAfterWrite=2m
+
+# 测试环境
+---
+spring:
+  config:
+    activate:
+      profile: test
+
+spring:
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+
+caffeine:
+  cache:
+    spec: maximumSize=1000,expireAfterWrite=5m
+
+# 生产环境
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+spring:
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 20
+          min-idle: 5
+          max-wait: 5000
+
+caffeine:
+  cache:
+    spec: maximumSize=5000,expireAfterWrite=10m

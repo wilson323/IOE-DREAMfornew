@@ -1,0 +1,525 @@
+# ============================================================
+# IOE-DREAM Visitor Service 生产环境配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8095}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    min-spare-threads: 25
+    accept-count: 150
+
+# ==================== Spring配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  # ==================== 数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 连接池配置
+      initial-size: 20
+      min-idle: 20
+      max-active: 100
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+
+  # ==================== Redis配置 ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 25
+        max-idle: 12
+        min-idle: 6
+        max-wait: 1000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 缓存配置 ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 900000  # 15分钟
+      cache-null-values: false
+      key-prefix: visitor_cache_
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    default-executor-type: reuse
+    default-statement-timeout: 15
+    default-fetch-size: 200
+
+  global-config:
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+
+# ==================== Zipkin分布式追踪配置 ====================
+  sleuth:
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      enabled: ${ZIPKIN_ENABLED:true}
+    sampler:
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      visitor-service:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        sliding-window-type: count_based
+
+  ratelimiter:
+    instances:
+      visitor-service:
+        limit-for-period: 200
+        limit-refresh-period: 60s
+        timeout-duration: 5s
+        register-health-indicator: true
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    net.lab1024.sa.visitor: INFO
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# ==================== 访客服务特定配置 ====================
+visitor:
+  registration:
+    # 访客登记
+    methods:
+      online:
+        enabled: ${VISITOR_ONLINE_ENABLED:true}
+        pre-registration-required: ${VISITOR_PRE_REGISTRATION:true}
+        min-advance-hours: ${VISITOR_MIN_ADVANCE:2}
+        max-advance-days: ${VISITOR_MAX_ADVANCE:30}
+        self-service: ${SELF_SERVICE_REGISTRATION:false}
+
+      onsite:
+        enabled: ${VISITOR_ONSITE_ENABLED:true}
+        auto-photo-capture: ${VISITOR_AUTO_PHOTO:true}
+        id-card-scanner: ${VISITOR_ID_CARD_SCANNER:true}
+        face-recognition: ${ONSITE_FACE_RECOGNITION:true}
+
+      invited:
+        enabled: ${VISITOR_INVITED_ENABLED:true}
+        qr-code-invitation: ${VISITOR_QR_INVITATION:true}
+        sms-invitation: ${VISITOR_SMS_INVITATION:true}
+        email-invitation: ${EMAIL_INVITATION_ENABLED:true}
+        batch-invitation: ${BATCH_INVITATION_ENABLED:false}
+
+    # 身份验证
+    authentication:
+      methods: ${VISITOR_AUTH_METHODS:face,id-card,phone,id-passport}
+      face-recognition:
+        enabled: ${VISITOR_FACE_AUTH_ENABLED:true}
+        liveness-check: ${VISITOR_FACE_LIVENESS:true}
+        confidence-threshold: ${VISITOR_FACE_CONFIDENCE:0.85}
+        anti-spoofing: ${FACE_ANTI_SPOOFING:true}
+
+      id-card:
+        enabled: ${VISITOR_ID_CARD_ENABLED:true}
+        ocr-verification: ${VISITOR_ID_OCR:true}
+        blacklist-check: ${VISITOR_ID_BLACKLIST:true}
+        id-validation-service: ${ID_VALIDATION_SERVICE:false}
+
+      phone:
+        enabled: ${VISITOR_PHONE_AUTH_ENABLED:true}
+        sms-verification: ${VISITOR_SMS_VERIFY:true}
+        verification-code-length: ${VISITOR_SMS_LENGTH:6}
+        code-expire-minutes: ${SMS_CODE_EXPIRE:5}
+        max-attempts: ${SMS_MAX_ATTEMPTS:3}
+
+      biometric:
+        fingerprint: ${FINGERPRINT_AUTH_ENABLED:false}
+        iris: ${IRIS_AUTH_ENABLED:false}
+        voice: ${VOICE_AUTH_ENABLED:false}
+
+  appointment:
+    # 预约管理
+    workflow:
+      enabled: ${VISITOR_WORKFLOW_ENABLED:true}
+      approval-required: ${VISITOR_APPROVAL_REQUIRED:true}
+      auto-approval-conditions: ${VISITOR_AUTO_APPROVAL:}
+      parallel-approval: ${PARALLEL_APPROVAL_ENABLED:false}
+      multi-level-approval: ${MULTI_LEVEL_APPROVAL_ENABLED:false}
+
+    # 审批流程
+    approval:
+      levels: ${VISITOR_APPROVAL_LEVELS:2}
+      timeout-hours: ${VISITOR_APPROVAL_TIMEOUT:24}
+      reminder-interval: ${VISITOR_REMINDER_INTERVAL:6}
+      escalation-rules: ${APPROVAL_ESCALATION_RULES:true}
+      auto-rejection: ${AUTO_REJECTION_ENABLED:false}
+
+    # 预约规则
+    rules:
+      max-daily-visitors: ${MAX_DAILY_VISITORS:500}
+      max-host-visitors: ${MAX_HOST_VISITORS:20}
+      advance-booking-hours: ${ADVANCE_BOOKING_HOURS:2}
+      cancellation-policy: ${CANCELLATION_POLICY:hours-in-advance}
+      no-show-penalty: ${NO_SHOW_PENALTY:false}
+
+    # 预约模板
+    templates:
+      business-visit: ${BUSINESS_VISIT_TEMPLATE:enabled}
+      personal-visit: ${PERSONAL_VISIT_TEMPLATE:enabled}
+      delivery-visit: ${DELIVERY_VISIT_TEMPLATE:enabled}
+      maintenance-visit: ${MAINTENANCE_VISIT_TEMPLATE:enabled}
+
+  access-control:
+    # 通行控制
+    check-in:
+      auto-check-out: ${VISITOR_AUTO_CHECKOUT:true}
+      check-out-hours: ${VISITOR_CHECKOUT_HOURS:8}
+      grace-period-minutes: ${VISITOR_GRACE_PERIOD:30}
+      multiple-check-in: ${MULTIPLE_CHECK_IN_ALLOWED:false}
+
+    # 通行凭证
+    credentials:
+      qr-code:
+        enabled: ${VISITOR_QR_ENABLED:true}
+        encryption: ${VISITOR_QR_ENCRYPTION:AES}
+        validity-hours: ${VISITOR_QR_VALIDITY:24}
+        dynamic-refresh: ${QR_DYNAMIC_REFRESH:true}
+        offline-access: ${QR_OFFLINE_ACCESS:false}
+
+      face:
+        enabled: ${VISITOR_FACE_ACCESS_ENABLED:true}
+        template-storage-days: ${VISITOR_FACE_STORAGE:7}
+        privacy-protection: ${FACE_PRIVACY_PROTECTION:true}
+
+      visitor-card:
+        enabled: ${VISITOR_CARD_ENABLED:false}
+        card-activation: ${VISITOR_CARD_ACTIVATION:check-in}
+        card-return: ${CARD_RETURN_REQUIRED:true}
+        card-deposit: ${CARD_DEPOSIT_REQUIRED:false}
+
+      temporary-pass:
+        enabled: ${TEMPORARY_PASS_ENABLED:false}
+        pass-format: ${TEMP_PASS_FORMAT:PDF}
+        auto-generation: ${AUTO_PASS_GENERATION:true}
+
+    # 访问权限
+    access:
+      time-restrictions: ${VISITOR_TIME_RESTRICTIONS:true}
+      area-restrictions: ${VISITOR_AREA_RESTRICTIONS:true}
+      escort-required: ${ESCORT_REQUIRED_CONFIG:false}
+      access-logging: ${ACCESS_LOGGING_ENABLED:true}
+
+    # 访问监控
+    monitoring:
+      real-time-tracking: ${VISITOR_REAL_TIME_TRACKING:true}
+      area-violation-detection: ${VISITOR_VIOLATION_DETECTION:true}
+      escort-required-monitoring: ${VISITOR_ESCORT_MONITOR:true}
+      overstay-detection: ${OVERSTAY_DETECTION:true}
+
+  host:
+    # 接待人管理
+    notification:
+      pre-arrival-hours: ${VISITOR_PRE_ARRIVAL:2}
+      check-in-notification: ${VISITOR_CHECK_IN_NOTIFY:true}
+      check-out-notification: ${VISITOR_CHECK_OUT_NOTIFY:true}
+      visitor-arrival: ${VISITOR_ARRIVAL_NOTIFICATION:true}
+      emergency-alert: ${EMERGENCY_ALERT_ENABLED:true}
+
+    # 接待人权限
+    permissions:
+      max-daily-visitors: ${VISITOR_MAX_DAILY:10}
+      can-approve-visitors: ${VISITOR_CAN_APPROVE:true}
+      can-extend-visits: ${VISITOR_CAN_EXTEND:true}
+      can-cancel-visits: ${VISITOR_CAN_CANCEL:true}
+      can-manage-groups: ${GROUP_MANAGEMENT_ENABLED:false}
+
+    # 接待组管理
+    groups:
+      enabled: ${HOST_GROUPS_ENABLED:false}
+      max-members-per-group: ${MAX_GROUP_MEMBERS:10}
+      group-approval: ${GROUP_APPROVAL_REQUIRED:true}
+
+  security:
+    # 安全管理
+    blacklist:
+      enabled: ${VISITOR_BLACKLIST_ENABLED:true}
+      auto-update: ${VISITOR_BLACKLIST_AUTO:true}
+      sync-sources: ${VISITOR_BLACKLIST_SOURCES:police,internal,watchlist}
+      blacklisting-rules: ${BLACKLISTING_RULES:}
+
+    risk-assessment:
+      enabled: ${VISITOR_RISK_ASSESSMENT_ENABLED:true}
+      factors: ${VISITOR_RISK_FACTORS:blacklist,frequency,pattern,location,time}
+      risk-threshold: ${VISITOR_RISK_THRESHOLD:70}
+      machine-learning: ${ML_RISK_ASSESSMENT:false}
+
+    # 安全事件
+    security-events:
+      unauthorized-access: ${UNAUTHORIZED_ACCESS_MONITORING:true}
+      suspicious-behavior: ${SUSPICIOUS_BEHAVIOR_MONITORING:true}
+      emergency-situations: ${EMERGENCY_SITUATION_HANDLING:true}
+      security-escalation: ${SECURITY_ESCALATION_RULES:true}
+
+    # 访客记录
+    audit:
+      full-logging: ${VISITOR_AUDIT_LOG:true}
+      retention-days: ${VISITOR_AUDIT_RETENTION:365}
+      compliance-mode: ${VISITOR_COMPLIANCE_MODE:false}
+      data-integrity: ${AUDIT_DATA_INTEGRITY:true}
+
+    # 数据保护
+    privacy:
+      data-anonymization: ${DATA_ANONYMIZATION:false}
+      consent-management: ${CONSENT_MANAGEMENT_ENABLED:true}
+      gdpr-compliance: ${GDPR_COMPLIANCE_ENABLED:false}
+      right-to-be-forgotten: ${RIGHT_TO_BE_FORGOTTEN:false}
+
+  notification:
+    # 通知系统
+    visitor:
+      pre-visit-reminder: ${VISITOR_PRE_VISIT_REMINDER:true}
+      check-in-confirm: ${VISITOR_CHECK_IN_CONFIRM:true}
+      access-instructions: ${VISITOR_ACCESS_INSTRUCTIONS:true}
+      visit-summary: ${VISIT_SUMMARY_ENABLED:true}
+      feedback-request: ${VISITOR_FEEDBACK_REQUEST:true}
+
+    host:
+      appointment-confirm: ${VISITOR_APPOINTMENT_CONFIRM:true}
+      visitor-arrival: ${VISITOR_VISITOR_ARRIVAL:true}
+      overstay-alert: ${VISITOR_OVERSTAY_ALERT:true}
+      security-alert: ${HOST_SECURITY_ALERT:true}
+
+    security:
+      blacklist-alert: ${VISITOR_BLACKLIST_ALERT:true}
+      violation-alert: ${VISITOR_VIOLATION_ALERT:true}
+      emergency-alert: ${VISITOR_EMERGENCY_ALERT:true}
+      system-alert: ${SYSTEM_ALERT_ENABLED:true}
+
+    # 通知渠道
+    channels:
+      email:
+        enabled: ${EMAIL_NOTIFICATION_ENABLED:true}
+        templates: ${EMAIL_TEMPLATES_PATH:/templates/email}
+        delivery-tracking: ${EMAIL_DELIVERY_TRACKING:true}
+
+      sms:
+        enabled: ${SMS_NOTIFICATION_ENABLED:true}
+        provider: ${SMS_PROVIDER:aliyun}
+        rate-limiting: ${SMS_RATE_LIMITING:true}
+
+      push:
+        enabled: ${PUSH_NOTIFICATION_ENABLED:true}
+        platforms: ${PUSH_PLATFORMS:android,ios}
+        silent-notifications: ${SILENT_NOTIFICATIONS_ENABLED:true}
+
+      system:
+        enabled: ${SYSTEM_NOTIFICATION_ENABLED:true}
+        in-app-notifications: ${IN_APP_NOTIFICATIONS:true}
+
+  integration:
+    # 第三方集成
+    access-control:
+      enabled: ${VISITOR_ACCESS_INTEGRATION_ENABLED:true}
+      automatic-access-grant: ${VISITOR_AUTO_ACCESS:true}
+      access-revocation: ${VISITOR_ACCESS_REVOKE:true}
+      elevator-control: ${ELEVATOR_CONTROL_INTEGRATION:false}
+
+    video-surveillance:
+      enabled: ${VISITOR_VIDEO_INTEGRATION_ENABLED:true}
+      visitor-face-detection: ${VISITOR_FACE_DETECTION:true}
+      tracking-recording: ${VISITOR_TRACKING_RECORD:true}
+      privacy-blur: ${VIDEO_PRIVACY_BLUR:true}
+
+    # 外部系统
+    external-systems:
+      id-verification:
+        enabled: ${ID_VERIFICATION_SERVICE:false}
+        provider: ${ID_VERIFICATION_PROVIDER:}
+        api-key: ${ID_VERIFICATION_API_KEY:ENC(AES256:encrypted_id_api_key)}
+
+      background-check:
+        enabled: ${BACKGROUND_CHECK_SERVICE:false}
+        provider: ${BACKGROUND_CHECK_PROVIDER:}
+        automated-checks: ${AUTOMATED_CHECKS_ENABLED:true}
+
+      hr-system:
+        enabled: ${HR_SYSTEM_INTEGRATION:false}
+        employee-validation: ${HR_EMPLOYEE_VALIDATION:true}
+        department-lookup: ${HR_DEPARTMENT_LOOKUP:true}
+
+      security-system:
+        enabled: ${SECURITY_SYSTEM_INTEGRATION:true}
+        police-database-check: ${POLICE_DATABASE_CHECK:false}
+        watchlist-check: ${WATCHLIST_CHECK_ENABLED:true}
+
+  cache:
+    # 缓存配置
+    visitor-information:
+      ttl: ${VISITOR_INFO_TTL:1800}           # 30分钟
+      max-size: ${VISITOR_INFO_MAX_SIZE:10000}
+
+    appointment-status:
+      ttl: ${VISITOR_APPOINTMENT_TTL:600}      # 10分钟
+      max-size: ${VISITOR_APPOINTMENT_MAX_SIZE:5000}
+
+    access-credentials:
+      ttl: ${VISITOR_CREDENTIALS_TTL:900}      # 15分钟
+      max-size: ${VISITOR_CREDENTIALS_MAX_SIZE:20000}
+
+    host-information:
+      ttl: ${HOST_INFO_TTL:3600}                # 1小时
+      max-size: ${HOST_INFO_MAX_SIZE:5000}
+
+    blacklist-cache:
+      ttl: ${BLACKLIST_CACHE_TTL:3600}          # 1小时
+      max-size: ${BLACKLIST_CACHE_MAX_SIZE:1000}
+
+  reporting:
+    # 报表统计
+    real-time:
+      enabled: ${VISITOR_REAL_TIME_REPORTING:true}
+      current-visitors: ${VISITOR_CURRENT_VISITORS:true}
+      dashboard-refresh: ${DASHBOARD_REFRESH_INTERVAL:30}
+
+    periodic:
+      daily-summary: ${VISITOR_DAILY_SUMMARY:true}
+      weekly-analysis: ${VISITOR_WEEKLY_ANALYSIS:true}
+      monthly-report: ${VISITOR_MONTHLY_REPORT:true}
+      compliance-report: ${COMPLIANCE_REPORT_ENABLED:true}
+
+    # 统计维度
+    dimensions:
+      time-based: ${VISITOR_TIME_ANALYSIS:true}
+      host-based: ${VISITOR_HOST_ANALYSIS:true}
+      purpose-based: ${VISITOR_PURPOSE_ANALYSIS:true}
+      access-based: ${VISITOR_ACCESS_ANALYSIS:true}
+      security-based: ${SECURITY_ANALYSIS_ENABLED:true}
+
+    # 报表格式
+    formats:
+      excel: ${REPORT_EXCEL_ENABLED:true}
+      pdf: ${REPORT_PDF_ENABLED:true}
+      csv: ${REPORT_CSV_ENABLED:true}
+      json: ${REPORT_JSON_ENABLED:true}
+
+  compliance:
+    # 合规管理
+    data-protection:
+      privacy-policy: ${VISITOR_PRIVACY_POLICY:true}
+      data-retention: ${VISITOR_DATA_RETENTION:true}
+      consent-management: ${VISITOR_CONSENT_MANAGEMENT:true}
+      data-export: ${DATA_EXPORT_ENABLED:true}
+
+    regulatory:
+      gdpr-compliance: ${VISITOR_GDPR_COMPLIANCE:false}
+      audit-trail: ${VISITOR_AUDIT_TRAIL:true}
+      reporting-standards: ${VISITOR_REPORTING_STANDARDS:true}
+      compliance-monitoring: ${COMPLIANCE_MONITORING_ENABLED:true}
+
+    # 法律要求
+    legal:
+      id-verification-requirement: ${ID_VERIFICATION_REQUIRED:true}
+      visit-records-keeping: ${VISIT_RECORDS_KEEPING:true}
+      privacy-notices: ${PRIVACY_NOTICES_ENABLED:true}
+      incident-reporting: ${INCIDENT_REPORTING_ENABLED:true}
+
+  # 性能优化
+  performance:
+    # 高并发处理
+    concurrency:
+      max-concurrent-registrations: ${MAX_CONCURRENT_REGISTRATIONS:100}
+      async-processing: ${ASYNC_PROCESSING_ENABLED:true}
+      batch-operations: ${BATCH_OPERATIONS_ENABLED:true}
+
+    # 数据库优化
+    database:
+      connection-pool-optimization: ${CONNECTION_POOL_OPTIMIZATION:true}
+      query-optimization: ${QUERY_OPTIMIZATION_ENABLED:true}
+      indexing-strategy: ${INDEXING_STRATEGY:adaptive}
+
+    # 响应时间优化
+    response-time:
+      target-response-time: ${TARGET_RESPONSE_TIME:2000}
+      slow-query-threshold: ${SLOW_QUERY_THRESHOLD:1000}
+      performance-monitoring: ${PERFORMANCE_MONITORING_ENABLED:true}

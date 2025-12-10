@@ -95,12 +95,14 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- 腾讯云OCR SDK -->
+        <!-- 腾讯云OCR SDK - 暂时注释掉依赖问题 -->
+        <!--
         <dependency>
             <groupId>com.tencentcloudapi</groupId>
             <artifactId>tencentcloud-sdk-java-ocr</artifactId>
             <version>${tencentcloud-ocr.version}</version>
         </dependency>
+        -->
     </dependencies>
 
     <build>

@@ -117,6 +117,13 @@
             <version>1.2.25</version>
         </dependency>
 
+        <!-- Resilience4j CircuitBreaker (网关服务需要) -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-spring-boot3</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -1,0 +1,459 @@
+# =====================================================
+# IOE-DREAM 监控体系配置
+# 企业级监控告警体系配置
+# 支持 Micrometer + Prometheus + Grafana + 告警通知
+# =====================================================
+
+# ===========================================
+# 监控配置启用开关
+# ===========================================
+monitoring:
+  # 全局监控开关
+  enabled: true
+
+  # 性能监控开关
+  performance:
+    enabled: true
+    # JVM监控
+    jvm: true
+    # 系统监控
+    system: true
+    # 自定义指标监控
+    custom: true
+
+  # 业务监控开关
+  business:
+    enabled: true
+    # HTTP请求监控
+    http: true
+    # 数据库操作监控
+    database: true
+    # 缓存操作监控
+    cache: true
+    # 业务指标监控
+    metrics: true
+
+  # 告警配置
+  alert:
+    enabled: true
+    # 告警收敛配置
+    convergence:
+      # 默认告警间隔（秒）
+      default-interval: 300
+      # 默认最大告警次数（时间窗口）
+      max-count-window: 1800
+      # 默认最大告警次数
+      max-count: 3
+
+    # 通知渠道配置
+    channels:
+      # 钉钉通知
+      dingtalk:
+        enabled: true
+        webhook-url: ${DINGTALK_WEBHOOK:}
+        secret: ${DINGTALK_SECRET:}
+        at-phones: ${ALERT_AT_PHONES:}
+
+      # 企业微信通知
+      wechat:
+        enabled: false
+        webhook-url: ${WECHAT_WEBHOOK:}
+
+      # 邮件通知
+      email:
+        enabled: false
+        smtp-host: ${SMTP_HOST:smtp.163.com}
+        smtp-port: ${SMTP_PORT:587}
+        username: ${SMTP_USERNAME:}
+        password: ${SMTP_PASSWORD:}
+        recipients: ${ALERT_EMAIL_RECIPIENTS:}
+
+      # 短信通知
+      sms:
+        enabled: false
+        api-key: ${SMS_API_KEY:}
+        api-secret: ${SMS_API_SECRET:}
+        recipients: ${ALERT_SMS_RECIPIENTS:}
+
+# ===========================================
+# Micrometer 指标收集配置
+# ===========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,threaddump,heapdump
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    # 启用JVM指标
+    jvm:
+      enabled: true
+      # 内存指标
+      memory:
+        enabled: true
+      # 线程指标
+      threads:
+        enabled: true
+      # 类加载指标
+      classes:
+        enabled: true
+      # GC指标
+      gc:
+        enabled: true
+
+    # 启用系统指标
+    system:
+      enabled: true
+      # CPU指标
+      cpu:
+        enabled: true
+      # 内存指标
+      memory:
+        enabled: true
+      # 文件系统指标
+      disk:
+        enabled: true
+      # 处理器指标
+      processor:
+        enabled: true
+
+    # 启用Web指标
+    web:
+      server:
+        enabled: true
+        request:
+          autotime:
+            enabled: true
+            percentiles: 0.5,0.9,0.95,0.99
+
+    # 启用数据库指标
+    datasource:
+      enabled: true
+
+    # 启用缓存指标
+    cache:
+      enabled: true
+
+    # 启用日志back指标
+    logback:
+      enabled: true
+
+    # 启用Tomcat指标
+    tomcat:
+      enabled: true
+      sessions:
+        enabled: true
+
+    # 自定义指标
+    tags:
+      application: ${spring.application.name:ioedream-common-service}
+      environment: ${spring.profiles.active:dev}
+      instance: ${INSTANCE_ID:${HOSTNAME:${random.uuid}}}
+
+    # 指标导出配置
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+        descriptions: true
+
+# ===========================================
+# 业务监控指标配置
+# ===========================================
+business-metrics:
+  # HTTP请求监控
+  http:
+    # 启用请求计数
+    counter-enabled: true
+    # 启用响应时间监控
+    timer-enabled: true
+    # 启用状态码监控
+    status-code-enabled: true
+    # 慢请求阈值（毫秒）
+    slow-request-threshold: 3000
+    # 记录请求参数
+    record-parameters: false
+
+  # 数据库操作监控
+  database:
+    # 启用SQL执行时间监控
+    sql-timer-enabled: true
+    # 启用连接池监控
+    connection-pool-enabled: true
+    # 慢SQL阈值（毫秒）
+    slow-sql-threshold: 1000
+    # 记录SQL语句（生产环境建议关闭）
+    record-sql: false
+
+  # 缓存操作监控
+  cache:
+    # 启用缓存命中率监控
+    hit-rate-enabled: true
+    # 启用缓存操作时间监控
+    operation-timer-enabled: true
+    # 缓存命中率告警阈值
+    hit-rate-threshold: 0.8
+
+  # 业务指标监控
+  metrics:
+    # 用户相关指标
+    user:
+      login-counter-enabled: true
+      active-user-gauge-enabled: true
+      registration-counter-enabled: true
+
+    # 权限相关指标
+    permission:
+      check-counter-enabled: true
+      failure-counter-enabled: true
+
+    # 字典相关指标
+    dict:
+      query-counter-enabled: true
+      cache-hit-gauge-enabled: true
+
+# ===========================================
+# 告警规则配置
+# ===========================================
+alert-rules:
+  # 系统级告警规则
+  system:
+    # HTTP错误率告警
+    http-error-rate:
+      enabled: true
+      threshold: 0.05  # 5%
+      severity: WARNING
+      message: "HTTP请求错误率过高"
+
+    # 平均响应时间告警
+    response-time:
+      enabled: true
+      threshold: 3000  # 3秒
+      severity: WARNING
+      message: "HTTP平均响应时间过长"
+
+    # CPU使用率告警
+    cpu-usage:
+      enabled: true
+      threshold: 0.85  # 85%
+      severity: CRITICAL
+      message: "CPU使用率过高"
+
+    # 内存使用率告警
+    memory-usage:
+      enabled: true
+      threshold: 0.85  # 85%
+      severity: WARNING
+      message: "内存使用率过高"
+
+    # 磁盘使用率告警
+    disk-usage:
+      enabled: true
+      threshold: 0.90  # 90%
+      severity: CRITICAL
+      message: "磁盘使用率过高"
+
+    # GC频率告警
+    gc-frequency:
+      enabled: true
+      threshold: 10  # 每分钟GC次数
+      severity: WARNING
+      message: "GC频率过高"
+
+  # 应用级告警规则
+  application:
+    # 缓存命中率告警
+    cache-hit-rate:
+      enabled: true
+      threshold: 0.8  # 80%
+      severity: INFO
+      message: "缓存命中率过低"
+
+    # 数据库连接池使用率告警
+    db-connection-usage:
+      enabled: true
+      threshold: 0.9  # 90%
+      severity: WARNING
+      message: "数据库连接池使用率过高"
+
+    # 慢SQL告警
+    slow-sql:
+      enabled: true
+      threshold: 1000  # 1秒
+      severity: WARNING
+      message: "存在慢SQL查询"
+
+    # 系统错误率告警
+    system-error-rate:
+      enabled: true
+      threshold: 0.01  # 1%
+      severity: CRITICAL
+      message: "系统错误率过高"
+
+    # 业务错误率告警
+    business-error-rate:
+      enabled: true
+      threshold: 0.02  # 2%
+      severity: WARNING
+      message: "业务错误率过高"
+
+# ===========================================
+# 分布式链路追踪配置
+# ===========================================
+tracing:
+  # 链路追踪开关
+  enabled: true
+
+  # 采样率配置
+  sampling:
+    probability: 0.1  # 10%采样率
+
+  # Zipkin配置
+  zipkin:
+    enabled: false
+    base-url: ${ZIPKIN_BASE_URL:http://localhost:9411}
+    service-name: ${spring.application.name:ioedream-common-service}
+
+  # Jaeger配置
+  jaeger:
+    enabled: false
+    endpoint: ${JAEGER_ENDPOINT:http://localhost:14268/api/traces}
+    service-name: ${spring.application.name:ioedream-common-service}
+
+# ===========================================
+# 性能剖析配置
+# ===========================================
+profiling:
+  # 性能剖析开关
+  enabled: false
+
+  # JVM剖析配置
+  jvm:
+    # 堆内存转储配置
+    heap-dump:
+      enabled: true
+      threshold: 0.8  # 80%内存使用率触发
+      path: ${HEAP_DUMP_PATH:./dumps/}
+
+    # 线程转储配置
+    thread-dump:
+      enabled: true
+      interval: 300  # 5分钟间隔
+
+    # GC日志配置
+    gc-logging:
+      enabled: true
+      file: ${GC_LOG_FILE:./logs/gc.log}
+      rotation: daily
+
+# ===========================================
+# 环境特定配置
+# ===========================================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+# 开发环境监控配置
+monitoring:
+  alert:
+    channels:
+      dingtalk:
+        enabled: false  # 开发环境关闭钉钉告警
+      email:
+        enabled: true   # 开发环境启用邮件告警
+
+business-metrics:
+  database:
+    record-sql: true  # 开发环境记录SQL
+  http:
+    record-parameters: true  # 开发环境记录请求参数
+
+alert-rules:
+  system:
+    cpu-usage:
+      threshold: 0.95  # 开发环境CPU告警阈值更高
+    memory-usage:
+      threshold: 0.95  # 开发环境内存告警阈值更高
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+# 测试环境监控配置
+monitoring:
+  alert:
+    channels:
+      dingtalk:
+        enabled: true
+      email:
+        enabled: true
+
+business-metrics:
+  database:
+    record-sql: false  # 测试环境不记录SQL
+  http:
+    record-parameters: false  # 测试环境不记录请求参数
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+# 生产环境监控配置
+monitoring:
+  alert:
+    convergence:
+      default-interval: 600  # 生产环境告警间隔更长
+      max-count: 2  # 生产环境最大告警次数更少
+
+    channels:
+      dingtalk:
+        enabled: true
+        webhook-url: ${DINGTALK_WEBHOOK}  # 生产环境必须配置
+        secret: ${DINGTALK_SECRET}
+      email:
+        enabled: true
+      sms:
+        enabled: true  # 生产环境启用短信告警
+
+business-metrics:
+  database:
+    record-sql: false  # 生产环境不记录SQL
+  http:
+    record-parameters: false  # 生产环境不记录请求参数
+
+alert-rules:
+  system:
+    cpu-usage:
+      threshold: 0.8   # 生产环境告警阈值更严格
+    memory-usage:
+      threshold: 0.8   # 生产环境告警阈值更严格
+    disk-usage:
+      threshold: 0.85  # 生产环境磁盘告警阈值更严格
+
+tracing:
+  enabled: true
+  sampling:
+    probability: 0.01  # 生产环境采样率更低
+
+profiling:
+  enabled: true  # 生产环境启用性能剖析
+  jvm:
+    heap-dump:
+      enabled: true
+      threshold: 0.7  # 生产环境堆转储阈值更严格

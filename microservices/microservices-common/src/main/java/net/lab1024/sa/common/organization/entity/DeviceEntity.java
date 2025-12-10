@@ -68,10 +68,13 @@ public class DeviceEntity extends BaseEntity {
 
     /**
      * 设备ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列device_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
-    @TableId(type = IdType.AUTO)
-    @TableField("device_id")
-    private Long deviceId;
+    @TableId(value = "device_id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 设备名称
@@ -242,5 +245,23 @@ public class DeviceEntity extends BaseEntity {
      */
     public String getExtensionConfig() {
         return extendedAttributes;
+    }
+
+    /**
+     * 获取设备状态（别名方法）
+     *
+     * @return 设备状态
+     */
+    public String getStatus() {
+        return deviceStatus;
+    }
+
+    /**
+     * 设置设备状态（别名方法）
+     *
+     * @param status 设备状态
+     */
+    public void setStatus(String status) {
+        this.deviceStatus = status;
     }
 }

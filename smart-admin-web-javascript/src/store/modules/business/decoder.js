@@ -7,7 +7,7 @@
  */
 import { defineStore } from 'pinia';
 import { message } from 'ant-design-vue';
-import { decoderApi } from '/@/api/business/smart-video/decoder-api';
+import { decoderApi } from '/@/api/business/video/decoder-api';
 import decoderMockData from '/@/views/business/smart-video/mock/decoder-mock-data';
 
 export const useDecoderStore = defineStore('decoder', {

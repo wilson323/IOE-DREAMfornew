@@ -20,8 +20,15 @@ import net.lab1024.sa.common.entity.BaseEntity;
 @TableName("t_sys_config")
 public class SystemConfigEntity extends BaseEntity {
 
+    /**
+     * 配置ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列config_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
+     */
     @TableId(value = "config_id", type = IdType.AUTO)
-    private Long configId;
+    private Long id;
 
     private String configKey;
     private String configValue;
@@ -37,5 +44,19 @@ public class SystemConfigEntity extends BaseEntity {
     private String validationRule;
     private String description;
     private String remark;
+
+    /**
+     * 获取配置描述
+     */
+    public String getConfigDesc() {
+        return description;
+    }
+
+    /**
+     * 设置配置描述
+     */
+    public void setConfigDesc(String configDesc) {
+        this.description = configDesc;
+    }
 }
 

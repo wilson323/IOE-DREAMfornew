@@ -97,7 +97,7 @@ public class AccountController {
     public ResponseDTO<Long> createAccount(
             @Parameter(description = "账户创建表单", required = true)
             @Valid @RequestBody AccountAddForm form) {
-        log.info("[账户管理] 创建账户请求，userId={}, accountKindId={}", 
+        log.info("[账户管理] 创建账户请求，userId={}, accountKindId={}",
                 form.getUserId(), form.getAccountKindId());
         try {
             Long accountId = accountService.createAccount(form);
@@ -213,17 +213,17 @@ public class AccountController {
     @Operation(summary = "分页查询账户列表", description = "分页查询账户列表，支持多条件筛选")
     @PreAuthorize("hasRole('CONSUME_MANAGER')")
     public ResponseDTO<PageResult<AccountEntity>> queryAccounts(
-            @Parameter(description = "页码（从1开始）") 
+            @Parameter(description = "页码（从1开始）")
             @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "每页大小") 
+            @Parameter(description = "每页大小")
             @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "关键词（账户名称、用户名称）") 
+            @Parameter(description = "关键词（账户名称、用户名称）")
             @RequestParam(required = false) String keyword,
-            @Parameter(description = "用户ID（可选）") 
+            @Parameter(description = "用户ID（可选）")
             @RequestParam(required = false) Long userId,
-            @Parameter(description = "账户类别ID（可选）") 
+            @Parameter(description = "账户类别ID（可选）")
             @RequestParam(required = false) Long accountKindId,
-            @Parameter(description = "账户状态（可选）") 
+            @Parameter(description = "账户状态（可选）")
             @RequestParam(required = false) Integer status) {
         log.info("[账户管理] 分页查询账户列表，pageNum={}, pageSize={}, keyword={}, userId={}, accountKindId={}, status={}",
                 pageNum, pageSize, keyword, userId, accountKindId, status);
@@ -548,7 +548,7 @@ public class AccountController {
      * @return 账户列表
      */
     @PostMapping("/batch/search")
-    @Operation(summary = "批量查询账户信息", description = "根据账户ID列表批量查询账户信息。使用POST方法接收请求体，避免URL过长问题。")
+    @Operation(summary = "批量查询账户信息", description = "根据账户ID列表批量查询账户信息。使用POST方法接收请求体，避免URL过长问题。注意：虽然这是查询操作，但为支持大批量ID列表，使用POST避免URL长度限制。")
     @PreAuthorize("hasRole('CONSUME_MANAGER')")
     public ResponseDTO<List<AccountEntity>> getAccountsByIds(@RequestBody List<Long> accountIds) {
         log.info("[账户管理] 批量查询账户信息，accountIds={}", accountIds);

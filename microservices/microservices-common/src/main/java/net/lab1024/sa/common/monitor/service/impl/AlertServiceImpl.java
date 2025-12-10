@@ -82,8 +82,8 @@ public class AlertServiceImpl implements AlertService {
 
             alertRuleDao.insert(alertRule);
 
-            log.info("告警规则添加成功，ID：{}", alertRule.getRuleId());
-            return alertRule.getRuleId();
+            log.info("告警规则添加成功，ID：{}", alertRule.getId());
+            return alertRule.getId();
 
         } catch (Exception e) {
             log.error("添加告警规则失败", e);
@@ -155,7 +155,7 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             AlertRuleEntity alertRule = new AlertRuleEntity();
-            alertRule.setRuleId(ruleId);
+            alertRule.setId(ruleId);
             alertRule.setStatus("ENABLED");
 
             alertRuleDao.updateById(alertRule);
@@ -174,7 +174,7 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             AlertRuleEntity alertRule = new AlertRuleEntity();
-            alertRule.setRuleId(ruleId);
+            alertRule.setId(ruleId);
             alertRule.setStatus("DISABLED");
 
             alertRuleDao.updateById(alertRule);
@@ -193,7 +193,7 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             AlertRuleEntity alertRule = new AlertRuleEntity();
-            alertRule.setRuleId(ruleId);
+            alertRule.setId(ruleId);
             alertRule.setDeletedFlag(1);
 
             alertRuleDao.updateById(alertRule);
@@ -394,7 +394,7 @@ public class AlertServiceImpl implements AlertService {
         for (Long alertId : alertIds) {
             try {
                 AlertEntity alert = new AlertEntity();
-                alert.setAlertId(alertId);
+                alert.setId(alertId);
                 alert.setStatus("RESOLVED");
                 alert.setResolutionNotes(resolution);
                 alert.setResolvedTime(LocalDateTime.now());
@@ -448,7 +448,7 @@ public class AlertServiceImpl implements AlertService {
      */
     private AlertRuleVO convertToVO(AlertRuleEntity entity) {
         AlertRuleVO vo = new AlertRuleVO();
-        vo.setRuleId(entity.getRuleId());
+        vo.setRuleId(entity.getId());
         vo.setRuleName(entity.getRuleName());
         vo.setRuleDescription(entity.getRuleDescription());
         vo.setMetricName(entity.getMetricName());
@@ -477,7 +477,7 @@ public class AlertServiceImpl implements AlertService {
      */
     private Map<String, Object> convertAlertToMap(AlertEntity entity) {
         Map<String, Object> map = new HashMap<>();
-        map.put("alertId", entity.getAlertId());
+        map.put("alertId", entity.getId());
         map.put("alertLevel", entity.getAlertLevel());
         map.put("alertTitle", entity.getAlertTitle());
         map.put("alertMessage", entity.getAlertMessage());
@@ -523,9 +523,9 @@ public class AlertServiceImpl implements AlertService {
             // 插入报警记录
             int result = alertDao.insert(alert);
 
-            if (result > 0 && alert.getAlertId() != null) {
-                log.info("报警记录创建成功，报警ID：{}", alert.getAlertId());
-                return alert.getAlertId();
+            if (result > 0 && alert.getId() != null) {
+                log.info("报警记录创建成功，报警ID：{}", alert.getId());
+                return alert.getId();
             } else {
                 log.warn("报警记录创建失败，报警标题：{}", alert.getAlertTitle());
                 throw new RuntimeException("创建报警记录失败");

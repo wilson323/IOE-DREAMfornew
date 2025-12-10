@@ -34,9 +34,16 @@ import lombok.EqualsAndHashCode;
 @Schema(description = "监控通知实体")
 public class NotificationEntity {
 
+    /**
+     * 通知ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列notification_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
+     */
     @TableId(value = "notification_id", type = IdType.ASSIGN_ID)
     @Schema(description = "通知ID")
-    private Long notificationId;
+    private Long id;
 
     @NotBlank(message = "通知标题不能为空")
     @TableField("title")

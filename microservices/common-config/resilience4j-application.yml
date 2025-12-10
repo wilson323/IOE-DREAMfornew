@@ -1,0 +1,390 @@
+# ============================================================
+# IOE-DREAM 微服务容错熔断统一配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: 基于Resilience4j的微服务容错配置，包含熔断、重试、限流、隔离
+# ============================================================
+
+# ============================================================
+# Resilience4j 全局配置
+# ============================================================
+resilience4j:
+  # 全局配置
+  circuitbreaker:
+    configs:
+      default:
+        # 熔断器配置
+        failure-rate-threshold: 50%                    # 失败率阈值（50%失败时熔断）
+        minimum-number-of-calls: 20                    # 最少调用次数
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 60s               # 熔断器打开持续时间
+        permitted-number-of-calls-in-half-open-state: 10  # 半开状态允许的调用次数
+        sliding-window-size: 100                       # 滑动窗口大小
+        sliding-window-type: count_based               # 基于计数的滑动窗口
+        slow-call-duration-threshold: 30s              # 慢调用阈值
+        slow-call-rate-threshold: 60%                  # 慢调用率阈值
+
+        # 异常记录配置
+        record-exceptions:
+          - java.lang.RuntimeException
+          - java.io.IOException
+          - java.net.SocketTimeoutException
+          - org.springframework.web.client.ResourceAccessException
+          - feign.FeignException
+        ignore-exceptions:
+          - java.lang.IllegalArgumentException
+          - java.lang.IllegalStateException
+
+    instances:
+      # 数据库访问熔断器
+      database-circuitbreaker:
+        base-config: default
+        failure-rate-threshold: 40%                    # 数据库访问更保守
+        wait-duration-in-open-state: 30s
+        minimum-number-of-calls: 10
+        slow-call-duration-threshold: 10s
+
+      # Redis访问熔断器
+      redis-circuitbreaker:
+        base-config: default
+        failure-rate-threshold: 60%                    # Redis更宽松
+        wait-duration-in-open-state: 10s
+        minimum-number-of-calls: 15
+        slow-call-duration-threshold: 2s
+
+      # 外部服务调用熔断器
+      external-service-circuitbreaker:
+        base-config: default
+        failure-rate-threshold: 55%
+        wait-duration-in-open-state: 90s               # 外部服务等待更久
+        minimum-number-of-calls: 15
+        slow-call-duration-threshold: 15s
+
+      # 微服务间调用熔断器
+      microservice-circuitbreaker:
+        base-config: default
+        failure-rate-threshold: 45%
+        wait-duration-in-open-state: 45s
+        minimum-number-of-calls: 20
+        slow-call-duration-threshold: 8s
+
+  # 重试配置
+  retry:
+    configs:
+      default:
+        max-attempts: 3                               # 最大重试次数
+        wait-duration: 1s                            # 重试间隔
+        retry-exception-predicate: org.springframework.retry.RetryException
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - java.io.IOException
+          - org.springframework.web.client.ResourceAccessException
+          - feign.FeignException$InternalServerError
+          - feign.FeignException$ServiceUnavailable
+          - org.springframework.dao.QueryTimeoutException
+        ignore-exceptions:
+          - java.lang.IllegalArgumentException
+          - java.security.AccessDeniedException
+          - org.springframework.security.authentication.BadCredentialsException
+
+    instances:
+      # 数据库访问重试
+      database-retry:
+        base-config: default
+        max-attempts: 2                               # 数据库重试次数少
+        wait-duration: 500ms
+        exponential-backoff-multiplier: 2
+
+      # Redis访问重试
+      redis-retry:
+        base-config: default
+        max-attempts: 5                               # Redis重试次数多
+        wait-duration: 100ms
+        exponential-backoff-multiplier: 1.5
+
+      # 外部服务重试
+      external-service-retry:
+        base-config: default
+        max-attempts: 3
+        wait-duration: 2s
+        exponential-backoff-multiplier: 2
+        retry-on-result-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+
+  # 限流配置
+  ratelimiter:
+    configs:
+      default:
+        limit-for-period: 100                         # 每个周期请求数
+        limit-refresh-period: 1s                       # 刷新周期
+        timeout-duration: 5s                          # 等待超时
+        register-health-indicator: true
+
+    instances:
+      # 数据库访问限流
+      database-ratelimiter:
+        base-config: default
+        limit-for-period: 200                         # 数据库访问限流更宽松
+        limit-refresh-period: 1s
+        timeout-duration: 100ms
+
+      # 写操作限流
+      write-operation-ratelimiter:
+        base-config: default
+        limit-for-period: 50                          # 写操作限流更严格
+        limit-refresh-period: 1s
+        timeout-duration: 1s
+
+      # 查询操作限流
+      query-operation-ratelimiter:
+        base-config: default
+        limit-for-period: 300                         # 查询操作限流宽松
+        limit-refresh-period: 1s
+        timeout-duration: 100ms
+
+      # 批量操作限流
+      batch-operation-ratelimiter:
+        base-config: default
+        limit-for-period: 10                          # 批量操作限流严格
+        limit-refresh-period: 1s
+        timeout-duration: 2s
+
+      # 外部服务调用限流
+      external-service-ratelimiter:
+        base-config: default
+        limit-for-period: 20                          # 外部服务调用限流严格
+        limit-refresh-period: 1s
+        timeout-duration: 1s
+
+  # 舱壁隔离配置
+  bulkhead:
+    configs:
+      default:
+        max-concurrent-calls: 100                     # 最大并发调用数
+        max-wait-duration: 2s                         # 最大等待时间
+
+    instances:
+      # 数据库访问舱壁
+      database-bulkhead:
+        base-config: default
+        max-concurrent-calls: 50                      # 数据库并发限制
+        max-wait-duration: 1s
+
+      # 外部服务调用舱壁
+      external-service-bulkhead:
+        base-config: default
+        max-concurrent-calls: 20                      # 外部服务并发限制
+        max-wait-duration: 5s
+
+      # CPU密集型操作舱壁
+      cpu-intensive-bulkhead:
+        base-config: default
+        max-concurrent-calls: 10                      # CPU密集型限制
+        max-wait-duration: 3s
+
+      # IO密集型操作舱壁
+      io-intensive-bulkhead:
+        base-config: default
+        max-concurrent-calls: 30                      # IO密集型限制
+        max-wait-duration: 2s
+
+  # 时间限制器配置
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 10s                         # 超时时间
+        cancel-running-future: true                   # 取消运行中的任务
+
+    instances:
+      # 数据库查询时间限制
+      database-timelimiter:
+        base-config: default
+        timeout-duration: 30s                         # 数据库查询超时
+
+      # 外部服务调用时间限制
+      external-service-timelimiter:
+        base-config: default
+        timeout-duration: 15s                         # 外部服务超时
+
+      # 缓存操作时间限制
+      cache-timelimiter:
+        base-config: default
+        timeout-duration: 5s                          # 缓存操作超时
+
+      # 文件操作时间限制
+      file-operation-timelimiter:
+        base-config: default
+        timeout-duration: 60s                         # 文件操作超时
+
+# ============================================================
+# 业务特定容错配置
+# ============================================================
+
+# 消费服务特定配置
+ioedream:
+  consume:
+    resilience:
+      circuitbreaker:
+        payment-processing:
+          failure-rate-threshold: 30%                  # 支付处理更严格
+          wait-duration-in-open-state: 120s
+          minimum-number-of-calls: 10
+        account-balance-check:
+          failure-rate-threshold: 20%                  # 余额检查最严格
+          wait-duration-in-open-state: 60s
+          minimum-number-of-calls: 5
+      ratelimiter:
+        payment-api:
+          limit-for-period: 10                         # 支付API限流严格
+          limit-refresh-period: 1s
+        query-api:
+          limit-for-period: 100                        # 查询API限流宽松
+
+# 门禁服务特定配置
+ioedream:
+  access:
+    resilience:
+      circuitbreaker:
+        door-control:
+          failure-rate-threshold: 25%                  # 门禁控制最严格
+          wait-duration-in-open-state: 30s
+          minimum-number-of-calls: 5
+        biometric-verification:
+          failure-rate-threshold: 35%
+          wait-duration-in-open-state: 60s
+      timelimiter:
+        door-control:
+          timeout-duration: 5s                         # 门禁控制超时短
+        biometric-verification:
+          timeout-duration: 10s
+
+# 考勤服务特定配置
+ioedream:
+  attendance:
+    resilience:
+      circuitbreaker:
+        clock-in-out:
+          failure-rate-threshold: 40%
+          wait-duration-in-open-state: 30s
+          minimum-number-of-calls: 10
+      ratelimiter:
+        clock-api:
+          limit-for-period: 200                        # 打卡API限流宽松
+
+# 访客服务特定配置
+ioedream:
+  visitor:
+    resilience:
+      circuitbreaker:
+        visitor-registration:
+          failure-rate-threshold: 35%
+          wait-duration-in-open-state: 60s
+      ratelimiter:
+        registration-api:
+          limit-for-period: 50
+        query-api:
+          limit-for-period: 150
+
+# 视频服务特定配置
+ioedream:
+  video:
+    resilience:
+      circuitbreaker:
+        video-stream:
+          failure-rate-threshold: 45%
+          wait-duration-in-open-state: 30s
+        recording:
+          failure-rate-threshold: 30%
+      timelimiter:
+        video-stream:
+          timeout-duration: 15s
+        recording:
+          timeout-duration: 60s
+
+# 设备通讯服务特定配置
+ioedream:
+  device:
+    resilience:
+      circuitbreaker:
+        device-communication:
+          failure-rate-threshold: 50%
+          wait-duration-in-open-state: 45s
+      timelimiter:
+        device-communication:
+          timeout-duration: 20s
+
+# OA服务特定配置
+ioedream:
+  oa:
+    resilience:
+      circuitbreaker:
+        document-processing:
+          failure-rate-threshold: 40%
+          wait-duration-in-open-state: 90s
+      bulkhead:
+        document-processing:
+          max-concurrent-calls: 5
+          max-wait-duration: 5s
+
+# ============================================================
+# 监控和健康检查配置
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,resilience4j,circuitbreakers,retries,ratelimiters,bulkheads,timers
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    circuitbreakers:
+      enabled: true
+    retries:
+      enabled: true
+    ratelimiters:
+      enabled: true
+    bulkheads:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+    distribution:
+      percentiles-histogram:
+        resilience4j.circuitbreaker.calls: true
+        resilience4j.retry.calls: true
+        resilience4j.ratelimiter.calls: true
+      percentiles:
+        resilience4j.circuitbreaker.calls: 0.5,0.9,0.95,0.99
+        resilience4j.retry.calls: 0.5,0.9,0.95,0.99
+
+# ============================================================
+# 日志配置
+# ============================================================
+logging:
+  level:
+    io.github.resilience4j: DEBUG
+    org.springframework.retry: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+
+# ============================================================
+# 告警配置
+# ============================================================
+resilience4j:
+  # 告警事件监听器
+  circuitbreaker:
+    event-consumer-buffer-size: 100
+    register-event-consumer: true
+
+  # 自定义告警配置
+  notifier:
+    circuitbreaker:
+      failure-rate-threshold-warning: 40%             # 失败率告警阈值
+      slow-call-rate-threshold-warning: 50%           # 慢调用率告警阈值

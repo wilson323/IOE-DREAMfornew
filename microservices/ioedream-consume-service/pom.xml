@@ -50,6 +50,12 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- Spring AOP -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- MyBatis-Plus (Spring Boot 3.x专用) -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -77,6 +83,21 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
+        <!-- SpringDoc OpenAPI (Swagger 3.0) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <!-- Jasypt配置加密 - 临时禁用以解决兼容性问题 -->
+        <!--
+        <dependency>
+            <groupId>com.github.ulisesboca</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+        </dependency>
+        -->
 
         <!-- 支付宝SDK -->
         <dependency>
