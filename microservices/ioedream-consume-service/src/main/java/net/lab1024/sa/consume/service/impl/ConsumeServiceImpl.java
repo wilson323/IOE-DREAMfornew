@@ -23,6 +23,8 @@ import net.lab1024.sa.consume.domain.request.ConsumeRequest;
 import net.lab1024.sa.consume.domain.vo.ConsumeDeviceStatisticsVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeDeviceVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeRealtimeStatisticsVO;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.consume.domain.vo.ConsumeRecordVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeTransactionDetailVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO;
 import net.lab1024.sa.consume.manager.ConsumeDeviceManager;
@@ -30,6 +32,8 @@ import net.lab1024.sa.consume.manager.ConsumeExecutionManager;
 import net.lab1024.sa.consume.service.ConsumeCacheService;
 import net.lab1024.sa.consume.service.ConsumeService;
 import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.util.CursorPagination;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -74,6 +78,9 @@ public class ConsumeServiceImpl implements ConsumeService {
 
     @Resource
     private ConsumeCacheService consumeCacheService;
+
+    @Resource
+    private net.lab1024.sa.consume.service.AccountService accountService;
 
     /**
      * 执行消费交易
@@ -122,7 +129,7 @@ public class ConsumeServiceImpl implements ConsumeService {
                 result.setTransactionStatus(transaction.getTransactionStatus());
                 result.setAmount(transaction.getAmount());
                 result.setBalanceAfter(transaction.getBalanceAfter() != null ?
-                        java.math.BigDecimal.valueOf(transaction.getBalanceAfter()).divide(
+                        transaction.getBalanceAfter().divide(
                                 java.math.BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP) :
                         java.math.BigDecimal.ZERO);
                 result.setTransactionTime(transaction.getTransactionTime());
@@ -159,8 +166,8 @@ public class ConsumeServiceImpl implements ConsumeService {
             ConsumeTransactionForm form = new ConsumeTransactionForm();
             form.setUserId(request.getUserId());
             form.setAccountId(request.getAccountId());
-            form.setDeviceId(request.getDeviceId());
-            form.setAreaId(request.getAreaId());
+            form.setDeviceId(request.getDeviceId()); // ConsumeRequest.deviceId已经是Long类型，直接使用
+            form.setAreaId(request.getAreaId() != null ? String.valueOf(request.getAreaId()) : null);
             form.setAmount(request.getAmount());
             form.setConsumeMode(request.getConsumeMode());
 
@@ -183,12 +190,12 @@ public class ConsumeServiceImpl implements ConsumeService {
             if (transaction != null) {
                 detail.setTransactionId(transaction.getId());
                 detail.setTransactionNo(transaction.getTransactionNo());
-                detail.setUserId(transaction.getUserId());
+                detail.setUserId(String.valueOf(transaction.getUserId()));
                 detail.setUserName(transaction.getUserName());
-                detail.setAccountId(transaction.getAccountId());
-                detail.setAreaId(transaction.getAreaId());
+                detail.setAccountId(String.valueOf(transaction.getAccountId()));
+                detail.setAreaId(String.valueOf(transaction.getAreaId()));
                 detail.setAreaName(transaction.getAreaName());
-                detail.setDeviceId(transaction.getDeviceId());
+                detail.setDeviceId(String.valueOf(transaction.getDeviceId()));
                 detail.setDeviceName(transaction.getDeviceName());
                 detail.setAmount(transaction.getAmount());
                 detail.setConsumeTime(transaction.getConsumeTime());
@@ -335,15 +342,23 @@ public class ConsumeServiceImpl implements ConsumeService {
             // 1. 查询今日交易记录
             List<ConsumeTransactionEntity> todayTransactions = consumeTransactionDao.selectByTimeRange(todayStart, now);
             if (areaId != null && !areaId.trim().isEmpty()) {
+                // 将String类型的areaId转换为Long进行比较（实体类字段为Long类型）
+                Long areaIdLong = null;
+                try {
+                    areaIdLong = Long.parseLong(areaId.trim());
+                } catch (NumberFormatException e) {
+                    log.warn("[消费服务] 无法将areaId转换为Long: {}", areaId);
+                }
+                final Long finalAreaId = areaIdLong;
                 todayTransactions = todayTransactions.stream()
-                        .filter(t -> areaId.equals(t.getAreaId()))
+                        .filter(t -> finalAreaId == null || finalAreaId.equals(t.getAreaId()))
                         .collect(Collectors.toList());
             }
 
             // 2. 计算今日统计
             BigDecimal todayAmount = todayTransactions.stream()
                     .filter(t -> t.getFinalMoney() != null)
-                    .map(t -> BigDecimal.valueOf(t.getFinalMoney()).divide(BigDecimal.valueOf(100))) // 转换为元
+                    .map(t -> t.getFinalMoney().divide(BigDecimal.valueOf(100))) // 转换为元
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             int todayCount = todayTransactions.size();
             int currentConsumeUserCount = (int) todayTransactions.stream()
@@ -358,7 +373,7 @@ public class ConsumeServiceImpl implements ConsumeService {
 
             BigDecimal lastHourAmount = lastHourTransactions.stream()
                     .filter(t -> t.getFinalMoney() != null)
-                    .map(t -> BigDecimal.valueOf(t.getFinalMoney()).divide(BigDecimal.valueOf(100))) // 转换为元
+                    .map(t -> t.getFinalMoney().divide(BigDecimal.valueOf(100))) // 转换为元
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             int lastHourCount = lastHourTransactions.size();
 
@@ -415,12 +430,12 @@ public class ConsumeServiceImpl implements ConsumeService {
             ConsumeTransactionDetailVO detail = new ConsumeTransactionDetailVO();
             detail.setTransactionId(transaction.getId());
             detail.setTransactionNo(transaction.getTransactionNo());
-            detail.setUserId(transaction.getUserId());
+            detail.setUserId(String.valueOf(transaction.getUserId()));
             detail.setUserName(transaction.getUserName());
-            detail.setAccountId(transaction.getAccountId());
-            detail.setAreaId(transaction.getAreaId());
+            detail.setAccountId(String.valueOf(transaction.getAccountId()));
+            detail.setAreaId(String.valueOf(transaction.getAreaId()));
             detail.setAreaName(transaction.getAreaName());
-            detail.setDeviceId(transaction.getDeviceId());
+            detail.setDeviceId(String.valueOf(transaction.getDeviceId()));
             detail.setDeviceName(transaction.getDeviceName());
             detail.setAmount(transaction.getAmount());
             detail.setConsumeTime(transaction.getConsumeTime());
@@ -502,12 +517,12 @@ public class ConsumeServiceImpl implements ConsumeService {
         ConsumeTransactionDetailVO vo = new ConsumeTransactionDetailVO();
         vo.setTransactionId(entity.getId());
         vo.setTransactionNo(entity.getTransactionNo());
-        vo.setUserId(entity.getUserId());
+        vo.setUserId(String.valueOf(entity.getUserId()));
         vo.setUserName(entity.getUserName());
-        vo.setAccountId(entity.getAccountId());
-        vo.setAreaId(entity.getAreaId());
+        vo.setAccountId(String.valueOf(entity.getAccountId()));
+        vo.setAreaId(String.valueOf(entity.getAreaId()));
         vo.setAreaName(entity.getAreaName());
-        vo.setDeviceId(entity.getDeviceId());
+        vo.setDeviceId(String.valueOf(entity.getDeviceId()));
         vo.setDeviceName(entity.getDeviceName());
         vo.setAmount(entity.getAmount());
         vo.setConsumeTime(entity.getConsumeTime());
@@ -528,5 +543,325 @@ public class ConsumeServiceImpl implements ConsumeService {
             vo.setTransactionStatus(entity.getTransactionStatus() != null ? entity.getTransactionStatus() : 2);
         }
         return vo;
+    }
+
+    /**
+     * 账户充值
+     *
+     * @param request 充值请求
+     * @return 充值结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public net.lab1024.sa.common.dto.ResponseDTO<Void> recharge(net.lab1024.sa.consume.domain.dto.RechargeRequestDTO request) {
+        log.info("[消费服务] 账户充值，userId={}, amount={}", request.getUserId(), request.getRechargeAmount());
+
+        try {
+            // 参数验证
+            if (request.getUserId() == null) {
+                return net.lab1024.sa.common.dto.ResponseDTO.error("USER_ID_NULL", "用户ID不能为空");
+            }
+            if (request.getRechargeAmount() == null || request.getRechargeAmount().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+                return net.lab1024.sa.common.dto.ResponseDTO.error("AMOUNT_INVALID", "充值金额必须大于0");
+            }
+
+            // 1. 验证账户存在
+            net.lab1024.sa.consume.domain.entity.AccountEntity account;
+            try {
+                account = accountService.getByUserId(request.getUserId());
+            } catch (Exception e) {
+                // AccountService.getByUserId可能抛出BusinessException，统一捕获处理
+                log.warn("[消费服务] 账户查询失败，userId={}, error={}", request.getUserId(), e.getMessage());
+                return net.lab1024.sa.common.dto.ResponseDTO.error("ACCOUNT_NOT_FOUND", "账户不存在：" + e.getMessage());
+            }
+
+            // 2. 更新账户余额（使用AccountService的addBalance方法）
+            String rechargeReason = "充值：" + (request.getRemark() != null ? request.getRemark() : "账户充值");
+            boolean success = accountService.addBalance(account.getAccountId(), request.getRechargeAmount(), rechargeReason);
+            if (!success) {
+                log.error("[消费服务] 账户余额更新失败，accountId={}, amount={}", account.getAccountId(), request.getRechargeAmount());
+                return net.lab1024.sa.common.dto.ResponseDTO.error("BALANCE_UPDATE_FAILED", "账户余额更新失败");
+            }
+
+            // 3. 记录充值流水（通过ConsumeTransactionDao记录充值交易）
+            // 注意：这里可以创建充值交易记录，但根据业务需求，充值可能不需要创建消费交易记录
+            // 如果需要记录充值流水，可以创建专门的充值记录表或使用交易记录表
+
+            log.info("[消费服务] 账户充值成功，userId={}, accountId={}, amount={}",
+                    request.getUserId(), account.getAccountId(), request.getRechargeAmount());
+            return net.lab1024.sa.common.dto.ResponseDTO.ok();
+
+        } catch (Exception e) {
+            log.error("[消费服务] 账户充值失败，userId={}, amount={}", request.getUserId(), request.getRechargeAmount(), e);
+            return net.lab1024.sa.common.dto.ResponseDTO.error("RECHARGE_FAILED", "充值失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 分页查询消费记录
+     *
+     * @param queryDTO 查询条件
+     * @return 分页结果
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public net.lab1024.sa.common.dto.ResponseDTO<com.baomidou.mybatisplus.core.metadata.IPage<net.lab1024.sa.consume.domain.vo.ConsumeRecordVO>> queryConsumeRecordPage(net.lab1024.sa.consume.domain.dto.ConsumeQueryDTO queryDTO) {
+        log.info("[消费服务] 分页查询消费记录，userId={}, pageNum={}, pageSize={}",
+                queryDTO.getUserId(), queryDTO.getPageNum(), queryDTO.getPageSize());
+
+        try {
+            // 构建分页对象
+            Page<net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity> page =
+                new Page<>(queryDTO.getPageNum(), queryDTO.getPageSize());
+
+            // 调用DAO进行分页查询
+            IPage<net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity> transactionPage =
+                consumeTransactionDao.queryTransactions(
+                    page,
+                    queryDTO.getUserId(),
+                    queryDTO.getAreaId() != null ? String.valueOf(queryDTO.getAreaId()) : null,
+                    queryDTO.getStartTime(),
+                    queryDTO.getEndTime(),
+                    queryDTO.getConsumeType(),
+                    queryDTO.getStatus() != null ? String.valueOf(queryDTO.getStatus()) : null
+                );
+
+            // 转换为VO分页结果
+            Page<net.lab1024.sa.consume.domain.vo.ConsumeRecordVO> voPage =
+                new Page<>(transactionPage.getCurrent(), transactionPage.getSize(), transactionPage.getTotal());
+
+            // 转换Entity列表为VO列表
+            List<net.lab1024.sa.consume.domain.vo.ConsumeRecordVO> voList = transactionPage.getRecords().stream()
+                .map(this::convertTransactionToRecordVO)
+                .collect(Collectors.toList());
+
+            voPage.setRecords(voList);
+
+            log.info("[消费服务] 分页查询消费记录成功，total={}, size={}", voPage.getTotal(), voList.size());
+            return net.lab1024.sa.common.dto.ResponseDTO.ok(voPage);
+
+        } catch (Exception e) {
+            log.error("[消费服务] 分页查询消费记录失败", e);
+            return net.lab1024.sa.common.dto.ResponseDTO.error("QUERY_FAILED", "查询失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 游标分页查询消费记录（推荐用于深度分页）
+     *
+     * @param pageSize 每页大小
+     * @param lastTime 上一页最后一条记录的创建时间
+     * @param userId 用户ID
+     * @param areaId 区域ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param consumeType 消费类型
+     * @param status 状态
+     * @return 游标分页结果
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseDTO<CursorPagination.CursorPageResult<ConsumeRecordVO>> cursorPageConsumeRecords(
+            Integer pageSize, LocalDateTime lastTime,
+            Long userId, Long areaId, LocalDateTime startTime, LocalDateTime endTime,
+            String consumeType, Integer status) {
+        log.info("[消费服务] 游标分页查询消费记录，pageSize={}, lastTime={}, userId={}",
+                pageSize, lastTime, userId);
+
+        try {
+            // 1. 构建查询条件
+            LambdaQueryWrapper<ConsumeTransactionEntity> queryWrapper = new LambdaQueryWrapper<>();
+
+            if (userId != null) {
+                queryWrapper.eq(ConsumeTransactionEntity::getUserId, userId);
+            }
+
+            if (areaId != null) {
+                queryWrapper.eq(ConsumeTransactionEntity::getAreaId, areaId);
+            }
+
+            if (startTime != null) {
+                queryWrapper.ge(ConsumeTransactionEntity::getCreateTime, startTime);
+            }
+
+            if (endTime != null) {
+                queryWrapper.le(ConsumeTransactionEntity::getCreateTime, endTime);
+            }
+
+            if (consumeType != null) {
+                queryWrapper.eq(ConsumeTransactionEntity::getConsumeType, consumeType);
+            }
+
+            if (status != null) {
+                queryWrapper.eq(ConsumeTransactionEntity::getStatus, status);
+            }
+
+            // 2. 使用游标分页（基于时间）
+            // 注意：ConsumeTransactionEntity的id是String类型，但CursorPagination内部使用反射处理
+            CursorPagination.CursorPageResult<ConsumeTransactionEntity> entityResult =
+                CursorPagination.queryByTimeCursor(
+                    consumeTransactionDao,
+                    queryWrapper,
+                    CursorPagination.CursorPageRequest.<ConsumeTransactionEntity>builder()
+                        .pageSize(pageSize)
+                        .lastTime(lastTime)
+                        .desc(true)
+                        .build()
+                );
+
+            // 3. 转换为VO列表
+            List<ConsumeRecordVO> voList = entityResult.getList().stream()
+                .map(this::convertTransactionToRecordVO)
+                .collect(Collectors.toList());
+
+            // 4. 构建VO游标分页结果
+            CursorPagination.CursorPageResult<ConsumeRecordVO> voResult =
+                CursorPagination.CursorPageResult.<ConsumeRecordVO>builder()
+                    .list(voList)
+                    .hasNext(entityResult.getHasNext())
+                    .lastId(entityResult.getLastId())
+                    .lastTime(entityResult.getLastTime())
+                    .size(voList.size())
+                    .build();
+
+            log.info("[消费服务] 游标分页查询消费记录成功，size={}, hasNext={}",
+                    voList.size(), voResult.getHasNext());
+
+            return ResponseDTO.ok(voResult);
+
+        } catch (Exception e) {
+            log.error("[消费服务] 游标分页查询消费记录失败", e);
+            return ResponseDTO.error("QUERY_FAILED", "查询失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 将消费交易Entity转换为消费记录VO
+     *
+     * @param transaction 消费交易实体
+     * @return 消费记录VO
+     */
+    private net.lab1024.sa.consume.domain.vo.ConsumeRecordVO convertTransactionToRecordVO(
+            net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity transaction) {
+        if (transaction == null) {
+            return null;
+        }
+
+        net.lab1024.sa.consume.domain.vo.ConsumeRecordVO vo = new net.lab1024.sa.consume.domain.vo.ConsumeRecordVO();
+
+        // 基本信息
+        vo.setId(transaction.getId() != null && !transaction.getId().isEmpty()
+                ? Long.parseLong(transaction.getId()) : null);
+        vo.setTransactionNo(transaction.getTransactionNo());
+        vo.setAccountId(transaction.getAccountId());
+        vo.setUserId(transaction.getUserId());
+        vo.setUserName(transaction.getUserName());
+
+        // 金额信息
+        vo.setAmount(transaction.getFinalMoney());
+        vo.setOriginalAmount(transaction.getConsumeMoney());
+        vo.setDiscountAmount(transaction.getDiscountMoney());
+        vo.setSubsidyAmount(transaction.getAllowanceUsed());
+        vo.setBalanceBefore(transaction.getBalanceBefore());
+        vo.setBalanceAfter(transaction.getBalanceAfter());
+
+        // 状态信息（transactionStatus是Integer类型）
+        vo.setStatus(transaction.getTransactionStatus());
+        if (vo.getStatus() != null) {
+            switch (vo.getStatus()) {
+                case 1: vo.setStatusDesc("待处理"); break;
+                case 2: vo.setStatusDesc("成功"); break;
+                case 3: vo.setStatusDesc("失败"); break;
+                case 4: vo.setStatusDesc("已退款"); break;
+                default: vo.setStatusDesc("未知"); break;
+            }
+        }
+
+        // 消费方式信息
+        vo.setConsumeMode(transaction.getConsumeMode());
+        if (transaction.getConsumeMode() != null) {
+            switch (transaction.getConsumeMode()) {
+                case "FIXED": vo.setConsumeModeDesc("定值"); break;
+                case "AMOUNT": vo.setConsumeModeDesc("金额"); break;
+                case "PRODUCT": vo.setConsumeModeDesc("商品"); break;
+                case "COUNT": vo.setConsumeModeDesc("计次"); break;
+                default: vo.setConsumeModeDesc("未知"); break;
+            }
+        }
+
+        // 消费类型信息
+        vo.setConsumeType(transaction.getConsumeType());
+        if (transaction.getConsumeType() != null) {
+            switch (transaction.getConsumeType()) {
+                case "CONSUME": vo.setConsumeTypeDesc("正常消费"); break;
+                case "MAKEUP": vo.setConsumeTypeDesc("补单"); break;
+                case "CORRECT": vo.setConsumeTypeDesc("纠错"); break;
+                default: vo.setConsumeTypeDesc("未知"); break;
+            }
+        }
+
+        // 设备信息
+        vo.setDeviceNo(transaction.getDeviceName()); // 使用设备名称作为设备编号
+        vo.setDeviceName(transaction.getDeviceName());
+
+        // 区域信息
+        vo.setAreaId(transaction.getAreaId());
+        vo.setAreaName(transaction.getAreaName());
+
+        // 时间信息
+        vo.setConsumeTime(transaction.getTransactionTime());
+        vo.setCreateTime(transaction.getCreateTime());
+        vo.setUpdateTime(transaction.getUpdateTime());
+
+        // 商品信息
+        vo.setProductId(transaction.getProductId());
+        vo.setProductName(transaction.getProductName());
+
+        // 其他信息
+        vo.setCurrency("CNY"); // 默认币种
+        // 注意：ConsumeTransactionEntity没有isOffline、remark、extendAttrs字段，暂不设置
+
+        return vo;
+    }
+
+    /**
+     * 执行消费（兼容方法）
+     *
+     * @param request 消费请求DTO
+     * @return 消费结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public net.lab1024.sa.common.dto.ResponseDTO<net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO> consume(net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request) {
+        log.info("[消费服务] 执行消费（兼容方法），userId={}, amount={}", request.getUserId(), request.getAmount());
+
+        try {
+            // 参数验证
+            if (request.getUserId() == null) {
+                return net.lab1024.sa.common.dto.ResponseDTO.error("USER_ID_NULL", "用户ID不能为空");
+            }
+            if (request.getAmount() == null || request.getAmount().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+                return net.lab1024.sa.common.dto.ResponseDTO.error("AMOUNT_INVALID", "消费金额必须大于0");
+            }
+
+            // 转换为表单对象
+            ConsumeTransactionForm form = new ConsumeTransactionForm();
+            form.setUserId(request.getUserId());
+            form.setAccountId(request.getAccountId());
+            form.setDeviceId(request.getDeviceIdAsLong()); // ConsumeRequestDTO.deviceId是String类型，需要转换为Long
+            form.setAreaId(request.getAreaId() != null ? String.valueOf(request.getAreaId()) : null);
+            form.setAmount(request.getAmount());
+            form.setConsumeMode(request.getConsumeMode());
+
+            // 调用现有的executeTransaction方法
+            ConsumeTransactionResultVO result = executeTransaction(form);
+
+            log.info("[消费服务] 执行消费成功，transactionNo={}", result.getTransactionNo());
+            return net.lab1024.sa.common.dto.ResponseDTO.ok(result);
+
+        } catch (Exception e) {
+            log.error("[消费服务] 执行消费失败，userId={}, amount={}", request.getUserId(), request.getAmount(), e);
+            return net.lab1024.sa.common.dto.ResponseDTO.error("CONSUME_FAILED", "消费失败：" + e.getMessage());
+        }
     }
 }

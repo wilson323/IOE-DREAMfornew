@@ -1,10 +1,10 @@
 # ============================================================
 # IOE-DREAM Device Communication Service 配置文件
-# 
+#
 # @Author:    IOE-DREAM Team
 # @Date:      2025-01-30
 # @Copyright  IOE-DREAM智慧园区一卡通管理平台
-# 
+#
 # 服务信息:
 # - 服务名称: ioedream-device-comm-service
 # - 服务端口: 8087
@@ -17,6 +17,12 @@ spring:
     name: ioedream-device-comm-service
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  # Spring Boot 2.4+ 要求显式声明配置导入
+  # 升级到Spring Cloud Alibaba 2025.0.0.0后，使用optional前缀允许配置中心可选
+  # dataId格式：${spring.application.name}-${spring.profiles.active}.${file-extension}
+  config:
+    import:
+      - "optional:nacos:ioedream-device-comm-service-docker.yaml"  # 2025.0.0.0版本需要显式指定dataId
   # ==================== Nacos服务发现配置 ====================
   cloud:
     nacos:
@@ -25,23 +31,26 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD}
         enabled: true
         register-enabled: true
-      # Nacos配置中心（Spring Cloud Alibaba标准配置）
-      # 注意：IDE可能显示"Unknown property"警告，但这是Spring Cloud Alibaba的标准配置，可以忽略
+      # Nacos配置中心（升级到2025.0.0.0后可以启用）
       config:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
         file-extension: yaml
-        enabled: true
+        enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
+        import-check:
+          enabled: true  # 2025.0.0.0版本支持optional:nacos:，可以启用检查
   # ==================== RabbitMQ消息队列配置 ====================
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USERNAME:guest}
-    password: ${RABBITMQ_PASSWORD:guest}
+    password: ${RABBITMQ_PASSWORD}
     virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
     # 连接池配置
     listener:
@@ -58,7 +67,7 @@ spring:
 
 # ==================== 服务器配置 ====================
 server:
-  port: 8087
+  port: ${DEVICE_COMM_SERVICE_PORT:8087}
   servlet:
     context-path: /
     encoding:
@@ -81,8 +90,9 @@ logging:
     root: INFO
     "[net.lab1024.sa]": DEBUG  # 使用方括号转义包含特殊字符的键
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    # 包含Trace ID和Span ID的日志格式
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{50} - %msg%n"
 
 # ==================== Actuator监控配置 ====================
 management:
@@ -110,13 +120,14 @@ management:
         "[protocol.message.process]": 0.5,0.9,0.95,0.99
   # 分布式追踪配置（Micrometer Tracing）
   # Spring Boot 3.x使用Micrometer Tracing替代Spring Cloud Sleuth
-  # 注意：IDE可能显示"Unknown property 'management.tracing.zipkin'"警告，
-  # 但这是Spring Boot 3.x的标准配置，可以忽略
+  # 正确配置格式：management.zipkin.tracing.endpoint
   tracing:
-    zipkin:
-      endpoint: ${ZIPKIN_BASE_URL:http://localhost:9411}/api/v2/spans
+    enabled: true
     sampling:
       probability: ${SLEUTH_SAMPLER_PROBABILITY:1.0}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
 
 # ==================== Resilience4j服务降级和熔断配置 ====================
 resilience4j:
@@ -194,11 +205,13 @@ resilience4j:
 device:
   protocol:
     # TCP推送服务器端口（用于接收设备推送数据）
+    # 注意：使用18087避免与common-service的8088端口冲突
     tcp:
-      port: ${DEVICE_PROTOCOL_TCP_PORT:8088}
+      port: ${DEVICE_PROTOCOL_TCP_PORT:18087}
     # UDP推送服务器端口（可选）
+    # 注意：使用18089避免与oa-service的8089端口冲突
     udp:
-      port: ${DEVICE_PROTOCOL_UDP_PORT:8089}
+      port: ${DEVICE_PROTOCOL_UDP_PORT:18089}
     # 协议处理线程池大小（动态配置）
     # 注意：IDE可能显示"Unknown property 'device.protocol.thread-pool.keep-alive-seconds'"警告，
     # 但这是通过@ConfigurationProperties绑定的自定义配置，可以忽略

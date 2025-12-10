@@ -276,5 +276,37 @@ public enum VerifyTypeEnum {
         }
         return 2; // 默认卡片
     }
+
+    /**
+     * 根据代码获取验证类型枚举
+     *
+     * @param code 验证方式代码（支持整数和字符串）
+     * @return 验证类型枚举，如果不存在返回null
+     */
+    public static VerifyTypeEnum fromCode(Object code) {
+        if (code == null) {
+            return null;
+        }
+
+        int codeValue;
+        if (code instanceof Integer) {
+            codeValue = (Integer) code;
+        } else if (code instanceof String) {
+            try {
+                codeValue = Integer.parseInt((String) code);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+
+        for (VerifyTypeEnum type : values()) {
+            if (type.getCode() == codeValue) {
+                return type;
+            }
+        }
+        return null;
+    }
 }
 

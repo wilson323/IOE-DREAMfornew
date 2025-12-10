@@ -93,6 +93,20 @@ export const postRequest = (url, data) => {
   return request(url, 'POST', data);
 };
 
+/**
+ * put请求
+ */
+export const putRequest = (url, data) => {
+  return request(url, 'PUT', data);
+};
+
+/**
+ * delete请求
+ */
+export const deleteRequest = (url, data) => {
+  return request(url, 'DELETE', data);
+};
+
 // ================================= 加密 =================================
 
 /**

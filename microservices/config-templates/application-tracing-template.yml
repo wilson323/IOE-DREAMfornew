@@ -1,0 +1,268 @@
+# ============================================================
+# IOE-DREAM 分布式链路追踪配置模板
+#
+# 功能：企业级分布式链路追踪，提供完整的服务调用链监控
+# 技术：Spring Cloud Sleuth + Zipkin + Brave
+# 标准：支持高并发、低延迟、可扩展的链路追踪
+#
+# @Author: IOE-DREAM架构委员会
+# @Date: 2025-01-30
+# @Version: v1.0.0-企业级追踪版
+# ============================================================
+
+# ==================== Spring Cloud Sleuth配置 ====================
+spring:
+  # Sleuth链路追踪配置
+  sleuth:
+    # Zipkin集成配置
+    zipkin:
+      # Zipkin服务器地址
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      # 是否启用Zipkin
+      enabled: ${ZIPKIN_ENABLED:true}
+      # 消息发送方式（web, rabbit, kafka, activemq）
+      sender:
+        type: ${ZIPKIN_SENDER_TYPE:web}
+      # 消息超时时间（毫秒）
+      message-timeout: ${ZIPKIN_MESSAGE_TIMEOUT:5000}
+      # 是否启用压缩
+      compression:
+        enabled: ${ZIPKIN_COMPRESSION_ENABLED:true}
+      # 连接超时
+      connect-timeout: ${ZIPKIN_CONNECT_TIMEOUT:1000}
+      # 读取超时
+      read-timeout: ${ZIPKIN_READ_TIMEOUT:6000}
+      # 最大请求大小
+      max-request-size: ${ZIPKIN_MAX_REQUEST_SIZE:2MB}
+
+    # 采样率配置
+    sampler:
+      # 采样率（0.0到1.0之间）
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}
+      # 生产环境建议0.01-0.1，开发环境可以设为1.0
+
+    # 链路追踪传播配置
+    propagation:
+      # 传播类型（b3，b3_multi，none）
+      type: ${SLEUTH_PROPAGATION_TYPE:b3}
+
+    # Baggage配置（跨服务传递自定义字段）
+    baggage:
+      # 是否启用Baggage
+      enabled: ${SLEUTH_BAGGAGE_ENABLED:true}
+      # Baggage字段列表
+      fields: ${SLEUTH_BAGGAGE_FIELDS:userId,sessionId,tenantId,traceId}
+      # 远程字段列表（传递到下游服务）
+      remote-fields: ${SLEUTH_REMOTE_FIELDS:userId,sessionId,tenantId}
+
+    # 链路ID配置
+    trace-id128: ${SLEUTH_TRACE_ID128:true}
+
+    # 是否支持连接服务中的span
+    support-join: ${SLEUTH_SUPPORT_JOIN:true}
+
+    # 异步任务追踪配置
+    async:
+      enabled: ${SLEUTH_ASYNC_ENABLED:true}
+      executor:
+        # 是否为异步任务生成span
+        bean-name: ${SLEUTH_ASYNC_EXECUTOR:taskExecutor}
+
+# ==================== Micrometer追踪指标配置 ====================
+management:
+  tracing:
+    # 启用追踪
+    enabled: ${MANAGEMENT_TRACING_ENABLED:true}
+    # 采样配置
+    sampling:
+      probability: ${MANAGEMENT_TRACING_SAMPLE_RATE:0.1}
+    # 包含模式
+    include:
+      pattern: ${MANAGEMENT_TRACING_INCLUDE_PATTERN:/*}
+    # 排除模式
+    exclude:
+      pattern: ${MANAGEMENT_TRACING_EXCLUDE_PATTERN:/actuator/**,/health/**,/info/**}
+
+  # 指标导出配置
+  metrics:
+    # 启用指标
+    export:
+      # Zipkin指标
+      zipkin:
+        enabled: ${METRICS_EXPORT_ZIPKIN_ENABLED:true}
+        # 步长
+        step: ${METRICS_EXPORT_ZIPKIN_STEP:30s}
+      # Prometheus指标
+      prometheus:
+        enabled: ${METRICS_EXPORT_PROMETHEUS_ENABLED:true}
+        step: ${METRICS_EXPORT_PROMETHEUS_STEP:30s}
+
+# ==================== 业务自定义追踪配置 ====================
+ioedream:
+  tracing:
+    # 业务链路追踪配置
+    business:
+      # 是否启用业务追踪
+      enabled: ${BUSINESS_TRACING_ENABLED:true}
+
+      # 关键业务操作追踪
+      critical-operations:
+        enabled: ${CRITICAL_OPERATIONS_TRACING_ENABLED:true}
+        # 采样率（关键操作使用更高采样率）
+        sample-rate: ${CRITICAL_OPERATIONS_SAMPLE_RATE:1.0}
+        # 关键操作列表
+        operations:
+          - CONSUME_TRANSACTION     # 消费交易
+          - ACCESS_CONTROL          # 门禁控制
+          - ATTENDANCE_CHECK_IN     # 考勤打卡
+          - USER_AUTHENTICATION     # 用户认证
+          - PERMISSION_CHECK        # 权限检查
+
+      # 慢操作追踪
+      slow-operations:
+        enabled: ${SLOW_OPERATIONS_TRACING_ENABLED:true}
+        # 慢操作阈值（毫秒）
+        threshold: ${SLOW_OPERATIONS_THRESHOLD:3000}
+        # 慢操作列表
+        operations:
+          - DATABASE_QUERY
+          - CACHE_OPERATION
+          - EXTERNAL_API_CALL
+          - FILE_OPERATION
+
+    # 错误追踪配置
+    error:
+      # 是否启用错误追踪
+      enabled: ${ERROR_TRACING_ENABLED:true}
+      # 错误标签配置
+      tags:
+        - exception-type: ${ERROR_TAG_EXCEPTION_TYPE:true}
+        - exception-message: ${ERROR_TAG_EXCEPTION_MESSAGE:true}
+        - stack-trace: ${ERROR_TAG_STACK_TRACE:false}
+
+    # 性能追踪配置
+    performance:
+      # 是否启用性能追踪
+      enabled: ${PERFORMANCE_TRACING_ENABLED:true}
+      # 性能标签配置
+      tags:
+        - method-name: ${PERFORMANCE_TAG_METHOD_NAME:true}
+        - execution-time: ${PERFORMANCE_TAG_EXECUTION_TIME:true}
+        - memory-usage: ${PERFORMANCE_TAG_MEMORY_USAGE:true}
+
+# ==================== 日志追踪配置 ====================
+logging:
+  # 日志级别配置
+  level:
+    # Sleuth相关日志级别
+    org.springframework.cloud.sleuth: ${SLEUTH_LOG_LEVEL:INFO}
+    # Zipkin相关日志级别
+    brave: ${BRAVE_LOG_LEVEL:INFO}
+    # 业务追踪日志级别
+    net.lab1024.sa.tracing: ${BUSINESS_TRACING_LOG_LEVEL:INFO}
+
+  # 日志模式配置
+  pattern:
+    # 控制台日志模式（包含链路追踪信息）
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] [%thread] %-5level %logger{36} - %msg%n"
+    # 文件日志模式
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] [%thread] %-5level %logger{36} - %msg%n"
+
+# ==================== 集成配置 ====================
+# Kafka配置（用于异步发送链路数据）
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      # 生产者配置
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # 重试配置
+      retries: ${KAFKA_PRODUCER_RETRIES:3}
+      # 批量发送配置
+      batch-size: ${KAFKA_PRODUCER_BATCH_SIZE:16384}
+      # 缓冲区配置
+      buffer-memory: ${KAFKA_PRODUCER_BUFFER_MEMORY:33554432}
+      # 压缩配置
+      compression-type: ${KAFKA_PRODUCER_COMPRESSION_TYPE:snappy}
+    consumer:
+      # 消费者配置
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:ioedream-tracing}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # 自动提交偏移量
+      enable-auto-commit: ${KAFKA_CONSUMER_ENABLE_AUTO_COMMIT:true}
+      # 会话超时
+      session-timeout: ${KAFKA_CONSUMER_SESSION_TIMEOUT:30000}
+
+# ==================== Redis缓存配置（用于链路追踪数据缓存） ====================
+spring:
+  redis:
+    # Redis缓存配置（用于链路追踪数据缓存）
+    host: ${REDIS_HOST:redis-prod}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 1  # 使用独立的数据库
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 4
+        min-idle: 1
+        max-wait: 2000
+
+# ==================== 环境特定配置 ====================
+---
+# 开发环境配置
+spring:
+  profiles: dev
+
+  sleuth:
+    sampler:
+      probability: 1.0  # 开发环境100%采样
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://localhost:9411}
+
+ioedream:
+  tracing:
+    business:
+      critical-operations:
+        sample-rate: 1.0  # 开发环境100%采样
+
+---
+# 测试环境配置
+spring:
+  profiles: test
+
+  sleuth:
+    sampler:
+      probability: 0.1  # 测试环境10%采样
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-test:9411}
+
+ioedream:
+  tracing:
+    business:
+      critical-operations:
+        sample-rate: 0.5  # 测试环境关键操作50%采样
+
+---
+# 生产环境配置
+spring:
+  profiles: prod
+
+  sleuth:
+    sampler:
+      probability: 0.01  # 生产环境1%采样
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      sender:
+        type: rabbit  # 生产环境使用RabbitMQ
+
+ioedream:
+  tracing:
+    business:
+      critical-operations:
+        sample-rate: 0.1  # 生产环境关键操作10%采样
+    performance:
+      enabled: false    # 生产环境关闭性能详细追踪（提升性能）

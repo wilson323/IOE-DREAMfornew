@@ -1,0 +1,512 @@
+# ============================================================
+# IOE-DREAM Consume Service 生产环境配置
+#
+# 基于统一模板 v1.0.0 - 企业级标准版
+# 严格遵循全局一致性，避免冗余配置
+#
+# @Author:    IOE-DREAM架构委员会
+# @Date:      2025-01-30
+# @Version:   v1.0.0-优化版
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8094}  # 消费服务专用端口
+  servlet:
+    context-path: /
+
+# ==================== Spring核心配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  application:
+    name: ioedream-consume-service
+
+  # ==================== 数据源配置（基于统一模板） ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 企业级优化连接池配置（统一标准）
+      initial-size: 15        # 消费服务适当增加初始连接
+      min-idle: 15
+      max-active: 60         # 适中的最大连接数
+      max-wait: 10000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置（统一安全配置）
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+        reset-enable: false
+
+      # 防SQL注入配置
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 500      # 消费服务快速SQL监控
+          log-slow-sql: true
+        wall:
+          enabled: true
+          config:
+            multi-statement-allow: false
+            delete-allow: false
+            drop-table-allow: false
+
+  # ==================== Redis配置（基于统一模板） ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 20        # 消费服务Redis连接池
+        max-idle: 10
+        min-idle: 3
+        max-wait: 3000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 缓存配置（消费服务专用） ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 180000  # 3分钟 - 消费数据快速变化
+      cache-null-values: false
+      key-prefix: consume_cache_
+
+  # ==================== 分布式追踪配置（基于统一模板） ====================
+  sleuth:
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      enabled: ${ZIPKIN_ENABLED:true}
+    sampler:
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}  # 生产环境10%采样率
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    default-executor-type: reuse
+    default-statement-timeout: 10
+    default-fetch-size: 1000
+
+  global-config:
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ioedream-consume-service
+      environment: prod
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      consume-service:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        sliding-window-type: count_based
+
+  ratelimiter:
+    instances:
+      consume-service:
+        limit-for-period: 500
+        limit-refresh-period: 60s
+        timeout-duration: 5s
+        register-health-indicator: true
+
+  retry:
+    instances:
+      consume-service:
+        max-attempts: 3
+        wait-duration: 1000ms
+        retry-exceptions:
+          - java.sql.SQLException
+          - java.net.SocketTimeoutException
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    net.lab1024.sa.consume: INFO
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# ==================== 消费服务特定配置 ====================
+consume:
+  payment:
+    # 支付配置
+    methods:
+      card:
+        enabled: ${CONSUME_CARD_ENABLED:true}
+        verify-luhn: ${CONSUME_CARD_VERIFY_LUHN:true}
+        track-history: ${CONSUME_CARD_TRACK_HISTORY:true}
+        card-blacklist: ${CARD_BLACKLIST_ENABLED:true}
+        contactless-limit: ${CONSUME_CONTACTLESS_LIMIT:300}
+
+      face:
+        enabled: ${CONSUME_FACE_ENABLED:true}
+        liveness-check: ${CONSUME_FACE_LIVENESS:true}
+        confidence-threshold: ${CONSUME_FACE_CONFIDENCE:0.85}
+        anti-spoofing: ${FACE_ANTI_SPOOFING:true}
+
+      qr-code:
+        enabled: ${CONSUME_QRCODE_ENABLED:true}
+        dynamic-refresh: ${CONSUME_QRCODE_DYNAMIC:true}
+        refresh-interval: ${CONSUME_QRCODE_REFRESH:30}
+        encryption: ${CONSUME_QRCODE_ENCRYPTION:AES}
+
+      mobile:
+        enabled: ${CONSUME_MOBILE_ENABLED:false}
+        payment-gateway: ${CONSUME_MOBILE_GATEWAY:wechat,alipay}
+
+    # 交易处理
+    transaction:
+      timeout: ${CONSUME_TRANSACTION_TIMEOUT:30}
+      max-retry: ${CONSUME_MAX_RETRY:3}
+      retry-interval: ${CONSUME_RETRY_INTERVAL:1000}
+      transaction-isolation: ${TRANSACTION_ISOLATION:READ_COMMITTED}
+      distributed-transaction: ${DISTRIBUTED_TRANSACTION_ENABLED:true}
+
+    # 离线消费
+    offline:
+      enabled: ${CONSUME_OFFLINE_ENABLED:true}
+      sync-interval: ${CONSUME_OFFLINE_SYNC:300}
+      max-offline-transactions: ${CONSUME_MAX_OFFLINE:1000}
+      conflict-resolution: ${CONSUME_CONFLICT_RESOLUTION:last-wins}
+      offline-storage: ${OFFLINE_STORAGE:redis}
+      data-retention-days: ${OFFLINE_DATA_RETENTION:7}
+
+    # 支付安全
+    security:
+      transaction-limit: ${TRANSACTION_LIMIT:10000}
+      daily-limit: ${DAILY_TRANSACTION_LIMIT:50000}
+      fraud-detection: ${FRAUD_DETECTION_ENABLED:true}
+      risk-scoring: ${RISK_SCORING_ENABLED:true}
+
+  account:
+    # 账户管理
+    types:
+      personal: ${CONSUME_PERSONAL_ACCOUNT:true}
+      corporate: ${CONSUME_CORPORATE_ACCOUNT:true}
+      visitor: ${CONSUME_VISITOR_ACCOUNT:true}
+      temp: ${TEMP_ACCOUNT_ENABLED:true}
+
+    balance:
+      min-balance: ${CONSUME_MIN_BALANCE:0}
+      overdraft-allowed: ${CONSUME_OVERDRAFT_ALLOWED:false}
+      overdraft-limit: ${CONSUME_OVERDRAFT_LIMIT:0}
+      negative-balance-warning: ${NEGATIVE_BALANCE_WARNING:true}
+
+    # 账户安全
+    security:
+      daily-limit: ${CONSUME_DAILY_LIMIT:10000}
+      single-transaction-limit: ${CONSUME_SINGLE_LIMIT:2000}
+      risk-score-threshold: ${CONSUME_RISK_THRESHOLD:80}
+      suspicious-pattern-detection: ${SUSPICIOUS_PATTERN_DETECTION:true}
+
+    # 冻结机制
+      freeze-conditions: ${FREEZE_CONDITIONS:daily-limit-exceeded,risk-score-high,suspicious-activity}
+      auto-unfreeze: ${AUTO_UNFREEZE:false}
+      manual-review-required: ${MANUAL_REVIEW_REQUIRED:true}
+
+  subsidy:
+    # 补贴管理
+    enabled: ${CONSUME_SUBSIDY_ENABLED:true}
+
+    # 补贴类型
+    types:
+      meal: ${CONSUME_MEAL_SUBSIDY:true}
+      transportation: ${CONSUME_TRANSPORT_SUBSIDY:false}
+      general: ${CONSUME_GENERAL_SUBSIDY:true}
+      special: ${SPECIAL_SUBSIDY_ENABLED:false}
+
+    # 发放策略
+    distribution:
+      auto-distribute: ${CONSUME_AUTO_DISTRIBUTE:true}
+      schedule: ${CONSUME_DISTRIBUTION_SCHEDULE:0 0 1 * *}  # 每月1号
+      calculation-method: ${CONSUME_CALCULATION_METHOD:attendance-based}
+      advance-payment: ${ADVANCE_SUBSIDY_PAYMENT:false}
+
+    # 补贴规则
+    rules:
+      meal-subsidy-amount: ${CONSUME_MEAL_AMOUNT:30}
+      max-meal-subsidy: ${CONSUME_MAX_MEAL:90}  # 每天3餐
+      carry-forward: ${CONSUME_CARRY_FORWARD:false}
+      expiry-days: ${CONSUME_EXPIRY_DAYS:30}
+      weekend-multiplier: ${WEEKEND_SUBSIDY_MULTIPLIER:1.0}
+      holiday-multiplier: ${HOLIDAY_SUBSIDY_MULTIPLIER:1.5}
+
+  pricing:
+    # 价格管理
+    dynamic-pricing:
+      enabled: ${CONSUME_DYNAMIC_PRICING:false}
+      time-based: ${CONSUME_TIME_BASED_PRICING:false}
+      demand-based: ${CONSUME_DEMAND_BASED_PRICING:false}
+      surge-pricing: ${SURGE_PRICING_ENABLED:false}
+
+    # 会员折扣
+    membership:
+      enabled: ${CONSUME_MEMBERSHIP_ENABLED:true}
+      levels: ${CONSUME_MEMBER_LEVELS:3}
+      discount-rates: ${CONSUME_DISCOUNT_RATES:0.95,0.9,0.85}
+      auto-upgrade: ${MEMBERSHIP_AUTO_UPGRADE:false}
+
+    # 区域定价
+    regional:
+      enabled: ${CONSUME_REGIONAL_PRICING:true}
+      price-matrix: ${CONSUME_PRICE_MATRIX:canteen,shop,vending}
+      location-based-pricing: ${LOCATION_BASED_PRICING:false}
+
+    # 促销管理
+    promotion:
+      enabled: ${PROMOTION_ENABLED:true}
+      discount-coupons: ${DISCOUNT_COUPONS_ENABLED:true}
+      happy-hour: ${HAPPY_HOUR_ENABLED:false}
+      bundle-deals: ${BUNDLE_DEALS_ENABLED:false}
+
+  device:
+    # 设备管理
+    pos:
+      connection-timeout: ${CONSUME_POS_TIMEOUT:10000}
+      max-transactions: ${CONSUME_POS_MAX_TX:1000}
+      auto-settlement: ${CONSUME_AUTO_SETTLEMENT:true}
+      settlement-time: ${SETTLEMENT_TIME:02:00}
+      hardware-redundancy: ${POS_HARDWARE_REDUNDANCY:false}
+
+    vending:
+      inventory-check: ${CONSUME_VENDING_INVENTORY:true}
+      payment-confirm-timeout: ${CONSUME_VENDING_TIMEOUT:30}
+      cashless-only: ${VENDING_CASHLESS_ONLY:true}
+      auto-refill-alert: ${VENDING_AUTO_REFILL_ALERT:true}
+
+    # 设备状态监控
+    monitoring:
+      heartbeat-interval: ${CONSUME_DEVICE_HEARTBEAT:60}
+      offline-threshold: ${CONSUME_OFFLINE_THRESHOLD:180}
+      performance-monitoring: ${DEVICE_PERFORMANCE_MONITORING:true}
+      maintenance-scheduling: ${MAINTENANCE_SCHEDULING_ENABLED:true}
+
+  reporting:
+    # 报表统计
+    real-time:
+      enabled: ${CONSUME_REAL_TIME_REPORTING:true}
+      update-interval: ${CONSUME_UPDATE_INTERVAL:30}
+      dashboard-refresh: ${DASHBOARD_REFRESH_INTERVAL:10}
+
+    batch:
+      daily-report: ${CONSUME_DAILY_REPORT:true}
+      weekly-summary: ${CONSUME_WEEKLY_SUMMARY:true}
+      monthly-analysis: ${CONSUME_MONTHLY_ANALYSIS:true}
+      yearly-summary: ${YEARLY_SUMMARY_ENABLED:true}
+
+    # 统计维度
+    dimensions:
+      time-based: ${CONSUME_TIME_ANALYSIS:true}
+      user-based: ${CONSUME_USER_ANALYSIS:true}
+      location-based: ${CONSUME_LOCATION_ANALYSIS:true}
+      product-based: ${CONSUME_PRODUCT_ANALYSIS:true}
+      payment-method: ${PAYMENT_METHOD_ANALYSIS:true}
+
+    # 报表格式
+    formats:
+      excel: ${REPORT_EXCEL_ENABLED:true}
+      pdf: ${REPORT_PDF_ENABLED:true}
+      csv: ${REPORT_CSV_ENABLED:true}
+      json: ${REPORT_JSON_ENABLED:true}
+
+  integration:
+    # 第三方集成
+    payment-gateway:
+      wechat:
+        enabled: ${CONSUME_WECHAT_PAY_ENABLED:false}
+        app-id: ${WECHAT_APP_ID:}
+        mch-id: ${WECHAT_MCH_ID:}
+        api-key: ${WECHAT_API_KEY:ENC(AES256:encrypted_wechat_key)}
+        cert-path: ${WECHAT_CERT_PATH:}
+        callback-url: ${WECHAT_CALLBACK_URL:}
+
+      alipay:
+        enabled: ${CONSUME_ALIPAY_ENABLED:false}
+        app-id: ${ALIPAY_APP_ID:}
+        private-key: ${ALIPAY_PRIVATE_KEY:ENC(AES256:encrypted_alipay_private_key)}
+        public-key: ${ALIPAY_PUBLIC_KEY:ENC(AES256:encrypted_alipay_public_key)}
+        gateway-url: ${ALIPAY_GATEWAY_URL:}
+        callback-url: ${ALIPAY_CALLBACK_URL:}
+
+    # 银行集成
+    bank:
+      enabled: ${BANK_INTEGRATION_ENABLED:false}
+      bank-api-url: ${BANK_API_URL:}
+      merchant-id: ${BANK_MERCHANT_ID:}
+      api-key: ${BANK_API_KEY:ENC(AES256:encrypted_bank_key)}
+      settlement-account: ${SETTLEMENT_ACCOUNT:}
+
+    # ERP集成
+    erp:
+      enabled: ${CONSUME_ERP_INTEGRATION:false}
+      sync-frequency: ${CONSUME_ERP_SYNC:3600}
+      data-mapping: ${CONSUME_ERP_MAPPING:json}
+      inventory-sync: ${INVENTORY_SYNC_ENABLED:true}
+
+  cache:
+    # 缓存配置
+    account-balance:
+      ttl: ${CONSUME_BALANCE_TTL:300}           # 5分钟
+      max-size: ${CONSUME_BALANCE_MAX_SIZE:50000}
+
+    product-price:
+      ttl: ${CONSUME_PRICE_TTL:600}            # 10分钟
+      max-size: ${CONSUME_PRICE_MAX_SIZE:10000}
+
+    transaction-records:
+      ttl: ${CONSUME_TRANSACTION_TTL:1800}     # 30分钟
+      max-size: ${CONSUME_TRANSACTION_MAX_SIZE:100000}
+
+    user-preferences:
+      ttl: ${USER_PREFERENCES_TTL:3600}        # 1小时
+      max-size: ${USER_PREFERENCES_MAX_SIZE:20000}
+
+    subsidy-rules:
+      ttl: ${SUBSIDY_RULES_TTL:7200}           # 2小时
+      max-size: ${SUBSIDY_RULES_MAX_SIZE:1000}
+
+  notification:
+    # 通知配置
+    low-balance:
+      enabled: ${CONSUME_LOW_BALANCE_NOTIFICATION:true}
+      threshold: ${CONSUME_LOW_BALANCE_THRESHOLD:50}
+      channels: ${CONSUME_NOTIFICATION_CHANNELS:sms,email,push}
+      frequency-limit: ${LOW_BALANCE_FREQ_LIMIT:24h}
+
+    transaction-alert:
+      enabled: ${CONSUME_TX_ALERT_ENABLED:true}
+      large-amount-threshold: ${CONSUME_LARGE_AMOUNT:500}
+      suspicious-pattern: ${CONSUME_SUSPICIOUS_PATTERN:true}
+      immediate-alert: ${SUSPICIOUS_IMMEDIATE_ALERT:true}
+
+    settlement:
+      enabled: ${CONSUME_SETTLEMENT_NOTIFICATION:true}
+      daily-summary: ${CONSUME_DAILY_SUMMARY:true}
+      failure-alert: ${CONSUME_FAILURE_ALERT:true}
+      reconciliation-report: ${RECONCILIATION_REPORT_ENABLED:true}
+
+    # 通知渠道配置
+    channels:
+      email:
+        enabled: ${EMAIL_NOTIFICATION_ENABLED:true}
+        smtp-host: ${SMTP_HOST:smtp.example.com}
+        smtp-port: ${SMTP_PORT:587}
+        username: ${SMTP_USERNAME:ENC(AES256:encrypted_email_username)}
+        password: ${SMTP_PASSWORD:ENC(AES256:encrypted_email_password)}
+        from: ${EMAIL_FROM:noreply@ioedream.com}
+
+      sms:
+        enabled: ${SMS_NOTIFICATION_ENABLED:true}
+        provider: ${SMS_PROVIDER:aliyun}
+        access-key: ${SMS_ACCESS_KEY:ENC(AES256:encrypted_sms_key)}
+        secret-key: ${SMS_SECRET_KEY:ENC(AES256:encrypted_sms_secret)}
+
+      push:
+        enabled: ${PUSH_NOTIFICATION_ENABLED:true}
+        firebase-key: ${FIREBASE_KEY:ENC(AES256:encrypted_firebase_key)}
+        apns-key: ${APNS_KEY:ENC(AES256:encrypted_apns_key)}
+
+  performance:
+    # 性能优化
+    high-concurrency:
+      max-concurrent-transactions: ${MAX_CONCURRENT_TRANSACTIONS:1000}
+      transaction-queue-size: ${TRANSACTION_QUEUE_SIZE:5000}
+      async-processing: ${ASYNC_PROCESSING_ENABLED:true}
+      batch-processing: ${BATCH_PROCESSING_ENABLED:true}
+
+    # 数据库优化
+    database:
+      connection-pool-optimization: ${CONNECTION_POOL_OPTIMIZATION:true}
+      query-optimization: ${QUERY_OPTIMIZATION_ENABLED:true}
+      indexing-strategy: ${INDEXING_STRATEGY:adaptive}
+      partitioning-enabled: ${PARTITIONING_ENABLED:false}
+
+    # 事务优化
+    transaction:
+      batch-operations: ${BATCH_OPERATIONS_ENABLED:true}
+      batch-size: ${TRANSACTION_BATCH_SIZE:100}
+      isolation-level: ${TRANSACTION_ISOLATION_LEVEL:READ_COMMITTED}
+      timeout-optimization: ${TRANSACTION_TIMEOUT_OPTIMIZATION:true}
+
+  compliance:
+    # 合规管理
+    financial-compliance:
+      enabled: ${FINANCIAL_COMPLIANCE_ENABLED:true}
+      audit-log: ${FINANCIAL_AUDIT_LOG:true}
+      transaction-tracking: ${TRANSACTION_TRACKING_ENABLED:true}
+      regulatory-reporting: ${REGULATORY_REPORTING_ENABLED:true}
+
+    # 数据保护
+    data-protection:
+      encryption-at-rest: ${ENCRYPTION_AT_REST_ENABLED:true}
+      encryption-in-transit: ${ENCRYPTION_IN_TRANSIT_ENABLED:true}
+      pii-protection: ${PII_PROTECTION_ENABLED:true}
+      data-retention-policy: ${DATA_RETENTION_POLICY:}
+
+    # 反洗钱
+    aml:
+      enabled: ${ANTI_MONEY_LAUNDERING_ENABLED:true}
+      transaction-monitoring: ${AML_TRANSACTION_MONITORING:true}
+      suspicious-activity-report: ${SAR_ENABLED:true}
+      reporting-threshold: ${AML_REPORTING_THRESHOLD:10000}

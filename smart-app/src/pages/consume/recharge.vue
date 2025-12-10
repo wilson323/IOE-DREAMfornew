@@ -83,167 +83,150 @@
   </view>
 </template>
 
-<script>
-import { ref, reactive, computed, onMounted } from 'vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue'
 import consumeApi from '@/api/business/consume/consume-api.js'
 import { useUserStore } from '@/store/modules/system/user'
 
-export default {
-  name: 'ConsumeRecharge',
-  
-  setup() {
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
-    const userStore = useUserStore()
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+const userStore = useUserStore()
 
-    // 页面状态
-    const recharging = ref(false)
-    const accountBalance = ref(0)
+// 页面状态
+const recharging = ref(false)
+const accountBalance = ref(0)
 
-    // 充值金额
-    const rechargeAmounts = [50, 100, 200, 500, 1000, 2000]
-    const selectedAmount = ref(0)
-    const customAmount = ref('')
+// 充值金额
+const rechargeAmounts = [50, 100, 200, 500, 1000, 2000]
+const selectedAmount = ref(0)
+const customAmount = ref('')
 
-    // 支付方式
-    const paymentMethods = [
-      { code: 'wechat', name: '微信支付', icon: '💚' },
-      { code: 'alipay', name: '支付宝', icon: '💙' },
-      { code: 'bank', name: '银行卡', icon: '💳' }
-    ]
-    const selectedMethod = ref('wechat')
+// 支付方式
+const paymentMethods = [
+  { code: 'wechat', name: '微信支付', icon: '💚' },
+  { code: 'alipay', name: '支付宝', icon: '💙' },
+  { code: 'bank', name: '银行卡', icon: '💳' }
+]
+const selectedMethod = ref('wechat')
 
-    // 计算最终金额
-    const finalAmount = computed(() => {
-      return customAmount.value || selectedAmount.value || 0
-    })
+// 计算最终金额
+const finalAmount = computed(() => {
+  return customAmount.value || selectedAmount.value || 0
+})
 
-    // 是否可以充值
-    const canRecharge = computed(() => {
-      const amount = Number(finalAmount.value)
-      return amount >= 10 && amount <= 5000
-    })
+// 是否可以充值
+const canRecharge = computed(() => {
+  const amount = Number(finalAmount.value)
+  return amount >= 10 && amount <= 5000
+})
 
-    onMounted(() => {
-      init()
-    })
+// 页面生命周期
+onMounted(() => {
+  init()
+})
 
-    const init = async () => {
-      const userId = userStore.userId || 1
-      await loadAccountInfo(userId)
+onShow(() => {
+  // 页面显示时可以刷新余额
+  const userId = userStore.userId || userStore.employeeId || 1
+  loadAccountInfo(userId)
+})
+
+// 方法实现
+const init = async () => {
+  const userId = userStore.userId || userStore.employeeId || 1
+  await loadAccountInfo(userId)
+}
+
+const loadAccountInfo = async (userId) => {
+  try {
+    const res = await consumeApi.getAccountBalance(userId)
+    if (res.code === 1 && res.data) {
+      accountBalance.value = res.data.balance || res.data || 0
     }
-
-    const loadAccountInfo = async (userId) => {
-      try {
-        const res = await consumeApi.getAccountBalance(userId)
-        if (res.code === 1 && res.data) {
-          accountBalance.value = res.data.balance || res.data || 0
-        }
-      } catch (error) {
-        console.error('加载账户信息失败:', error)
-      }
-    }
-
-    const selectAmount = (amount) => {
-      selectedAmount.value = selectedAmount.value === amount ? 0 : amount
-      customAmount.value = ''
-      uni.vibrateShort()
-    }
-
-    const onCustomInput = () => {
-      selectedAmount.value = 0
-    }
-
-    const selectMethod = (method) => {
-      selectedMethod.value = method
-      uni.vibrateShort()
-    }
-
-    const confirmRecharge = async () => {
-      if (!canRecharge.value) return
-
-      const amount = Number(finalAmount.value)
-      
-      // 二次确认
-      const confirmed = await showConfirm(`确认充值 ¥${formatAmount(amount)}？`)
-      if (!confirmed) return
-
-      recharging.value = true
-
-      try {
-        // 调用充值API（这里应该集成实际的支付SDK）
-        const res = await consumeApi.accountApi.recharge({
-          userId: userStore.userId,
-          amount,
-          paymentMethod: selectedMethod.value
-        })
-
-        if (res.code === 1) {
-          // 更新余额
-          accountBalance.value += amount
-          
-          // 显示成功
-          uni.showToast({ title: '充值成功', icon: 'success' })
-          uni.vibrateLong()
-          
-          // 2秒后返回
-          setTimeout(() => {
-            uni.navigateBack()
-          }, 2000)
-        } else {
-          uni.showToast({ title: res.message || '充值失败', icon: 'none' })
-        }
-      } catch (error) {
-        console.error('充值失败:', error)
-        uni.showToast({ title: '充值失败', icon: 'none' })
-      } finally {
-        recharging.value = false
-      }
-    }
-
-    const showConfirm = (content) => {
-      return new Promise((resolve) => {
-        uni.showModal({
-          title: '确认充值',
-          content,
-          success: (res) => resolve(res.confirm)
-        })
-      })
-    }
-
-    const formatAmount = (amount) => {
-      if (!amount && amount !== 0) return '0.00'
-      return Number(amount).toFixed(2)
-    }
-
-    const goToRechargeRecord = () => {
-      uni.navigateTo({ url: '/pages/consume/transaction?type=recharge' })
-    }
-
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    return {
-      statusBarHeight,
-      recharging,
-      accountBalance,
-      rechargeAmounts,
-      selectedAmount,
-      customAmount,
-      paymentMethods,
-      selectedMethod,
-      finalAmount,
-      canRecharge,
-      selectAmount,
-      onCustomInput,
-      selectMethod,
-      confirmRecharge,
-      formatAmount,
-      goToRechargeRecord,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载账户信息失败:', error)
   }
+}
+
+const selectAmount = (amount) => {
+  selectedAmount.value = selectedAmount.value === amount ? 0 : amount
+  customAmount.value = ''
+  uni.vibrateShort()
+}
+
+const onCustomInput = () => {
+  selectedAmount.value = 0
+}
+
+const selectMethod = (method) => {
+  selectedMethod.value = method
+  uni.vibrateShort()
+}
+
+const confirmRecharge = async () => {
+  if (!canRecharge.value) return
+
+  const amount = Number(finalAmount.value)
+
+  // 二次确认
+  const confirmed = await showConfirm(`确认充值 ¥${formatAmount(amount)}？`)
+  if (!confirmed) return
+
+  recharging.value = true
+
+  try {
+    // 调用充值API（这里应该集成实际的支付SDK）
+    const res = await consumeApi.accountApi.recharge({
+      userId: userStore.userId || userStore.employeeId,
+      amount,
+      paymentMethod: selectedMethod.value
+    })
+
+    if (res.code === 1) {
+      // 更新余额
+      accountBalance.value += amount
+
+      // 显示成功
+      uni.showToast({ title: '充值成功', icon: 'success' })
+      uni.vibrateLong()
+
+      // 2秒后返回
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 2000)
+    } else {
+      uni.showToast({ title: res.message || '充值失败', icon: 'none' })
+    }
+  } catch (error) {
+    console.error('充值失败:', error)
+    uni.showToast({ title: '充值失败', icon: 'none' })
+  } finally {
+    recharging.value = false
+  }
+}
+
+const showConfirm = (content) => {
+  return new Promise((resolve) => {
+    uni.showModal({
+      title: '确认充值',
+      content,
+      success: (res) => resolve(res.confirm)
+    })
+  })
+}
+
+const formatAmount = (amount) => {
+  if (!amount && amount !== 0) return '0.00'
+  return Number(amount).toFixed(2)
+}
+
+const goToRechargeRecord = () => {
+  uni.navigateTo({ url: '/pages/consume/transaction?type=recharge' })
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

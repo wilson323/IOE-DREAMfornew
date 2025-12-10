@@ -25,8 +25,15 @@ import net.lab1024.sa.common.entity.BaseEntity;
 @TableName("t_rbac_resource")
 public class RbacResourceEntity extends BaseEntity {
 
-    @TableId(type = IdType.AUTO)
-    private Long resourceId;
+    /**
+     * 资源ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列resource_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
+     */
+    @TableId(value = "resource_id", type = IdType.AUTO)
+    private Long id;
 
     private String resourceCode;
     private String resourceName;

@@ -48,119 +48,107 @@
   </view>
 </template>
 
-<script>
-import { ref, reactive, onMounted } from 'vue'
+<script setup>
+import { ref, onMounted } from 'vue'
 import visitorApi from '@/api/business/visitor/visitor-api.js'
 
-export default {
-  name: 'VisitorCheckout',
-  setup() {
-    const appointmentDetail = ref(null)
-    const checkingOut = ref(false)
+// 响应式数据
+const appointmentDetail = ref(null)
+const checkingOut = ref(false)
 
-    // 加载预约详情
-    const loadAppointmentDetail = async (appointmentId) => {
-      try {
-        const result = await visitorApi.getAppointmentDetail(appointmentId)
-        if (result.success && result.data) {
-          appointmentDetail.value = result.data
-        }
-      } catch (error) {
-        console.error('加载预约详情失败:', error)
-      }
-    }
-
-    // 签退
-    const handleCheckout = async () => {
-      if (!appointmentDetail.value) {
-        uni.showToast({ title: '预约信息不存在', icon: 'none' })
-        return
-      }
-
-      uni.showModal({
-        title: '确认签退',
-        content: '确定要签退吗？',
-        success: async (res) => {
-          if (res.confirm) {
-            checkingOut.value = true
-            try {
-              const result = await visitorApi.checkout(appointmentDetail.value.appointmentId)
-              if (result.success) {
-                uni.showToast({ title: '签退成功', icon: 'success' })
-                setTimeout(() => {
-                  uni.navigateBack()
-                }, 1500)
-              } else {
-                uni.showToast({ title: result.msg || '签退失败', icon: 'none' })
-              }
-            } catch (error) {
-              uni.showToast({ title: '签退失败', icon: 'none' })
-            } finally {
-              checkingOut.value = false
-            }
-          }
-        }
-      })
-    }
-
-    // 计算停留时长
-    const calculateDuration = () => {
-      if (!appointmentDetail.value || !appointmentDetail.value.checkInTime) {
-        return '-'
-      }
-      const checkInTime = new Date(appointmentDetail.value.checkInTime)
-      const now = new Date()
-      const minutes = Math.floor((now - checkInTime) / 1000 / 60)
-      const hours = Math.floor(minutes / 60)
-      const mins = minutes % 60
-      return `${hours}小时${mins}分钟`
-    }
-
-    // 格式化日期时间
-    const formatDateTime = (datetime) => {
-      if (!datetime) return '-'
-      const date = new Date(datetime)
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      return `${month}-${day} ${hours}:${minutes}`
-    }
-
-    // 获取状态文本
-    const getStatusText = (status) => {
-      const textMap = {
-        'CHECKED_IN': '已签到',
-        'CHECKED_OUT': '已签退'
-      }
-      return textMap[status] || status
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 初始化
-    onMounted(() => {
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
-      const appointmentId = currentPage.options.id
-      if (appointmentId) {
-        loadAppointmentDetail(appointmentId)
-      }
-    })
-
-    return {
-      appointmentDetail,
-      checkingOut,
-      handleCheckout,
-      calculateDuration,
-      formatDateTime,
-      getStatusText,
-      goBack
-    }
+// 页面生命周期
+onMounted(() => {
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  const appointmentId = currentPage.options.id
+  if (appointmentId) {
+    loadAppointmentDetail(appointmentId)
   }
+})
+
+onShow(() => {
+  // 页面显示时可以刷新数据
+  if (appointmentDetail.value && appointmentDetail.value.appointmentId) {
+    loadAppointmentDetail(appointmentDetail.value.appointmentId)
+  }
+})
+
+// 方法实现
+const loadAppointmentDetail = async (appointmentId) => {
+  try {
+    const result = await visitorApi.getAppointmentDetail(appointmentId)
+    if (result.success && result.data) {
+      appointmentDetail.value = result.data
+    }
+  } catch (error) {
+    console.error('加载预约详情失败:', error)
+  }
+}
+
+const handleCheckout = async () => {
+  if (!appointmentDetail.value) {
+    uni.showToast({ title: '预约信息不存在', icon: 'none' })
+    return
+  }
+
+  uni.showModal({
+    title: '确认签退',
+    content: '确定要签退吗？',
+    success: async (res) => {
+      if (res.confirm) {
+        checkingOut.value = true
+        try {
+          const result = await visitorApi.checkout(appointmentDetail.value.appointmentId)
+          if (result.success) {
+            uni.showToast({ title: '签退成功', icon: 'success' })
+            setTimeout(() => {
+              uni.navigateBack()
+            }, 1500)
+          } else {
+            uni.showToast({ title: result.msg || '签退失败', icon: 'none' })
+          }
+        } catch (error) {
+          uni.showToast({ title: '签退失败', icon: 'none' })
+        } finally {
+          checkingOut.value = false
+        }
+      }
+    }
+  })
+}
+
+const calculateDuration = () => {
+  if (!appointmentDetail.value || !appointmentDetail.value.checkInTime) {
+    return '-'
+  }
+  const checkInTime = new Date(appointmentDetail.value.checkInTime)
+  const now = new Date()
+  const minutes = Math.floor((now - checkInTime) / 1000 / 60)
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  return `${hours}小时${mins}分钟`
+}
+
+const formatDateTime = (datetime) => {
+  if (!datetime) return '-'
+  const date = new Date(datetime)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${month}-${day} ${hours}:${minutes}`
+}
+
+const getStatusText = (status) => {
+  const textMap = {
+    'CHECKED_IN': '已签到',
+    'CHECKED_OUT': '已签退'
+  }
+  return textMap[status] || status
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

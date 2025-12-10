@@ -281,7 +281,7 @@ public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
             return false;
         }
 
-        String parentId = targetArea.getParentId();
+        String parentId = targetArea.getParentId() != null ? String.valueOf(targetArea.getParentId()) : null;
         if (parentId == null) {
             return false;
         }

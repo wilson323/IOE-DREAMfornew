@@ -1,35 +1,32 @@
 package net.lab1024.sa.common.notification.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.notification.domain.form.NotificationConfigAddForm;
+import net.lab1024.sa.common.notification.domain.form.NotificationConfigQueryForm;
+import net.lab1024.sa.common.notification.domain.form.NotificationConfigUpdateForm;
 import net.lab1024.sa.common.notification.domain.vo.NotificationConfigVO;
 import net.lab1024.sa.common.notification.service.NotificationConfigService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 /**
- * 通知配置控制器
+ * 通知配置管理控制器
  * <p>
- * 提供通知配置管理的REST API
+ * 提供通知配置的CRUD操作API接口
  * 严格遵循CLAUDE.md规范:
- * - 使用@RestController注解
- * - 使用@Resource依赖注入
- * - 使用@Valid参数验证
- * - 返回统一ResponseDTO格式
+ * - 使用@RestController注解标识控制器
+ * - 使用@Resource依赖注入（禁止@Autowired）
+ * - 使用@Valid进行参数验证
  * - 完整的Swagger文档注解
+ * - RESTful API设计规范
  * </p>
  *
  * @author IOE-DREAM Team
@@ -39,103 +36,182 @@ import net.lab1024.sa.common.notification.service.NotificationConfigService;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/notification/config")
-@Tag(name = "通知配置管理", description = "通知渠道配置管理接口")
+@Tag(name = "通知配置管理", description = "通知配置管理相关接口，支持管理员通过界面配置通知渠道启用状态")
+@Validated
 public class NotificationConfigController {
 
     @Resource
     private NotificationConfigService notificationConfigService;
 
     /**
-     * 根据配置键获取配置值
+     * 新增通知配置
      * <p>
-     * 自动解密加密配置
+     * 功能说明：
+     * 1. 验证配置键唯一性
+     * 2. 如果isEncrypted=1，加密配置值
+     * 3. 保存到数据库
+     * 4. 清除相关缓存
+     * 5. 触发AlertManager配置刷新（如果是告警配置）
+     * </p>
+     *
+     * @param form 新增表单
+     * @return 响应结果（包含配置ID）
+     */
+    @PostMapping
+    @Operation(summary = "新增通知配置", description = "新增通知配置，支持加密存储敏感信息")
+    public ResponseDTO<Long> add(@RequestBody @Valid NotificationConfigAddForm form) {
+        log.info("[通知配置管理] 新增通知配置，configKey={}", form.getConfigKey());
+        return notificationConfigService.add(form);
+    }
+
+    /**
+     * 更新通知配置
+     * <p>
+     * 功能说明：
+     * 1. 验证配置是否存在
+     * 2. 如果isEncrypted=1，加密配置值
+     * 3. 更新到数据库
+     * 4. 清除相关缓存
+     * 5. 触发AlertManager配置刷新（如果是告警配置）
+     * </p>
+     *
+     * @param form 更新表单
+     * @return 响应结果
+     */
+    @PutMapping
+    @Operation(summary = "更新通知配置", description = "更新通知配置，支持部分字段更新")
+    public ResponseDTO<Void> update(@RequestBody @Valid NotificationConfigUpdateForm form) {
+        log.info("[通知配置管理] 更新通知配置，configId={}", form.getConfigId());
+        return notificationConfigService.update(form);
+    }
+
+    /**
+     * 删除通知配置（软删除）
+     * <p>
+     * 功能说明：
+     * 1. 验证配置是否存在
+     * 2. 执行软删除（deleted_flag=1）
+     * 3. 清除相关缓存
+     * 4. 触发AlertManager配置刷新（如果是告警配置）
+     * </p>
+     *
+     * @param configId 配置ID
+     * @return 响应结果
+     */
+    @DeleteMapping("/{configId}")
+    @Operation(summary = "删除通知配置", description = "删除通知配置（软删除）")
+    public ResponseDTO<Void> delete(
+            @Parameter(description = "配置ID", required = true)
+            @PathVariable @NotNull(message = "配置ID不能为空") Long configId) {
+        log.info("[通知配置管理] 删除通知配置，configId={}", configId);
+        return notificationConfigService.delete(configId);
+    }
+
+    /**
+     * 根据ID查询通知配置
+     * <p>
+     * 功能说明：
+     * 1. 从数据库查询配置
+     * 2. 如果isEncrypted=1，解密配置值
+     * 3. 敏感信息脱敏处理
+     * 4. 转换为VO返回
+     * </p>
+     *
+     * @param configId 配置ID
+     * @return 响应结果
+     */
+    @GetMapping("/{configId}")
+    @Operation(summary = "根据ID查询通知配置", description = "根据配置ID查询通知配置详情")
+    public ResponseDTO<NotificationConfigVO> getById(
+            @Parameter(description = "配置ID", required = true)
+            @PathVariable @NotNull(message = "配置ID不能为空") Long configId) {
+        log.debug("[通知配置管理] 根据ID查询通知配置，configId={}", configId);
+        return notificationConfigService.getById(configId);
+    }
+
+    /**
+     * 根据配置键查询通知配置
+     * <p>
+     * 功能说明：
+     * 1. 从缓存或数据库查询配置
+     * 2. 如果isEncrypted=1，解密配置值
+     * 3. 敏感信息脱敏处理
+     * 4. 转换为VO返回
      * </p>
      *
      * @param configKey 配置键
-     * @return 配置值（已解密）
+     * @return 响应结果
      */
-    @GetMapping("/value/{configKey}")
-    @Operation(summary = "获取配置值", description = "根据配置键获取配置值，自动解密加密配置")
-    public ResponseDTO<String> getConfigValue(@PathVariable String configKey) {
-        log.info("[通知配置] 获取配置值，configKey：{}", configKey);
-        String value = notificationConfigService.getConfigValue(configKey);
-        return ResponseDTO.ok(value);
+    @GetMapping("/key/{configKey}")
+    @Operation(summary = "根据配置键查询通知配置", description = "根据配置键查询通知配置详情")
+    public ResponseDTO<NotificationConfigVO> getByConfigKey(
+            @Parameter(description = "配置键", required = true)
+            @PathVariable @NotNull(message = "配置键不能为空") String configKey) {
+        log.debug("[通知配置管理] 根据配置键查询通知配置，configKey={}", configKey);
+        return notificationConfigService.getByConfigKey(configKey);
     }
 
     /**
-     * 根据配置类型获取所有配置
+     * 分页查询通知配置
+     * <p>
+     * 功能说明：
+     * 1. 根据查询条件构建查询条件
+     * 2. 执行分页查询
+     * 3. 如果isEncrypted=1，解密配置值
+     * 4. 敏感信息脱敏处理
+     * 5. 转换为VO列表返回
+     * </p>
      *
-     * @param configType 配置类型
-     * @return 配置Map
+     * @param form 查询表单
+     * @return 响应结果
      */
-    @GetMapping("/type/{configType}")
-    @Operation(summary = "获取配置列表（按类型）", description = "根据配置类型获取所有启用的配置")
-    public ResponseDTO<Map<String, String>> getConfigsByType(@PathVariable String configType) {
-        log.info("[通知配置] 获取配置列表（按类型），configType：{}", configType);
-        Map<String, String> configs = notificationConfigService.getConfigsByType(configType);
-        return ResponseDTO.ok(configs);
+    @GetMapping("/page")
+    @Operation(summary = "分页查询通知配置", description = "分页查询通知配置列表，支持按配置键、配置类型、状态筛选")
+    public ResponseDTO<PageResult<NotificationConfigVO>> queryPage(@Valid NotificationConfigQueryForm form) {
+        log.info("[通知配置管理] 分页查询通知配置，pageNum={}, pageSize={}", form.getPageNum(), form.getPageSize());
+        return notificationConfigService.queryPage(form);
     }
 
     /**
-     * 更新配置值
+     * 更新配置状态（启用/禁用）
+     * <p>
+     * 功能说明：
+     * 1. 验证配置是否存在
+     * 2. 更新配置状态
+     * 3. 清除相关缓存
+     * 4. 触发AlertManager配置刷新（如果是告警配置）
+     * </p>
      *
-     * @param configKey   配置键
-     * @param configValue 配置值
-     * @return 是否更新成功
+     * @param configId 配置ID
+     * @param status   状态（1-启用 2-禁用）
+     * @return 响应结果
      */
-    @PutMapping("/value/{configKey}")
-    @Operation(summary = "更新配置值", description = "更新指定配置的值，支持加密配置")
-    public ResponseDTO<Boolean> updateConfigValue(
-            @PathVariable String configKey,
-            @Valid @RequestBody Map<String, String> request) {
-        log.info("[通知配置] 更新配置值，configKey：{}", configKey);
-        String configValue = request.get("configValue");
-        boolean result = notificationConfigService.updateConfigValue(configKey, configValue);
-        return ResponseDTO.ok(result);
+    @PutMapping("/{configId}/status")
+    @Operation(summary = "更新配置状态", description = "启用或禁用通知配置，管理员可通过此接口控制通知渠道的启用状态")
+    public ResponseDTO<Void> updateStatus(
+            @Parameter(description = "配置ID", required = true)
+            @PathVariable @NotNull(message = "配置ID不能为空") Long configId,
+            @Parameter(description = "状态：1-启用 2-禁用", required = true)
+            @RequestParam @NotNull(message = "状态不能为空") Integer status) {
+        log.info("[通知配置管理] 更新配置状态，configId={}, status={}", configId, status);
+        return notificationConfigService.updateStatus(configId, status);
     }
 
     /**
-     * 更新配置状态
+     * 刷新AlertManager配置
+     * <p>
+     * 功能说明：
+     * 1. 调用AlertManager的refreshAlertConfig方法
+     * 2. 使配置修改立即生效，无需重启服务
+     * </p>
      *
-     * @param configKey 配置键
-     * @param status    状态（1-启用 2-禁用）
-     * @return 是否更新成功
+     * @return 响应结果
      */
-    @PutMapping("/status/{configKey}")
-    @Operation(summary = "更新配置状态", description = "启用或禁用指定配置")
-    public ResponseDTO<Boolean> updateConfigStatus(
-            @PathVariable String configKey,
-            @RequestParam Integer status) {
-        log.info("[通知配置] 更新配置状态，configKey：{}，status：{}", configKey, status);
-        boolean result = notificationConfigService.updateConfigStatus(configKey, status);
-        return ResponseDTO.ok(result);
-    }
-
-    /**
-     * 获取配置列表（按类型）
-     *
-     * @param configType 配置类型
-     * @return 配置列表
-     */
-    @GetMapping("/list/{configType}")
-    @Operation(summary = "获取配置列表", description = "根据配置类型获取配置列表（包含详细信息）")
-    public ResponseDTO<List<NotificationConfigVO>> getConfigListByType(@PathVariable String configType) {
-        log.info("[通知配置] 获取配置列表，configType：{}", configType);
-        List<NotificationConfigVO> configs = notificationConfigService.getConfigListByType(configType);
-        return ResponseDTO.ok(configs);
-    }
-
-    /**
-     * 清除配置缓存
-     *
-     * @param configKey 配置键
-     * @return 操作结果
-     */
-    @PutMapping("/cache/evict/{configKey}")
-    @Operation(summary = "清除配置缓存", description = "清除指定配置的缓存，用于配置热更新")
-    public ResponseDTO<Void> evictCache(@PathVariable String configKey) {
-        log.info("[通知配置] 清除配置缓存，configKey：{}", configKey);
-        notificationConfigService.evictCache(configKey);
-        return ResponseDTO.ok();
+    @PostMapping("/refresh-alert")
+    @Operation(summary = "刷新AlertManager配置", description = "刷新AlertManager配置，使配置修改立即生效，无需重启服务")
+    public ResponseDTO<Void> refreshAlertConfig() {
+        log.info("[通知配置管理] 刷新AlertManager配置");
+        return notificationConfigService.refreshAlertConfig();
     }
 }
+

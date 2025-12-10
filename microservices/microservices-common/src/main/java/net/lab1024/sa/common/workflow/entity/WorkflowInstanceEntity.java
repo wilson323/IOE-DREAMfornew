@@ -32,9 +32,13 @@ public class WorkflowInstanceEntity extends BaseEntity {
 
     /**
      * 实例ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列instance_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
     @TableId(value = "instance_id", type = IdType.AUTO)
-    private Long instanceId;
+    private Long id;
 
     /**
      * 流程定义ID

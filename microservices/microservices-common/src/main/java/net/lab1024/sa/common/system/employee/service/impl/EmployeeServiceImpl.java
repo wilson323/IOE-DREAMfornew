@@ -172,7 +172,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             int result = employeeDao.insert(entity);
 
             if (result > 0) {
-                log.info("员工新增成功，员工ID：{}，姓名：{}", entity.getEmployeeId(), entity.getEmployeeName());
+                log.info("员工新增成功，员工ID：{}，姓名：{}", entity.getId(), entity.getEmployeeName());
             }
 
             return result > 0;
@@ -247,7 +247,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             // 逻辑删除
             EmployeeEntity entity = new EmployeeEntity();
-            entity.setEmployeeId(employeeId);
+            entity.setId(employeeId);
             entity.setDeletedFlag(1);
 
             int result = employeeDao.updateById(entity);
@@ -333,7 +333,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
 
             EmployeeEntity entity = new EmployeeEntity();
-            entity.setEmployeeId(employeeId);
+            entity.setId(employeeId);
             entity.setStatus(status);
 
             int result = employeeDao.updateById(entity);

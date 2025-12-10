@@ -1,0 +1,399 @@
+# ============================================================
+# IOE-DREAM 监控告警配置模板
+#
+# 功能：企业级监控告警体系，提供全方位的服务监控
+# 技术：Prometheus + Grafana + Micrometer + AlertManager
+# 标准：支持高并发、高可用、可扩展的监控体系
+#
+# @Author: IOE-DREAM架构委员会
+# @Date: 2025-01-30
+# @Version: v1.0.0-企业级监控版
+# ============================================================
+
+# ==================== Spring Boot Actuator配置 ====================
+management:
+  # 端点配置
+  endpoints:
+    web:
+      # 基础路径
+      base-path: /actuator
+      # 暴露的端点
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS_INCLUDE:health,info,metrics,prometheus,env,configprops,beans,loggers,threaddump,heapdump}
+        # 排除的端点（安全考虑）
+        exclude: ${MANAGEMENT_ENDPOINTS_EXCLUDE:}
+      # CORS配置
+      cors:
+        allowed-origins: ${MANAGEMENT_CORS_ORIGINS:http://localhost:3000,https://admin.ioedream.com}
+        allowed-methods: ${MANAGEMENT_CORS_METHODS:GET,POST}
+
+  # 健康检查配置
+  endpoint:
+    health:
+      # 显示详细信息
+      show-details: ${MANAGEMENT_HEALTH_DETAILS:always}
+      # 探针配置
+      probes:
+        enabled: ${MANAGEMENT_HEALTH_PROBES:true}
+      # 分组配置
+      group:
+        # 存活探针
+        liveness:
+          include: ${MANAGEMENT_LIVENESS_INCLUDE:livenessState,diskSpace}
+          show-details: always
+        # 就绪探针
+        readiness:
+          include: ${MANAGEMENT_READINESS_INCLUDE:readinessState,db,redis}
+          show-details: always
+      # 健康状态
+      status:
+        order: ${MANAGEMENT_HEALTH_STATUS_ORDER:down,out-of-service,up,unknown}
+
+    # 指标端点
+    metrics:
+      enabled: ${MANAGEMENT_METRICS_ENABLED:true}
+    # Prometheus端点
+    prometheus:
+      enabled: ${MANAGEMENT_PROMETHEUS_ENABLED:true}
+    # 信息端点
+    info:
+      enabled: ${MANAGEMENT_INFO_ENABLED:true}
+    # 环境端点
+    env:
+      enabled: ${MANAGEMENT_ENV_ENABLED:false}
+    # 配置端点
+    configprops:
+      enabled: ${MANAGEMENT_CONFIGPROPS_ENABLED:false}
+    # Bean端点
+    beans:
+      enabled: ${MANAGEMENT_BEANS_ENABLED:false}
+
+  # 指标配置
+  metrics:
+    # 指标导出
+    export:
+      # Prometheus配置
+      prometheus:
+        enabled: ${PROMETHEUS_EXPORT_ENABLED:true}
+        # 步长
+        step: ${PROMETHEUS_EXPORT_STEP:30s}
+        # 描述
+        descriptions: ${PROMETHEUS_EXPORT_DESCRIPTIONS:true}
+        # 注册指标名称
+        registry: ${PROMETHEUS_EXPORT_REGISTRY:prometheus}
+        # 发布指标
+        pushgateway:
+          enabled: ${PROMETHEUS_PUSHGATEWAY_ENABLED:false}
+          base-url: ${PROMETHEUS_PUSHGATEWAY_URL:http://pushgateway:9091}
+          job: ${PROMETHEUS_PUSHGATEWAY_JOB:ioedream}
+
+      # JMX配置
+      jmx:
+        enabled: ${JMX_EXPORT_ENABLED:true}
+        domain: ${JMX_EXPORT_DOMAIN:ioedream}
+        step: ${JMX_EXPORT_STEP:30s}
+
+    # 指标发布配置
+    tags:
+      application: ${spring.application.name:unknown}
+      environment: ${spring.profiles.active:unknown}
+      instance: ${HOSTNAME:${spring.application.name}-${random.uuid}}
+      region: ${METRICS_REGION:default}
+      zone: ${METRICS_ZONE:default}
+
+    # 指标分布配置
+    distribution:
+      # HTTP请求分布
+      http.server.requests:
+        # 启用百分位直方图
+        percentiles-histogram: ${HTTP_METRICS_PERCENTILES_HISTOGRAM:true}
+        # 百分位配置
+        percentiles: ${HTTP_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
+        # 分桶配置
+        sla: ${HTTP_METRICS_SLA:10ms,50ms,100ms,200ms,500ms,1s,2s,5s}
+
+      # 数据库连接池分布
+      hikaricp.connections:
+        percentiles-histogram: ${HIKARI_METRICS_PERCENTILES_HISTOGRAM:true}
+        percentiles: ${HIKARI_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
+        sla: ${HIKARI_METRICS_SLA:5,10,15,20,25}
+
+      # Redis连接池分布
+      redis.connections:
+        percentiles-histogram: ${REDIS_METRICS_PERCENTILES_HISTOGRAM:true}
+        percentiles: ${REDIS_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
+        sla: ${REDIS_METRICS_SLA:5,10,15,20}
+
+      # 业务操作分布
+      business.operations:
+        percentiles-histogram: ${BUSINESS_METRICS_PERCENTILES_HISTOGRAM:true}
+        percentiles: ${BUSINESS_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
+        sla: ${BUSINESS_METRICS_SLA:100ms,500ms,1s,2s,5s}
+
+    # 自定义指标
+    binders:
+      # JVM指标
+      jvm:
+        enabled: ${JVM_METRICS_ENABLED:true}
+        cache:
+          enabled: ${JVM_CACHE_METRICS_ENABLED:true}
+      # 系统指标
+      system:
+        enabled: ${SYSTEM_METRICS_ENABLED:true}
+        cpu:
+          enabled: ${SYSTEM_CPU_METRICS_ENABLED:true}
+        memory:
+          enabled: ${SYSTEM_MEMORY_METRICS_ENABLED:true}
+      # 日志指标
+      logback:
+        enabled: ${LOGBACK_METRICS_ENABLED:true}
+        registry: ${LOGBACK_METRICS_REGISTRY:logback}
+
+# ==================== 业务监控配置 ====================
+ioedream:
+  # 业务监控配置
+  monitoring:
+    # 是否启用业务监控
+    enabled: ${BUSINESS_MONITORING_ENABLED:true}
+
+    # 业务指标配置
+    metrics:
+      # 关键业务操作指标
+      operations:
+        # 消费交易
+        consume-transaction:
+          enabled: ${CONSUME_TRANSACTION_METRICS_ENABLED:true}
+          # 交易量指标
+          transaction-count:
+            enabled: ${CONSUME_TRANSACTION_COUNT_ENABLED:true}
+          # 交易金额指标
+          transaction-amount:
+            enabled: ${CONSUME_TRANSACTION_AMOUNT_ENABLED:true}
+          # 交易延迟指标
+          transaction-latency:
+            enabled: ${CONSUME_TRANSACTION_LATENCY_ENABLED:true}
+
+        # 门禁控制
+        access-control:
+          enabled: ${ACCESS_CONTROL_METRICS_ENABLED:true}
+          # 控制次数指标
+          control-count:
+            enabled: ${ACCESS_CONTROL_COUNT_ENABLED:true}
+          # 控制延迟指标
+          control-latency:
+            enabled: ${ACCESS_CONTROL_LATENCY_ENABLED:true}
+          # 控制结果指标
+          control-result:
+            enabled: ${ACCESS_CONTROL_RESULT_ENABLED:true}
+
+        # 考勤打卡
+        attendance-checkin:
+          enabled: ${ATTENDANCE_CHECKIN_METRICS_ENABLED:true}
+          # 打卡次数指标
+          checkin-count:
+            enabled: ${ATTENDANCE_CHECKIN_COUNT_ENABLED:true}
+          # 打卡延迟指标
+          checkin-latency:
+            enabled: ${ATTENDANCE_CHECKIN_LATENCY_ENABLED:true}
+
+      # 系统性能指标
+      performance:
+        # 数据库性能
+        database:
+          enabled: ${DATABASE_METRICS_ENABLED:true}
+          connection-pool:
+            enabled: ${DATABASE_CONNECTION_POOL_METRICS_ENABLED:true}
+          query-latency:
+            enabled: ${DATABASE_QUERY_LATENCY_ENABLED:true}
+
+        # 缓存性能
+        cache:
+          enabled: ${CACHE_METRICS_ENABLED:true}
+          hit-ratio:
+            enabled: ${CACHE_HIT_RATIO_METRICS_ENABLED:true}
+          operation-latency:
+            enabled: ${CACHE_OPERATION_LATENCY_METRICS_ENABLED:true}
+
+        # 网络性能
+        network:
+          enabled: ${NETWORK_METRICS_ENABLED:true}
+          request-latency:
+            enabled: ${NETWORK_REQUEST_LATENCY_ENABLED:true}
+          response-size:
+            enabled: ${NETWORK_RESPONSE_SIZE_METRICS_ENABLED:true}
+
+    # 告警配置
+    alerts:
+      # 是否启用告警
+      enabled: ${BUSINESS_ALERTS_ENABLED:true}
+
+      # 告警规则
+      rules:
+        # 服务可用性告警
+        availability:
+          enabled: ${AVAILABILITY_ALERTS_ENABLED:true}
+          threshold: ${AVAILABILITY_ALERT_THRESHOLD:95}  # 可用性阈值（百分比）
+          duration: ${AVAILABILITY_ALERT_DURATION:5m}   # 持续时间
+
+        # 性能告警
+        performance:
+          enabled: ${PERFORMANCE_ALERTS_ENABLED:true}
+          # 响应时间告警
+          response-time:
+            threshold: ${RESPONSE_TIME_ALERT_THRESHOLD:1000}  # 响应时间阈值（毫秒）
+            percentile: ${RESPONSE_TIME_ALERT_PERCENTILE:95}   # 百分位数
+          # 错误率告警
+          error-rate:
+            threshold: ${ERROR_RATE_ALERT_THRESHOLD:5}        # 错误率阈值（百分比）
+            duration: ${ERROR_RATE_ALERT_DURATION:2m}         # 持续时间
+
+        # 业务告警
+        business:
+          enabled: ${BUSINESS_ALERTS_ENABLED:true}
+          # 交易失败率告警
+          transaction-failure-rate:
+            threshold: ${TRANSACTION_FAILURE_RATE_THRESHOLD:2}  # 失败率阈值（百分比）
+            duration: ${TRANSACTION_FAILURE_RATE_DURATION:3m}  # 持续时间
+
+          # 异常行为告警
+          anomaly-detection:
+            enabled: ${ANOMALY_DETECTION_ENABLED:true}
+            # 流量异常告警
+            traffic-anomaly:
+              threshold: ${TRAFFIC_ANOMALY_THRESHOLD:50}         # 流量变化阈值（百分比）
+              duration: ${TRAFFIC_ANOMALY_DURATION:5m}           # 持续时间
+
+# ==================== 日志监控配置 ====================
+logging:
+  # 日志级别配置
+  level:
+    # Actuator日志级别
+    org.springframework.boot.actuator: ${ACTUATOR_LOG_LEVEL:INFO}
+    # 监控日志级别
+    io.micrometer: ${MICROMETER_LOG_LEVEL:INFO}
+    # Prometheus日志级别
+    io.prometheus: ${PROMETHEUS_LOG_LEVEL:WARN}
+
+  # 日志配置
+  pattern:
+    # 控制台日志模式（包含监控信息）
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] [%thread] %-5level [%logger{36}] [%X{pid}] - %msg%n"
+    # 文件日志模式
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] [%thread] %-5level [%logger{36}] [%X{pid}] - %msg%n"
+
+# ==================== 环境特定配置 ====================
+---
+# 开发环境配置
+spring:
+  profiles: dev
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # 开发环境暴露所有端点
+  endpoint:
+    health:
+      show-details: always
+    env:
+      enabled: true     # 开发环境启用环境端点
+    configprops:
+      enabled: true     # 开发环境启用配置端点
+
+ioedream:
+  monitoring:
+    alerts:
+      enabled: false    # 开发环境关闭告警
+
+---
+# 测试环境配置
+spring:
+  profiles: test
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+ioedream:
+  monitoring:
+    alerts:
+      enabled: true     # 测试环境启用告警
+      rules:
+        availability:
+          threshold: 90   # 测试环境可用性阈值较低
+        performance:
+          response-time:
+            threshold: 2000  # 测试环境响应时间阈值较宽松
+
+---
+# 生产环境配置
+spring:
+  profiles: prod
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+    env:
+      enabled: false    # 生产环境禁用环境端点
+    configprops:
+      enabled: false    # 生产环境禁用配置端点
+    beans:
+      enabled: false    # 生产环境禁用Bean端点
+
+management:
+  server:
+    # Actuator端口（与主应用端口分离）
+    port: ${MANAGEMENT_SERVER_PORT:18080}
+    # SSL配置
+    ssl:
+      enabled: ${MANAGEMENT_SSL_ENABLED:false}
+
+ioedream:
+  monitoring:
+    alerts:
+      enabled: true     # 生产环境必须启用告警
+      rules:
+        availability:
+          threshold: 99   # 生产环境可用性阈值严格
+        performance:
+          response-time:
+            threshold: 500  # 生产环境响应时间阈值严格
+          error-rate:
+            threshold: 1    # 生产环境错误率阈值严格
+
+# ==================== 监控系统集成配置 ====================
+# Prometheus抓取配置（需要配置到Prometheus）
+# prometheus.yml
+# scrape_configs:
+#   - job_name: 'ioedream-microservices'
+#     metrics_path: '/actuator/prometheus'
+#     static_configs:
+#       - targets:
+#         - 'gateway:8080'
+#         - 'consume:8094'
+#         - 'access:8090'
+#         - 'attendance:8091'
+#         - 'visitor:8095'
+#         - 'video:8092'
+#         - 'device-comm:8087'
+#     relabel_configs:
+#       - source_labels: [__address__]
+#         target_label: instance
+#         replacement: '${1}'
+#         regex: '([^:]+):.*'
+
+# Grafana Dashboard配置（需要导入到Grafana）
+# Dashboard JSON files should be placed in:
+# - grafana/dashboards/ioedream-overview.json
+# - grafana/dashboards/ioedream-microservices.json
+# - grafana/dashboards/ioedream-business.json

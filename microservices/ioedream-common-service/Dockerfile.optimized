@@ -1,0 +1,141 @@
+# =====================================================
+# IOE-DREAM 通用服务优化版 Dockerfile
+# 多阶段构建 + 层缓存 + 安全扫描
+# 生产级Docker镜像优化
+# =====================================================
+
+# 第一阶段：构建阶段
+FROM openjdk:17-jdk-slim as builder
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装构建工具
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/m2 \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    wget \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# 复制依赖文件
+COPY pom.xml .
+COPY ./microservices ./microservices
+COPY ./scripts ./scripts
+
+# 构建应用
+RUN --mount=type=cache,target=/var/cache/m2 \
+    ./mvnw clean package -DskipTests -DskipITs \
+    -Dmaven.repo.local=$MAVEN_LOCAL_REPO \
+    -Ddocker.build.skip=false \
+    -Dspring-boot.build-image.skip=false
+
+# 第二阶段：运行时镜像
+FROM openjdk:17-jre-slim
+
+# 设置标签信息
+LABEL maintainer="IOE-DREAM Team"
+LABEL version="1.0.0"
+LABEL description="IOE-DREAM Common Service"
+LABEL org.opencontainers.image.created="${BUILD_DATE:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
+LABEL org.opencontainers.image.source="https://github.com/your-org/ioedream"
+
+# 创建应用用户
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装必要的系统工具
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        curl \
+        netcat \
+        iproute2 \
+        telnet \
+        dnsutils \
+        procps \
+        htop \
+        && rm -rf /var/lib/apt/lists/*
+
+# 创建应用目录结构
+RUN mkdir -p \
+        /app/config \
+        /app/logs \
+        /app/dumps \
+        /app/temp \
+        /app/data \
+        /app/scripts && \
+    chown -R appuser:appuser /app
+
+# 复制JAR文件
+COPY --from=builder /app/microservices/ioedream-common-service/target/*.jar ./app.jar
+
+# 复制启动脚本
+COPY --from=builder /app/scripts/docker-entrypoint.sh ./scripts/
+COPY --from=builder /app/scripts/health-check.sh ./scripts/
+
+# 设置脚本权限
+RUN chmod +x ./scripts/*.sh
+
+# 设置JVM参数配置文件
+COPY --from=builder /app/jvm-optimized.conf ./jvm.conf
+
+# 复制应用配置文件
+COPY ./microservices/ioedream-common-service/src/main/resources/application-*.yml ./config/
+
+# 切换到应用用户
+USER appuser
+
+# 暴露应用端口
+EXPOSE 8088
+
+# 设置健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD ["./scripts/health-check.sh", "http://localhost:8088/actuator/health"]
+
+# 设置启动命令
+ENTRYPOINT ["./scripts/docker-entrypoint.sh"]
+
+# JVM参数
+ENV JAVA_OPTS="-server.port=8088 \
+                  -Xms2048m \
+                  -Xmx4096m \
+                  -Xmn1024m \
+                  -XX:MetaspaceSize=512m \
+                  -XX:MaxMetaspaceSize=1024m \
+                  -XX:DirectMemorySize=256m \
+                  -XX:+UseG1GC \
+                  -XX:MaxGCPauseMillis=100 \
+                  -XX:G1HeapRegionSize=16m \
+                  -XX:+UnlockExperimentalVMOptions \
+                  -XX:+UseStringDeduplication \
+                  -XX:+PrintGCDetails \
+                  -XX:+PrintGCTimeStamps \
+                  -XX:+PrintGCDateStamps \
+                  -XX:+HeapDumpOnOutOfMemoryError \
+                  -XX:HeapDumpPath=/app/dumps \
+                  -XX:+UseCompressedOops \
+                  -XX:+CompressedClassSpaceSize=8k \
+                  -Xloggc:/app/logs/gc.log \
+                  -XX:NumberOfGCLogFiles=10 \
+                  -XX:GCLogFileSize=10M \
+                  -Djava.security.egd=file:/dev/./urandom \
+                  -Dfile.encoding=UTF-8 \
+                  -Duser.timezone=Asia/Shanghai \
+                  -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:prod}"
+
+# Spring Boot参数
+ENV SPRING_PROFILES_ACTIVE="prod"
+ENV SPRING_JPA_HIBERNATE_DDL_AUTO="none"
+ENV SPRING_JPA_SHOW_SQL="false"
+ENV SPRING_ACTUATOR_BASEPATH="/actuator"
+ENV MANAGEMENT_ENDPOINTS_WEB_EXPOSE="health,info,metrics,prometheus"
+
+# 应用配置
+ENV APP_NAME="ioedream-common-service"
+ENV APP_VERSION="1.0.0"
+ENV LOG_LEVEL="INFO"
+ENV LOG_PATH="/app/logs"

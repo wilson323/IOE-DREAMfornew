@@ -252,7 +252,7 @@ public class NotificationConfigManager {
         }
 
         // 更新配置值
-        int result = notificationConfigDao.updateConfigValue(config.getConfigId(), configValue);
+        int result = notificationConfigDao.updateConfigValue(config.getId(), configValue);
 
         // 清除缓存
         String cacheKey = CACHE_KEY_PREFIX + configKey;

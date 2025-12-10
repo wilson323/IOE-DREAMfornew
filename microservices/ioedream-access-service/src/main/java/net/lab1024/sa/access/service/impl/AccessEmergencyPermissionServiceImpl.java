@@ -87,12 +87,12 @@ public class AccessEmergencyPermissionServiceImpl implements AccessEmergencyPerm
         entity.setAreaName(areaName != null ? areaName : "未知区域");
         entity.setApplyType("EMERGENCY"); // 固定为紧急权限
         entity.setApplyReason(form.getApplyReason());
-        
+
         // 紧急权限：开始时间立即生效，结束时间24小时后
         LocalDateTime now = LocalDateTime.now();
         entity.setStartTime(form.getStartTime() != null ? form.getStartTime() : now);
         entity.setEndTime(form.getEndTime() != null ? form.getEndTime() : now.plusHours(EMERGENCY_PERMISSION_VALID_HOURS));
-        
+
         entity.setRemark("紧急权限申请，有效期24小时");
         entity.setStatus("PENDING");
         accessPermissionApplyDao.insert(entity);
@@ -242,7 +242,7 @@ public class AccessEmergencyPermissionServiceImpl implements AccessEmergencyPerm
         }
 
         log.info("[紧急权限申请] 紧急权限关联记录创建成功，relationId={}, applicantId={}, areaId={}, applyNo={}",
-                areaPerson.getRelationId(), entity.getApplicantId(), entity.getAreaId(), entity.getApplyNo());
+                areaPerson.getId(), entity.getApplicantId(), entity.getAreaId(), entity.getApplyNo());
     }
 
     /**
@@ -253,23 +253,25 @@ public class AccessEmergencyPermissionServiceImpl implements AccessEmergencyPerm
     private void updateToEmergencyPermission(AccessPermissionApplyEntity entity) {
         try {
             // 查询现有权限
-            var existingPermissions = areaPersonDao.getEffectivePermissionsByTimeRange(
+            List<AreaPersonEntity> existingPermissions = areaPersonDao.getEffectivePermissionsByTimeRange(
                     entity.getApplicantId(),
                     LocalDateTime.now(),
                     entity.getEndTime() != null ? entity.getEndTime() : LocalDateTime.now().plusHours(EMERGENCY_PERMISSION_VALID_HOURS)
             );
 
             // 更新为紧急权限
-            for (AreaPersonEntity permission : existingPermissions) {
-                if (permission.getAreaId().equals(entity.getAreaId())) {
-                    permission.setAccessLevel(2); // 更新为紧急权限级别
-                    permission.setAccessReason("紧急权限：" + entity.getApplyReason());
-                    permission.setValidEndTime(entity.getEndTime());
-                    permission.setExpireTime(entity.getEndTime());
-                    areaPersonDao.updateById(permission);
-                    log.info("[紧急权限申请] 权限已更新为紧急权限，relationId={}, expireTime={}",
-                            permission.getRelationId(), entity.getEndTime());
-                    break;
+            if (existingPermissions != null) {
+                for (AreaPersonEntity permission : existingPermissions) {
+                    if (permission.getAreaId().equals(entity.getAreaId())) {
+                        permission.setAccessLevel(2); // 更新为紧急权限级别
+                        permission.setAccessReason("紧急权限：" + entity.getApplyReason());
+                        permission.setValidEndTime(entity.getEndTime());
+                        permission.setExpireTime(entity.getEndTime());
+                        areaPersonDao.updateById(permission);
+                        log.info("[紧急权限申请] 权限已更新为紧急权限，relationId={}, expireTime={}",
+                                permission.getId(), entity.getEndTime());
+                        break;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -359,20 +361,22 @@ public class AccessEmergencyPermissionServiceImpl implements AccessEmergencyPerm
     private void revokeEmergencyPermission(AccessPermissionApplyEntity entity) {
         try {
             // 1. 更新权限状态为失效
-            var existingPermissions = areaPersonDao.getEffectivePermissionsByTimeRange(
+            List<AreaPersonEntity> existingPermissions = areaPersonDao.getEffectivePermissionsByTimeRange(
                     entity.getApplicantId(),
                     LocalDateTime.now().minusHours(EMERGENCY_PERMISSION_VALID_HOURS),
                     LocalDateTime.now()
             );
 
-            for (AreaPersonEntity permission : existingPermissions) {
-                if (permission.getAreaId().equals(entity.getAreaId())) {
-                    permission.setStatus(0); // 0-已失效
-                    permission.setExpireTime(LocalDateTime.now());
-                    areaPersonDao.updateById(permission);
-                    log.info("[紧急权限申请] 紧急权限已回收，relationId={}, applyNo={}",
-                            permission.getRelationId(), entity.getApplyNo());
-                    break;
+            if (existingPermissions != null) {
+                for (AreaPersonEntity permission : existingPermissions) {
+                    if (permission.getAreaId().equals(entity.getAreaId())) {
+                        permission.setStatus(0); // 0-已失效
+                        permission.setExpireTime(LocalDateTime.now());
+                        areaPersonDao.updateById(permission);
+                        log.info("[紧急权限申请] 紧急权限已回收，relationId={}, applyNo={}",
+                                permission.getId(), entity.getApplyNo());
+                        break;
+                    }
                 }
             }
 

@@ -26,8 +26,15 @@ import net.lab1024.sa.common.entity.BaseEntity;
 @TableName("t_role")
 public class RoleEntity extends BaseEntity {
 
-    @TableId(type = IdType.AUTO)
-    private Long roleId;
+    /**
+     * 角色ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列role_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
+     */
+    @TableId(value = "role_id", type = IdType.AUTO)
+    private Long id;
 
     private String roleCode;
     private String roleName;

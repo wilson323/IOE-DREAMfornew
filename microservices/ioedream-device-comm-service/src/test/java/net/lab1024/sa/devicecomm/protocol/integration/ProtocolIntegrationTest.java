@@ -9,10 +9,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import net.lab1024.sa.devicecomm.protocol.handler.ProtocolParseException;
 import net.lab1024.sa.devicecomm.protocol.handler.ProtocolProcessException;
@@ -37,18 +35,17 @@ import net.lab1024.sa.devicecomm.protocol.handler.impl.ConsumeProtocolHandler;
  * @author IOE-DREAM Team
  * @since 2025-01-30
  */
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @DisplayName("协议集成测试")
 class ProtocolIntegrationTest {
 
-    @Autowired(required = false)
+    @Resource
     private AccessProtocolHandler accessProtocolHandler;
 
-    @Autowired(required = false)
+    @Resource
     private AttendanceProtocolHandler attendanceProtocolHandler;
 
-    @Autowired(required = false)
+    @Resource
     private ConsumeProtocolHandler consumeProtocolHandler;
 
     private byte[] accessMessageBytes;
@@ -59,10 +56,10 @@ class ProtocolIntegrationTest {
     void setUp() {
         // 准备门禁协议测试消息
         accessMessageBytes = createAccessMessage();
-        
+
         // 准备考勤协议测试消息
         attendanceMessageBytes = createAttendanceMessage();
-        
+
         // 准备消费协议测试消息
         consumeMessageBytes = createConsumeMessage();
     }
@@ -154,8 +151,8 @@ class ProtocolIntegrationTest {
     void testProtocolHandlers_AllRegistered() {
         // 验证所有协议处理器都已注册为Spring Bean
         // 注意：这需要Spring上下文支持，实际运行时需要配置
-        if (accessProtocolHandler == null || 
-            attendanceProtocolHandler == null || 
+        if (accessProtocolHandler == null ||
+            attendanceProtocolHandler == null ||
             consumeProtocolHandler == null) {
             System.out.println("跳过测试：部分协议处理器未注入（测试环境未配置）");
             return;
@@ -191,11 +188,11 @@ class ProtocolIntegrationTest {
         long endTime = System.nanoTime();
         long duration = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
 
-        System.out.println(String.format("解析%d条消息耗时：%d ms，平均：%.2f ms/条", 
+        System.out.println(String.format("解析%d条消息耗时：%d ms，平均：%.2f ms/条",
                 messageCount, duration, (double) duration / messageCount));
 
         // 验证性能要求：平均每条消息解析时间应小于10ms
-        assertTrue((double) duration / messageCount < 10, 
+        assertTrue((double) duration / messageCount < 10,
                 "协议解析性能不达标，平均耗时超过10ms");
     }
 
@@ -205,33 +202,33 @@ class ProtocolIntegrationTest {
     private byte[] createAccessMessage() {
         byte[] messageBytes = new byte[24];
         ByteBuffer buffer = ByteBuffer.wrap(messageBytes).order(ByteOrder.LITTLE_ENDIAN);
-        
+
         // 协议头
         buffer.put((byte) 0xAA);
         buffer.put((byte) 0x55);
-        
+
         // 消息类型
         buffer.put((byte) 0x01);
-        
+
         // 设备编号
         byte[] deviceCode = "DEV001  ".getBytes();
         buffer.put(deviceCode);
-        
+
         // 用户ID
         buffer.putInt(1001);
-        
+
         // 通行时间
         buffer.putInt((int) (System.currentTimeMillis() / 1000));
-        
+
         // 通行类型
         buffer.put((byte) 0x00);
-        
+
         // 门号
         buffer.put((byte) 0x01);
-        
+
         // 通行方式
         buffer.put((byte) 0x01);
-        
+
         // 校验和
         int checksum = 0;
         for (int i = 2; i < messageBytes.length - 2; i++) {
@@ -249,27 +246,27 @@ class ProtocolIntegrationTest {
     private byte[] createAttendanceMessage() {
         byte[] messageBytes = new byte[22];
         ByteBuffer buffer = ByteBuffer.wrap(messageBytes).order(ByteOrder.LITTLE_ENDIAN);
-        
+
         // 协议头
         buffer.put((byte) 0xAA);
         buffer.put((byte) 0x55);
-        
+
         // 消息类型
         buffer.put((byte) 0x01);
-        
+
         // 设备编号
         byte[] deviceCode = "DEV001  ".getBytes();
         buffer.put(deviceCode);
-        
+
         // 用户ID
         buffer.putInt(1001);
-        
+
         // 打卡时间
         buffer.putInt((int) (System.currentTimeMillis() / 1000));
-        
+
         // 打卡类型
         buffer.put((byte) 0x00);
-        
+
         // 校验和
         int checksum = 0;
         for (int i = 2; i < messageBytes.length - 2; i++) {
@@ -287,27 +284,27 @@ class ProtocolIntegrationTest {
     private byte[] createConsumeMessage() {
         byte[] messageBytes = new byte[25];
         ByteBuffer buffer = ByteBuffer.wrap(messageBytes).order(ByteOrder.LITTLE_ENDIAN);
-        
+
         // 协议头
         buffer.put((byte) 0xAA);
         buffer.put((byte) 0x55);
-        
+
         // 消息类型
         buffer.put((byte) 0x01);
-        
+
         // 设备编号
         byte[] deviceCode = "DEV001  ".getBytes();
         buffer.put(deviceCode);
-        
+
         // 用户ID
         buffer.putInt(1001);
-        
+
         // 消费金额
         buffer.putInt(1000);
-        
+
         // 消费时间
         buffer.putInt((int) (System.currentTimeMillis() / 1000));
-        
+
         // 校验和
         int checksum = 0;
         for (int i = 2; i < messageBytes.length - 2; i++) {

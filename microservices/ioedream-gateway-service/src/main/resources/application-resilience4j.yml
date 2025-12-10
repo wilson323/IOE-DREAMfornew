@@ -1,0 +1,349 @@
+# ============================================================
+# IOE-DREAM 网关服务 Resilience4j 配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: 网关服务专用容错熔断配置，包含路由级别的容错策略
+# ============================================================
+
+spring:
+  cloud:
+    gateway:
+      # 网关熔断配置
+      httpclient:
+        connect-timeout: 5000                         # 连接超时 5s
+        response-timeout: 30s                         # 响应超时 30s
+        pool:
+          type: elastic
+          max-connections: 500                         # 最大连接数
+          max-idle-time: 30s                          # 最大空闲时间
+          acquire-timeout: 30000                      # 获取连接超时
+
+      # 路由级别熔断配置
+      routes:
+        # 公共服务路由
+        - id: ioedream-common-service
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/api/v1/common/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: common-service-circuitbreaker
+                fallbackUri: forward:/fallback/common
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY,GATEWAY_TIMEOUT,SERVICE_UNAVAILABLE
+                methods: GET,POST
+
+        # 设备通讯服务路由
+        - id: ioedream-device-comm-service
+          uri: lb://ioedream-device-comm-service
+          predicates:
+            - Path=/api/v1/device/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: device-service-circuitbreaker
+                fallbackUri: forward:/fallback/device
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+                key-resolver: "#{@userKeyResolver}"
+
+        # OA服务路由
+        - id: ioedream-oa-service
+          uri: lb://ioedream-oa-service
+          predicates:
+            - Path=/api/v1/oa/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: oa-service-circuitbreaker
+                fallbackUri: forward:/fallback/oa
+
+        # 门禁服务路由
+        - id: ioedream-access-service
+          uri: lb://ioedream-access-service
+          predicates:
+            - Path=/api/v1/access/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: access-service-circuitbreaker
+                fallbackUri: forward:/fallback/access
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 80
+                redis-rate-limiter.burstCapacity: 160
+
+        # 考勤服务路由
+        - id: ioedream-attendance-service
+          uri: lb://ioedream-attendance-service
+          predicates:
+            - Path=/api/v1/attendance/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: attendance-service-circuitbreaker
+                fallbackUri: forward:/fallback/attendance
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 150
+                redis-rate-limiter.burstCapacity: 300
+
+        # 消费服务路由
+        - id: ioedream-consume-service
+          uri: lb://ioedream-consume-service
+          predicates:
+            - Path=/api/v1/consume/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: consume-service-circuitbreaker
+                fallbackUri: forward:/fallback/consume
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 60
+                redis-rate-limiter.burstCapacity: 120
+
+        # 访客服务路由
+        - id: ioedream-visitor-service
+          uri: lb://ioedream-visitor-service
+          predicates:
+            - Path=/api/v1/visitor/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: visitor-service-circuitbreaker
+                fallbackUri: forward:/fallback/visitor
+
+        # 视频服务路由
+        - id: ioedream-video-service
+          uri: lb://ioedream-video-service
+          predicates:
+            - Path=/api/v1/video/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: video-service-circuitbreaker
+                fallbackUri: forward:/fallback/video
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 30
+                redis-rate-limiter.burstCapacity: 60
+
+# ============================================================
+# Resilience4j 网关专用配置
+# ============================================================
+resilience4j:
+  circuitbreaker:
+    configs:
+      gateway-default:
+        failure-rate-threshold: 60%                    # 网关熔断阈值更宽松
+        minimum-number-of-calls: 30                    # 最少调用次数
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 30s               # 熔断持续时间
+        permitted-number-of-calls-in-half-open-state: 15
+        sliding-window-size: 200                       # 滑动窗口大小
+        sliding-window-type: count_based
+        slow-call-duration-threshold: 20s              # 慢调用阈值
+        slow-call-rate-threshold: 70%                  # 慢调用率阈值
+
+    instances:
+      # 各服务熔断器实例
+      common-service-circuitbreaker:
+        base-config: gateway-default
+        failure-rate-threshold: 55%
+        wait-duration-in-open-state: 20s
+        slow-call-duration-threshold: 15s
+
+      device-service-circuitbreaker:
+        base-config: gateway-default
+        failure-rate-threshold: 65%
+        wait-duration-in-open-state: 40s               # 设备服务等待更久
+        slow-call-duration-threshold: 25s
+
+      oa-service-circuitbreaker:
+        base-config: gateway-default
+        failure-rate-threshold: 60%
+        wait-duration-in-open-state: 30s
+        slow-call-duration-threshold: 18s
+
+      access-service-circuitbreaker:
+        base-config: gateway-default
+        failure-rate-threshold: 45%                    # 门禁服务更严格
+        wait-duration-in-open-state: 15s
+        slow-call-duration-threshold: 10s
+        minimum-number-of-calls: 20
+
+      attendance-service-circuitbreaker:
+        base-config: gateway-default
+        failure-rate-threshold: 50%
+        wait-duration-in-open-state: 25s
+        slow-call-duration-threshold: 12s
+
+      consume-service-circuitbreaker:
+        base-config: gateway-default
+        failure-rate-threshold: 40%                    # 消费服务最严格
+        wait-duration-in-open-state: 45s
+        slow-call-duration-threshold: 8s
+        minimum-number-of-calls: 15
+
+      visitor-service-circuitbreaker:
+        base-config: gateway-default
+        failure-rate-threshold: 55%
+        wait-duration-in-open-state: 30s
+        slow-call-duration-threshold: 15s
+
+      video-service-circuitbreaker:
+        base-config: gateway-default
+        failure-rate-threshold: 70%                    # 视频服务最宽松
+        wait-duration-in-open-state: 20s
+        slow-call-duration-threshold: 30s
+
+  # 限流配置（网关级别）
+  ratelimiter:
+    configs:
+      gateway-default:
+        limit-for-period: 1000                         # 网关总限流
+        limit-refresh-period: 1s
+        timeout-duration: 100ms
+        register-health-indicator: true
+
+    instances:
+      # 基于用户ID的限流
+      user-ratelimiter:
+        base-config: gateway-default
+        limit-for-period: 100
+        limit-refresh-period: 1s
+        timeout-duration: 50ms
+
+      # 基于IP的限流
+      ip-ratelimiter:
+        base-config: gateway-default
+        limit-for-period: 200
+        limit-refresh-period: 1s
+        timeout-duration: 50ms
+
+      # API级别限流
+      api-ratelimiter:
+        base-config: gateway-default
+        limit-for-period: 50
+        limit-refresh-period: 1s
+        timeout-duration: 100ms
+
+  # 舱壁隔离配置
+  bulkhead:
+    configs:
+      gateway-default:
+        max-concurrent-calls: 500                      # 网关总并发
+        max-wait-duration: 1s
+
+    instances:
+      # 服务调用舱壁
+      service-call-bulkhead:
+        base-config: gateway-default
+        max-concurrent-calls: 100
+        max-wait-duration: 2s
+
+      # 认证授权舱壁
+      auth-bulkhead:
+        base-config: gateway-default
+        max-concurrent-calls: 50
+        max-wait-duration: 500ms
+
+      # 日志记录舱壁
+      logging-bulkhead:
+        base-config: gateway-default
+        max-concurrent-calls: 200
+        max-wait-duration: 200ms
+
+# ============================================================
+# Redis 限流配置
+# ============================================================
+spring:
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 1                                         # 网关使用db=1
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 10
+        min-idle: 5
+
+# ============================================================
+# 网关特定监控配置
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway,resilience4j,circuitbreakers,retries,ratelimiters,bulkheads
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+  metrics:
+    tags:
+      service: gateway
+      component: resilience4j
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+
+# ============================================================
+# 网关日志配置
+# ============================================================
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    io.github.resilience4j: DEBUG
+    org.springframework.retry: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+
+# ============================================================
+# 自定义配置
+# ============================================================
+gateway:
+  resilience:
+    # 熔断器配置
+    circuitbreaker:
+      enabled: true
+      fallback-path: /fallback/{service}
+      failure-rate-threshold: 60%
+      minimum-number-of-calls: 30
+      wait-duration-in-open-state: 30s
+
+    # 限流配置
+    ratelimiter:
+      enabled: true
+      default-limit: 1000
+      default-period: 1s
+      ip-limit: 200
+      user-limit: 100
+
+    # 重试配置
+    retry:
+      enabled: true
+      max-attempts: 3
+      backoff-delay: 1000ms
+
+    # 超时配置
+    timeout:
+      connect: 5000ms
+      read: 30000ms
+      write: 30000ms

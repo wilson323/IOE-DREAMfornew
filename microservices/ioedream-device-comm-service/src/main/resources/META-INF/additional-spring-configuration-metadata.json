@@ -49,6 +49,26 @@
       "name": "device.protocol.thread-pool.queue-capacity",
       "type": "java.lang.Integer",
       "description": "协议处理线程池队列容量"
+    },
+    {
+      "name": "device.protocol.thread-pool.keep-alive-seconds",
+      "type": "java.lang.Integer",
+      "description": "协议处理线程池线程存活时间（秒）"
+    },
+    {
+      "name": "management.tracing.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用分布式追踪"
+    },
+    {
+      "name": "management.tracing.sampling.probability",
+      "type": "java.lang.Double",
+      "description": "追踪采样概率（0.0-1.0）"
+    },
+    {
+      "name": "management.zipkin.tracing.endpoint",
+      "type": "java.lang.String",
+      "description": "Zipkin追踪端点URL"
     }
   ]
 }

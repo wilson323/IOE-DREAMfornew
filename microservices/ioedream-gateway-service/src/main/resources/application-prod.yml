@@ -1,0 +1,306 @@
+# ============================================================
+# IOE-DREAM Gateway Service 生产环境配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  http2:
+    enabled: true
+
+# ==================== Spring配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  # ==================== 数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 连接池配置
+      initial-size: 10
+      min-idle: 10
+      max-active: 50
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+
+  # ==================== Redis配置 ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 16
+        max-idle: 8
+        min-idle: 2
+        max-wait: 1000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 网关路由配置 ====================
+  cloud:
+    gateway:
+      # 跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: ${CORS_ALLOWED_ORIGINS:*}
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+      # 路由配置
+      routes:
+        # 公共服务路由
+        - id: common-service
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/api/v1/common/**
+            - Weight=common-service, 100
+          filters:
+            - StripPrefix=3
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@userKeyResolver}"
+
+        # 设备通讯服务路由
+        - id: device-comm-service
+          uri: lb://ioedream-device-comm-service
+          predicates:
+            - Path=/api/v1/device/**
+            - Weight=device-comm-service, 100
+          filters:
+            - StripPrefix=3
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 400
+                key-resolver: "#{@userKeyResolver}"
+
+        # OA服务路由
+        - id: oa-service
+          uri: lb://ioedream-oa-service
+          predicates:
+            - Path=/api/v1/oa/**
+            - Weight=oa-service, 100
+          filters:
+            - StripPrefix=3
+
+        # 门禁服务路由
+        - id: access-service
+          uri: lb://ioedream-access-service
+          predicates:
+            - Path=/api/v1/access/**
+            - Weight=access-service, 100
+          filters:
+            - StripPrefix=3
+
+        # 考勤服务路由
+        - id: attendance-service
+          uri: lb://ioedream-attendance-service
+          predicates:
+            - Path=/api/v1/attendance/**
+            - Weight=attendance-service, 100
+          filters:
+            - StripPrefix=3
+
+        # 视频服务路由
+        - id: video-service
+          uri: lb://ioedream-video-service
+          predicates:
+            - Path=/api/v1/video/**
+            - Weight=video-service, 100
+          filters:
+            - StripPrefix=3
+
+        # 消费服务路由
+        - id: consume-service
+          uri: lb://ioedream-consume-service
+          predicates:
+            - Path=/api/v1/consume/**
+            - Weight=consume-service, 100
+          filters:
+            - StripPrefix=3
+
+        # 访客服务路由
+        - id: visitor-service
+          uri: lb://ioedream-visitor-service
+          predicates:
+            - Path=/api/v1/visitor/**
+            - Weight=visitor-service, 100
+          filters:
+            - StripPrefix=3
+
+      # 默认过滤器
+      default-filters:
+        - name: Retry
+          args:
+            retries: 3
+            statuses: BAD_GATEWAY,GATEWAY_TIMEOUT
+            methods: GET,POST
+            backoff:
+              firstBackoff: 50ms
+              maxBackoff: 500ms
+              factor: 2
+        - name: CircuitBreaker
+          args:
+            name: default
+            fallbackUri: forward:/fallback/default
+
+      # 服务发现配置
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      # 负载均衡配置
+      loadbalancer:
+        ribbon:
+          enabled: false  # 使用Spring Cloud LoadBalancer
+
+  # ==================== 缓存配置 ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000  # 10分钟
+      cache-null-values: false
+      key-prefix: gateway_cache_
+
+  # ==================== Zipkin分布式追踪配置 ====================
+  sleuth:
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      enabled: ${ZIPKIN_ENABLED:true}
+    sampler:
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    org.springframework.web.reactive.function.client: INFO
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] %5p ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# ==================== 安全配置 ====================
+security:
+  # 访问控制
+  access-control:
+    ip-whitelist:
+      enabled: ${IP_WHITELIST_ENABLED:false}
+      allowed-ips: ${ALLOWED_IPS:127.0.0.1,localhost}
+
+  # API限流
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    default-limit: ${DEFAULT_RATE_LIMIT:1000}
+    default-window: ${DEFAULT_RATE_WINDOW:60}
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      default:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        sliding-window-type: count_based
+
+  ratelimiter:
+    instances:
+      default:
+        limit-for-period: 100
+        limit-refresh-period: 60s
+        timeout-duration: 5s
+        register-health-indicator: true
+
+# ==================== 业务特定配置 ====================
+gateway:
+  # JWT配置
+  jwt:
+    secret: ${JWT_SECRET:ENC(AES256:encrypted_jwt_secret)}
+    expiration: ${JWT_EXPIRATION:86400}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800}
+
+  # 文件上传配置
+  file-upload:
+    max-file-size: ${MAX_FILE_SIZE:10MB}
+    max-request-size: ${MAX_REQUEST_SIZE:50MB}
+    allowed-types: ${ALLOWED_FILE_TYPES:image/jpeg,image/png,image/gif,application/pdf}
+
+  # WebSocket配置
+  websocket:
+    allowed-origins: ${WEBSOCKET_ALLOWED_ORIGINS:*}
+    heartbeat-interval: ${WEBSOCKET_HEARTBEAT:30}

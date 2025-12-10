@@ -91,7 +91,7 @@ public class SystemServiceImpl implements SystemService {
             systemConfigDao.insert(config);
 
             log.info("创建系统配置成功 - key: {}", config.getConfigKey());
-            return ResponseDTO.ok(config.getConfigId());
+            return ResponseDTO.ok(config.getId());
 
         } catch (Exception e) {
             log.error("创建系统配置失败", e);
@@ -220,7 +220,7 @@ public class SystemServiceImpl implements SystemService {
             dictManager.refreshDict(dto.getDictTypeCode());
 
             log.info("创建字典数据成功 - typeCode: {}, value: {}", dto.getDictTypeCode(), dto.getDictValue());
-            return ResponseDTO.ok(dict.getDictDataId());
+            return ResponseDTO.ok(dict.getId());
 
         } catch (Exception e) {
             log.error("创建字典数据失败", e);
@@ -339,7 +339,7 @@ public class SystemServiceImpl implements SystemService {
 
     private DictVO convertDictToVO(SystemDictEntity entity) {
         DictVO vo = new DictVO();
-        vo.setDictDataId(entity.getDictDataId());
+        vo.setDictDataId(entity.getId());
         vo.setDictTypeId(entity.getDictTypeId());
         vo.setDictTypeCode(entity.getDictTypeCode());
         vo.setDictLabel(entity.getDictLabel());

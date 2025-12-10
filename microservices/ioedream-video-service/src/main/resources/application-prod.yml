@@ -1,0 +1,482 @@
+# ============================================================
+# IOE-DREAM Video Service 生产环境配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8092}
+  servlet:
+    context-path: /
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:500MB}
+      max-request-size: ${MAX_REQUEST_SIZE:1GB}
+      enabled: true
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,video/mp4,video/avi,video/mov
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 400
+    min-spare-threads: 50
+    accept-count: 200
+    connection-timeout: 20000
+
+# ==================== Spring配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  # ==================== 数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 连接池配置（视频流处理优化）
+      initial-size: 40
+      min-idle: 40
+      max-active: 200
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+
+  # ==================== Redis配置 ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 40
+        max-idle: 20
+        min-idle: 10
+        max-wait: 1000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 缓存配置 ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000  # 10分钟
+      cache-null-values: false
+      key-prefix: video_cache_
+
+  # ==================== Zipkin分布式追踪配置 ====================
+  sleuth:
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      enabled: ${ZIPKIN_ENABLED:true}
+    sampler:
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    multiple-result-sets-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    default-executor-type: reuse
+    default-statement-timeout: 20
+    default-fetch-size: 500
+
+  global-config:
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      video-service:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        sliding-window-type: count_based
+
+  ratelimiter:
+    instances:
+      video-service:
+        limit-for-period: 500
+        limit-refresh-period: 60s
+        timeout-duration: 5s
+        register-health-indicator: true
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    net.lab1024.sa.video: INFO
+    org.bytedeco.javacv: WARN
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# ==================== 视频服务特定配置 ====================
+video:
+  streaming:
+    # 视频流配置
+    rtsp:
+      enabled: ${VIDEO_RTSP_ENABLED:true}
+      port: ${VIDEO_RTSP_PORT:8554}
+      transport: ${VIDEO_RTSP_TRANSPORT:TCP}
+      authentication: ${VIDEO_RTSP_AUTH:true}
+      max-connections: ${RTSP_MAX_CONNECTIONS:1000}
+      connection-timeout: ${RTSP_CONNECTION_TIMEOUT:30000}
+
+    rtmp:
+      enabled: ${VIDEO_RTMP_ENABLED:true}
+      port: ${VIDEO_RTMP_PORT:1935}
+      chunk-size: ${RTMP_CHUNK_SIZE:60000}
+      authentication: ${RTMP_AUTHENTICATION:false}
+
+    hls:
+      enabled: ${VIDEO_HLS_ENABLED:true}
+      segment-duration: ${VIDEO_HLS_SEGMENT:10}
+      playlist-size: ${VIDEO_HLS_PLAYLIST:6}
+      segment-cleanup: ${HLS_SEGMENT_CLEANUP:true}
+      cleanup-interval: ${HLS_CLEANUP_INTERVAL:3600}
+
+    web:
+      enabled: ${VIDEO_WEB_ENABLED:true}
+      port: ${VIDEO_WEB_PORT:8093}
+      cors-enabled: ${VIDEO_CORS_ENABLED:true}
+      websocket-enabled: ${WEBSOCKET_ENABLED:true}
+      max-concurrent-streams: ${MAX_CONCURRENT_STREAMS:500}
+
+  device:
+    # 设备管理
+    connection:
+      max-devices: ${VIDEO_MAX_DEVICES:1000}
+      connection-timeout: ${VIDEO_CONNECTION_TIMEOUT:30000}
+      keep-alive-interval: ${VIDEO_KEEP_ALIVE:60000}
+      reconnect-interval: ${VIDEO_RECONNECT_INTERVAL:5000}
+      max-reconnect-attempts: ${MAX_RECONNECT_ATTEMPTS:5}
+
+    protocols:
+      supported: ${VIDEO_PROTOCOLS:H.264,H.265,MJPEG,MPEG4}
+      default-profile: ${VIDEO_DEFAULT_PROFILE:High}
+      bitrate-control: ${VIDEO_BITRATE_CONTROL:CBR}
+      max-bitrate: ${VIDEO_MAX_BITRATE:8192}
+
+    # PTZ控制
+    ptz:
+      enabled: ${VIDEO_PTZ_ENABLED:true}
+      preset-speed: ${VIDEO_PTZ_PRESET_SPEED:5}
+      move-speed: ${VIDEO_PTZ_MOVE_SPEED:10}
+      auto-home: ${PTZ_AUTO_HOME:false}
+      patrol-enabled: ${PTZ_PATROL_ENABLED:false}
+
+    # 设备状态监控
+    monitoring:
+      health-check-interval: ${DEVICE_HEALTH_CHECK:60}
+      offline-threshold: ${DEVICE_OFFLINE_THRESHOLD:180}
+      performance-monitoring: ${DEVICE_PERFORMANCE_MONITORING:true}
+
+  recording:
+    # 录像管理
+    storage:
+      path: ${VIDEO_STORAGE_PATH:/opt/ioedream/video/recordings}
+      retention-days: ${VIDEO_RETENTION_DAYS:30}
+      disk-usage-threshold: ${VIDEO_DISK_THRESHOLD:85}
+      storage-warning-threshold: ${STORAGE_WARNING_THRESHOLD:75}
+      auto-cleanup: ${AUTO_CLEANUP_ENABLED:true}
+
+    # 存储配置
+    file-system:
+      type: ${STORAGE_TYPE:local}
+      nas-config: ${NAS_CONFIG:}
+      s3-config: ${S3_CONFIG:}
+      backup-enabled: ${RECORDING_BACKUP_ENABLED:false}
+      backup-path: ${BACKUP_PATH:/backup/video}
+
+    schedule:
+      enabled: ${VIDEO_RECORDING_SCHEDULE_ENABLED:true}
+      continuous-recording: ${VIDEO_CONTINUOUS_RECORDING:false}
+      motion-detection-triggered: ${VIDEO_MOTION_TRIGGERED:true}
+      event-triggered: ${EVENT_TRIGGERED_RECORDING:true}
+
+    quality:
+      high-quality:
+        resolution: ${VIDEO_HIGH_RESOLUTION:1920x1080}
+        bitrate: ${VIDEO_HIGH_BITRATE:2048}
+        fps: ${VIDEO_HIGH_FPS:25}
+        codec: ${HIGH_QUALITY_CODEC:H.264}
+      medium-quality:
+        resolution: ${VIDEO_MEDIUM_RESOLUTION:1280x720}
+        bitrate: ${VIDEO_MEDIUM_BITRATE:1024}
+        fps: ${VIDEO_MEDIUM_FPS:20}
+        codec: ${MEDIUM_QUALITY_CODEC:H.264}
+      low-quality:
+        resolution: ${VIDEO_LOW_RESOLUTION:640x480}
+        bitrate: ${VIDEO_LOW_BITRATE:512}
+        fps: ${VIDEO_LOW_FPS:15}
+        codec: ${LOW_QUALITY_CODEC:H.264}
+
+    # 录像文件管理
+    file-management:
+      segment-duration: ${RECORDING_SEGMENT_DURATION:300}
+      max-file-size: ${MAX_RECORDING_FILE_SIZE:1024}
+      file-naming-pattern: ${FILE_NAMING_PATTERN:yyyyMMdd_HHmmss}
+      metadata-extraction: ${METADATA_EXTRACTION_ENABLED:true}
+
+  analytics:
+    # 智能分析
+    ai:
+      enabled: ${VIDEO_AI_ENABLED:true}
+      provider: ${VIDEO_AI_PROVIDER:opencv}
+      model-path: ${VIDEO_AI_MODEL_PATH:/opt/ioedream/video/models}
+      gpu-acceleration: ${GPU_ACCELERATION_ENABLED:false}
+      parallel-processing: ${AI_PARALLEL_PROCESSING:true}
+
+    face-recognition:
+      enabled: ${VIDEO_FACE_RECOGNITION_ENABLED:true}
+      confidence-threshold: ${VIDEO_FACE_CONFIDENCE:0.8}
+      face-database: ${VIDEO_FACE_DATABASE:/opt/ioedream/video/facedb}
+      face-detection-interval: ${FACE_DETECTION_INTERVAL:5}
+      max-faces-per-frame: ${MAX_FACES_PER_FRAME:10}
+
+    motion-detection:
+      enabled: ${VIDEO_MOTION_DETECTION_ENABLED:true}
+      sensitivity: ${VIDEO_MOTION_SENSITIVITY:0.7}
+      minimum-object-size: ${VIDEO_MOTION_MIN_SIZE:50}
+      detection-interval: ${MOTION_DETECTION_INTERVAL:1}
+      noise-reduction: ${MOTION_NOISE_REDUCTION:true}
+
+    object-detection:
+      enabled: ${VIDEO_OBJECT_DETECTION_ENABLED:false}
+      objects: ${VIDEO_DETECT_OBJECTS:person,vehicle,animal}
+      confidence-threshold: ${VIDEO_OBJECT_CONFIDENCE:0.75}
+      detection-interval: ${OBJECT_DETECTION_INTERVAL:10}
+      tracking-enabled: ${OBJECT_TRACKING_ENABLED:true}
+
+    behavior-analysis:
+      enabled: ${VIDEO_BEHAVIOR_ANALYSIS_ENABLED:false}
+      behaviors: ${VIDEO_ANALYZE_BEHAVIORS:loitering,fighting,falling,intrusion}
+      detection-window: ${VIDEO_BEHAVIOR_WINDOW:30}
+      behavior-threshold: ${BEHAVIOR_THRESHOLD:0.6}
+
+    # AI性能优化
+    performance:
+      batch-processing: ${AI_BATCH_PROCESSING:true}
+      batch-size: ${AI_BATCH_SIZE:32}
+      inference-thread-pool: ${INFERENCE_THREAD_POOL:4}
+      model-optimization: ${MODEL_OPTIMIZATION_ENABLED:true}
+
+  playback:
+    # 录像回放
+    playback-speeds: ${VIDEO_PLAYBACK_SPEEDS:0.5,1,2,4,8,16}
+    max-playback-streams: ${VIDEO_MAX_PLAYBACK_STREAMS:50}
+    buffer-size: ${VIDEO_PLAYBACK_BUFFER:1048576}
+    seek-precision: ${PLAYBACK_SEEK_PRECISION:keyframe}
+    fast-seek-enabled: ${FAST_SEEK_ENABLED:true}
+
+    timeline:
+      enabled: ${VIDEO_TIMELINE_ENABLED:true}
+      thumbnail-interval: ${VIDEO_THUMBNAIL_INTERVAL:60}
+      event-markers: ${VIDEO_EVENT_MARKERS:true}
+      smart-thumbnails: ${SMART_THUMBNAILS_ENABLED:true}
+
+    # 回放优化
+    optimization:
+      adaptive-bitrate: ${PLAYBACK_ADAPTIVE_BITRATE:true}
+      pre-fetch-buffer: ${PRE_FETCH_BUFFER_SIZE:5}
+      network-adaptation: ${NETWORK_ADAPTATION_ENABLED:true}
+
+  integration:
+    # 第三方集成
+    access-control:
+      enabled: ${VIDEO_ACCESS_INTEGRATION_ENABLED:true}
+      event-recording: ${VIDEO_EVENT_RECORDING:true}
+      pre-roll-seconds: ${VIDEO_PRE_ROLL:10}
+      post-roll-seconds: ${VIDEO_POST_ROLL:10}
+      video-quality-on-event: ${EVENT_VIDEO_QUALITY:high}
+
+    alarm:
+      enabled: ${VIDEO_ALARM_INTEGRATION_ENABLED:true}
+      event-types: ${VIDEO_ALARM_EVENTS:motion,detection,face-recognized}
+      notification-channels: ${VIDEO_ALARM_CHANNELS:system,email,sms}
+      alarm-video-clips: ${ALARM_VIDEO_CLIPS:true}
+      clip-duration: ${ALARM_CLIP_DURATION:30}
+
+    third-party:
+      vms-integration: ${VMS_INTEGRATION_ENABLED:false}
+      onvif-support: ${ONVIF_SUPPORT_ENABLED:true}
+      sdk-integration: ${SDK_INTEGRATION_ENABLED:false}
+
+  performance:
+    # 性能优化
+    transcoding:
+      enabled: ${VIDEO_TRANSCODING_ENABLED:true}
+      hardware-acceleration: ${VIDEO_HW_ACCELERATION:true}
+      max-concurrent-jobs: ${VIDEO_MAX_TRANSCODING:10}
+      transcoding-quality: ${TRANSCODING_QUALITY:medium}
+      auto-scaling: ${TRANSCODING_AUTO_SCALING:true}
+
+    streaming:
+      buffer-size: ${VIDEO_STREAM_BUFFER:1048576}
+      max-bitrate: ${VIDEO_MAX_BITRATE:8192}
+      adaptive-bitrate: ${VIDEO_ADAPTIVE_BITRATE:true}
+      network-optimization: ${NETWORK_OPTIMIZATION_ENABLED:true}
+
+    # 资源管理
+    resource:
+      max-memory-usage: ${MAX_MEMORY_USAGE:8192}
+      max-cpu-usage: ${MAX_CPU_USAGE:80}
+      thread-pool-size: ${VIDEO_THREAD_POOL:100}
+      connection-pool-size: ${CONNECTION_POOL_SIZE:200}
+
+  cache:
+    # 缓存配置
+    live-streams:
+      ttl: ${VIDEO_LIVE_STREAMS_TTL:60}          # 1分钟
+      max-size: ${VIDEO_LIVE_STREAMS_MAX_SIZE:100}
+
+    device-status:
+      ttl: ${VIDEO_DEVICE_STATUS_TTL:30}         # 30秒
+      max-size: ${VIDEO_DEVICE_STATUS_MAX_SIZE:1000}
+
+    recording-metadata:
+      ttl: ${VIDEO_RECORDING_METADATA_TTL:3600}  # 1小时
+      max-size: ${VIDEO_RECORDING_METADATA_MAX_SIZE:5000}
+
+    ai-results:
+      ttl: ${AI_RESULTS_TTL:300}                  # 5分钟
+      max-size: ${AI_RESULTS_MAX_SIZE:2000}
+
+    thumbnail-cache:
+      ttl: ${THUMBNAIL_CACHE_TTL:3600}            # 1小时
+      max-size: ${THUMBNAIL_CACHE_MAX_SIZE:10000}
+
+  security:
+    # 安全配置
+    authentication:
+      enabled: ${VIDEO_AUTH_ENABLED:true}
+      token-expire: ${VIDEO_TOKEN_EXPIRE:3600}
+      session-timeout: ${VIDEO_SESSION_TIMEOUT:1800}
+
+    encryption:
+      enabled: ${VIDEO_ENCRYPTION_ENABLED:false}
+      algorithm: ${VIDEO_ENCRYPTION_ALGORITHM:AES-256}
+      key-rotation-days: ${VIDEO_KEY_ROTATION:30}
+      stream-encryption: ${STREAM_ENCRYPTION_ENABLED:false}
+
+    access-control:
+      device-access-level: ${VIDEO_DEVICE_ACCESS_LEVEL:viewer}
+      recording-access-level: ${VIDEO_RECORDING_ACCESS_LEVEL:operator}
+      admin-access-level: ${VIDEO_ADMIN_ACCESS_LEVEL:admin}
+
+    # 数据保护
+    data-protection:
+      privacy-mask: ${PRIVACY_MASK_ENABLED:true}
+      sensitive-area-blur: ${SENSITIVE_AREA_BLUR:true}
+      audit-log: ${VIDEO_AUDIT_LOG:true}
+
+  # 监控告警
+  monitoring:
+    # 设备监控
+    device-monitoring:
+      enabled: ${DEVICE_MONITORING_ENABLED:true}
+      check-interval: ${DEVICE_CHECK_INTERVAL:60}
+      alert-thresholds:
+        offline-count: ${OFFLINE_ALERT_THRESHOLD:10}
+        high-cpu-usage: ${HIGH_CPU_THRESHOLD:80}
+        high-memory-usage: ${HIGH_MEMORY_THRESHOLD:85}
+        storage-full: ${STORAGE_FULL_THRESHOLD:95}
+
+    # 性能监控
+    performance-monitoring:
+      enabled: ${PERFORMANCE_MONITORING_ENABLED:true}
+      metrics-collection: ${METRICS_COLLECTION_ENABLED:true}
+      alert-on-degradation: ${ALERT_ON_DEGRADATION:true}
+
+    # 业务监控
+    business-monitoring:
+      enabled: ${BUSINESS_MONITORING_ENABLED:true}
+      recording-success-rate: ${RECORDING_SUCCESS_RATE_TARGET:99.5}
+      streaming-quality: ${STREAMING_QUALITY_TARGET:95}
+      ai-detection-accuracy: ${AI_DETECTION_ACCURACY_TARGET:85}
+
+  # 运维配置
+  operations:
+    # 自动化运维
+    auto-maintenance:
+      enabled: ${AUTO_MAINTENANCE_ENABLED:true}
+      maintenance-window-start: ${MAINTENANCE_WINDOW_START:02:00}
+      maintenance-window-end: ${MAINTENANCE_WINDOW_END:04:00}
+      auto-restart: ${AUTO_RESTART_ENABLED:false}
+
+    # 备份配置
+    backup:
+      enabled: ${BACKUP_ENABLED:true}
+      backup-interval: ${BACKUP_INTERVAL:86400}
+      backup-retention: ${BACKUP_RETENTION_DAYS:30}
+      incremental-backup: ${INCREMENTAL_BACKUP_ENABLED:true}
+
+    # 日志管理
+    log-management:
+      enabled: ${LOG_MANAGEMENT_ENABLED:true}
+      log-retention-days: ${LOG_RETENTION_DAYS:30}
+      log-compression: ${LOG_COMPRESSION_ENABLED:true}
+      log-rotation: ${LOG_ROTATION_ENABLED:true}

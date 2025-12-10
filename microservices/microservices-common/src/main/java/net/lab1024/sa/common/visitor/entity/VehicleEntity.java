@@ -25,10 +25,14 @@ import lombok.EqualsAndHashCode;
 public class VehicleEntity {
 
     /**
-     * 车辆ID
+     * 车辆ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列vehicle_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long vehicleId;
+    @TableId(value = "vehicle_id", type = IdType.ASSIGN_ID)
+    private Long id;
 
     /**
      * 车牌号

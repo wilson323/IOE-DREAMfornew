@@ -210,7 +210,7 @@ public class AccessPermissionApplyServiceImpl implements AccessPermissionApplySe
             }
 
             log.info("[权限申请] 区域权限关联记录创建成功，relationId={}, applicantId={}, areaId={}, applyNo={}",
-                    areaPerson.getRelationId(), entity.getApplicantId(), entity.getAreaId(), entity.getApplyNo());
+                    areaPerson.getId(), entity.getApplicantId(), entity.getAreaId(), entity.getApplyNo());
 
             // 3. 同步权限到门禁设备（通过设备管理服务）
             syncPermissionToDevices(entity, areaPerson);
@@ -251,7 +251,7 @@ public class AccessPermissionApplyServiceImpl implements AccessPermissionApplySe
                     permission.setExpireTime(entity.getEndTime());
                     areaPersonDao.updateById(permission);
                     log.info("[权限申请] 权限过期时间更新成功，relationId={}, expireTime={}",
-                            permission.getRelationId(), entity.getEndTime());
+                            permission.getId(), entity.getEndTime());
                     break;
                 }
             }
@@ -279,7 +279,7 @@ public class AccessPermissionApplyServiceImpl implements AccessPermissionApplySe
             java.util.Map<String, Object> syncRequest = new java.util.HashMap<>();
             syncRequest.put("personId", entity.getApplicantId());
             syncRequest.put("areaId", entity.getAreaId());
-            syncRequest.put("relationId", areaPerson.getRelationId());
+            syncRequest.put("relationId", areaPerson.getId());
             syncRequest.put("validStartTime", areaPerson.getValidStartTime());
             syncRequest.put("validEndTime", areaPerson.getValidEndTime());
 

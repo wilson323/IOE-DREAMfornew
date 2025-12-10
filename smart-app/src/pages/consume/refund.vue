@@ -75,129 +75,120 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, onMounted } from 'vue'
 import consumeApi from '@/api/business/consume/consume-api.js'
 import { useUserStore } from '@/store/modules/system/user'
 
-export default {
-  name: 'ConsumeRefund',
-  
-  setup() {
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
-    const userStore = useUserStore()
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+const userStore = useUserStore()
 
-    const submitting = ref(false)
-    const accountBalance = ref(0)
-    const refundAmount = ref('')
-    const refundReason = ref('')
-    const contactPhone = ref('')
+// 页面状态
+const submitting = ref(false)
+const accountBalance = ref(0)
+const refundAmount = ref('')
+const refundReason = ref('')
+const contactPhone = ref('')
 
-    const canSubmit = computed(() => {
-      const amount = Number(refundAmount.value)
-      return amount > 0 &&
-             amount <= accountBalance.value &&
-             refundReason.value.trim().length >= 5 &&
-             /^1[3-9]\d{9}$/.test(contactPhone.value)
-    })
+// 计算是否可以提交
+const canSubmit = computed(() => {
+  const amount = Number(refundAmount.value)
+  return amount > 0 &&
+         amount <= accountBalance.value &&
+         refundReason.value.trim().length >= 5 &&
+         /^1[3-9]\d{9}$/.test(contactPhone.value)
+})
 
-    onMounted(() => {
-      init()
-    })
+// 页面生命周期
+onMounted(() => {
+  init()
+})
 
-    const init = async () => {
-      const userId = userStore.userId || 1
-      await loadAccountInfo(userId)
-      
-      // 预填联系电话
-      contactPhone.value = userStore.phone || ''
+onShow(() => {
+  // 页面显示时可以刷新余额
+  const userId = userStore.userId || userStore.employeeId || 1
+  loadAccountInfo(userId)
+})
+
+// 方法实现
+const init = async () => {
+  const userId = userStore.userId || userStore.employeeId || 1
+  await loadAccountInfo(userId)
+
+  // 预填联系电话
+  contactPhone.value = userStore.phone || ''
+}
+
+const loadAccountInfo = async (userId) => {
+  try {
+    const res = await consumeApi.getAccountBalance(userId)
+    if (res.code === 1 && res.data) {
+      accountBalance.value = res.data.balance || res.data || 0
     }
-
-    const loadAccountInfo = async (userId) => {
-      try {
-        const res = await consumeApi.getAccountBalance(userId)
-        if (res.code === 1 && res.data) {
-          accountBalance.value = res.data.balance || res.data || 0
-        }
-      } catch (error) {
-        console.error('加载账户信息失败:', error)
-      }
-    }
-
-    const submitRefund = async () => {
-      if (!canSubmit.value) {
-        if (Number(refundAmount.value) > accountBalance.value) {
-          uni.showToast({ title: '退款金额不能大于余额', icon: 'none' })
-        } else if (refundReason.value.trim().length < 5) {
-          uni.showToast({ title: '请输入退款原因', icon: 'none' })
-        } else {
-          uni.showToast({ title: '请填写完整信息', icon: 'none' })
-        }
-        return
-      }
-
-      submitting.value = true
-
-      try {
-        const res = await consumeApi.accountApi.requestRefund({
-          userId: userStore.userId,
-          amount: Number(refundAmount.value),
-          reason: refundReason.value,
-          contactPhone: contactPhone.value
-        })
-
-        if (res.code === 1) {
-          uni.showModal({
-            title: '提交成功',
-            content: '退款申请已提交，请等待审核',
-            showCancel: false,
-            success: () => {
-              uni.navigateBack()
-            }
-          })
-        } else {
-          uni.showToast({ title: res.message || '提交失败', icon: 'none' })
-        }
-      } catch (error) {
-        console.error('提交退款申请失败:', error)
-        uni.showToast({ title: '提交失败', icon: 'none' })
-      } finally {
-        submitting.value = false
-      }
-    }
-
-    const showHelp = () => {
-      uni.showModal({
-        title: '退款帮助',
-        content: '退款将在1-3个工作日内审核处理，审核通过后资金将原路返回。如有疑问请联系财务部门。',
-        showCancel: false
-      })
-    }
-
-    const formatAmount = (amount) => {
-      if (!amount && amount !== 0) return '0.00'
-      return Number(amount).toFixed(2)
-    }
-
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    return {
-      statusBarHeight,
-      submitting,
-      accountBalance,
-      refundAmount,
-      refundReason,
-      contactPhone,
-      canSubmit,
-      submitRefund,
-      showHelp,
-      formatAmount,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载账户信息失败:', error)
   }
+}
+
+const submitRefund = async () => {
+  if (!canSubmit.value) {
+    if (Number(refundAmount.value) > accountBalance.value) {
+      uni.showToast({ title: '退款金额不能大于余额', icon: 'none' })
+    } else if (refundReason.value.trim().length < 5) {
+      uni.showToast({ title: '请输入退款原因', icon: 'none' })
+    } else {
+      uni.showToast({ title: '请填写完整信息', icon: 'none' })
+    }
+    return
+  }
+
+  submitting.value = true
+
+  try {
+    const res = await consumeApi.accountApi.requestRefund({
+      userId: userStore.userId || userStore.employeeId,
+      amount: Number(refundAmount.value),
+      reason: refundReason.value,
+      contactPhone: contactPhone.value
+    })
+
+    if (res.code === 1) {
+      uni.showModal({
+        title: '提交成功',
+        content: '退款申请已提交，请等待审核',
+        showCancel: false,
+        success: () => {
+          uni.navigateBack()
+        }
+      })
+    } else {
+      uni.showToast({ title: res.message || '提交失败', icon: 'none' })
+    }
+  } catch (error) {
+    console.error('提交退款申请失败:', error)
+    uni.showToast({ title: '提交失败', icon: 'none' })
+  } finally {
+    submitting.value = false
+  }
+}
+
+const showHelp = () => {
+  uni.showModal({
+    title: '退款帮助',
+    content: '退款将在1-3个工作日内审核处理，审核通过后资金将原路返回。如有疑问请联系财务部门。',
+    showCancel: false
+  })
+}
+
+const formatAmount = (amount) => {
+  if (!amount && amount !== 0) return '0.00'
+  return Number(amount).toFixed(2)
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

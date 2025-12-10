@@ -1,0 +1,320 @@
+# ============================================================
+# IOE-DREAM Common Service 生产环境配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8088}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    min-spare-threads: 20
+
+# ==================== Spring配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  # ==================== 数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 连接池配置
+      initial-size: 20
+      min-idle: 20
+      max-active: 100
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+
+      # SQL监控
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 1000
+          log-slow-sql: true
+        wall:
+          enabled: true
+          config:
+            multi-statement-allow: true
+
+  # ==================== Redis配置 ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 10
+        min-idle: 5
+        max-wait: 1000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 缓存配置 ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # 30分钟
+      cache-null-values: false
+      key-prefix: common_cache_
+
+  # ==================== 任务调度配置 ====================
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: ioedream-common-scheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            clusterCheckinInterval: 20000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 20
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    multiple-result-sets-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    default-executor-type: reuse
+    default-statement-timeout: 25
+    default-fetch-size: 100
+    safe-row-bounds-enabled: false
+    map-nested-result-maps-for-single-result: false
+    local-cache-scope: session
+    jdbc-type-for-null: other
+    lazy-load-trigger-methods: ""
+
+  global-config:
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      capital-mode: false
+      key-generator: com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      insert-strategy: not_null
+      update-strategy: not_null
+      select-strategy: not_empty
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    env:
+      show-values: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+
+# ==================== Zipkin分布式追踪配置 ====================
+  sleuth:
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      enabled: ${ZIPKIN_ENABLED:true}
+    sampler:
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      common-service:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        sliding-window-type: count_based
+
+  ratelimiter:
+    instances:
+      common-service:
+        limit-for-period: 200
+        limit-refresh-period: 60s
+        timeout-duration: 5s
+        register-health-indicator: true
+
+  retry:
+    instances:
+      common-service:
+        max-attempts: 3
+        wait-duration: 1000ms
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - java.sql.SQLException
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    net.lab1024.sa.common: INFO
+    org.springframework.security: INFO
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] %5p ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# ==================== 安全配置 ====================
+security:
+  # JWT配置
+  jwt:
+    secret: ${JWT_SECRET:ENC(AES256:encrypted_jwt_secret)}
+    expiration: ${JWT_EXPIRATION:86400}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800}
+    issuer: ${JWT_ISSUER:IOE-DREAM}
+
+  # 密码加密
+  password:
+    encoder: bcrypt
+    strength: ${PASSWORD_STRENGTH:10}
+
+  # RBAC配置
+  rbac:
+    enabled: true
+    cache-enabled: true
+    cache-ttl: 3600
+
+# ==================== 业务特定配置 ====================
+common:
+  # 用户管理
+  user:
+    default-password: ${DEFAULT_USER_PASSWORD:ENC(AES256:encrypted_default_password)}
+    password-expire-days: ${PASSWORD_EXPIRE_DAYS:90}
+    max-login-attempts: ${MAX_LOGIN_ATTEMPTS:5}
+    account-lock-minutes: ${ACCOUNT_LOCK_MINUTES:30}
+
+  # 文件存储
+  file-storage:
+    type: ${FILE_STORAGE_TYPE:minio}
+    endpoint: ${MINIO_ENDPOINT:http://minio-prod:9000}
+    access-key: ${MINIO_ACCESS_KEY:ENC(AES256:encrypted_minio_key)}
+    secret-key: ${MINIO_SECRET_KEY:ENC(AES256:encrypted_minio_secret)}
+    bucket-name: ${MINIO_BUCKET:ioedream-common-files}
+    max-file-size: ${MAX_FILE_SIZE:100MB}
+
+  # 通知配置
+  notification:
+    email:
+      enabled: ${EMAIL_ENABLED:true}
+      host: ${EMAIL_HOST:smtp.example.com}
+      port: ${EMAIL_PORT:587}
+      username: ${EMAIL_USERNAME:ENC(AES256:encrypted_email_username)}
+      password: ${EMAIL_PASSWORD:ENC(AES256:encrypted_email_password)}
+      from: ${EMAIL_FROM:noreply@ioedream.com}
+
+    sms:
+      enabled: ${SMS_ENABLED:true}
+      provider: ${SMS_PROVIDER:aliyun}
+      access-key: ${SMS_ACCESS_KEY:ENC(AES256:encrypted_sms_key)}
+      secret-key: ${SMS_SECRET_KEY:ENC(AES256:encrypted_sms_secret)}
+
+  # 字典管理
+  dict:
+    cache-enabled: true
+    cache-ttl: 7200  # 2小时
+    refresh-interval: 86400  # 24小时
+
+  # 组织架构
+  organization:
+    cache-enabled: true
+    cache-ttl: 3600  # 1小时
+    max-department-level: ${MAX_DEPT_LEVEL:10}
+
+  # 权限管理
+  permission:
+    cache-enabled: true
+    cache-ttl: 1800  # 30分钟
+    default-permissions: ${DEFAULT_PERMISSIONS:}
+
+  # 审计日志
+  audit:
+    enabled: true
+    log-all-operations: ${AUDIT_ALL_OPERATIONS:true}
+    retention-days: ${AUDIT_RETENTION_DAYS:365}
+    async-logging: true
+    batch-size: ${AUDIT_BATCH_SIZE:100}
+
+  # 数据库连接监控
+  database-monitor:
+    enabled: true
+    slow-query-threshold: ${SLOW_QUERY_THRESHOLD:1000}
+    connection-leak-detection: true
+    sql-log-enabled: false
+
+  # 缓存配置
+  cache-config:
+    l1-cache-enabled: true
+    l1-cache-size: ${L1_CACHE_SIZE:1000}
+    l1-cache-ttl: ${L1_CACHE_TTL:300}
+    l2-cache-enabled: true
+    cache-null-values: false

@@ -1,0 +1,420 @@
+# ============================================================
+# IOE-DREAM 公共监控配置
+#
+# 供所有微服务使用的监控和指标配置
+# 包含健康检查、指标收集、日志管理、性能监控等配置
+# ============================================================
+
+# ============================================================
+# Spring Boot Actuator配置
+# ============================================================
+management:
+  # Actuator端点配置
+  endpoints:
+    web:
+      # 开放的Web端点
+      exposure:
+        include: ${ACTUATOR_WEB_EXPOSURE:health,info,metrics,prometheus,threaddump,heapdump,env}
+        # 排除的端点
+        exclude: ${ACTUATOR_WEB_EXCLUDE:}
+      # 基础路径
+      base-path: ${ACTUATOR_BASE_PATH:/actuator}
+      # 是否启用CORS
+      cors:
+        allowed-origins: ${ACTUATOR_CORS_ORIGINS:"*"}
+        allowed-methods: ${ACTUATOR_CORS_METHODS:"GET,POST,PUT,DELETE,OPTIONS"}
+
+    # JMX端点配置
+    jmx:
+      exposure:
+        include: ${ACTUATOR_JMX_EXPOSURE:*}
+      exclude: ${ACTUATOR_JMX_EXCLUDE:}
+
+  # 端点详细配置
+  endpoint:
+    # 健康检查端点
+    health:
+      enabled: ${ACTUATOR_HEALTH_ENABLED:true}
+      show-details: ${ACTUATOR_HEALTH_SHOW_DETAILS:always}
+      show-components: ${ACTUATOR_HEALTH_SHOW_COMPONENTS:always}
+      probes:
+        enabled: ${ACTUATOR_HEALTH_PROBES_ENABLED:true}
+        add-additional-paths: ${ACTUATOR_HEALTH_ADDITIONAL_PATHS:true}
+
+    # 信息端点
+    info:
+      enabled: ${ACTUATOR_INFO_ENABLED:true}
+      git:
+        mode: ${ACTUATOR_INFO_GIT_MODE:full}
+
+    # 指标端点
+    metrics:
+      enabled: ${ACTUATOR_METRICS_ENABLED:true}
+      tags:
+        application: ${spring.application.name}
+        environment: ${spring.profiles.active}
+
+    # 环境端点
+    env:
+      enabled: ${ACTUATOR_ENV_ENABLED:false}
+
+    # 线程转储端点
+    threaddump:
+      enabled: ${ACTUATOR_THREADDUMP_ENABLED:true}
+
+    # 堆转储端点
+    heapdump:
+      enabled: ${ACTUATOR_HEAPDUMP_ENABLED:true}
+
+    # 日志端点
+    loggers:
+      enabled: ${ACTUATOR_LOGGERS_ENABLED:true}
+
+    # Prometheus端点
+    prometheus:
+      enabled: ${ACTUATOR_PROMETHEUS_ENABLED:true}
+
+  # 监控指标配置
+  metrics:
+    # 启用所有指标
+    enable:
+      all: ${METRICS_ENABLE_ALL:true}
+      jvm: ${METRICS_ENABLE_JVM:true}
+      system: ${METRICS_ENABLE_SYSTEM:true}
+      tomcat: ${METRICS_ENABLE_TOMCAT:true}
+      cache: ${METRICS_ENABLE_CACHE:true}
+      datasource: ${METRICS_ENABLE_DATASOURCE:true}
+      redis: ${METRICS_ENABLE_REDIS:true}
+      spring: ${METRICS_ENABLE_SPRING:true}
+
+    # 导出配置
+    export:
+      # Prometheus导出
+      prometheus:
+        enabled: ${METRICS_EXPORT_PROMETHEUS_ENABLED:true}
+        step: ${METRICS_EXPORT_PROMETHEUS_STEP:60}
+        descriptions: ${METRICS_EXPORT_PROMETHEUS_DESCRIPTIONS:true}
+
+      # JMX导出
+      jmx:
+        enabled: ${METRICS_EXPORT_JMX_ENABLED:true}
+        step: ${METRICS_EXPORT_JMX_STEP:60}
+
+      # Simple导出
+      simple:
+        enabled: ${METRICS_EXPORT_SIMPLE_ENABLED:false}
+        step: ${METRICS_EXPORT_SIMPLE_STEP:60}
+
+    # 分布式追踪
+    distribution:
+      # 百分位配置
+      percentiles-histogram:
+        http.server.requests: ${METRICS_DISTRIBUTION_HISTOGRAM_ENABLED:true}
+        spring.data.repository.invocations: ${METRICS_DISTRIBUTION_HISTOGRAM_ENABLED:true}
+
+      percentiles:
+        http.server.requests: ${METRICS_DISTRIBUTION_PERCENTILES:"0.5,0.9,0.95,0.99"}
+        spring.data.repository.invocations: ${METRICS_DISTRIBUTION_PERCENTILES:"0.5,0.9,0.95,0.99"}
+
+      # SLO配置
+      sla:
+        http.server.requests: ${METRICS_SLA_HTTP:"100ms,200ms,500ms,1s,2s,5s"}
+
+    # 自定义指标
+    tags:
+      instance: ${METRICS_TAG_INSTANCE:${spring.application.name}:${server.port}}
+      region: ${METRICS_TAG_REGION:default}
+      zone: ${METRICS_TAG_ZONE:default}
+
+  # 分布式追踪配置（Micrometer Tracing - Spring Boot 3.x）
+  # Spring Boot 3.x使用Micrometer Tracing替代Spring Cloud Sleuth
+  tracing:
+    # 是否启用追踪
+    enabled: ${MANAGEMENT_TRACING_ENABLED:true}
+    # 采样配置
+    sampling:
+      # 采样率（0.0到1.0之间）
+      # 开发环境：1.0 (100%)
+      # 测试环境：0.1 (10%)
+      # 生产环境：0.01 (1%)
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:1.0}
+    # 包含模式
+    include:
+      pattern: ${MANAGEMENT_TRACING_INCLUDE_PATTERN:/*}
+    # 排除模式（actuator端点不追踪）
+    exclude:
+      pattern: ${MANAGEMENT_TRACING_EXCLUDE_PATTERN:/actuator/**,/health/**,/info/**}
+
+  # Zipkin追踪配置
+  zipkin:
+    tracing:
+      # Zipkin服务器端点
+      endpoint: ${ZIPKIN_ENDPOINT:http://127.0.0.1:9411/api/v2/spans}
+
+# ============================================================
+# 日志配置
+# ============================================================
+logging:
+  # 日志级别配置
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    org.springframework: ${LOG_LEVEL_SPRING:INFO}
+    org.springframework.cloud: ${LOG_LEVEL_SPRING_CLOUD:WARN}
+    org.springframework.boot: ${LOG_LEVEL_SPRING_BOOT:INFO}
+    org.springframework.web: ${LOG_LEVEL_SPRING_WEB:INFO}
+    org.springframework.security: ${LOG_LEVEL_SPRING_SECURITY:WARN}
+    org.mybatis: ${LOG_LEVEL_MYBATIS:WARN}
+    net.lab1024.sa: ${LOG_LEVEL_APPLICATION:DEBUG}
+    com.alibaba.druid: ${LOG_LEVEL_DRUID:INFO}
+    com.zaxxer.hikari: ${LOG_LEVEL_HIKARI:WARN}
+    redis.clients.jedis: ${LOG_LEVEL_JEDIS:WARN}
+    io.lettuce.core: ${LOG_LEVEL_LETTUCE:WARN}
+
+  # 日志文件配置
+  file:
+    name: ${LOG_FILE_NAME:${LOG_PATH:/var/log/ioedream}/${spring.application.name}.log}
+    max-size: ${LOG_FILE_MAX_SIZE:100MB}
+    max-history: ${LOG_FILE_MAX_HISTORY:30}
+    total-size-cap: ${LOG_FILE_TOTAL_SIZE_CAP:1GB}
+
+  # 日志格式配置
+  pattern:
+    # 控制台日志格式
+    console: ${LOG_PATTERN_CONSOLE:"%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{50} - %msg%n"}
+    # 文件日志格式
+    file: ${LOG_PATTERN_FILE:"%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{50} - %msg%n"}
+    # 滚动文件日志格式
+    rolling-file-name: ${LOG_PATTERN_ROLLING_FILE_NAME:"${LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i"}
+
+  # 日志组配置
+  group:
+    # 应用日志组
+    application: ${LOG_GROUP_APPLICATION:"net.lab1024.sa"}
+    # 数据库日志组
+    database: ${LOG_GROUP_DATABASE:"org.springframework.data,org.mybatis,com.alibaba.druid"}
+    # 缓存日志组
+    cache: ${LOG_GROUP_CACHE:"org.springframework.cache,org.springframework.data.redis"}
+    # Web日志组
+    web: ${LOG_GROUP_WEB:"org.springframework.web,org.springframework.boot.actuate"}
+
+# ============================================================
+# 日志追踪配置（Trace ID集成到日志）
+# ============================================================
+# Trace ID会自动添加到日志中，格式: [%X{traceId:-},%X{spanId:-}]
+
+# ============================================================
+# 性能监控配置
+# ============================================================
+performance:
+  # JVM监控
+  jvm:
+    enabled: ${PERFORMANCE_JVM_ENABLED:true}
+    # 堆内存监控
+    heap-monitoring:
+      enabled: ${PERFORMANCE_JVM_HEAP_ENABLED:true}
+      threshold: ${PERFORMANCE_JVM_HEAP_THRESHOLD:80}
+    # GC监控
+    gc-monitoring:
+      enabled: ${PERFORMANCE_JVM_GC_ENABLED:true}
+      include-tenured: ${PERFORMANCE_JVM_GC_INCLUDE_TENURED:true}
+    # 线程监控
+    thread-monitoring:
+      enabled: ${PERFORMANCE_JVM_THREAD_ENABLED:true}
+      threshold: ${PERFORMANCE_JVM_THREAD_THRESHOLD:80}
+
+  # 数据库性能监控
+  database:
+    enabled: ${PERFORMANCE_DATABASE_ENABLED:true}
+    # 慢查询监控
+    slow-query:
+      enabled: ${PERFORMANCE_DATABASE_SLOW_QUERY_ENABLED:true}
+      threshold: ${PERFORMANCE_DATABASE_SLOW_QUERY_THRESHOLD:1000}
+    # 连接池监控
+    connection-pool:
+      enabled: ${PERFORMANCE_DATABASE_POOL_ENABLED:true}
+      threshold: ${PERFORMANCE_DATABASE_POOL_THRESHOLD:80}
+
+  # 缓存性能监控
+  cache:
+    enabled: ${PERFORMANCE_CACHE_ENABLED:true}
+    # 命中率监控
+    hit-ratio:
+      enabled: ${PERFORMANCE_CACHE_HIT_RATIO_ENABLED:true}
+      threshold: ${PERFORMANCE_CACHE_HIT_RATIO_THRESHOLD:80}
+    # 缓存大小监控
+    size:
+      enabled: ${PERFORMANCE_CACHE_SIZE_ENABLED:true}
+      threshold: ${PERFORMANCE_CACHE_SIZE_THRESHOLD:1000}
+
+# ============================================================
+# 告警配置
+# ============================================================
+alert:
+  # 告警规则
+  rules:
+    # JVM告警
+    jvm-memory:
+      enabled: ${ALERT_JVM_MEMORY_ENABLED:true}
+      threshold: ${ALERT_JVM_MEMORY_THRESHOLD:90}
+      duration: ${ALERT_JVM_MEMORY_DURATION:300}
+
+    jvm-gc:
+      enabled: ${ALERT_JVM_GC_ENABLED:true}
+      threshold: ${ALERT_JVM_GC_THRESHOLD:10}
+      duration: ${ALERT_JVM_GC_DURATION:60}
+
+    # 数据库告警
+    database-connection:
+      enabled: ${ALERT_DATABASE_CONNECTION_ENABLED:true}
+      threshold: ${ALERT_DATABASE_CONNECTION_THRESHOLD:80}
+      duration: ${ALERT_DATABASE_CONNECTION_DURATION:120}
+
+    database-slow-query:
+      enabled: ${ALERT_DATABASE_SLOW_QUERY_ENABLED:true}
+      threshold: ${ALERT_DATABASE_SLOW_QUERY_THRESHOLD:5}
+      duration: ${ALERT_DATABASE_SLOW_QUERY_DURATION:300}
+
+    # 业务告警
+    business-error-rate:
+      enabled: ${ALERT_BUSINESS_ERROR_RATE_ENABLED:true}
+      threshold: ${ALERT_BUSINESS_ERROR_RATE_THRESHOLD:5}
+      duration: ${ALERT_BUSINESS_ERROR_RATE_DURATION:300}
+
+    # 接口响应时间告警
+    response-time:
+      enabled: ${ALERT_RESPONSE_TIME_ENABLED:true}
+      threshold: ${ALERT_RESPONSE_TIME_THRESHOLD:3000}
+      duration: ${ALERT_RESPONSE_TIME_DURATION:180}
+
+  # 告警通知配置
+  notification:
+    # 邮件通知
+    email:
+      enabled: ${ALERT_EMAIL_ENABLED:true}
+      smtp-host: ${ALERT_EMAIL_SMTP_HOST:smtp.example.com}
+      smtp-port: ${ALERT_EMAIL_SMTP_PORT:587}
+      username: ${ALERT_EMAIL_USERNAME:}
+      password: ${ALERT_EMAIL_PASSWORD:ENC(P5Q6R7S8T9U0V1W2X3Y4Z5A6B7C8D9E0)}
+      recipients: ${ALERT_EMAIL_RECIPIENTS:admin@example.com}
+
+    # 钉钉通知
+    dingtalk:
+      enabled: ${ALERT_DINGTALK_ENABLED:false}
+      webhook: ${ALERT_DINGTALK_WEBHOOK:}
+      secret: ${ALERT_DINGTALK_SECRET:}
+
+    # 微信通知
+    wechat:
+      enabled: ${ALERT_WECHAT_ENABLED:false}
+      webhook: ${ALERT_WECHAT_WEBHOOK:}
+
+# ============================================================
+# 健康检查配置
+# ============================================================
+health:
+  # 自定义健康检查
+  indicators:
+    # 数据库健康检查
+    database:
+      enabled: ${HEALTH_DATABASE_ENABLED:true}
+      timeout: ${HEALTH_DATABASE_TIMEOUT:5000}
+
+    # Redis健康检查
+    redis:
+      enabled: ${HEALTH_REDIS_ENABLED:true}
+      timeout: ${HEALTH_REDIS_TIMEOUT:3000}
+
+    # 外部服务健康检查
+    external-service:
+      enabled: ${HEALTH_EXTERNAL_SERVICE_ENABLED:false}
+      services: ${HEALTH_EXTERNAL_SERVICES:}
+
+    # 磁盘空间检查
+    disk-space:
+      enabled: ${HEALTH_DISK_SPACE_ENABLED:true}
+      threshold: ${HEALTH_DISK_SPACE_THRESHOLD:100MB}
+
+# ============================================================
+# 环境特定配置
+# ============================================================
+
+# 开发环境
+---
+spring:
+  config:
+    activate:
+      profile: dev
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    root: DEBUG
+    net.lab1024.sa: DEBUG
+
+performance:
+  jvm:
+    enabled: false
+
+alert:
+  notification:
+    email:
+      enabled: false
+
+# 测试环境
+---
+spring:
+  config:
+    activate:
+      profile: test
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+performance:
+  jvm:
+    enabled: true
+
+alert:
+  notification:
+    email:
+      enabled: true
+
+# 生产环境
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+    endpoint:
+      health:
+        show-details: when-authorized
+
+logging:
+  level:
+    root: WARN
+    net.lab1024.sa: INFO
+
+performance:
+  jvm:
+    enabled: true
+
+alert:
+  notification:
+    email:
+      enabled: true
+    dingtalk:
+      enabled: true

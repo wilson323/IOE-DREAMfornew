@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "gateway.url",
+      "type": "java.lang.String",
+      "description": "API网关地址，用于服务间通过网关进行通信",
+      "defaultValue": "http://localhost:8080"
+    }
+  ]
+}

@@ -96,21 +96,23 @@ public class AccountManagerImpl implements AccountManager {
                 return false;
             }
 
-            // 转换为分
-            Long amountInCents = amount.multiply(BigDecimal.valueOf(100)).longValue();
-            Long newBalance = account.getBalance() - amountInCents;
+            // 获取当前余额（元）
+            BigDecimal currentBalance = account.getBalance() != null ? account.getBalance() : BigDecimal.ZERO;
+            
+            // 计算新余额（元）
+            BigDecimal newBalance = currentBalance.subtract(amount);
 
-            if (newBalance < 0) {
-                log.warn("[账户管理] 余额不足，accountId={}, balance={}, amount={}", accountId, account.getBalance(), amountInCents);
+            if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+                log.warn("[账户管理] 余额不足，accountId={}, balance={}, amount={}", accountId, currentBalance, amount);
                 return false;
             }
 
-            // 更新余额
+            // 更新余额（使用BigDecimal类型，单位为元）
             account.setBalance(newBalance);
             account.setVersion(account.getVersion() + 1); // 乐观锁版本号+1
             int result = accountDao.updateById(account);
 
-            log.info("[账户管理] 扣减账户余额成功，accountId={}, amount={}, newBalance={}", accountId, amountInCents, newBalance);
+            log.info("[账户管理] 扣减账户余额成功，accountId={}, amount={}, newBalance={}", accountId, amount, newBalance);
             return result > 0;
 
         } catch (Exception e) {
@@ -136,16 +138,18 @@ public class AccountManagerImpl implements AccountManager {
                 return false;
             }
 
-            // 转换为分
-            Long amountInCents = amount.multiply(BigDecimal.valueOf(100)).longValue();
-            Long newBalance = account.getBalance() + amountInCents;
+            // 获取当前余额（元）
+            BigDecimal currentBalance = account.getBalance() != null ? account.getBalance() : BigDecimal.ZERO;
+            
+            // 计算新余额（元）
+            BigDecimal newBalance = currentBalance.add(amount);
 
-            // 更新余额
+            // 更新余额（使用BigDecimal类型，单位为元）
             account.setBalance(newBalance);
             account.setVersion(account.getVersion() + 1); // 乐观锁版本号+1
             int result = accountDao.updateById(account);
 
-            log.info("[账户管理] 增加账户余额成功，accountId={}, amount={}, newBalance={}", accountId, amountInCents, newBalance);
+            log.info("[账户管理] 增加账户余额成功，accountId={}, amount={}, newBalance={}", accountId, amount, newBalance);
             return result > 0;
 
         } catch (Exception e) {
@@ -171,12 +175,18 @@ public class AccountManagerImpl implements AccountManager {
                 return false;
             }
 
-            // 转换为分
-            Long amountInCents = amount.multiply(BigDecimal.valueOf(100)).longValue();
-            boolean sufficient = account.getBalance() >= amountInCents;
+            // 获取当前余额（元）
+            BigDecimal currentBalance = account.getBalance() != null ? account.getBalance() : BigDecimal.ZERO;
+            
+            // 计算可用余额（余额 - 冻结金额）
+            BigDecimal frozenAmount = account.getFrozenAmount() != null ? account.getFrozenAmount() : BigDecimal.ZERO;
+            BigDecimal availableBalance = currentBalance.subtract(frozenAmount);
+            
+            // 比较可用余额和需要金额
+            boolean sufficient = availableBalance.compareTo(amount) >= 0;
 
-            log.debug("[账户管理] 余额检查结果，accountId={}, balance={}, amount={}, sufficient={}",
-                    accountId, account.getBalance(), amountInCents, sufficient);
+            log.debug("[账户管理] 余额检查结果，accountId={}, balance={}, frozenAmount={}, availableBalance={}, amount={}, sufficient={}",
+                    accountId, currentBalance, frozenAmount, availableBalance, amount, sufficient);
             return sufficient;
 
         } catch (Exception e) {

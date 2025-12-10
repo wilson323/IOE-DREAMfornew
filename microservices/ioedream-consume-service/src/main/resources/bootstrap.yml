@@ -1,0 +1,306 @@
+# ============================================================
+# IOE-DREAM Consume Service Bootstrap 配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+#
+# 服务信息:
+# - 服务名称: ioedream-consume-service
+# - 服务端口: 8094
+# - 服务职责: 消费管理微服务，提供支付结算、账户管理、补贴管理等功能
+# ============================================================
+
+# ==================== 应用基础配置 ====================
+spring:
+  application:
+    name: ${SERVICE_NAME:ioedream-consume-service}
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # ==================== Nacos服务发现配置 ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+        enabled: true
+        register-enabled: true
+        # 服务注册元数据
+        metadata:
+          version: ${SERVICE_VERSION:1.0.0}
+          zone: ${ZONE:dev}
+          cluster: ${CLUSTER:default}
+          environment: ${ENVIRONMENT:dev}
+          payment-methods: "card,face,qr-code,mobile-payment"
+          offline-capable: true
+
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+        file-extension: yaml
+        enabled: true
+        refresh-enabled: true
+        # 配置文件导入顺序
+        import-check:
+          enabled: true
+        # 共享配置 - 所有服务共享
+        shared-configs:
+          - data-id: common-database.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-redis.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-monitoring.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-security.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: payment-gateway-config.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+        # 扩展配置 - 服务特定配置
+        extension-configs:
+          - data-id: ioedream-consume-service-ext.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: ${spring.application.name}-${spring.profiles.active:dev}.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+  # ==================== 配置文件导入 ====================
+  config:
+    import:
+      - "optional:nacos:${spring.application.name}.yaml"
+      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:common-config.yaml"
+      - "optional:nacos:consume-payment-config.yaml"
+
+# ==================== 加密配置 ====================
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    key-obtention-iterations: 1000
+    pool-size: 1
+    provider-name: SunJCE
+    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
+    string-output-type: base64
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    property:
+      prefix: ENC(
+      suffix: )
+
+# ==================== JVM配置 ====================
+java:
+  # 消费服务JVM优化参数（高并发交易）
+  opts:
+    - "-server"
+    - "-Xms1g"
+    - "-Xmx2g"
+    - "-XX:+UseG1GC"
+    - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+HeapDumpOnOutOfMemoryError"
+    - "-XX:HeapDumpPath=/var/log/ioedream/consume-service"
+    - "-XX:+PrintGCDetails"
+    - "-XX:+PrintGCTimeStamps"
+    - "-Dfile.encoding=UTF-8"
+    - "-Duser.timezone=Asia/Shanghai"
+
+# ==================== 日志配置启动参数 ====================
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    net.lab1024.sa.consume: DEBUG
+    org.springframework: INFO
+
+# ==================== 消费服务特定配置 ====================
+consume:
+  payment:
+    # 支付配置
+    methods:
+      card:
+        enabled: ${CONSUME_CARD_ENABLED:true}
+        verify-luhn: ${CONSUME_CARD_VERIFY_LUHN:true}
+        contactless-limit: ${CONSUME_CONTACTLESS_LIMIT:300}
+
+      face:
+        enabled: ${CONSUME_FACE_ENABLED:true}
+        liveness-check: ${CONSUME_FACE_LIVENESS:true}
+        confidence-threshold: ${CONSUME_FACE_CONFIDENCE:0.85}
+
+      qr-code:
+        enabled: ${CONSUME_QRCODE_ENABLED:true}
+        dynamic-refresh: ${CONSUME_QRCODE_DYNAMIC:true}
+        refresh-interval: ${CONSUME_QRCODE_REFRESH:30}
+
+      mobile:
+        enabled: ${CONSUME_MOBILE_ENABLED:false}
+        payment-gateway: ${CONSUME_MOBILE_GATEWAY:wechat,alipay}
+
+    # 交易处理
+    transaction:
+      timeout: ${CONSUME_TRANSACTION_TIMEOUT:30}
+      max-retry: ${CONSUME_MAX_RETRY:3}
+      retry-interval: ${CONSUME_RETRY_INTERVAL:1000}
+
+    # 离线消费
+    offline:
+      enabled: ${CONSUME_OFFLINE_ENABLED:true}
+      sync-interval: ${CONSUME_OFFLINE_SYNC:300}
+      max-offline-transactions: ${CONSUME_MAX_OFFLINE:1000}
+      conflict-resolution: ${CONSUME_CONFLICT_RESOLUTION:last-wins}
+
+  account:
+    # 账户管理
+    types:
+      personal: ${CONSUME_PERSONAL_ACCOUNT:true}
+      corporate: ${CONSUME_CORPORATE_ACCOUNT:true}
+      visitor: ${CONSUME_VISITOR_ACCOUNT:true}
+
+    balance:
+      min-balance: ${CONSUME_MIN_BALANCE:0}
+      overdraft-allowed: ${CONSUME_OVERDRAFT_ALLOWED:false}
+      overdraft-limit: ${CONSUME_OVERDRAFT_LIMIT:0}
+
+    # 账户安全
+    security:
+      daily-limit: ${CONSUME_DAILY_LIMIT:10000}
+      single-transaction-limit: ${CONSUME_SINGLE_LIMIT:2000}
+      risk-score-threshold: ${CONSUME_RISK_THRESHOLD:80}
+
+  subsidy:
+    # 补贴管理
+    enabled: ${CONSUME_SUBSIDY_ENABLED:true}
+
+    # 补贴类型
+    types:
+      meal: ${CONSUME_MEAL_SUBSIDY:true}
+      transportation: ${CONSUME_TRANSPORT_SUBSIDY:false}
+      general: ${CONSUME_GENERAL_SUBSIDY:true}
+
+    # 发放策略
+    distribution:
+      auto-distribute: ${CONSUME_AUTO_DISTRIBUTE:true}
+      schedule: ${CONSUME_DISTRIBUTION_SCHEDULE:0 0 1 * *}  # 每月1号
+      calculation-method: ${CONSUME_CALCULATION_METHOD:attendance-based}
+
+    # 补贴规则
+    rules:
+      meal-subsidy-amount: ${CONSUME_MEAL_AMOUNT:30}
+      max-meal-subsidy: ${CONSUME_MAX_MEAL:90}  # 每天3餐
+      carry-forward: ${CONSUME_CARRY_FORWARD:false}
+      expiry-days: ${CONSUME_EXPIRY_DAYS:30}
+
+  pricing:
+    # 价格管理
+    dynamic-pricing:
+      enabled: ${CONSUME_DYNAMIC_PRICING:false}
+      time-based: ${CONSUME_TIME_BASED_PRICING:false}
+      demand-based: ${CONSUME_DEMAND_BASED_PRICING:false}
+
+    # 会员折扣
+    membership:
+      enabled: ${CONSUME_MEMBERSHIP_ENABLED:true}
+      levels: ${CONSUME_MEMBER_LEVELS:3}
+      discount-rates: ${CONSUME_DISCOUNT_RATES:0.95,0.9,0.85}
+
+    # 区域定价
+    regional:
+      enabled: ${CONSUME_REGIONAL_PRICING:true}
+      price-matrix: ${CONSUME_PRICE_MATRIX:canteen,shop,vending}
+
+  device:
+    # 设备管理
+    pos:
+      connection-timeout: ${CONSUME_POS_TIMEOUT:10000}
+      max-transactions: ${CONSUME_POS_MAX_TX:1000}
+      auto-settlement: ${CONSUME_AUTO_SETTLEMENT:true}
+
+    vending:
+      inventory-check: ${CONSUME_VENDING_INVENTORY:true}
+      payment-confirm-timeout: ${CONSUME_VENDING_TIMEOUT:30}
+
+    # 设备状态监控
+    monitoring:
+      heartbeat-interval: ${CONSUME_DEVICE_HEARTBEAT:60}
+      offline-threshold: ${CONSUME_OFFLINE_THRESHOLD:180}
+      auto-maintenance: ${CONSUME_AUTO_MAINTENANCE:false}
+
+  reporting:
+    # 报表统计
+    real-time:
+      enabled: ${CONSUME_REAL_TIME_REPORTING:true}
+      update-interval: ${CONSUME_UPDATE_INTERVAL:30}
+
+    batch:
+      daily-report: ${CONSUME_DAILY_REPORT:true}
+      weekly-summary: ${CONSUME_WEEKLY_SUMMARY:true}
+      monthly-analysis: ${CONSUME_MONTHLY_ANALYSIS:true}
+
+    # 统计维度
+    dimensions:
+      time-based: ${CONSUME_TIME_ANALYSIS:true}
+      user-based: ${CONSUME_USER_ANALYSIS:true}
+      location-based: ${CONSUME_LOCATION_ANALYSIS:true}
+      product-based: ${CONSUME_PRODUCT_ANALYSIS:true}
+
+  integration:
+    # 第三方集成
+    payment-gateway:
+      wechat:
+        enabled: ${CONSUME_WECHAT_PAY_ENABLED:false}
+        app-id: ${WECHAT_APP_ID:}
+        mch-id: ${WECHAT_MCH_ID:}
+        api-key: ${WECHAT_API_KEY:}
+
+      alipay:
+        enabled: ${CONSUME_ALIPAY_ENABLED:false}
+        app-id: ${ALIPAY_APP_ID:}
+        private-key: ${ALIPAY_PRIVATE_KEY:}
+        public-key: ${ALIPAY_PUBLIC_KEY:}
+
+    erp:
+      enabled: ${CONSUME_ERP_INTEGRATION:false}
+      sync-frequency: ${CONSUME_ERP_SYNC:3600}
+      data-mapping: ${CONSUME_ERP_MAPPING:json}
+
+  cache:
+    # 缓存配置
+    account-balance:
+      ttl: ${CONSUME_BALANCE_TTL:300}           # 5分钟
+      max-size: ${CONSUME_BALANCE_MAX_SIZE:50000}
+
+    product-price:
+      ttl: ${CONSUME_PRICE_TTL:600}            # 10分钟
+      max-size: ${CONSUME_PRICE_MAX_SIZE:10000}
+
+    transaction-records:
+      ttl: ${CONSUME_TRANSACTION_TTL:1800}     # 30分钟
+      max-size: ${CONSUME_TRANSACTION_MAX_SIZE:100000}
+
+  notification:
+    # 通知配置
+    low-balance:
+      enabled: ${CONSUME_LOW_BALANCE_NOTIFICATION:true}
+      threshold: ${CONSUME_LOW_BALANCE_THRESHOLD:50}
+      channels: ${CONSUME_NOTIFICATION_CHANNELS:sms,email}
+
+    transaction-alert:
+      enabled: ${CONSUME_TX_ALERT_ENABLED:true}
+      large-amount-threshold: ${CONSUME_LARGE_AMOUNT:500}
+      suspicious-pattern: ${CONSUME_SUSPICIOUS_PATTERN:true}
+
+    settlement:
+      enabled: ${CONSUME_SETTLEMENT_NOTIFICATION:true}
+      daily-summary: ${CONSUME_DAILY_SUMMARY:true}
+      failure-alert: ${CONSUME_FAILURE_ALERT:true}

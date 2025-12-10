@@ -1,0 +1,290 @@
+# ============================================================
+# IOE-DREAM Video Service Bootstrap 配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+#
+# 服务信息:
+# - 服务名称: ioedream-video-service
+# - 服务端口: 8092
+# - 服务职责: 视频监控微服务，提供实时监控、录像回放、智能分析等功能
+# ============================================================
+
+# ==================== 应用基础配置 ====================
+spring:
+  application:
+    name: ${SERVICE_NAME:ioedream-video-service}
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # ==================== Nacos服务发现配置 ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+        enabled: true
+        register-enabled: true
+        # 服务注册元数据
+        metadata:
+          version: ${SERVICE_VERSION:1.0.0}
+          zone: ${ZONE:dev}
+          cluster: ${CLUSTER:default}
+          environment: ${ENVIRONMENT:dev}
+          video-formats: "H.264,H.265,MJPEG"
+          protocols: "RTSP,HTTP,WebSocket"
+          ai-analytics: "face-recognition,behavior-analysis,object-detection"
+
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+        file-extension: yaml
+        enabled: true
+        refresh-enabled: true
+        # 配置文件导入顺序
+        import-check:
+          enabled: true
+        # 共享配置 - 所有服务共享
+        shared-configs:
+          - data-id: common-database.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-redis.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-monitoring.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-security.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: video-streaming-config.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+        # 扩展配置 - 服务特定配置
+        extension-configs:
+          - data-id: ioedream-video-service-ext.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: ${spring.application.name}-${spring.profiles.active:dev}.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+  # ==================== 配置文件导入 ====================
+  config:
+    import:
+      - "optional:nacos:${spring.application.name}.yaml"
+      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:common-config.yaml"
+      - "optional:nacos:video-surveillance-config.yaml"
+
+# ==================== 加密配置 ====================
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    key-obtention-iterations: 1000
+    pool-size: 1
+    provider-name: SunJCE
+    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
+    string-output-type: base64
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    property:
+      prefix: ENC(
+      suffix: )
+
+# ==================== JVM配置 ====================
+java:
+  # 视频服务JVM优化参数（视频流处理）
+  opts:
+    - "-server"
+    - "-Xms2g"
+    - "-Xmx4g"
+    - "-XX:+UseG1GC"
+    - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+HeapDumpOnOutOfMemoryError"
+    - "-XX:HeapDumpPath=/var/log/ioedream/video-service"
+    - "-XX:+PrintGCDetails"
+    - "-XX:+PrintGCTimeStamps"
+    - "-Dfile.encoding=UTF-8"
+    - "-Duser.timezone=Asia/Shanghai"
+    - "-Djava.awt.headless=true"
+    - "-Dorg.bytedeco.javacpp.maxbytes=1g"
+    - "-Dorg.bytedeco.javacpp.maxphysicalbytes=2g"
+
+# ==================== 日志配置启动参数 ====================
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    net.lab1024.sa.video: DEBUG
+    org.springframework: INFO
+    org.bytedeco.javacv: WARN
+
+# ==================== 视频服务特定配置 ====================
+video:
+  streaming:
+    # 视频流配置
+    rtsp:
+      enabled: ${VIDEO_RTSP_ENABLED:true}
+      port: ${VIDEO_RTSP_PORT:8554}
+      transport: ${VIDEO_RTSP_TRANSPORT:TCP}
+      authentication: ${VIDEO_RTSP_AUTH:true}
+
+    rtmp:
+      enabled: ${VIDEO_RTMP_ENABLED:true}
+      port: ${VIDEO_RTMP_PORT:1935}
+
+    hls:
+      enabled: ${VIDEO_HLS_ENABLED:true}
+      segment-duration: ${VIDEO_HLS_SEGMENT:10}
+      playlist-size: ${VIDEO_HLS_PLAYLIST:6}
+
+    web:
+      enabled: ${VIDEO_WEB_ENABLED:true}
+      port: ${VIDEO_WEB_PORT:8093}
+      cors-enabled: ${VIDEO_CORS_ENABLED:true}
+
+  device:
+    # 设备管理
+    connection:
+      max-devices: ${VIDEO_MAX_DEVICES:1000}
+      connection-timeout: ${VIDEO_CONNECTION_TIMEOUT:30000}
+      keep-alive-interval: ${VIDEO_KEEP_ALIVE:60000}
+      reconnect-interval: ${VIDEO_RECONNECT_INTERVAL:5000}
+
+    protocols:
+      supported: ${VIDEO_PROTOCOLS:H.264,H.265,MJPEG,MPEG4}
+      default-profile: ${VIDEO_DEFAULT_PROFILE:High}
+      bitrate-control: ${VIDEO_BITRATE_CONTROL:CBR}
+
+    # PTZ控制
+    ptz:
+      enabled: ${VIDEO_PTZ_ENABLED:true}
+      preset-speed: ${VIDEO_PTZ_PRESET_SPEED:5}
+      move-speed: ${VIDEO_PTZ_MOVE_SPEED:10}
+
+  recording:
+    # 录像管理
+    storage:
+      path: ${VIDEO_STORAGE_PATH:/opt/ioedream/video/recordings}
+      retention-days: ${VIDEO_RETENTION_DAYS:30}
+      disk-usage-threshold: ${VIDEO_DISK_THRESHOLD:85}
+
+    schedule:
+      enabled: ${VIDEO_RECORDING_SCHEDULE_ENABLED:true}
+      continuous-recording: ${VIDEO_CONTINUOUS_RECORDING:false}
+      motion-detection-triggered: ${VIDEO_MOTION_TRIGGERED:true}
+
+    quality:
+      high-quality:
+        resolution: ${VIDEO_HIGH_RESOLUTION:1920x1080}
+        bitrate: ${VIDEO_HIGH_BITRATE:2048}
+        fps: ${VIDEO_HIGH_FPS:25}
+      medium-quality:
+        resolution: ${VIDEO_MEDIUM_RESOLUTION:1280x720}
+        bitrate: ${VIDEO_MEDIUM_BITRATE:1024}
+        fps: ${VIDEO_MEDIUM_FPS:20}
+      low-quality:
+        resolution: ${VIDEO_LOW_RESOLUTION:640x480}
+        bitrate: ${VIDEO_LOW_BITRATE:512}
+        fps: ${VIDEO_LOW_FPS:15}
+
+  analytics:
+    # 智能分析
+    ai:
+      enabled: ${VIDEO_AI_ENABLED:true}
+      provider: ${VIDEO_AI_PROVIDER:opencv}
+      model-path: ${VIDEO_AI_MODEL_PATH:/opt/ioedream/video/models}
+
+    face-recognition:
+      enabled: ${VIDEO_FACE_RECOGNITION_ENABLED:true}
+      confidence-threshold: ${VIDEO_FACE_CONFIDENCE:0.8}
+      face-database: ${VIDEO_FACE_DATABASE:/opt/ioedream/video/facedb}
+
+    motion-detection:
+      enabled: ${VIDEO_MOTION_DETECTION_ENABLED:true}
+      sensitivity: ${VIDEO_MOTION_SENSITIVITY:0.7}
+      minimum-object-size: ${VIDEO_MOTION_MIN_SIZE:50}
+
+    object-detection:
+      enabled: ${VIDEO_OBJECT_DETECTION_ENABLED:false}
+      objects: ${VIDEO_DETECT_OBJECTS:person,vehicle,animal}
+      confidence-threshold: ${VIDEO_OBJECT_CONFIDENCE:0.75}
+
+    behavior-analysis:
+      enabled: ${VIDEO_BEHAVIOR_ANALYSIS_ENABLED:false}
+      behaviors: ${VIDEO_ANALYZE_BEHAVIORS:loitering,fighting,falling,intrusion}
+      detection-window: ${VIDEO_BEHAVIOR_WINDOW:30}
+
+  playback:
+    # 录像回放
+    playback-speeds: ${VIDEO_PLAYBACK_SPEEDS:0.5,1,2,4,8,16}
+    max-playback-streams: ${VIDEO_MAX_PLAYBACK_STREAMS:50}
+    buffer-size: ${VIDEO_PLAYBACK_BUFFER:1048576}
+
+    timeline:
+      enabled: ${VIDEO_TIMELINE_ENABLED:true}
+      thumbnail-interval: ${VIDEO_THUMBNAIL_INTERVAL:60}
+      event-markers: ${VIDEO_EVENT_MARKERS:true}
+
+  integration:
+    # 第三方集成
+    access-control:
+      enabled: ${VIDEO_ACCESS_INTEGRATION_ENABLED:true}
+      event-recording: ${VIDEO_EVENT_RECORDING:true}
+      pre-roll-seconds: ${VIDEO_PRE_ROLL:10}
+      post-roll-seconds: ${VIDEO_POST_ROLL:10}
+
+    alarm:
+      enabled: ${VIDEO_ALARM_INTEGRATION_ENABLED:true}
+      event-types: ${VIDEO_ALARM_EVENTS:motion,detection,face-recognized}
+      notification-channels: ${VIDEO_ALARM_CHANNELS:system,email}
+
+  performance:
+    # 性能优化
+    transcoding:
+      enabled: ${VIDEO_TRANSCODING_ENABLED:true}
+      hardware-acceleration: ${VIDEO_HW_ACCELERATION:true}
+      max-concurrent-jobs: ${VIDEO_MAX_TRANSCODING:5}
+
+    streaming:
+      buffer-size: ${VIDEO_STREAM_BUFFER:1048576}
+      max-bitrate: ${VIDEO_MAX_BITRATE:8192}
+      adaptive-bitrate: ${VIDEO_ADAPTIVE_BITRATE:true}
+
+  cache:
+    # 缓存配置
+    live-streams:
+      ttl: ${VIDEO_LIVE_STREAMS_TTL:60}          # 1分钟
+      max-size: ${VIDEO_LIVE_STREAMS_MAX_SIZE:100}
+
+    device-status:
+      ttl: ${VIDEO_DEVICE_STATUS_TTL:30}         # 30秒
+      max-size: ${VIDEO_DEVICE_STATUS_MAX_SIZE:1000}
+
+    recording-metadata:
+      ttl: ${VIDEO_RECORDING_METADATA_TTL:3600}  # 1小时
+      max-size: ${VIDEO_RECORDING_METADATA_MAX_SIZE:5000}
+
+  security:
+    # 安全配置
+    authentication:
+      enabled: ${VIDEO_AUTH_ENABLED:true}
+      token-expire: ${VIDEO_TOKEN_EXPIRE:3600}
+
+    encryption:
+      enabled: ${VIDEO_ENCRYPTION_ENABLED:false}
+      algorithm: ${VIDEO_ENCRYPTION_ALGORITHM:AES-256}
+      key-rotation-days: ${VIDEO_KEY_ROTATION:30}
+
+    access-control:
+      device-access-level: ${VIDEO_DEVICE_ACCESS_LEVEL:viewer}
+      recording-access-level: ${VIDEO_RECORDING_ACCESS_LEVEL:operator}

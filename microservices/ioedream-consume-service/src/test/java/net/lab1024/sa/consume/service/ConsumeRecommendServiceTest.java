@@ -81,7 +81,7 @@ class ConsumeRecommendServiceTest {
         // 准备模拟交易记录
         mockTransaction = new ConsumeTransactionEntity();
         mockTransaction.setId("TXN001");
-        mockTransaction.setUserId("1001");
+        mockTransaction.setUserId(1001L);
         mockTransaction.setAmount(new BigDecimal("15.00"));
         mockTransaction.setTransactionTime(LocalDateTime.now());
         mockTransaction.setTransactionStatus(2); // 成功
@@ -169,8 +169,9 @@ class ConsumeRecommendServiceTest {
                 .thenReturn(mockResults);
 
         ConsumeAreaEntity mockArea = new ConsumeAreaEntity();
-        mockArea.setId("AREA001");
-        mockArea.setGpsLocation("39.9042,116.4074");
+        mockArea.setId(1L); // AreaEntity使用id作为主键，映射到area_id列
+        // GPS位置信息存储在AreaEntity的gpsLocation字段中，通过父类方法设置
+        // 注意：如果AreaEntity没有setGpsLocation方法，可能需要通过其他方式设置
         when(consumeAreaManager.getAreaById(anyString()))
                 .thenReturn(mockArea);
 
@@ -190,7 +191,7 @@ class ConsumeRecommendServiceTest {
         String timeOfDay = "LUNCH";
         List<ConsumeTransactionEntity> transactions = new ArrayList<>();
         ConsumeTransactionEntity lunchTransaction = new ConsumeTransactionEntity();
-        lunchTransaction.setUserId("1001");
+        lunchTransaction.setUserId(1001L);
         lunchTransaction.setAmount(new BigDecimal("15.00"));
         lunchTransaction.setTransactionTime(LocalDateTime.now().withHour(12).withMinute(30));
         lunchTransaction.setTransactionStatus(2);

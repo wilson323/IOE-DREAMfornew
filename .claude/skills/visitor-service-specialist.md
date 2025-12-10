@@ -3,9 +3,10 @@
 
 **🎯 技能定位**: IOE-DREAM智慧园区访客管理业务专家，精通访客预约、审批流程、跨服务权限下发、访客体验优化等核心业务
 
-**⚡ 技能等级**: ★★★★★ (顶级专家)
+**⚡ 技能等级**: ★★★★★★ (顶级专家)
 **🎯 适用场景**: 访客服务开发、预约管理系统、审批流程建设、访客体验优化
 **📊 技能覆盖**: 访客预约 | 审批流程 | 跨服务调用 | 权限下发 | 访客记录 | 访客体验 | 安全管控
+**🔧 技术栈**: Spring Boot 3.5.8 + Camunda BPM + MyBatis-Plus + Redis + MinIO
 
 ---
 
@@ -34,20 +35,425 @@
 
 ### 👤 访客预约管理
 ```java
+// 访客预约管理 (Jakarta EE 3.0+)
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import jakarta.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+
+// Controller层 - REST接口
+@RestController
+@RequestMapping("/api/v1/visitor/appointment")
+@Tag(name = "访客预约", description = "访客预约和管理服务")
+public class VisitorAppointmentController {
+
+    @Resource
+    private VisitorAppointmentService visitorAppointmentService;
+
+    /**
+     * 创建访客预约
+     */
+    @PostMapping("/create")
+    @RateLimiter(name = "appointment-create", fallbackMethod = "createAppointmentFallback")
+    @ApiOperation(value = "创建预约", notes = "创建新的访客预约")
+    public ResponseDTO<AppointmentResultDTO> createAppointment(
+            @Valid @RequestBody AppointmentCreateRequestDTO request,
+            HttpServletRequest httpRequest) {
+
+        log.info("[访客预约] 创建预约, visitorName={}, visitDate={}",
+                request.getVisitorName(), request.getVisitDate());
+
+        validateRequestSource(httpRequest);
+
+        AppointmentResultDTO result = visitorAppointmentService.createAppointment(request);
+
+        log.info("[访客预约] 预约创建成功, appointmentId={}, status={}",
+                result.getAppointmentId(), result.getStatus());
+
+        return ResponseDTO.ok(result);
+    }
+
+    /**
+     * 取消访客预约
+     */
+    @PostMapping("/cancel")
+    @ApiOperation(value = "取消预约", notes = "取消访客预约")
+    public ResponseDTO<Void> cancelAppointment(@Valid @RequestBody AppointmentCancelRequestDTO request) {
+        log.info("[访客预约] 取消预约, appointmentId={}", request.getAppointmentId());
+
+        visitorAppointmentService.cancelAppointment(request.getAppointmentId(), request.getCancelReason());
+
+        return ResponseDTO.ok();
+    }
+
+    // 服务降级处理
+    public ResponseDTO<AppointmentResultDTO> createAppointmentFallback(AppointmentCreateRequestDTO request, Exception ex) {
+        log.error("[访客预约] 服务降级, visitorName={}", request.getVisitorName(), ex);
+        return ResponseDTO.error("SERVICE_DEGRADED", "系统繁忙，请稍后重试");
+    }
+}
+
+// Service层 - 业务逻辑实现
 @Service
-public class VisitorAppointmentService {
+@Transactional(rollbackFor = Exception.class)
+public class VisitorAppointmentServiceImpl implements VisitorAppointmentService {
 
     @Resource
-    private AppointmentScheduler scheduler;
+    private VisitorAppointmentManager visitorAppointmentManager;
 
-    @Resource
-    private ConflictDetector conflictDetector;
+    @Override
+    public AppointmentResultDTO createAppointment(AppointmentCreateRequestDTO request) {
+        try {
+            validateAppointmentRequest(request);
 
-    @Resource
-    private VisitorValidator visitorValidator;
+            AppointmentResult result = visitorAppointmentManager.createAppointment(request);
 
-    public AppointmentResult createAppointment(AppointmentRequest request) {
+            return convertToDTO(result);
+        } catch (BusinessException e) {
+            log.warn("[访客预约] 业务异常, visitorName={}, error={}", request.getVisitorName(), e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("[访客预约] 系统异常, visitorName={}", request.getVisitorName(), e);
+            throw new BusinessException("APPOINTMENT_CREATE_ERROR", "访客预约创建失败");
+        }
+    }
+
+    @Override
+    public void cancelAppointment(Long appointmentId, String cancelReason) {
+        try {
+            if (appointmentId == null) {
+                throw new BusinessException("APPOINTMENT_ID_REQUIRED", "预约ID不能为空");
+            }
+
+            visitorAppointmentManager.cancelAppointment(appointmentId, cancelReason);
+        } catch (Exception e) {
+            log.error("[访客预约] 取消失败, appointmentId={}", appointmentId, e);
+            throw new BusinessException("APPOINTMENT_CANCEL_ERROR", "访客预约取消失败");
+        }
+    }
+
+    private void validateAppointmentRequest(AppointmentCreateRequestDTO request) {
+        if (StringUtils.isEmpty(request.getVisitorName())) {
+            throw new BusinessException("VISITOR_NAME_REQUIRED", "访客姓名不能为空");
+        }
+        if (StringUtils.isEmpty(request.getVisitorPhone())) {
+            throw new BusinessException("VISITOR_PHONE_REQUIRED", "访客电话不能为空");
+        }
+        if (request.getVisitDate() == null) {
+            throw new BusinessException("VISIT_DATE_REQUIRED", "访问日期不能为空");
+        }
+        if (request.getVisitDate().isBefore(LocalDate.now())) {
+            throw new BusinessException("INVALID_VISIT_DATE", "访问日期不能早于今天");
+        }
+    }
+}
+
+// Manager层 - 复杂业务流程编排
+public class VisitorAppointmentManagerImpl implements VisitorAppointmentManager {
+
+    private final AppointmentScheduler appointmentScheduler;
+    private final ConflictDetector conflictDetector;
+    private final VisitorValidator visitorValidator;
+    private final VisitorAppointmentDao visitorAppointmentDao;
+    private final ApprovalEngine approvalEngine;
+    private final GatewayServiceClient gatewayServiceClient;
+
+    // 构造函数注入依赖
+    public VisitorAppointmentManagerImpl(
+            AppointmentScheduler appointmentScheduler,
+            ConflictDetector conflictDetector,
+            VisitorValidator visitorValidator,
+            VisitorAppointmentDao visitorAppointmentDao,
+            ApprovalEngine approvalEngine,
+            GatewayServiceClient gatewayServiceClient) {
+        this.appointmentScheduler = appointmentScheduler;
+        this.conflictDetector = conflictDetector;
+        this.visitorValidator = visitorValidator;
+        this.visitorAppointmentDao = visitorAppointmentDao;
+        this.approvalEngine = approvalEngine;
+        this.gatewayServiceClient = gatewayServiceClient;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AppointmentResult createAppointment(AppointmentCreateRequestDTO request) {
         // 1. 访客信息验证
+        VisitorValidationResult validation = visitorValidator.validateVisitor(request);
+        if (!validation.isValid()) {
+            throw new BusinessException("VISITOR_VALIDATION_FAILED", validation.getErrorMessage());
+        }
+
+        // 2. 预约冲突检测
+        ConflictDetectionResult conflictResult = conflictDetector.detectConflicts(request);
+        if (conflictResult.hasConflicts()) {
+            return AppointmentResult.builder()
+                .status("CONFLICT_DETECTED")
+                .conflicts(conflictResult.getConflicts())
+                .suggestions(conflictResult.getSuggestions())
+                .build();
+        }
+
+        // 3. 智能调度安排
+        AppointmentSchedule schedule = appointmentScheduler.scheduleAppointment(request);
+
+        // 4. 访客预约信息持久化
+        VisitorAppointmentEntity appointment = saveAppointment(request, schedule);
+
+        // 5. 启动审批流程（如需要）
+        if (approvalRequired(request)) {
+            startApprovalProcess(appointment);
+        } else {
+            // 自动审批通过，下发权限
+            grantVisitorPermission(appointment);
+        }
+
+        // 6. 发送预约确认通知
+        sendAppointmentNotification(appointment);
+
+        return buildAppointmentResult(appointment, schedule);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelAppointment(Long appointmentId, String cancelReason) {
+        // 1. 获取预约信息
+        VisitorAppointmentEntity appointment = getAppointmentById(appointmentId);
+        if (appointment == null) {
+            throw new BusinessException("APPOINTMENT_NOT_FOUND", "访客预约不存在");
+        }
+
+        // 2. 验证取消权限
+        validateCancelPermission(appointment);
+
+        // 3. 回收已下发的权限
+        revokeVisitorPermission(appointment);
+
+        // 4. 更新预约状态
+        updateAppointmentStatus(appointmentId, "CANCELLED", cancelReason);
+
+        // 5. 发送取消通知
+        sendCancelNotification(appointment, cancelReason);
+    }
+
+    private VisitorValidationResult visitorValidator.validateVisitor(AppointmentCreateRequestDTO request) {
+        return visitorValidator.validateBasicInfo(request)
+                .andThen(() -> validateBlacklist(request))
+                .andThen(() -> validateVisitHistory(request));
+    }
+
+    private ConflictDetectionResult conflictDetector.detectConflicts(AppointmentCreateRequestDTO request) {
+        // 1. 时间冲突检测
+        List<TimeConflict> timeConflicts = checkTimeConflicts(request);
+
+        // 2. 资源冲突检测
+        List<ResourceConflict> resourceConflicts = checkResourceConflicts(request);
+
+        // 3. 访客容量冲突检测
+        List<CapacityConflict> capacityConflicts = checkCapacityConflicts(request);
+
+        return ConflictDetectionResult.builder()
+                .timeConflicts(timeConflicts)
+                .resourceConflicts(resourceConflicts)
+                .capacityConflicts(capacityConflicts)
+                .hasConflicts(!timeConflicts.isEmpty() || !resourceConflicts.isEmpty() || !capacityConflicts.isEmpty())
+                .build();
+    }
+
+    private VisitorAppointmentEntity saveAppointment(AppointmentCreateRequestDTO request, AppointmentSchedule schedule) {
+        VisitorAppointmentEntity appointment = VisitorAppointmentEntity.builder()
+                .visitorName(request.getVisitorName())
+                .visitorPhone(request.getVisitorPhone())
+                .visitorEmail(request.getVisitorEmail())
+                .visitorCompany(request.getVisitorCompany())
+                .visitorIdCard(request.getVisitorIdCard())
+                .visitDate(request.getVisitDate())
+                .visitStartTime(schedule.getStartTime())
+                .visitEndTime(schedule.getEndTime())
+                .visitPurpose(request.getVisitPurpose())
+                .visitDepartment(request.getVisitDepartment())
+                .visitContactPerson(request.getVisitContactPerson())
+                .appointmentStatus("PENDING")
+                .build();
+
+        visitorAppointmentDao.insert(appointment);
+
+        return appointment;
+    }
+
+    private void grantVisitorPermission(VisitorAppointmentEntity appointment) {
+        // 通过网关调用门禁服务，下发访客权限
+        VisitorProvisionRequest provisionRequest = VisitorProvisionRequest.builder()
+                .visitorId(appointment.getAppointmentId())
+                .permissionId("VISITOR_" + appointment.getAppointmentId())
+                .deviceIds(getDeviceIdsForDepartment(appointment.getVisitDepartment()))
+                .visitorInfo(VisitorInfo.builder()
+                        .name(appointment.getVisitorName())
+                        .phone(appointment.getVisitorPhone())
+                        .idCard(appointment.getVisitorIdCard())
+                        .photo(appointment.getVisitorPhoto())
+                        .build())
+                .accessTimeWindow(AccessTimeWindow.builder()
+                        .startTime(appointment.getVisitStartTime())
+                        .endTime(appointment.getVisitEndTime())
+                        .build())
+                .build();
+
+        ResponseDTO<Void> result = gatewayServiceClient.callAccessService(
+                "/api/v1/access/device/visitor/provision",
+                HttpMethod.POST,
+                provisionRequest,
+                Void.class
+        );
+
+        if (result.getCode() != 200) {
+            throw new BusinessException("PERMISSION_PROVISION_FAILED", "访客权限下发失败");
+        }
+
+        // 更新预约状态为已授权
+        updateAppointmentStatus(appointment.getAppointmentId(), "AUTHORIZED", "自动审批通过");
+    }
+
+    private void revokeVisitorPermission(VisitorAppointmentEntity appointment) {
+        VisitorRevokeRequest revokeRequest = VisitorRevokeRequest.builder()
+                .visitorId(appointment.getAppointmentId())
+                .deviceIds(getDeviceIdsForDepartment(appointment.getVisitDepartment()))
+                .build();
+
+        ResponseDTO<Void> result = gatewayServiceClient.callAccessService(
+                "/api/v1/access/device/visitor/revoke",
+                HttpMethod.DELETE,
+                revokeRequest,
+                Void.class
+        );
+
+        if (result.getCode() != 200) {
+            log.warn("[访客权限] 权限回收失败, appointmentId={}", appointment.getAppointmentId());
+        }
+    }
+}
+
+// DAO层 - 数据访问
+@Mapper
+public interface VisitorAppointmentDao extends BaseMapper<VisitorAppointmentEntity> {
+
+    @Transactional(readOnly = true)
+    VisitorAppointmentEntity selectByAppointmentId(@Param("appointmentId") Long appointmentId);
+
+    @Transactional(readOnly = true)
+    List<VisitorAppointmentEntity> selectByVisitorPhone(@Param("visitorPhone") String visitorPhone);
+
+    @Transactional(readOnly = true)
+    List<VisitorAppointmentEntity> selectByVisitDateRange(
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate
+    );
+
+    @Transactional(readOnly = true)
+    List<VisitorAppointmentEntity> selectByDepartmentAndDate(
+        @Param("department") String department,
+        @Param("visitDate") LocalDate visitDate
+    );
+
+    @Transactional(rollbackFor = Exception.class)
+    int updateAppointmentStatus(
+        @Param("appointmentId") Long appointmentId,
+        @Param("status") String status,
+        @Param("reason") String reason
+    );
+}
+
+// 实体类 - 访客预约
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("t_visitor_appointment")
+public class VisitorAppointmentEntity extends BaseEntity {
+
+    @TableId(type = IdType.AUTO)
+    private Long appointmentId;
+
+    @TableField("visitor_name")
+    private String visitorName;
+
+    @TableField("visitor_phone")
+    private String visitorPhone;
+
+    @TableField("visitor_email")
+    private String visitorEmail;
+
+    @TableField("visitor_company")
+    private String visitorCompany;
+
+    @TableField("visitor_id_card")
+    @Convert(converter = EncryptedStringConverter.class)
+    private String visitorIdCard;  // 身份证号加密存储
+
+    @TableField("visitor_photo")
+    private String visitorPhoto;  // 照片URL
+
+    @TableField("visit_date")
+    private LocalDate visitDate;
+
+    @TableField("visit_start_time")
+    private LocalDateTime visitStartTime;
+
+    @TableField("visit_end_time")
+    private LocalDateTime visitEndTime;
+
+    @TableField("visit_purpose")
+    private String visitPurpose;
+
+    @TableField("visit_department")
+    private String visitDepartment;
+
+    @TableField("visit_contact_person")
+    private String visitContactPerson;
+
+    @TableField("appointment_status")
+    private String appointmentStatus;  // PENDING, APPROVED, REJECTED, CANCELLED, COMPLETED
+
+    @TableField("approval_required")
+    private Boolean approvalRequired;
+
+    @TableField("approval_process_id")
+    private String approvalProcessId;  // Camunda流程实例ID
+
+    @TableField("access_granted")
+    private Boolean accessGranted;  // 是否已下发门禁权限
+
+    @TableField("access_start_time")
+    private LocalDateTime accessStartTime;
+
+    @TableField("access_end_time")
+    private LocalDateTime accessEndTime;
+
+    @TableField("check_in_time")
+    private LocalDateTime checkInTime;  // 实际签到时间
+
+    @TableField("check_out_time")
+    private LocalDateTime checkOutTime;  // 实际离开时间
+
+    @TableField("cancel_reason")
+    private String cancelReason;
+
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+
+    @TableLogic
+    @TableField("deleted_flag")
+    private Integer deletedFlag;
+
+    @Version
+    private Integer version;
+}
+```
         ValidationErrors errors = visitorValidator.validate(request);
         if (!errors.isEmpty()) {
             return AppointmentResult.failed(errors);

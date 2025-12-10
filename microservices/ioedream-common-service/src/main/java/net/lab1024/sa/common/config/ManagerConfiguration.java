@@ -1,403 +1,353 @@
 package net.lab1024.sa.common.config;
 
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.MeterRegistry;
+import net.lab1024.sa.common.cache.UnifiedCacheManager;
+import net.lab1024.sa.common.dict.dao.DictDataDao;
+import net.lab1024.sa.common.dict.dao.DictTypeDao;
+import net.lab1024.sa.common.dict.manager.DictManager;
+import net.lab1024.sa.common.menu.dao.MenuDao;
+import net.lab1024.sa.common.notification.dao.NotificationConfigDao;
+import net.lab1024.sa.common.notification.manager.NotificationConfigManager;
+import net.lab1024.sa.common.organization.dao.EmployeeDao;
+import net.lab1024.sa.common.menu.manager.MenuManager;
+import net.lab1024.sa.common.util.AESUtil;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.micrometer.core.instrument.MeterRegistry;
-import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RedissonClient;
-import org.springframework.context.ApplicationContext;
-import net.lab1024.sa.common.audit.dao.AuditArchiveDao;
-import net.lab1024.sa.common.audit.dao.AuditLogDao;
-import net.lab1024.sa.common.audit.manager.AuditManager;
-import net.lab1024.sa.common.auth.dao.UserSessionDao;
-import net.lab1024.sa.common.auth.manager.AuthManager;
-import net.lab1024.sa.common.auth.util.JwtTokenUtil;
-import net.lab1024.sa.common.cache.UnifiedCacheManager;
-import net.lab1024.sa.common.monitor.dao.AlertRuleDao;
-import net.lab1024.sa.common.monitor.dao.NotificationDao;
-import net.lab1024.sa.common.monitor.dao.SystemLogDao;
-import net.lab1024.sa.common.monitor.dao.SystemMonitorDao;
-import net.lab1024.sa.common.monitor.manager.HealthCheckManager;
-import net.lab1024.sa.common.monitor.manager.LogManagementManager;
-import net.lab1024.sa.common.monitor.manager.MetricsCollectorManager;
-import net.lab1024.sa.common.monitor.manager.NotificationManager;
-import net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager;
-import net.lab1024.sa.common.monitor.manager.SystemMonitorManager;
-import net.lab1024.sa.common.system.dao.SystemConfigDao;
-import net.lab1024.sa.common.system.dao.SystemDictDao;
-import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
-import net.lab1024.sa.common.system.employee.manager.EmployeeManager;
-import net.lab1024.sa.common.system.manager.ConfigManager;
-import net.lab1024.sa.common.system.manager.DictManager;
-import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
 
 /**
  * Manager配置类
  * <p>
- * 将所有microservices-common中的Manager类注册为Spring Bean
- * 严格遵循CLAUDE.md规范：
- * - Manager类在microservices-common中是纯Java类，不使用Spring注解
- * - 在ioedream-common-service中，通过@Configuration类将Manager注册为Spring Bean
- * - Service层通过@Resource注入Manager实例（由Spring容器管理）
+ * 将microservices-common中的Manager类注册为Spring Bean
+ * 确保Manager类保持纯Java特性，不使用Spring注解
  * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-08
  */
-@Slf4j
 @Configuration
 public class ManagerConfiguration {
 
-    // ==================== DAO依赖注入 ====================
-
-    @Resource
-    private SystemConfigDao systemConfigDao;
-
-    @Resource
-    private SystemDictDao systemDictDao;
-
-    @Resource
-    private EmployeeDao employeeDao;
-
-    @Resource
-    private NotificationDao notificationDao;
-
-    @Resource
-    private AlertRuleDao alertRuleDao;
-
-    @Resource
-    private SystemMonitorDao systemMonitorDao;
-
-    @Resource
-    private SystemLogDao systemLogDao;
-
-    @Resource
-    private UserSessionDao userSessionDao;
-
-    @Resource
-    private AuditLogDao auditLogDao;
-
-    @Resource
-    private AuditArchiveDao auditArchiveDao;
-
-    @Resource
-    private net.lab1024.sa.common.rbac.dao.RoleDao roleDao;
-
-    @Resource
-    private net.lab1024.sa.common.notification.dao.NotificationConfigDao notificationConfigDao;
-
-    @Resource
-    private net.lab1024.sa.common.notification.dao.NotificationTemplateDao notificationTemplateDao;
-
-    // ==================== 其他依赖注入 ====================
-
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
-
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
-
-    @Resource
-    private RestTemplate restTemplate;
-
-    @Resource
-    private DiscoveryClient discoveryClient;
-
-    @Resource
-    private MeterRegistry meterRegistry;
-
-    @Resource
-    private ObjectMapper objectMapper;
-
-    @Resource
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Resource
-    private GatewayServiceClient gatewayServiceClient;
-
-    @Resource
-    private ApplicationContext applicationContext;
-
-    // ==================== Manager Bean注册 ====================
+    /**
+     * 字典管理器Bean配置
+     *
+     * @param dictTypeDao 字典类型DAO
+     * @param dictDataDao 字典数据DAO
+     * @return 字典管理器实例
+     */
+    @Bean
+    public DictManager dictManager(DictTypeDao dictTypeDao, DictDataDao dictDataDao) {
+        return new DictManager(dictTypeDao, dictDataDao);
+    }
 
     /**
-     * 配置Manager Bean
+     * 菜单管理器Bean配置
+     *
+     * @param menuDao 菜单DAO
+     * @param employeeDao 员工DAO
+     * @return 菜单管理器实例
+     */
+    @Bean
+    public MenuManager menuManager(MenuDao menuDao, EmployeeDao employeeDao) {
+        return new MenuManager(menuDao, employeeDao);
+    }
+
+    /**
+     * 统一缓存管理器Bean配置
      * <p>
-     * 注册System配置相关的Manager
+     * 实现多级缓存架构（L1本地缓存 + L2 Redis缓存）
+     * 如果已存在UnifiedCacheManager Bean，则不重复创建
      * </p>
      *
-     * @return ConfigManager实例
+     * @param redisTemplate Redis模板
+     * @param redissonClient Redisson客户端（可选）
+     * @param meterRegistry Micrometer指标注册表（可选）
+     * @return 统一缓存管理器实例
      */
     @Bean
-    public ConfigManager configManager() {
-        log.info("注册ConfigManager为Spring Bean");
-        return new ConfigManager(systemConfigDao, redisTemplate);
+    @ConditionalOnMissingBean(UnifiedCacheManager.class)
+    public UnifiedCacheManager unifiedCacheManager(
+            RedisTemplate<String, Object> redisTemplate,
+            RedissonClient redissonClient,
+            MeterRegistry meterRegistry) {
+        return new UnifiedCacheManager(
+                redisTemplate,
+                redissonClient,
+                meterRegistry
+        );
     }
 
     /**
-     * 字典Manager Bean
+     * AES加密工具Bean配置
      * <p>
-     * 注册字典管理相关的Manager
+     * 用于敏感数据的加密和解密
+     * 如果已存在AESUtil Bean，则不重复创建
      * </p>
      *
-     * @return DictManager实例
+     * @return AES加密工具实例
      */
     @Bean
-    public DictManager dictManager() {
-        log.info("注册DictManager为Spring Bean");
-        return new DictManager(systemDictDao, redisTemplate);
+    @ConditionalOnMissingBean(AESUtil.class)
+    public AESUtil aesUtil() {
+        return new AESUtil();
     }
 
     /**
-     * 员工Manager Bean
+     * 通知配置管理器Bean配置
      * <p>
-     * 注册员工管理相关的Manager
-     * </p>
-     *
-     * @return EmployeeManager实例
-     */
-    @Bean
-    public EmployeeManager employeeManager() {
-        log.info("注册EmployeeManager为Spring Bean");
-        return new EmployeeManager(employeeDao);
-    }
-
-    /**
-     * 通知Manager Bean
-     * <p>
-     * 注册通知管理相关的Manager
-     * 注意：NotificationManagerImpl已经在微服务中通过@Component注册
-     * 这里注册的是基类NotificationManager，供其他服务使用
-     * </p>
-     *
-     * @return NotificationManager实例
-     */
-    @Bean
-    public NotificationManager notificationManager() {
-        log.info("注册NotificationManager为Spring Bean");
-        return new NotificationManager(notificationDao, alertRuleDao);
-    }
-
-    /**
-     * 系统监控Manager Bean
-     *
-     * @return SystemMonitorManager实例
-     */
-    @Bean
-    public SystemMonitorManager systemMonitorManager() {
-        log.info("注册SystemMonitorManager为Spring Bean");
-        return new SystemMonitorManager(systemMonitorDao);
-    }
-
-    /**
-     * 日志管理Manager Bean
-     *
-     * @return LogManagementManager实例
-     */
-    /**
-     * 日志管理Manager Bean
-     *
-     * @return LogManagementManager实例
-     */
-    @Bean
-    public LogManagementManager logManagementManager() {
-        log.info("注册LogManagementManager为Spring Bean");
-        return new LogManagementManager(systemLogDao);
-    }
-
-    /**
-     * 性能监控Manager Bean
-     *
-     * @return PerformanceMonitorManager实例
-     */
-    @Bean
-    public PerformanceMonitorManager performanceMonitorManager() {
-        log.info("注册PerformanceMonitorManager为Spring Bean");
-        return new PerformanceMonitorManager(systemMonitorDao);
-    }
-
-    /**
-     * 指标收集Manager Bean
-     *
-     * @return MetricsCollectorManager实例
-     */
-    @Bean
-    public MetricsCollectorManager metricsCollectorManager() {
-        log.info("注册MetricsCollectorManager为Spring Bean");
-        return new MetricsCollectorManager(meterRegistry, redisTemplate);
-    }
-
-    /**
-     * 健康检查Manager Bean
-     *
-     * @return HealthCheckManager实例
-     */
-    @Bean
-    public HealthCheckManager healthCheckManager() {
-        log.info("注册HealthCheckManager为Spring Bean");
-        return new HealthCheckManager(discoveryClient, restTemplate, objectMapper);
-    }
-
-    /**
-     * 认证Manager Bean
-     *
-     * @return AuthManager实例
-     */
-    @Bean
-    public AuthManager authManager() {
-        log.info("注册AuthManager为Spring Bean");
-        return new AuthManager(userSessionDao, jwtTokenUtil, stringRedisTemplate);
-    }
-
-    /**
-     * 审计Manager Bean
-     * <p>
-     * 注册审计管理相关的Manager
-     * 需要传入ObjectMapper和文件存储路径
-     * </p>
-     *
-     * @return AuditManager实例
-     */
-    @Bean
-    public AuditManager auditManager() {
-        log.info("注册AuditManager为Spring Bean");
-        String exportBasePath = "./exports/audit"; // 可从配置文件中读取
-        String archiveBasePath = "./archives/audit"; // 可从配置文件中读取
-        return new AuditManager(auditLogDao, auditArchiveDao, objectMapper, exportBasePath, archiveBasePath);
-    }
-
-    /**
-     * 统一缓存Manager Bean
-     * <p>
-     * 注册统一缓存管理器，支持多级缓存、缓存击穿防护和缓存命中率监控
-     * </p>
-     *
-     * @return UnifiedCacheManager实例
-     */
-    @Bean
-    public UnifiedCacheManager unifiedCacheManager() {
-        log.info("注册UnifiedCacheManager为Spring Bean（支持缓存击穿防护和命中率监控）");
-        // 尝试从Spring容器获取RedissonClient（如果已配置）
-        RedissonClient redissonClient = null;
-        try {
-            redissonClient = applicationContext.getBean(RedissonClient.class);
-            log.info("RedissonClient已配置，缓存击穿防护功能已启用");
-        } catch (Exception e) {
-            log.warn("RedissonClient未配置，缓存击穿防护功能将不可用。请配置RedissonClient Bean。");
-        }
-        return new UnifiedCacheManager(redisTemplate, redissonClient, meterRegistry);
-    }
-
-    /**
-     * 通知配置Manager Bean
-     * <p>
-     * 注册通知配置管理相关的Manager
      * 负责通知配置的获取、缓存、解密等管理功能
+     * 支持从数据库读取配置，管理员可通过界面配置通知渠道启用状态
      * </p>
      *
-     * @return NotificationConfigManager实例
+     * @param notificationConfigDao 通知配置DAO
+     * @param cacheManager          统一缓存管理器
+     * @param objectMapper          JSON对象映射器
+     * @param aesUtil              AES加密工具
+     * @return 通知配置管理器实例
      */
     @Bean
-    public net.lab1024.sa.common.notification.manager.NotificationConfigManager notificationConfigManager() {
-        log.info("注册NotificationConfigManager为Spring Bean");
-        // 创建AESUtil实例（从环境变量获取密钥）
-        net.lab1024.sa.common.util.AESUtil aesUtil = new net.lab1024.sa.common.util.AESUtil();
-        return new net.lab1024.sa.common.notification.manager.NotificationConfigManager(
+    @ConditionalOnBean({UnifiedCacheManager.class, ObjectMapper.class, AESUtil.class})
+    public NotificationConfigManager notificationConfigManager(
+            NotificationConfigDao notificationConfigDao,
+            UnifiedCacheManager cacheManager,
+            ObjectMapper objectMapper,
+            AESUtil aesUtil) {
+        return new NotificationConfigManager(
                 notificationConfigDao,
-                unifiedCacheManager(),
+                cacheManager,
                 objectMapper,
                 aesUtil
         );
     }
 
     /**
-     * 通知限流管理器Bean
+     * 查询优化管理器Bean配置
      * <p>
-     * 统一管理所有通知渠道的限流策略
-     * 使用滑动窗口算法实现限流
+     * 符合CLAUDE.md规范：Manager类是纯Java类，无状态设计，可直接创建单例
      * </p>
      *
-     * @return NotificationRateLimiter实例
+     * @return 查询优化管理器实例
      */
     @Bean
-    public net.lab1024.sa.common.notification.manager.NotificationRateLimiter notificationRateLimiter() {
-        log.info("注册NotificationRateLimiter为Spring Bean");
-        return new net.lab1024.sa.common.notification.manager.NotificationRateLimiter();
+    public net.lab1024.sa.common.config.QueryOptimizationManager queryOptimizationManager() {
+        return new net.lab1024.sa.common.config.QueryOptimizationManager();
     }
 
     /**
-     * 通知重试管理器Bean
+     * 数据库优化管理器配置属性绑定
      * <p>
-     * 统一管理所有通知渠道的重试策略
-     * 使用指数退避算法实现重试
+     * 使用@ConfigurationProperties绑定配置，然后传入Manager构造函数
      * </p>
      *
-     * @return NotificationRetryManager实例
+     * @return 数据库优化配置对象
      */
     @Bean
-    public net.lab1024.sa.common.notification.manager.NotificationRetryManager notificationRetryManager() {
-        log.info("注册NotificationRetryManager为Spring Bean");
-        return new net.lab1024.sa.common.notification.manager.NotificationRetryManager();
+    @ConfigurationProperties(prefix = "ioedream.database")
+    public net.lab1024.sa.common.config.DatabaseOptimizationManager.PoolConfig databasePoolConfig() {
+        return new net.lab1024.sa.common.config.DatabaseOptimizationManager.PoolConfig();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "ioedream.database.monitoring")
+    public net.lab1024.sa.common.config.DatabaseOptimizationManager.MonitoringConfig databaseMonitoringConfig() {
+        return new net.lab1024.sa.common.config.DatabaseOptimizationManager.MonitoringConfig();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "ioedream.database.query-optimization")
+    public net.lab1024.sa.common.config.DatabaseOptimizationManager.QueryOptimizationConfig databaseQueryOptimizationConfig() {
+        return new net.lab1024.sa.common.config.DatabaseOptimizationManager.QueryOptimizationConfig();
     }
 
     /**
-     * 通知监控指标收集器Bean
+     * 数据库优化管理器Bean配置
      * <p>
-     * 统一收集通知系统的监控指标
-     * 集成Micrometer进行指标收集
+     * 符合CLAUDE.md规范：Manager类通过构造函数接收配置对象
      * </p>
      *
-     * @param meterRegistry Micrometer指标注册表
-     * @return NotificationMetricsCollector实例
+     * @param poolConfig 连接池配置
+     * @param monitoringConfig 监控配置
+     * @param queryOptimizationConfig 查询优化配置
+     * @return 数据库优化管理器实例
      */
     @Bean
-    public net.lab1024.sa.common.notification.manager.NotificationMetricsCollector notificationMetricsCollector(
-            io.micrometer.core.instrument.MeterRegistry meterRegistry) {
-        log.info("注册NotificationMetricsCollector为Spring Bean");
-        return new net.lab1024.sa.common.notification.manager.NotificationMetricsCollector(meterRegistry);
+    public net.lab1024.sa.common.config.DatabaseOptimizationManager databaseOptimizationManager(
+            net.lab1024.sa.common.config.DatabaseOptimizationManager.PoolConfig poolConfig,
+            net.lab1024.sa.common.config.DatabaseOptimizationManager.MonitoringConfig monitoringConfig,
+            net.lab1024.sa.common.config.DatabaseOptimizationManager.QueryOptimizationConfig queryOptimizationConfig) {
+        return new net.lab1024.sa.common.config.DatabaseOptimizationManager(
+                poolConfig,
+                monitoringConfig,
+                queryOptimizationConfig
+        );
     }
 
     /**
-     * 通知模板管理器Bean
-     * <p>
-     * 统一管理通知模板的获取、渲染、缓存等操作
-     * 支持变量替换和模板缓存
-     * </p>
+     * 缓存优化管理器配置对象
      *
-     * @return NotificationTemplateManager实例
+     * @return 缓存配置对象（可选，使用默认配置）
      */
     @Bean
-    public net.lab1024.sa.common.notification.manager.NotificationTemplateManager notificationTemplateManager() {
-        log.info("注册NotificationTemplateManager为Spring Bean");
-        return new net.lab1024.sa.common.notification.manager.NotificationTemplateManager(
-                notificationTemplateDao,
-                unifiedCacheManager(),
+    @ConditionalOnMissingBean(net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration.class)
+    public net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration cacheOptimizationConfig() {
+        return new net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration();
+    }
+
+    /**
+     * 缓存优化管理器Bean配置
+     * <p>
+     * 符合CLAUDE.md规范：Manager类通过构造函数接收RedisTemplate和配置对象
+     * </p>
+     *
+     * @param redisTemplate Redis模板
+     * @param cacheConfig 缓存配置（可选）
+     * @return 缓存优化管理器实例
+     */
+    @Bean
+    @ConditionalOnBean(RedisTemplate.class)
+    public net.lab1024.sa.common.config.CacheOptimizationManager cacheOptimizationManager(
+            RedisTemplate<String, Object> redisTemplate,
+            net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration cacheConfig) {
+        return new net.lab1024.sa.common.config.CacheOptimizationManager(redisTemplate, cacheConfig);
+    }
+
+    /**
+     * 配置变更审计管理器Bean配置
+     * <p>
+     * 符合CLAUDE.md规范：Manager类通过构造函数接收依赖
+     * </p>
+     *
+     * @param configChangeAuditDao 配置变更审计DAO
+     * @param redisTemplate Redis模板
+     * @param objectMapper JSON对象映射器
+     * @return 配置变更审计管理器实例
+     */
+    @Bean
+    public net.lab1024.sa.common.audit.manager.ConfigChangeAuditManager configChangeAuditManager(
+            net.lab1024.sa.common.audit.dao.ConfigChangeAuditDao configChangeAuditDao,
+            RedisTemplate<String, Object> redisTemplate,
+            ObjectMapper objectMapper) {
+        return new net.lab1024.sa.common.audit.manager.ConfigChangeAuditManager(
+                configChangeAuditDao,
+                redisTemplate,
                 objectMapper
         );
     }
 
     /**
-     * 工作流审批Manager Bean
+     * 系统配置批量管理器Bean配置
      * <p>
-     * 注册工作流审批管理相关的Manager
-     * 供各个业务模块使用，统一调用OA服务的工作流API
+     * 符合CLAUDE.md规范：Manager类通过构造函数接收依赖
      * </p>
      *
-     * @return WorkflowApprovalManager实例
+     * @param systemConfigDao 系统配置DAO
+     * @param redisTemplate Redis模板
+     * @return 系统配置批量管理器实例
      */
     @Bean
-    public WorkflowApprovalManager workflowApprovalManager() {
-        log.info("注册WorkflowApprovalManager为Spring Bean");
-        return new WorkflowApprovalManager(gatewayServiceClient);
+    public net.lab1024.sa.common.system.manager.SystemConfigBatchManager systemConfigBatchManager(
+            net.lab1024.sa.common.system.dao.SystemConfigDao systemConfigDao,
+            RedisTemplate<String, Object> redisTemplate) {
+        return new net.lab1024.sa.common.system.manager.SystemConfigBatchManager(
+                systemConfigDao,
+                redisTemplate
+        );
+    }
+
+    /**
+     * 用户偏好设置管理器Bean配置
+     * <p>
+     * 符合CLAUDE.md规范：Manager类通过构造函数接收依赖
+     * </p>
+     *
+     * @param userPreferenceDao 用户偏好设置DAO
+     * @param redisTemplate Redis模板
+     * @return 用户偏好设置管理器实例
+     */
+    @Bean
+    public net.lab1024.sa.common.preference.manager.UserPreferenceManager userPreferenceManager(
+            net.lab1024.sa.common.preference.dao.UserPreferenceDao userPreferenceDao,
+            RedisTemplate<String, Object> redisTemplate) {
+        return new net.lab1024.sa.common.preference.manager.UserPreferenceManager(
+                userPreferenceDao,
+                redisTemplate
+        );
+    }
+
+    /**
+     * 安全管理优化器Bean配置
+     * <p>
+     * 符合CLAUDE.md规范：Manager类通过构造函数接收依赖
+     * </p>
+     *
+     * @param redisTemplate Redis模板
+     * @param stringRedisTemplate String Redis模板
+     * @param menuDao 菜单DAO
+     * @param systemConfigDao 系统配置DAO
+     * @param ipWhitelistConfig IP白名单配置
+     * @param ipWhitelistDbEnabled 是否启用数据库IP白名单
+     * @return 安全管理优化器实例
+     */
+    @Bean
+    public net.lab1024.sa.common.security.SecurityOptimizationManager securityOptimizationManager(
+            RedisTemplate<String, Object> redisTemplate,
+            org.springframework.data.redis.core.StringRedisTemplate stringRedisTemplate,
+            net.lab1024.sa.common.menu.dao.MenuDao menuDao,
+            net.lab1024.sa.common.system.dao.SystemConfigDao systemConfigDao,
+            @Value("${security.ip.whitelist:127.0.0.1,localhost,::1}") String ipWhitelistConfig,
+            @Value("${security.ip.whitelist.db.enabled:true}") boolean ipWhitelistDbEnabled) {
+        net.lab1024.sa.common.security.SecurityOptimizationManager manager =
+                new net.lab1024.sa.common.security.SecurityOptimizationManager(
+                        redisTemplate,
+                        stringRedisTemplate,
+                        menuDao,
+                        systemConfigDao,
+                        ipWhitelistConfig,
+                        ipWhitelistDbEnabled
+                );
+        manager.init();
+        return manager;
+    }
+
+    /**
+     * 表达式引擎管理器Bean配置
+     * <p>
+     * 符合CLAUDE.md规范：Manager类通过构造函数接收依赖
+     * </p>
+     *
+     * @param gatewayServiceClient 网关服务客户端（可选）
+     * @return 表达式引擎管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(net.lab1024.sa.common.workflow.manager.ExpressionEngineManager.class)
+    public net.lab1024.sa.common.workflow.manager.ExpressionEngineManager expressionEngineManager(
+            net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient) {
+        return new net.lab1024.sa.common.workflow.manager.ExpressionEngineManager(gatewayServiceClient);
+    }
+
+    /**
+     * 工作流执行器注册表Bean配置
+     * <p>
+     * 符合CLAUDE.md规范：Manager类通过构造函数接收依赖
+     * </p>
+     *
+     * @param gatewayServiceClient 网关服务客户端
+     * @param expressionEngineManager 表达式引擎管理器
+     * @return 工作流执行器注册表实例
+     */
+    @Bean
+    public net.lab1024.sa.common.workflow.executor.WorkflowExecutorRegistry workflowExecutorRegistry(
+            net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient,
+            net.lab1024.sa.common.workflow.manager.ExpressionEngineManager expressionEngineManager) {
+        return new net.lab1024.sa.common.workflow.executor.WorkflowExecutorRegistry(
+                gatewayServiceClient,
+                expressionEngineManager
+        );
     }
 }

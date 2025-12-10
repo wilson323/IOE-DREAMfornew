@@ -1,0 +1,213 @@
+# ============================================================
+# IOE-DREAM 公共数据库配置
+#
+# 供所有微服务使用的数据库连接配置
+# 包含Druid连接池、MyBatis-Plus、事务管理等配置
+# ============================================================
+
+# ============================================================
+# 数据源基础配置
+# ============================================================
+spring:
+  datasource:
+    # 数据库连接配置 - 使用环境变量，支持加密
+    url: ${DATABASE_URL:jdbc:mysql://${DATABASE_HOST:127.0.0.1}:${DATABASE_PORT:3306}/${DATABASE_NAME:ioedream}?useSSL=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:ENC(G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    # Druid连接池配置
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 基础连接池配置
+      initial-size: ${DRUID_INITIAL_SIZE:5}
+      min-idle: ${DRUID_MIN_IDLE:5}
+      max-active: ${DRUID_MAX_ACTIVE:20}
+      max-wait: ${DRUID_MAX_WAIT:60000}
+
+      # 连接有效性检查配置
+      validation-query: ${DRUID_VALIDATION_QUERY:SELECT 1}
+      test-while-idle: ${DRUID_TEST_WHILE_IDLE:true}
+      test-on-borrow: ${DRUID_TEST_ON_BORROW:false}
+      test-on-return: ${DRUID_TEST_ON_RETURN:false}
+
+      # 连接回收配置
+      time-between-eviction-runs-millis: ${DRUID_TIME_BETWEEN_EVICTION_RUNS_MILLIS:60000}
+      min-evictable-idle-time-millis: ${DRUID_MIN_EVICTABLE_IDLE_TIME_MILLIS:300000}
+      max-evictable-idle-time-millis: ${DRUID_MAX_EVICTABLE_IDLE_TIME_MILLIS:900000}
+
+      # 监控配置
+      stat-view-servlet:
+        enabled: ${DRUID_STAT_ENABLED:true}
+        url-pattern: ${DRUID_STAT_URL_PATTERN:/druid/*}
+        reset-enable: ${DRUID_STAT_RESET_ENABLE:false}
+        login-username: ${DRUID_STAT_USERNAME:admin}
+        login-password: ${DRUID_STAT_PASSWORD:ENC(H7K8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y)}
+
+      # Web监控配置
+      web-stat-filter:
+        enabled: ${DRUID_WEB_STAT_ENABLED:true}
+        url-pattern: ${DRUID_WEB_STAT_URL_PATTERN:/*}
+        exclusions: ${DRUID_WEB_STAT_EXCLUSIONS:"*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"}
+
+      # 慢查询监控
+      filter:
+        stat:
+          enabled: ${DRUID_FILTER_STAT_ENABLED:true}
+          slow-sql-millis: ${DRUID_SLOW_SQL_MILLIS:1000}
+          log-slow-sql: ${DRUID_LOG_SLOW_SQL:true}
+
+        # SQL防火墙
+        wall:
+          enabled: ${DRUID_FILTER_WALL_ENABLED:true}
+          config:
+            multi-statement-allow: ${DRUID_WALL_MULTI_STATEMENT:true}
+            select-allow: ${DRUID_WALL_SELECT_ALLOW:true}
+            delete-allow: ${DRUID_WALL_DELETE_ALLOW:true}
+            update-allow: ${DRUID_WALL_UPDATE_ALLOW:true}
+            insert-allow: ${DRUID_WALL_INSERT_ALLOW:true}
+
+# ============================================================
+# MyBatis-Plus配置
+# ============================================================
+mybatis-plus:
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: ${MYBATIS_TYPE_ALIASES_PACKAGE:net.lab1024.sa.**.entity}
+
+  # mapper xml文件扫描路径
+  mapper-locations: ${MYBATIS_MAPPER_LOCATIONS:classpath*:mapper/**/*.xml}
+
+  # MyBatis原生配置
+  configuration:
+    # 数据库字段下划线转驼峰命名
+    map-underscore-to-camel-case: ${MYBATIS_MAP_UNDERSCORE_TO_CAMEL:true}
+    # 结果集映射
+    auto-mapping-behavior: ${MYBATIS_AUTO_MAPPING_BEHAVIOR:partial}
+    # 级联映射
+    auto-mapping-unknown-column-behavior: ${MYBATIS_AUTO_MAPPING_UNKNOWN_COLUMN_BEHAVIOR:warning}
+    # 缓存配置
+    cache-enabled: ${MYBATIS_CACHE_ENABLED:true}
+    # 延迟加载
+    lazy-loading-enabled: ${MYBATIS_LAZY_LOADING_ENABLED:false}
+    # 多结果集
+    multiple-result-sets-enabled: ${MYBATIS_MULTIPLE_RESULT_SETS:true}
+    # 使用列标签
+    use-column-label: ${MYBATIS_USE_COLUMN_LABEL:true}
+    # 使用生成的主键
+    use-generated-keys: ${MYBATIS_USE_GENERATED_KEYS:true}
+    # 默认执行器类型
+    default-executor-type: ${MYBATIS_DEFAULT_EXECUTOR_TYPE:simple}
+    # 默认语句超时时间
+    default-statement-timeout: ${MYBATIS_DEFAULT_STATEMENT_TIMEOUT:30}
+    # 默认获取大小
+    default-fetch-size: ${MYBATIS_DEFAULT_FETCH_SIZE:100}
+    # 安全行为
+    safe-row-bounds-enabled: ${MYBATIS_SAFE_ROW_BOUNDS_ENABLED:false}
+    # 本地缓存范围
+    local-cache-scope: ${MYBATIS_LOCAL_CACHE_SCOPE:session}
+    # JDBC类型为NULL
+    jdbc-type-for-null: ${MYBATIS_JDBC_TYPE_FOR_NULL:other}
+    # 日志实现
+    log-impl: ${MYBATIS_LOG_IMPL:org.apache.ibatis.logging.slf4j.Slf4jImpl}
+
+  # 全局配置
+  global-config:
+    # 数据库配置
+    db-config:
+      # 主键类型
+      id-type: ${MYBATIS_ID_TYPE:assign_id}
+      # 表名前缀
+      table-prefix: ${MYBATIS_TABLE_PREFIX:t_}
+      # 字段填充策略
+      field-strategy: ${MYBATIS_FIELD_STRATEGY:not_null}
+      # 逻辑删除配置
+      logic-delete-field: ${MYBATIS_LOGIC_DELETE_FIELD:deletedFlag}
+      logic-delete-value: ${MYBATIS_LOGIC_DELETE_VALUE:1}
+      logic-not-delete-value: ${MYBATIS_LOGIC_NOT_DELETE_VALUE:0}
+      # 数据库类型
+      db-type: ${MYBATIS_DB_TYPE:mysql}
+
+    # 批量操作配置
+    batch:
+      # 是否开启批量
+      batch-is-persist: ${MYBATIS_BATCH_IS_PERSIST:true}
+      # 批量大小
+      batch-size: ${MYBATIS_BATCH_SIZE:1000}
+
+# ============================================================
+# 事务管理配置
+# ============================================================
+spring:
+  transaction:
+    # 事务管理器
+    default-transaction-manager: ${TRANSACTION_DEFAULT_MANAGER:true}
+    # 事务超时时间
+    default-timeout: ${TRANSACTION_DEFAULT_TIMEOUT:30}
+    # 只读事务默认值
+    read-only-default: ${TRANSACTION_READ_ONLY_DEFAULT:false}
+
+# ============================================================
+# 数据库性能监控配置
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,druid
+  endpoint:
+    health:
+      show-details: always
+    druid:
+      enabled: true
+
+# ============================================================
+# 环境特定配置
+# ============================================================
+
+# 开发环境
+---
+spring:
+  config:
+    activate:
+      profile: dev
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+spring:
+  datasource:
+    druid:
+      initial-size: 2
+      min-idle: 2
+      max-active: 10
+
+# 测试环境
+---
+spring:
+  config:
+    activate:
+      profile: test
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# 生产环境
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+spring:
+  datasource:
+    druid:
+      initial-size: 10
+      min-idle: 10
+      max-active: 50
+      max-wait: 10000

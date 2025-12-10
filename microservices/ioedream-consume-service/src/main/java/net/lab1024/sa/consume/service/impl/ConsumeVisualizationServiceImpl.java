@@ -409,7 +409,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
         // 按区域分组统计
         Map<String, Map<String, Object>> regionMap = new HashMap<>();
         for (ConsumeTransactionEntity transaction : transactions) {
-            String areaId = transaction.getAreaId() != null ? transaction.getAreaId() : "未知";
+            String areaId = transaction.getAreaId() != null ? String.valueOf(transaction.getAreaId()) : "未知";
             regionMap.computeIfAbsent(areaId, k -> {
                 Map<String, Object> data = new HashMap<>();
                 data.put("areaId", areaId);
@@ -508,7 +508,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
         // 用户排名
         Map<String, UserRankingData> userMap = new HashMap<>();
         for (ConsumeTransactionEntity transaction : transactions) {
-            String userId = transaction.getUserId();
+            String userId = transaction.getUserId() != null ? String.valueOf(transaction.getUserId()) : null;
             if (userId == null) {
                 continue;
             }
@@ -566,7 +566,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
         // 区域排名
         Map<String, RegionRankingData> regionMap = new HashMap<>();
         for (ConsumeTransactionEntity transaction : transactions) {
-            String areaId = transaction.getAreaId();
+            String areaId = transaction.getAreaId() != null ? String.valueOf(transaction.getAreaId()) : null;
             if (areaId == null) {
                 continue;
             }
@@ -684,7 +684,8 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
         }
 
         // 用户群体分析
-        Map<String, List<ConsumeTransactionEntity>> userGroups = transactions.stream()
+        Map<Long, List<ConsumeTransactionEntity>> userGroups = transactions.stream()
+                .filter(t -> t.getUserId() != null)
                 .collect(Collectors.groupingBy(ConsumeTransactionEntity::getUserId));
 
         List<ConsumeUserBehaviorAnalysisVO.UserSegmentAnalysis> segments = new ArrayList<>();
@@ -695,7 +696,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
         segmentCounts.put("低频用户", 0);
 
         int totalUsers = userGroups.size();
-        for (Map.Entry<String, List<ConsumeTransactionEntity>> entry : userGroups.entrySet()) {
+        for (Map.Entry<Long, List<ConsumeTransactionEntity>> entry : userGroups.entrySet()) {
             int frequency = entry.getValue().size();
             String segment = frequency >= 10 ? "高频用户" : frequency >= 5 ? "中频用户" : "低频用户";
             segmentCounts.put(segment, segmentCounts.get(segment) + 1);
@@ -902,7 +903,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
             count++;
             amount = amount.add(transaction.getAmount());
             if (transaction.getUserId() != null) {
-                activeUsers.add(transaction.getUserId());
+                activeUsers.add(String.valueOf(transaction.getUserId()));
             }
             if (name == null) {
                 name = transaction.getAreaName() != null ? transaction.getAreaName() : "未知区域";

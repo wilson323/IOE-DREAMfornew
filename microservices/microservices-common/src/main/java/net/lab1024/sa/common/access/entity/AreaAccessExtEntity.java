@@ -39,10 +39,14 @@ import net.lab1024.sa.common.entity.BaseEntity;
 public class AreaAccessExtEntity extends BaseEntity {
 
     /**
-     * 扩展ID
+     * 扩展ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列ext_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
-    @TableId(type = IdType.AUTO)
-    private Long extId;
+    @TableId(value = "ext_id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 区域ID

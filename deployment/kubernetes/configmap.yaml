@@ -1,0 +1,331 @@
+---
+# 通用配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ioe-dream-config
+  namespace: ioe-dream-staging
+data:
+  application.yml: |
+    server:
+      port: 8088
+      servlet:
+        context-path: /
+
+    spring:
+      profiles:
+        active: staging
+      application:
+        name: ioedream-common-service
+
+      # 数据库配置
+      datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://mysql-staging:3306/ioedream_staging?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+        username: ${MYSQL_USERNAME:ioedream}
+        password: ${MYSQL_PASSWORD}
+        druid:
+          initial-size: 5
+          min-idle: 5
+          max-active: 20
+          max-wait: 60000
+          validation-query: SELECT 1
+          test-while-idle: true
+          test-on-borrow: false
+          test-on-return: false
+          time-between-eviction-runs-millis: 60000
+          min-evictable-idle-time-millis: 300000
+          pool-prepared-statements: true
+          max-pool-prepared-statement-per-connection-size: 20
+          web-stat-filter:
+            enabled: true
+            url-pattern: /*
+            exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+
+      # Redis配置
+      redis:
+        host: redis-staging
+        port: 6379
+        password: ${REDIS_PASSWORD:}
+        database: 0
+        timeout: 3000
+        lettuce:
+          pool:
+            max-active: 8
+            max-idle: 8
+            min-idle: 0
+            max-wait: -1
+
+      # Nacos配置
+      cloud:
+        nacos:
+          discovery:
+            server-addr: nacos-staging:8848
+            namespace: staging
+            group: IOE-DREAM
+            username: nacos
+            password: nacos
+            enabled: true
+            register-enabled: true
+          config:
+            server-addr: nacos-staging:8848
+            namespace: staging
+            group: IOE-DREAM
+            file-extension: yaml
+            enabled: true
+            refresh-enabled: true
+
+      # 监控配置
+      boot:
+        admin:
+          client:
+            url: http://admin-server:8888
+            instance:
+              service-host-type: ip
+              prefer-ip: true
+              name: ${spring.application.name}
+              metadata:
+                version: ${APP_VERSION:1.0.0}
+                environment: ${SPRING_PROFILES_ACTIVE:staging}
+                zone: ${ZONE:default}
+
+    # Actuator监控
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus,env,configprops,loggers
+          base-path: /actuator
+      endpoint:
+        health:
+          show-details: always
+      metrics:
+        export:
+          prometheus:
+            enabled: true
+        distribution:
+          percentiles-histogram:
+            http.server.requests: true
+          percentiles:
+            http.server.requests: 0.5,0.9,0.95,0.99
+
+    # 日志配置
+    logging:
+      level:
+        net.lab1024.sa: INFO
+        org.springframework: WARN
+        com.alibaba.druid: WARN
+        org.mybatis: WARN
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId}] %logger{36} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId}] %logger{36} - %msg%n"
+      file:
+        name: /app/logs/application.log
+      logback:
+        rollingpolicy:
+          max-file-size: 100MB
+          max-history: 30
+          total-size-cap: 1GB
+
+---
+# 生产环境配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ioe-dream-config
+  namespace: ioe-dream-production
+data:
+  application.yml: |
+    server:
+      port: 8088
+      servlet:
+        context-path: /
+
+    spring:
+      profiles:
+        active: production
+      application:
+        name: ioedream-common-service
+
+      # 数据库配置
+      datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://mysql-production:3306/ioedream_production?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+        username: ${MYSQL_USERNAME:ioedream}
+        password: ${MYSQL_PASSWORD}
+        druid:
+          initial-size: 10
+          min-idle: 10
+          max-active: 50
+          max-wait: 60000
+          validation-query: SELECT 1
+          test-while-idle: true
+          test-on-borrow: false
+          test-on-return: false
+          time-between-eviction-runs-millis: 60000
+          min-evictable-idle-time-millis: 300000
+          pool-prepared-statements: true
+          max-pool-prepared-statement-per-connection-size: 20
+          web-stat-filter:
+            enabled: true
+            url-pattern: /*
+            exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+
+      # Redis配置
+      redis:
+        host: redis-production
+        port: 6379
+        password: ${REDIS_PASSWORD}
+        database: 0
+        timeout: 3000
+        lettuce:
+          pool:
+            max-active: 20
+            max-idle: 10
+            min-idle: 5
+            max-wait: 3000
+
+      # Nacos配置
+      cloud:
+        nacos:
+          discovery:
+            server-addr: nacos-production:8848
+            namespace: production
+            group: IOE-DREAM
+            username: ${NACOS_USERNAME:nacos}
+            password: ${NACOS_PASSWORD}
+            enabled: true
+            register-enabled: true
+          config:
+            server-addr: nacos-production:8848
+            namespace: production
+            group: IOE-DREAM
+            file-extension: yaml
+            enabled: true
+            refresh-enabled: true
+
+      # 监控配置
+      boot:
+        admin:
+          client:
+            url: http://admin-server:8888
+            instance:
+              service-host-type: ip
+              prefer-ip: true
+              name: ${spring.application.name}
+              metadata:
+                version: ${APP_VERSION:1.0.0}
+                environment: ${SPRING_PROFILES_ACTIVE:production}
+                zone: ${ZONE:default}
+
+    # Actuator监控
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus,env,configprops,loggers
+          base-path: /actuator
+      endpoint:
+        health:
+          show-details: when-authorized
+      metrics:
+        export:
+          prometheus:
+            enabled: true
+        distribution:
+          percentiles-histogram:
+            http.server.requests: true
+          percentiles:
+            http.server.requests: 0.5,0.9,0.95,0.99
+
+    # 日志配置
+    logging:
+      level:
+        net.lab1024.sa: INFO
+        org.springframework: WARN
+        com.alibaba.druid: WARN
+        org.mybatis: WARN
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId}] %logger{36} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId}] %logger{36} - %msg%n"
+      file:
+        name: /app/logs/application.log
+      logback:
+        rollingpolicy:
+          max-file-size: 100MB
+          max-history: 30
+          total-size-cap: 1GB
+
+---
+# Nacos配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nacos-config
+  namespace: ioe-dream-staging
+data:
+  server-addr: "nacos-staging:8848"
+  namespace: "staging"
+  group: "IOE-DREAM"
+
+---
+# Nacos配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nacos-config
+  namespace: ioe-dream-production
+data:
+  server-addr: "nacos-production:8848"
+  namespace: "production"
+  group: "IOE-DREAM"
+
+---
+# MySQL配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: ioe-dream-staging
+data:
+  host: "mysql-staging"
+  port: "3306"
+  database: "ioedream_staging"
+
+---
+# MySQL配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: ioe-dream-production
+data:
+  host: "mysql-production"
+  port: "3306"
+  database: "ioedream_production"
+
+---
+# Redis配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: ioe-dream-staging
+data:
+  host: "redis-staging"
+  port: "6379"
+  database: "0"
+
+---
+# Redis配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: ioe-dream-production
+data:
+  host: "redis-production"
+  port: "6379"
+  database: "0"

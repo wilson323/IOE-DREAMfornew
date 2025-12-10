@@ -34,82 +34,78 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/store/modules/system/user.js'
 import { permissionApi } from '@/api/business/access/access-api.js'
 
-export default {
-  name: 'AccessArea',
-  setup() {
-    const userStore = useUserStore()
-    const areaList = ref([])
-    const loading = ref(false)
+// 响应式数据
+const userStore = useUserStore()
+const areaList = ref([])
+const loading = ref(false)
 
-    // 加载区域列表
-    const loadAreas = async () => {
-      loading.value = true
-      try {
-        // 从用户store获取用户ID
-        const userId = userStore.employeeId
-        if (!userId) {
-          uni.showToast({
-            title: '请先登录',
-            icon: 'none'
-          })
-          loading.value = false
-          return
-        }
-        // 通过权限API获取用户有权限的区域列表
-        // 注意：后端需要添加区域列表的移动端接口，当前通过权限接口获取
-        try {
-          const result = await permissionApi.getUserPermissions(userId)
-          if (result.success && result.data) {
-            // 转换数据格式（后端需要提供区域详情接口）
-            areaList.value = (result.data.allowedAreaIds || []).map((areaId) => ({
-              areaId: areaId,
-              areaName: `区域${areaId}`,
-              areaType: '标准区域',
-              deviceCount: 0,
-              permissionCount: 1
-            }))
-          }
-        } catch (error) {
-          console.error('加载区域列表失败:', error)
-          uni.showToast({
-            title: '加载区域列表失败',
-            icon: 'none'
-          })
-        }
-      } catch (error) {
-        console.error('加载区域列表失败:', error)
-      } finally {
-        loading.value = false
+// 页面生命周期
+onMounted(() => {
+  loadAreas()
+})
+
+onShow(() => {
+  // 页面显示时可以刷新区域列表
+})
+
+onPullDownRefresh(() => {
+  loadAreas()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const loadAreas = async () => {
+  loading.value = true
+  try {
+    // 从用户store获取用户ID
+    const userId = userStore.employeeId
+    if (!userId) {
+      uni.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+      loading.value = false
+      return
+    }
+    // 通过权限API获取用户有权限的区域列表
+    // 注意：后端需要添加区域列表的移动端接口，当前通过权限接口获取
+    try {
+      const result = await permissionApi.getUserPermissions(userId)
+      if (result.success && result.data) {
+        // 转换数据格式（后端需要提供区域详情接口）
+        areaList.value = (result.data.allowedAreaIds || []).map((areaId) => ({
+          areaId: areaId,
+          areaName: `区域${areaId}`,
+          areaType: '标准区域',
+          deviceCount: 0,
+          permissionCount: 1
+        }))
       }
+    } catch (error) {
+      console.error('加载区域列表失败:', error)
+      uni.showToast({
+        title: '加载区域列表失败',
+        icon: 'none'
+      })
     }
-
-    // 查看区域详情
-    const viewAreaDetail = (area) => {
-      uni.showToast({ title: '详情功能开发中', icon: 'none' })
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 初始化
-    onMounted(() => {
-      loadAreas()
-    })
-
-    return {
-      areaList,
-      loading,
-      viewAreaDetail,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载区域列表失败:', error)
+  } finally {
+    loading.value = false
   }
+}
+
+const viewAreaDetail = (area) => {
+  uni.showToast({ title: '详情功能开发中', icon: 'none' })
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

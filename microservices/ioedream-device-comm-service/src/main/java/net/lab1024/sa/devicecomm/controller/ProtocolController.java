@@ -160,14 +160,14 @@ public class ProtocolController {
      * - 监控指标：记录请求处理量和延迟
      * </p>
      *
-     * @param SN 设备序列号（从HTTP请求参数中提取）
+     * @param serialNumber 设备序列号（从HTTP请求参数中提取）
      * @param table 数据表名（rtlog/ATTLOG/BUYLOG等）
      * @param protocolType 协议类型代码（可选，如不提供则根据table自动识别）
-     * @param deviceId 设备ID（可选，如不提供则根据SN查找）
+     * @param deviceId 设备ID（可选，如不提供则根据serialNumber查找）
      * @param rawData 原始数据（文本格式）
      * @return 响应结果（HTTP协议返回"OK"）
      */
-    @PostMapping(value = "/push/text", consumes = {"text/plain", "application-push", "application/x-www-form-urlencoded"})
+    @PostMapping(value = "/push/text", consumes = {"text/plain", "text/html;charset=utf-8", "application/x-www-form-urlencoded;charset=UTF-8", "application/x-www-form-urlencoded;charset=GB18030"})
     @RateLimiter(name = "protocol-push", fallbackMethod = "receivePushTextFallback")
     public ResponseDTO<String> receivePushText(
             @RequestParam(value = "SN", required = false) String serialNumber,
@@ -178,7 +178,7 @@ public class ProtocolController {
 
         long startTime = System.currentTimeMillis();
         String finalProtocolType = protocolType; // 声明在try块外，以便在catch块中使用
-        
+
         log.info("[协议控制器] 接收到HTTP文本推送，SN={}, table={}, protocolType={}, deviceId={}, 数据长度={}",
                 serialNumber, table, protocolType, deviceId, rawData != null ? rawData.length() : 0);
 
@@ -224,7 +224,7 @@ public class ProtocolController {
                     // 1. 先查询缓存（L1本地缓存 -> L2 Redis缓存）
                     DeviceEntity cachedDevice = cacheManager.getDeviceByCode(serialNumber);
                     if (cachedDevice != null) {
-                        finalDeviceId = cachedDevice.getDeviceId();
+                        finalDeviceId = cachedDevice.getId();
                         log.info("[协议控制器] 从缓存获取设备ID，SN={}, deviceId={}", serialNumber, finalDeviceId);
                     } else {
                         // 2. 缓存未命中，通过网关调用公共服务查询
@@ -237,11 +237,11 @@ public class ProtocolController {
 
                         if (deviceResponse != null && deviceResponse.isSuccess() && deviceResponse.getData() != null) {
                             DeviceEntity device = deviceResponse.getData();
-                            finalDeviceId = device.getDeviceId();
-                            
+                            finalDeviceId = device.getId();
+
                             // 3. 缓存设备信息（多级缓存）
                             cacheManager.cacheDevice(device);
-                            
+
                             log.info("[协议控制器] 根据SN查询到设备ID，SN={}, deviceId={}", serialNumber, finalDeviceId);
                         } else {
                             log.warn("[协议控制器] 根据SN未查询到设备，SN={}, message={}",
@@ -267,12 +267,12 @@ public class ProtocolController {
             future.join();
 
             long duration = System.currentTimeMillis() - startTime;
-            log.info("[协议控制器] HTTP文本推送处理成功，协议类型={}, 设备ID={}, duration={}ms", 
+            log.info("[协议控制器] HTTP文本推送处理成功，协议类型={}, 设备ID={}, duration={}ms",
                     finalProtocolType, finalDeviceId, duration);
-            
+
             // 记录监控指标
             metricsCollector.recordSuccess(finalProtocolType, duration);
-            
+
             // HTTP协议返回"OK"
             return ResponseDTO.ok("OK");
 
@@ -280,10 +280,10 @@ public class ProtocolController {
             long duration = System.currentTimeMillis() - startTime;
             log.error("[协议控制器] HTTP文本推送处理失败，SN={}, table={}, 错误={}, duration={}ms",
                     serialNumber, table, e.getMessage(), duration, e);
-            
+
             // 记录错误指标
             metricsCollector.recordError(finalProtocolType != null ? finalProtocolType : "UNKNOWN", "PROCESS_ERROR");
-            
+
             // HTTP协议返回错误描述
             return ResponseDTO.error("PROCESS_ERROR", "消息处理失败：" + e.getMessage());
         }
@@ -310,13 +310,13 @@ public class ProtocolController {
             @RequestParam(value = "deviceId", required = false) Long deviceId,
             @RequestBody(required = false) String rawData,
             Exception exception) {
-        
-        log.warn("[协议控制器] 请求被限流，SN={}, table={}, 错误={}", 
+
+        log.warn("[协议控制器] 请求被限流，SN={}, table={}, 错误={}",
                 serialNumber, table, exception != null ? exception.getMessage() : "限流触发");
-        
+
         // 记录限流指标
         metricsCollector.recordError(protocolType != null ? protocolType : "UNKNOWN", "RATE_LIMIT");
-        
+
         // 返回限流错误（HTTP协议返回错误描述）
         return ResponseDTO.error("RATE_LIMIT", "请求过于频繁，请稍后重试");
     }

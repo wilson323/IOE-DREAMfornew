@@ -1,0 +1,167 @@
+# ============================================================
+# IOE-DREAM OA Service - Spring Boot 3.5.8 配置
+# OA办公服务 - 企业级生产环境配置
+#
+# 技术标准: Spring Boot 3.5.8 + Jakarta EE 9.0 + Java 17
+# 遵循规范: 完全兼容Spring Boot 3.x配置模式
+#
+# @Author: IOE-DREAM架构委员会
+# @Version: v1.0.0-企业级重构版
+# @Date: 2025-01-30
+# ============================================================
+
+# ==================== Spring Boot 核心配置 ====================
+spring:
+  application:
+    name: ioedream-oa-service
+
+  # ==================== 数据源配置 (OA系统优化) ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # OA系统连接池配置
+      initial-size: 15
+      min-idle: 15
+      max-active: 75
+      max-wait: 35000
+
+      # 性能优化配置
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      time-between-eviction-runs-millis: 60000
+
+      # OA系统安全配置
+      remove-abandoned: true
+      remove-abandoned-timeout: 300
+      log-abandoned: true
+
+      # 连接池监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 1200
+          log-slow-sql: true
+
+  # ==================== Redis配置 (Spring Boot 3.x标准) ====================
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:ENC(AES256:encrypted_password)}
+      database: ${REDIS_DATABASE:3}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 32
+          max-idle: 16
+          min-idle: 8
+          max-wait: 2500ms
+
+  # ==================== 缓存配置 (OA系统优化) ====================
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=30000,expireAfterWrite=35m,recordStats
+
+  # ==================== MyBatis-Plus配置 (Spring Boot 3.x兼容) ====================
+  mybatis-plus:
+    # 全局配置
+    global-config:
+      db-config:
+        logic-delete-field: deletedFlag
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+        id-type: ASSIGN_ID
+        table-underline: true
+
+    # 配置信息
+    configuration:
+      map-underscore-to-camel-case: true
+      cache-enabled: true
+      call-setters-on-nulls: true
+      log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+  # ==================== 事务配置 ====================
+  transaction:
+    default-timeout: 60
+    rollback-on-commit-failure: true
+
+# ==================== 服务器配置 ====================
+server:
+  port: 8089
+  servlet:
+    context-path: /oa
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    threads:
+      max: 260
+      min-spare: 26
+    max-connections: 11000
+    accept-count: 160
+    connection-timeout: 22000
+    # OA文档上传优化
+    max-http-form-post-size: 20MB
+
+# ==================== 管理端点配置 (Spring Boot 3.x标准) ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: always
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# ==================== 日志配置 (Spring Boot 3.x标准) ====================
+logging:
+  level:
+    root: INFO
+    net.lab1024.sa.oa: DEBUG
+    org.springframework.web: INFO
+    com.alibaba.druid: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/oa-service.log
+    max-size: 250MB
+    max-history: 30
+
+# ==================== 环境特定配置 ====================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    root: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  level:
+    root: WARN
+  file:
+    name: logs/oa-service-prod.log

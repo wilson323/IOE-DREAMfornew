@@ -1,6 +1,7 @@
 package net.lab1024.sa.consume.domain.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -19,6 +20,7 @@ import net.lab1024.sa.common.entity.BaseEntity;
  * - 使用@TableName指定数据库表名
  * - 字段数控制在30个以内
  * - 行数控制在200行以内
+ * - 已修复字段重复问题
  * </p>
  * <p>
  * 业务场景：
@@ -28,32 +30,24 @@ import net.lab1024.sa.common.entity.BaseEntity;
  * - 补贴管理
  * </p>
  * <p>
- * 数据库表：POSID_ACCOUNT（业务文档中定义的表名）
- * 注意：根据CLAUDE.md规范，表名应使用t_consume_*格式，但业务文档中使用POSID_*格式
- * 实际使用时需要根据数据库表名调整@TableName注解
+ * 数据库表：t_consume_account（标准化命名）
+ * 修复记录：2025-12-09 修复字段重复问题，统一使用BigDecimal类型
  * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
+ * @version 1.0.1-FIX
  * @since 2025-01-30
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("account")
+@TableName("t_consume_account")
 public class AccountEntity extends BaseEntity {
 
     /**
      * 账户ID（主键）
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
-
-    /**
-     * 账户ID（别名，用于兼容测试类）
-     */
-    public Long getAccountId() {
-        return id;
-    }
+    private Long accountId;
 
     /**
      * 用户ID
@@ -61,93 +55,181 @@ public class AccountEntity extends BaseEntity {
     private Long userId;
 
     /**
-     * 人员ID（别名，用于兼容测试类）
+     * 账户编号
      */
-    public Long getPersonId() {
-        return userId;
-    }
+    private String accountNo;
 
     /**
-     * 总消费金额（用于测试类，单位：元）
+     * 账户名称
      */
-    private java.math.BigDecimal totalConsumeAmount;
+    private String accountName;
 
     /**
-     * 设置账户ID（用于测试类）
+     * 账户类型：1-个人账户 2-团体账户 3-临时账户
      */
-    public void setAccountId(Long accountId) {
-        this.id = accountId;
-    }
+    private Integer accountType;
 
     /**
-     * 设置人员ID（用于测试类）
+     * 补贴余额
      */
-    public void setPersonId(Long personId) {
-        this.userId = personId;
-    }
+    private BigDecimal allowanceBalance;
 
     /**
-     * 账户类别ID
+     * 账户余额（BigDecimal类型，精确到分）
      */
-    private Long accountKindId;
+    private BigDecimal balance;
 
     /**
-     * 账户余额（单位：分）
+     * 冻结金额
      */
-    private Long balance;
+    private BigDecimal frozenAmount;
 
     /**
-     * 补贴余额（单位：分）
+     * 信用额度
      */
-    private Long allowanceBalance;
+    private BigDecimal creditLimit;
 
     /**
-     * 冻结余额（单位：分）
+     * 日消费限额
      */
-    private Long frozenBalance;
+    private BigDecimal dailyLimit;
 
     /**
-     * 账户状态
-     * <p>
-     * 1-正常
-     * 2-冻结
-     * 3-注销
-     * </p>
+     * 月消费限额
+     */
+    private BigDecimal monthlyLimit;
+
+    /**
+     * 补贴余额
+     */
+    private BigDecimal subsidyBalance;
+
+    /**
+     * 累计充值金额
+     */
+    private BigDecimal totalRechargeAmount;
+
+    /**
+     * 累计消费金额
+     */
+    private BigDecimal totalConsumeAmount;
+
+    /**
+     * 累计补贴金额
+     */
+    private BigDecimal totalSubsidyAmount;
+
+    /**
+     * 账户状态：1-正常 2-冻结 3-注销
      */
     private Integer status;
 
     /**
-     * 乐观锁版本号
+     * 最后使用时间
      */
-    private Integer version;
+    private LocalDateTime lastUseTime;
 
-    /**
-     * 账户余额（BigDecimal类型，用于计算）
-     * <p>
-     * 从balance转换而来
-     * </p>
-     */
+      // 注意：version、createTime、updateTime、createUserId、updateUserId、deletedFlag
+    // 已由BaseEntity提供，无需重复定义
+
+    // 便捷方法：为了兼容现有代码调用getId()
+    public Long getId() {
+        return this.accountId;
+    }
+
+    // 便捷方法：为了兼容现有代码调用getAccountKindId()
+    // 返回账户类型作为账户种类ID
+    public Long getAccountKindId() {
+        return this.accountType != null ? this.accountType.longValue() : null;
+    }
+
+    // 便捷方法：为了兼容现有代码调用getBalanceAmount()
     public BigDecimal getBalanceAmount() {
-        return balance != null ? BigDecimal.valueOf(balance).divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        return this.balance;
     }
 
-    /**
-     * 补贴余额（BigDecimal类型，用于计算）
-     * <p>
-     * 从allowanceBalance转换而来
-     * </p>
-     */
-    public BigDecimal getAllowanceBalanceAmount() {
-        return allowanceBalance != null ? BigDecimal.valueOf(allowanceBalance).divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
+    // 便捷方法：为了兼容现有代码调用getFrozenBalance()
+    public BigDecimal getFrozenBalance() {
+        return this.frozenAmount;
     }
 
-    /**
-     * 冻结余额（BigDecimal类型，用于计算）
-     * <p>
-     * 从frozenBalance转换而来
-     * </p>
-     */
+    // 便捷方法：为了兼容现有代码调用getFrozenBalanceAmount()
     public BigDecimal getFrozenBalanceAmount() {
-        return frozenBalance != null ? BigDecimal.valueOf(frozenBalance).divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        return this.frozenAmount;
+    }
+
+    // 便捷方法：为了兼容现有代码调用setFrozenBalance()
+    public void setFrozenBalance(BigDecimal frozenBalance) {
+        this.frozenAmount = frozenBalance;
+    }
+
+    // 新增缺失的方法 - 为了兼容现有代码调用
+
+    /**
+     * 设置账户种类ID（兼容方法）
+     */
+    public void setAccountKindId(Long accountKindId) {
+        if (accountKindId != null) {
+            this.accountType = accountKindId.intValue();
+        }
+    }
+
+    /**
+     * 获取余额（BigDecimal类型，兼容方法）
+     */
+    public BigDecimal getBalance() {
+        return this.balance;
+    }
+
+    /**
+     * 设置余额（BigDecimal类型，兼容方法）
+     */
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
+    /**
+     * 设置补贴余额（BigDecimal类型，兼容方法）
+     */
+    public void setAllowanceBalance(BigDecimal allowanceBalance) {
+        this.allowanceBalance = allowanceBalance;
+    }
+
+    /**
+     * 设置补贴余额（Long类型，兼容方法 - 用于存储分）
+     */
+    public void setAllowanceBalance(Long allowanceBalanceCents) {
+        if (allowanceBalanceCents != null) {
+            this.allowanceBalance = BigDecimal.valueOf(allowanceBalanceCents).divide(BigDecimal.valueOf(100));
+        }
+    }
+
+    /**
+     * 获取补贴余额（Long类型，兼容方法 - 返回分）
+     */
+    public Long getAllowanceBalanceCents() {
+        if (this.allowanceBalance != null) {
+            return this.allowanceBalance.multiply(BigDecimal.valueOf(100)).longValue();
+        }
+        return 0L;
+    }
+
+    /**
+     * 获取余额（Long类型，兼容方法 - 返回分）
+     */
+    public Long getBalanceCents() {
+        if (this.balance != null) {
+            return this.balance.multiply(BigDecimal.valueOf(100)).longValue();
+        }
+        return 0L;
+    }
+
+    /**
+     * 设置余额（Long类型，兼容方法 - 用于存储分）
+     */
+    public void setBalance(Long balanceCents) {
+        if (balanceCents != null) {
+            this.balance = BigDecimal.valueOf(balanceCents).divide(BigDecimal.valueOf(100));
+        }
     }
 }
