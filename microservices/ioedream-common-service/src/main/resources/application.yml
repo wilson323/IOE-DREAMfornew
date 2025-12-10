@@ -1,10 +1,10 @@
 # ============================================================
 # IOE-DREAM Common Service 配置文件
-# 
+#
 # @Author:    IOE-DREAM Team
 # @Date:      2025-01-30
 # @Copyright  IOE-DREAM智慧园区一卡通管理平台
-# 
+#
 # 服务信息:
 # - 服务名称: ioedream-common-service
 # - 服务端口: 8088
@@ -17,30 +17,83 @@ spring:
     name: ioedream-common-service
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  # Spring Boot 2.4+ 要求显式声明配置导入
+  # 升级到Spring Cloud Alibaba 2025.0.0.0后，使用optional前缀允许配置中心可选
+  # 注意：占位符在config.import阶段无法解析，需要直接指定dataId或使用环境变量
+  config:
+    import:
+      - "optional:nacos:ioedream-common-service-docker.yaml"  # 2025.0.0.0版本需要显式指定dataId
 
 # ==================== Nacos服务发现配置 ====================
   cloud:
-    gateway:
-      url: ${GATEWAY_URL:http://localhost:8080}
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD}
         enabled: true
         register-enabled: true
       config:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
         file-extension: yaml
-        enabled: true
+        enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
+        import-check:
+          enabled: true  # 2025.0.0.0版本支持optional:nacos:，可以启用检查
+
+# ==================== Flyway数据库迁移配置 ====================
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+    table: flyway_schema_history
+    validate-on-migrate: true
+    clean-disabled: true
+
+# ==================== 数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD}
+    druid:
+      initial-size: ${DRUID_INITIAL_SIZE:5}
+      min-idle: ${DRUID_MIN_IDLE:5}
+      max-active: ${DRUID_MAX_ACTIVE:20}
+      max-wait: ${DRUID_MAX_WAIT:60000}
+      validation-query: ${DRUID_VALIDATION_QUERY:SELECT 1}
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+# ==================== Redis配置 ====================
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+      database: ${REDIS_DATABASE:0}
+      timeout: ${REDIS_TIMEOUT:3000}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_MAX_ACTIVE:8}
+          max-idle: ${REDIS_POOL_MAX_IDLE:8}
+          min-idle: ${REDIS_POOL_MIN_IDLE:0}
+
+# ==================== 网关配置 ====================
+gateway:
+  url: ${GATEWAY_URL:http://localhost:8080}
 
 # ==================== 服务器配置 ====================
 server:
-  port: 8088
+  port: ${COMMON_SERVICE_PORT:8088}
   servlet:
     context-path: /
     encoding:
@@ -66,8 +119,8 @@ mybatis-plus:
 # ==================== 日志配置 ====================
 logging:
   level:
-    root: INFO
-    net.lab1024.sa: DEBUG
+    root: ${LOG_LEVEL_ROOT:INFO}
+    '[net.lab1024.sa]': ${LOG_LEVEL_APP:DEBUG}
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
@@ -77,12 +130,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
-      base-path: /actuator
+        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:health,info,metrics,prometheus}
+      base-path: ${MANAGEMENT_ENDPOINTS_WEB_BASE_PATH:/actuator}
   endpoint:
     health:
       show-details: when-authorized
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true

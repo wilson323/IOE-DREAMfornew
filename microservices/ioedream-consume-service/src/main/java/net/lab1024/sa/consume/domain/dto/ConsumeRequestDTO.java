@@ -32,9 +32,9 @@ public class ConsumeRequestDTO {
     private Long accountId;
 
     /**
-     * 设备ID
+     * 设备ID（支持设备编码和数字ID）
      */
-    private Long deviceId;
+    private String deviceId;
 
     /**
      * 区域ID
@@ -60,4 +60,55 @@ public class ConsumeRequestDTO {
      * 商品数量（商品模式时使用）
      */
     private Integer quantity;
+
+    /**
+     * 订单ID
+     */
+    private String orderId;
+
+    /**
+     * 消费类型
+     */
+    private String consumeType;
+
+    // ========== 便捷方法：支持不同类型的数据转换 ==========
+
+    /**
+     * 获取设备ID（数字格式）
+     * 如果deviceId是数字字符串，返回对应的Long值
+     */
+    public Long getDeviceIdAsLong() {
+        if (this.deviceId == null) {
+            return null;
+        }
+        try {
+            return Long.parseLong(this.deviceId);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 设置设备ID（支持数字和字符串）
+     */
+    public void setDeviceId(Object deviceId) {
+        if (deviceId == null) {
+            this.deviceId = null;
+        } else if (deviceId instanceof String) {
+            this.deviceId = (String) deviceId;
+        } else if (deviceId instanceof Long) {
+            this.deviceId = String.valueOf(deviceId);
+        } else if (deviceId instanceof Integer) {
+            this.deviceId = String.valueOf(deviceId);
+        } else {
+            this.deviceId = deviceId.toString();
+        }
+    }
+
+    /**
+     * 检查设备ID是否为数字格式
+     */
+    public boolean isDeviceIdNumeric() {
+        return getDeviceIdAsLong() != null;
+    }
 }

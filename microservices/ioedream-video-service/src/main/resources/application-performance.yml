@@ -1,0 +1,167 @@
+# ============================================================
+# IOE-DREAM Video Service - Spring Boot 3.5.8 配置
+# 视频监控服务 - 企业级生产环境配置
+#
+# 技术标准: Spring Boot 3.5.8 + Jakarta EE 9.0 + Java 17
+# 遵循规范: 完全兼容Spring Boot 3.x配置模式
+#
+# @Author: IOE-DREAM架构委员会
+# @Version: v1.0.0-企业级重构版
+# @Date: 2025-01-30
+# ============================================================
+
+# ==================== Spring Boot 核心配置 ====================
+spring:
+  application:
+    name: ioedream-video-service
+
+  # ==================== 数据源配置 (视频系统优化) ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 视频系统连接池配置
+      initial-size: 18
+      min-idle: 18
+      max-active: 70
+      max-wait: 40000
+
+      # 性能优化配置
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      time-between-eviction-runs-millis: 60000
+
+      # 视频系统安全配置
+      remove-abandoned: true
+      remove-abandoned-timeout: 360
+      log-abandoned: true
+
+      # 连接池监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 1500
+          log-slow-sql: true
+
+  # ==================== Redis配置 (Spring Boot 3.x标准) ====================
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:ENC(AES256:encrypted_password)}
+      database: ${REDIS_DATABASE:4}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 35
+          max-idle: 18
+          min-idle: 9
+          max-wait: 2500ms
+
+  # ==================== 缓存配置 (视频监控优化) ====================
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=15000,expireAfterWrite=45m,recordStats
+
+  # ==================== MyBatis-Plus配置 (Spring Boot 3.x兼容) ====================
+  mybatis-plus:
+    # 全局配置
+    global-config:
+      db-config:
+        logic-delete-field: deletedFlag
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+        id-type: ASSIGN_ID
+        table-underline: true
+
+    # 配置信息
+    configuration:
+      map-underscore-to-camel-case: true
+      cache-enabled: true
+      call-setters-on-nulls: true
+      log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+  # ==================== 事务配置 ====================
+  transaction:
+    default-timeout: 90
+    rollback-on-commit-failure: true
+
+# ==================== 服务器配置 ====================
+server:
+  port: 8092
+  servlet:
+    context-path: /video
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    threads:
+      max: 280
+      min-spare: 28
+    max-connections: 10000
+    accept-count: 180
+    connection-timeout: 25000
+    # 视频文件上传优化
+    max-http-form-post-size: 100MB
+
+# ==================== 管理端点配置 (Spring Boot 3.x标准) ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: always
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# ==================== 日志配置 (Spring Boot 3.x标准) ====================
+logging:
+  level:
+    root: INFO
+    net.lab1024.sa.video: DEBUG
+    org.springframework.web: INFO
+    com.alibaba.druid: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/video-service.log
+    max-size: 500MB
+    max-history: 15
+
+# ==================== 环境特定配置 ====================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    root: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  level:
+    root: WARN
+  file:
+    name: logs/video-service-prod.log

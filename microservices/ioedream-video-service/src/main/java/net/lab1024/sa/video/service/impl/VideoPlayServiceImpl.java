@@ -274,7 +274,7 @@ public class VideoPlayServiceImpl implements VideoPlayService {
      */
     private VideoDeviceVO convertToVO(DeviceEntity entity) {
         VideoDeviceVO vo = new VideoDeviceVO();
-        vo.setDeviceId(entity.getDeviceId());
+        vo.setDeviceId(entity.getId());
         vo.setDeviceCode(entity.getDeviceCode());
         vo.setDeviceName(entity.getDeviceName());
         vo.setDeviceType(entity.getDeviceType());

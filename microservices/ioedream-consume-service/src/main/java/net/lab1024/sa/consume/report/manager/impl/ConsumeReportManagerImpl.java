@@ -1,5 +1,6 @@
 package net.lab1024.sa.consume.report.manager.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,9 +111,9 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             // 3. 解析报表参数
             // 类型安全改进：使用ReportParams类型，提取参数
             Map<String, Object> reportParams = convertReportParamsToMap(params);
-            LocalDateTime startTime = params != null && params.getStartTime() != null 
+            LocalDateTime startTime = params != null && params.getStartTime() != null
                     ? params.getStartTime() : extractStartTime(reportParams);
-            LocalDateTime endTime = params != null && params.getEndTime() != null 
+            LocalDateTime endTime = params != null && params.getEndTime() != null
                     ? params.getEndTime() : extractEndTime(reportParams);
 
             // 4. 查询统计数据
@@ -266,7 +267,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
      * @param startTime 开始时间
      * @param endTime 结束时间
      * @param reportParams 报表参数
-     * @return 报表数据
+     * @return 报表数据（包含统计数据和明细数据）
      */
     private Map<String, Object> queryReportData(
             ConsumeReportTemplateEntity template,
@@ -290,6 +291,15 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         } else {
             // 自定义报表：根据配置查询
             reportData = queryCustomStatistics(reportConfig, startTime, endTime, reportParams);
+        }
+
+        // 如果报表配置需要明细数据，则添加交易明细列表
+        boolean includeDetails = extractBoolean(reportConfig, "includeDetails", false);
+        if (includeDetails) {
+            List<ConsumeTransactionEntity> transactions = queryTransactionsByParams(startTime, endTime, reportParams);
+            List<Map<String, Object>> transactionDetails = convertTransactionsToDetails(transactions);
+            reportData.put("details", transactionDetails);
+            reportData.put("detailCount", transactions.size());
         }
 
         return reportData;
@@ -316,7 +326,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             // 统计计算
             long totalCount = transactions.size();
             long totalMoney = transactions.stream()
-                    .mapToLong(t -> t.getFinalMoney() != null ? t.getFinalMoney() : 0L)
+                    .mapToLong(t -> t.getFinalMoney() != null ? t.getFinalMoney().longValue() : 0L)
                     .sum();
             long personCount = transactions.stream()
                     .map(ConsumeTransactionEntity::getUserId)
@@ -596,7 +606,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             // 1. 基础统计
             long totalCount = transactions.size();
             long totalMoney = transactions.stream()
-                    .mapToLong(t -> t.getFinalMoney() != null ? t.getFinalMoney() : 0L)
+                    .mapToLong(t -> t.getFinalMoney() != null ? t.getFinalMoney().longValue() : 0L)
                     .sum();
             long personCount = transactions.stream()
                     .map(ConsumeTransactionEntity::getUserId)
@@ -696,26 +706,29 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         Map<String, Map<String, Object>> areaStats = new HashMap<>();
 
         for (ConsumeTransactionEntity transaction : transactions) {
-            String areaId = transaction.getAreaId();
+            Long areaId = transaction.getAreaId();
             if (areaId == null) {
                 continue;
             }
 
-            areaStats.computeIfAbsent(areaId, k -> {
+            String areaIdKey = String.valueOf(areaId);
+            areaStats.computeIfAbsent(areaIdKey, k -> {
                 Map<String, Object> stat = new HashMap<>();
                 stat.put("areaId", areaId);
                 stat.put("areaName", transaction.getAreaName());
                 stat.put("count", 0L);
-                stat.put("totalMoney", 0L);
-                stat.put("personCount", new java.util.HashSet<String>());
+                stat.put("totalMoney", BigDecimal.ZERO);
+                stat.put("personCount", new java.util.HashSet<Long>());
                 return stat;
             });
 
-            Map<String, Object> stat = areaStats.get(areaId);
+            Map<String, Object> stat = areaStats.get(areaIdKey);
             stat.put("count", ((Long) stat.get("count")) + 1);
-            stat.put("totalMoney", ((Long) stat.get("totalMoney")) + (transaction.getFinalMoney() != null ? transaction.getFinalMoney() : 0L));
+            BigDecimal currentTotal = (BigDecimal) stat.get("totalMoney");
+            BigDecimal finalMoney = transaction.getFinalMoney() != null ? transaction.getFinalMoney() : BigDecimal.ZERO;
+            stat.put("totalMoney", currentTotal.add(finalMoney));
             @SuppressWarnings("unchecked")
-            java.util.Set<String> personSet = (java.util.Set<String>) stat.get("personCount");
+            java.util.Set<Long> personSet = (java.util.Set<Long>) stat.get("personCount");
             if (transaction.getUserId() != null) {
                 personSet.add(transaction.getUserId());
             }
@@ -725,9 +738,8 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         List<Map<String, Object>> result = new ArrayList<>();
         for (Map<String, Object> stat : areaStats.values()) {
             @SuppressWarnings("unchecked")
-            java.util.Set<String> personSet = (java.util.Set<String>) stat.get("personCount");
+            java.util.Set<Long> personSet = (java.util.Set<Long>) stat.get("personCount");
             stat.put("personCount", personSet.size());
-            stat.remove("personCount");
             result.add(stat);
         }
 
@@ -747,25 +759,28 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         Map<String, Map<String, Object>> kindStats = new HashMap<>();
 
         for (ConsumeTransactionEntity transaction : transactions) {
-            String accountKindId = transaction.getAccountKindId();
+            Long accountKindId = transaction.getAccountKindId();
             if (accountKindId == null) {
                 continue;
             }
 
-            kindStats.computeIfAbsent(accountKindId, k -> {
+            String accountKindIdKey = String.valueOf(accountKindId);
+            kindStats.computeIfAbsent(accountKindIdKey, k -> {
                 Map<String, Object> stat = new HashMap<>();
                 stat.put("accountKindId", accountKindId);
                 stat.put("count", 0L);
-                stat.put("totalMoney", 0L);
-                stat.put("personCount", new java.util.HashSet<String>());
+                stat.put("totalMoney", BigDecimal.ZERO);
+                stat.put("personCount", new java.util.HashSet<Long>());
                 return stat;
             });
 
-            Map<String, Object> stat = kindStats.get(accountKindId);
+            Map<String, Object> stat = kindStats.get(accountKindIdKey);
             stat.put("count", ((Long) stat.get("count")) + 1);
-            stat.put("totalMoney", ((Long) stat.get("totalMoney")) + (transaction.getFinalMoney() != null ? transaction.getFinalMoney() : 0L));
+            BigDecimal currentTotal = (BigDecimal) stat.get("totalMoney");
+            BigDecimal finalMoney = transaction.getFinalMoney() != null ? transaction.getFinalMoney() : BigDecimal.ZERO;
+            stat.put("totalMoney", currentTotal.add(finalMoney));
             @SuppressWarnings("unchecked")
-            java.util.Set<String> personSet = (java.util.Set<String>) stat.get("personCount");
+            java.util.Set<Long> personSet = (java.util.Set<Long>) stat.get("personCount");
             if (transaction.getUserId() != null) {
                 personSet.add(transaction.getUserId());
             }
@@ -775,9 +790,8 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         List<Map<String, Object>> result = new ArrayList<>();
         for (Map<String, Object> stat : kindStats.values()) {
             @SuppressWarnings("unchecked")
-            java.util.Set<String> personSet = (java.util.Set<String>) stat.get("personCount");
+            java.util.Set<Long> personSet = (java.util.Set<Long>) stat.get("personCount");
             stat.put("personCount", personSet.size());
-            stat.remove("personCount");
             result.add(stat);
         }
 
@@ -803,13 +817,15 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
                 Map<String, Object> stat = new HashMap<>();
                 stat.put("consumeMode", consumeMode);
                 stat.put("count", 0L);
-                stat.put("totalMoney", 0L);
+                stat.put("totalMoney", BigDecimal.ZERO);
                 return stat;
             });
 
             Map<String, Object> stat = modeStats.get(consumeMode);
             stat.put("count", ((Long) stat.get("count")) + 1);
-            stat.put("totalMoney", ((Long) stat.get("totalMoney")) + (transaction.getFinalMoney() != null ? transaction.getFinalMoney() : 0L));
+            BigDecimal currentTotal = (BigDecimal) stat.get("totalMoney");
+            BigDecimal finalMoney = transaction.getFinalMoney() != null ? transaction.getFinalMoney() : BigDecimal.ZERO;
+            stat.put("totalMoney", currentTotal.add(finalMoney));
         }
 
         // 转换为列表格式
@@ -831,23 +847,26 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         Map<String, Map<String, Object>> mealStats = new HashMap<>();
 
         for (ConsumeTransactionEntity transaction : transactions) {
-            String mealId = transaction.getMealId();
+            Long mealId = transaction.getMealId();
             if (mealId == null) {
                 continue;
             }
 
-            mealStats.computeIfAbsent(mealId, k -> {
+            String mealIdKey = String.valueOf(mealId);
+            mealStats.computeIfAbsent(mealIdKey, k -> {
                 Map<String, Object> stat = new HashMap<>();
                 stat.put("mealId", mealId);
                 stat.put("mealName", transaction.getMealName());
                 stat.put("count", 0L);
-                stat.put("totalMoney", 0L);
+                stat.put("totalMoney", BigDecimal.ZERO);
                 return stat;
             });
 
-            Map<String, Object> stat = mealStats.get(mealId);
+            Map<String, Object> stat = mealStats.get(mealIdKey);
             stat.put("count", ((Long) stat.get("count")) + 1);
-            stat.put("totalMoney", ((Long) stat.get("totalMoney")) + (transaction.getFinalMoney() != null ? transaction.getFinalMoney() : 0L));
+            BigDecimal currentTotal = (BigDecimal) stat.get("totalMoney");
+            BigDecimal finalMoney = transaction.getFinalMoney() != null ? transaction.getFinalMoney() : BigDecimal.ZERO;
+            stat.put("totalMoney", currentTotal.add(finalMoney));
         }
 
         // 转换为列表格式
@@ -881,13 +900,15 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
                 Map<String, Object> stat = new HashMap<>();
                 stat.put("timeKey", timeKey);
                 stat.put("count", 0L);
-                stat.put("totalMoney", 0L);
+                stat.put("totalMoney", BigDecimal.ZERO);
                 return stat;
             });
 
             Map<String, Object> stat = timeStats.get(timeKey);
             stat.put("count", ((Long) stat.get("count")) + 1);
-            stat.put("totalMoney", ((Long) stat.get("totalMoney")) + (transaction.getFinalMoney() != null ? transaction.getFinalMoney() : 0L));
+            BigDecimal currentTotal = (BigDecimal) stat.get("totalMoney");
+            BigDecimal finalMoney = transaction.getFinalMoney() != null ? transaction.getFinalMoney() : BigDecimal.ZERO;
+            stat.put("totalMoney", currentTotal.add(finalMoney));
         }
 
         // 转换为列表格式（按时间排序）
@@ -979,12 +1000,18 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             String consumeMode,
             String userId,
             String accountId) {
+        // 将String参数转换为Long类型进行比较（实体类字段为Long类型）
+        Long areaIdLong = parseLongSafely(areaId);
+        Long accountKindIdLong = parseLongSafely(accountKindId);
+        Long userIdLong = parseLongSafely(userId);
+        Long accountIdLong = parseLongSafely(accountId);
+
         return transactions.stream()
-                .filter(t -> areaId == null || areaId.trim().isEmpty() || areaId.equals(t.getAreaId()))
-                .filter(t -> accountKindId == null || accountKindId.trim().isEmpty() || accountKindId.equals(t.getAccountKindId()))
+                .filter(t -> areaIdLong == null || areaIdLong.equals(t.getAreaId()))
+                .filter(t -> accountKindIdLong == null || accountKindIdLong.equals(t.getAccountKindId()))
                 .filter(t -> consumeMode == null || consumeMode.trim().isEmpty() || consumeMode.equals(t.getConsumeMode()))
-                .filter(t -> userId == null || userId.trim().isEmpty() || userId.equals(t.getUserId()))
-                .filter(t -> accountId == null || accountId.trim().isEmpty() || accountId.equals(t.getAccountId()))
+                .filter(t -> userIdLong == null || userIdLong.equals(t.getUserId()))
+                .filter(t -> accountIdLong == null || accountIdLong.equals(t.getAccountId()))
                 .collect(java.util.stream.Collectors.toList());
     }
 
@@ -1000,10 +1027,35 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             List<ConsumeTransactionEntity> transactions,
             String accountKindId,
             String consumeMode) {
+        // 将String参数转换为Long类型进行比较（实体类字段为Long类型）
+        Long accountKindIdLong = parseLongSafely(accountKindId);
+
         return transactions.stream()
-                .filter(t -> accountKindId == null || accountKindId.trim().isEmpty() || accountKindId.equals(t.getAccountKindId()))
+                .filter(t -> accountKindIdLong == null || accountKindIdLong.equals(t.getAccountKindId()))
                 .filter(t -> consumeMode == null || consumeMode.trim().isEmpty() || consumeMode.equals(t.getConsumeMode()))
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * 安全地将String转换为Long
+     * <p>
+     * 如果字符串为null或空，返回null
+     * 如果转换失败，返回null（不抛出异常）
+     * </p>
+     *
+     * @param str 待转换的字符串
+     * @return Long值，转换失败返回null
+     */
+    private Long parseLongSafely(String str) {
+        if (str == null || str.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.parseLong(str.trim());
+        } catch (NumberFormatException e) {
+            log.warn("[报表管理] 无法将字符串转换为Long: {}", str);
+            return null;
+        }
     }
 
     /**
@@ -1061,7 +1113,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
                     exportToExcel(reportData, filePath);
             }
 
-            log.info("[报表管理] 报表导出成功，templateId={}, format={}, filePath={}", 
+            log.info("[报表管理] 报表导出成功，templateId={}, format={}, filePath={}",
                     templateId, format, filePath);
             return ResponseDTO.ok(filePath.toString());
 
@@ -1098,7 +1150,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
     private String generateExportFileName(Long templateId, String format) {
         String timestamp = java.time.LocalDateTime.now()
                 .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String extension = "PDF".equals(format) ? ".pdf" : 
+        String extension = "PDF".equals(format) ? ".pdf" :
                 "CSV".equals(format) ? ".csv" : ".xlsx";
         return String.format("consume_report_%d_%s%s", templateId, timestamp, extension);
     }
@@ -1163,12 +1215,42 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
      * @param data 报表数据
      * @return Excel行数据列表
      */
+    @SuppressWarnings("unchecked")
     private List<List<Object>> convertToExcelRows(Map<String, Object> data) {
         List<List<Object>> rows = new ArrayList<>();
 
-        // 如果数据是统计类型，转换为表格格式
-        if (data.containsKey("totalCount")) {
-            // 统计报表：显示汇总信息
+        // 1. 如果包含明细数据，优先导出明细
+        if (data.containsKey("details")) {
+            List<Map<String, Object>> details = (List<Map<String, Object>>) data.get("details");
+            if (details != null && !details.isEmpty()) {
+                for (Map<String, Object> detail : details) {
+                    List<Object> row = new ArrayList<>();
+                    row.add(formatDateTime(detail.get("consumeTime")));
+                    row.add(detail.get("userId"));
+                    row.add(detail.get("accountId"));
+                    row.add(detail.get("areaId"));
+                    row.add(detail.get("consumeMode"));
+                    row.add(detail.get("finalMoney"));
+                    row.add(detail.get("status"));
+                    row.add(detail.get("deviceId"));
+                    rows.add(row);
+                }
+            }
+            // 如果有统计数据，在明细后添加汇总行
+            if (data.containsKey("totalCount")) {
+                List<Object> summaryRow = new ArrayList<>();
+                summaryRow.add("统计汇总");
+                summaryRow.add("");
+                summaryRow.add("");
+                summaryRow.add("");
+                summaryRow.add("");
+                summaryRow.add(data.get("totalMoney"));
+                summaryRow.add("成功");
+                summaryRow.add("");
+                rows.add(summaryRow);
+            }
+        } else if (data.containsKey("totalCount")) {
+            // 2. 如果只有统计数据，显示汇总信息
             List<Object> row = new ArrayList<>();
             row.add("统计汇总");
             row.add("");
@@ -1179,13 +1261,76 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             row.add("成功");
             row.add("");
             rows.add(row);
-        } else {
-            // 明细报表：需要从交易记录转换
-            // 这里需要根据实际数据结构调整
-            log.debug("[报表管理] 明细报表数据转换，需要根据实际数据结构调整");
         }
 
         return rows;
+    }
+
+    /**
+     * 将交易记录转换为明细数据列表
+     *
+     * @param transactions 交易记录列表
+     * @return 明细数据列表
+     */
+    private List<Map<String, Object>> convertTransactionsToDetails(List<ConsumeTransactionEntity> transactions) {
+        List<Map<String, Object>> details = new ArrayList<>();
+        for (ConsumeTransactionEntity transaction : transactions) {
+            Map<String, Object> detail = new HashMap<>();
+            detail.put("consumeTime", transaction.getConsumeTime());
+            detail.put("userId", transaction.getUserId());
+            detail.put("accountId", transaction.getAccountId());
+            detail.put("areaId", transaction.getAreaId());
+            detail.put("areaName", transaction.getAreaName());
+            detail.put("consumeMode", transaction.getConsumeMode());
+            detail.put("finalMoney", transaction.getFinalMoney());
+            detail.put("status", transaction.getStatus());
+            detail.put("deviceId", transaction.getDeviceId());
+            detail.put("deviceName", transaction.getDeviceName());
+            details.add(detail);
+        }
+        return details;
+    }
+
+    /**
+     * 格式化日期时间
+     *
+     * @param dateTimeObj 日期时间对象
+     * @return 格式化后的字符串
+     */
+    private String formatDateTime(Object dateTimeObj) {
+        if (dateTimeObj == null) {
+            return "";
+        }
+        if (dateTimeObj instanceof LocalDateTime) {
+            return ((LocalDateTime) dateTimeObj)
+                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        }
+        return dateTimeObj.toString();
+    }
+
+    /**
+     * 从Map中提取Boolean值
+     *
+     * @param map Map对象
+     * @param key 键名
+     * @param defaultValue 默认值
+     * @return Boolean值
+     */
+    private boolean extractBoolean(Map<String, Object> map, String key, boolean defaultValue) {
+        if (map == null || key == null) {
+            return defaultValue;
+        }
+        Object value = map.get(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value instanceof String) {
+            return Boolean.parseBoolean((String) value);
+        }
+        return defaultValue;
     }
 
     /**
@@ -1201,7 +1346,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             // 1. 创建PDF文档
             com.itextpdf.kernel.pdf.PdfWriter writer = new com.itextpdf.kernel.pdf.PdfWriter(filePath.toFile());
             com.itextpdf.kernel.pdf.PdfDocument pdfDoc = new com.itextpdf.kernel.pdf.PdfDocument(writer);
-            com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc, 
+            com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc,
                     com.itextpdf.kernel.geom.PageSize.A4);
 
             // 2. 创建字体
@@ -1238,7 +1383,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
                 Object totalMoney = data.get("totalMoney");
                 if (totalCount != null || totalMoney != null) {
                     com.itextpdf.layout.element.Paragraph summary = new com.itextpdf.layout.element.Paragraph(
-                            String.format("交易总数: %s, 总金额: %s", 
+                            String.format("交易总数: %s, 总金额: %s",
                                     totalCount != null ? totalCount : 0,
                                     totalMoney != null ? totalMoney : 0))
                             .setFont(normalFont)
@@ -1246,9 +1391,58 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
                             .setMarginBottom(20);
                     document.add(summary);
                 }
+
+                // 6. 如果有明细数据，添加明细表格
+                if (data.containsKey("details")) {
+                    @SuppressWarnings("unchecked")
+                    List<Map<String, Object>> details = (List<Map<String, Object>>) data.get("details");
+                    if (details != null && !details.isEmpty()) {
+                        // 创建表格
+                        com.itextpdf.layout.element.Table table = new com.itextpdf.layout.element.Table(8)
+                                .useAllAvailableWidth()
+                                .setMarginTop(10)
+                                .setMarginBottom(10);
+
+                        // 添加表头
+                        table.addHeaderCell(createPdfCell("交易时间", boldFont, true));
+                        table.addHeaderCell(createPdfCell("用户ID", boldFont, true));
+                        table.addHeaderCell(createPdfCell("账户ID", boldFont, true));
+                        table.addHeaderCell(createPdfCell("区域ID", boldFont, true));
+                        table.addHeaderCell(createPdfCell("消费模式", boldFont, true));
+                        table.addHeaderCell(createPdfCell("消费金额", boldFont, true));
+                        table.addHeaderCell(createPdfCell("交易状态", boldFont, true));
+                        table.addHeaderCell(createPdfCell("设备ID", boldFont, true));
+
+                        // 添加数据行（最多显示100条，避免PDF过大）
+                        int maxRows = Math.min(details.size(), 100);
+                        for (int i = 0; i < maxRows; i++) {
+                            Map<String, Object> detail = details.get(i);
+                            table.addCell(createPdfCell(formatDateTime(detail.get("consumeTime")), normalFont, false));
+                            table.addCell(createPdfCell(String.valueOf(detail.get("userId")), normalFont, false));
+                            table.addCell(createPdfCell(String.valueOf(detail.get("accountId")), normalFont, false));
+                            table.addCell(createPdfCell(String.valueOf(detail.get("areaId")), normalFont, false));
+                            table.addCell(createPdfCell(String.valueOf(detail.get("consumeMode")), normalFont, false));
+                            table.addCell(createPdfCell(String.valueOf(detail.get("finalMoney")), normalFont, false));
+                            table.addCell(createPdfCell(String.valueOf(detail.get("status")), normalFont, false));
+                            table.addCell(createPdfCell(String.valueOf(detail.get("deviceId")), normalFont, false));
+                        }
+
+                        if (details.size() > 100) {
+                            com.itextpdf.layout.element.Paragraph note = new com.itextpdf.layout.element.Paragraph(
+                                    String.format("注：共%d条记录，仅显示前100条", details.size()))
+                                    .setFont(normalFont)
+                                    .setFontSize(10)
+                                    .setItalic()
+                                    .setMarginTop(5);
+                            document.add(note);
+                        }
+
+                        document.add(table);
+                    }
+                }
             }
 
-            // 6. 关闭文档
+            // 7. 关闭文档
             document.close();
 
             log.info("[报表管理] PDF文件导出成功，路径：{}", filePath);
@@ -1278,8 +1472,38 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             @SuppressWarnings("unchecked")
             Map<String, Object> data = (Map<String, Object>) reportData.get("data");
             if (data != null) {
-                // 统计报表：显示汇总信息
-                if (data.containsKey("totalCount")) {
+                // 如果包含明细数据，优先导出明细
+                if (data.containsKey("details")) {
+                    @SuppressWarnings("unchecked")
+                    List<Map<String, Object>> details = (List<Map<String, Object>>) data.get("details");
+                    if (details != null && !details.isEmpty()) {
+                        for (Map<String, Object> detail : details) {
+                            csvContent.append(escapeCsvValue(formatDateTime(detail.get("consumeTime"))));
+                            csvContent.append(",");
+                            csvContent.append(escapeCsvValue(String.valueOf(detail.get("userId"))));
+                            csvContent.append(",");
+                            csvContent.append(escapeCsvValue(String.valueOf(detail.get("accountId"))));
+                            csvContent.append(",");
+                            csvContent.append(escapeCsvValue(String.valueOf(detail.get("areaId"))));
+                            csvContent.append(",");
+                            csvContent.append(escapeCsvValue(String.valueOf(detail.get("consumeMode"))));
+                            csvContent.append(",");
+                            csvContent.append(escapeCsvValue(String.valueOf(detail.get("finalMoney"))));
+                            csvContent.append(",");
+                            csvContent.append(escapeCsvValue(String.valueOf(detail.get("status"))));
+                            csvContent.append(",");
+                            csvContent.append(escapeCsvValue(String.valueOf(detail.get("deviceId"))));
+                            csvContent.append("\n");
+                        }
+                    }
+                    // 如果有统计数据，在明细后添加汇总行
+                    if (data.containsKey("totalCount")) {
+                        csvContent.append("统计汇总,,,,,");
+                        csvContent.append(escapeCsvValue(data.get("totalMoney") != null ? data.get("totalMoney").toString() : "0"));
+                        csvContent.append(",成功,\n");
+                    }
+                } else if (data.containsKey("totalCount")) {
+                    // 如果只有统计数据，显示汇总信息
                     csvContent.append("统计汇总,,,,,");
                     csvContent.append(escapeCsvValue(data.get("totalMoney") != null ? data.get("totalMoney").toString() : "0"));
                     csvContent.append(",成功,\n");
@@ -1295,6 +1519,24 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
             log.error("[报表管理] CSV文件导出失败，路径：{}", filePath, e);
             throw new RuntimeException("CSV文件导出失败: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * 创建PDF表格单元格
+     *
+     * @param text 文本内容
+     * @param font 字体
+     * @param isHeader 是否为表头
+     * @return PDF单元格
+     */
+    private com.itextpdf.layout.element.Cell createPdfCell(String text, com.itextpdf.kernel.font.PdfFont font, boolean isHeader) {
+        com.itextpdf.layout.element.Cell cell = new com.itextpdf.layout.element.Cell()
+                .add(new com.itextpdf.layout.element.Paragraph(text != null ? text : "").setFont(font).setFontSize(isHeader ? 10 : 9))
+                .setPadding(5);
+        if (isHeader) {
+            cell.setBackgroundColor(com.itextpdf.kernel.colors.ColorConstants.LIGHT_GRAY);
+        }
+        return cell;
     }
 
     /**

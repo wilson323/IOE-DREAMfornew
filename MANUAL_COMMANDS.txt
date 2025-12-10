@@ -1,0 +1,52 @@
+IOE-DREAM 手动编译命令
+=========================
+
+如果脚本都失败，请直接在管理员命令提示符中执行以下命令：
+
+步骤1：打开管理员命令提示符
+- 右键点击"命令提示符" -> "以管理员身份运行"
+
+步骤2：设置环境变量
+set JAVA_HOME=C:\Program Files\Microsoft\jdk-17.0.17.10-hotspot
+set MAVEN_HOME=D:\code\IOE-dream\apache-maven-3.9.11
+set PATH=%MAVEN_HOME%\bin;%PATH%
+
+步骤3：进入项目目录
+cd /d "D:\IOE-DREAM\microservices"
+
+步骤4：清理项目（如果失败就跳过）
+"%MAVEN_HOME%\bin\mvn.cmd" clean
+
+步骤5：编译公共模块
+cd microservices-common
+"%MAVEN_HOME%\bin\mvn.cmd" install -DskipTests -X
+
+步骤6：返回主目录编译所有模块
+cd ..
+"%MAVEN_HOME%\bin\mvn.cmd" compile -DskipTests -X
+
+步骤7：打包应用
+"%MAVEN_HOME%\bin\mvn.cmd" package -DskipTests -X
+
+步骤8：检查结果
+dir /s target\*.jar
+
+如果以上命令仍然失败，请尝试：
+
+方案A：使用IntelliJ IDEA
+1. 用IntelliJ IDEA打开 microservices 目录
+2. 等待Maven索引下载完成
+3. 右键pom.xml -> Maven -> Reload project
+4. 点击Maven工具栏的Lifecycle -> clean -> install
+
+方案B：使用Gradle（如果Maven彻底失败）
+项目可能需要转换为Gradle构建系统。
+
+方案C：使用Docker
+如果本地环境有问题，可以使用Docker构建：
+docker build -t ioedream-builder .
+
+注意：
+- -X 参数表示不输出日志，减少编码问题
+- 如果遇到下载失败，配置Maven镜像源
+- 可能需要配置代理网络

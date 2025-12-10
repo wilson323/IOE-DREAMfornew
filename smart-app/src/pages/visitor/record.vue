@@ -56,87 +56,77 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import visitorApi from '@/api/business/visitor/visitor-api.js'
 
-export default {
-  name: 'VisitorRecord',
-  setup() {
-    const recordList = ref([])
-    const loading = ref(false)
+// 响应式数据
+const recordList = ref([])
+const loading = ref(false)
 
-    // 加载记录列表
-    const loadRecords = async () => {
-      loading.value = true
-      try {
-        const userId = 1 // TODO: 从本地存储获取
-        const result = await visitorApi.getMyAppointments(userId)
-        if (result.success && result.data) {
-          recordList.value = result.data
-        }
-      } catch (error) {
-        console.error('加载记录列表失败:', error)
-        uni.showToast({ title: '加载失败', icon: 'none' })
-      } finally {
-        loading.value = false
-      }
+// 页面生命周期
+onMounted(() => {
+  loadRecords()
+})
+
+onShow(() => {
+  // 页面显示时可以刷新数据
+})
+
+onPullDownRefresh(() => {
+  loadRecords()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const loadRecords = async () => {
+  loading.value = true
+  try {
+    const userId = 1 // TODO: 从本地存储获取
+    const result = await visitorApi.getMyAppointments(userId)
+    if (result.success && result.data) {
+      recordList.value = result.data
     }
-
-    // 查看详情
-    const viewDetail = (record) => {
-      uni.navigateTo({
-        url: `/pages/visitor/record-detail?id=${record.appointmentId}`
-      })
-    }
-
-    // 格式化日期
-    const formatDate = (datetime) => {
-      if (!datetime) return '-'
-      const date = new Date(datetime)
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    }
-
-    // 格式化时间
-    const formatTime = (datetime) => {
-      if (!datetime) return '-'
-      const date = new Date(datetime)
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      return `${hours}:${minutes}`
-    }
-
-    // 格式化时长
-    const formatDuration = (minutes) => {
-      if (!minutes) return '-'
-      const hours = Math.floor(minutes / 60)
-      const mins = minutes % 60
-      return `${hours}小时${mins}分钟`
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 初始化
-    onMounted(() => {
-      loadRecords()
-    })
-
-    return {
-      recordList,
-      loading,
-      viewDetail,
-      formatDate,
-      formatTime,
-      formatDuration,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载记录列表失败:', error)
+    uni.showToast({ title: '加载失败', icon: 'none' })
+  } finally {
+    loading.value = false
   }
+}
+
+const viewDetail = (record) => {
+  uni.navigateTo({
+    url: `/pages/visitor/record-detail?id=${record.appointmentId}`
+  })
+}
+
+const formatDate = (datetime) => {
+  if (!datetime) return '-'
+  const date = new Date(datetime)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const formatTime = (datetime) => {
+  if (!datetime) return '-'
+  const date = new Date(datetime)
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
+const formatDuration = (minutes) => {
+  if (!minutes) return '-'
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  return `${hours}小时${mins}分钟`
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

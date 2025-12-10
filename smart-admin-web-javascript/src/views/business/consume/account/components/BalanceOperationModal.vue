@@ -7,7 +7,8 @@
 -->
 <template>
   <a-modal
-    v-model:visible="visible"
+    :visible="visible"
+    @update:visible="(val) => $emit('update:visible', val)"
     :title="getOperationTitle()"
     width="500px"
     @ok="handleSubmit"

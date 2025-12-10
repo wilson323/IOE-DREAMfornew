@@ -46,25 +46,25 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 )
 @EnableDiscoveryClient
 @MapperScan(basePackages = {
-    // Common模块DAO（18个包）
-    "net.lab1024.sa.common.auth.dao",
-    "net.lab1024.sa.common.security.dao",
-    "net.lab1024.sa.common.hr.dao",
-    "net.lab1024.sa.common.system.employee.dao",
-    "net.lab1024.sa.common.access.dao",
-    "net.lab1024.sa.common.visitor.dao",
+    // Common模块所有DAO包（18个，按字母排序）
+    "net.lab1024.sa.common.attendance.dao",
     "net.lab1024.sa.common.audit.dao",
-    "net.lab1024.sa.common.monitor.dao",
-    "net.lab1024.sa.common.config.dao",
-    "net.lab1024.sa.common.document.dao",
-    "net.lab1024.sa.common.file.dao",
+    "net.lab1024.sa.common.auth.dao",
+    "net.lab1024.sa.common.consume.dao",
+    "net.lab1024.sa.common.device.dao",
+    "net.lab1024.sa.common.dict.dao",          // 新增：字典管理DAO
     "net.lab1024.sa.common.menu.dao",
-    "net.lab1024.sa.common.dict.dao",
-    "net.lab1024.sa.common.organization.dao",
-    "net.lab1024.sa.common.workflow.dao",
-    "net.lab1024.sa.common.system.dao",
+    "net.lab1024.sa.common.monitor.dao",
     "net.lab1024.sa.common.notification.dao",
-    "net.lab1024.sa.common.scheduler.dao"
+    "net.lab1024.sa.common.oa.dao",
+    "net.lab1024.sa.common.organization.dao",
+    "net.lab1024.sa.common.rbac.dao",
+    "net.lab1024.sa.common.scheduler.dao",
+    "net.lab1024.sa.common.system.dao",
+    "net.lab1024.sa.common.system.employee.dao",
+    "net.lab1024.sa.common.video.dao",
+    "net.lab1024.sa.common.visitor.dao",
+    "net.lab1024.sa.common.workflow.dao"
 })
 public class CommonServiceApplication {
 

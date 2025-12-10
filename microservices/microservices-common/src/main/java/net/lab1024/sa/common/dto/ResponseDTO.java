@@ -56,6 +56,15 @@ public class ResponseDTO<T> implements Serializable {
     private Long timestamp;
 
     /**
+     * 判断是否为成功响应
+     *
+     * @return 是否成功
+     */
+    public boolean getOk() {
+        return code != null && code == 200;
+    }
+
+    /**
      * 成功响应（无数据）
      *
      * @return 成功响应

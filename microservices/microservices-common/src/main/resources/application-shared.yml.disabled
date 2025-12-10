@@ -1,0 +1,200 @@
+# ============================================================
+# IOE-DREAM 微服务统一共享配置模板
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-08
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+#
+# 说明: 此文件包含所有微服务的统一配置
+# 用法: 在各微服务的application.yml中通过import引入此配置
+# ============================================================
+
+# ==================== 数据库连接配置（统一标准） ====================
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root1234}
+    druid:
+      # ==================== 核心连接池配置 ====================
+      initial-size: ${DRUID_INITIAL_SIZE:5}
+      min-idle: ${DRUID_MIN_IDLE:5}
+      max-active: ${DRUID_MAX_ACTIVE:20}
+      max-wait: ${DRUID_MAX_WAIT:60000}
+      
+      # ==================== 连接有效性检测 ====================
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      
+      # ==================== 连接回收配置 ====================
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      
+      # ==================== 性能优化配置 ====================
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      
+      # ==================== 慢查询监控 ====================
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 1000
+          log-slow-sql: true
+          merge-sql: true
+        wall:
+          enabled: true
+          config:
+            multi-statement-allow: false
+
+  # ==================== Redis缓存配置（统一标准） ====================
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:redis123}
+      database: ${REDIS_DATABASE:0}
+      timeout: ${REDIS_TIMEOUT:3000}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_MAX_ACTIVE:8}
+          max-idle: ${REDIS_POOL_MAX_IDLE:8}
+          min-idle: ${REDIS_POOL_MIN_IDLE:0}
+          max-wait: ${REDIS_POOL_MAX_WAIT:-1}
+
+  # ==================== Nacos服务发现配置（统一标准） ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        enabled: ${NACOS_DISCOVERY_ENABLED:true}
+        register-enabled: ${NACOS_REGISTER_ENABLED:true}
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        file-extension: yaml
+        enabled: ${NACOS_CONFIG_ENABLED:true}
+        import-check:
+          enabled: true
+
+# ==================== MyBatis-Plus配置（统一标准） ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    cache-enabled: true
+  mapper-locations: classpath*:/mapper/**/*.xml
+  global-config:
+    db-config:
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ==================== 服务器通用配置（统一标准） ====================
+server:
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    max-threads: ${SERVER_MAX_THREADS:200}
+    min-spare-threads: ${SERVER_MIN_SPARE_THREADS:10}
+    accept-count: ${SERVER_ACCEPT_COUNT:100}
+
+# ==================== 日志配置（统一标准） ====================
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    net.lab1024.sa: ${LOG_LEVEL_APP:DEBUG}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+  file:
+    path: ${LOG_PATH:logs}
+
+# ==================== Actuator监控配置（统一标准） ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+  health:
+    db:
+      enabled: true
+    redis:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  # ==================== 分布式追踪配置 ====================
+  tracing:
+    enabled: ${TRACING_ENABLED:false}
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+
+# ==================== 安全配置（统一标准） ====================
+sa-token:
+  token-name: Authorization
+  timeout: 86400
+  is-concurrent: true
+  token-style: uuid
+  is-log: false
+
+# ==================== 网关客户端配置（统一标准） ====================
+gateway:
+  client:
+    connect-timeout: ${GATEWAY_CONNECT_TIMEOUT:5000}
+    read-timeout: ${GATEWAY_READ_TIMEOUT:30000}
+
+# ==================== 统一环境变量说明 ====================
+# 
+# 数据库配置:
+#   MYSQL_HOST          - MySQL主机地址 (默认: 127.0.0.1)
+#   MYSQL_PORT          - MySQL端口 (默认: 3306)
+#   MYSQL_DATABASE      - 数据库名称 (默认: ioedream)
+#   MYSQL_USERNAME      - 数据库用户名 (默认: root)
+#   MYSQL_PASSWORD      - 数据库密码 (默认: root1234)
+#
+# Redis配置:
+#   REDIS_HOST          - Redis主机地址 (默认: 127.0.0.1)
+#   REDIS_PORT          - Redis端口 (默认: 6379)
+#   REDIS_PASSWORD      - Redis密码 (默认: redis123)
+#   REDIS_DATABASE      - Redis数据库 (默认: 0)
+#
+# Nacos配置:
+#   NACOS_SERVER_ADDR   - Nacos服务地址 (默认: 127.0.0.1:8848)
+#   NACOS_NAMESPACE     - Nacos命名空间 (默认: dev)
+#   NACOS_GROUP         - Nacos分组 (默认: IOE-DREAM)
+#   NACOS_USERNAME      - Nacos用户名 (默认: nacos)
+#   NACOS_PASSWORD      - Nacos密码 (默认: nacos)
+#
+# 日志配置:
+#   LOG_LEVEL_ROOT      - 根日志级别 (默认: INFO)
+#   LOG_LEVEL_APP       - 应用日志级别 (默认: DEBUG)
+#   LOG_PATH            - 日志文件路径 (默认: logs)
+#
+# 分布式追踪:
+#   TRACING_ENABLED     - 启用追踪 (默认: false)
+#   ZIPKIN_ENDPOINT     - Zipkin服务地址
+# ============================================================

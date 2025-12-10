@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.lab1024.sa</groupId>
+    <artifactId>ioedream-microservices-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>IOE-DREAM Microservices Parent</name>
+    <description>IOE-DREAM微服务父POM，统一管理所有微服务的依赖版本和配置</description>
+
+    <properties>
+        <!-- Maven编译配置 -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <java.version>17</java.version>
+
+        <!-- Jasypt配置加密 - 强制安全全域解密方案 -->
+        <jasypt.version>3.0.5</jasypt.version>
+
+        <!-- Spring Boot 3.x兼容规范 -->
+        <spring-boot-configuration-processor.version>3.1.5</spring-boot-configuration-processor.version>
+
+        <!-- 统一依赖版本管理 -->
+        <!-- Spring Boot版本 -->
+        <spring-boot.version>3.5.8</spring-boot.version>
+
+        <!-- MyBatis-Plus版本 -->
+        <mybatis-plus.version>3.5.15</mybatis-plus.version>
+
+        <!-- MySQL驱动版本 -->
+        <mysql.version>8.0.35</mysql.version>
+
+        <!-- Redis版本 -->
+        <redis.version>7.2.3</redis.version>
+
+        <!-- Lombok版本 -->
+        <lombok.version>1.18.42</lombok.version>
+
+        <!-- Jakarta Validation版本 -->
+        <jakarta-validation.version>3.1.1</jakarta-validation.version>
+
+        <!-- Jackson版本（已升级到最新稳定版本） -->
+        <jackson.version>2.20.1</jackson.version>
+
+        <!-- Caffeine版本（已升级到最新稳定版本） -->
+        <caffeine.version>3.2.3</caffeine.version>
+
+        <!-- Swagger版本（已升级到最新稳定版本） -->
+        <swagger.version>2.2.41</swagger.version>
+
+        <!-- EasyExcel版本 -->
+        <easyexcel.version>4.0.3</easyexcel.version>
+
+        <!-- iText PDF版本 -->
+        <itextpdf.version>9.4.0</itextpdf.version>
+
+        <!-- JWT版本 -->
+        <jjwt.version>0.13.0</jjwt.version>
+
+        <!-- Micrometer版本 -->
+        <micrometer.version>1.16.0</micrometer.version>
+
+        <!-- Spring Cloud版本 -->
+        <!-- Spring Boot 3.5.8 兼容 Spring Cloud 2025.0.x -->
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+
+        <!-- Spring Cloud Alibaba版本 -->
+        <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
+
+        <!-- JUnit单元测试版本 -->
+        <junit.version>5.11.0</junit.version>
+        <mockito.version>5.20.0</mockito.version>
+
+        <!-- Sa-Token版本 -->
+        <sa-token.version>1.44.0</sa-token.version>
+
+        <!-- Druid数据库连接池 -->
+        <druid.version>1.2.25</druid.version>
+
+        <!-- ZXing版本 -->
+        <zxing.version>3.5.4</zxing.version>
+
+        <!-- 阿里云短信SDK版本 -->
+        <aliyun-dysmsapi.version>4.3.0</aliyun-dysmsapi.version>
+
+        <!-- 腾讯云OCR SDK版本 -->
+        <tencentcloud-ocr.version>3.1.1373</tencentcloud-ocr.version>
+
+        <!-- Redisson版本（分布式锁和缓存存储） -->
+        <redisson.version>3.24.3</redisson.version>
+
+        <!-- Jakarta Servlet API版本 -->
+        <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
+
+        <!-- FastJSON2鐗堟湰 -->
+        <fastjson2.version>2.0.53</fastjson2.version>
+
+        <!-- Apache Commons鐗堟湰 -->
+        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-text.version>1.12.0</commons-text.version>
+
+        <!-- Bouncy Castle鐗堟湰 -->
+        <bouncycastle.version>1.80</bouncycastle.version>
+    </properties>
+
+    <!-- 渚濊禆鐗堟湰缁熶竴绠＄悊 -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot BOM锛堢粺涓€绠＄悊Spring Boot渚濊禆鐗堟湰锟?-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Cloud Alibaba BOM锛堢粺涓€绠＄悊Spring Cloud Alibaba渚濊禆鐗堟湰锟?-->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Cloud BOM锛堢粺涓€绠＄悊Spring Cloud渚濊禆鐗堟湰锛屽寘鎷珿ateway锟?-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Jasypt鍔犲瘑渚濊禆 - 浼佷笟绾ч厤缃姞瀵嗚В鍐虫柟妗?-->
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>${jasypt.version}</version>
+            </dependency>
+
+            <!-- MySQL椹卞姩 -->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <!-- Druid鏁版嵁搴撹繛鎺ユ睜 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- MyBatis-Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- Redis -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+            </dependency>
+
+            <!-- Sa-Token -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-spring-boot-starter</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+
+            <!-- FastJSON2 -->
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+
+            <!-- Swagger -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <!-- Jakarta Validation -->
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta-validation.version}</version>
+            </dependency>
+
+            <!-- Apache Commons -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
+
+            <!-- Redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+
+            <!-- ZXing -->
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>${zxing.version}</version>
+            </dependency>
+
+            <!-- JWT -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- 鎵€鏈夊井鏈嶅姟妯″潡 -->
+    <modules>
+        <module>microservices-common</module>
+        <module>ioedream-gateway-service</module>
+        <module>ioedream-common-service</module>
+        <module>ioedream-device-comm-service</module>
+        <module>ioedream-oa-service</module>
+        <module>ioedream-access-service</module>
+        <module>ioedream-attendance-service</module>
+        <module>ioedream-video-service</module>
+        <module>ioedream-consume-service</module>
+        <module>ioedream-visitor-service</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Spring Boot Maven Plugin -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <!-- Maven Resources Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.1</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <!-- 纭繚璧勬簮鏂囦欢浣跨敤UTF-8缂栫爜 -->
+                    </configuration>
+                </plugin>
+
+                <!-- Maven Compiler Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <!-- 浣跨敤 release 鏇夸唬 source 锟?target锛岃嚜鍔ㄨ缃郴缁熸ā鍧椾綅锟?-->
+                        <release>${java.version}</release>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <!-- 鏄庣‘鎸囧畾缂栬瘧鍣ㄧ紪鐮侊紝鎻愪緵鍙岄噸淇濋殰 -->
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                            <arg>-encoding</arg>
+                            <arg>${project.build.sourceEncoding}</arg>
+                        </compilerArgs>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-configuration-processor</artifactId>
+                                <version>${spring-boot-configuration-processor.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
+
+

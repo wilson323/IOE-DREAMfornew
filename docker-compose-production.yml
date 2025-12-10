@@ -1,0 +1,629 @@
+# IOE-DREAM 生产环境 Docker Compose 配置
+# 包含所有基础设施服务、微服务和前端应用
+# Docker Compose v3.8
+
+services:
+  # ==================== 基础设施服务 ====================
+
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: ioedream-mysql-prod
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Asia/Shanghai
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data_prod:/var/lib/mysql
+      - ./deployment/mysql/init:/docker-entrypoint-initdb.d
+      - ./deployment/mysql/conf:/etc/mysql/conf.d
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: ioedream-redis-prod
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD} --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data_prod:/data
+      - ./deployment/redis/redis.conf:/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  # Nacos注册中心和配置中心
+  nacos:
+    image: nacos/nacos-server:v2.3.0
+    container_name: ioedream-nacos-prod
+    environment:
+      - MODE=cluster
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_DB_NAME=${NACOS_DATABASE}
+      - MYSQL_SERVICE_USER=${MYSQL_USER}
+      - MYSQL_SERVICE_PASSWORD=${MYSQL_PASSWORD}
+      - NACOS_AUTH_ENABLE=true
+      - NACOS_AUTH_TOKEN=${NACOS_AUTH_TOKEN}
+      - NACOS_AUTH_IDENTITY_KEY=${NACOS_AUTH_IDENTITY_KEY}
+      - NACOS_AUTH_IDENTITY_VALUE=${NACOS_AUTH_IDENTITY_VALUE}
+      - JVM_XMS=512m
+      - JVM_XMX=1024m
+      - TZ=Asia/Shanghai
+    ports:
+      - "${NACOS_PORT:-8848}:8848"
+      - "9848:9848"
+    volumes:
+      - nacos_data_prod:/home/nacos/data
+      - nacos_logs_prod:/home/nacos/logs
+      - ./deployment/nacos/custom.properties:/home/nacos/init.d/custom.properties
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/v1/console/health/readiness"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  # Nginx负载均衡器
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: ioedream-nginx-prod
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./deployment/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./deployment/nginx/conf.d:/etc/nginx/conf.d
+      - ./deployment/nginx/ssl:/etc/nginx/ssl
+      - nginx_logs_prod:/var/log/nginx
+    depends_on:
+      - gateway-service
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # ==================== 前端应用 ====================
+
+  # Web前端管理后台
+  web-admin:
+    build:
+      context: ./smart-admin-web-javascript
+      dockerfile: Dockerfile
+    image: ioedream/web-admin:latest
+    container_name: ioedream-web-admin
+    ports:
+      - "${WEB_ADMIN_PORT:-3000}:80"
+    environment:
+      - NODE_ENV=production
+      - VUE_APP_API_BASE_URL=http://nginx/api
+      - VUE_APP_WS_URL=ws://nginx/ws
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # ==================== 微服务 ====================
+
+  # API网关服务
+  gateway-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-gateway-service/Dockerfile
+    image: ioedream/gateway-service:latest
+    container_name: ioedream-gateway-service
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms1g -Xmx2g -XX:+UseG1GC
+    ports:
+      - "${GATEWAY_PORT:-8080}:8080"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # 公共业务服务
+  common-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-common-service/Dockerfile
+    image: ioedream/common-service:latest
+    container_name: ioedream-common-service
+    environment:
+      - SERVER_PORT=8088
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms1g -Xmx2g -XX:+UseG1GC
+    ports:
+      - "${COMMON_SERVICE_PORT:-8088}:8088"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+        reservations:
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # 设备通讯服务
+  device-comm-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-device-comm-service/Dockerfile
+    image: ioedream/device-comm-service:latest
+    container_name: ioedream-device-comm-service
+    environment:
+      - SERVER_PORT=8087
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms1g -Xmx2g -XX:+UseG1GC
+    ports:
+      - "${DEVICE_COMM_PORT:-8087}:8087"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      common-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8087/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # OA服务
+  oa-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-oa-service/Dockerfile
+    image: ioedream/oa-service:latest
+    container_name: ioedream-oa-service
+    environment:
+      - SERVER_PORT=8089
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms1g -Xmx2g -XX:+UseG1GC
+    ports:
+      - "${OA_SERVICE_PORT:-8089}:8089"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      common-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8089/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # 门禁服务
+  access-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-access-service/Dockerfile
+    image: ioedream/access-service:latest
+    container_name: ioedream-access-service
+    environment:
+      - SERVER_PORT=8090
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC
+    ports:
+      - "${ACCESS_SERVICE_PORT:-8090}:8090"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      common-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # 考勤服务
+  attendance-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-attendance-service/Dockerfile
+    image: ioedream/attendance-service:latest
+    container_name: ioedream-attendance-service
+    environment:
+      - SERVER_PORT=8091
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC
+    ports:
+      - "${ATTENDANCE_SERVICE_PORT:-8091}:8091"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      common-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8091/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # 视频服务
+  video-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-video-service/Dockerfile
+    image: ioedream/video-service:latest
+    container_name: ioedream-video-service
+    environment:
+      - SERVER_PORT=8092
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms1g -Xmx2g -XX:+UseG1GC
+    ports:
+      - "${VIDEO_SERVICE_PORT:-8092}:8092"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      common-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 4G  # 视频服务需要更多内存
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8092/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # 消费服务
+  consume-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-consume-service/Dockerfile
+    image: ioedream/consume-service:latest
+    container_name: ioedream-consume-service
+    environment:
+      - SERVER_PORT=8094
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC
+    ports:
+      - "${CONSUME_SERVICE_PORT:-8094}:8094"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      common-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8094/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # 访客服务
+  visitor-service:
+    build:
+      context: .
+      dockerfile: microservices/ioedream-visitor-service/Dockerfile
+    image: ioedream/visitor-service:latest
+    container_name: ioedream-visitor-service
+    environment:
+      - SERVER_PORT=8095
+      - SPRING_PROFILES_ACTIVE=prod
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=${NACOS_NAMESPACE:-prod}
+      - NACOS_GROUP=IOE-DREAM
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=Asia/Shanghai
+      - JVM_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC
+    ports:
+      - "${VISITOR_SERVICE_PORT:-8095}:8095"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      common-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8095/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+# ==================== 数据卷 ====================
+volumes:
+  mysql_data_prod:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/mysql
+  redis_data_prod:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/redis
+  nacos_data_prod:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/nacos/data
+  nacos_logs_prod:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${LOGS_DIR:-./logs}/nacos
+  nginx_logs_prod:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${LOGS_DIR:-./logs}/nginx
+
+# ==================== 网络 ====================
+networks:
+  ioedream-network:
+    driver: bridge
+    name: ioedream-network
+    driver_opts:
+      com.docker.network.bridge.name: ioe-dream-bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

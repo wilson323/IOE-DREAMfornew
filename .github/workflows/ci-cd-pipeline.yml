@@ -1,0 +1,558 @@
+name: IOE-DREAM CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, IOE-DREAM2025127 ]
+  pull_request:
+    branches: [ main, develop ]
+  release:
+    types: [ published ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # 代码质量检查
+  code-quality:
+    name: 代码质量检查
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 设置Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: 代码格式检查
+      run: |
+        mvn spotless:check -pl microservices/microservices-common
+        mvn spotless:check -pl microservices/ioedream-common-service
+        mvn spotless:check -pl microservices/ioedream-access-service
+
+    - name: 静态代码分析
+      run: |
+        mvn sonar:sonar \
+          -Dsonar.projectKey=ioe-dream \
+          -Dsonar.organization=ioe-dream \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=$SONAR_TOKEN
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    - name: 架构合规性检查
+      run: |
+        ./scripts/architecture-compliance-check.ps1
+
+  # 单元测试和集成测试
+  testing:
+    name: 测试执行
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ioedream_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      nacos:
+        image: nacos/nacos-server:v2.2.3
+        env:
+          MODE: standalone
+          SPRING_DATASOURCE_PLATFORM: mysql
+          MYSQL_SERVICE_HOST: mysql
+          MYSQL_SERVICE_DB_NAME: ioedream_test
+          MYSQL_SERVICE_USER: root
+          MYSQL_SERVICE_PASSWORD: root
+        ports:
+          - 8848:8848
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: 等待服务就绪
+      run: |
+        echo "等待数据库服务启动..."
+        sleep 30
+        mysql -h127.0.0.1 -uroot -proot -e "SELECT 1"
+
+        echo "等待Redis服务启动..."
+        redis-cli -h127.0.0.1 ping
+
+        echo "等待Nacos服务启动..."
+        curl -f http://localhost:8848/nacos/v1/console/health || exit 1
+
+    - name: 运行单元测试
+      run: |
+        mvn test \
+          -pl microservices/microservices-common \
+          -Dspring.profiles.active=test \
+          -Dspring.datasource.url=jdbc:mysql://localhost:3306/ioedream_test \
+          -Dspring.redis.host=localhost \
+          -Dspring.cloud.nacos.discovery.server-addr=localhost:8848
+
+    - name: 运行集成测试
+      run: |
+        mvn verify \
+          -pl microservices/ioedream-common-service \
+          -Dspring.profiles.active=integration-test \
+          -Dspring.datasource.url=jdbc:mysql://localhost:3306/ioedream_test \
+          -Dspring.redis.host=localhost \
+          -Dspring.cloud.nacos.discovery.server-addr=localhost:8848
+
+    - name: 生成测试报告
+      uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        name: 测试报告
+        path: '**/target/surefire-reports/*.xml'
+        reporter: java-junit
+
+    - name: 计算测试覆盖率
+      run: |
+        mvn jacoco:report \
+          -pl microservices/microservices-common \
+          -pl microservices/ioedream-common-service
+
+    - name: 上传覆盖率报告
+      uses: codecov/codecov-action@v3
+      with:
+        file: '**/target/site/jacoco/jacoco.xml'
+        flags: unittests
+        name: IOE-DREAM 覆盖率报告
+
+  # 安全扫描
+  security-scan:
+    name: 安全扫描
+    runs-on: ubuntu-latest
+    needs: testing
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 依赖漏洞扫描
+      run: |
+        mvn dependency-check:check \
+          -pl microservices/microservices-common \
+          -pl microservices/ioedream-common-service \
+          -DskipTests
+
+    - name: 容器镜像安全扫描准备
+      run: |
+        # 构建镜像用于扫描
+        docker build -t ioe-dream:scan -f microservices/ioedream-common-service/Dockerfile.optimized .
+
+    - name: Trivy 容器安全扫描
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'ioe-dream:scan'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: 上传安全扫描结果
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # 构建和打包
+  build:
+    name: 构建应用
+    runs-on: ubuntu-latest
+    needs: [testing, security-scan]
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: 构建微服务
+      run: |
+        ./scripts/build-all.ps1 -SkipTests
+
+    - name: 构建产物归档
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: |
+          microservices/*/target/*.jar
+          microservices/*/Dockerfile*
+          microservices/*/scripts/
+        retention-days: 7
+
+  # 多环境部署
+  deploy:
+    name: 部署到环境
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+
+    strategy:
+      matrix:
+        service: [
+          'ioedream-common-service',
+          'ioedream-device-comm-service',
+          'ioedream-oa-service',
+          'ioedream-access-service',
+          'ioedream-attendance-service',
+          'ioedream-video-service',
+          'ioedream-consume-service',
+          'ioedream-visitor-service'
+        ]
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 登录容器镜像仓库
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 提取元数据
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+
+    - name: 构建并推送镜像
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./microservices/${{ matrix.service }}/Dockerfile.optimized
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+
+    - name: 部署到Kubernetes
+      run: |
+        echo "部署 ${{ matrix.service }} 到 ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }} 环境"
+
+        # 根据环境选择配置文件
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          KUBE_CONFIG_FILE="${{ secrets.KUBE_CONFIG_PROD }}"
+          ENVIRONMENT="production"
+        else
+          KUBE_CONFIG_FILE="${{ secrets.KUBE_CONFIG_STAGING }}"
+          ENVIRONMENT="staging"
+        fi
+
+        # 设置kubectl
+        mkdir -p $HOME/.kube
+        echo "$KUBE_CONFIG_FILE" | base64 -d > $HOME/.kube/config
+
+        # 部署应用
+        cat <<EOF > deployment.yaml
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ${{ matrix.service }}
+          namespace: ioe-dream-${ENVIRONMENT}
+          labels:
+            app: ${{ matrix.service }}
+            version: ${{ github.sha }}
+        spec:
+          replicas: ${{ matrix.service == 'ioedream-common-service' && '3' || '2' }}
+          selector:
+            matchLabels:
+              app: ${{ matrix.service }}
+          template:
+            metadata:
+              labels:
+                app: ${{ matrix.service }}
+                version: ${{ github.sha }}
+            spec:
+              containers:
+              - name: ${{ matrix.service }}
+                image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}:${{ github.sha }}
+                ports:
+                - containerPort: ${{
+                  matrix.service == 'ioedream-gateway-service' && '8080' ||
+                  matrix.service == 'ioedream-common-service' && '8088' ||
+                  matrix.service == 'ioedream-device-comm-service' && '8087' ||
+                  matrix.service == 'ioedream-oa-service' && '8089' ||
+                  matrix.service == 'ioedream-access-service' && '8090' ||
+                  matrix.service == 'ioedream-attendance-service' && '8091' ||
+                  matrix.service == 'ioedream-video-service' && '8092' ||
+                  matrix.service == 'ioedream-consume-service' && '8094' ||
+                  matrix.service == 'ioedream-visitor-service' && '8095'
+                }}
+                env:
+                - name: SPRING_PROFILES_ACTIVE
+                  value: "${{ ENVIRONMENT }}"
+                - name: NACOS_SERVER_ADDR
+                  valueFrom:
+                    secretKeyRef:
+                      name: nacos-config
+                      key: server-addr
+                - name: MYSQL_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: mysql-config
+                      key: host
+                - name: REDIS_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: redis-config
+                      key: host
+                resources:
+                  requests:
+                    memory: "512Mi"
+                    cpu: "200m"
+                  limits:
+                    memory: "2Gi"
+                    cpu: "1000m"
+                livenessProbe:
+                  httpGet:
+                    path: /actuator/health
+                    port: ${{
+                      matrix.service == 'ioedream-gateway-service' && '8080' ||
+                      matrix.service == 'ioedream-common-service' && '8088' ||
+                      matrix.service == 'ioedream-device-comm-service' && '8087' ||
+                      matrix.service == 'ioedream-oa-service' && '8089' ||
+                      matrix.service == 'ioedream-access-service' && '8090' ||
+                      matrix.service == 'ioedream-attendance-service' && '8091' ||
+                      matrix.service == 'ioedream-video-service' && '8092' ||
+                      matrix.service == 'ioedream-consume-service' && '8094' ||
+                      matrix.service == 'ioedream-visitor-service' && '8095'
+                    }}
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                readinessProbe:
+                  httpGet:
+                    path: /actuator/health
+                    port: ${{
+                      matrix.service == 'ioedream-gateway-service' && '8080' ||
+                      matrix.service == 'ioedream-common-service' && '8088' ||
+                      matrix.service == 'ioedream-device-comm-service' && '8087' ||
+                      matrix.service == 'ioedream-oa-service' && '8089' ||
+                      matrix.service == 'ioedream-access-service' && '8090' ||
+                      matrix.service == 'ioedream-attendance-service' && '8091' ||
+                      matrix.service == 'ioedream-video-service' && '8092' ||
+                      matrix.service == 'ioedream-consume-service' && '8094' ||
+                      matrix.service == 'ioedream-visitor-service' && '8095'
+                    }}
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ${{ matrix.service }}
+          namespace: ioe-dream-${ENVIRONMENT}
+        spec:
+          selector:
+            app: ${{ matrix.service }}
+          ports:
+          - port: ${{
+              matrix.service == 'ioedream-gateway-service' && '8080' ||
+              matrix.service == 'ioedream-common-service' && '8088' ||
+              matrix.service == 'ioedream-device-comm-service' && '8087' ||
+              matrix.service == 'ioedream-oa-service' && '8089' ||
+              matrix.service == 'ioedream-access-service' && '8090' ||
+              matrix.service == 'ioedream-attendance-service' && '8091' ||
+              matrix.service == 'ioedream-video-service' && '8092' ||
+              matrix.service == 'ioedream-consume-service' && '8094' ||
+              matrix.service == 'ioedream-visitor-service' && '8095'
+            }}
+            targetPort: ${{
+              matrix.service == 'ioedream-gateway-service' && '8080' ||
+              matrix.service == 'ioedream-common-service' && '8088' ||
+              matrix.service == 'ioedream-device-comm-service' && '8087' ||
+              matrix.service == 'ioedream-oa-service' && '8089' ||
+              matrix.service == 'ioedream-access-service' && '8090' ||
+              matrix.service == 'ioedream-attendance-service' && '8091' ||
+              matrix.service == 'ioedream-video-service' && '8092' ||
+              matrix.service == 'ioedream-consume-service' && '8094' ||
+              matrix.service == 'ioedream-visitor-service' && '8095'
+            }}
+          type: ClusterIP
+        EOF
+
+        # 应用配置
+        kubectl apply -f deployment.yaml
+
+        # 等待部署完成
+        kubectl rollout status deployment/${{ matrix.service }} -n ioe-dream-${ENVIRONMENT} --timeout=300s
+
+    - name: 部署后健康检查
+      run: |
+        echo "执行 ${{ matrix.service }} 健康检查"
+
+        sleep 60  # 等待服务启动
+
+        # 获取服务IP
+        SERVICE_IP=$(kubectl get svc ${{ matrix.service }} -n ioe-dream-${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }} -o jsonpath='{.spec.clusterIP}')
+        SERVICE_PORT=${{
+          matrix.service == 'ioedream-gateway-service' && '8080' ||
+          matrix.service == 'ioedream-common-service' && '8088' ||
+          matrix.service == 'ioedream-device-comm-service' && '8087' ||
+          matrix.service == 'ioedream-oa-service' && '8089' ||
+          matrix.service == 'ioedream-access-service' && '8090' ||
+          matrix.service == 'ioedream-attendance-service' && '8091' ||
+          matrix.service == 'ioedream-video-service' && '8092' ||
+          matrix.service == 'ioedream-consume-service' && '8094' ||
+          matrix.service == 'ioedream-visitor-service' && '8095'
+        }}
+
+        # 健康检查
+        for i in {1..30}; do
+          if curl -f http://${SERVICE_IP}:${SERVICE_PORT}/actuator/health; then
+            echo "健康检查通过"
+            break
+          else
+            echo "健康检查失败，重试 $i/30"
+            sleep 10
+          fi
+        done
+
+  # 性能测试
+  performance-test:
+    name: 性能测试
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置K6性能测试
+      run: |
+        # 安装K6
+        sudo gpg -k
+        sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+
+    - name: 运行性能测试
+      run: |
+        # 获取服务端点
+        GATEWAY_URL=$(kubectl get svc ioedream-gateway-service -n ioe-dream-production -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+        # 运行性能测试
+        cat <<EOF > performance-test.js
+        import http from 'k6/http';
+        import { check, sleep } from 'k6';
+
+        export let options = {
+          stages: [
+            { duration: '2m', target: 100 }, // 2分钟内增加到100用户
+            { duration: '5m', target: 100 }, // 保持100用户5分钟
+            { duration: '2m', target: 200 }, // 2分钟内增加到200用户
+            { duration: '5m', target: 200 }, // 保持200用户5分钟
+            { duration: '2m', target: 0 },   // 2分钟内减少到0用户
+          ],
+          thresholds: {
+            http_req_duration: ['p(95)<500'], // 95%的请求在500ms内完成
+            http_req_failed: ['rate<0.1'],    // 错误率低于10%
+          },
+        };
+
+        export default function () {
+          let response = http.get('http://${GATEWAY_URL}:8080/api/v1/system/health');
+          check(response, {
+            'status is 200': (r) => r.status === 200,
+            'response time < 500ms': (r) => r.timings.duration < 500,
+          });
+          sleep(1);
+        }
+        EOF
+
+        # 执行性能测试
+        k6 run performance-test.js --out json=performance-results.json
+
+    - name: 上传性能测试报告
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-results
+        path: performance-results.json
+
+  # 通知和清理
+  notification:
+    name: 通知和清理
+    runs-on: ubuntu-latest
+    needs: [deploy, performance-test]
+    if: always()
+
+    steps:
+    - name: 部署成功通知
+      if: needs.deploy.result == 'success'
+      run: |
+        echo "✅ IOE-DREAM 部署成功！"
+        echo "分支: ${{ github.ref }}"
+        echo "提交: ${{ github.sha }}"
+        echo "时间: $(date)"
+
+        # 发送Slack通知
+        curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"✅ IOE-DREAM 部署成功！\n分支: ${{ github.ref }}\n提交: ${{ github.sha }}\n时间: '$(date)'"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: 部署失败通知
+      if: needs.deploy.result == 'failure'
+      run: |
+        echo "❌ IOE-DREAM 部署失败！"
+        echo "分支: ${{ github.ref }}"
+        echo "提交: ${{ github.sha }}"
+        echo "时间: $(date)"
+
+        # 发送Slack通知
+        curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"❌ IOE-DREAM 部署失败！\n分支: ${{ github.ref }}\n提交: ${{ github.sha }}\n时间: '$(date)'"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: 清理临时文件
+      run: |
+        echo "清理构建产物和临时文件"
+        docker system prune -f
+        echo "清理完成"

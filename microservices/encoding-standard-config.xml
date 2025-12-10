@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    IOE-DREAM 编码标准配置
+    根源性解决编译乱码问题
+
+    使用方法：
+    1. 在parent pom.xml的build/plugins中引入此配置
+    2. 确保所有子模块继承这些编码设置
+    3. 设置IDE和JVM的编码参数
+-->
+<configuration xmlns="http://maven.apache.org/CONFIG/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/CONFIG/1.0.0
+    http://maven.apache.org/xsd/config-1.0.0.xsd">
+
+    <!-- 编码标准配置说明 -->
+    <encodingStandard>
+        <!-- Java编译编码设置 -->
+        <javaCompilation>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <targetEncoding>UTF-8</targetEncoding>
+            <compilerArgs>
+                <arg>-encoding</arg>
+                <arg>UTF-8</arg>
+                <arg>-J-Dfile.encoding=UTF-8</arg>
+            </compilerArgs>
+        </javaCompilation>
+
+        <!-- 资源文件编码设置 -->
+        <resourceFiltering>
+            <encoding>UTF-8</encoding>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+                <include>**/*.yml</include>
+                <include>**/*.yaml</include>
+            </includes>
+        </resourceFiltering>
+
+        <!-- Javadoc编码设置 -->
+        <javadocGeneration>
+            <docencoding>UTF-8</docencoding>
+            <charset>UTF-8</charset>
+            <encoding>UTF-8</encoding>
+        </javadocGeneration>
+
+        <!-- 测试编码设置 -->
+        <testExecution>
+            <systemPropertyVariables>
+                <file.encoding>UTF-8</file.encoding>
+                <user.timezone>Asia/Shanghai</user.timezone>
+            </systemPropertyVariables>
+        </testExecution>
+    </encodingStandard>
+
+    <!-- 推荐的Maven插件配置 -->
+    <recommendedPlugins>
+        <!-- Maven Compiler Plugin 增强配置 -->
+        <compilerPlugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.13.0</version>
+            <configuration>
+                <source>17</source>
+                <target>17</target>
+                <encoding>UTF-8</encoding>
+                <compilerArgs>
+                    <arg>-parameters</arg>
+                    <arg>-Xlint:unchecked</arg>
+                    <arg>-Xlint:deprecation</arg>
+                    <arg>-encoding</arg>
+                    <arg>UTF-8</arg>
+                </compilerArgs>
+                <showWarnings>true</showWarnings>
+                <showDeprecation>true</showDeprecation>
+            </configuration>
+        </compilerPlugin>
+
+        <!-- Maven Resources Plugin 编码配置 -->
+        <resourcesPlugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.3.1</version>
+            <configuration>
+                <encoding>UTF-8</encoding>
+                <propertiesEncoding>UTF-8</propertiesEncoding>
+            </configuration>
+        </resourcesPlugin>
+
+        <!-- Maven Surefire Plugin 测试编码配置 -->
+        <surefirePlugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.2.5</version>
+            <configuration>
+                <argLine>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai</argLine>
+                <systemPropertyVariables>
+                    <file.encoding>UTF-8</file.encoding>
+                    <user.timezone>Asia/Shanghai</user.timezone>
+                </systemPropertyVariables>
+            </configuration>
+        </surefirePlugin>
+
+        <!-- Maven Failsafe Plugin 集成测试编码配置 -->
+        <failsafePlugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>3.2.5</version>
+            <configuration>
+                <argLine>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai</argLine>
+                <systemPropertyVariables>
+                    <file.encoding>UTF-8</file.encoding>
+                    <user.timezone>Asia/Shanghai</user.timezone>
+                </systemPropertyVariables>
+            </configuration>
+        </failsafePlugin>
+    </recommendedPlugins>
+
+    <!-- JVM启动参数建议 -->
+    <jvmArguments>
+        <!-- 强制使用UTF-8编码 -->
+        <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
+        <jvmArg>-Dsun.jnu.encoding=UTF-8</jvmArg>
+        <jvmArg>-Dconsole.encoding=UTF-8</jvmArg>
+
+        <!-- 设置默认时区 -->
+        <jvmArg>-Duser.timezone=Asia/Shanghai</jvmArg>
+        <jvmArg>-Duser.country=CN</jvmArg>
+        <jvmArg>-Duser.language=zh</jvmArg>
+
+        <!-- MySQL连接字符串编码 -->
+        <mysqlUrlParams>
+            <param>useUnicode=true</param>
+            <param>characterEncoding=UTF-8</param>
+            <param>serverTimezone=Asia/Shanghai</param>
+        </mysqlUrlParams>
+    </jvmArguments>
+
+    <!-- IDE编码配置建议 -->
+    <ideConfiguration>
+        <intellijIDEA>
+            <fileEncodings>
+                <encoding name="Properties Files" value="UTF-8"/>
+                <encoding name="XML" value="UTF-8"/>
+                <encoding name="YAML" value="UTF-8"/>
+                <encoding name="JAVA" value="UTF-8"/>
+                <encoding name="HTML" value="UTF-8"/>
+                <encoding name="JSP" value="UTF-8"/>
+                <encoding name="JavaScript" value="UTF-8"/>
+            </fileEncodings>
+            <settings>
+                <editorConfig>
+                    <property name="charset" value="UTF-8"/>
+                    <property name="lineEnding" value="CRLF"/>
+                </editorConfig>
+            </settings>
+        </intellijIDEA>
+
+        <eclipseIDE>
+            <workspaceSettings>
+                <property name="encoding//src/main/java" value="UTF-8"/>
+                <property name="encoding//src/main/resources" value="UTF-8"/>
+                <property name="encoding//src/test/java" value="UTF-8"/>
+                <property name="encoding//src/test/resources" value="UTF-8"/>
+            </workspaceSettings>
+        </eclipseIDE>
+
+        <vscode>
+            <settings>
+                <property name="files.encoding" value="utf8"/>
+                <property name="files.eol" value="\r\n"/>
+            </settings>
+        </vscode>
+    </ideConfiguration>
+
+</configuration>

@@ -154,258 +154,214 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, onMounted } from 'vue'
 import videoApi from '@/api/business/video/video-api'
 
-export default {
-  name: 'VideoPlayback',
+// 页面状态
+const loading = ref(false)
 
-  setup() {
-    // 系统信息
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+// 数据
+const devices = ref([])
+const selectedDevice = ref(null)
+const recordList = ref([])
+const currentRecord = ref(null)
+const playbackUrl = ref('')
+const currentTime = ref(0)
+const duration = ref(0)
+const playSpeed = ref(1)
 
-    // 页面状态
-    const loading = ref(false)
+// 日期时间
+const now = new Date()
+const startDate = ref(formatDate(now))
+const startTime = ref('00:00')
+const endDate = ref(formatDate(now))
+const endTime = ref('23:59')
 
-    // 数据
-    const devices = ref([])
-    const selectedDevice = ref(null)
-    const recordList = ref([])
-    const currentRecord = ref(null)
-    const playbackUrl = ref('')
-    const currentTime = ref(0)
-    const duration = ref(0)
-    const playSpeed = ref(1)
+// 计算时间轴进度
+const timelineProgress = computed(() => {
+  if (duration.value === 0) return 0
+  return (currentTime.value / duration.value) * 100
+})
 
-    // 日期时间
-    const now = new Date()
-    const startDate = ref(formatDate(now))
-    const startTime = ref('00:00')
-    const endDate = ref(formatDate(now))
-    const endTime = ref('23:59')
+// 页面生命周期
+onMounted(() => {
+  init()
+})
 
-    // 计算时间轴进度
-    const timelineProgress = computed(() => {
-      if (duration.value === 0) return 0
-      return (currentTime.value / duration.value) * 100
-    })
+// 初始化
+const init = async () => {
+  await loadDevices()
+}
 
-    // 页面生命周期
-    onMounted(() => {
-      init()
-    })
-
-    // 初始化
-    const init = async () => {
-      await loadDevices()
+// 加载设备列表
+const loadDevices = async () => {
+  try {
+    const res = await videoApi.getMobileDevices(true)
+    if (res.code === 1 && res.data) {
+      devices.value = res.data.devices || []
     }
-
-    // 加载设备列表
-    const loadDevices = async () => {
-      try {
-        const res = await videoApi.getMobileDevices(true)
-        if (res.code === 1 && res.data) {
-          devices.value = res.data.devices || []
-        }
-      } catch (error) {
-        console.error('加载设备列表失败:', error)
-      }
-    }
-
-    // 查询录像
-    const queryPlayback = async () => {
-      if (!selectedDevice.value) {
-        uni.showToast({ title: '请选择设备', icon: 'none' })
-        return
-      }
-
-      try {
-        loading.value = true
-
-        const params = {
-          deviceId: selectedDevice.value.deviceId,
-          startTime: `${startDate.value} ${startTime.value}:00`,
-          endTime: `${endDate.value} ${endTime.value}:00`
-        }
-
-        const res = await videoApi.queryPlayback(params)
-
-        if (res.code === 1 && res.data) {
-          recordList.value = res.data
-
-          if (recordList.value.length === 0) {
-            uni.showToast({ title: '该时段无录像', icon: 'none' })
-          }
-        }
-      } catch (error) {
-        console.error('查询录像失败:', error)
-        uni.showToast({ title: '查询失败', icon: 'none' })
-      } finally {
-        loading.value = false
-      }
-    }
-
-    // 播放录像
-    const playRecord = async (record) => {
-      try {
-        currentRecord.value = record
-
-        const res = await videoApi.getPlaybackUrl(
-          selectedDevice.value.deviceId,
-          record.recordId
-        )
-
-        if (res.code === 1 && res.data) {
-          playbackUrl.value = res.data.streamUrl || res.data
-          duration.value = record.duration || 0
-        }
-      } catch (error) {
-        console.error('获取回放地址失败:', error)
-        uni.showToast({ title: '播放失败', icon: 'none' })
-      }
-    }
-
-    // 下载录像
-    const downloadRecord = async () => {
-      if (!currentRecord.value) return
-
-      try {
-        const res = await videoApi.downloadRecord(currentRecord.value.recordId)
-
-        if (res.code === 1 && res.data) {
-          uni.showToast({ title: '下载已开始', icon: 'success' })
-        }
-      } catch (error) {
-        console.error('下载录像失败:', error)
-        uni.showToast({ title: '下载失败', icon: 'none' })
-      }
-    }
-
-    // 设备选择change
-    const onDeviceChange = (e) => {
-      const index = e.detail.value
-      selectedDevice.value = devices.value[index]
-      recordList.value = []
-      currentRecord.value = null
-      playbackUrl.value = ''
-    }
-
-    // 日期时间选择
-    const onStartDateChange = (e) => {
-      startDate.value = e.detail.value
-    }
-
-    const onStartTimeChange = (e) => {
-      startTime.value = e.detail.value
-    }
-
-    const onEndDateChange = (e) => {
-      endDate.value = e.detail.value
-    }
-
-    const onEndTimeChange = (e) => {
-      endTime.value = e.detail.value
-    }
-
-    // 时间更新
-    const handleTimeUpdate = (e) => {
-      currentTime.value = e.detail.currentTime
-      duration.value = e.detail.duration
-    }
-
-    // 时间轴拖动
-    const handleTimelineChanging = (e) => {
-      // 拖动中
-    }
-
-    const handleTimelineChange = (e) => {
-      const newTime = (duration.value * e.detail.value) / 100
-      // 跳转到指定时间（需要video组件支持）
-    }
-
-    // 改变播放速度
-    const changeSpeed = (speed) => {
-      playSpeed.value = speed
-      uni.showToast({ title: `${speed}x 倍速`, icon: 'none' })
-      // 设置播放速度（需要video组件支持）
-    }
-
-    // 视频错误处理
-    const handleVideoError = (e) => {
-      console.error('视频播放错误:', e)
-      uni.showToast({ title: '播放失败', icon: 'none' })
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 格式化日期
-    function formatDate(date) {
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    }
-
-    // 格式化播放时间
-    const formatPlayTime = (seconds) => {
-      if (!seconds) return '00:00'
-      const h = Math.floor(seconds / 3600)
-      const m = Math.floor((seconds % 3600) / 60)
-      const s = Math.floor(seconds % 60)
-
-      if (h > 0) {
-        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-      } else {
-        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-      }
-    }
-
-    // 格式化录像时间
-    const formatRecordTime = (time) => {
-      if (!time) return ''
-      const date = new Date(time)
-      return `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`
-    }
-
-    return {
-      statusBarHeight,
-      loading,
-      devices,
-      selectedDevice,
-      recordList,
-      currentRecord,
-      playbackUrl,
-      currentTime,
-      duration,
-      playSpeed,
-      timelineProgress,
-      startDate,
-      startTime,
-      endDate,
-      endTime,
-      queryPlayback,
-      playRecord,
-      downloadRecord,
-      onDeviceChange,
-      onStartDateChange,
-      onStartTimeChange,
-      onEndDateChange,
-      onEndTimeChange,
-      handleTimeUpdate,
-      handleTimelineChanging,
-      handleTimelineChange,
-      changeSpeed,
-      handleVideoError,
-      goBack,
-      formatPlayTime,
-      formatRecordTime
-    }
+  } catch (error) {
+    console.error('加载设备列表失败:', error)
   }
+}
+
+// 查询录像
+const queryPlayback = async () => {
+  if (!selectedDevice.value) {
+    uni.showToast({ title: '请选择设备', icon: 'none' })
+    return
+  }
+
+  try {
+    loading.value = true
+
+    const params = {
+      deviceId: selectedDevice.value.deviceId,
+      startTime: `${startDate.value} ${startTime.value}:00`,
+      endTime: `${endDate.value} ${endTime.value}:00`
+    }
+
+    const res = await videoApi.queryPlayback(params)
+
+    if (res.code === 1 && res.data) {
+      recordList.value = res.data
+
+      if (recordList.value.length === 0) {
+        uni.showToast({ title: '该时段无录像', icon: 'none' })
+      }
+    }
+  } catch (error) {
+    console.error('查询录像失败:', error)
+    uni.showToast({ title: '查询失败', icon: 'none' })
+  } finally {
+    loading.value = false
+  }
+}
+
+// 播放录像
+const playRecord = async (record) => {
+  try {
+    currentRecord.value = record
+
+    const res = await videoApi.getPlaybackUrl(
+      selectedDevice.value.deviceId,
+      record.recordId
+    )
+
+    if (res.code === 1 && res.data) {
+      playbackUrl.value = res.data.streamUrl || res.data
+      duration.value = record.duration || 0
+    }
+  } catch (error) {
+    console.error('获取回放地址失败:', error)
+    uni.showToast({ title: '播放失败', icon: 'none' })
+  }
+}
+
+// 下载录像
+const downloadRecord = async () => {
+  if (!currentRecord.value) return
+
+  try {
+    const res = await videoApi.downloadRecord(currentRecord.value.recordId)
+
+    if (res.code === 1 && res.data) {
+      uni.showToast({ title: '下载已开始', icon: 'success' })
+    }
+  } catch (error) {
+    console.error('下载录像失败:', error)
+    uni.showToast({ title: '下载失败', icon: 'none' })
+  }
+}
+
+// 设备选择change
+const onDeviceChange = (e) => {
+  const index = e.detail.value
+  selectedDevice.value = devices.value[index]
+  recordList.value = []
+  currentRecord.value = null
+  playbackUrl.value = ''
+}
+
+// 日期时间选择
+const onStartDateChange = (e) => {
+  startDate.value = e.detail.value
+}
+
+const onStartTimeChange = (e) => {
+  startTime.value = e.detail.value
+}
+
+const onEndDateChange = (e) => {
+  endDate.value = e.detail.value
+}
+
+const onEndTimeChange = (e) => {
+  endTime.value = e.detail.value
+}
+
+// 时间更新
+const handleTimeUpdate = (e) => {
+  currentTime.value = e.detail.currentTime
+  duration.value = e.detail.duration
+}
+
+// 时间轴拖动
+const handleTimelineChanging = (e) => {
+  // 拖动中
+}
+
+const handleTimelineChange = (e) => {
+  const newTime = (duration.value * e.detail.value) / 100
+  // 跳转到指定时间（需要video组件支持）
+}
+
+// 改变播放速度
+const changeSpeed = (speed) => {
+  playSpeed.value = speed
+  uni.showToast({ title: `${speed}x 倍速`, icon: 'none' })
+  // 设置播放速度（需要video组件支持）
+}
+
+// 视频错误处理
+const handleVideoError = (e) => {
+  console.error('视频播放错误:', e)
+  uni.showToast({ title: '播放失败', icon: 'none' })
+}
+
+// 返回
+const goBack = () => {
+  uni.navigateBack()
+}
+
+// 格式化日期
+function formatDate(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// 格式化播放时间
+const formatPlayTime = (seconds) => {
+  if (!seconds) return '00:00'
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = Math.floor(seconds % 60)
+
+  if (h > 0) {
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  } else {
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  }
+}
+
+// 格式化录像时间
+const formatRecordTime = (time) => {
+  if (!time) return ''
+  const date = new Date(time)
+  return `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`
 }
 </script>
 

@@ -64,7 +64,7 @@ class DefaultFixedAmountCalculatorTest {
         // 准备模拟账户
         mockAccount = new AccountEntity();
         mockAccount.setAccountId(1001L);
-        mockAccount.setPersonId(2001L);
+        mockAccount.setUserId(2001L);
         mockAccount.setTotalConsumeAmount(new BigDecimal("500.00"));
 
         // 准备模拟区域配置
@@ -89,7 +89,7 @@ class DefaultFixedAmountCalculatorTest {
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
                 new net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO();
         request.setAreaId(areaId);
-        request.setUserId(mockAccount.getPersonId());
+        request.setUserId(mockAccount.getUserId());
         request.setDeviceId(1L);
         request.setAmount(new BigDecimal("10.00"));
 
@@ -115,7 +115,7 @@ class DefaultFixedAmountCalculatorTest {
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
                 new net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO();
         request.setAreaId(areaId);
-        request.setUserId(mockAccount.getPersonId());
+        request.setUserId(mockAccount.getUserId());
         request.setDeviceId(1L);
         request.setAmount(new BigDecimal("10.00"));
 
@@ -141,7 +141,7 @@ class DefaultFixedAmountCalculatorTest {
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
                 new net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO();
         request.setAreaId(areaId);
-        request.setUserId(mockAccount.getPersonId());
+        request.setUserId(mockAccount.getUserId());
         request.setDeviceId(1L);
         request.setAmount(new BigDecimal("10.00"));
 
@@ -170,7 +170,7 @@ class DefaultFixedAmountCalculatorTest {
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
                 new net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO();
         request.setAreaId(areaId);
-        request.setUserId(mockAccount.getPersonId());
+        request.setUserId(mockAccount.getUserId());
         request.setDeviceId(1L);
         request.setAmount(new BigDecimal("10.00"));
 
@@ -201,7 +201,7 @@ class DefaultFixedAmountCalculatorTest {
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
                 new net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO();
         request.setAreaId(areaId);
-        request.setUserId(mockAccount.getPersonId());
+        request.setUserId(mockAccount.getUserId());
         request.setDeviceId(1L);
         request.setAmount(new BigDecimal("10.00"));
 
@@ -227,7 +227,7 @@ class DefaultFixedAmountCalculatorTest {
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
                 new net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO();
         request.setAreaId(areaId);
-        request.setUserId(mockAccount.getPersonId());
+        request.setUserId(mockAccount.getUserId());
         request.setDeviceId(1L);
         request.setAmount(new BigDecimal("10.00"));
 

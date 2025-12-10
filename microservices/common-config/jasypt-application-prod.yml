@@ -1,0 +1,183 @@
+# ============================================================
+# IOE-DREAM 通用Jasypt生产环境配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: 统一的Jasypt加密配置，供所有微服务使用
+# ============================================================
+
+# ============================================================
+# Jasypt 加密配置
+# ============================================================
+jasypt:
+  encryptor:
+    # 从环境变量读取加密密钥（生产环境必须设置）
+    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+
+    # 加密算法 - 使用AES-256 + SHA-512
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+
+    # 密钥获取迭代次数
+    key-obtention-iterations: 1000
+
+    # 池大小
+    pool-size: 1
+
+    # 提供者名称
+    provider-name: SunJCE
+
+    # 盐生成器类名
+    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
+
+    # IV生成器类名
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+
+    # 字符串输出类型
+    string-output-type: base64
+
+    # 属性前缀和后缀
+    property:
+      prefix: "ENC("
+      suffix: ")"
+
+# ============================================================
+# 通用加密配置示例
+# 所有微服务都可以引用这些配置
+# ============================================================
+
+# 数据库配置
+spring:
+  datasource:
+    # 注意：这里使用ENC()格式，实际值需要通过Jasypt加密工具生成
+    # 使用方法：java -cp jasypt-cli-3.0.5.jar org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input="原始密码" password="加密密钥" algorithm="PBEWITHHMACSHA512ANDAES_256"
+
+    # 数据库连接示例
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:ioedream}?useSSL=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${DATABASE_USERNAME:root}
+    password: ENC(这里放置加密后的数据库密码)
+
+    # Druid连接池配置
+    druid:
+      password: ENC(这里放置加密后的数据库密码)
+      stat-view-servlet:
+        login-password: ENC(这里放置加密后的Druid监控密码)
+
+# Redis配置
+  redis:
+    password: ENC(这里放置加密后的Redis密码)
+
+# 邮件服务配置
+  mail:
+    username: ${SMTP_USERNAME:ENC(这里放置加密后的邮箱用户名)}
+    password: ${SMTP_PASSWORD:ENC(这里放置加密后的邮箱密码)}
+
+# 短信服务配置
+  sms:
+    access-key: ${SMS_ACCESS_KEY:ENC(这里放置加密后的短信API密钥)}
+    secret-key: ${SMS_SECRET_KEY:ENC(这里放置加密后的短信API密钥)}
+
+# MinIO对象存储配置
+minio:
+  access-key: ${MINIO_ACCESS_KEY:ENC(这里放置加密后的MinIO访问密钥)}
+  secret-key: ${MINIO_SECRET_KEY:ENC(这里放置加密后的MinIO密钥)}
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:ENC(这里放置加密后的JWT密钥)}
+
+# 支付网关配置
+payment:
+  wechat:
+    api-key: ${WECHAT_API_KEY:ENC(这里放置加密后的微信支付API密钥)}
+    mch-id: ${WECHAT_MCH_ID:ENC(这里放置加密后的微信商户ID)}
+
+  alipay:
+    app-id: ${ALIPAY_APP_ID:ENC(这里放置加密后的支付宝应用ID)}
+    private-key: ${ALIPAY_PRIVATE_KEY:ENC(这里放置加密后的支付宝私钥)}
+    public-key: ${ALIPAY_PUBLIC_KEY:ENC(这里放置加密后的支付宝公钥)}
+
+# ============================================================
+# 环境特定配置
+# ============================================================
+
+# 开发环境（使用默认密码，仅用于开发测试）
+---
+spring:
+  config:
+    activate:
+      profile: dev
+
+jasypt:
+  encryptor:
+    password: dev-default-key-please-change
+
+# 测试环境
+---
+spring:
+  config:
+    activate:
+      profile: test
+
+jasypt:
+  encryptor:
+    password: test-default-key-please-change
+
+# 生产环境（必须设置环境变量）
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD}
+
+# ============================================================
+# 加密密钥管理说明
+# ============================================================
+
+# 🔐 密钥生成方法：
+# 1. 使用提供的脚本：./setup-jasypt.ps1 (Windows) 或 ./jasypt-setup.sh (Linux)
+# 2. 使用OpenSSL：openssl rand -hex 32
+# 3. 使用在线工具生成32字节的随机字符串
+
+# 🚨 安全注意事项：
+# 1. 生产环境必须通过环境变量 JASYPT_PASSWORD 设置加密密钥
+# 2. 不要将加密密钥提交到代码仓库
+# 3. 定期轮换加密密钥
+# 4. 使用强密钥策略（至少32字节，包含大小写字母、数字、特殊字符）
+
+# 📋 密码加密流程：
+# 1. 编辑 Batch-Encrypt.ps1 或 batch-encrypt.sh 添加需要加密的明文密码
+# 2. 运行批量加密脚本获取 ENC() 格式的加密值
+# 3. 将 ENC(加密值) 替换配置文件中的明文密码
+# 4. 设置环境变量 JASYPT_PASSWORD
+# 5. 启动应用测试配置
+
+# 🔍 密码解密验证：
+# 1. 使用提供的解密脚本验证加密是否正确
+# 2. 解密脚本：.\Decrypt-Password.ps1 "ENC(加密值)"
+# 3. 确保解密结果与原始密码一致
+
+# ============================================================
+# 常见加密场景示例
+# ============================================================
+
+# 数据库密码示例
+database:
+  # 原始: mypassword123
+  # 加密: ENC(G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)
+  password: ENC(G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)
+
+# Redis密码示例
+redis:
+  # 原始: redis123
+  # 加密: ENC(H7K8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y)
+  password: ENC(H7K8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y)
+
+# JWT密钥示例
+jwt:
+  # 原始: my-jwt-secret-key-2023
+  # 加密: ENC(I8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y2Z)
+  secret: ENC(I8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y2Z)

@@ -1,5 +1,7 @@
 package net.lab1024.sa.common.auth.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -11,19 +13,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * 安全配置类
- *
+ * 安全配置类 (Servlet应用专用)
+ * <p>
+ * 注意: 此配置类仅在Servlet应用中生效，
+ * WebFlux应用(如API网关)不加载此配置
+ * </p>
+ * <p>
  * 功能：
  * - Spring Security配置
  * - 密码编码器配置
  * - JWT认证配置
  * - 权限拦截配置
- *
+ * </p>
+ * <p>
  * 企业级安全特性：
  * - BCrypt密码加密
  * - 无状态会话管理
  * - CORS跨域配置
  * - CSRF防护
+ * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -32,6 +40,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@ConditionalOnWebApplication(type = Type.SERVLET)
 public class SecurityConfig {
 
     /**

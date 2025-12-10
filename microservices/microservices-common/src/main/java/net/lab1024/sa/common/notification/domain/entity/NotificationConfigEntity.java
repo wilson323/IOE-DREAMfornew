@@ -47,14 +47,16 @@ public class NotificationConfigEntity extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 配置ID
+     * 配置ID（主键）
      * <p>
-     * 主键，使用雪花算法生成
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列config_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * 主键使用雪花算法生成
      * </p>
      */
     @TableId(value = "config_id", type = IdType.ASSIGN_ID)
     @Schema(description = "配置ID")
-    private Long configId;
+    private Long id;
 
     /**
      * 配置键

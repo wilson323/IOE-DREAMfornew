@@ -232,7 +232,7 @@ public class ConsumeRecommendService {
             // 3. 解析商品明细，统计用户购买的商品
             for (ConsumeTransactionEntity transaction : successTransactions) {
                 try {
-                    Long userId = Long.parseLong(transaction.getUserId());
+                    Long userId = transaction.getUserId();
                     String productDetailsJson = transaction.getProductDetails();
 
                     if (productDetailsJson != null && !productDetailsJson.trim().isEmpty()) {

@@ -57,7 +57,7 @@ public class ConsumeTransactionEntity extends BaseEntity {
     /**
      * 用户ID（对应person_id）
      */
-    private String userId;
+    private Long userId;
 
     /**
      * 用户姓名（对应person_name）
@@ -67,17 +67,17 @@ public class ConsumeTransactionEntity extends BaseEntity {
     /**
      * 部门ID（对应dept_id）
      */
-    private String deptId;
+    private Long deptId;
 
     /**
      * 账户ID
      */
-    private String accountId;
+    private Long accountId;
 
     /**
      * 账户类别ID
      */
-    private String accountKindId;
+    private Long accountKindId;
 
     /**
      * 是否考勤消费（冗余字段，来自账户类别）
@@ -87,7 +87,7 @@ public class ConsumeTransactionEntity extends BaseEntity {
     /**
      * 区域ID
      */
-    private String areaId;
+    private Long areaId;
 
     /**
      * 区域名称
@@ -107,12 +107,12 @@ public class ConsumeTransactionEntity extends BaseEntity {
     /**
      * 餐别ID
      */
-    private String mealId;
+    private Long mealId;
 
     /**
      * 餐别分类ID
      */
-    private String mealCategoryId;
+    private Long mealCategoryId;
 
     /**
      * 餐别名称
@@ -122,7 +122,7 @@ public class ConsumeTransactionEntity extends BaseEntity {
     /**
      * 设备ID
      */
-    private String deviceId;
+    private Long deviceId;
 
     /**
      * 设备名称
@@ -130,39 +130,39 @@ public class ConsumeTransactionEntity extends BaseEntity {
     private String deviceName;
 
     /**
-     * 消费金额（单位：分）
+     * 消费金额（单位：元）
      */
-    private Integer consumeMoney;
+    private BigDecimal consumeMoney;
 
     /**
-     * 折扣金额（单位：分）
+     * 折扣金额（单位：元）
      */
-    private Integer discountMoney;
+    private BigDecimal discountMoney;
 
     /**
-     * 实际支付金额（单位：分）
+     * 实际支付金额（单位：元）
      */
-    private Integer finalMoney;
+    private BigDecimal finalMoney;
 
     /**
-     * 消费前余额（单位：分）
+     * 消费前余额（单位：元）
      */
-    private Integer balanceBefore;
+    private BigDecimal balanceBefore;
 
     /**
-     * 消费后余额（单位：分）
+     * 消费后余额（单位：元）
      */
-    private Integer balanceAfter;
+    private BigDecimal balanceAfter;
 
     /**
-     * 使用补贴金额（单位：分）
+     * 使用补贴金额（单位：元）
      */
-    private Integer allowanceUsed;
+    private BigDecimal allowanceUsed;
 
     /**
-     * 使用现金金额（单位：分）
+     * 使用现金金额（单位：元）
      */
-    private Integer cashUsed;
+    private BigDecimal cashUsed;
 
     /**
      * 消费模式
@@ -188,7 +188,7 @@ public class ConsumeTransactionEntity extends BaseEntity {
     /**
      * 定值规则ID
      */
-    private String fixedValueRuleId;
+    private Long fixedValueRuleId;
 
     /**
      * 第几次消费
@@ -229,7 +229,7 @@ public class ConsumeTransactionEntity extends BaseEntity {
     /**
      * 商品ID（商品消费时使用）
      */
-    private String productId;
+    private Long productId;
 
     /**
      * 商品名称
@@ -237,25 +237,27 @@ public class ConsumeTransactionEntity extends BaseEntity {
     private String productName;
 
     /**
-     * 金额（BigDecimal类型，用于计算）
+     * 获取消费金额（兼容方法）
      * <p>
-     * 从consumeMoney转换而来
+     * 直接返回consumeMoney字段
      * </p>
+     *
+     * @return 消费金额
      */
     public BigDecimal getAmount() {
-        return consumeMoney != null ? BigDecimal.valueOf(consumeMoney).divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        return consumeMoney != null ? consumeMoney : BigDecimal.ZERO;
     }
 
     /**
-     * 设置金额（BigDecimal类型）
+     * 设置消费金额（兼容方法）
      * <p>
-     * 转换为consumeMoney（单位：分）
+     * 直接设置consumeMoney字段
      * </p>
      *
-     * @param amount 金额
+     * @param amount 消费金额
      */
     public void setAmount(BigDecimal amount) {
-        this.consumeMoney = amount != null ? amount.multiply(BigDecimal.valueOf(100)).intValue() : null;
+        this.consumeMoney = amount;
     }
 
     /**

@@ -34,66 +34,64 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/store/modules/system/user.js'
 import { permissionApi } from '@/api/business/access/access-api.js'
 
-export default {
-  name: 'AccessPermission',
-  setup() {
-    const userStore = useUserStore()
-    const permissionList = ref([])
-    const loading = ref(false)
+// 响应式数据
+const userStore = useUserStore()
+const permissionList = ref([])
+const loading = ref(false)
 
-    // 加载权限列表
-    const loadPermissions = async () => {
-      loading.value = true
-      try {
-        // 从用户store获取用户ID
-        const userId = userStore.employeeId
-        if (!userId) {
-          uni.showToast({
-            title: '请先登录',
-            icon: 'none'
-          })
-          loading.value = false
-          return
-        }
-        // 调用权限列表API
-        const result = await permissionApi.getUserPermissions(userId)
-        if (result.success && result.data) {
-          // 转换数据格式
-          permissionList.value = (result.data.allowedAreaIds || []).map((areaId, index) => ({
-            areaId: areaId,
-            areaName: `区域${areaId}`,
-            permissionType: result.data.permissionLevel || '标准权限',
-            active: true
-          }))
-        }
-      } catch (error) {
-        console.error('加载权限列表失败:', error)
-      } finally {
-        loading.value = false
-      }
+// 页面生命周期
+onMounted(() => {
+  loadPermissions()
+})
+
+onShow(() => {
+  // 页面显示时可以刷新数据
+})
+
+onPullDownRefresh(() => {
+  loadPermissions()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const loadPermissions = async () => {
+  loading.value = true
+  try {
+    // 从用户store获取用户ID
+    const userId = userStore.employeeId
+    if (!userId) {
+      uni.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+      loading.value = false
+      return
     }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
+    // 调用权限列表API
+    const result = await permissionApi.getUserPermissions(userId)
+    if (result.success && result.data) {
+      // 转换数据格式
+      permissionList.value = (result.data.allowedAreaIds || []).map((areaId, index) => ({
+        areaId: areaId,
+        areaName: `区域${areaId}`,
+        permissionType: result.data.permissionLevel || '标准权限',
+        active: true
+      }))
     }
-
-    // 初始化
-    onMounted(() => {
-      loadPermissions()
-    })
-
-    return {
-      permissionList,
-      loading,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载权限列表失败:', error)
+  } finally {
+    loading.value = false
   }
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

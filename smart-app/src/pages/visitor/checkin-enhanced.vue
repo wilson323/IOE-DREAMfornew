@@ -145,7 +145,7 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, computed } from 'vue'
 import visitorApi from '@/api/business/visitor/visitor-api'
 import { ocrApi } from '@/api/business/visitor/visitor-api'
@@ -153,310 +153,286 @@ import { validateRequired, validatePhone, validateIdCard, FormValidator } from '
 import { compressImage } from '@/utils/performance-optimizer'
 import idCardReaderManager from '@/utils/idcard-reader'
 
-export default {
-  name: 'VisitorCheckInEnhanced',
-  
-  setup() {
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
 
-    const submitting = ref(false)
-    const ocrProcessing = ref(false)
-    const idCardScanned = ref(false)
-    const photoUrl = ref('')
+const ocrProcessing = ref(false)
+const idCardScanned = ref(false)
+const photoUrl = ref('')
 
-    const formData = reactive({
-      visitorName: '',
-      idCard: '',
-      phone: '',
-      company: '',
-      purpose: ''
-    })
+const formData = reactive({
+  visitorName: '',
+  idCard: '',
+  phone: '',
+  company: '',
+  purpose: ''
+})
 
-    const errors = reactive({})
+const errors = reactive({})
 
-    // 表单验证规则
-    const validator = new FormValidator({
-      visitorName: [
-        { required: true, label: '姓名' },
-        { minLength: 2, maxLength: 20, label: '姓名' }
-      ],
-      idCard: [
-        { required: true, label: '身份证号' },
-        { 
-          pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-          message: '身份证号格式不正确'
-        }
-      ],
-      phone: [
-        { required: true, label: '手机号' },
-        { 
-          pattern: /^1[3-9]\d{9}$/,
-          message: '手机号格式不正确'
-        }
-      ],
-      purpose: [
-        { required: true, label: '访问事由' },
-        { minLength: 5, maxLength: 200, label: '访问事由' }
-      ]
-    })
+// 表单验证规则
+const validator = new FormValidator({
+  visitorName: [
+    { required: true, label: '姓名' },
+    { minLength: 2, maxLength: 20, label: '姓名' }
+  ],
+  idCard: [
+    { required: true, label: '身份证号' },
+    {
+      pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+      message: '身份证号格式不正确'
+    }
+  ],
+  phone: [
+    { required: true, label: '手机号' },
+    {
+      pattern: /^1[3-9]\d{9}$/,
+      message: '手机号格式不正确'
+    }
+  ],
+  purpose: [
+    { required: true, label: '访问事由' },
+    { minLength: 5, maxLength: 200, label: '访问事由' }
+  ]
+})
 
-    const canSubmit = computed(() => {
-      return formData.visitorName &&
-             formData.idCard &&
-             formData.phone &&
-             formData.purpose &&
-             photoUrl.value
-    })
+const canSubmit = computed(() => {
+  return formData.visitorName &&
+         formData.idCard &&
+         formData.phone &&
+         formData.purpose &&
+         photoUrl.value
+})
 
-    // 扫描身份证（OCR识别）
-    const scanIDCard = async () => {
-      try {
-        // 调用相机拍照
-        const imagePath = await chooseImage()
-        
-        ocrProcessing.value = true
-        
-        // 调用OCR识别API
-        const result = await ocrApi.recognizeIdCard(imagePath, 'FRONT')
-        
-        if (result.success && result.data) {
-          const ocrResult = result.data
-          
-          // 自动填充表单
-          // 注意：OCR返回的字段名可能因服务提供商而异，需要根据实际返回结果调整
-          formData.visitorName = ocrResult.name || ocrResult.visitorName || ''
-          formData.idCard = ocrResult.idCard || ocrResult.idCardNumber || ocrResult.idNo || ''
-          
-          // 可选：填充其他字段（如果OCR返回）
-          if (ocrResult.gender) {
-            // 可以根据需要添加性别字段
-          }
-          if (ocrResult.birthday || ocrResult.birthDate) {
-            // 可以根据需要添加生日字段
-          }
-          if (ocrResult.address || ocrResult.addr) {
-            // 可以根据需要添加地址字段
-          }
-          
-          idCardScanned.value = true
-          ocrProcessing.value = false
-          
-          uni.showToast({ title: '识别成功', icon: 'success' })
-          uni.vibrateShort()
-        } else {
-          throw new Error(result.message || '识别失败')
-        }
-      } catch (error) {
-        ocrProcessing.value = false
-        console.error('身份证识别失败:', error)
-        
-        // 降级方案：如果OCR失败，允许手动输入
-        uni.showModal({
-          title: '识别失败',
-          content: error.message || 'OCR识别失败，请手动输入身份证信息',
-          showCancel: false,
-          confirmText: '确定'
-        })
+// 扫描身份证（OCR识别）
+const scanIDCard = async () => {
+  try {
+    // 调用相机拍照
+    const imagePath = await chooseImage()
+
+    ocrProcessing.value = true
+
+    // 调用OCR识别API
+    const result = await ocrApi.recognizeIdCard(imagePath, 'FRONT')
+
+    if (result.success && result.data) {
+      const ocrResult = result.data
+
+      // 自动填充表单
+      // 注意：OCR返回的字段名可能因服务提供商而异，需要根据实际返回结果调整
+      formData.visitorName = ocrResult.name || ocrResult.visitorName || ''
+      formData.idCard = ocrResult.idCard || ocrResult.idCardNumber || ocrResult.idNo || ''
+
+      // 可选：填充其他字段（如果OCR返回）
+      if (ocrResult.gender) {
+        // 可以根据需要添加性别字段
       }
-    }
-
-    // 读取身份证（读卡器）
-    const readIDCard = async () => {
-      try {
-        uni.showToast({
-          title: '请将身份证放在读卡器上',
-          icon: 'none',
-          duration: 2000
-        })
-
-        ocrProcessing.value = true
-
-        // 检测读卡器是否可用
-        const available = await idCardReaderManager.checkReaderAvailable()
-        if (!available) {
-          throw new Error('未检测到身份证读卡器，请检查硬件连接')
-        }
-
-        // 读取身份证信息
-        const idCardData = await idCardReaderManager.readIdCard()
-
-        // 自动填充表单
-        formData.visitorName = idCardData.name || ''
-        formData.idCard = idCardData.idCard || ''
-
-        // 可选：填充其他字段
-        if (idCardData.gender) {
-          // 可以根据需要添加性别字段
-        }
-        if (idCardData.birthday) {
-          // 可以根据需要添加生日字段
-        }
-        if (idCardData.address) {
-          // 可以根据需要添加地址字段
-        }
-
-        idCardScanned.value = true
-        ocrProcessing.value = false
-
-        uni.showToast({ title: '读取成功', icon: 'success' })
-        uni.vibrateShort()
-      } catch (error) {
-        ocrProcessing.value = false
-        console.error('身份证读卡失败:', error)
-        
-        uni.showModal({
-          title: '读卡失败',
-          content: error.message || '身份证读卡失败，请检查硬件连接或使用OCR识别',
-          showCancel: true,
-          cancelText: '取消',
-          confirmText: '使用OCR',
-          success: (res) => {
-            if (res.confirm) {
-              // 用户选择使用OCR识别
-              scanIDCard()
-            }
-          }
-        })
+      if (ocrResult.birthday || ocrResult.birthDate) {
+        // 可以根据需要添加生日字段
       }
-    }
-
-    // 选择图片
-    const chooseImage = () => {
-      return new Promise((resolve, reject) => {
-        uni.chooseImage({
-          count: 1,
-          sourceType: ['camera'],
-          success: (res) => {
-            resolve(res.tempFilePaths[0])
-          },
-          fail: reject
-        })
-      })
-    }
-
-    // 拍照
-    const takePhoto = async () => {
-      try {
-        const filePath = await chooseImage()
-        
-        // 压缩图片
-        const compressed = await compressImage(filePath, {
-          quality: 80,
-          maxWidth: 800,
-          maxHeight: 800
-        })
-        
-        photoUrl.value = compressed
-        uni.vibrateShort()
-      } catch (error) {
-        console.error('拍照失败:', error)
+      if (ocrResult.address || ocrResult.addr) {
+        // 可以根据需要添加地址字段
       }
-    }
 
-    // 删除照片
-    const deletePhoto = () => {
-      photoUrl.value = ''
+      idCardScanned.value = true
+      ocrProcessing.value = false
+
+      uni.showToast({ title: '识别成功', icon: 'success' })
       uni.vibrateShort()
+    } else {
+      throw new Error(result.message || '识别失败')
     }
+  } catch (error) {
+    ocrProcessing.value = false
+    console.error('身份证识别失败:', error)
+
+    // 降级方案：如果OCR失败，允许手动输入
+    uni.showModal({
+      title: '识别失败',
+      content: error.message || 'OCR识别失败，请手动输入身份证信息',
+      showCancel: false,
+      confirmText: '确定'
+    })
+  }
+}
+
+// 读取身份证（读卡器）
+const readIDCard = async () => {
+  try {
+    uni.showToast({
+      title: '请将身份证放在读卡器上',
+      icon: 'none',
+      duration: 2000
+    })
+
+    ocrProcessing.value = true
+
+    // 检测读卡器是否可用
+    const available = await idCardReaderManager.checkReaderAvailable()
+    if (!available) {
+      throw new Error('未检测到身份证读卡器，请检查硬件连接')
+    }
+
+    // 读取身份证信息
+    const idCardData = await idCardReaderManager.readIdCard()
+
+    // 自动填充表单
+    formData.visitorName = idCardData.name || ''
+    formData.idCard = idCardData.idCard || ''
+
+    // 可选：填充其他字段
+    if (idCardData.gender) {
+      // 可以根据需要添加性别字段
+    }
+    if (idCardData.birthday) {
+      // 可以根据需要添加生日字段
+    }
+    if (idCardData.address) {
+      // 可以根据需要添加地址字段
+    }
+
+    idCardScanned.value = true
+    ocrProcessing.value = false
+
+    uni.showToast({ title: '读取成功', icon: 'success' })
+    uni.vibrateShort()
+  } catch (error) {
+    ocrProcessing.value = false
+    console.error('身份证读卡失败:', error)
+
+    uni.showModal({
+      title: '读卡失败',
+      content: error.message || '身份证读卡失败，请检查硬件连接或使用OCR识别',
+      showCancel: true,
+      cancelText: '取消',
+      confirmText: '使用OCR',
+      success: (res) => {
+        if (res.confirm) {
+          // 用户选择使用OCR识别
+          scanIDCard()
+        }
+      }
+    })
+  }
+}
+
+// 选择图片
+const chooseImage = () => {
+  return new Promise((resolve, reject) => {
+    uni.chooseImage({
+      count: 1,
+      sourceType: ['camera'],
+      success: (res) => {
+        resolve(res.tempFilePaths[0])
+      },
+      fail: reject
+    })
+  })
+}
+
+// 拍照
+const takePhoto = async () => {
+  try {
+    const filePath = await chooseImage()
+
+    // 压缩图片
+    const compressed = await compressImage(filePath, {
+      quality: 80,
+      maxWidth: 800,
+      maxHeight: 800
+    })
+
+    photoUrl.value = compressed
+    uni.vibrateShort()
+  } catch (error) {
+    console.error('拍照失败:', error)
+  }
+}
+
+// 删除照片
+const deletePhoto = () => {
+  photoUrl.value = ''
+  uni.vibrateShort()
+}
+
+// 提交登记
+const submitCheckIn = async () => {
+  // 表单验证
+  const result = validator.validate(formData)
+  if (!result.valid) {
+    Object.assign(errors, result.errors)
+    const firstError = Object.values(result.errors)[0]
+    uni.showToast({ title: firstError, icon: 'none' })
+    return
+  }
+
+  if (!photoUrl.value) {
+    uni.showToast({ title: '请拍摄访客照片', icon: 'none' })
+    return
+  }
+
+  submitting.value = true
+
+  try {
+    // 上传照片
+    const uploadRes = await uploadPhoto(photoUrl.value)
 
     // 提交登记
-    const submitCheckIn = async () => {
-      // 表单验证
-      const result = validator.validate(formData)
-      if (!result.valid) {
-        Object.assign(errors, result.errors)
-        const firstError = Object.values(result.errors)[0]
-        uni.showToast({ title: firstError, icon: 'none' })
-        return
-      }
-
-      if (!photoUrl.value) {
-        uni.showToast({ title: '请拍摄访客照片', icon: 'none' })
-        return
-      }
-
-      submitting.value = true
-
-      try {
-        // 上传照片
-        const uploadRes = await uploadPhoto(photoUrl.value)
-        
-        // 提交登记
-        const checkInData = {
-          ...formData,
-          photoUrl: uploadRes.url
-        }
-        
-        const res = await visitorApi.createVisitorRegistration(checkInData)
-        
-        if (res.code === 1) {
-          uni.showToast({ title: '登记成功', icon: 'success' })
-          uni.vibrateLong()
-          
-          setTimeout(() => {
-            uni.navigateBack()
-          }, 1500)
-        }
-      } catch (error) {
-        console.error('登记失败:', error)
-        uni.showToast({ title: '登记失败', icon: 'none' })
-      } finally {
-        submitting.value = false
-      }
+    const checkInData = {
+      ...formData,
+      photoUrl: uploadRes.url
     }
 
-    // 上传照片
-    const uploadPhoto = (filePath) => {
-      return new Promise((resolve, reject) => {
-        uni.uploadFile({
-          url: `${import.meta.env.VITE_APP_API_URL}/support/file/upload`,
-          filePath,
-          name: 'file',
-          formData: { folder: 'visitor' },
-          success: (res) => {
-            const data = JSON.parse(res.data)
-            if (data.code === 1) {
-              resolve(data.data)
-            } else {
-              reject(new Error(data.message))
-            }
-          },
-          fail: reject
-        })
-      })
-    }
+    const res = await visitorApi.createVisitorRegistration(checkInData)
 
-    const showHelp = () => {
-      uni.showModal({
-        title: '使用帮助',
-        content: '1. 点击"拍照识别"扫描访客身份证\n2. 系统自动识别并填充信息\n3. 补充其他必填信息\n4. 拍摄访客正面照片\n5. 点击"确认登记"完成',
-        showCancel: false
-      })
-    }
+    if (res.code === 1) {
+      uni.showToast({ title: '登记成功', icon: 'success' })
+      uni.vibrateLong()
 
-    const goBack = () => {
-      uni.navigateBack()
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1500)
     }
-
-    return {
-      statusBarHeight,
-      submitting,
-      ocrProcessing,
-      idCardScanned,
-      photoUrl,
-      formData,
-      errors,
-      canSubmit,
-      scanIDCard,
-      readIDCard,
-      takePhoto,
-      deletePhoto,
-      submitCheckIn,
-      showHelp,
-      goBack
-    }
+  } catch (error) {
+    console.error('登记失败:', error)
+    uni.showToast({ title: '登记失败', icon: 'none' })
+  } finally {
+    submitting.value = false
   }
+}
+
+// 上传照片
+const uploadPhoto = (filePath) => {
+  return new Promise((resolve, reject) => {
+    uni.uploadFile({
+      url: `${import.meta.env.VITE_APP_API_URL}/support/file/upload`,
+      filePath,
+      name: 'file',
+      formData: { folder: 'visitor' },
+      success: (res) => {
+        const data = JSON.parse(res.data)
+        if (data.code === 1) {
+          resolve(data.data)
+        } else {
+          reject(new Error(data.message))
+        }
+      },
+      fail: reject
+    })
+  })
+}
+
+const showHelp = () => {
+  uni.showModal({
+    title: '使用帮助',
+    content: '1. 点击"拍照识别"扫描访客身份证\n2. 系统自动识别并填充信息\n3. 补充其他必填信息\n4. 拍摄访客正面照片\n5. 点击"确认登记"完成',
+    showCancel: false
+  })
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

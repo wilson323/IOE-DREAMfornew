@@ -1,10 +1,10 @@
 # ============================================================
 # IOE-DREAM Gateway Service 配置文件
-# 
+#
 # @Author:    IOE-DREAM Team
 # @Date:      2025-01-30
 # @Copyright  IOE-DREAM智慧园区一卡通管理平台
-# 
+#
 # 服务信息:
 # - 服务名称: ioedream-gateway-service
 # - 服务端口: 8080
@@ -15,8 +15,17 @@
 spring:
   application:
     name: ioedream-gateway-service
+  # Spring Cloud Gateway需要WebFlux环境
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  # Spring Boot 2.4+ 要求显式声明配置导入
+  # 升级到Spring Cloud Alibaba 2025.0.0.0后，使用optional前缀允许配置中心可选
+  # 注意：占位符在config.import阶段无法解析，需要直接指定dataId或使用环境变量
+  config:
+    import: ""  # 本地开发时禁用Nacos配置导入
 
 # ==================== Nacos服务发现配置 ====================
   cloud:
@@ -26,19 +35,97 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD}
         enabled: true
         register-enabled: true
       config:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
         file-extension: yaml
-        enabled: true
+        enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
+        import-check:
+          enabled: true  # 2025.0.0.0版本支持optional:nacos:，可以启用检查
+
+    # ==================== Gateway路由配置 ====================
+    gateway:
+      # 启用服务发现路由
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      # 路由配置 - 按照CLAUDE.md规范的微服务架构
+      routes:
+        # ==================== 公共业务服务路由 ====================
+        - id: ioedream-common-service
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/support/**,/system/**,/security/**
+          filters:
+            - StripPrefix=0
+
+        # ==================== OA办公服务路由 ====================
+        - id: ioedream-oa-service
+          uri: lb://ioedream-oa-service
+          predicates:
+            - Path=/oa/**
+          filters:
+            - StripPrefix=0
+
+        # ==================== 门禁管理服务路由 ====================
+        - id: ioedream-access-service
+          uri: lb://ioedream-access-service
+          predicates:
+            - Path=/access/**
+          filters:
+            - StripPrefix=0
+
+        # ==================== 考勤管理服务路由 ====================
+        - id: ioedream-attendance-service
+          uri: lb://ioedream-attendance-service
+          predicates:
+            - Path=/attendance/**
+          filters:
+            - StripPrefix=0
+
+        # ==================== 消费管理服务路由 ====================
+        - id: ioedream-consume-service
+          uri: lb://ioedream-consume-service
+          predicates:
+            - Path=/consume/**
+          filters:
+            - StripPrefix=0
+
+        # ==================== 访客管理服务路由 ====================
+        - id: ioedream-visitor-service
+          uri: lb://ioedream-visitor-service
+          predicates:
+            - Path=/visitor/**
+          filters:
+            - StripPrefix=0
+
+        # ==================== 视频监控服务路由 ====================
+        - id: ioedream-video-service
+          uri: lb://ioedream-video-service
+          predicates:
+            - Path=/video/**
+          filters:
+            - StripPrefix=0
+
+        # ==================== 设备通讯服务路由 ====================
+        - id: ioedream-device-comm-service
+          uri: lb://ioedream-device-comm-service
+          predicates:
+            - Path=/device/**
+          filters:
+            - StripPrefix=0
 
 # ==================== 服务器配置 ====================
 server:
-  port: 8080
+  port: ${GATEWAY_SERVICE_PORT:8080}
   servlet:
     context-path: /
     encoding:
@@ -49,9 +136,9 @@ server:
 # ==================== 日志配置 ====================
 logging:
   level:
-    root: INFO
-    net.lab1024.sa: DEBUG
-    org.springframework.cloud.gateway: DEBUG
+    root: ${LOG_LEVEL_ROOT:INFO}
+    '[net.lab1024.sa]': ${LOG_LEVEL_APP:DEBUG}
+    '[org.springframework.cloud.gateway]': DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
@@ -61,14 +148,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus,gateway
-      base-path: /actuator
+        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:health,info,metrics,prometheus,gateway}
+      base-path: ${MANAGEMENT_ENDPOINTS_WEB_BASE_PATH:/actuator}
   endpoint:
     health:
       show-details: when-authorized
-    gateway:
-      enabled: true
-  metrics:
-    export:
-      prometheus:
+    # Spring Boot 3.5+不再需要gateway.enabled配置项
+    # gateway:
+    #   enabled: true
+  prometheus:
+    metrics:
+      export:
         enabled: true

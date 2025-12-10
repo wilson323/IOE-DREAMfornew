@@ -90,7 +90,7 @@ class ConsumeServiceImplTest {
         // Given
         ConsumeTransactionEntity mockEntity = createMockTransactionEntity("TXN001");
         @SuppressWarnings("rawtypes")
-        net.lab1024.sa.common.dto.ResponseDTO successResponse = 
+        net.lab1024.sa.common.dto.ResponseDTO successResponse =
                 net.lab1024.sa.common.dto.ResponseDTO.ok(mockEntity);
         doReturn(successResponse).when(consumeExecutionManager).executeConsumption(any());
         when(consumeTransactionDao.selectByTransactionNo("TXN001"))
@@ -184,9 +184,9 @@ class ConsumeServiceImplTest {
     void testGetDeviceDetail_Success() {
         // Given
         Long deviceId = 3001L;
-        net.lab1024.sa.common.organization.entity.DeviceEntity deviceEntity = 
+        net.lab1024.sa.common.organization.entity.DeviceEntity deviceEntity =
                 new net.lab1024.sa.common.organization.entity.DeviceEntity();
-        deviceEntity.setDeviceId(deviceId);
+        deviceEntity.setId(deviceId); // DeviceEntity使用setId方法设置设备ID
         deviceEntity.setDeviceName("测试消费机");
 
         when(consumeDeviceManager.getConsumeDeviceById(deviceId)).thenReturn(deviceEntity);
@@ -242,7 +242,7 @@ class ConsumeServiceImplTest {
     private ConsumeTransactionEntity createMockTransactionEntity(String transactionNo) {
         ConsumeTransactionEntity entity = new ConsumeTransactionEntity();
         entity.setTransactionNo(transactionNo);
-        entity.setUserId("1001");
+        entity.setUserId(1001L);
         entity.setAmount(new BigDecimal("50.00"));
         entity.setTransactionStatus(2); // 成功
         entity.setTransactionTime(LocalDateTime.now());
@@ -253,7 +253,7 @@ class ConsumeServiceImplTest {
     @SuppressWarnings("unchecked")
     private com.baomidou.mybatisplus.core.metadata.IPage<ConsumeTransactionEntity> createMockPage(
             List<ConsumeTransactionEntity> list, Long total) {
-        com.baomidou.mybatisplus.core.metadata.IPage<ConsumeTransactionEntity> page = 
+        com.baomidou.mybatisplus.core.metadata.IPage<ConsumeTransactionEntity> page =
                 mock(com.baomidou.mybatisplus.core.metadata.IPage.class);
         when(page.getRecords()).thenReturn(list);
         when(page.getTotal()).thenReturn(total);

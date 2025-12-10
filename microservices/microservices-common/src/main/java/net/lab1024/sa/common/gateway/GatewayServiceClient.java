@@ -31,7 +31,6 @@ import net.lab1024.sa.common.dto.ResponseDTO;
  * @since 2025-01-30
  */
 @Slf4j
-@SuppressWarnings("null")
 public class GatewayServiceClient {
 
     private final RestTemplate restTemplate;
@@ -209,8 +208,13 @@ public class GatewayServiceClient {
      * @param <T> 响应数据类型
      * @return 响应结果
      */
-    @SuppressWarnings("null")
     public <T> ResponseDTO<T> callService(String url, HttpMethod method, Object requestBody, TypeReference<ResponseDTO<T>> typeReference) {
+        // 参数验证
+        if (url == null || method == null) {
+            log.error("[网关调用] 参数错误：url或method为空");
+            return ResponseDTO.error("PARAM_ERROR", "URL或HTTP方法不能为空");
+        }
+
         try {
             log.debug("[网关调用] 调用服务（TypeReference），url={}, method={}", url, method);
 
@@ -227,17 +231,18 @@ public class GatewayServiceClient {
             HttpEntity<String> entity = new HttpEntity<>(requestBodyJson, headers);
 
             // 使用String接收响应，然后通过ObjectMapper反序列化
+            // url和method已通过null检查
             ResponseEntity<String> response = restTemplate.exchange(
-                    url, 
-                    method, 
-                    entity, 
+                    url,
+                    method,
+                    entity,
                     String.class
             );
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 // 使用TypeReference反序列化
                 ResponseDTO<T> responseBody = objectMapper.readValue(
-                        response.getBody(), 
+                        response.getBody(),
                         typeReference
                 );
                 log.debug("[网关调用] 调用成功，url={}", url);
@@ -262,8 +267,13 @@ public class GatewayServiceClient {
      * @param <T> 响应数据类型
      * @return 响应结果
      */
-    @SuppressWarnings({"unchecked", "null"})
     private <T> ResponseDTO<T> callService(String url, HttpMethod method, Object requestBody, Class<T> responseType) {
+        // 参数验证
+        if (url == null || method == null) {
+            log.error("[网关调用] 参数错误：url或method为空");
+            return ResponseDTO.error("PARAM_ERROR", "URL或HTTP方法不能为空");
+        }
+
         try {
             log.debug("[网关调用] 调用服务，url={}, method={}", url, method);
 
@@ -280,20 +290,21 @@ public class GatewayServiceClient {
             HttpEntity<String> entity = new HttpEntity<>(requestBodyJson, headers);
 
             // 使用String接收响应，然后通过ObjectMapper反序列化（更可靠的方式）
+            // url和method已通过null检查
             ResponseEntity<String> response = restTemplate.exchange(
-                    url, 
-                    method, 
-                    entity, 
+                    url,
+                    method,
+                    entity,
                     String.class
             );
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 // 反序列化为ResponseDTO<Object>
                 ResponseDTO<Object> responseBody = objectMapper.readValue(
-                        response.getBody(), 
+                        response.getBody(),
                         new TypeReference<ResponseDTO<Object>>() {}
                 );
-                
+
                 if (responseBody.getData() != null && responseType != null) {
                     // 转换响应数据
                     Object data = responseBody.getData();
@@ -301,7 +312,9 @@ public class GatewayServiceClient {
                     return ResponseDTO.ok(convertedData);
                 }
                 log.debug("[网关调用] 调用成功，url={}", url);
-                return (ResponseDTO<T>) responseBody;
+                @SuppressWarnings("unchecked")
+                ResponseDTO<T> result = (ResponseDTO<T>) responseBody;
+                return result;
             } else {
                 log.warn("[网关调用] 调用失败，url={}, status={}", url, response.getStatusCode());
                 return ResponseDTO.error("SERVICE_CALL_ERROR", "服务调用失败");

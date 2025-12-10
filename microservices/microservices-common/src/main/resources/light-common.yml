@@ -1,0 +1,71 @@
+# 轻量级通用配置
+# 避免过度工程化，只保留核心配置
+
+spring:
+  # 缓存配置
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # 30分钟
+      cache-null-values: false
+
+  # Redis配置
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      simple:
+        enabled: true
+
+# 轻量级追踪配置
+spring:
+  sleuth:
+    enabled: ${TRACING_ENABLED:false}
+    sampler:
+      probability: 1.0
+
+# 轻量级监控配置
+light:
+  monitoring:
+    enabled: ${MONITORING_ENABLED:true}
+  performance:
+    enabled: ${PERFORMANCE_ENABLED:true}
+  resilience:
+    enabled: ${RESILIENCE_ENABLED:true}
+  validation:
+    enabled: ${VALIDATION_ENABLED:true}
+  cache:
+    enabled: ${CACHE_ENABLED:true}
+
+# 日志配置
+logging:
+  level:
+    net.lab1024.sa: ${LOG_LEVEL:INFO}
+    org.springframework.cache: ${CACHE_LOG_LEVEL:WARN}
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] [%X{traceId:-}] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId:-}] %-5level %logger{36} - %msg%n"

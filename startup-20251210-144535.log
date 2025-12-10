@@ -1,0 +1,14 @@
+﻿[2025-12-10 14:45:35] [INFO] ========================================
+[2025-12-10 14:45:35] [INFO]   IOE-DREAM Smart Campus Card Platform
+[2025-12-10 14:45:35] [INFO]   Enterprise Startup Script v3.0.0
+[2025-12-10 14:45:35] [INFO] ========================================
+[2025-12-10 14:45:35] [INFO] Project Root: D:\IOE-DREAM
+[2025-12-10 14:45:35] [INFO] Startup Log: D:\IOE-DREAM\startup-20251210-144535.log
+[2025-12-10 14:45:35] [INFO] 
+[2025-12-10 14:45:35] [INFO] [Step 1] Starting Backend Microservices
+[2025-12-10 14:45:35] [INFO] OK Maven environment check passed
+[2025-12-10 14:45:35] [INFO] Starting batch 1 services (5 total)...
+[2025-12-10 14:45:35] [ERROR] Exception occurred during script execution: 无法覆盖变量 Host，因为该变量为只读变量或常量。
+[2025-12-10 14:45:35] [ERROR] Error location: 133:12
+[2025-12-10 14:45:35] [INFO] 
+[2025-12-10 14:45:35] [INFO] Press any key to exit...

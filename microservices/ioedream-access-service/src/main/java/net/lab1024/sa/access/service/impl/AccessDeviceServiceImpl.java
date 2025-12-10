@@ -198,8 +198,8 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 return ResponseDTO.error("ADD_DEVICE_ERROR", "添加设备失败");
             }
 
-            log.info("[门禁设备] 添加设备成功，deviceId={}", device.getDeviceId());
-            return ResponseDTO.ok(device.getDeviceId());
+            log.info("[门禁设备] 添加设备成功，deviceId={}", device.getId());
+            return ResponseDTO.ok(device.getId());
 
         } catch (Exception e) {
             log.error("[门禁设备] 添加设备失败", e);
@@ -224,7 +224,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             if (!device.getDeviceCode().equals(updateForm.getDeviceCode())) {
                 LambdaQueryWrapper<DeviceEntity> wrapper = new LambdaQueryWrapper<>();
                 wrapper.eq(DeviceEntity::getDeviceCode, updateForm.getDeviceCode())
-                        .ne(DeviceEntity::getDeviceId, updateForm.getDeviceId())
+                        .ne(DeviceEntity::getId, updateForm.getDeviceId())
                         .eq(DeviceEntity::getDeletedFlag, 0);
                 DeviceEntity existingDevice = accessDeviceDao.selectOne(wrapper);
                 if (existingDevice != null) {
@@ -343,25 +343,13 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      * @param latitude 纬度
      * @param longitude 经度
      * @param radius 半径（米，默认500米）
-     * @return 附近设备列表
-     */
-    /**
-     * 获取附近设备
-     * <p>
-     * 根据GPS坐标查询附近的门禁设备，使用Haversine公式计算距离
-     * </p>
-     *
-     * @param userId 用户ID
-     * @param latitude 纬度
-     * @param longitude 经度
-     * @param radius 半径（米，默认500米）
-     * @return 附近设备列表（按距离排序）
+     * @return 附近设备列表，使用Haversine公式计算距离（按距离排序）
      */
     @Override
     @Transactional(readOnly = true)
     public ResponseDTO<List<AccessMobileController.MobileDeviceItem>> getNearbyDevices(
             Long userId, Double latitude, Double longitude, Integer radius) {
-        log.info("[门禁设备] 移动端附近设备查询，userId={}, latitude={}, longitude={}, radius={}", 
+        log.info("[门禁设备] 移动端附近设备查询，userId={}, latitude={}, longitude={}, radius={}",
                 userId, latitude, longitude, radius);
 
         try {
@@ -397,7 +385,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     Double deviceLng = getLongitudeFromDevice(device);
 
                     if (deviceLat == null || deviceLng == null) {
-                        log.debug("[门禁设备] 设备缺少GPS坐标，跳过，deviceId={}", device.getDeviceId());
+                        log.debug("[门禁设备] 设备缺少GPS坐标，跳过，deviceId={}", device.getId());
                         continue;
                     }
 
@@ -406,7 +394,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
 
                     if (distance <= radius) {
                         AccessMobileController.MobileDeviceItem item = new AccessMobileController.MobileDeviceItem();
-                        item.setDeviceId(device.getDeviceId());
+                        item.setDeviceId(device.getId());
                         item.setDeviceName(device.getDeviceName());
                         item.setDeviceLocation(getDeviceLocation(device));
                         item.setLatitude(deviceLat);
@@ -415,7 +403,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                         nearbyDevices.add(item);
                     }
                 } catch (Exception e) {
-                    log.warn("[门禁设备] 处理设备异常，deviceId={}", device.getDeviceId(), e);
+                    log.warn("[门禁设备] 处理设备异常，deviceId={}", device.getId(), e);
                     // 单个设备处理失败不影响其他设备，继续处理
                 }
             }
@@ -479,7 +467,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             String permissionLevel = determinePermissionLevel(userId, allowedAreaIds, allowedDeviceIds);
             permissions.setPermissionLevel(permissionLevel);
 
-            log.info("[门禁设备] 用户权限查询成功，userId={}, 区域数量={}, 设备数量={}, 权限级别={}", 
+            log.info("[门禁设备] 用户权限查询成功，userId={}, 区域数量={}, 设备数量={}, 权限级别={}",
                     userId, allowedAreaIds.size(), allowedDeviceIds.size(), permissionLevel);
             return ResponseDTO.ok(permissions);
 
@@ -496,16 +484,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      * </p>
      *
      * @param deviceId 设备ID
-     * @return 设备实时状态
-     */
-    /**
-     * 获取移动端实时状态
-     * <p>
-     * 查询设备的实时状态信息，包括在线用户数等
-     * </p>
-     *
-     * @param deviceId 设备ID
-     * @return 设备实时状态
+     * @return 设备移动端实时状态，包括在线用户数等信息
      */
     @Override
     @Transactional(readOnly = true)
@@ -524,7 +503,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             }
 
             AccessMobileController.MobileRealTimeStatus status = new AccessMobileController.MobileRealTimeStatus();
-            status.setDeviceId(device.getDeviceId());
+            status.setDeviceId(device.getId());
             status.setDeviceName(device.getDeviceName());
             status.setDeviceStatus(device.getDeviceStatus());
 
@@ -540,7 +519,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 status.setLastUpdateTime(device.getUpdateTime() != null ? device.getUpdateTime().toString() : "");
             }
 
-            log.info("[门禁设备] 实时状态查询成功，deviceId={}, status={}, onlineCount={}", 
+            log.info("[门禁设备] 实时状态查询成功，deviceId={}, status={}, onlineCount={}",
                     deviceId, status.getDeviceStatus(), status.getOnlineCount());
             return ResponseDTO.ok(status);
 
@@ -560,7 +539,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      */
     private AccessDeviceVO convertToVO(DeviceEntity device) {
         AccessDeviceVO vo = new AccessDeviceVO();
-        vo.setDeviceId(device.getDeviceId());
+        vo.setDeviceId(device.getId());
         vo.setDeviceName(device.getDeviceName());
         vo.setDeviceCode(device.getDeviceCode());
         vo.setDeviceType(device.getDeviceType());
@@ -620,7 +599,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             if (device.getExtendedAttributes() == null || device.getExtendedAttributes().trim().isEmpty()) {
                 return null;
             }
-            Map<String, Object> attrs = objectMapper.readValue(device.getExtendedAttributes(), 
+            Map<String, Object> attrs = objectMapper.readValue(device.getExtendedAttributes(),
                     new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {});
             Object latObj = attrs.get("latitude");
             if (latObj != null) {
@@ -628,7 +607,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             }
             return null;
         } catch (Exception e) {
-            log.debug("[门禁设备] 解析设备纬度失败，deviceId={}", device.getDeviceId());
+            log.debug("[门禁设备] 解析设备纬度失败，deviceId={}", device.getId());
             return null;
         }
     }
@@ -644,7 +623,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             if (device.getExtendedAttributes() == null || device.getExtendedAttributes().trim().isEmpty()) {
                 return null;
             }
-            Map<String, Object> attrs = objectMapper.readValue(device.getExtendedAttributes(), 
+            Map<String, Object> attrs = objectMapper.readValue(device.getExtendedAttributes(),
                     new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {});
             Object lngObj = attrs.get("longitude");
             if (lngObj != null) {
@@ -652,7 +631,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             }
             return null;
         } catch (Exception e) {
-            log.debug("[门禁设备] 解析设备经度失败，deviceId={}", device.getDeviceId());
+            log.debug("[门禁设备] 解析设备经度失败，deviceId={}", device.getId());
             return null;
         }
     }
@@ -670,7 +649,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
         try {
             // 优先从扩展属性获取位置
             if (device.getExtendedAttributes() != null && !device.getExtendedAttributes().trim().isEmpty()) {
-                Map<String, Object> attrs = objectMapper.readValue(device.getExtendedAttributes(), 
+                Map<String, Object> attrs = objectMapper.readValue(device.getExtendedAttributes(),
                         new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {});
                 Object locationObj = attrs.get("location");
                 if (locationObj != null) {
@@ -688,7 +667,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
 
             return device.getDeviceName() != null ? device.getDeviceName() : "未知位置";
         } catch (Exception e) {
-            log.debug("[门禁设备] 获取设备位置失败，deviceId={}", device.getDeviceId());
+            log.debug("[门禁设备] 获取设备位置失败，deviceId={}", device.getId());
             return device.getDeviceName() != null ? device.getDeviceName() : "未知位置";
         }
     }
@@ -791,7 +770,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             List<DeviceEntity> devices = accessDeviceDao.selectList(wrapper);
 
             return devices.stream()
-                    .map(DeviceEntity::getDeviceId)
+                    .map(DeviceEntity::getId)
                     .filter(deviceId -> deviceId != null)
                     .collect(Collectors.toList());
 
@@ -901,8 +880,9 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
 
             // 2. 查询区域详情
             // 使用LambdaQueryWrapper查询，避免使用已废弃的selectBatchIds方法
+            // AreaEntity主键字段已统一为id，符合实体类主键命名规范
             LambdaQueryWrapper<AreaEntity> areaWrapper = new LambdaQueryWrapper<>();
-            areaWrapper.in(AreaEntity::getAreaId, allowedAreaIds)
+            areaWrapper.in(AreaEntity::getId, allowedAreaIds)
                     .eq(AreaEntity::getDeletedFlag, 0);
             List<AreaEntity> areaList = accessAreaDao.selectList(areaWrapper);
             if (areaList == null || areaList.isEmpty()) {
@@ -917,7 +897,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     .eq(DeviceEntity::getDeletedFlag, 0)
                     .in(DeviceEntity::getAreaId, allowedAreaIds);
             List<DeviceEntity> devices = accessDeviceDao.selectList(deviceWrapper);
-            
+
             if (devices != null && !devices.isEmpty()) {
                 deviceCountMap = devices.stream()
                         .collect(Collectors.groupingBy(
@@ -929,10 +909,10 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             // 4. 构建MobileAreaItem列表
             for (AreaEntity area : areaList) {
                 AccessMobileController.MobileAreaItem item = new AccessMobileController.MobileAreaItem();
-                item.setAreaId(area.getAreaId());
+                item.setAreaId(area.getId());
                 item.setAreaName(area.getAreaName());
                 item.setAreaType(area.getAreaType() != null ? area.getAreaType().toString() : "标准区域");
-                item.setDeviceCount(deviceCountMap.getOrDefault(area.getAreaId(), 0L).intValue());
+                item.setDeviceCount(deviceCountMap.getOrDefault(area.getId(), 0L).intValue());
                 item.setPermissionCount(1); // 用户有权限
                 // 使用areaDesc字段作为描述
                 item.setDescription(area.getAreaDesc() != null ? area.getAreaDesc() : "");

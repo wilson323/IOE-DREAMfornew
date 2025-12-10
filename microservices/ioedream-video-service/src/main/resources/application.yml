@@ -1,10 +1,10 @@
 # ============================================================
 # IOE-DREAM Video Service 配置文件
-# 
+#
 # @Author:    IOE-DREAM Team
 # @Date:      2025-01-30
 # @Copyright  IOE-DREAM智慧园区一卡通管理平台
-# 
+#
 # 服务信息:
 # - 服务名称: ioedream-video-service
 # - 服务端口: 8092
@@ -17,6 +17,12 @@ spring:
     name: ioedream-video-service
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  # Spring Boot 2.4+ 要求显式声明配置导入
+  # 升级到Spring Cloud Alibaba 2025.0.0.0后，使用optional前缀允许配置中心可选
+  # dataId格式：${spring.application.name}-${spring.profiles.active}.${file-extension}
+  config:
+    import:
+      - "optional:nacos:ioedream-video-service-docker.yaml"  # 2025.0.0.0版本需要显式指定dataId
 
 # ==================== Nacos服务发现配置 ====================
   cloud:
@@ -26,19 +32,23 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD}
         enabled: true
         register-enabled: true
       config:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
         file-extension: yaml
-        enabled: true
+        enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
+        import-check:
+          enabled: true  # 2025.0.0.0版本支持optional:nacos:，可以启用检查
 
 # ==================== 服务器配置 ====================
 server:
-  port: 8092
+  port: ${VIDEO_SERVICE_PORT:8092}
   servlet:
     context-path: /
     encoding:
@@ -74,7 +84,7 @@ management:
   endpoint:
     health:
       show-details: when-authorized
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true

@@ -41,10 +41,14 @@ import net.lab1024.sa.common.entity.BaseEntity;
 public class ApprovalProcessEntity extends BaseEntity {
 
     /**
-     * 流程ID
+     * 流程ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列process_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
-    @TableId(type = IdType.AUTO)
-    private Long processId;
+    @TableId(value = "process_id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 流程编号

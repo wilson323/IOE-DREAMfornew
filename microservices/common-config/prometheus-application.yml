@@ -1,0 +1,391 @@
+# ============================================================
+# IOE-DREAM 微服务Prometheus监控配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: 基于Prometheus的监控配置，针对单企业1000台设备20000人规模优化
+# ============================================================
+
+# ============================================================
+# Spring Boot Actuator 配置
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,configprops,env,loggers,threaddump,heapdump
+      base-path: /actuator
+    enabled-by-default: true
+    jmx:
+      exposure:
+        include: health,info,metrics
+
+  endpoint:
+    # 健康检查端点
+    health:
+      enabled: true
+      show-details: always
+      show-components: always
+      group:
+        liveness:
+          include: "*"
+          show-details: always
+        readiness:
+          include: "*"
+          show-details: always
+
+    # 信息端点
+    info:
+      enabled: true
+
+    # 指标端点
+    metrics:
+      enabled: true
+
+    # Prometheus端点
+    prometheus:
+      enabled: true
+
+    # 日志端点
+    loggers:
+      enabled: true
+
+    # 线程转储端点
+    threaddump:
+      enabled: true
+
+    # 堆转储端点
+    heapdump:
+      enabled: true
+
+  # 指标配置
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:dev}
+      service: ${ioedream.service.type:unknown}
+      version: ${project.version:1.0.0}
+      instance: ${HOSTNAME:${spring.application.name}-local}
+
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+        pushgateway:
+          enabled: false
+
+    # 指标统计
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        spring.data.redis: true
+        spring.jdbc: true
+        resilience4j: true
+
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+        spring.data.redis: 0.5,0.9,0.95,0.99
+        spring.jdbc: 0.5,0.9,0.95,0.99
+        resilience4j.circuitbreaker.calls: 0.5,0.9,0.95,0.99
+
+      sla:
+        http.server.requests: 100ms,200ms,500ms,1s,2s,5s
+        spring.data.redis: 10ms,50ms,100ms,500ms,1s
+        spring.jdbc: 50ms,100ms,200ms,500ms,1s
+
+    # 计时器配置
+    timers:
+      jdbc.connection.creation: enabled
+      http.server.requests: enabled
+      redis.command: enabled
+
+    # 仪表盘配置
+    web:
+      client:
+        request:
+          autotime:
+            enabled: true
+            percentiles: 0.5,0.9,0.95,0.99
+
+# ============================================================
+# IOE-DREAM 业务监控配置
+# ============================================================
+ioedream:
+  monitoring:
+    # 基础监控配置
+    base:
+      enabled: true
+      jmx-enabled: true
+      log-metrics: true
+      health-metrics: true
+
+    # 应用性能监控（APM）
+    apm:
+      enabled: true
+      trace-enabled: true
+      span-max-duration: 30s
+      sample-rate: 1.0
+
+    # JVM监控
+    jvm:
+      enabled: true
+      gc-logging: true
+      thread-dump-interval: 300s
+      heap-dump-enabled: true
+
+    # 业务指标监控
+    business:
+      enabled: true
+      metrics:
+        # 用户相关指标
+        user:
+          login-count: enabled
+          online-users: enabled
+          active-users-period: 60s
+
+        # 设备相关指标 - 针对1000台设备规模
+        device:
+          online-count: enabled
+          heartbeat-interval: 30s
+          offline-threshold: 300s
+          health-check-interval: 60s
+
+        # 交易相关指标 - 针对20000人规模
+        transaction:
+          volume: enabled
+          success-rate: enabled
+          amount-distribution: enabled
+          real-time-processing: enabled
+
+        # 考勤相关指标
+        attendance:
+          clock-in-rate: enabled
+          attendance-accuracy: enabled
+          exception-rate: enabled
+
+        # 访客相关指标
+        visitor:
+          registration-count: enabled
+          approval-rate: enabled
+          average-visit-duration: enabled
+
+    # 数据库监控
+    database:
+      enabled: true
+      connection-pool:
+        monitoring: enabled
+        leak-detection: enabled
+        max-connections-threshold: 0.8
+      query:
+        slow-query-threshold: 1000ms
+        query-count: enabled
+        execution-time: enabled
+
+    # Redis监控
+    redis:
+      enabled: true
+      monitoring:
+        memory-usage: enabled
+        connection-count: enabled
+        hit-ratio: enabled
+        eviction-rate: enabled
+        slow-log-monitoring: enabled
+
+    # 消息队列监控
+    message-queue:
+      enabled: true
+      rabbitmq:
+        monitoring: enabled
+        queue-depth: enabled
+        message-rate: enabled
+        consumer-lag: enabled
+
+    # 系统资源监控
+    system:
+      enabled: true
+      cpu:
+        monitoring: enabled
+        threshold: 0.8
+      memory:
+        monitoring: enabled
+        threshold: 0.85
+      disk:
+        monitoring: enabled
+        threshold: 0.9
+      network:
+        monitoring: enabled
+        throughput-monitoring: enabled
+
+    # 告警配置
+    alerts:
+      enabled: true
+      rules:
+        # 服务可用性告警
+        availability:
+          enabled: true
+          threshold: 0.99
+          evaluation-window: 5m
+
+        # 性能告警
+        performance:
+          response-time-threshold: 2s
+          error-rate-threshold: 0.05
+          cpu-threshold: 0.8
+          memory-threshold: 0.85
+
+        # 业务告警
+        business:
+          user-login-failure-rate: 0.1
+          device-offline-rate: 0.05
+          transaction-failure-rate: 0.01
+
+    # 自定义指标配置
+    custom:
+      enabled: true
+      timers:
+        # 业务操作计时器
+        user-operation-timer: enabled
+        device-command-timer: enabled
+        transaction-processing-timer: enabled
+
+      counters:
+        # 业务计数器
+        user-login-counter: enabled
+        device-heartbeat-counter: enabled
+        transaction-volume-counter: enabled
+
+      gauges:
+        # 业务仪表盘
+        online-users-gauge: enabled
+        active-devices-gauge: enabled
+        pending-transactions-gauge: enabled
+
+# ============================================================
+# 日志配置 - 集成监控
+# ============================================================
+logging:
+  level:
+    org.springframework.web: INFO
+    org.springframework.data.redis: INFO
+    org.springframework.jdbc: INFO
+    org.springframework.cloud.gateway: INFO
+    io.micrometer: DEBUG
+    io.prometheus.client: DEBUG
+
+  # 访问日志监控
+  access:
+    enabled: true
+    log-format: combined
+    request-attributes: true
+    response-headers: true
+    slow-request-threshold: 2000ms
+
+# ============================================================
+# 环境特定配置
+# ============================================================
+---
+spring:
+  config:
+    activate:
+      profile: dev
+
+# 开发环境监控配置 - 降低性能开销
+ioedream:
+  monitoring:
+    base:
+      jmx-enabled: false
+      log-metrics: true
+    apm:
+      sample-rate: 0.1
+    business:
+      metrics:
+        user:
+          active-users-period: 120s
+        device:
+          heartbeat-interval: 60s
+    system:
+      cpu:
+        monitoring: false
+      memory:
+        threshold: 0.9
+
+---
+spring:
+  config:
+    activate:
+      profile: test
+
+# 测试环境监控配置
+ioedream:
+  monitoring:
+    apm:
+      sample-rate: 0.5
+    system:
+      cpu:
+        threshold: 0.7
+      memory:
+        threshold: 0.8
+    database:
+      query:
+        slow-query-threshold: 500ms
+
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+# 生产环境监控配置 - 完整监控
+ioedream:
+  monitoring:
+    base:
+      jmx-enabled: true
+      log-metrics: true
+      health-metrics: true
+    apm:
+      sample-rate: 1.0
+      trace-enabled: true
+    jvm:
+      gc-logging: true
+      thread-dump-interval: 60s
+      heap-dump-enabled: true
+    business:
+      metrics:
+        user:
+          active-users-period: 30s
+        device:
+          heartbeat-interval: 30s
+          offline-threshold: 180s
+    database:
+      connection-pool:
+        max-connections-threshold: 0.7
+        leak-detection: true
+      query:
+        slow-query-threshold: 500ms
+    redis:
+      monitoring:
+        slow-log-monitoring: true
+    message-queue:
+      rabbitmq:
+        monitoring: enabled
+    system:
+      cpu:
+        threshold: 0.75
+      memory:
+        threshold: 0.8
+      disk:
+        threshold: 0.85
+    alerts:
+      rules:
+        availability:
+          threshold: 0.999
+          evaluation-window: 2m
+        performance:
+          response-time-threshold: 1s
+          error-rate-threshold: 0.01
+          cpu-threshold: 0.75
+          memory-threshold: 0.8
+        business:
+          user-login-failure-rate: 0.05
+          device-offline-rate: 0.02
+          transaction-failure-rate: 0.005

@@ -3,7 +3,9 @@ package net.lab1024.sa.consume.dao;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -34,9 +36,27 @@ public interface ConsumeRecordDao extends BaseMapper<ConsumeRecordEntity> {
      * @param endTime 结束时间
      * @return 消费记录列表
      */
+    @Select("SELECT * FROM t_consume_record WHERE user_id = #{userId} " +
+            "AND create_time >= #{startTime} AND create_time <= #{endTime} " +
+            "AND deleted_flag = 0 ORDER BY create_time DESC")
+    List<ConsumeRecordEntity> selectByUserIdAndTimeRange(@Param("userId") Long userId,
+                                                         @Param("startTime") LocalDateTime startTime,
+                                                         @Param("endTime") LocalDateTime endTime);
+
+    /**
+     * 根据用户ID查询消费记录（兼容方法）
+     *
+     * @param userId 用户ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 消费记录列表
+     */
+    @Select("SELECT * FROM t_consume_record WHERE user_id = #{userId} " +
+            "AND create_time >= #{startTime} AND create_time <= #{endTime} " +
+            "AND deleted_flag = 0 ORDER BY create_time DESC")
     List<ConsumeRecordEntity> selectByUserId(@Param("userId") Long userId,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
+                                           @Param("startTime") LocalDateTime startTime,
+                                           @Param("endTime") LocalDateTime endTime);
 
     /**
      * 根据账户ID查询消费记录
@@ -81,4 +101,78 @@ public interface ConsumeRecordDao extends BaseMapper<ConsumeRecordEntity> {
             @Param("deviceIds") List<Long> deviceIds,
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime);
+
+    // ==================== SAGA事务支持的业务方法 ====================
+
+    /**
+     * 根据订单号删除消费记录（SAGA补偿操作）
+     *
+     * @param orderNo 订单号
+     * @return 删除的记录数
+     */
+    @Delete("DELETE FROM t_consume_record WHERE order_no = #{orderNo} AND deleted_flag = 0")
+    int deleteByOrderNo(@Param("orderNo") String orderNo);
+
+    /**
+     * 根据订单号查询消费记录
+     *
+     * @param orderNo 订单号
+     * @return 消费记录
+     */
+    @Select("SELECT * FROM t_consume_record WHERE order_no = #{orderNo} AND deleted_flag = 0")
+    ConsumeRecordEntity selectByOrderNo(@Param("orderNo") String orderNo);
+
+    /**
+     * 统计用户在指定时间范围内的消费次数
+     *
+     * @param userId 用户ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 消费次数
+     */
+    @Select("SELECT COUNT(*) FROM t_consume_record WHERE user_id = #{userId} " +
+            "AND create_time >= #{startTime} AND create_time <= #{endTime} AND deleted_flag = 0")
+    int countByUserId(@Param("userId") Long userId,
+                      @Param("startTime") LocalDateTime startTime,
+                      @Param("endTime") LocalDateTime endTime);
+
+    /**
+     * 统计用户在指定时间范围内的消费总金额
+     *
+     * @param userId 用户ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 消费总金额
+     */
+    @Select("SELECT COALESCE(SUM(amount), 0) FROM t_consume_record WHERE user_id = #{userId} " +
+            "AND create_time >= #{startTime} AND create_time <= #{endTime} AND deleted_flag = 0")
+    java.math.BigDecimal sumAmountByUserId(@Param("userId") Long userId,
+                                           @Param("startTime") LocalDateTime startTime,
+                                           @Param("endTime") LocalDateTime endTime);
+
+    /**
+     * 查询用户最近的消费记录
+     *
+     * @param userId 用户ID
+     * @param limit 限制数量
+     * @return 消费记录列表
+     */
+    @Select("SELECT * FROM t_consume_record WHERE user_id = #{userId} AND deleted_flag = 0 " +
+            "ORDER BY create_time DESC LIMIT #{limit}")
+    List<ConsumeRecordEntity> selectRecentByUserId(@Param("userId") Long userId,
+                                                  @Param("limit") Integer limit);
+
+    /**
+     * 根据状态查询消费记录
+     *
+     * @param status 状态
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 消费记录列表
+     */
+    @Select("SELECT * FROM t_consume_record WHERE status = #{status} " +
+            "AND create_time >= #{startTime} AND create_time <= #{endTime} AND deleted_flag = 0")
+    List<ConsumeRecordEntity> selectByStatus(@Param("status") String status,
+                                           @Param("startTime") LocalDateTime startTime,
+                                           @Param("endTime") LocalDateTime endTime);
 }

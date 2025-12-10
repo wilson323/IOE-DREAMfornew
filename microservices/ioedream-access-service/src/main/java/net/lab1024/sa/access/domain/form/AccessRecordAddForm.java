@@ -38,7 +38,7 @@ public class AccessRecordAddForm {
      * 用户ID
      */
     @NotNull(message = "用户ID不能为空")
-    @Schema(description = "用户ID", example = "1001", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "用户ID", example = "1001")
     private Long userId;
 
     /**

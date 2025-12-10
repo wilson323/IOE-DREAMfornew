@@ -7,7 +7,8 @@
 -->
 <template>
   <a-modal
-    v-model:visible="visible"
+    :visible="visible"
+    @update:visible="(val) => $emit('update:visible', val)"
     title="交易详情"
     width="700px"
     :footer="null"

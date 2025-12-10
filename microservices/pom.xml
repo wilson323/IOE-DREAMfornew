@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -9,111 +9,72 @@
     <artifactId>ioedream-microservices-parent</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-    
-    <name>IOE-DREAM Microservices Parent</name>
-    <description>IOE-DREAM微服务父POM，统一管理所有微服务的依赖版本和配置</description>
 
     <properties>
-        <!-- Maven编译配置 -->
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <java.version>17</java.version>
-        
-        <!-- 统一依赖版本管理 -->
-        <!-- Spring Boot版本 -->
+
+        <!-- Spring Boot & Cloud Versions -->
         <spring-boot.version>3.5.8</spring-boot.version>
-        
-        <!-- MyBatis-Plus版本 -->
-        <mybatis-plus.version>3.5.15</mybatis-plus.version>
-        
-        <!-- Lombok版本 -->
-        <lombok.version>1.18.42</lombok.version>
-        
-        <!-- Jakarta Validation版本 -->
-        <jakarta-validation.version>3.1.1</jakarta-validation.version>
-        
-        <!-- Jackson版本（已升级到最新稳定版） -->
-        <jackson.version>2.20.1</jackson.version>
-        
-        <!-- Caffeine版本（已升级到最新稳定版） -->
-        <caffeine.version>3.2.3</caffeine.version>
-        
-        <!-- Swagger版本（已升级到最新稳定版） -->
-        <swagger.version>2.2.41</swagger.version>
-        
-        <!-- EasyExcel版本 -->
-        <easyexcel.version>4.0.3</easyexcel.version>
-        
-        <!-- iText PDF版本 -->
-        <itextpdf.version>9.4.0</itextpdf.version>
-        
-        <!-- JWT版本 -->
-        <jjwt.version>0.13.0</jjwt.version>
-        
-        <!-- Micrometer版本 -->
-        <micrometer.version>1.16.0</micrometer.version>
-        
-        <!-- Spring Cloud版本 -->
-        <!-- Spring Boot 3.5.8 兼容 Spring Cloud 2025.0.x -->
         <spring-cloud.version>2025.0.0</spring-cloud.version>
-        
-        <!-- Spring Cloud Alibaba版本 -->
-        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
-        
-        <!-- JUnit测试版本 -->
+        <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
+
+        <!-- Database Versions -->
+        <mysql.version>8.0.35</mysql.version>
+        <mybatis-plus.version>3.5.15</mybatis-plus.version>
+        <druid.version>1.2.25</druid.version>
+
+        <!-- Common Library Versions -->
+        <lombok.version>1.18.42</lombok.version>
         <junit.version>5.11.0</junit.version>
-        <mockito.version>5.20.0</mockito.version>
-        
-        <!-- Sa-Token版本 -->
-        <sa-token.version>1.44.0</sa-token.version>
-        
-        <!-- ZXing版本 -->
-        <zxing.version>3.5.4</zxing.version>
-        
-        <!-- 阿里云SDK版本 -->
-        <aliyun-dysmsapi.version>4.3.0</aliyun-dysmsapi.version>
-        
-        <!-- 腾讯云SDK版本 -->
-        <tencentcloud-ocr.version>3.1.1373</tencentcloud-ocr.version>
-        
-        <!-- Redisson版本（分布式锁和缓存） -->
-        <redisson.version>3.24.3</redisson.version>
+
+        <!-- API & Documentation -->
+        <swagger.version>2.2.0</swagger.version>
+        <jakarta-validation.version>3.0.2</jakarta-validation.version>
+
+        <!-- JSON & XML Processing -->
+        <jackson.version>2.18.2</jackson.version>
+        <fastjson2.version>2.0.53</fastjson2.version>
+
+        <!-- Excel & PDF Processing -->
+        <easyexcel.version>3.3.4</easyexcel.version>
+        <itextpdf.version>8.0.5</itextpdf.version>
+
+        <!-- Security & Authentication -->
+        <jjwt.version>0.12.6</jjwt.version>
+        <bouncycastle.version>1.80</bouncycastle.version>
+        <sa-token.version>1.42.0</sa-token.version>
+
+        <!-- Monitoring & Metrics -->
+        <micrometer.version>1.13.6</micrometer.version>
+        <micrometer-prometheus.version>1.13.6</micrometer-prometheus.version>
+
+        <!-- Cache -->
+        <caffeine.version>3.1.8</caffeine.version>
+        <redisson.version>3.35.0</redisson.version>
+
+        <!-- HTTP Client -->
+        <httpclient5.version>5.4.1</httpclient5.version>
+
+        <!-- Common Utilities -->
+        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-text.version>1.13.0</commons-text.version>
+
+        <!-- Servlet -->
+        <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
+
+        <!-- Testing -->
+        <mockito.version>5.15.2</mockito.version>
+
+        <!-- Tencent Cloud -->
+        <tencentcloud-ocr.version>3.1.1115</tencentcloud-ocr.version>
     </properties>
 
-    <!-- 依赖版本统一管理 -->
-    <dependencyManagement>
-        <dependencies>
-            <!-- Spring Boot BOM（统一管理Spring Boot依赖版本） -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            
-            <!-- Spring Cloud Alibaba BOM（统一管理Spring Cloud Alibaba依赖版本） -->
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${spring-cloud-alibaba.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            
-            <!-- Spring Cloud BOM（统一管理Spring Cloud依赖版本，包括Gateway） -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <!-- 所有微服务模块 -->
     <modules>
         <module>microservices-common</module>
         <module>ioedream-gateway-service</module>
@@ -127,43 +88,348 @@
         <module>ioedream-visitor-service</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <optional>true</optional>
+            </dependency>
+
+            <!-- Micrometer Dependencies -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+
+            <!-- Zipkin/Brave Dependencies -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bridge-brave</artifactId>
+                <version>1.3.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.reporter2</groupId>
+                <artifactId>zipkin-reporter-brave</artifactId>
+                <version>3.4.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.reporter2</groupId>
+                <artifactId>zipkin-sender-okhttp3</artifactId>
+                <version>3.4.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave</artifactId>
+                <version>6.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-context-slf4j</artifactId>
+                <version>6.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-propagation-brave</artifactId>
+                <version>6.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-sampler-bean</artifactId>
+                <version>6.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-spring-beans</artifactId>
+                <version>6.1.0</version>
+            </dependency>
+
+            <!-- Swagger Dependencies -->
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
-        <pluginManagement>
-            <plugins>
-                <!-- Spring Boot Maven Plugin -->
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.version}</version>
-                    <configuration>
-                        <excludes>
-                            <exclude>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                            </exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-                
-                <!-- Maven Compiler Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                        <encoding>${project.build.sourceEncoding}</encoding>
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </path>
-                        </annotationProcessorPaths>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <!-- 强制UTF-8编码的资源过滤 -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.yaml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                    <exclude>**/*.xml</exclude>
+                    <exclude>**/*.yml</exclude>
+                    <exclude>**/*.yaml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <!-- 测试资源的UTF-8编码配置 -->
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.yaml</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                    <exclude>**/*.xml</exclude>
+                    <exclude>**/*.yml</exclude>
+                    <exclude>**/*.yaml</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <!-- 增强的Maven编译器插件 - 完整UTF-8支持 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:deprecation</arg>
+                        <arg>-encoding</arg>
+                        <arg>UTF-8</arg>
+                        <arg>-J-Dfile.encoding=UTF-8</arg>
+                    </compilerArgs>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
+            <!-- Maven资源过滤插件 - UTF-8编码保障 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <propertiesEncoding>UTF-8</propertiesEncoding>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>jpeg</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>gif</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>png</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>svg</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>doc</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>docx</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
+
+            <!-- Spring Boot Maven插件 - 增强编码支持 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <!-- 运行时的JVM参数 -->
+                    <jvmArguments>
+                        -Dfile.encoding=UTF-8
+                        -Dsun.jnu.encoding=UTF-8
+                        -Dconsole.encoding=UTF-8
+                        -Duser.timezone=Asia/Shanghai
+                        -Duser.country=CN
+                        -Duser.language=zh
+                    </jvmArguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- PMD Plugin - 代码质量分析 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.21.2</version>
+                <configuration>
+                    <targetJdk>17</targetJdk>
+                    <rulesets>
+                        <ruleset>/category/java/bestpractices.xml</ruleset>
+                        <ruleset>/category/java/codestyle.xml</ruleset>
+                        <ruleset>/category/java/design.xml</ruleset>
+                        <ruleset>/category/java/errorprone.xml</ruleset>
+                        <ruleset>/category/java/performance.xml</ruleset>
+                        <ruleset>/category/java/security.xml</ruleset>
+                    </rulesets>
+                    <failOnViolation>false</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
+                    <minimumTokens>50</minimumTokens>
+                    <analysisCache>true</analysisCache>
+                    <rulesMinimumPriority>5</rulesMinimumPriority>
+                    <maxAllowedViolations>100</maxAllowedViolations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Surefire Plugin - 单元测试编码保障 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai</argLine>
+                    <systemPropertyVariables>
+                        <file.encoding>UTF-8</file.encoding>
+                        <user.timezone>Asia/Shanghai</user.timezone>
+                        <user.country>CN</user.country>
+                        <user.language>zh</user.language>
+                    </systemPropertyVariables>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Failsafe Plugin - 集成测试编码保障 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai</argLine>
+                    <systemPropertyVariables>
+                        <file.encoding>UTF-8</file.encoding>
+                        <user.timezone>Asia/Shanghai</user.timezone>
+                        <user.country>CN</user.country>
+                        <user.language>zh</user.language>
+                    </systemPropertyVariables>
+                    <includes>
+                        <include>**/*IT.java</include>
+                        <include>**/*IntegrationTest.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Javadoc Plugin - UTF-8编码 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <docencoding>UTF-8</docencoding>
+                    <charset>UTF-8</charset>
+                    <encoding>UTF-8</encoding>
+                    <doclint>none</doclint>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Clean Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+        </plugins>
     </build>
 </project>

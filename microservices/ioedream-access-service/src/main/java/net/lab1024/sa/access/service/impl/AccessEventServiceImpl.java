@@ -218,7 +218,7 @@ public class AccessEventServiceImpl implements AccessEventService {
     public ResponseDTO<List<AccessMobileController.MobileAccessRecord>> getMobileAccessRecords(
             Long userId, Integer size) {
         log.info("[门禁记录] 移动端访问记录查询，userId={}, size={}", userId, size);
-        
+
         try {
             // 参数验证和默认值
             if (userId == null) {
@@ -236,9 +236,9 @@ public class AccessEventServiceImpl implements AccessEventService {
             List<AuditLogEntity> accessEvents = accessEventDao.selectUserRecentAccessEvents(userId, size);
 
             // 转换为移动端记录格式
-            List<AccessMobileController.MobileAccessRecord> records = 
+            List<AccessMobileController.MobileAccessRecord> records =
                     accessEvents.stream()
-                            .map(this::convertToMobileAccessRecord)
+                            .map(auditLog -> convertToMobileAccessRecord(auditLog))
                             .collect(Collectors.toList());
 
             log.info("[门禁记录] 移动端访问记录查询成功，userId={}, 返回记录数={}", userId, records.size());
@@ -262,7 +262,7 @@ public class AccessEventServiceImpl implements AccessEventService {
      */
     @Override
     public ResponseDTO<Long> createAccessRecord(AccessRecordAddForm form) {
-        log.info("[门禁记录] 创建门禁记录，userId={}, deviceId={}, passType={}", 
+        log.info("[门禁记录] 创建门禁记录，userId={}, deviceId={}, passType={}",
                 form.getUserId(), form.getDeviceId(), form.getPassType());
 
         try {
@@ -299,7 +299,7 @@ public class AccessEventServiceImpl implements AccessEventService {
                 if (form.getPassTime() instanceof Number) {
                     // 时间戳（秒）
                     long timestamp = ((Number) form.getPassTime()).longValue();
-                    passTime = LocalDateTime.ofEpochSecond(timestamp, 0, 
+                    passTime = LocalDateTime.ofEpochSecond(timestamp, 0,
                             java.time.ZoneOffset.of("+8"));
                 } else if (form.getPassTime() instanceof LocalDateTime) {
                     passTime = (LocalDateTime) form.getPassTime();
@@ -354,19 +354,19 @@ public class AccessEventServiceImpl implements AccessEventService {
             );
 
             if (response != null && response.isSuccess() && response.getData() != null) {
-                log.info("[门禁记录] 门禁记录创建成功，logId={}, userId={}", 
+                log.info("[门禁记录] 门禁记录创建成功，logId={}, userId={}",
                         response.getData(), form.getUserId());
                 return ResponseDTO.ok(response.getData());
             } else {
-                log.warn("[门禁记录] 门禁记录创建失败，错误={}", 
+                log.warn("[门禁记录] 门禁记录创建失败，错误={}",
                         response != null ? response.getMessage() : "响应为空");
-                return ResponseDTO.error("CREATE_ACCESS_RECORD_ERROR", 
+                return ResponseDTO.error("CREATE_ACCESS_RECORD_ERROR",
                         "创建门禁记录失败: " + (response != null ? response.getMessage() : "响应为空"));
             }
 
         } catch (Exception e) {
             log.error("[门禁记录] 创建门禁记录异常，userId={}", form.getUserId(), e);
-            return ResponseDTO.error("CREATE_ACCESS_RECORD_ERROR", 
+            return ResponseDTO.error("CREATE_ACCESS_RECORD_ERROR",
                     "创建门禁记录失败: " + e.getMessage());
         }
     }
@@ -379,12 +379,12 @@ public class AccessEventServiceImpl implements AccessEventService {
      */
     private AccessMobileController.MobileAccessRecord convertToMobileAccessRecord(
             AuditLogEntity auditLog) {
-        AccessMobileController.MobileAccessRecord record = 
+        AccessMobileController.MobileAccessRecord record =
                 new AccessMobileController.MobileAccessRecord();
-        
-        record.setRecordId(auditLog.getLogId());
+
+        record.setRecordId(auditLog.getId());
         record.setUserId(auditLog.getUserId());
-        
+
         // 解析设备ID
         if (auditLog.getResourceId() != null && !auditLog.getResourceId().isEmpty()) {
             try {
@@ -393,7 +393,7 @@ public class AccessEventServiceImpl implements AccessEventService {
                 log.debug("[门禁记录] 设备ID格式错误，resourceId={}", auditLog.getResourceId());
             }
         }
-        
+
         // 获取设备名称（通过网关调用公共服务）
         if (record.getDeviceId() != null) {
             try {
@@ -410,22 +410,22 @@ public class AccessEventServiceImpl implements AccessEventService {
                 log.debug("[门禁记录] 获取设备名称失败，deviceId={}", record.getDeviceId(), e);
             }
         }
-        
+
         // 访问时间
         if (auditLog.getCreateTime() != null) {
             record.setAccessTime(auditLog.getCreateTime().toString());
         }
-        
+
         // 访问类型（从操作描述中提取）
         record.setAccessType(auditLog.getOperationDesc() != null ? auditLog.getOperationDesc() : "未知");
-        
+
         // 访问结果（resultStatus: 1-成功, 2-失败, 3-异常）
         if (auditLog.getResultStatus() != null) {
             record.setAccessResult(auditLog.getResultStatus() == 1);
         } else {
             record.setAccessResult(false);
         }
-        
+
         return record;
     }
 
@@ -439,7 +439,7 @@ public class AccessEventServiceImpl implements AccessEventService {
      */
     private AccessRecordVO convertToVO(AuditLogEntity auditLog) {
         AccessRecordVO vo = new AccessRecordVO();
-        vo.setLogId(auditLog.getLogId());
+        vo.setLogId(auditLog.getId());
         vo.setUserId(auditLog.getUserId());
         vo.setUserName(auditLog.getUserName());
         vo.setDeviceId(auditLog.getResourceId());

@@ -1,0 +1,409 @@
+# ============================================================
+# IOE-DREAM 公共网关配置
+#
+# 专用于网关服务的配置
+# 包含路由规则、负载均衡、限流熔断、跨域处理等配置
+# ============================================================
+
+# ============================================================
+# Spring Cloud Gateway配置
+# ============================================================
+spring:
+  cloud:
+    gateway:
+      # 路由配置
+      routes:
+        # 公共服务路由
+        - id: common-service
+          uri: ${COMMON_SERVICE_URL:lb://ioedream-common-service}
+          predicates:
+            - Path=${COMMON_SERVICE_PATH:/api/common/**}
+            - Weight=${COMMON_SERVICE_WEIGHT_GROUP:common-service},${COMMON_SERVICE_WEIGHT:100}
+          filters:
+            - StripPrefix=${COMMON_SERVICE_STRIP_PREFIX:2}
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                replenishRate: ${COMMON_SERVICE_RATE_LIMIT:100}
+                burstCapacity: ${COMMON_SERVICE_RATE_BURST:200}
+
+        # 设备通讯服务路由
+        - id: device-comm-service
+          uri: ${DEVICE_COMM_SERVICE_URL:lb://ioedream-device-comm-service}
+          predicates:
+            - Path=${DEVICE_COMM_SERVICE_PATH:/api/device/**}
+            - Weight=${DEVICE_COMM_SERVICE_WEIGHT_GROUP:device-service},${DEVICE_COMM_SERVICE_WEIGHT:100}
+          filters:
+            - StripPrefix=${DEVICE_COMM_SERVICE_STRIP_PREFIX:2}
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                replenishRate: ${DEVICE_COMM_SERVICE_RATE_LIMIT:50}
+                burstCapacity: ${DEVICE_COMM_SERVICE_RATE_BURST:100}
+
+        # OA服务路由
+        - id: oa-service
+          uri: ${OA_SERVICE_URL:lb://ioedream-oa-service}
+          predicates:
+            - Path=${OA_SERVICE_PATH:/api/oa/**}
+            - Weight=${OA_SERVICE_WEIGHT_GROUP:oa-service},${OA_SERVICE_WEIGHT:100}
+          filters:
+            - StripPrefix=${OA_SERVICE_STRIP_PREFIX:2}
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                replenishRate: ${OA_SERVICE_RATE_LIMIT:80}
+                burstCapacity: ${OA_SERVICE_RATE_BURST:160}
+
+        # 门禁服务路由
+        - id: access-service
+          uri: ${ACCESS_SERVICE_URL:lb://ioedream-access-service}
+          predicates:
+            - Path=${ACCESS_SERVICE_PATH:/api/access/**}
+            - Weight=${ACCESS_SERVICE_WEIGHT_GROUP:access-service},${ACCESS_SERVICE_WEIGHT:100}
+          filters:
+            - StripPrefix=${ACCESS_SERVICE_STRIP_PREFIX:2}
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                replenishRate: ${ACCESS_SERVICE_RATE_LIMIT:60}
+                burstCapacity: ${ACCESS_SERVICE_RATE_BURST:120}
+
+        # 考勤服务路由
+        - id: attendance-service
+          uri: ${ATTENDANCE_SERVICE_URL:lb://ioedream-attendance-service}
+          predicates:
+            - Path=${ATTENDANCE_SERVICE_PATH:/api/attendance/**}
+            - Weight=${ATTENDANCE_SERVICE_WEIGHT_GROUP:attendance-service},${ATTENDANCE_SERVICE_WEIGHT:100}
+          filters:
+            - StripPrefix=${ATTENDANCE_SERVICE_STRIP_PREFIX:2}
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                replenishRate: ${ATTENDANCE_SERVICE_RATE_LIMIT:70}
+                burstCapacity: ${ATTENDANCE_SERVICE_RATE_BURST:140}
+
+        # 视频服务路由
+        - id: video-service
+          uri: ${VIDEO_SERVICE_URL:lb://ioedream-video-service}
+          predicates:
+            - Path=${VIDEO_SERVICE_PATH:/api/video/**}
+            - Weight=${VIDEO_SERVICE_WEIGHT_GROUP:video-service},${VIDEO_SERVICE_WEIGHT:100}
+          filters:
+            - StripPrefix=${VIDEO_SERVICE_STRIP_PREFIX:2}
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                replenishRate: ${VIDEO_SERVICE_RATE_LIMIT:30}
+                burstCapacity: ${VIDEO_SERVICE_RATE_BURST:60}
+
+        # 消费服务路由
+        - id: consume-service
+          uri: ${CONSUME_SERVICE_URL:lb://ioedream-consume-service}
+          predicates:
+            - Path=${CONSUME_SERVICE_PATH:/api/consume/**}
+            - Weight=${CONSUME_SERVICE_WEIGHT_GROUP:consume-service},${CONSUME_SERVICE_WEIGHT:100}
+          filters:
+            - StripPrefix=${CONSUME_SERVICE_STRIP_PREFIX:2}
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                replenishRate: ${CONSUME_SERVICE_RATE_LIMIT:90}
+                burstCapacity: ${CONSUME_SERVICE_RATE_BURST:180}
+
+        # 访客服务路由
+        - id: visitor-service
+          uri: ${VISITOR_SERVICE_URL:lb://ioedream-visitor-service}
+          predicates:
+            - Path=${VISITOR_SERVICE_PATH:/api/visitor/**}
+            - Weight=${VISITOR_SERVICE_WEIGHT_GROUP:visitor-service},${VISITOR_SERVICE_WEIGHT:100}
+          filters:
+            - StripPrefix=${VISITOR_SERVICE_STRIP_PREFIX:2}
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                replenishRate: ${VISITOR_SERVICE_RATE_LIMIT:40}
+                burstCapacity: ${VISITOR_SERVICE_RATE_BURST:80}
+
+      # 全局过滤器配置
+      default-filters:
+        # 添加响应头
+        - AddResponseHeader=X-Response-Time, ${GATEWAY_RESPONSE_TIME_HEADER:TMS}
+        - AddResponseHeader=X-Gateway-Service, ${GATEWAY_SERVICE_NAME:ioedream-gateway}
+        - AddResponseHeader=X-Gateway-Version, ${GATEWAY_VERSION:1.0.0}
+
+        # 全局限流
+        - name: RequestRateLimiter
+          args:
+            key-resolver: "#{@ipKeyResolver}"
+            replenishRate: ${GATEWAY_GLOBAL_RATE_LIMIT:1000}
+            burstCapacity: ${GATEWAY_GLOBAL_RATE_BURST:2000}
+
+      # 负载均衡配置
+      loadbalancer:
+        # 负载均衡策略
+        ribbon:
+          enabled: ${GATEWAY_RIBBON_ENABLED:false}
+        spring:
+          cloud:
+            loadbalancer:
+              # 负载均衡策略
+              strategy: ${GATEWAY_LOADBALANCER_STRATEGY:round_robin}
+              # 健康检查
+              health:
+                enabled: ${GATEWAY_HEALTH_CHECK_ENABLED:true}
+                check-interval: ${GATEWAY_HEALTH_CHECK_INTERVAL:30}
+                check-path: ${GATEWAY_HEALTH_CHECK_PATH:/actuator/health}
+
+# ============================================================
+# 熔断器配置（Resilience4j）
+# ============================================================
+resilience4j:
+  circuitbreaker:
+    # 熔断器配置
+    configs:
+      default:
+        # 熔断器开启状态
+        registerHealthIndicator: ${CIRCUITBREAKER_HEALTH_INDICATOR:true}
+        # 滑动窗口类型
+        slidingWindowSize: ${CIRCUITBREAKER_SLIDING_WINDOW_SIZE:10}
+        # 最小调用次数
+        minimumNumberOfCalls: ${CIRCUITBREAKER_MINIMUM_CALLS:5}
+        # 失败率阈值
+        failureRateThreshold: ${CIRCUITBREAKER_FAILURE_RATE_THRESHOLD:50}
+        # 慢调用率阈值
+        slowCallDurationThreshold: ${CIRCUITBREAKER_SLOW_CALL_DURATION_THRESHOLD:5000}
+        # 慢调用率阈值百分比
+        slowCallRateThreshold: ${CIRCUITBREAKER_SLOW_CALL_RATE_THRESHOLD:50}
+        # 熔断器自动半开状态转换
+        automaticTransitionFromOpenToHalfOpenEnabled: ${CIRCUITBREAKER_AUTO_HALF_OPEN:true}
+        # 熔断器等待时间
+        waitDurationInOpenState: ${CIRCUITBREAKER_WAIT_DURATION:60000}
+        # 允许的调用次数
+        permittedNumberOfCallsInHalfOpenState: ${CIRCUITBREAKER_HALF_OPEN_CALLS:3}
+
+    # 实例配置
+    instances:
+      common-service:
+        base-config: default
+        slidingWindowSize: ${CIRCUITBREAKER_COMMON_SERVICE_WINDOW_SIZE:20}
+        failureRateThreshold: ${CIRCUITBREAKER_COMMON_SERVICE_FAILURE_RATE:30}
+
+      device-comm-service:
+        base-config: default
+        slidingWindowSize: ${CIRCUITBREAKER_DEVICE_COMM_SERVICE_WINDOW_SIZE:15}
+        failureRateThreshold: ${CIRCUITBREAKER_DEVICE_COMM_SERVICE_FAILURE_RATE:40}
+
+      oa-service:
+        base-config: default
+        slidingWindowSize: ${CIRCUITBREAKER_OA_SERVICE_WINDOW_SIZE:25}
+        failureRateThreshold: ${CIRCUITBREAKER_OA_SERVICE_FAILURE_RATE:35}
+
+  # 重试配置
+  retry:
+    configs:
+      default:
+        # 最大重试次数
+        maxAttempts: ${RETRY_MAX_ATTEMPTS:3}
+        # 重试间隔
+        waitDuration: ${RETRY_WAIT_DURATION:1000}
+        # 可重试的异常
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException
+        # 不重试的异常
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException
+          - java.lang.IllegalArgumentException
+
+    instances:
+      common-service:
+        base-config: default
+        maxAttempts: ${RETRY_COMMON_SERVICE_MAX_ATTEMPTS:2}
+
+      device-comm-service:
+        base-config: default
+        maxAttempts: ${RETRY_DEVICE_COMM_SERVICE_MAX_ATTEMPTS:3}
+
+# ============================================================
+# 限流配置
+# ============================================================
+spring:
+  cloud:
+    gateway:
+      # 限流器配置
+      filter:
+        request-rate-limiter:
+          # 是否启用限流
+          enabled: ${GATEWAY_RATE_LIMIT_ENABLED:true}
+          # 密钥解析器
+          key-resolver: "#{@userKeyResolver}"
+          # 限流算法
+          algorithm: ${GATEWAY_RATE_LIMIT_ALGORITHM:token-bucket}
+          # 限流维度
+          dimensions:
+            - ip: ${GATEWAY_RATE_LIMIT_IP_ENABLED:true}
+            - user: ${GATEWAY_RATE_LIMIT_USER_ENABLED:true}
+            - path: ${GATEWAY_RATE_LIMIT_PATH_ENABLED:false}
+
+# ============================================================
+# 跨域配置
+# ============================================================
+spring:
+  cloud:
+    gateway:
+      # 全局跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            # 允许的源
+            allowedOriginPatterns: ${GATEWAY_CORS_ORIGINS:"*"}
+            # 允许的方法
+            allowedMethods: ${GATEWAY_CORS_METHODS:"GET,POST,PUT,DELETE,OPTIONS,HEAD"}
+            # 允许的头
+            allowedHeaders: ${GATEWAY_CORS_HEADERS:"*"}
+            # 允许凭证
+            allowCredentials: ${GATEWAY_CORS_CREDENTIALS:true}
+            # 预检请求缓存时间
+            maxAge: ${GATEWAY_CORS_MAX_AGE:3600}
+
+# ============================================================
+# 安全配置
+# ============================================================
+spring:
+  cloud:
+    gateway:
+      # 安全过滤器
+      filter:
+        # 认证过滤器
+        authentication:
+          enabled: ${GATEWAY_AUTH_ENABLED:true}
+          # 跳过认证的路径
+          exclude-paths: ${GATEWAY_AUTH_EXCLUDE_PATHS:"/actuator/**,/auth/**,/login/**"}
+
+        # 授权过滤器
+        authorization:
+          enabled: ${GATEWAY_AUTHZ_ENABLED:true}
+          # 权限配置
+          permissions:
+            - path: /api/common/**
+              roles: ${GATEWAY_PERMISSIONS_COMMON_ROLES:"USER,ADMIN"}
+            - path: /api/access/**
+              roles: ${GATEWAY_PERMISSIONS_ACCESS_ROLES:"SECURITY_GUARD,ADMIN"}
+            - path: /api/attendance/**
+              roles: ${GATEWAY_PERMISSIONS_ATTENDANCE_ROLES:"HR,ADMIN"}
+
+# ============================================================
+# 监控和日志配置
+# ============================================================
+logging:
+  level:
+    org.springframework.cloud.gateway: ${GATEWAY_LOG_LEVEL:INFO}
+    org.springframework.web.reactive.function.client: ${GATEWAY_WEB_CLIENT_LOG_LEVEL:DEBUG}
+
+# 网关请求日志
+gateway:
+  request:
+    # 是否记录请求日志
+    log-enabled: ${GATEWAY_REQUEST_LOG_ENABLED:true}
+    # 记录请求体
+    log-body: ${GATEWAY_REQUEST_LOG_BODY:false}
+    # 记录响应体
+    log-response-body: ${GATEWAY_REQUEST_LOG_RESPONSE_BODY:false}
+    # 请求体大小限制
+    max-body-size: ${GATEWAY_REQUEST_MAX_BODY_SIZE:1MB}
+
+# ============================================================
+# 性能优化配置
+# ============================================================
+spring:
+  cloud:
+    gateway:
+      # 连接池配置
+      httpclient:
+        # 连接池启用
+        enabled: ${GATEWAY_HTTP_CLIENT_ENABLED:true}
+        # 最大连接数
+        max-connections: ${GATEWAY_HTTP_CLIENT_MAX_CONNECTIONS:500}
+        # 每个路由的最大连接数
+        max-connections-per-route: ${GATEWAY_HTTP_CLIENT_MAX_CONNECTIONS_PER_ROUTE:50}
+        # 连接超时时间
+        connect-timeout: ${GATEWAY_HTTP_CLIENT_CONNECT_TIMEOUT:5000}
+        # 响应超时时间
+        response-timeout: ${GATEWAY_HTTP_CLIENT_RESPONSE_TIMEOUT:60s}
+        # 读取超时时间
+        read-timeout: ${GATEWAY_HTTP_CLIENT_READ_TIMEOUT:10s}
+        # 写入超时时间
+        write-timeout: ${GATEWAY_HTTP_CLIENT_WRITE_TIMEOUT:10s}
+
+      # WebSocket配置
+      websocket:
+        # 是否启用WebSocket
+        enabled: ${GATEWAY_WEBSOCKET_ENABLED:true}
+        # 最大帧负载大小
+        max-frame-payload-length: ${GATEWAY_WEBSOCKET_MAX_FRAME_LENGTH:65536}
+        # WebSocket消息大小限制
+        max-message-size: ${GATEWAY_WEBSOCKET_MAX_MESSAGE_SIZE:102400}
+
+# ============================================================
+# 环境特定配置
+# ============================================================
+
+# 开发环境
+---
+spring:
+  config:
+    activate:
+      profile: dev
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - AddRequestHeader=profile, dev
+      httpclient:
+        max-connections: 50
+        max-connections-per-route: 10
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+
+# 测试环境
+---
+spring:
+  config:
+    activate:
+      profile: test
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - AddRequestHeader=profile, test
+      httpclient:
+        max-connections: 200
+        max-connections-per-route: 25
+
+# 生产环境
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - AddRequestHeader=profile, prod
+      httpclient:
+        max-connections: 1000
+        max-connections-per-route: 100
+        connect-timeout: 10000
+        response-timeout: 30s
+
+gateway:
+  request:
+    log-body: true
+    log-response-body: true

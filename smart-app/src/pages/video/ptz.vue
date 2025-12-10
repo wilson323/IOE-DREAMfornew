@@ -154,227 +154,199 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import videoApi from '@/api/business/video/video-api'
 
-export default {
-  name: 'VideoPTZ',
+// 页面参数
+const deviceId = ref(0)
 
-  setup() {
-    // 系统信息
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+// 页面状态
+const loading = ref(false)
+const isRecording = ref(false)
+const recordId = ref('')
 
-    // 页面参数
-    const deviceId = ref(0)
+// 设备信息
+const deviceInfo = reactive({
+  deviceId: 0,
+  deviceName: '',
+  ptzEnabled: false
+})
 
-    // 页面状态
-    const loading = ref(false)
-    const isRecording = ref(false)
-    const recordId = ref('')
+// 云台控制
+const ptzSpeed = ref(50)
+const currentAction = ref('')
+const ptzTimer = ref(null)
 
-    // 设备信息
-    const deviceInfo = reactive({
-      deviceId: 0,
-      deviceName: '',
-      ptzEnabled: false
+// 视频流
+const streamUrl = ref('')
+
+// 预置位列表
+const presetList = ref([])
+
+// 页面生命周期
+onMounted(() => {
+  init()
+})
+
+onUnmounted(() => {
+  cleanup()
+})
+
+// 初始化
+const init = async () => {
+  // 获取页面参数
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  deviceId.value = currentPage.options.deviceId || 0
+
+  if (deviceId.value) {
+    await loadDeviceInfo()
+    await loadPresetList()
+    await loadVideoStream()
+  }
+}
+
+// 加载设备信息
+const loadDeviceInfo = async () => {
+  try {
+    const res = await videoApi.getMobileDeviceDetail(deviceId.value)
+    if (res.code === 1 && res.data) {
+      Object.assign(deviceInfo, res.data)
+    }
+  } catch (error) {
+    console.error('加载设备信息失败:', error)
+  }
+}
+
+// 加载预置位列表
+const loadPresetList = async () => {
+  try {
+    const res = await videoApi.getPresetList(deviceId.value)
+    if (res.code === 1 && res.data) {
+      presetList.value = res.data
+    }
+  } catch (error) {
+    console.error('加载预置位列表失败:', error)
+  }
+}
+
+// 加载视频流
+const loadVideoStream = async () => {
+  try {
+    const res = await videoApi.getMobileMonitor(deviceId.value, 'SUB', '480p')
+    if (res.code === 1 && res.data) {
+      streamUrl.value = res.data.streamUrl
+    }
+  } catch (error) {
+    console.error('加载视频流失败:', error)
+  }
+}
+
+// 云台控制开始
+const handlePTZStart = async (action) => {
+  currentAction.value = action
+
+  try {
+    await videoApi.mobilePTZControl(deviceId.value, {
+      action,
+      speed: ptzSpeed.value
     })
 
-    // 云台控制
-    const ptzSpeed = ref(50)
-    const currentAction = ref('')
-    const ptzTimer = ref(null)
+    // 持续发送控制命令（每500ms）
+    ptzTimer.value = setInterval(async () => {
+      await videoApi.mobilePTZControl(deviceId.value, {
+        action,
+        speed: ptzSpeed.value
+      })
+    }, 500)
 
-    // 视频流
-    const streamUrl = ref('')
+  } catch (error) {
+    console.error('云台控制失败:', error)
+  }
+}
 
-    // 预置位列表
-    const presetList = ref([])
+// 云台控制停止
+const handlePTZStop = () => {
+  if (ptzTimer.value) {
+    clearInterval(ptzTimer.value)
+    ptzTimer.value = null
+  }
+  currentAction.value = ''
+}
 
-    // 页面生命周期
-    onMounted(() => {
-      init()
-    })
+// 停止所有移动
+const stopAllMovement = () => {
+  handlePTZStop()
+  uni.vibrateShort()
+}
 
-    onUnmounted(() => {
-      cleanup()
-    })
+// 速度改变
+const handleSpeedChange = (e) => {
+  ptzSpeed.value = e.detail.value
+}
 
-    // 初始化
-    const init = async () => {
-      // 获取页面参数
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
-      deviceId.value = currentPage.options.deviceId || 0
+// 跳转预置位
+const gotoPreset = async (preset) => {
+  try {
+    await videoApi.gotoPreset(deviceId.value, preset.num)
+    uni.showToast({ title: `跳转到${preset.name}`, icon: 'success' })
+    uni.vibrateShort()
+  } catch (error) {
+    console.error('跳转预置位失败:', error)
+    uni.showToast({ title: '跳转失败', icon: 'none' })
+  }
+}
 
-      if (deviceId.value) {
-        await loadDeviceInfo()
-        await loadPresetList()
-        await loadVideoStream()
-      }
-    }
-
-    // 加载设备信息
-    const loadDeviceInfo = async () => {
-      try {
-        const res = await videoApi.getMobileDeviceDetail(deviceId.value)
-        if (res.code === 1 && res.data) {
-          Object.assign(deviceInfo, res.data)
-        }
-      } catch (error) {
-        console.error('加载设备信息失败:', error)
-      }
-    }
-
-    // 加载预置位列表
-    const loadPresetList = async () => {
-      try {
-        const res = await videoApi.getPresetList(deviceId.value)
-        if (res.code === 1 && res.data) {
-          presetList.value = res.data
-        }
-      } catch (error) {
-        console.error('加载预置位列表失败:', error)
-      }
-    }
-
-    // 加载视频流
-    const loadVideoStream = async () => {
-      try {
-        const res = await videoApi.getMobileMonitor(deviceId.value, 'SUB', '480p')
-        if (res.code === 1 && res.data) {
-          streamUrl.value = res.data.streamUrl
-        }
-      } catch (error) {
-        console.error('加载视频流失败:', error)
-      }
-    }
-
-    // 云台控制开始
-    const handlePTZStart = async (action) => {
-      currentAction.value = action
-
-      try {
-        await videoApi.mobilePTZControl(deviceId.value, {
-          action,
-          speed: ptzSpeed.value
-        })
-
-        // 持续发送控制命令（每500ms）
-        ptzTimer.value = setInterval(async () => {
-          await videoApi.mobilePTZControl(deviceId.value, {
-            action,
-            speed: ptzSpeed.value
-          })
-        }, 500)
-
-      } catch (error) {
-        console.error('云台控制失败:', error)
-      }
-    }
-
-    // 云台控制停止
-    const handlePTZStop = () => {
-      if (ptzTimer.value) {
-        clearInterval(ptzTimer.value)
-        ptzTimer.value = null
-      }
-      currentAction.value = ''
-    }
-
-    // 停止所有移动
-    const stopAllMovement = () => {
-      handlePTZStop()
+// 截图
+const captureSnapshot = async () => {
+  try {
+    const res = await videoApi.captureSnapshot(deviceId.value)
+    if (res.code === 1) {
+      uni.showToast({ title: '截图成功', icon: 'success' })
       uni.vibrateShort()
     }
+  } catch (error) {
+    console.error('截图失败:', error)
+    uni.showToast({ title: '截图失败', icon: 'none' })
+  }
+}
 
-    // 速度改变
-    const handleSpeedChange = (e) => {
-      ptzSpeed.value = e.detail.value
-    }
-
-    // 跳转预置位
-    const gotoPreset = async (preset) => {
-      try {
-        await videoApi.gotoPreset(deviceId.value, preset.num)
-        uni.showToast({ title: `跳转到${preset.name}`, icon: 'success' })
-        uni.vibrateShort()
-      } catch (error) {
-        console.error('跳转预置位失败:', error)
-        uni.showToast({ title: '跳转失败', icon: 'none' })
+// 切换录像
+const toggleRecord = async () => {
+  try {
+    if (isRecording.value) {
+      // 停止录像
+      await videoApi.stopRecord(deviceId.value, recordId.value)
+      isRecording.value = false
+      recordId.value = ''
+      uni.showToast({ title: '录像已停止', icon: 'success' })
+    } else {
+      // 开始录像
+      const res = await videoApi.startRecord(deviceId.value)
+      if (res.code === 1 && res.data) {
+        isRecording.value = true
+        recordId.value = res.data
+        uni.showToast({ title: '录像已开始', icon: 'success' })
       }
     }
 
-    // 截图
-    const captureSnapshot = async () => {
-      try {
-        const res = await videoApi.captureSnapshot(deviceId.value)
-        if (res.code === 1) {
-          uni.showToast({ title: '截图成功', icon: 'success' })
-          uni.vibrateShort()
-        }
-      } catch (error) {
-        console.error('截图失败:', error)
-        uni.showToast({ title: '截图失败', icon: 'none' })
-      }
-    }
+    uni.vibrateShort()
+  } catch (error) {
+    console.error('录像操作失败:', error)
+    uni.showToast({ title: '操作失败', icon: 'none' })
+  }
+}
 
-    // 切换录像
-    const toggleRecord = async () => {
-      try {
-        if (isRecording.value) {
-          // 停止录像
-          await videoApi.stopRecord(deviceId.value, recordId.value)
-          isRecording.value = false
-          recordId.value = ''
-          uni.showToast({ title: '录像已停止', icon: 'success' })
-        } else {
-          // 开始录像
-          const res = await videoApi.startRecord(deviceId.value)
-          if (res.code === 1 && res.data) {
-            isRecording.value = true
-            recordId.value = res.data
-            uni.showToast({ title: '录像已开始', icon: 'success' })
-          }
-        }
+// 返回
+const goBack = () => {
+  uni.navigateBack()
+}
 
-        uni.vibrateShort()
-      } catch (error) {
-        console.error('录像操作失败:', error)
-        uni.showToast({ title: '操作失败', icon: 'none' })
-      }
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 清理资源
-    const cleanup = () => {
-      if (ptzTimer.value) {
-        clearInterval(ptzTimer.value)
-      }
-    }
-
-    return {
-      statusBarHeight,
-      loading,
-      isRecording,
-      deviceInfo,
-      ptzSpeed,
-      streamUrl,
-      presetList,
-      handlePTZStart,
-      handlePTZStop,
-      stopAllMovement,
-      handleSpeedChange,
-      gotoPreset,
-      captureSnapshot,
-      toggleRecord,
-      goBack
-    }
+// 清理资源
+const cleanup = () => {
+  if (ptzTimer.value) {
+    clearInterval(ptzTimer.value)
   }
 }
 </script>

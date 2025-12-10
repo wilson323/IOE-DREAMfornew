@@ -1,0 +1,72 @@
+package net.lab1024.sa.gateway.config;
+
+import net.lab1024.sa.common.auth.manager.UnifiedAuthenticationManager;
+import net.lab1024.sa.common.auth.util.JwtTokenUtil;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+/**
+ * 认证配置类
+ * <p>
+ * 注册统一认证管理器为Spring Bean
+ * 严格遵循CLAUDE.md全局架构规范：
+ * - Manager类是纯Java类，通过构造函数注入依赖
+ * - 在微服务中通过配置类将Manager注册为Spring Bean
+ * </p>
+ * <p>
+ * 企业级功能：
+ * - 多种认证方式支持（用户名密码、短信、邮件、生物识别、TOTP）
+ * - JWT令牌管理
+ * - Redis会话和黑名单管理
+ * - 登录安全策略
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 2.0.0
+ * @since 2025-01-30（企业级完善版）
+ */
+@Configuration
+public class AuthenticationConfig {
+
+    @Value("${auth.jwt.secret:ioedream-jwt-secret-key-2025-must-be-at-least-256-bits}")
+    private String jwtSecret;
+
+    @Value("${auth.jwt.access-token-expiration:86400}")
+    private Long accessTokenExpiration;
+
+    @Value("${auth.jwt.refresh-token-expiration:604800}")
+    private Long refreshTokenExpiration;
+
+    /**
+     * 注册JwtTokenUtil Bean
+     * <p>
+     * JwtTokenUtil是纯Java类，通过配置类注册为Spring Bean
+     * </p>
+     */
+    @Bean
+    public JwtTokenUtil jwtTokenUtil() {
+        return new JwtTokenUtil(jwtSecret, accessTokenExpiration, refreshTokenExpiration);
+    }
+
+    /**
+     * 注册统一认证管理器
+     * <p>
+     * 企业级统一身份认证管理，支持多种认证方式
+     * </p>
+     *
+     * @param gatewayServiceClient 网关服务客户端
+     * @param jwtTokenUtil JWT令牌工具类
+     * @param redisTemplate Redis模板
+     * @return 统一认证管理器实例
+     */
+    @Bean
+    public UnifiedAuthenticationManager unifiedAuthenticationManager(
+            GatewayServiceClient gatewayServiceClient,
+            JwtTokenUtil jwtTokenUtil,
+            StringRedisTemplate redisTemplate) {
+        return new UnifiedAuthenticationManager(gatewayServiceClient, jwtTokenUtil, redisTemplate);
+    }
+}

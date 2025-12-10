@@ -30,10 +30,14 @@ import net.lab1024.sa.common.entity.BaseEntity;
 public class SystemMonitorEntity extends BaseEntity {
 
     /**
-     * 监控ID
+     * 监控ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列monitor_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
-    @TableId(type = IdType.AUTO)
-    private Long monitorId;
+    @TableId(value = "monitor_id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 服务名称

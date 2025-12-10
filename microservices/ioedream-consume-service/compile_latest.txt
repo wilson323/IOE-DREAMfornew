@@ -1,0 +1,536 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------< net.lab1024.sa:ioedream-consume-service >---------------
+[INFO] Building IOE-DREAM Consume Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The POM for com.mysql:mysql-connector-j:jar:8.0.35 is missing, no dependency information available
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-consume-service ---
+[INFO] Copying 8 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-consume-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 137 source files with javac [debug release 17] to target\classes
+[INFO] ĳЩ��Ϣ�Ѿ�����; ��ʹ�� -Xdiags:verbose ���±����Ի���������
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeExecutionManagerImpl.java:[170,66] �Ҳ�������
+  ����:   ���� getBalanceAmount()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeExecutionManagerImpl.java:[288,37] �Ҳ�������
+  ����:   ���� getName()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeExecutionManagerImpl.java:[290,40] �Ҳ�������
+  ����:   ���� getAreaSubType()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeExecutionManagerImpl.java:[317,88] ��Ԫ����� '-' �Ĳ��������ʹ���
+  ��һ������:  java.lang.Number&java.lang.Comparable<? extends java.lang.Number&java.lang.Comparable<?>>
+  �ڶ�������: java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[55,53] �Ҳ�������
+  ����:   ���� consume(net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeService�ı��� consumeService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[83,13] �Ҳ�������
+  ����:   �� ConsumeQueryDTO
+  λ��: �� net.lab1024.sa.consume.controller.MobileConsumeController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[83,44] �Ҳ�������
+  ����:   �� ConsumeQueryDTO
+  λ��: �� net.lab1024.sa.consume.controller.MobileConsumeController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[194,54] �Ҳ�������
+  ����:   ���� recharge(net.lab1024.sa.consume.domain.dto.RechargeRequestDTO)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeService�ı��� consumeService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[207,66] �Ҳ�������
+  ����:   ���� getMsg()
+  λ��: ����Ϊnet.lab1024.sa.common.dto.ResponseDTO<java.lang.Void>�ı��� result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[274,40] �����ݵ�����: java.lang.String�޷�ת��Ϊjava.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[276,53] �Ҳ�������
+  ����:   ���� consume(net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeService�ı��� consumeService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[320,16] �Ҳ�������
+  ����:   ���� setOrderId(java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[323,54] �����ݵ�����: java.lang.String�޷�ת��Ϊjava.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[325,16] �Ҳ�������
+  ����:   ���� setConsumeType(java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[334,39] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeResultDTO�ı��� result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[335,48] �����ݵ�����: java.lang.Integer�޷�ת��Ϊjava.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[336,39] �Ҳ�������
+  ����:   ���� getMessage()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeResultDTO�ı��� result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[339,45] �Ҳ�������
+  ����:   ���� getBalanceBefore()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeResultDTO�ı��� result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[367,40] �Ҳ�������
+  ����:   ���� getRecordId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.vo.ConsumeRecordVO�ı��� record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[368,39] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.vo.ConsumeRecordVO�ı��� record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[373,48] �����ݵ�����: java.lang.Integer�޷�ת��Ϊjava.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[382,16] �Ҳ�������
+  ����:   ���� setOrderId(java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.RechargeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[384,16] �Ҳ�������
+  ����:   ���� setAmount(java.math.BigDecimal)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.RechargeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[386,16] �Ҳ�������
+  ����:   ���� setPaymentMethod(java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.RechargeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[421,16] �Ҳ�������
+  ����:   ���� setOrderId(java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[422,29] �����ݵ�����: java.lang.String�޷�ת��Ϊjava.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[424,16] �Ҳ�������
+  ����:   ���� setConsumeType(java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/AccountController.java:[530,41] �Ҳ�������
+  ����:   ���� getBalanceAmount()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[46,31] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[48,66] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[68,62] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[83,71] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[86,47] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[121,47] �Ҳ�������
+  ����:   ���� getBalanceById(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.dao.AccountDao�ı��� accountDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[128,41] �Ҳ�������
+  ����:   ���� updateBalance(java.lang.Long,java.math.BigDecimal)
+  λ��: ����Ϊnet.lab1024.sa.consume.dao.AccountDao�ı��� accountDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[139,60] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[152,41] �Ҳ�������
+  ����:   ���� updateBalance(java.lang.Long,java.math.BigDecimal)
+  λ��: ����Ϊnet.lab1024.sa.consume.dao.AccountDao�ı��� accountDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[158,60] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[172,45] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[175,19] �Ҳ�������
+  ����:   ���� setDeviceId(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeRecordEntity�ı��� record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[177,49] �Ҳ�������
+  ����:   ���� getConsumeType()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[178,30] �����ݵ�����: java.lang.String�޷�ת��Ϊjava.lang.Integer
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[179,58] �����ݵ�����: long�޷�ת��Ϊjava.time.LocalDateTime
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[181,47] ����insert(net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity), �Ҳ������ʵķ���
+    ���� com.baomidou.mybatisplus.core.mapper.BaseMapper.insert(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity)������
+      (������ƥ��; net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity�޷�ת��Ϊnet.lab1024.sa.common.consume.entity.ConsumeRecordEntity)
+    ���� com.baomidou.mybatisplus.core.mapper.BaseMapper.insert(java.util.Collection<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity>)������
+      (������ƥ��; net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity�޷�ת��Ϊjava.util.Collection<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity>)
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[184,62] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[197,47] �Ҳ�������
+  ����:   ���� deleteByOrderId(java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.dao.ConsumeRecordDao�ı��� consumeRecordDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[214,61] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[217,60] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[231,61] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[234,62] �Ҳ�������
+  ����:   ���� getOrderId()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[92,20] �Ҳ�������
+  ����:   ���� setAccountKindId(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[97,90] �����ݵ�����: long�޷�ת��Ϊjava.math.BigDecimal
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[98,20] �Ҳ�������
+  ����:   ���� setAllowanceBalance(long)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[99,20] �Ҳ�������
+  ����:   ���� setFrozenBalance(long)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[145,24] �Ҳ�������
+  ����:   ���� setAccountKindId(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[531,50] �Ҳ�������
+  ����:   ���� getBalanceAmount()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[532,38] �Ҳ�������
+  ����:   ���� getFrozenBalanceAmount()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[541,44] �Ҳ�������
+  ����:   ���� getFrozenBalance()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[542,20] �Ҳ�������
+  ����:   ���� setFrozenBalance(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[594,24] �Ҳ�������
+  ����:   ���� getFrozenBalance()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[596,43] �Ҳ�������
+  ����:   ���� getFrozenBalance()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[601,44] �Ҳ�������
+  ����:   ���� getFrozenBalance()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[602,20] �Ҳ�������
+  ����:   ���� setFrozenBalance(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[862,27] �Ҳ�������
+  ����:   ���� getBalanceAmount()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[897,26] ����������Ч
+  �Ҳ�������
+    ����:   ���� getBalanceAmount()
+    λ��: �� net.lab1024.sa.consume.domain.entity.AccountEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[901,26] ����������Ч
+  �Ҳ�������
+    ����:   ���� getFrozenBalanceAmount()
+    λ��: �� net.lab1024.sa.consume.domain.entity.AccountEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[52,58] �Ҳ�������
+  ����:   ���� getAccountPage(net.lab1024.sa.consume.domain.form.AccountQueryForm)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[63,45] �Ҳ�������
+  ����:   ���� getAccountDetail(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[74,57] �Ҳ�������
+  ����:   ���� getUserBalanceInfo(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[85,64] �����ݵ�����: net.lab1024.sa.common.dto.ResponseDTO<net.lab1024.sa.consume.domain.vo.AccountVO>�޷�ת��Ϊnet.lab1024.sa.consume.domain.vo.AccountVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[98,40] �Ҳ�������
+  ����:   ���� freezeAccount(java.lang.Long,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.Integer)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[114,40] �Ҳ�������
+  ����:   ���� unfreezeAccount(java.lang.Long,@jakarta.validation.constraints.NotBlank java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[132,40] �Ҳ�������
+  ����:   ���� rechargeAccount(java.lang.Long,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[149,40] �Ҳ�������
+  ����:   ���� setAccountLimit(java.lang.Long,java.math.BigDecimal,java.math.BigDecimal)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[166,42] �Ҳ�������
+  ����:   ���� batchUpdateAccountStatus(@jakarta.validation.constraints.NotNull java.util.List<java.lang.Long>,@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[176,56] �Ҳ�������
+  ����:   ���� getAccountStatistics()
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[198,65] �Ҳ�������
+  ����:   ���� getAccountConsumeRecords(java.lang.Long,java.lang.Integer,java.lang.Integer)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[209,56] �Ҳ�������
+  ����:   ���� checkAccountStatus(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[219,40] �Ҳ�������
+  ����:   ���� createAccount(@jakarta.validation.Valid net.lab1024.sa.consume.domain.entity.AccountEntity)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[232,55] �����ݵ�����: @jakarta.validation.Valid net.lab1024.sa.consume.domain.entity.AccountEntity�޷�ת��Ϊnet.lab1024.sa.consume.domain.vo.AccountVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[247,40] �Ҳ�������
+  ����:   ���� deleteAccount(java.lang.Long)
+  λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[101,52] ��Ԫ����� '-' �Ĳ��������ʹ���
+  ��һ������:  java.math.BigDecimal
+  �ڶ�������: java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[109,32] �����ݵ�����: java.lang.Long�޷�ת��Ϊjava.math.BigDecimal
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[141,52] ��Ԫ����� '+' �Ĳ��������ʹ���
+  ��һ������:  java.math.BigDecimal
+  �ڶ�������: java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[144,32] �����ݵ�����: java.lang.Long�޷�ת��Ϊjava.math.BigDecimal
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[176,55] ��Ԫ����� '>=' �Ĳ��������ʹ���
+  ��һ������:  java.math.BigDecimal
+  �ڶ�������: java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeAreaManagerImpl.java:[238,55] �Ҳ�������
+  ����:   ���� getFullPath()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� targetArea
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeAreaManagerImpl.java:[284,49] �����ݵ�����: java.lang.Long�޷�ת��Ϊjava.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeAreaManagerImpl.java:[311,24] �Ҳ�������
+  ����:   ���� getFullPath()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeAreaManagerImpl.java:[335,45] �Ҳ�������
+  ����:   ���� getExtendedAttributes()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeRecommendService.java:[512,38] �Ҳ�������
+  ����:   ���� getGpsLocation()
+  λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[INFO] 91 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.375 s
+[INFO] Finished at: 2025-12-09T10:06:43+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-consume-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeExecutionManagerImpl.java:[170,66] �Ҳ�������
+[ERROR]   ����:   ���� getBalanceAmount()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeExecutionManagerImpl.java:[288,37] �Ҳ�������
+[ERROR]   ����:   ���� getName()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeExecutionManagerImpl.java:[290,40] �Ҳ�������
+[ERROR]   ����:   ���� getAreaSubType()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeExecutionManagerImpl.java:[317,88] ��Ԫ����� '-' �Ĳ��������ʹ���
+[ERROR]   ��һ������:  java.lang.Number&java.lang.Comparable<? extends java.lang.Number&java.lang.Comparable<?>>
+[ERROR]   �ڶ�������: java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[55,53] �Ҳ�������
+[ERROR]   ����:   ���� consume(net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeService�ı��� consumeService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[83,13] �Ҳ�������
+[ERROR]   ����:   �� ConsumeQueryDTO
+[ERROR]   λ��: �� net.lab1024.sa.consume.controller.MobileConsumeController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[83,44] �Ҳ�������
+[ERROR]   ����:   �� ConsumeQueryDTO
+[ERROR]   λ��: �� net.lab1024.sa.consume.controller.MobileConsumeController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[194,54] �Ҳ�������
+[ERROR]   ����:   ���� recharge(net.lab1024.sa.consume.domain.dto.RechargeRequestDTO)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeService�ı��� consumeService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[207,66] �Ҳ�������
+[ERROR]   ����:   ���� getMsg()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.common.dto.ResponseDTO<java.lang.Void>�ı��� result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[274,40] �����ݵ�����: java.lang.String�޷�ת��Ϊjava.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[276,53] �Ҳ�������
+[ERROR]   ����:   ���� consume(net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeService�ı��� consumeService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[320,16] �Ҳ�������
+[ERROR]   ����:   ���� setOrderId(java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[323,54] �����ݵ�����: java.lang.String�޷�ת��Ϊjava.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[325,16] �Ҳ�������
+[ERROR]   ����:   ���� setConsumeType(java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[334,39] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeResultDTO�ı��� result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[335,48] �����ݵ�����: java.lang.Integer�޷�ת��Ϊjava.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[336,39] �Ҳ�������
+[ERROR]   ����:   ���� getMessage()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeResultDTO�ı��� result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[339,45] �Ҳ�������
+[ERROR]   ����:   ���� getBalanceBefore()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeResultDTO�ı��� result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[367,40] �Ҳ�������
+[ERROR]   ����:   ���� getRecordId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.vo.ConsumeRecordVO�ı��� record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[368,39] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.vo.ConsumeRecordVO�ı��� record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[373,48] �����ݵ�����: java.lang.Integer�޷�ת��Ϊjava.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[382,16] �Ҳ�������
+[ERROR]   ����:   ���� setOrderId(java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.RechargeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[384,16] �Ҳ�������
+[ERROR]   ����:   ���� setAmount(java.math.BigDecimal)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.RechargeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[386,16] �Ҳ�������
+[ERROR]   ����:   ���� setPaymentMethod(java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.RechargeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[421,16] �Ҳ�������
+[ERROR]   ����:   ���� setOrderId(java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[422,29] �����ݵ�����: java.lang.String�޷�ת��Ϊjava.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[424,16] �Ҳ�������
+[ERROR]   ����:   ���� setConsumeType(java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/AccountController.java:[530,41] �Ҳ�������
+[ERROR]   ����:   ���� getBalanceAmount()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[46,31] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[48,66] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[68,62] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[83,71] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[86,47] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[121,47] �Ҳ�������
+[ERROR]   ����:   ���� getBalanceById(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.dao.AccountDao�ı��� accountDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[128,41] �Ҳ�������
+[ERROR]   ����:   ���� updateBalance(java.lang.Long,java.math.BigDecimal)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.dao.AccountDao�ı��� accountDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[139,60] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[152,41] �Ҳ�������
+[ERROR]   ����:   ���� updateBalance(java.lang.Long,java.math.BigDecimal)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.dao.AccountDao�ı��� accountDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[158,60] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[172,45] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[175,19] �Ҳ�������
+[ERROR]   ����:   ���� setDeviceId(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeRecordEntity�ı��� record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[177,49] �Ҳ�������
+[ERROR]   ����:   ���� getConsumeType()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[178,30] �����ݵ�����: java.lang.String�޷�ת��Ϊjava.lang.Integer
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[179,58] �����ݵ�����: long�޷�ת��Ϊjava.time.LocalDateTime
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[181,47] ����insert(net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity), �Ҳ������ʵķ���
+[ERROR]     ���� com.baomidou.mybatisplus.core.mapper.BaseMapper.insert(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity)������
+[ERROR]       (������ƥ��; net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity�޷�ת��Ϊnet.lab1024.sa.common.consume.entity.ConsumeRecordEntity)
+[ERROR]     ���� com.baomidou.mybatisplus.core.mapper.BaseMapper.insert(java.util.Collection<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity>)������
+[ERROR]       (������ƥ��; net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity�޷�ת��Ϊjava.util.Collection<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity>)
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[184,62] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[197,47] �Ҳ�������
+[ERROR]   ����:   ���� deleteByOrderId(java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.dao.ConsumeRecordDao�ı��� consumeRecordDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[214,61] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[217,60] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[231,61] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeSagaManager.java:[234,62] �Ҳ�������
+[ERROR]   ����:   ���� getOrderId()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.dto.ConsumeRequestDTO�ı��� consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[92,20] �Ҳ�������
+[ERROR]   ����:   ���� setAccountKindId(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[97,90] �����ݵ�����: long�޷�ת��Ϊjava.math.BigDecimal
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[98,20] �Ҳ�������
+[ERROR]   ����:   ���� setAllowanceBalance(long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[99,20] �Ҳ�������
+[ERROR]   ����:   ���� setFrozenBalance(long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[145,24] �Ҳ�������
+[ERROR]   ����:   ���� setAccountKindId(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[531,50] �Ҳ�������
+[ERROR]   ����:   ���� getBalanceAmount()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[532,38] �Ҳ�������
+[ERROR]   ����:   ���� getFrozenBalanceAmount()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[541,44] �Ҳ�������
+[ERROR]   ����:   ���� getFrozenBalance()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[542,20] �Ҳ�������
+[ERROR]   ����:   ���� setFrozenBalance(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[594,24] �Ҳ�������
+[ERROR]   ����:   ���� getFrozenBalance()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[596,43] �Ҳ�������
+[ERROR]   ����:   ���� getFrozenBalance()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[601,44] �Ҳ�������
+[ERROR]   ����:   ���� getFrozenBalance()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[602,20] �Ҳ�������
+[ERROR]   ����:   ���� setFrozenBalance(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[862,27] �Ҳ�������
+[ERROR]   ����:   ���� getBalanceAmount()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.AccountEntity�ı��� account
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[897,26] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getBalanceAmount()
+[ERROR]     λ��: �� net.lab1024.sa.consume.domain.entity.AccountEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/AccountServiceImpl.java:[901,26] ����������Ч
+[ERROR]   �Ҳ�������
+[ERROR]     ����:   ���� getFrozenBalanceAmount()
+[ERROR]     λ��: �� net.lab1024.sa.consume.domain.entity.AccountEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[52,58] �Ҳ�������
+[ERROR]   ����:   ���� getAccountPage(net.lab1024.sa.consume.domain.form.AccountQueryForm)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[63,45] �Ҳ�������
+[ERROR]   ����:   ���� getAccountDetail(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[74,57] �Ҳ�������
+[ERROR]   ����:   ���� getUserBalanceInfo(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[85,64] �����ݵ�����: net.lab1024.sa.common.dto.ResponseDTO<net.lab1024.sa.consume.domain.vo.AccountVO>�޷�ת��Ϊnet.lab1024.sa.consume.domain.vo.AccountVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[98,40] �Ҳ�������
+[ERROR]   ����:   ���� freezeAccount(java.lang.Long,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.Integer)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[114,40] �Ҳ�������
+[ERROR]   ����:   ���� unfreezeAccount(java.lang.Long,@jakarta.validation.constraints.NotBlank java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[132,40] �Ҳ�������
+[ERROR]   ����:   ���� rechargeAccount(java.lang.Long,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[149,40] �Ҳ�������
+[ERROR]   ����:   ���� setAccountLimit(java.lang.Long,java.math.BigDecimal,java.math.BigDecimal)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[166,42] �Ҳ�������
+[ERROR]   ����:   ���� batchUpdateAccountStatus(@jakarta.validation.constraints.NotNull java.util.List<java.lang.Long>,@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[176,56] �Ҳ�������
+[ERROR]   ����:   ���� getAccountStatistics()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[198,65] �Ҳ�������
+[ERROR]   ����:   ���� getAccountConsumeRecords(java.lang.Long,java.lang.Integer,java.lang.Integer)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[209,56] �Ҳ�������
+[ERROR]   ����:   ���� checkAccountStatus(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[219,40] �Ҳ�������
+[ERROR]   ����:   ���� createAccount(@jakarta.validation.Valid net.lab1024.sa.consume.domain.entity.AccountEntity)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[232,55] �����ݵ�����: @jakarta.validation.Valid net.lab1024.sa.consume.domain.entity.AccountEntity�޷�ת��Ϊnet.lab1024.sa.consume.domain.vo.AccountVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[247,40] �Ҳ�������
+[ERROR]   ����:   ���� deleteAccount(java.lang.Long)
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.service.ConsumeAccountService�ı��� accountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[101,52] ��Ԫ����� '-' �Ĳ��������ʹ���
+[ERROR]   ��һ������:  java.math.BigDecimal
+[ERROR]   �ڶ�������: java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[109,32] �����ݵ�����: java.lang.Long�޷�ת��Ϊjava.math.BigDecimal
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[141,52] ��Ԫ����� '+' �Ĳ��������ʹ���
+[ERROR]   ��һ������:  java.math.BigDecimal
+[ERROR]   �ڶ�������: java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[144,32] �����ݵ�����: java.lang.Long�޷�ת��Ϊjava.math.BigDecimal
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/AccountManagerImpl.java:[176,55] ��Ԫ����� '>=' �Ĳ��������ʹ���
+[ERROR]   ��һ������:  java.math.BigDecimal
+[ERROR]   �ڶ�������: java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeAreaManagerImpl.java:[238,55] �Ҳ�������
+[ERROR]   ����:   ���� getFullPath()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� targetArea
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeAreaManagerImpl.java:[284,49] �����ݵ�����: java.lang.Long�޷�ת��Ϊjava.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeAreaManagerImpl.java:[311,24] �Ҳ�������
+[ERROR]   ����:   ���� getFullPath()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/impl/ConsumeAreaManagerImpl.java:[335,45] �Ҳ�������
+[ERROR]   ����:   ���� getExtendedAttributes()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeRecommendService.java:[512,38] �Ҳ�������
+[ERROR]   ����:   ���� getGpsLocation()
+[ERROR]   λ��: ����Ϊnet.lab1024.sa.consume.domain.entity.ConsumeAreaEntity�ı��� area
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

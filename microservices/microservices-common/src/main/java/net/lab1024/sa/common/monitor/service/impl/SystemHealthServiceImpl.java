@@ -270,7 +270,7 @@ public class SystemHealthServiceImpl implements SystemHealthService {
             return alerts.stream()
                     .map(alert -> {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("alertId", alert.getAlertId());
+                        map.put("alertId", alert.getId());
                         map.put("alertLevel", alert.getAlertLevel());
                         map.put("alertTitle", alert.getAlertTitle());
                         map.put("alertMessage", alert.getAlertMessage());
@@ -328,7 +328,7 @@ public class SystemHealthServiceImpl implements SystemHealthService {
 
         try {
             AlertEntity alert = new AlertEntity();
-            alert.setAlertId(alertId);
+            alert.setId(alertId);
             alert.setStatus("RESOLVED");
             alert.setResolutionNotes(resolution);
             alert.setResolvedTime(LocalDateTime.now());

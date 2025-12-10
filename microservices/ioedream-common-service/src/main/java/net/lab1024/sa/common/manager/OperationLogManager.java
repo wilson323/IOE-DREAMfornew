@@ -86,19 +86,19 @@ public class OperationLogManager {
             // 2. 保存到数据库
             int result = auditLogDao.insert(auditLog);
             if (result > 0) {
-                log.debug("[操作日志] 操作日志保存成功，日志ID：{}", auditLog.getLogId());
+                log.debug("[操作日志] 操作日志保存成功，日志ID：{}", auditLog.getId());
 
                 // 3. 缓存到Redis（提升查询性能）
                 try {
-                    String cacheKey = CACHE_KEY_PREFIX + auditLog.getLogId();
+                    String cacheKey = CACHE_KEY_PREFIX + auditLog.getId();
                     // Duration.ofSeconds() 总是返回非null对象，但类型系统无法推断
                     java.time.Duration expireDuration = java.util.Objects.requireNonNull(
                             java.time.Duration.ofSeconds(CACHE_EXPIRE_SECONDS));
                     redisTemplate.opsForValue().set(cacheKey, auditLog, expireDuration);
-                    log.debug("[操作日志] 操作日志缓存成功，日志ID：{}", auditLog.getLogId());
+                    log.debug("[操作日志] 操作日志缓存成功，日志ID：{}", auditLog.getId());
                 } catch (Exception e) {
                     // Redis缓存失败不影响主业务流程，只记录警告日志
-                    log.warn("[操作日志] 操作日志缓存失败，日志ID：{}，错误：{}", auditLog.getLogId(), e.getMessage());
+                    log.warn("[操作日志] 操作日志缓存失败，日志ID：{}，错误：{}", auditLog.getId(), e.getMessage());
                 }
             } else {
                 log.warn("[操作日志] 操作日志保存失败，用户ID：{}，操作：{}", userId, action);

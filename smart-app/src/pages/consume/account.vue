@@ -48,82 +48,73 @@
   </view>
 </template>
 
-<script>
-import { ref, reactive, onMounted } from 'vue'
+<script setup>
+import { reactive, onMounted } from 'vue'
 import { useUserStore } from '@/store/modules/system/user.js'
 import consumeApi from '@/api/business/consume/consume-api.js'
 
-export default {
-  name: 'ConsumeAccount',
-  setup() {
-    const userStore = useUserStore()
-    const userInfo = reactive({
-      balance: 0,
-      status: 1,
-      accountType: ''
-    })
+// 响应式数据
+const userStore = useUserStore()
+const userInfo = reactive({
+  balance: 0,
+  status: 1,
+  accountType: ''
+})
 
-    // 加载用户信息
-    const loadUserInfo = async () => {
-      try {
-        // 从用户store获取用户ID
-        const userId = userStore.employeeId
-        if (!userId) {
-          uni.showToast({
-            title: '请先登录',
-            icon: 'none'
-          })
-          return
-        }
-        const result = await consumeApi.getUserInfo(userId)
-        if (result.success && result.data) {
-          Object.assign(userInfo, result.data)
-        }
-      } catch (error) {
-        console.error('加载用户信息失败:', error)
-      }
+// 页面生命周期
+onMounted(() => {
+  loadUserInfo()
+})
+
+onShow(() => {
+  // 页面显示时可以刷新数据
+})
+
+onPullDownRefresh(() => {
+  loadUserInfo()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const loadUserInfo = async () => {
+  try {
+    // 从用户store获取用户ID
+    const userId = userStore.employeeId
+    if (!userId) {
+      uni.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+      return
     }
-
-    // 充值
-    const recharge = () => {
-      uni.showToast({ title: '充值功能开发中', icon: 'none' })
+    const result = await consumeApi.getUserInfo(userId)
+    if (result.success && result.data) {
+      Object.assign(userInfo, result.data)
     }
-
-    // 查看明细
-    const viewRecords = () => {
-      uni.navigateTo({ url: '/pages/consume/record' })
-    }
-
-    // 查看统计
-    const viewStats = () => {
-      uni.showToast({ title: '统计功能开发中', icon: 'none' })
-    }
-
-    // 格式化金额
-    const formatAmount = (amount) => {
-      if (!amount) return '0.00'
-      return Number(amount).toFixed(2)
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 初始化
-    onMounted(() => {
-      loadUserInfo()
-    })
-
-    return {
-      userInfo,
-      recharge,
-      viewRecords,
-      viewStats,
-      formatAmount,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载用户信息失败:', error)
   }
+}
+
+const recharge = () => {
+  uni.navigateTo({ url: '/pages/consume/recharge' })
+}
+
+const viewRecords = () => {
+  uni.navigateTo({ url: '/pages/consume/record' })
+}
+
+const viewStats = () => {
+  uni.showToast({ title: '统计功能开发中', icon: 'none' })
+}
+
+const formatAmount = (amount) => {
+  if (!amount) return '0.00'
+  return Number(amount).toFixed(2)
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 
