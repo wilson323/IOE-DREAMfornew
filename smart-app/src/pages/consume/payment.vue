@@ -121,353 +121,329 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import consumeApi from '@/api/business/consume/consume-api.js'
 import { useUserStore } from '@/store/modules/system/user'
 
-export default {
-  name: 'QuickConsumePayment',
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
 
-  setup() {
-    // 系统信息
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+// 用户store
+const userStore = useUserStore()
 
-    // 用户store
-    const userStore = useUserStore()
+// 页面状态
+const consuming = ref(false)
+const refreshing = ref(false)
+const showSuccessAnimation = ref(false)
 
-    // 页面状态
-    const consuming = ref(false)
-    const refreshing = ref(false)
-    const showSuccessAnimation = ref(false)
+// 用户信息
+const userInfo = reactive({
+  userId: null,
+  name: '',
+  avatar: '',
+  balance: 0
+})
 
-    // 用户信息
-    const userInfo = reactive({
-      userId: null,
-      name: '',
-      avatar: '',
-      balance: 0
+// 快捷金额
+const quickAmounts = [5, 10, 15, 20, 30, 50]
+
+// 选中的金额
+const selectedAmount = ref(0)
+
+// 自定义金额
+const customAmount = ref('')
+
+// 最后消费金额
+const lastConsumeAmount = ref(0)
+
+// 最近消费记录
+const recentRecords = ref([])
+
+// 计算显示金额
+const displayAmount = computed(() => {
+  if (customAmount.value) {
+    return formatAmount(customAmount.value)
+  }
+  if (selectedAmount.value > 0) {
+    return formatAmount(selectedAmount.value)
+  }
+  return '0.00'
+})
+
+// 是否可以消费
+const canConsume = computed(() => {
+  const amount = customAmount.value || selectedAmount.value
+  return amount > 0 && amount <= userInfo.balance
+})
+
+// 页面生命周期
+onMounted(() => {
+  init()
+})
+
+onShow(() => {
+  // 页面显示时可以刷新余额
+  if (userInfo.userId) {
+    loadUserInfo(userInfo.userId)
+  }
+})
+
+  // 初始化
+const init = async () => {
+  // 从用户store获取用户ID
+  const userId = userStore.employeeId
+  if (!userId) {
+    uni.showToast({
+      title: '请先登录',
+      icon: 'none'
+    })
+    return
+  }
+  userInfo.userId = userId
+
+  await Promise.all([
+    loadUserInfo(userId),
+    loadRecentRecords(userId)
+  ])
+}
+
+// 加载用户信息
+const loadUserInfo = async (userId) => {
+  try {
+    const res = await consumeApi.getUserConsumeInfo(userId)
+    if (res.code === 1 && res.data) {
+      userInfo.name = res.data.userName || res.data.name
+      userInfo.avatar = res.data.avatar
+      userInfo.balance = res.data.balance || 0
+    }
+  } catch (error) {
+    console.error('加载用户信息失败:', error)
+
+    // 尝试从本地缓存加载
+    const cachedInfo = uni.getStorageSync('USER_CONSUME_INFO')
+    if (cachedInfo) {
+      Object.assign(userInfo, cachedInfo)
+    }
+  }
+}
+
+// 加载最近消费记录
+const loadRecentRecords = async (userId) => {
+  try {
+    const res = await consumeApi.getRecentHistory({
+      userId,
+      pageNum: 1,
+      pageSize: 5
+    })
+    if (res.code === 1 && res.data) {
+      recentRecords.value = res.data.list || res.data || []
+    }
+  } catch (error) {
+    console.error('加载消费记录失败:', error)
+  }
+}
+
+// 选择金额
+const selectAmount = (amount) => {
+  if (selectedAmount.value === amount) {
+    selectedAmount.value = 0  // 取消选择
+  } else {
+    selectedAmount.value = amount
+    customAmount.value = ''  // 清除自定义金额
+  }
+
+  // 震动反馈
+  uni.vibrateShort({ type: 'light' })
+}
+
+// 自定义金额输入
+const onCustomAmountInput = (e) => {
+  selectedAmount.value = 0  // 清除快捷金额选择
+}
+
+// 确认自定义金额
+const confirmCustomAmount = () => {
+  if (customAmount.value) {
+    selectedAmount.value = 0
+    uni.vibrateShort({ type: 'light' })
+  }
+}
+
+// 清除自定义金额
+const clearCustomAmount = () => {
+  customAmount.value = ''
+  uni.vibrateShort({ type: 'light' })
+}
+
+// 刷新余额
+const refreshBalance = async () => {
+  refreshing.value = true
+  await loadUserInfo(userInfo.userId)
+  refreshing.value = false
+  uni.showToast({ title: '余额已刷新', icon: 'none', duration: 1000 })
+}
+
+// 确认消费
+const confirmConsume = async () => {
+  if (!canConsume.value) {
+    if (userInfo.balance < (customAmount.value || selectedAmount.value)) {
+      uni.showToast({ title: '余额不足', icon: 'none' })
+    } else {
+      uni.showToast({ title: '请选择金额', icon: 'none' })
+    }
+    return
+  }
+
+  // 二次确认
+  const amount = Number(customAmount.value || selectedAmount.value)
+  const confirmed = await showConfirmDialog(`确认消费 ¥${formatAmount(amount)}？`)
+  if (!confirmed) {
+    return
+  }
+
+  consuming.value = true
+
+  try {
+    const res = await consumeApi.quickConsume({
+      userId: userInfo.userId,
+      amount,
+      deviceId: 'MOBILE_POS_001',
+      paymentMethod: 'balance'
     })
 
-    // 快捷金额
-    const quickAmounts = [5, 10, 15, 20, 30, 50]
+    if (res.code === 1) {
+      lastConsumeAmount.value = amount
 
-    // 选中的金额
-    const selectedAmount = ref(0)
+      // 更新余额（乐观更新）
+      userInfo.balance -= amount
 
-    // 自定义金额
-    const customAmount = ref('')
+      // 缓存用户信息
+      uni.setStorageSync('USER_CONSUME_INFO', userInfo)
 
-    // 最后消费金额
-    const lastConsumeAmount = ref(0)
+      // 显示成功动画
+      showSuccessAnimation.value = true
 
-    // 最近消费记录
-    const recentRecords = ref([])
+      // 震动反馈（长震动）
+      uni.vibrateLong()
 
-    // 计算显示金额
-    const displayAmount = computed(() => {
-      if (customAmount.value) {
-        return formatAmount(customAmount.value)
-      }
-      if (selectedAmount.value > 0) {
-        return formatAmount(selectedAmount.value)
-      }
-      return '0.00'
-    })
+      // 播放成功音效（可选）
+      // playSuccessSound()
 
-    // 是否可以消费
-    const canConsume = computed(() => {
-      const amount = customAmount.value || selectedAmount.value
-      return amount > 0 && amount <= userInfo.balance
-    })
+      // 3秒后关闭动画并返回
+      setTimeout(() => {
+        showSuccessAnimation.value = false
 
-    // 页面生命周期
-    onMounted(() => {
-      init()
-    })
-
-    // 初始化
-    const init = async () => {
-      // 从用户store获取用户ID
-      const userId = userStore.employeeId
-      if (!userId) {
-        uni.showToast({
-          title: '请先登录',
-          icon: 'none'
-        })
-        return
-      }
-      userInfo.userId = userId
-
-      await Promise.all([
-        loadUserInfo(userId),
-        loadRecentRecords(userId)
-      ])
-    }
-
-    // 加载用户信息
-    const loadUserInfo = async (userId) => {
-      try {
-        const res = await consumeApi.getUserConsumeInfo(userId)
-        if (res.code === 1 && res.data) {
-          userInfo.name = res.data.userName || res.data.name
-          userInfo.avatar = res.data.avatar
-          userInfo.balance = res.data.balance || 0
-        }
-      } catch (error) {
-        console.error('加载用户信息失败:', error)
-
-        // 尝试从本地缓存加载
-        const cachedInfo = uni.getStorageSync('USER_CONSUME_INFO')
-        if (cachedInfo) {
-          Object.assign(userInfo, cachedInfo)
-        }
-      }
-    }
-
-    // 加载最近消费记录
-    const loadRecentRecords = async (userId) => {
-      try {
-        const res = await consumeApi.getRecentHistory({
-          userId,
-          pageNum: 1,
-          pageSize: 5
-        })
-        if (res.code === 1 && res.data) {
-          recentRecords.value = res.data.list || res.data || []
-        }
-      } catch (error) {
-        console.error('加载消费记录失败:', error)
-      }
-    }
-
-    // 选择金额
-    const selectAmount = (amount) => {
-      if (selectedAmount.value === amount) {
-        selectedAmount.value = 0  // 取消选择
-      } else {
-        selectedAmount.value = amount
-        customAmount.value = ''  // 清除自定义金额
-      }
-
-      // 震动反馈
-      uni.vibrateShort({ type: 'light' })
-    }
-
-    // 自定义金额输入
-    const onCustomAmountInput = (e) => {
-      selectedAmount.value = 0  // 清除快捷金额选择
-    }
-
-    // 确认自定义金额
-    const confirmCustomAmount = () => {
-      if (customAmount.value) {
+        // 重置选择
         selectedAmount.value = 0
-        uni.vibrateShort({ type: 'light' })
-      }
-    }
+        customAmount.value = ''
 
-    // 清除自定义金额
-    const clearCustomAmount = () => {
-      customAmount.value = ''
-      uni.vibrateShort({ type: 'light' })
-    }
-
-    // 刷新余额
-    const refreshBalance = async () => {
-      refreshing.value = true
-      await loadUserInfo(userInfo.userId)
-      refreshing.value = false
-      uni.showToast({ title: '余额已刷新', icon: 'none', duration: 1000 })
-    }
-
-    // 确认消费
-    const confirmConsume = async () => {
-      if (!canConsume.value) {
-        if (userInfo.balance < (customAmount.value || selectedAmount.value)) {
-          uni.showToast({ title: '余额不足', icon: 'none' })
-        } else {
-          uni.showToast({ title: '请选择金额', icon: 'none' })
-        }
-        return
-      }
-
-      // 二次确认
-      const amount = Number(customAmount.value || selectedAmount.value)
-      const confirmed = await showConfirmDialog(`确认消费 ¥${formatAmount(amount)}？`)
-      if (!confirmed) {
-        return
-      }
-
-      consuming.value = true
-
-      try {
-        const res = await consumeApi.quickConsume({
-          userId: userInfo.userId,
-          amount,
-          deviceId: 'MOBILE_POS_001',
-          paymentMethod: 'balance'
-        })
-
-        if (res.code === 1) {
-          lastConsumeAmount.value = amount
-
-          // 更新余额（乐观更新）
-          userInfo.balance -= amount
-
-          // 缓存用户信息
-          uni.setStorageSync('USER_CONSUME_INFO', userInfo)
-
-          // 显示成功动画
-          showSuccessAnimation.value = true
-
-          // 震动反馈（长震动）
-          uni.vibrateLong()
-
-          // 播放成功音效（可选）
-          // playSuccessSound()
-
-          // 3秒后关闭动画并返回
-          setTimeout(() => {
-            showSuccessAnimation.value = false
-
-            // 重置选择
-            selectedAmount.value = 0
-            customAmount.value = ''
-
-            // 刷新数据
-            loadUserInfo(userInfo.userId)
-            loadRecentRecords(userInfo.userId)
-          }, 2000)
-        } else {
-          uni.showToast({
-            title: res.message || '消费失败',
-            icon: 'none',
-            duration: 2000
-          })
-        }
-      } catch (error) {
-        console.error('消费失败:', error)
-
-        // 检查是否是网络错误
-        if (!error.response) {
-          // 网络错误，尝试离线消费
-          const offlineSaved = await saveOfflineConsume(amount)
-          if (offlineSaved) {
-            uni.showToast({
-              title: '网络不佳，已保存离线记录',
-              icon: 'none',
-              duration: 2000
-            })
-          } else {
-            uni.showToast({ title: '消费失败', icon: 'none' })
-          }
-        } else {
-          uni.showToast({
-            title: error.message || '消费失败',
-            icon: 'none'
-          })
-        }
-      } finally {
-        consuming.value = false
-      }
-    }
-
-    // 保存离线消费记录
-    const saveOfflineConsume = async (amount) => {
-      try {
-        const offlineQueue = uni.getStorageSync('OFFLINE_CONSUME_QUEUE') || []
-        offlineQueue.push({
-          userId: userInfo.userId,
-          amount,
-          deviceId: 'MOBILE_POS_001',
-          timestamp: Date.now(),
-          status: 'pending'
-        })
-        uni.setStorageSync('OFFLINE_CONSUME_QUEUE', offlineQueue)
-        return true
-      } catch (error) {
-        console.error('保存离线记录失败:', error)
-        return false
-      }
-    }
-
-    // 显示确认对话框
-    const showConfirmDialog = (content) => {
-      return new Promise((resolve) => {
-        uni.showModal({
-          title: '确认消费',
-          content,
-          success: (res) => {
-            resolve(res.confirm)
-          }
-        })
+        // 刷新数据
+        loadUserInfo(userInfo.userId)
+        loadRecentRecords(userInfo.userId)
+      }, 2000)
+    } else {
+      uni.showToast({
+        title: res.message || '消费失败',
+        icon: 'none',
+        duration: 2000
       })
     }
+  } catch (error) {
+    console.error('消费失败:', error)
 
-    // 跳转到历史记录
-    const goToHistory = () => {
-      uni.navigateTo({ url: '/pages/consume/record' })
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 格式化金额
-    const formatAmount = (amount) => {
-      if (!amount && amount !== 0) return '0.00'
-      return Number(amount).toFixed(2)
-    }
-
-    // 格式化时间
-    const formatTime = (time) => {
-      if (!time) return ''
-      const date = new Date(time)
-      const now = new Date()
-      const diff = now - date
-
-      if (diff < 60000) {
-        return '刚刚'
-      } else if (diff < 3600000) {
-        return `${Math.floor(diff / 60000)}分钟前`
-      } else if (diff < 86400000) {
-        return `${Math.floor(diff / 3600000)}小时前`
+    // 检查是否是网络错误
+    if (!error.response) {
+      // 网络错误，尝试离线消费
+      const offlineSaved = await saveOfflineConsume(amount)
+      if (offlineSaved) {
+        uni.showToast({
+          title: '网络不佳，已保存离线记录',
+          icon: 'none',
+          duration: 2000
+        })
       } else {
-        const month = date.getMonth() + 1
-        const day = date.getDate()
-        const hours = String(date.getHours()).padStart(2, '0')
-        const minutes = String(date.getMinutes()).padStart(2, '0')
-        return `${month}-${day} ${hours}:${minutes}`
+        uni.showToast({ title: '消费失败', icon: 'none' })
       }
+    } else {
+      uni.showToast({
+        title: error.message || '消费失败',
+        icon: 'none'
+      })
     }
+  } finally {
+    consuming.value = false
+  }
+}
 
-    return {
-      statusBarHeight,
-      consuming,
-      refreshing,
-      showSuccessAnimation,
-      userInfo,
-      quickAmounts,
-      selectedAmount,
-      customAmount,
-      lastConsumeAmount,
-      recentRecords,
-      displayAmount,
-      canConsume,
-      selectAmount,
-      onCustomAmountInput,
-      confirmCustomAmount,
-      clearCustomAmount,
-      refreshBalance,
-      confirmConsume,
-      goToHistory,
-      goBack,
-      formatAmount,
-      formatTime
-    }
+// 保存离线消费记录
+const saveOfflineConsume = async (amount) => {
+  try {
+    const offlineQueue = uni.getStorageSync('OFFLINE_CONSUME_QUEUE') || []
+    offlineQueue.push({
+      userId: userInfo.userId,
+      amount,
+      deviceId: 'MOBILE_POS_001',
+      timestamp: Date.now(),
+      status: 'pending'
+    })
+    uni.setStorageSync('OFFLINE_CONSUME_QUEUE', offlineQueue)
+    return true
+  } catch (error) {
+    console.error('保存离线记录失败:', error)
+    return false
+  }
+}
+
+// 显示确认对话框
+const showConfirmDialog = (content) => {
+  return new Promise((resolve) => {
+    uni.showModal({
+      title: '确认消费',
+      content,
+      success: (res) => {
+        resolve(res.confirm)
+      }
+    })
+  })
+}
+
+// 跳转到历史记录
+const goToHistory = () => {
+  uni.navigateTo({ url: '/pages/consume/record' })
+}
+
+// 返回
+const goBack = () => {
+  uni.navigateBack()
+}
+
+// 格式化金额
+const formatAmount = (amount) => {
+  if (!amount && amount !== 0) return '0.00'
+  return Number(amount).toFixed(2)
+}
+
+// 格式化时间
+const formatTime = (time) => {
+  if (!time) return ''
+  const date = new Date(time)
+  const now = new Date()
+  const diff = now - date
+
+  if (diff < 60000) {
+    return '刚刚'
+  } else if (diff < 3600000) {
+    return `${Math.floor(diff / 60000)}分钟前`
+  } else if (diff < 86400000) {
+    return `${Math.floor(diff / 3600000)}小时前`
+  } else {
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${month}-${day} ${hours}:${minutes}`
   }
 }
 </script>

@@ -1,0 +1,220 @@
+# ============================================================
+# IOE-DREAM 统一安全配置模板
+#
+# 功能：企业级安全标准，确保所有服务安全一致
+# 标准：金融级安全防护 + 三级等保合规
+#
+# @Author: IOE-DREAM架构委员会
+# @Date: 2025-01-30
+# @Version: v1.0.0-企业级安全版
+# ============================================================
+
+# ==================== Jasypt加密配置 ====================
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD}
+    algorithm: PBEWithMD5AndTripleDES
+    key-obtention-iterations: 1000
+    pool-size: 1
+    provider-name: SunJCE
+    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    string-output-type: base64
+
+# ==================== Spring Security配置 ====================
+spring:
+  security:
+    # 密码编码器
+    user:
+      password: ${ADMIN_PASSWORD:ENC(AES256:encrypted_admin_password)}
+
+  # OAuth2资源配置
+  oauth2:
+    resourceserver:
+      jwt:
+        issuer-uri: ${OAUTH2_ISSUER_URI:http://auth-server:9000}
+        jwk-set-uri: ${OAUTH2_JWK_SET_URI:http://auth-server:9000/.well-known/jwks.json}
+
+# ==================== 访问控制配置 ====================
+ioedream:
+  security:
+    # JWT配置
+    jwt:
+      secret: ${JWT_SECRET:ENC(AES256:encrypted_jwt_secret_key_32bytes_long)}
+      expiration: ${JWT_EXPIRATION:86400}      # 24小时
+      refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800}  # 7天
+      issuer: ${JWT_ISSUER:IOE-DREAM}
+      audience: ${JWT_AUDIENCE:IOE-DREAM-USERS}
+
+    # 密码策略
+    password:
+      min-length: ${PASSWORD_MIN_LENGTH:8}
+      require-uppercase: ${PASSWORD_REQUIRE_UPPERCASE:true}
+      require-lowercase: ${PASSWORD_REQUIRE_LOWERCASE:true}
+      require-digits: ${PASSWORD_REQUIRE_DIGITS:true}
+      require-special-chars: ${PASSWORD_REQUIRE_SPECIAL:true}
+      max-age-days: ${PASSWORD_MAX_AGE_DAYS:90}
+
+    # 登录限制
+    login:
+      max-attempts: ${LOGIN_MAX_ATTEMPTS:5}
+      lockout-duration: ${LOGIN_LOCKOUT_DURATION:1800}  # 30分钟
+      session-timeout: ${SESSION_TIMEOUT:3600}  # 1小时
+
+    # IP白名单
+    ip-whitelist:
+      enabled: ${IP_WHITELIST_ENABLED:false}
+      allowed-ips: ${IP_WHITELIST_IPS:127.0.0.1,localhost}
+
+    # CORS配置
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://admin.ioedream.com}
+      allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+      allowed-headers: ${CORS_ALLOWED_HEADERS:*}
+      allow-credentials: ${CORS_ALLOW_CREDENTIALS:true}
+      max-age: ${CORS_MAX_AGE:3600}
+
+# ==================== HTTPS配置 ====================
+server:
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store: ${SSL_KEYSTORE:classpath:keystore.p12}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD:ENC(AES256:encrypted_keystore_password)}
+    key-store-type: ${SSL_KEYSTORE_TYPE:PKCS12}
+    key-alias: ${SSL_KEY_ALIAS:ioedream}
+
+  # 强制HTTPS重定向
+  http:
+    port: ${HTTP_PORT:80}
+
+  # 压缩和安全头
+  compression:
+    enabled: true
+  tomcat:
+    remote-ip-header: X-Forwarded-For
+    protocol-header: X-Forwarded-Proto
+
+# ==================== 安全响应头配置 ====================
+# 通过Servlet配置或过滤器添加安全响应头
+security:
+  headers:
+    # 防止XSS攻击
+    xss-protection: "1; mode=block"
+
+    # 防止点击劫持
+    frame-options: DENY
+
+    # 强制HTTPS
+    strict-transport-security: "max-age=31536000; includeSubDomains"
+
+    # 内容类型检测
+    content-type-options: nosniff
+
+    # 引用策略
+    referrer-policy: "strict-origin-when-cross-origin"
+
+    # 内容安全策略
+    content-security-policy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';"
+
+# ==================== 审计日志配置 ====================
+management:
+  endpoint:
+    audit:
+      enabled: ${AUDIT_ENABLED:true}
+  audit:
+    events:
+      include: AUTHENTICATION_SUCCESS,AUTHENTICATION_FAILURE,ACCESS_DENIED
+
+# ==================== 数据加密配置 ====================
+ioedream:
+  encryption:
+    # 数据库敏感字段加密
+    database:
+      enabled: ${DB_ENCRYPTION_ENABLED:true}
+      algorithm: AES-256-GCM
+      key-fields: phone,email,idCard,bankCard
+
+    # 文件存储加密
+    file:
+      enabled: ${FILE_ENCRYPTION_ENABLED:true}
+      algorithm: AES-256-CBC
+
+# ==================== 网络安全配置 ====================
+# 防火墙和访问控制
+firewall:
+  enabled: ${FIREWALL_ENABLED:true}
+  rules:
+    - name: "admin-access"
+      source: ${ADMIN_IP_RANGE:192.168.1.0/24}
+      destination: ${SERVICE_IP:0.0.0.0/0}
+      port: ${SERVICE_PORT:8080}
+      action: allow
+    - name: "deny-suspicious"
+      source: ${SUSPICIOUS_IP_RANGES:10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+      destination: ${SERVICE_IP:0.0.0.0/0}
+      action: deny
+
+# ==================== 监控和告警配置 ====================
+security-monitoring:
+  enabled: ${SECURITY_MONITORING_ENABLED:true}
+
+  # 异常行为检测
+  anomaly-detection:
+    enabled: ${ANOMALY_DETECTION_ENABLED:true}
+    threshold: ${ANOMALY_THRESHOLD:5}  # 5次异常触发告警
+    time-window: ${ANOMALY_TIME_WINDOW:300}  # 5分钟窗口
+
+  # 实时告警
+  alerts:
+    # 登录失败告警
+    login-failure:
+      enabled: ${LOGIN_FAILURE_ALERT_ENABLED:true}
+      threshold: ${LOGIN_FAILURE_THRESHOLD:3}
+      time-window: ${LOGIN_FAILURE_TIME_WINDOW:300}
+
+    # 异常访问告警
+    suspicious-access:
+      enabled: ${SUSPICIOUS_ACCESS_ALERT_ENABLED:true}
+      threshold: ${SUSPICIOUS_ACCESS_THRESHOLD:10}
+      time-window: ${SUSPICIOUS_ACCESS_TIME_WINDOW:600}
+
+# ==================== 合规性配置 ====================
+compliance:
+  # 等保三级合规要求
+  level3:
+    # 日志留存时间（天）
+    log-retention-days: ${LOG_RETENTION_DAYS:180}
+
+    # 数据备份策略
+    backup:
+      enabled: ${BACKUP_ENABLED:true}
+      frequency: ${BACKUP_FREQUENCY:daily}
+      retention-days: ${BACKUP_RETENTION_DAYS:90}
+
+    # 权限最小化原则
+    least-privilege:
+      enabled: ${LEAST_PRIVILEGE_ENABLED:true}
+
+    # 操作审计
+    operation-audit:
+      enabled: ${OPERATION_AUDIT_ENABLED:true}
+      critical-operations: ${CRITICAL_OPERATIONS:DELETE,UPDATE,EXPORT,IMPORT}
+
+# ==================== 性能安全平衡配置 ====================
+# 在安全性和性能之间找到平衡点
+performance-security:
+  # 加密缓存
+  encryption-cache:
+    enabled: ${ENCRYPTION_CACHE_ENABLED:true}
+    size: ${ENCRYPTION_CACHE_SIZE:1000}
+    ttl: ${ENCRYPTION_CACHE_TTL:300}
+
+  # 会话管理优化
+  session-optimization:
+    enabled: ${SESSION_OPTIMIZATION_ENABLED:true}
+    cleanup-interval: ${SESSION_CLEANUP_INTERVAL:3600}
+
+  # 安全检查优化
+  security-check-cache:
+    enabled: ${SECURITY_CHECK_CACHE_ENABLED:true}
+    ttl: ${SECURITY_CHECK_CACHE_TTL:60}

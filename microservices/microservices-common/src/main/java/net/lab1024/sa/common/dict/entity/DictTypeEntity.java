@@ -3,7 +3,6 @@ package net.lab1024.sa.common.dict.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.lab1024.sa.common.entity.BaseEntity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -26,9 +25,13 @@ public class DictTypeEntity implements Serializable {
 
     /**
      * 字典类型ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列type_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
     @TableId(value = "type_id", type = IdType.AUTO)
-    private Long typeId;
+    private Long id;
 
     /**
      * 字典类型编码（唯一）

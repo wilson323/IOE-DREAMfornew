@@ -1,0 +1,136 @@
+# ============================================================
+# IOE-DREAM Gateway Service - Spring Boot 3.5.8 配置
+# API网关服务 - 企业级生产环境配置
+#
+# 技术标准: Spring Boot 3.5.8 + Jakarta EE 9.0 + Java 17
+# 遵循规范: 完全兼容Spring Boot 3.x配置模式
+#
+# @Author: IOE-DREAM架构委员会
+# @Version: v1.0.0-企业级重构版
+# @Date: 2025-01-30
+# ============================================================
+
+# ==================== Spring Boot 核心配置 ====================
+spring:
+  application:
+    name: ioedream-gateway-service
+
+  # ==================== Gateway路由配置 ====================
+  cloud:
+    gateway:
+      # 路由发现配置
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      # 全局跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - "http://localhost:*"
+              - "http://127.0.0.1:*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+            maxAge: 3600
+
+  # ==================== Redis配置 (Spring Boot 3.x标准) ====================
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:ENC(AES256:encrypted_password)}
+      database: ${REDIS_DATABASE:0}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 2000ms
+
+  # ==================== 缓存配置 ====================
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=30000,expireAfterWrite=5m,recordStats
+
+# ==================== 服务器配置 ====================
+server:
+  port: 8080
+  servlet:
+    context-path: /gateway
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    threads:
+      max: 400
+      min-spare: 50
+    max-connections: 10000
+    accept-count: 200
+    connection-timeout: 10000
+
+# ==================== 管理端点配置 (Spring Boot 3.x标准) ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# ==================== 日志配置 (Spring Boot 3.x标准) ====================
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/gateway-service.log
+    max-size: 200MB
+    max-history: 30
+
+# ==================== 环境特定配置 ====================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    root: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  level:
+    root: WARN
+  file:
+    name: logs/gateway-service-prod.log

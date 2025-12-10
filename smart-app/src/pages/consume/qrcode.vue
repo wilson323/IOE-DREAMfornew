@@ -44,83 +44,78 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import consumeApi from '@/api/business/consume/consume-api.js'
 
-export default {
-  name: 'ConsumeQRCode',
-  setup() {
-    const recentScans = ref([])
+// 响应式数据
+const recentScans = ref([])
 
-    // 扫描二维码
-    const scanQRCode = () => {
-      uni.scanCode({
-        success: async (res) => {
-          uni.showLoading({ title: '处理中...' })
-          try {
-            const result = await consumeApi.scanConsume({
-              qrCode: res.result,
-              deviceId: 'MOBILE_001'
-            })
-            uni.hideLoading()
-            if (result.success) {
-              uni.showToast({ title: '支付成功', icon: 'success' })
-              loadRecentScans()
-            } else {
-              uni.showToast({ title: result.msg || '支付失败', icon: 'none' })
-            }
-          } catch (error) {
-            uni.hideLoading()
-            uni.showToast({ title: '支付失败', icon: 'none' })
-          }
-        },
-        fail: () => {
-          uni.showToast({ title: '扫码失败', icon: 'none' })
-        }
-      })
-    }
+// 页面生命周期
+onMounted(() => {
+  loadRecentScans()
+})
 
-    // 加载最近扫码记录
-    const loadRecentScans = async () => {
+onShow(() => {
+  // 页面显示时可以刷新数据
+})
+
+onPullDownRefresh(() => {
+  loadRecentScans()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const scanQRCode = () => {
+  uni.scanCode({
+    success: async (res) => {
+      uni.showLoading({ title: '处理中...' })
       try {
-        const result = await consumeApi.getRecentHistory({ limit: 10 })
-        if (result.success && result.data) {
-          recentScans.value = result.data
+        const result = await consumeApi.scanConsume({
+          qrCode: res.result,
+          deviceId: 'MOBILE_001'
+        })
+        uni.hideLoading()
+        if (result.success) {
+          uni.showToast({ title: '支付成功', icon: 'success' })
+          loadRecentScans()
+        } else {
+          uni.showToast({ title: result.msg || '支付失败', icon: 'none' })
         }
       } catch (error) {
-        console.error('加载扫码记录失败:', error)
+        uni.hideLoading()
+        uni.showToast({ title: '支付失败', icon: 'none' })
       }
+    },
+    fail: () => {
+      uni.showToast({ title: '扫码失败', icon: 'none' })
     }
+  })
+}
 
-    // 格式化日期时间
-    const formatDateTime = (datetime) => {
-      if (!datetime) return '-'
-      const date = new Date(datetime)
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      return `${month}-${day} ${hours}:${minutes}`
+const loadRecentScans = async () => {
+  try {
+    const result = await consumeApi.getRecentHistory({ limit: 10 })
+    if (result.success && result.data) {
+      recentScans.value = result.data
     }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 初始化
-    onMounted(() => {
-      loadRecentScans()
-    })
-
-    return {
-      recentScans,
-      scanQRCode,
-      formatDateTime,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载扫码记录失败:', error)
   }
+}
+
+const formatDateTime = (datetime) => {
+  if (!datetime) return '-'
+  const date = new Date(datetime)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${month}-${day} ${hours}:${minutes}`
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

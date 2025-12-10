@@ -1,10 +1,10 @@
 # ============================================================
 # IOE-DREAM Device Communication Service 配置文件
-# 
+#
 # @Author:    IOE-DREAM Team
 # @Date:      2025-01-30
 # @Copyright  IOE-DREAM智慧园区一卡通管理平台
-# 
+#
 # 服务信息:
 # - 服务名称: ioedream-device-comm-service
 # - 服务端口: 8087
@@ -31,7 +31,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD}
         enabled: true
         register-enabled: true
       # Nacos配置中心（升级到2025.0.0.0后可以启用）
@@ -40,7 +40,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD}
         file-extension: yaml
         enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
         import-check:
@@ -50,7 +50,7 @@ spring:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USERNAME:guest}
-    password: ${RABBITMQ_PASSWORD:guest}
+    password: ${RABBITMQ_PASSWORD}
     virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
     # 连接池配置
     listener:
@@ -67,7 +67,7 @@ spring:
 
 # ==================== 服务器配置 ====================
 server:
-  port: 8087
+  port: ${DEVICE_COMM_SERVICE_PORT:8087}
   servlet:
     context-path: /
     encoding:
@@ -90,8 +90,9 @@ logging:
     root: INFO
     "[net.lab1024.sa]": DEBUG  # 使用方括号转义包含特殊字符的键
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    # 包含Trace ID和Span ID的日志格式
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{50} - %msg%n"
 
 # ==================== Actuator监控配置 ====================
 management:
@@ -126,7 +127,7 @@ management:
       probability: ${SLEUTH_SAMPLER_PROBABILITY:1.0}
   zipkin:
     tracing:
-      endpoint: ${ZIPKIN_BASE_URL:http://localhost:9411}/api/v2/spans
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
 
 # ==================== Resilience4j服务降级和熔断配置 ====================
 resilience4j:

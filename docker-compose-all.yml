@@ -1,16 +1,17 @@
 # IOE-DREAM 完整项目 Docker Compose 配置
 # 包含所有基础设施服务和微服务
+# 统一使用根目录.env文件作为配置源
 # 注意: Docker Compose v2+ 不再需要 version 字段
 
 services:
   # ==================== 基础设施服务 ====================
-  
+
   # MySQL数据库
   mysql:
     image: mysql:8.0
     container_name: ioedream-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root1234}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
       MYSQL_DATABASE: ioedream
       TZ: Asia/Shanghai
     ports:
@@ -20,7 +21,7 @@ services:
       - ./deployment/mysql/init:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root1234}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-123456}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -55,7 +56,8 @@ services:
     image: mysql:8.0
     container_name: ioedream-db-init
     environment:
-      MYSQL_PWD: ${MYSQL_ROOT_PASSWORD:-root1234}
+      MYSQL_PWD: ${MYSQL_ROOT_PASSWORD:-123456}
+      ENVIRONMENT: ${ENVIRONMENT:-dev}  # 环境变量：dev/test/prod
     entrypoint: ["/bin/bash", "-c"]
     command:
       - |
@@ -78,28 +80,165 @@ services:
         done
         echo '  MySQL已就绪 ✓'
         echo ''
-        echo '[2/3] 执行数据库初始化脚本...'
-        for sql_file in /init-sql/*.sql; do
-          if [ -f "$$sql_file" ]; then
-            echo "  执行: $$(basename $$sql_file)"
-            mysql -h mysql -uroot < "$$sql_file"
-            echo "    完成 ✓"
-          fi
-        done
+        echo '[2/5] 检查环境配置...'
+        ENV=$${ENVIRONMENT:-dev}
+        echo "  当前环境: $$ENV"
         echo ''
-        echo '[3/3] 验证数据库状态...'
+
+        # 脚本执行函数（必须在调用前定义）
+        execute_script() {
+          local sql_file=$$1
+          if [ -f "$$sql_file" ]; then
+            SCRIPT_COUNT=$$((SCRIPT_COUNT + 1))
+            SCRIPT_NAME=$$(basename "$$sql_file")
+            echo "  [$$SCRIPT_COUNT] 执行: $$SCRIPT_NAME"
+            START_TIME=$$(date +%s)
+            if mysql -h mysql -uroot < "$$sql_file" 2>&1 | tee "/tmp/db-init-$$SCRIPT_NAME.log"; then
+              END_TIME=$$(date +%s)
+              DURATION=$$((END_TIME - START_TIME))
+              echo "    ✓ 完成 (耗时: $$DURATION秒)"
+              SUCCESS_COUNT=$$((SUCCESS_COUNT + 1))
+            else
+              END_TIME=$$(date +%s)
+              ERROR_LOG=$$(cat "/tmp/db-init-$$SCRIPT_NAME.log" 2>/dev/null || echo "未知错误")
+              echo "    ✗ 失败!"
+              echo "    错误信息: $$ERROR_LOG"
+              FAILED_SCRIPTS="$$FAILED_SCRIPTS $$SCRIPT_NAME"
+              echo "    错误: 脚本执行失败，停止初始化流程!"
+              exit 1
+            fi
+          fi
+        }
+
+        echo '[3/5] 执行数据库初始化脚本（版本管理和环境隔离）...'
+        SCRIPT_COUNT=0
+        SUCCESS_COUNT=0
+        FAILED_SCRIPTS=""
+
+        # 定义脚本执行顺序（按文件名排序，但排除环境特定脚本）
+        # 1. 版本检查脚本
+        # 2. 表结构脚本
+        # 3. 基础数据脚本（所有环境通用）
+        # 4. 环境特定数据脚本（根据ENVIRONMENT选择）
+        # 5. Nacos脚本
+
+        # 执行版本检查脚本
+        if [ -f "/init-sql/00-version-check.sql" ]; then
+          execute_script "/init-sql/00-version-check.sql"
+        fi
+
+        # 执行表结构脚本
+        if [ -f "/init-sql/01-ioedream-schema.sql" ]; then
+          execute_script "/init-sql/01-ioedream-schema.sql"
+        fi
+
+        # 执行基础数据脚本（所有环境通用）
+        if [ -f "/init-sql/02-ioedream-data.sql" ]; then
+          execute_script "/init-sql/02-ioedream-data.sql"
+        fi
+
+        # 根据环境选择执行环境特定数据脚本
+        ENV_DATA_SCRIPT=""
+        case "$$ENV" in
+          dev)
+            ENV_DATA_SCRIPT="/init-sql/02-ioedream-data-dev.sql"
+            ;;
+          test)
+            ENV_DATA_SCRIPT="/init-sql/02-ioedream-data-test.sql"
+            ;;
+          prod)
+            ENV_DATA_SCRIPT="/init-sql/02-ioedream-data-prod.sql"
+            ;;
+          *)
+            echo "  警告: 未知环境 $$ENV，使用开发环境配置"
+            ENV_DATA_SCRIPT="/init-sql/02-ioedream-data-dev.sql"
+            ;;
+        esac
+
+        if [ -f "$$ENV_DATA_SCRIPT" ]; then
+          echo "  执行环境特定数据脚本: $$(basename $$ENV_DATA_SCRIPT)"
+          execute_script "$$ENV_DATA_SCRIPT"
+        else
+          echo "  警告: 环境特定数据脚本不存在: $$ENV_DATA_SCRIPT"
+        fi
+
+        # 执行索引优化脚本（性能优化：在数据插入后创建索引）
+        if [ -f "/init-sql/03-optimize-indexes.sql" ]; then
+          execute_script "/init-sql/03-optimize-indexes.sql"
+        fi
+
+        # 执行V2.0.x版本迁移脚本（增量更新）
+        if [ -f "/init-sql/04-v2.0.0__enhance-consume-record.sql" ]; then
+          execute_script "/init-sql/04-v2.0.0__enhance-consume-record.sql"
+        fi
+
+        if [ -f "/init-sql/05-v2.0.1__enhance-account-table.sql" ]; then
+          execute_script "/init-sql/05-v2.0.1__enhance-account-table.sql"
+        fi
+
+        if [ -f "/init-sql/06-v2.0.2__create-refund-table.sql" ]; then
+          execute_script "/init-sql/06-v2.0.2__create-refund-table.sql"
+        fi
+
+        if [ -f "/init-sql/07-v2.1.0__api-compatibility-validation.sql" ]; then
+          execute_script "/init-sql/07-v2.1.0__api-compatibility-validation.sql"
+        fi
+
+        # 执行Nacos脚本
+        if [ -f "/init-sql/nacos-schema.sql" ]; then
+          execute_script "/init-sql/nacos-schema.sql"
+        fi
+        echo "  执行统计: 总计 $$SCRIPT_COUNT 个脚本，成功 $$SUCCESS_COUNT 个"
+        if [ -n "$$FAILED_SCRIPTS" ]; then
+          echo "  失败的脚本: $$FAILED_SCRIPTS"
+          exit 1
+        fi
+        echo ''
+        echo '[4/5] 验证数据库状态...'
         echo '  检查ioedream数据库:'
         IOEDREAM_TABLES=$$(mysql -h mysql -uroot -N -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='ioedream';" 2>/dev/null || echo '0')
         echo "    表数量: $$IOEDREAM_TABLES"
+        IOEDREAM_DICT_COUNT=$$(mysql -h mysql -uroot -N -e "SELECT COUNT(*) FROM ioedream.t_common_dict_type;" 2>/dev/null || echo '0')
+        echo "    字典类型数量: $$IOEDREAM_DICT_COUNT"
+        IOEDREAM_USER_COUNT=$$(mysql -h mysql -uroot -N -e "SELECT COUNT(*) FROM ioedream.t_common_user;" 2>/dev/null || echo '0')
+        echo "    用户数量: $$IOEDREAM_USER_COUNT"
+        if [ "$$IOEDREAM_TABLES" -lt 20 ]; then
+          echo '  ✗ 错误: ioedream表数量不足，初始化不完整!'
+          exit 1
+        fi
+        if [ "$$IOEDREAM_DICT_COUNT" -lt 10 ]; then
+          echo '  ✗ 错误: ioedream字典数据不足，初始化不完整!'
+          exit 1
+        fi
+        if [ "$$IOEDREAM_USER_COUNT" -lt 1 ]; then
+          echo '  ✗ 错误: ioedream用户数据不足，初始化不完整!'
+          exit 1
+        fi
         echo '  检查nacos数据库:'
         NACOS_TABLES=$$(mysql -h mysql -uroot -N -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='nacos';" 2>/dev/null || echo '0')
         echo "    表数量: $$NACOS_TABLES"
         if [ "$$NACOS_TABLES" -lt 10 ]; then
-          echo '警告: Nacos表数量不足，可能初始化不完整!'
+          echo '  ✗ 错误: Nacos表数量不足，初始化不完整!'
+          exit 1
         fi
         echo ''
+        echo '[5/5] 验证数据库版本记录...'
+        MIGRATION_COUNT=$$(mysql -h mysql -uroot -N -e "SELECT COUNT(*) FROM ioedream.t_migration_history;" 2>/dev/null || echo '0')
+        echo "    迁移记录数量: $$MIGRATION_COUNT"
+        if [ "$$MIGRATION_COUNT" -lt 1 ]; then
+          echo '  ⚠ 警告: 迁移历史记录为空，但数据库可能已初始化'
+        fi
+        echo ''
+        echo ''
         echo '=========================================='
-        echo '  数据库初始化完成!'
+        echo '  ✓ 数据库初始化完成!'
+        echo '=========================================='
+        echo '  初始化统计:'
+        echo "    - ioedream表: $$IOEDREAM_TABLES 个"
+        echo "    - ioedream字典: $$IOEDREAM_DICT_COUNT 个"
+        echo "    - ioedream用户: $$IOEDREAM_USER_COUNT 个"
+        echo "    - nacos表: $$NACOS_TABLES 个"
+        echo "    - 迁移记录: $$MIGRATION_COUNT 条"
         echo '=========================================='
     volumes:
       - ./deployment/mysql/init:/init-sql:ro
@@ -123,7 +262,7 @@ services:
       - MYSQL_SERVICE_PORT=3306
       - MYSQL_SERVICE_DB_NAME=nacos
       - MYSQL_SERVICE_USER=root
-      - MYSQL_SERVICE_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_SERVICE_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       # 内置数据库连接池优化（解决启动缓慢问题）
       - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
       # 认证配置
@@ -188,7 +327,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8080:8080"
@@ -232,7 +371,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8088:8088"
@@ -276,7 +415,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8087:8087"
@@ -322,7 +461,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8089:8089"
@@ -368,7 +507,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8090:8090"
@@ -414,7 +553,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8091:8091"
@@ -460,7 +599,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8092:8092"
@@ -506,7 +645,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8094:8094"
@@ -552,7 +691,7 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-root1234}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
       - TZ=Asia/Shanghai
     ports:
       - "8095:8095"

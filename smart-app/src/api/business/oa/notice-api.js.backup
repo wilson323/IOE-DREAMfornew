@@ -1,0 +1,178 @@
+/**
+ * 通知公告API - 移动端版本
+ * 企业级通知公告移动端接口
+ *
+ * @Author:    IOE-DREAM Team
+ * @Date:      2025-01-30
+ * @Copyright: IOE-DREAM (https://ioe-dream.net), Since 2025
+ */
+
+import { getRequest, postRequest, putRequest } from '@/lib/smart-request'
+
+// 通知公告管理
+export const noticeApi = {
+  /**
+   * 获取通知公告类型列表
+   * @returns {Promise}
+   */
+  getNoticeTypeList: () =>
+    getRequest('/api/v1/mobile/oa/notice-type/list'),
+
+  /**
+   * 获取我的通知公告列表
+   * @param {Number} userId 用户ID
+   * @param {Object} params 查询参数
+   * @param {String} params.typeId 类型ID
+   * @param {String} params.status 状态
+   * @param {Number} params.pageNum 页码
+   * @param {Number} params.pageSize 页大小
+   * @returns {Promise}
+   */
+  getMyNoticeList: (userId, params) =>
+    postRequest('/api/v1/mobile/oa/notice/my/list', { userId, ...params }),
+
+  /**
+   * 获取通知公告详情
+   * @param {Number} noticeId 公告ID
+   * @returns {Promise}
+   */
+  getNoticeDetail: (noticeId) =>
+    getRequest(`/api/v1/mobile/oa/notice/${noticeId}`),
+
+  /**
+   * 查看通知公告（记录查看状态）
+   * @param {Number} noticeId 公告ID
+   * @returns {Promise}
+   */
+  viewNotice: (noticeId) =>
+    putRequest(`/api/v1/mobile/oa/notice/${noticeId}/view`),
+
+  /**
+   * 获取我的未读通知数量
+   * @param {Number} userId 用户ID
+   * @returns {Promise}
+   */
+  getUnreadCount: (userId) =>
+    getRequest(`/api/v1/mobile/oa/notice/unread/count/${userId}`),
+
+  /**
+   * 标记通知为已读
+   * @param {Number} noticeId 公告ID
+   * @returns {Promise}
+   */
+  markAsRead: (noticeId) =>
+    putRequest(`/api/v1/mobile/oa/notice/${noticeId}/read`),
+
+  /**
+   * 批量标记为已读
+   * @param {Array} noticeIds 公告ID列表
+   * @returns {Promise}
+   */
+  batchMarkAsRead: (noticeIds) =>
+    putRequest('/api/v1/mobile/oa/notice/batch/read', { noticeIds })
+}
+
+// 企业动态管理
+export const dynamicsApi = {
+  /**
+   * 获取企业动态列表
+   * @param {Number} userId 用户ID
+   * @param {Object} params 查询参数
+   * @returns {Promise}
+   */
+  getDynamicsList: (userId, params) =>
+    getRequest('/api/v1/mobile/oa/dynamics/list', { userId, ...params }),
+
+  /**
+   * 获取动态详情
+   * @param {Number} dynamicsId 动态ID
+   * @returns {Promise}
+   */
+  getDynamicsDetail: (dynamicsId) =>
+    getRequest(`/api/v1/mobile/oa/dynamics/${dynamicsId}`),
+
+  /**
+   * 点赞动态
+   * @param {Number} dynamicsId 动态ID
+   * @returns {Promise}
+   */
+  likeDynamics: (dynamicsId) =>
+    postRequest(`/api/v1/mobile/oa/dynamics/${dynamicsId}/like`),
+
+  /**
+   * 评论动态
+   * @param {Number} dynamicsId 动态ID
+   * @param {Object} data 评论数据
+   * @returns {Promise}
+   */
+  commentDynamics: (dynamicsId, data) =>
+    postRequest(`/api/v1/mobile/oa/dynamics/${dynamicsId}/comment`, data)
+}
+
+// 消息通知管理
+export const messageApi = {
+  /**
+   * 获取我的消息列表
+   * @param {Number} userId 用户ID
+   * @param {Object} params 查询参数
+   * @returns {Promise}
+   */
+  getMessageList: (userId, params) =>
+    getRequest('/api/v1/mobile/oa/message/list', { userId, ...params }),
+
+  /**
+   * 获取消息详情
+   * @param {Number} messageId 消息ID
+   * @returns {Promise}
+   */
+  getMessageDetail: (messageId) =>
+    getRequest(`/api/v1/mobile/oa/message/${messageId}`),
+
+  /**
+   * 发送消息
+   * @param {Object} data 消息数据
+   * @returns {Promise}
+   */
+  sendMessage: (data) =>
+    postRequest('/api/v1/mobile/oa/message/send', data),
+
+  /**
+   * 删除消息
+   * @param {Number} messageId 消息ID
+   * @returns {Promise}
+   */
+  deleteMessage: (messageId) =>
+    putRequest(`/api/v1/mobile/oa/message/${messageId}/delete`)
+}
+
+// 查看记录管理
+export const viewRecordApi = {
+  /**
+   * 获取通知查看记录
+   * @param {Number} noticeId 公告ID
+   * @param {Object} params 查询参数
+   * @returns {Promise}
+   */
+  getViewRecords: (noticeId, params) =>
+    postRequest('/api/v1/mobile/oa/notice/view-records', { noticeId, ...params }),
+
+  /**
+   * 获取我的查看历史
+   * @param {Number} userId 用户ID
+   * @param {Object} params 查询参数
+   * @returns {Promise}
+   */
+  getViewHistory: (userId, params) =>
+    getRequest('/api/v1/mobile/oa/notice/view-history/${userId}`, params)
+}
+
+// 导出所有API
+export default {
+  ...noticeApi,
+  ...dynamicsApi,
+  ...messageApi,
+  ...viewRecordApi
+}
+
+// 单独导出各个模块
+export { noticeApi, dynamicsApi, messageApi, viewRecordApi }

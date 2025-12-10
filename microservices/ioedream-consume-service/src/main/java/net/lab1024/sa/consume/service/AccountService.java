@@ -8,6 +8,9 @@ import net.lab1024.sa.consume.domain.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.AccountAddForm;
 import net.lab1024.sa.consume.domain.form.AccountUpdateForm;
 import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.util.CursorPagination;
+
+import java.time.LocalDateTime;
 
 /**
  * 账户服务接口
@@ -72,7 +75,7 @@ public interface AccountService {
     AccountEntity getByUserId(Long userId);
 
     /**
-     * 分页查询账户列表
+     * 分页查询账户列表（传统分页）
      *
      * @param pageNum 页码
      * @param pageSize 每页大小
@@ -81,7 +84,24 @@ public interface AccountService {
      * @param status 账户状态（可选）
      * @return 账户列表
      */
-    PageResult<AccountEntity> pageAccounts(Integer pageNum, Integer pageSize, 
+    PageResult<AccountEntity> pageAccounts(Integer pageNum, Integer pageSize,
+            String keyword, Long accountKindId, Integer status);
+
+    /**
+     * 游标分页查询账户列表（基于时间，推荐用于深度分页）
+     * <p>
+     * 适用于需要查询大量数据的场景，性能优于传统分页
+     * </p>
+     *
+     * @param pageSize 每页大小（默认20，最大100）
+     * @param lastTime 上一页最后一条记录的创建时间（首次查询传null）
+     * @param keyword 关键词（账户ID、用户ID、用户姓名）
+     * @param accountKindId 账户类别ID（可选）
+     * @param status 账户状态（可选）
+     * @return 游标分页结果
+     */
+    CursorPagination.CursorPageResult<AccountEntity> cursorPageAccounts(
+            Integer pageSize, LocalDateTime lastTime,
             String keyword, Long accountKindId, Integer status);
 
     /**

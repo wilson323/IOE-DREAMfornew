@@ -208,12 +208,12 @@ public class AccessDeviceController {
      * @param status 设备状态
      * @return 是否成功
      */
-    @PostMapping("/status/update")
+    @PutMapping("/{deviceId}/status")
     @Operation(summary = "更新设备状态", description = "更新门禁设备状态")
     @PreAuthorize("hasRole('ACCESS_MANAGER')")
     public ResponseDTO<Boolean> updateDeviceStatus(
-            @RequestParam @NotNull Long deviceId,
-            @RequestParam @NotNull Integer status) {
+            @Parameter(description = "设备ID") @PathVariable @NotNull Long deviceId,
+            @Parameter(description = "设备状态") @RequestParam @NotNull Integer status) {
         log.info("[门禁设备] 更新设备状态，deviceId={}, status={}", deviceId, status);
         try {
             // 调用Service层更新状态

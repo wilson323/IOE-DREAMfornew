@@ -1,0 +1,369 @@
+# ============================================================
+# IOE-DREAM 容错降级配置模板
+#
+# 功能：企业级容错降级机制，确保服务高可用性
+# 技术：Resilience4j + Circuit Breaker + Rate Limiter + Bulkhead
+# 标准：支持微服务间调用的容错保护
+#
+# @Author: IOE-DREAM架构委员会
+# @Date: 2025-01-30
+# @Version: v1.0.0-企业级容错版
+# ============================================================
+
+# ==================== Resilience4j全局配置 ====================
+resilience4j:
+  # 时间配置
+  timelimiter:
+    instances:
+      default:
+        timeout-duration: ${RESILIENCE_DEFAULT_TIMEOUT:10s}
+        cancel-running-future: true
+
+  # 熔断器配置
+  circuitbreaker:
+    # 全局熔断器配置
+    configs:
+      default:
+        # 失败率阈值（百分比）
+        failure-rate-threshold: ${RESILIENCE_FAILURE_RATE:50}
+        # 最小调用次数
+        minimum-number-of-calls: ${RESILIENCE_MIN_CALLS:10}
+        # 熔断持续时间
+        wait-duration-in-open-state: ${RESILIENCE_WAIT_DURATION:30s}
+        # 滑动窗口大小
+        sliding-window-size: ${RESILIENCE_SLIDING_WINDOW:20}
+        # 滑动窗口类型
+        sliding-window-type: count_based
+        # 半开状态调用次数
+        permitted-number-of-calls-in-half-open-state: ${RESILIENCE_HALF_OPEN_CALLS:5}
+
+  # 限流配置
+  ratelimiter:
+    configs:
+      default:
+        # 限流周期内允许的最大请求数
+        limit-for-period: ${RESILIENCE_RATE_LIMIT:100}
+        # 限流周期
+        limit-refresh-period: ${RESILIENCE_RATE_PERIOD:1s}
+        # 超时时间
+        timeout-duration: ${RESILIENCE_RATE_TIMEOUT:5s}
+        # 注册健康检查
+        register-health-indicator: true
+
+  # 舱壁模式配置
+  bulkhead:
+    configs:
+      default:
+        # 最大并发调用数
+        max-concurrent-calls: ${RESILIENCE_BULKHEAD_MAX_CALLS:20}
+        # 最大等待时间
+        max-wait-duration: ${RESILIENCE_BULKHEAD_WAIT:1s}
+
+  # 重试配置
+  retry:
+    configs:
+      default:
+        # 最大重试次数
+        max-attempts: ${RESILIENCE_RETRY_MAX:3}
+        # 重试间隔
+        wait-duration: ${RESILIENCE_RETRY_WAIT:1s}
+        # 指数退避
+        exponential-backoff-multiplier: ${RESILIENCE_RETRY_BACKOFF:2}
+        # 重试异常类型
+        retry-exceptions:
+          - java.io.IOException
+          - java.net.SocketTimeoutException
+          - org.springframework.web.client.ResourceAccessException
+
+# ==================== 业务服务特定配置 ====================
+# 消费服务容错配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      consume-service:
+        failure-rate-threshold: ${CONSUME_FAILURE_RATE:30}
+        minimum-number-of-calls: ${CONSUME_MIN_CALLS:5}
+        wait-duration-in-open-state: ${CONSUME_WAIT_DURATION:15s}
+        sliding-window-size: ${CONSUME_SLIDING_WINDOW:10}
+
+      consume-payment:
+        failure-rate-threshold: ${CONSUME_PAYMENT_FAILURE_RATE:20}
+        minimum-number-of-calls: ${CONSUME_PAYMENT_MIN_CALLS:10}
+        wait-duration-in-open-state: ${CONSUME_PAYMENT_WAIT_DURATION:60s}
+        sliding-window-size: ${CONSUME_PAYMENT_SLIDING_WINDOW:20}
+
+  ratelimiter:
+    instances:
+      consume-service:
+        limit-for-period: ${CONSUME_RATE_LIMIT:200}
+        limit-refresh-period: ${CONSUME_RATE_PERIOD:1s}
+        timeout-duration: ${CONSUME_RATE_TIMEOUT:3s}
+
+      consume-payment:
+        limit-for-period: ${CONSUME_PAYMENT_RATE_LIMIT:50}
+        limit-refresh-period: ${CONSUME_PAYMENT_RATE_PERIOD:1s}
+        timeout-duration: ${CONSUME_PAYMENT_RATE_TIMEOUT:5s}
+
+  bulkhead:
+    instances:
+      consume-service:
+        max-concurrent-calls: ${CONSUME_BULKHEAD_MAX:50}
+        max-wait-duration: ${CONSUME_BULKHEAD_WAIT:2s}
+
+      consume-payment:
+        max-concurrent-calls: ${CONSUME_PAYMENT_BULKHEAD_MAX:10}
+        max-wait-duration: ${CONSUME_PAYMENT_BULKHEAD_WAIT:3s}
+
+# 门禁服务容错配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      access-service:
+        failure-rate-threshold: ${ACCESS_FAILURE_RATE:25}
+        minimum-number-of-calls: ${ACCESS_MIN_CALLS:8}
+        wait-duration-in-open-state: ${ACCESS_WAIT_DURATION:20s}
+        sliding-window-size: ${ACCESS_SLIDING_WINDOW:15}
+
+      access-control:
+        failure-rate-threshold: ${ACCESS_CONTROL_FAILURE_RATE:15}
+        minimum-number-of-calls: ${ACCESS_CONTROL_MIN_CALLS:5}
+        wait-duration-in-open-state: ${ACCESS_CONTROL_WAIT_DURATION:10s}
+        sliding-window-size: ${ACCESS_CONTROL_SLIDING_WINDOW:10}
+
+  ratelimiter:
+    instances:
+      access-service:
+        limit-for-period: ${ACCESS_RATE_LIMIT:300}
+        limit-refresh-period: ${ACCESS_RATE_PERIOD:1s}
+        timeout-duration: ${ACCESS_RATE_TIMEOUT:2s}
+
+      access-control:
+        limit-for-period: ${ACCESS_CONTROL_RATE_LIMIT:100}
+        limit-refresh-period: ${ACCESS_CONTROL_RATE_PERIOD:1s}
+        timeout-duration: ${ACCESS_CONTROL_RATE_TIMEOUT:3s}
+
+# 考勤服务容错配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      attendance-service:
+        failure-rate-threshold: ${ATTENDANCE_FAILURE_RATE:35}
+        minimum-number-of-calls: ${ATTENDANCE_MIN_CALLS:8}
+        wait-duration-in-open-state: ${ATTENDANCE_WAIT_DURATION:25s}
+        sliding-window-size: ${ATTENDANCE_SLIDING_WINDOW:15}
+
+  ratelimiter:
+    instances:
+      attendance-service:
+        limit-for-period: ${ATTENDANCE_RATE_LIMIT:150}
+        limit-refresh-period: ${ATTENDANCE_RATE_PERIOD:1s}
+        timeout-duration: ${ATTENDANCE_RATE_TIMEOUT:3s}
+
+# 访客服务容错配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      visitor-service:
+        failure-rate-threshold: ${VISITOR_FAILURE_RATE:40}
+        minimum-number-of-calls: ${VISITOR_MIN_CALLS:5}
+        wait-duration-in-open-state: ${VISITOR_WAIT_DURATION:30s}
+        sliding-window-size: ${VISITOR_SLIDING_WINDOW:10}
+
+  ratelimiter:
+    instances:
+      visitor-service:
+        limit-for-period: ${VISITOR_RATE_LIMIT:80}
+        limit-refresh-period: ${VISITOR_RATE_PERIOD:1s}
+        timeout-duration: ${VISITOR_RATE_TIMEOUT:4s}
+
+# 视频服务容错配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      video-service:
+        failure-rate-threshold: ${VIDEO_FAILURE_RATE:45}
+        minimum-number-of-calls: ${VIDEO_MIN_CALLS:5}
+        wait-duration-in-open-state: ${VIDEO_WAIT_DURATION:40s}
+        sliding-window-size: ${VIDEO_SLIDING_WINDOW:10}
+
+  bulkhead:
+    instances:
+      video-service:
+        max-concurrent-calls: ${VIDEO_BULKHEAD_MAX:5}
+        max-wait-duration: ${VIDEO_BULKHEAD_WAIT:5s}
+
+# 设备通讯服务容错配置
+resilience4j:
+  circuitbreaker:
+    instances:
+      device-comm-service:
+        failure-rate-threshold: ${DEVICE_COMM_FAILURE_RATE:20}
+        minimum-number-of-calls: ${DEVICE_COMM_MIN_CALLS:10}
+        wait-duration-in-open-state: ${DEVICE_COMM_WAIT_DURATION:10s}
+        sliding-window-size: ${DEVICE_COMM_SLIDING_WINDOW:20}
+
+  ratelimiter:
+    instances:
+      device-comm-service:
+        limit-for-period: ${DEVICE_COMM_RATE_LIMIT:500}
+        limit-refresh-period: ${DEVICE_COMM_RATE_PERIOD:1s}
+        timeout-duration: ${DEVICE_COMM_RATE_TIMEOUT:1s}
+
+# ==================== 监控配置 ====================
+# 熔断器事件监控
+resilience4j:
+  circuitbreaker:
+    event-consumer-buffer-size: ${RESILIENCE_EVENT_BUFFER_SIZE:100}
+  ratelimiter:
+    event-consumer-buffer-size: ${RESILIENCE_EVENT_BUFFER_SIZE:100}
+  bulkhead:
+    event-consumer-buffer-size: ${RESILIENCE_EVENT_BUFFER_SIZE:100}
+
+# 健康检查配置
+management:
+  health:
+    circuitbreakers:
+      enabled: ${RESILIENCE_HEALTH_ENABLED:true}
+    ratelimiters:
+      enabled: ${RESILIENCE_HEALTH_ENABLED:true}
+
+  # 指标配置
+  metrics:
+    export:
+      prometheus:
+        enabled: ${RESILIENCE_METRICS_ENABLED:true}
+    distribution:
+      percentiles-histogram:
+        resilience4j.circuitbreaker.calls: true
+        resilience4j.ratelimiter.calls: true
+      percentiles:
+        resilience4j.circuitbreaker.calls: 0.5,0.9,0.95,0.99
+        resilience4j.ratelimiter.calls: 0.5,0.9,0.95,0.99
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    # Resilience4j日志级别
+    io.github.resilience4j: ${RESILIENCE_LOG_LEVEL:INFO}
+    # 熔断器事件日志
+    resilience4j.circuitbreaker: ${CIRCUIT_BREAKER_LOG_LEVEL:INFO}
+    # 限流器事件日志
+    resilience4j.ratelimiter: ${RATE_LIMITER_LOG_LEVEL:INFO}
+    # 船壁模式事件日志
+    resilience4j.bulkhead: ${BULKHEAD_LOG_LEVEL:INFO}
+
+# ==================== 业务特定降级策略 ====================
+ioedream:
+  resilience:
+    # 降级策略配置
+    fallback:
+      # 是否启用降级
+      enabled: ${FALLBACK_ENABLED:true}
+
+      # 默认降级响应
+      default-response:
+        code: "SERVICE_UNAVAILABLE"
+        message: "服务暂时不可用，请稍后重试"
+        data: null
+
+      # 业务降级策略
+      strategies:
+        # 消费服务降级
+        consume-service:
+          payment-fallback:
+            code: "PAYMENT_UNAVAILABLE"
+            message: "支付服务暂时不可用，请使用现金支付"
+            alternative: "cash_payment"
+
+        # 门禁服务降级
+        access-service:
+          control-fallback:
+            code: "ACCESS_CONTROL_UNAVAILABLE"
+            message: "门禁控制系统暂时不可用，请联系管理员"
+            alternative: "manual_verification"
+
+        # 考勤服务降级
+        attendance-service:
+          check-in-fallback:
+            code: "ATTENDANCE_UNAVAILABLE"
+            message: "考勤系统暂时不可用，请手动登记"
+            alternative: "manual_registration"
+
+    # 限流策略配置
+    rate-limit:
+      # 全局限流配置
+      global:
+        enabled: ${GLOBAL_RATE_LIMIT_ENABLED:true}
+        limit-per-minute: ${GLOBAL_RATE_LIMIT:1000}
+        burst-capacity: ${GLOBAL_RATE_BURST:200}
+
+      # IP限流配置
+      ip-based:
+        enabled: ${IP_RATE_LIMIT_ENABLED:true}
+        limit-per-minute: ${IP_RATE_LIMIT:100}
+
+      # 用户限流配置
+      user-based:
+        enabled: ${USER_RATE_LIMIT_ENABLED:true}
+        limit-per-minute: ${USER_RATE_LIMIT:50}
+
+      # API限流配置
+      api-based:
+        enabled: ${API_RATE_LIMIT_ENABLED:true}
+        limits:
+          "/api/v1/consume/execute": 10  # 消费交易接口
+          "/api/v1/access/control": 20   # 门禁控制接口
+          "/api/v1/attendance/checkin": 30  # 考勤打卡接口
+
+# ==================== 环境特定配置 ====================
+---
+# 开发环境配置
+spring:
+  profiles: dev
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      default:
+        failure-rate-threshold: 80  # 开发环境更高容错
+        minimum-number-of-calls: 5
+  ratelimiter:
+    configs:
+      default:
+        limit-for-period: 1000  # 开发环境更高限制
+
+---
+# 测试环境配置
+spring:
+  profiles: test
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      default:
+        failure-rate-threshold: 60  # 测试环境中等容错
+  ratelimiter:
+    configs:
+      default:
+        limit-for-period: 500   # 测试环境中等限制
+
+---
+# 生产环境配置
+spring:
+  profiles: prod
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      default:
+        failure-rate-threshold: 30  # 生产环境严格容错
+        minimum-number-of-calls: 20
+  ratelimiter:
+    configs:
+      default:
+        limit-for-period: 100   # 生产环境严格限制
+
+ioedream:
+  resilience:
+    fallback:
+      enabled: true  # 生产环境必须启用降级

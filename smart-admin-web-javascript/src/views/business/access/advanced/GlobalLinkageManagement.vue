@@ -252,7 +252,7 @@ import { useGlobalLinkageStore } from '/@/store/modules/business/global-linkage'
 import LinkageRuleModal from '../components/LinkageRuleModal.vue';
 import BatchOperationModal from '../components/BatchOperationModal.vue';
 import RuleTestModal from '../components/RuleTestModal.vue';
-import { formatDateTime, formatTime } from '/@/lib/format';
+import { formatDateTime, formatTime } from '/@/utils/format';
 
 // Store
 const globalLinkageStore = useGlobalLinkageStore();

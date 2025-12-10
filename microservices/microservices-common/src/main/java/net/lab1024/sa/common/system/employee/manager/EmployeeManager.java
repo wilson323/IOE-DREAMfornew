@@ -71,7 +71,7 @@ public class EmployeeManager {
             EmployeeEntity employee = employeeDao.selectByPhone(phone.trim());
 
             if (employee != null) {
-                log.debug("根据手机号查询员工成功: phone={}, employeeId={}", phone, employee.getEmployeeId());
+                log.debug("根据手机号查询员工成功: phone={}, employeeId={}", phone, employee.getId());
             } else {
                 log.debug("根据手机号未找到员工: phone={}", phone);
             }
@@ -111,7 +111,7 @@ public class EmployeeManager {
             EmployeeEntity employee = employeeDao.selectByEmail(email.trim().toLowerCase());
 
             if (employee != null) {
-                log.debug("根据邮箱查询员工成功: email={}, employeeId={}", email, employee.getEmployeeId());
+                log.debug("根据邮箱查询员工成功: email={}, employeeId={}", email, employee.getId());
             } else {
                 log.debug("根据邮箱未找到员工: email={}", email);
             }
@@ -139,7 +139,7 @@ public class EmployeeManager {
             EmployeeEntity employee = employeeDao.selectByEmployeeNo(employeeNo.trim());
 
             if (employee != null) {
-                log.debug("根据工号查询员工成功: employeeNo={}, employeeId={}", employeeNo, employee.getEmployeeId());
+                log.debug("根据工号查询员工成功: employeeNo={}, employeeId={}", employeeNo, employee.getId());
             } else {
                 log.debug("根据工号未找到员工: employeeNo={}", employeeNo);
             }
@@ -167,7 +167,7 @@ public class EmployeeManager {
             EmployeeEntity employee = employeeDao.selectByUserId(userId);
 
             if (employee != null) {
-                log.debug("根据用户ID查询员工成功: userId={}, employeeId={}", userId, employee.getEmployeeId());
+                log.debug("根据用户ID查询员工成功: userId={}, employeeId={}", userId, employee.getId());
             } else {
                 log.debug("根据用户ID未找到员工: userId={}", userId);
             }
@@ -338,7 +338,7 @@ public class EmployeeManager {
             }
 
             // 如果是更新操作，排除自己
-            if (excludeEmployeeId != null && employee.getEmployeeId().equals(excludeEmployeeId)) {
+            if (excludeEmployeeId != null && employee.getId().equals(excludeEmployeeId)) {
                 return true;
             }
 
@@ -368,7 +368,7 @@ public class EmployeeManager {
                 return true;
             }
 
-            if (excludeEmployeeId != null && employee.getEmployeeId().equals(excludeEmployeeId)) {
+            if (excludeEmployeeId != null && employee.getId().equals(excludeEmployeeId)) {
                 return true;
             }
 
@@ -398,7 +398,7 @@ public class EmployeeManager {
                 return true;
             }
 
-            if (excludeEmployeeId != null && employee.getEmployeeId().equals(excludeEmployeeId)) {
+            if (excludeEmployeeId != null && employee.getId().equals(excludeEmployeeId)) {
                 return true;
             }
 
@@ -428,7 +428,7 @@ public class EmployeeManager {
                 return true;
             }
 
-            if (excludeEmployeeId != null && employee.getEmployeeId().equals(excludeEmployeeId)) {
+            if (excludeEmployeeId != null && employee.getId().equals(excludeEmployeeId)) {
                 return true;
             }
 
@@ -582,7 +582,7 @@ public class EmployeeManager {
      */
     private Map<String, Object> buildEmployeeTreeNode(EmployeeEntity employee, List<EmployeeEntity> allEmployees) {
         Map<String, Object> node = new java.util.HashMap<>();
-        node.put("employeeId", employee.getEmployeeId());
+        node.put("employeeId", employee.getId());
         node.put("employeeName", employee.getEmployeeName());
         node.put("employeeNo", employee.getEmployeeNo());
         node.put("position", employee.getPosition());
@@ -591,7 +591,7 @@ public class EmployeeManager {
         // 查找下属
         List<Map<String, Object>> children = new java.util.ArrayList<>();
         for (EmployeeEntity subordinate : allEmployees) {
-            if (employee.getEmployeeId().equals(subordinate.getSupervisorId())) {
+            if (employee.getId().equals(subordinate.getSupervisorId())) {
                 Map<String, Object> childNode = buildEmployeeTreeNode(subordinate, allEmployees);
                 children.add(childNode);
             }

@@ -91,128 +91,119 @@
   </view>
 </template>
 
-<script>
-import { ref, reactive } from 'vue'
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
 import visitorApi from '@/api/business/visitor/visitor-api.js'
 
-export default {
-  name: 'VisitorCheckIn',
-  setup() {
-    const qrCodeValue = ref('')
-    const verifying = ref(false)
-    const showResultModal = ref(false)
+// 响应式数据
+const qrCodeValue = ref('')
+const verifying = ref(false)
+const showResultModal = ref(false)
 
-    const idCardForm = reactive({
-      idCardNumber: '',
-      phoneNumber: ''
-    })
+const idCardForm = reactive({
+  idCardNumber: '',
+  phoneNumber: ''
+})
 
-    const verifyResult = reactive({
-      success: false,
-      message: '',
-      data: null
-    })
+const verifyResult = reactive({
+  success: false,
+  message: '',
+  data: null
+})
 
-    // 扫描二维码
-    const scanQRCode = () => {
-      uni.scanCode({
-        success: async (res) => {
-          qrCodeValue.value = res.result
-          await verifyQRCode()
-        },
-        fail: (error) => {
-          uni.showToast({
-            title: '扫码失败',
-            icon: 'none'
-          })
-        }
+// 页面生命周期
+onMounted(() => {
+  // 初始化页面
+})
+
+onShow(() => {
+  // 页面显示时重置状态
+  qrCodeValue.value = ''
+  idCardForm.idCardNumber = ''
+  idCardForm.phoneNumber = ''
+})
+
+// 方法实现
+const scanQRCode = () => {
+  uni.scanCode({
+    success: async (res) => {
+      qrCodeValue.value = res.result
+      await verifyQRCode()
+    },
+    fail: (error) => {
+      uni.showToast({
+        title: '扫码失败',
+        icon: 'none'
       })
     }
+  })
+}
 
-    // 验证二维码
-    const verifyQRCode = async () => {
-      if (!qrCodeValue.value) {
-        uni.showToast({ title: '请输入二维码内容', icon: 'none' })
-        return
-      }
-
-      verifying.value = true
-      try {
-        const result = await visitorApi.checkInByQRCode(qrCodeValue.value)
-        if (result.success) {
-          verifyResult.success = true
-          verifyResult.message = '验证成功，访客已签到'
-          verifyResult.data = result.data
-          showResultModal.value = true
-          qrCodeValue.value = ''
-        } else {
-          verifyResult.success = false
-          verifyResult.message = result.msg || '验证失败'
-          verifyResult.data = null
-          showResultModal.value = true
-        }
-      } catch (error) {
-        uni.showToast({ title: '验证失败', icon: 'none' })
-      } finally {
-        verifying.value = false
-      }
-    }
-
-    // 验证身份证
-    const verifyIdCard = async () => {
-      if (!idCardForm.idCardNumber || !idCardForm.phoneNumber) {
-        uni.showToast({ title: '请输入身份证号和手机号', icon: 'none' })
-        return
-      }
-
-      verifying.value = true
-      try {
-        const result = await visitorApi.validateVisitorInfo(
-          idCardForm.idCardNumber,
-          idCardForm.phoneNumber
-        )
-        if (result.success && result.data) {
-          verifyResult.success = result.data.isValid
-          verifyResult.message = result.data.isValid ? '验证成功' : '访客信息不存在'
-          verifyResult.data = result.data
-          showResultModal.value = true
-          if (result.data.isValid) {
-            idCardForm.idCardNumber = ''
-            idCardForm.phoneNumber = ''
-          }
-        } else {
-          uni.showToast({ title: result.msg || '验证失败', icon: 'none' })
-        }
-      } catch (error) {
-        uni.showToast({ title: '验证失败', icon: 'none' })
-      } finally {
-        verifying.value = false
-      }
-    }
-
-    // 关闭结果弹窗
-    const closeResultModal = () => {
-      showResultModal.value = false
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    return {
-      qrCodeValue,
-      verifying,
-      showResultModal,
-      idCardForm,
-      verifyResult,
-      scanQRCode,
-      verifyQRCode,
-      verifyIdCard,
-      closeResultModal,
-      goBack
-    }
+const verifyQRCode = async () => {
+  if (!qrCodeValue.value) {
+    uni.showToast({ title: '请输入二维码内容', icon: 'none' })
+    return
   }
+
+  verifying.value = true
+  try {
+    const result = await visitorApi.checkInByQRCode(qrCodeValue.value)
+    if (result.success) {
+      verifyResult.success = true
+      verifyResult.message = '验证成功，访客已签到'
+      verifyResult.data = result.data
+      showResultModal.value = true
+      qrCodeValue.value = ''
+    } else {
+      verifyResult.success = false
+      verifyResult.message = result.msg || '验证失败'
+      verifyResult.data = null
+      showResultModal.value = true
+    }
+  } catch (error) {
+    uni.showToast({ title: '验证失败', icon: 'none' })
+  } finally {
+    verifying.value = false
+  }
+}
+
+const verifyIdCard = async () => {
+  if (!idCardForm.idCardNumber || !idCardForm.phoneNumber) {
+    uni.showToast({ title: '请输入身份证号和手机号', icon: 'none' })
+    return
+  }
+
+  verifying.value = true
+  try {
+    const result = await visitorApi.validateVisitorInfo(
+      idCardForm.idCardNumber,
+      idCardForm.phoneNumber
+    )
+    if (result.success && result.data) {
+      verifyResult.success = result.data.isValid
+      verifyResult.message = result.data.isValid ? '验证成功' : '访客信息不存在'
+      verifyResult.data = result.data
+      showResultModal.value = true
+      if (result.data.isValid) {
+        idCardForm.idCardNumber = ''
+        idCardForm.phoneNumber = ''
+      }
+    } else {
+      uni.showToast({ title: result.msg || '验证失败', icon: 'none' })
+    }
+  } catch (error) {
+    uni.showToast({ title: '验证失败', icon: 'none' })
+  } finally {
+    verifying.value = false
+  }
+}
+
+const closeResultModal = () => {
+  showResultModal.value = false
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

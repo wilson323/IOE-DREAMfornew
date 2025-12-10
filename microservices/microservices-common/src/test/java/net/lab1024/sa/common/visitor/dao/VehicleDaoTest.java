@@ -28,7 +28,7 @@ import net.lab1024.sa.common.visitor.entity.VehicleEntity;
  * @Author IOE-DREAM Team
  * @Date 2025-12-05
  * @Copyright IOE-DREAM智慧园区一卡通管理平台
- * 
+ *
  *            测试覆盖：
  *            - CRUD基本操作
  *            - 条件查询
@@ -73,8 +73,8 @@ class VehicleDaoTest {
 
         // 验证
         assertEquals(1, result, "应该成功插入1条记录");
-        assertNotNull(testVehicle.getVehicleId(), "车辆ID应该自动生成");
-        assertTrue(testVehicle.getVehicleId() > 0, "车辆ID应该大于0");
+        assertNotNull(testVehicle.getId(), "车辆ID应该自动生成");
+        assertTrue(testVehicle.getId() > 0, "车辆ID应该大于0");
     }
 
     @Test
@@ -83,7 +83,7 @@ class VehicleDaoTest {
     void testSelectById() {
         // 先插入测试数据
         vehicleDao.insert(testVehicle);
-        Long vehicleId = testVehicle.getVehicleId();
+        Long vehicleId = testVehicle.getId();
 
         // 执行查询
         VehicleEntity result = vehicleDao.selectById(vehicleId);
@@ -133,7 +133,7 @@ class VehicleDaoTest {
         assertEquals(1, result, "应该成功更新1条记录");
 
         // 重新查询验证
-        VehicleEntity updated = vehicleDao.selectById(testVehicle.getVehicleId());
+        VehicleEntity updated = vehicleDao.selectById(testVehicle.getId());
         assertEquals("黑色", updated.getVehicleColor(), "颜色应该已更新");
         assertEquals(2, updated.getStatus(), "状态应该已更新");
     }
@@ -144,7 +144,7 @@ class VehicleDaoTest {
     void testLogicDelete() {
         // 先插入测试数据
         vehicleDao.insert(testVehicle);
-        Long vehicleId = testVehicle.getVehicleId();
+        Long vehicleId = testVehicle.getId();
 
         // 执行逻辑删除
         testVehicle.setDeletedFlag(1);
@@ -156,7 +156,7 @@ class VehicleDaoTest {
 
         // 查询已删除的记录
         LambdaQueryWrapper<VehicleEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(VehicleEntity::getVehicleId, vehicleId);
+        wrapper.eq(VehicleEntity::getId, vehicleId);
         wrapper.eq(VehicleEntity::getDeletedFlag, 1);
 
         VehicleEntity deleted = vehicleDao.selectOne(wrapper);

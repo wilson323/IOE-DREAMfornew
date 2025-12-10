@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import net.lab1024.sa.common.workflow.domain.vo.ApprovalStatisticsVO;
 import net.lab1024.sa.common.workflow.entity.ApprovalStatisticsEntity;
 
 /**
@@ -52,5 +54,19 @@ public interface ApprovalStatisticsDao extends BaseMapper<ApprovalStatisticsEnti
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             @Param("statisticsDimension") String statisticsDimension);
+
+    /**
+     * 查询审批统计信息
+     *
+     * @param userId 用户ID（可选）
+     * @param departmentId 部门ID（可选）
+     * @param statisticsType 统计类型（day/week/month）
+     * @return 统计信息VO
+     */
+    @Transactional(readOnly = true)
+    ApprovalStatisticsVO selectStatistics(
+            @Param("userId") Long userId,
+            @Param("departmentId") Long departmentId,
+            @Param("statisticsType") String statisticsType);
 }
 

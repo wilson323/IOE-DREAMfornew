@@ -2098,6 +2098,217 @@ public class DeviceProtocolServiceImpl implements DeviceProtocolService {
 - [ ] 验证微服务调用模式
 - [ ] Repository合规性检查
 
+## 🏗️ 区域-设备关联架构规范 (2025-12-08新增)
+
+### 1. 区域设备关联核心概念
+
+**设计目标**: 通过区域与设备的双向关联，串联各个业务场景，实现统一的智慧园区空间管理。
+
+**核心原则**:
+- ✅ **区域作为空间概念**: 统一公共区域设置，各业务模块有对应属性
+- ✅ **设备区域关联**: 设备部署在具体区域中，支持跨区域服务
+- ✅ **业务属性管理**: 设备在区域中有特定的业务属性和配置
+- ✅ **权限继承机制**: 通过区域权限控制设备访问权限
+
+### 2. 区域设备关联实体设计
+
+**核心实体**: `net.lab1024.sa.common.organization.entity.AreaDeviceEntity`
+
+**数据库表**: `t_area_device_relation`
+
+**关键字段**:
+```java
+// 关联标识
+@TableId(type = IdType.ASSIGN_ID)
+private String relationId;           // 关联ID
+
+// 区域关联
+private Long areaId;                 // 区域ID
+private String deviceId;             // 设备ID
+private String deviceCode;           // 设备编码
+private String deviceName;           // 设备名称
+
+// 设备分类
+private Integer deviceType;          // 设备类型 (1-门禁 2-考勤 3-消费 4-视频 5-访客)
+private Integer deviceSubType;       // 设备子类型
+private String businessModule;       // 业务模块 (access/attendance/consume/visitor/video)
+
+// 业务属性
+private String businessAttributes;   // 业务属性(JSON格式)
+private Integer relationStatus;      // 关联状态 (1-正常 2-维护 3-故障 4-离线 5-停用)
+private Integer priority;            // 优先级 (1-主设备 2-辅助设备 3-备用设备)
+
+// 时间控制
+private LocalDateTime effectiveTime; // 生效时间
+private LocalDateTime expireTime;     // 失效时间
+```
+
+### 3. 区域设备管理服务架构
+
+**服务接口**: `net.lab1024.sa.common.organization.service.AreaDeviceManager`
+
+**核心功能**:
+- **设备关联管理**: 添加、移除、批量管理区域设备
+- **权限控制**: 基于用户权限获取可访问设备
+- **业务属性**: 设备在区域中的业务属性管理
+- **状态同步**: 设备状态同步到区域关联
+- **统计分析**: 区域设备统计和分布分析
+
+**实现类**: `net.lab1024.sa.common.organization.service.impl.AreaDeviceManagerImpl`
+
+**数据访问**: `net.lab1024.sa.common.organization.dao.AreaDeviceDao`
+
+### 4. 业务场景应用模式
+
+#### 4.1 门禁区域设备关联
+```java
+// 门禁设备部署到区域
+areaDeviceManager.addDeviceToArea(
+    areaId,           // A栋1楼大厅
+    deviceId,         // 门禁控制器DEV001
+    deviceCode,       // ACCESS_CTRL_001
+    deviceName,       // 主入口门禁
+    1,                // 设备类型：门禁设备
+    "access"          // 业务模块：门禁管理
+);
+
+// 设置门禁业务属性
+Map<String, Object> accessAttributes = new HashMap<>();
+accessAttributes.put("accessMode", "card");
+accessAttributes.put("antiPassback", true);
+accessAttributes.put("openTime", 3000);
+areaDeviceManager.setDeviceBusinessAttributes(deviceId, areaId, accessAttributes);
+```
+
+#### 4.2 考勤区域设备关联
+```java
+// 考勤设备部署到办公区域
+areaDeviceManager.addDeviceToArea(
+    officeAreaId,     // 办公区域
+    attendanceDeviceId, // 考勤机ATT001
+    "ATTEND_001",     // 设备编码
+    "办公区考勤机",   // 设备名称
+    2,                // 设备类型：考勤设备
+    "attendance"      // 业务模块：考勤管理
+);
+```
+
+#### 4.3 消费区域设备关联
+```java
+// 消费设备部署到餐厅区域
+areaDeviceManager.addDeviceToArea(
+    canteenAreaId,     // 餐厅区域
+    posDeviceId,       // POS机POS001
+    "POS_001",        // 设备编码
+    "餐厅POS机",      // 设备名称
+    3,                // 设备类型：消费设备
+    "consume"         // 业务模块：消费管理
+);
+```
+
+### 5. 统一区域管理服务集成
+
+**区域统一服务**: `net.lab1024.sa.common.organization.service.AreaUnifiedService`
+
+**集成功能**:
+- **区域层级管理**: 支持多级区域结构和权限继承
+- **业务属性管理**: 各业务模块在区域中的专属配置
+- **设备关联查询**: 通过区域获取关联的设备信息
+- **权限验证**: 用户区域权限验证和设备访问控制
+
+```java
+// 获取区域的所有设备
+List<AreaDeviceEntity> areaDevices = areaDeviceManager.getAreaDevices(areaId);
+
+// 获取区域中指定业务模块的设备
+List<AreaDeviceEntity> accessDevices = areaDeviceManager.getAreaDevicesByModule(areaId, "access");
+
+// 获取用户可访问的设备
+List<AreaDeviceEntity> userDevices = areaDeviceManager.getUserAccessibleDevices(userId, "access");
+
+// 检查设备是否在区域中
+boolean inArea = areaDeviceManager.isDeviceInArea(areaId, deviceId);
+```
+
+### 6. 设备业务属性模板
+
+**模板机制**: 为不同设备类型提供标准化的业务属性模板
+
+**支持模板**:
+- **门禁设备**: 访问模式、反潜回、胁迫码、开关门时间
+- **考勤设备**: 工作模式、位置验证、拍照采集
+- **消费设备**: 支付模式、离线模式、小票打印
+- **视频设备**: 分辨率、录像模式、AI分析、存储类型
+
+```java
+// 获取设备属性模板
+Map<String, Object> template = areaDeviceManager.getDeviceAttributeTemplate(1, 11); // 门禁控制器
+
+// 应用模板到设备关联
+areaDeviceManager.addDeviceToArea(areaId, deviceId, deviceCode, deviceName, deviceType, businessModule);
+```
+
+### 7. 缓存和性能优化
+
+**多级缓存策略**:
+- **L1本地缓存**: 设备关联关系缓存(30分钟)
+- **L2 Redis缓存**: 分布式缓存支持
+- **L3数据库**: 持久化存储
+
+**缓存键规范**:
+```
+area:device:area:{areaId}              # 区域设备列表
+area:device:area:{areaId}:type:{type}   # 区域指定类型设备
+area:device:area:{areaId}:module:{module} # 区域业务模块设备
+area:device:user:{userId}:devices       # 用户可访问设备
+```
+
+### 8. 业务场景串联示例
+
+#### 8.1 用户进门场景
+```
+用户刷卡 → 区域设备关联查询 → 权限验证 → 门禁控制 → 记录生成 → 视频联动
+    ↓           ↓              ↓         ↓         ↓         ↓
+  刷卡设备    查找区域关联    验证区域权限  控制门禁   通行记录   关联摄像头
+```
+
+#### 8.2 考勤打卡场景
+```
+用户打卡 → 区域定位 → 设备验证 → 考勤记录 → 数据统计 → 异常检测
+    ↓        ↓        ↓        ↓        ↓        ↓
+  考勤机   确定办公区域  验证权限  记录打卡  汇总统计  异常告警
+```
+
+#### 8.3 消费结算场景
+```
+用户消费 → 区域验证 → 账户检查 → 支付处理 → 记录生成 → 通知推送
+    ↓        ↓        ↓        ↓        ↓        ↓
+  POS机   验证消费区域  检查余额  扣款支付  消费记录   消费通知
+```
+
+### 9. 规范检查清单
+
+**代码实现检查**:
+- [ ] 使用AreaDeviceEntity进行区域设备关联
+- [ ] 通过AreaDeviceManager管理设备关联关系
+- [ ] 遵循四层架构规范(Controller→Service→Manager→DAO)
+- [ ] 使用@Mapper注解而非@Repository
+- [ ] 设备业务属性使用JSON格式存储
+
+**业务逻辑检查**:
+- [ ] 区域权限验证机制完整
+- [ ] 设备状态同步机制正确
+- [ ] 缓存策略合理有效
+- [ ] 业务属性模板标准化
+- [ ] 跨业务场景串联支持
+
+**性能优化检查**:
+- [ ] 多级缓存策略实施
+- [ ] 数据库查询优化
+- [ ] 批量操作支持
+- [ ] 异步处理机制
+- [ ] 监控指标完善
+
 ---
 
 ## 📝 详细开发规范 (2025-12-02新增)

@@ -1,0 +1,80 @@
+# IOE-DREAM 项目EditorConfig配置
+# 根源性解决编码问题，确保所有开发环境使用一致的编码
+
+# 设定根目录
+root = true
+
+# 所有文件的通用设置
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Java文件
+[*.java]
+charset = utf-8
+indent_style = space
+indent_size = 4
+continuation_indent_size = 8
+
+# XML文件
+[*.xml]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+# YAML文件
+[*.{yml,yaml}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+# Properties文件
+[*.properties]
+charset = utf-8
+end_of_line = crlf
+
+# JavaScript/TypeScript文件
+[*.{js,ts,jsx,tsx}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+# HTML文件
+[*.html]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+# CSS/SCSS文件
+[*.{css,scss,sass}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+# Markdown文件
+[*.md]
+charset = utf-8
+end_of_line = crlf
+trim_trailing_whitespace = false
+
+# JSON文件
+[*.json]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+# SQL文件
+[*.sql]
+charset = utf-8
+end_of_line = crlf
+
+# Shell/Batch脚本
+[*.{sh,bat}]
+charset = utf-8
+end_of_line = crlf
+
+# 配置文件
+[*.{conf,config,ini,toml}]
+charset = utf-8

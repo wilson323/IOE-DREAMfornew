@@ -53,86 +53,80 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, onMounted } from 'vue'
 import accessApi from '@/api/access.js'
 
-export default {
-  name: 'AccessMonitor',
-  setup() {
-    const stats = reactive({
-      onlineDevices: 0,
-      todayAccess: 0,
-      activeAlerts: 0
-    })
-    const eventList = ref([])
+// 响应式数据
+const stats = reactive({
+  onlineDevices: 0,
+  todayAccess: 0,
+  activeAlerts: 0
+})
+const eventList = ref([])
 
-    // 加载统计数据
-    const loadStats = async () => {
-      try {
-        const result = await accessApi.getAccessStatistics()
-        if (result.success && result.data) {
-          Object.assign(stats, result.data)
-        }
-      } catch (error) {
-        console.error('加载统计数据失败:', error)
-      }
+// 页面生命周期
+onMounted(() => {
+  loadStats()
+  loadEvents()
+})
+
+onShow(() => {
+  // 页面显示时可以刷新数据
+  refreshData()
+})
+
+onPullDownRefresh(() => {
+  refreshData()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const loadStats = async () => {
+  try {
+    const result = await accessApi.getAccessStatistics()
+    if (result.success && result.data) {
+      Object.assign(stats, result.data)
     }
-
-    // 加载事件列表
-    const loadEvents = async () => {
-      try {
-        const result = await accessApi.getRecentEvents({ limit: 20 })
-        if (result.success && result.data) {
-          eventList.value = result.data
-        }
-      } catch (error) {
-        console.error('加载事件列表失败:', error)
-      }
-    }
-
-    // 刷新数据
-    const refreshData = async () => {
-      uni.showLoading({ title: '刷新中...' })
-      try {
-        await Promise.all([loadStats(), loadEvents()])
-        uni.hideLoading()
-        uni.showToast({ title: '刷新成功', icon: 'success' })
-      } catch (error) {
-        uni.hideLoading()
-        uni.showToast({ title: '刷新失败', icon: 'none' })
-      }
-    }
-
-    // 格式化日期时间
-    const formatDateTime = (datetime) => {
-      if (!datetime) return '-'
-      const date = new Date(datetime)
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      const seconds = String(date.getSeconds()).padStart(2, '0')
-      return `${hours}:${minutes}:${seconds}`
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 初始化
-    onMounted(() => {
-      loadStats()
-      loadEvents()
-    })
-
-    return {
-      stats,
-      eventList,
-      refreshData,
-      formatDateTime,
-      goBack
-    }
+  } catch (error) {
+    console.error('加载统计数据失败:', error)
   }
+}
+
+const loadEvents = async () => {
+  try {
+    const result = await accessApi.getRecentEvents({ limit: 20 })
+    if (result.success && result.data) {
+      eventList.value = result.data
+    }
+  } catch (error) {
+    console.error('加载事件列表失败:', error)
+  }
+}
+
+const refreshData = async () => {
+  uni.showLoading({ title: '刷新中...' })
+  try {
+    await Promise.all([loadStats(), loadEvents()])
+    uni.hideLoading()
+    uni.showToast({ title: '刷新成功', icon: 'success' })
+  } catch (error) {
+    uni.hideLoading()
+    uni.showToast({ title: '刷新失败', icon: 'none' })
+  }
+}
+
+const formatDateTime = (datetime) => {
+  if (!datetime) return '-'
+  const date = new Date(datetime)
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${hours}:${minutes}:${seconds}`
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

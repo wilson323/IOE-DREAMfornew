@@ -22,23 +22,23 @@ import lombok.Data;
 @Schema(description = "审批节点配置表单")
 public class ApprovalNodeConfigForm {
 
-    @Schema(description = "审批配置ID", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "审批配置ID", example = "1")
     @NotNull(message = "审批配置ID不能为空")
     private Long approvalConfigId;
 
-    @Schema(description = "节点名称", example = "部门经理审批", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "节点名称", example = "部门经理审批")
     @NotBlank(message = "节点名称不能为空")
     private String nodeName;
 
-    @Schema(description = "节点顺序（从1开始）", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "节点顺序（从1开始）", example = "1")
     @NotNull(message = "节点顺序不能为空")
     private Integer nodeOrder;
 
-    @Schema(description = "节点类型（SERIAL-串行 PARALLEL-并行 COUNTERSIGN-会签 OR_SIGN-或签 CONDITION-条件分支 AUTO-自动）", example = "SERIAL", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "节点类型（SERIAL-串行 PARALLEL-并行 COUNTERSIGN-会签 OR_SIGN-或签 CONDITION-条件分支 AUTO-自动）", example = "SERIAL")
     @NotBlank(message = "节点类型不能为空")
     private String nodeType;
 
-    @Schema(description = "审批人设置方式", example = "DIRECT_MANAGER", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "审批人设置方式", example = "DIRECT_MANAGER")
     @NotBlank(message = "审批人设置方式不能为空")
     private String approverType;
 

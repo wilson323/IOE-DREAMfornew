@@ -80,93 +80,90 @@
   </view>
 </template>
 
-<script>
-import { ref, reactive, onMounted } from 'vue'
+<script setup>
+import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/store/modules/system/user.js'
 import consumeApi from '@/api/business/consume/consume-api.js'
 
-export default {
-  name: 'ConsumeIndex',
-  setup() {
-    const userStore = useUserStore()
-    const accountBalance = ref(0)
-    const recentTransactions = ref([])
+// 响应式数据
+const userStore = useUserStore()
+const accountBalance = ref(0)
+const recentTransactions = ref([])
 
-    // 加载账户余额
-    const loadAccountBalance = async () => {
-      try {
-        // 从用户store获取用户ID
-        const userId = userStore.employeeId
-        if (!userId) {
-          uni.showToast({
-            title: '请先登录',
-            icon: 'none'
-          })
-          return
-        }
-        const result = await consumeApi.getAccountBalance(userId)
-        if (result.success && result.data) {
-          accountBalance.value = result.data.balance || 0
-        }
-      } catch (error) {
-        console.error('加载账户余额失败:', error)
-      }
+// 页面生命周期
+onMounted(() => {
+  loadData()
+})
+
+onShow(() => {
+  // 页面显示时可以刷新数据
+})
+
+onPullDownRefresh(() => {
+  loadData()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const loadData = async () => {
+  await Promise.all([
+    loadAccountBalance(),
+    loadRecentTransactions()
+  ])
+}
+
+const loadAccountBalance = async () => {
+  try {
+    // 从用户store获取用户ID
+    const userId = userStore.employeeId
+    if (!userId) {
+      uni.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+      return
     }
-
-    // 加载最近交易
-    const loadRecentTransactions = async () => {
-      try {
-        const result = await consumeApi.getRecentHistory({ limit: 5 })
-        if (result.success && result.data) {
-          recentTransactions.value = result.data
-        }
-      } catch (error) {
-        console.error('加载最近交易失败:', error)
-      }
+    const result = await consumeApi.getAccountBalance(userId)
+    if (result.success && result.data) {
+      accountBalance.value = result.data.balance || 0
     }
-
-    // 页面导航
-    const navigateTo = (url) => {
-      uni.navigateTo({ url })
-    }
-
-    // 返回
-    const goBack = () => {
-      uni.navigateBack()
-    }
-
-    // 格式化金额
-    const formatAmount = (amount) => {
-      if (!amount) return '0.00'
-      return Number(amount).toFixed(2)
-    }
-
-    // 格式化日期时间
-    const formatDateTime = (datetime) => {
-      if (!datetime) return '-'
-      const date = new Date(datetime)
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      return `${month}-${day} ${hours}:${minutes}`
-    }
-
-    // 初始化
-    onMounted(() => {
-      loadAccountBalance()
-      loadRecentTransactions()
-    })
-
-    return {
-      accountBalance,
-      recentTransactions,
-      navigateTo,
-      goBack,
-      formatAmount,
-      formatDateTime
-    }
+  } catch (error) {
+    console.error('加载账户余额失败:', error)
   }
+}
+
+const loadRecentTransactions = async () => {
+  try {
+    const result = await consumeApi.getRecentHistory({ limit: 5 })
+    if (result.success && result.data) {
+      recentTransactions.value = result.data
+    }
+  } catch (error) {
+    console.error('加载最近交易失败:', error)
+  }
+}
+
+const navigateTo = (url) => {
+  uni.navigateTo({ url })
+}
+
+const goBack = () => {
+  uni.navigateBack()
+}
+
+const formatAmount = (amount) => {
+  if (!amount) return '0.00'
+  return Number(amount).toFixed(2)
+}
+
+const formatDateTime = (datetime) => {
+  if (!datetime) return '-'
+  const date = new Date(datetime)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${month}-${day} ${hours}:${minutes}`
 }
 </script>
 

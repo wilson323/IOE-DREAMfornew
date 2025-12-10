@@ -1,0 +1,225 @@
+# ============================================================
+# IOE-DREAM 统一生产环境配置模板
+#
+# 功能：消除配置冗余，确保全局一致性
+# 适用：所有微服务的生产环境配置
+#
+# @Author: IOE-DREAM架构委员会
+# @Date: 2025-01-30
+# @Version: v1.0.0-企业级标准版
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  tomcat:
+    uri-encoding: UTF-8
+    # 优化后的线程池配置（企业级标准）
+    max-threads: 200
+    min-spare-threads: 20
+    accept-count: 100
+    connection-timeout: 20000
+
+# ==================== Spring核心配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  application:
+    name: ${SPRING_APPLICATION_NAME:ioedream-service}
+
+  # ==================== 数据源配置（统一优化） ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 企业级优化连接池配置
+      initial-size: 10
+      min-idle: 10
+      max-active: 50
+      max-wait: 10000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置（统一安全配置）
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+        reset-enable: false
+
+      # 防SQL注入配置
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 1000
+          log-slow-sql: true
+        wall:
+          enabled: true
+          config:
+            multi-statement-allow: false
+            delete-allow: false
+            drop-table-allow: false
+
+  # ==================== Redis配置（统一集群配置） ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 16
+        max-idle: 8
+        min-idle: 2
+        max-wait: 3000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 缓存配置（统一策略） ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000  # 5分钟
+      cache-null-values: false
+      key-prefix: ${SPRING_APPLICATION_NAME:ioedream}_cache_
+
+  # ==================== JVM性能配置 ====================
+  jvm:
+    # JVM优化参数将通过启动脚本设置
+    # 这里只配置应用级别的优化
+
+# ==================== MyBatis-Plus配置（统一标准） ====================
+mybatis-plus:
+  configuration:
+    # 性能优化配置
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    default-executor-type: reuse
+    default-statement-timeout: 30
+    default-fetch-size: 1000
+    # 开发环境可以开启SQL日志，生产环境关闭
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+  global-config:
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+    # 性能优化配置
+    banner: false
+
+# ==================== 监控配置（统一标准） ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: health
+        readiness:
+          include: health,db,redis
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${SPRING_APPLICATION_NAME:ioedream-service}
+      environment: prod
+
+# ==================== 日志配置（统一企业级标准） ====================
+logging:
+  level:
+    root: WARN
+    net.lab1024.sa: INFO
+    # SQL日志在生产环境关闭
+    net.lab1024.sa.*.dao: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ${LOG_FILE:/var/log/ioedream}/${SPRING_APPLICATION_NAME:ioedream-service}.log
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30
+      total-size-cap: 1GB
+
+# ==================== 安全配置（统一标准） ====================
+# 敏感信息加密配置
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD}
+    algorithm: PBEWithMD5AndTripleDES
+    key-obtention-iterations: 1000
+    pool-size: 1
+    provider-name: SunJCE
+    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    string-output-type: base64
+
+# ==================== 业务特定配置（由各服务覆盖） ====================
+# 以下配置允许各个服务根据业务需求进行覆盖
+ioedream:
+  # 业务配置
+  business:
+    timeout: ${BUSINESS_TIMEOUT:30000}
+    retry-count: ${RETRY_COUNT:3}
+
+  # 安全配置
+  security:
+    jwt-secret: ${JWT_SECRET:ENC(AES256:encrypted_jwt_secret)}
+    jwt-expiration: ${JWT_EXPIRATION:86400}
+
+  # 缓存配置
+  cache:
+    local-cache-size: ${LOCAL_CACHE_SIZE:1000}
+    local-cache-ttl: ${LOCAL_CACHE_TTL:300}
+
+  # 限流配置
+  rate-limit:
+    requests-per-minute: ${RATE_LIMIT_RPM:1000}
+    burst-capacity: ${RATE_LIMIT_BURST:200}

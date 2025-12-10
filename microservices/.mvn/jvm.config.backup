@@ -1,0 +1,17 @@
+# IOE-DREAM Maven JVM配置
+# 统一字符编码为UTF-8，解决编译乱码问题
+-Dfile.encoding=UTF-8
+-Dconsole.encoding=UTF-8
+-Dsun.stdout.encoding=UTF-8
+-Dsun.stderr.encoding=UTF-8
+
+# 优化JVM参数
+-Xms512m
+-Xmx2g
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:+PrintGCDetails
+-XX:+PrintGCTimeStamps
+
+# 时区设置
+-Duser.timezone=Asia/Shanghai

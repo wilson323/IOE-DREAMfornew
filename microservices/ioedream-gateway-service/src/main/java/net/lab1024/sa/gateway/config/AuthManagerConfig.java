@@ -41,10 +41,27 @@ public class AuthManagerConfig {
     private UserSessionDao userSessionDao;
 
     @Resource
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @org.springframework.beans.factory.annotation.Value("${auth.jwt.secret:ioedream-jwt-secret-key-2025-must-be-at-least-256-bits}")
+    private String jwtSecret;
+
+    @org.springframework.beans.factory.annotation.Value("${auth.jwt.access-token-expiration:86400}")
+    private Long accessTokenExpiration;
+
+    @org.springframework.beans.factory.annotation.Value("${auth.jwt.refresh-token-expiration:604800}")
+    private Long refreshTokenExpiration;
+
+    /**
+     * 注册JwtTokenUtil Bean
+     * <p>
+     * JwtTokenUtil是纯Java类，通过配置类注册为Spring Bean
+     * </p>
+     */
+    @Bean
+    public JwtTokenUtil jwtTokenUtil() {
+        return new JwtTokenUtil(jwtSecret, accessTokenExpiration, refreshTokenExpiration);
+    }
 
     /**
      * 注册企业级AuthManager
@@ -68,8 +85,12 @@ public class AuthManagerConfig {
     @Bean
     public AuthManager authManager() {
         log.info("[AuthManager] 初始化企业级认证管理器");
+
+        // 创建JwtTokenUtil实例
+        JwtTokenUtil jwtTokenUtil = jwtTokenUtil();
+
         log.info("[AuthManager] UserSessionDao: {}", userSessionDao != null ? "已注入" : "未注入");
-        log.info("[AuthManager] JwtTokenUtil: {}", jwtTokenUtil != null ? "已注入" : "未注入");
+        log.info("[AuthManager] JwtTokenUtil: {}", jwtTokenUtil != null ? "已创建" : "未创建");
         log.info("[AuthManager] StringRedisTemplate: {}", stringRedisTemplate != null ? "已注入" : "未注入");
 
         AuthManager authManager = new AuthManager(

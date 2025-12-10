@@ -18,7 +18,7 @@ export const monitorApi = {
    * @returns {Promise}
    */
   getMobileMonitor: (deviceId, streamType = 'SUB', resolution = '720p') =>
-    getRequest(`/api/mobile/v1/video/monitor/${deviceId}`, { streamType, resolution }),
+    getRequest(`/api/v1/mobile/video/monitor/${deviceId}`, { streamType, resolution }),
 
   /**
    * 移动端多画面监控
@@ -27,7 +27,7 @@ export const monitorApi = {
    * @param {String} data.layout 布局模式：2x2
    * @returns {Promise}
    */
-  getMultiMonitor: (data) => postRequest('/api/mobile/v1/video/monitor/multi', data),
+  getMultiMonitor: (data) => postRequest('/api/v1/mobile/video/monitor/multi', data),
 
   /**
    * 启动实时监控
@@ -36,7 +36,7 @@ export const monitorApi = {
    * @returns {Promise}
    */
   startMonitor: (deviceId, streamType = 'SUB') =>
-    postRequest(`/api/v1/video/monitor/${deviceId}/start`, null, { streamType }),
+    postRequest(`/api/v1/mobile/video/monitor/${deviceId}/start`, null, { streamType }),
 
   /**
    * 停止实时监控
@@ -44,7 +44,7 @@ export const monitorApi = {
    * @returns {Promise}
    */
   stopMonitor: (deviceId) =>
-    postRequest(`/api/v1/video/monitor/${deviceId}/stop`),
+    postRequest(`/api/v1/mobile/video/monitor/${deviceId}/stop`),
 
   /**
    * 批量启动监控
@@ -53,7 +53,7 @@ export const monitorApi = {
    * @returns {Promise}
    */
   batchStartMonitor: (deviceIds, streamType = 'SUB') =>
-    postRequest('/api/v1/video/monitor/batch/start', { deviceIds, streamType }),
+    postRequest('/api/v1/mobile/video/monitor/batch/start', { deviceIds, streamType }),
 
   /**
    * 批量停止监控
@@ -61,7 +61,7 @@ export const monitorApi = {
    * @returns {Promise}
    */
   batchStopMonitor: (deviceIds) =>
-    postRequest('/api/v1/video/monitor/batch/stop', deviceIds)
+    postRequest('/api/v1/mobile/video/monitor/batch/stop', deviceIds)
 }
 
 // 云台控制相关接口
@@ -75,7 +75,7 @@ export const ptzApi = {
    * @returns {Promise}
    */
   mobilePTZControl: (deviceId, controlData) =>
-    postRequest(`/api/mobile/v1/video/ptz/${deviceId}`, controlData),
+    postRequest(`/api/v1/mobile/video/ptz/${deviceId}`, controlData),
 
   /**
    * 调用预置位
@@ -84,7 +84,7 @@ export const ptzApi = {
    * @returns {Promise}
    */
   gotoPreset: (deviceId, presetNum) =>
-    postRequest(`/api/v1/video/monitor/${deviceId}/preset/${presetNum}`),
+    postRequest(`/api/v1/mobile/video/monitor/${deviceId}/preset/${presetNum}`),
 
   /**
    * 获取预置位列表
@@ -92,7 +92,7 @@ export const ptzApi = {
    * @returns {Promise}
    */
   getPresetList: (deviceId) =>
-    getRequest(`/api/v1/video/monitor/${deviceId}/preset/list`)
+    getRequest(`/api/v1/mobile/video/monitor/${deviceId}/preset/list`)
 }
 
 // 快捷操作相关接口
@@ -104,7 +104,7 @@ export const quickActionApi = {
    * @returns {Promise}
    */
   quickAction: (deviceId, action) =>
-    postRequest(`/api/mobile/v1/video/quick-action/${deviceId}`, null, { action }),
+    postRequest(`/api/v1/mobile/video/quick-action/${deviceId}`, null, { action }),
 
   /**
    * 截图
@@ -112,7 +112,7 @@ export const quickActionApi = {
    * @returns {Promise}
    */
   captureSnapshot: (deviceId) =>
-    postRequest(`/api/v1/video/monitor/${deviceId}/snapshot`),
+    postRequest(`/api/v1/mobile/video/monitor/${deviceId}/snapshot`),
 
   /**
    * 开始录像
@@ -120,7 +120,7 @@ export const quickActionApi = {
    * @returns {Promise}
    */
   startRecord: (deviceId) =>
-    postRequest(`/api/v1/video/monitor/${deviceId}/record/start`),
+    postRequest(`/api/v1/mobile/video/monitor/${deviceId}/record/start`),
 
   /**
    * 停止录像
@@ -129,7 +129,7 @@ export const quickActionApi = {
    * @returns {Promise}
    */
   stopRecord: (deviceId, recordId) =>
-    postRequest(`/api/v1/video/monitor/${deviceId}/record/stop`, { recordId })
+    postRequest(`/api/v1/mobile/video/monitor/${deviceId}/record/stop`, { recordId })
 }
 
 // 设备管理相关接口
@@ -141,7 +141,7 @@ export const deviceApi = {
    * @returns {Promise}
    */
   getMobileDevices: (onlineOnly = true, deviceType) =>
-    getRequest('/api/mobile/v1/video/devices', { onlineOnly, deviceType }),
+    getRequest('/api/v1/mobile/video/devices', { onlineOnly, deviceType }),
 
   /**
    * 移动端设备详情
@@ -149,14 +149,14 @@ export const deviceApi = {
    * @returns {Promise}
    */
   getMobileDeviceDetail: (deviceId) =>
-    getRequest(`/api/mobile/v1/video/devices/${deviceId}/detail`),
+    getRequest(`/api/v1/mobile/video/devices/${deviceId}/detail`),
 
   /**
    * 获取设备统计信息
    * @returns {Promise}
    */
   getDeviceStatistics: () =>
-    getRequest('/api/v1/video/devices/statistics')
+    getRequest('/api/v1/mobile/video/devices/statistics')
 }
 
 // 告警管理相关接口
@@ -166,7 +166,7 @@ export const alarmApi = {
    * @returns {Promise}
    */
   getAlarmOverview: () =>
-    getRequest('/api/mobile/v1/video/alarms/overview'),
+    getRequest('/api/v1/mobile/video/alarms/overview'),
 
   /**
    * 移动端告警处理
@@ -176,7 +176,7 @@ export const alarmApi = {
    * @returns {Promise}
    */
   processMobileAlarm: (alarmId, action, userId) =>
-    postRequest(`/api/mobile/v1/video/alarms/${alarmId}/process`, null, { action, userId }),
+    postRequest(`/api/v1/mobile/video/alarms/${alarmId}/process`, null, { action, userId }),
 
   /**
    * 获取活跃告警列表
@@ -184,7 +184,7 @@ export const alarmApi = {
    * @returns {Promise}
    */
   getActiveAlarms: (limit = 10) =>
-    getRequest('/api/v1/video/alarms/active', { limit }),
+    getRequest('/api/v1/mobile/video/alarms/active', { limit }),
 
   /**
    * 获取告警统计
@@ -192,7 +192,7 @@ export const alarmApi = {
    * @returns {Promise}
    */
   getAlarmStatistics: (timeRange = 'DAY') =>
-    getRequest('/api/v1/video/alarms/statistics', { timeRange })
+    getRequest('/api/v1/mobile/video/alarms/statistics', { timeRange })
 }
 
 // 录像回放相关接口
@@ -206,7 +206,7 @@ export const playbackApi = {
    * @returns {Promise}
    */
   queryPlayback: (params) =>
-    getRequest('/api/v1/video/playback/query', params),
+    getRequest('/api/v1/mobile/video/playback/query', params),
 
   /**
    * 获取回放流地址
@@ -215,7 +215,7 @@ export const playbackApi = {
    * @returns {Promise}
    */
   getPlaybackUrl: (deviceId, recordId) =>
-    getRequest(`/api/v1/video/playback/${deviceId}/${recordId}/url`),
+    getRequest(`/api/v1/mobile/video/playback/${deviceId}/${recordId}/url`),
 
   /**
    * 下载录像
@@ -223,7 +223,7 @@ export const playbackApi = {
    * @returns {Promise}
    */
   downloadRecord: (recordId) =>
-    getRequest(`/api/v1/video/playback/download/${recordId}`)
+    getRequest(`/api/v1/mobile/video/playback/download/${recordId}`)
 }
 
 // 流媒体优化相关接口
@@ -235,14 +235,14 @@ export const streamApi = {
    * @returns {Promise}
    */
   getOptimizedStreamConfig: (deviceId, networkType = 'WIFI') =>
-    getRequest(`/api/mobile/v1/video/stream/optimized/${deviceId}`, { networkType }),
+    getRequest(`/api/v1/mobile/video/stream/optimized/${deviceId}`, { networkType }),
 
   /**
    * 检测网络质量
    * @returns {Promise}
    */
   detectNetworkQuality: () =>
-    getRequest('/api/mobile/v1/video/stream/network-quality')
+    getRequest('/api/v1/mobile/video/stream/network-quality')
 }
 
 // 导出所有API

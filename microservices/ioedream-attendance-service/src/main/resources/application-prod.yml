@@ -1,0 +1,462 @@
+# ============================================================
+# IOE-DREAM Attendance Service 生产环境配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8091}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    min-spare-threads: 25
+    accept-count: 150
+
+# ==================== Spring配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  # ==================== 数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 连接池配置
+      initial-size: 25
+      min-idle: 25
+      max-active: 120
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+
+  # ==================== Redis配置 ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 25
+        max-idle: 12
+        min-idle: 6
+        max-wait: 1000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 缓存配置 ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 900000  # 15分钟
+      cache-null-values: false
+      key-prefix: attendance_cache_
+
+  # ==================== Quartz任务调度配置 ====================
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: ioedream-attendance-scheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            clusterCheckinInterval: 20000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 20
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+
+  # ==================== Zipkin分布式追踪配置 ====================
+  sleuth:
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      enabled: ${ZIPKIN_ENABLED:true}
+    sampler:
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    default-executor-type: reuse
+    default-statement-timeout: 15
+    default-fetch-size: 200
+
+  global-config:
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      attendance-service:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        sliding-window-type: count_based
+
+  ratelimiter:
+    instances:
+      attendance-service:
+        limit-for-period: 200
+        limit-refresh-period: 60s
+        timeout-duration: 5s
+        register-health-indicator: true
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    net.lab1024.sa.attendance: INFO
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# ==================== 考勤服务特定配置 ====================
+attendance:
+  clock:
+    # 打卡配置
+    methods:
+      face:
+        enabled: ${ATTENDANCE_FACE_ENABLED:true}
+        liveness-check: ${ATTENDANCE_FACE_LIVENESS:true}
+        confidence-threshold: ${ATTENDANCE_FACE_CONFIDENCE:0.8}
+        anti-spoofing: ${FACE_ANTI_SPOOFING:true}
+
+      fingerprint:
+        enabled: ${ATTENDANCE_FINGERPRINT_ENABLED:true}
+        template-quality: ${ATTENDANCE_FINGERPRINT_QUALITY:60}
+        match-score: ${ATTENDANCE_FINGERPRINT_MATCH:75}
+        anti-fake: ${FINGERPRINT_ANTI_FAKE:true}
+
+      card:
+        enabled: ${ATTENDANCE_CARD_ENABLED:true}
+        verify-luhn: ${ATTENDANCE_CARD_VERIFY_LUHN:true}
+        card-blacklist: ${CARD_BLACKLIST_ENABLED:true}
+
+      qr-code:
+        enabled: ${ATTENDANCE_QRCODE_ENABLED:true}
+        dynamic-refresh: ${ATTENDANCE_QRCODE_DYNAMIC:true}
+        refresh-interval: ${ATTENDANCE_QRCODE_REFRESH:30}
+        encryption: ${QR_CODE_ENCRYPTION:AES}
+
+    # 位置验证
+    location:
+      enabled: ${ATTENDANCE_LOCATION_ENABLED:true}
+      accuracy-meters: ${ATTENDANCE_LOCATION_ACCURACY:100}
+      wifi-enabled: ${ATTENDANCE_WIFI_ENABLED:true}
+      bluetooth-enabled: ${ATTENDANCE_BLUETOOTH_ENABLED:false}
+      gps-enabled: ${GPS_ENABLED:false}
+      location-verification: ${LOCATION_VERIFICATION_STRICT:true}
+
+    # 防代打卡
+    anti-cheating:
+      enabled: ${ATTENDANCE_ANTI_CHEATING_ENABLED:true}
+      photo-capture: ${ATTENDANCE_PHOTO_CAPTURE:true}
+      location-verify: ${ATTENDANCE_LOCATION_VERIFY:true}
+      time-window-minutes: ${ATTENDANCE_TIME_WINDOW:5}
+      device-verification: ${DEVICE_VERIFICATION_ENABLED:true}
+
+  schedule:
+    # 排班管理
+    shift:
+      # 班次配置
+      types: ${ATTENDANCE_SHIFT_TYPES:normal,overtime,weekend,holiday,special}
+      default-duration: ${ATTENDANCE_DEFAULT_DURATION:480}  # 8小时
+      break-duration: ${ATTENDANCE_BREAK_DURATION:60}     # 1小时
+      max-duration: ${ATTENDANCE_MAX_DURATION:720}       # 12小时
+
+    # 弹性时间
+    flexible:
+      enabled: ${ATTENDANCE_FLEXIBLE_ENABLED:true}
+      grace-minutes: ${ATTENDANCE_GRACE_MINUTES:10}
+      max-late-minutes: ${ATTENDANCE_MAX_LATE_MINUTES:30}
+      max-early-minutes: ${ATTENDANCE_MAX_EARLY_MINUTES:30}
+      core-hours-start: ${FLEXIBLE_CORE_HOURS_START:09:30}
+      core-hours-end: ${FLEXIBLE_CORE_HOURS_END:17:30}
+
+    # 轮班配置
+    rotation:
+      enabled: ${ATTENDANCE_ROTATION_ENABLED:false}
+      cycle-weeks: ${ATTENDANCE_ROTATION_CYCLE:2}
+      auto-switch: ${ATTENDANCE_AUTO_SWITCH:true}
+      switch-notification: ${ROTATION_SWITCH_NOTIFICATION:true}
+
+    # 特殊班次
+    special-shifts:
+      enabled: ${SPECIAL_SHIFTS_ENABLED:true}
+      approval-required: ${SPECIAL_SHIFT_APPROVAL:true}
+      max-special-shifts: ${MAX_SPECIAL_SHIFTS:5}
+
+  calculation:
+    # 考勤计算
+    rules:
+      # 迟到早退
+      late-threshold-minutes: ${ATTENDANCE_LATE_THRESHOLD:5}
+      early-leave-threshold-minutes: ${ATTENDANCE_EARLY_LEAVE_THRESHOLD:30}
+      absence-threshold-hours: ${ATTENDANCE_ABSENT_THRESHOLD:4}
+      late-deduction-rules: ${LATE_DEDUCTION_RULES:enabled}
+      early-leave-deduction-rules: ${EARLY_LEAVE_DEDUCTION_RULES:enabled}
+
+      # 加班计算
+      overtime:
+        enabled: ${ATTENDANCE_OVERTIME_ENABLED:true}
+        min-minutes: ${ATTENDANCE_OVERTIME_MIN:30}
+        approval-required: ${ATTENDANCE_OVERTIME_APPROVAL:true}
+        weekend-rate: ${ATTENDANCE_OVERTIME_WEEKEND_RATE:2.0}
+        holiday-rate: ${ATTENDANCE_OVERTIME_HOLIDAY_RATE:3.0}
+        weekday-rate: ${OVERTIME_WEEKDAY_RATE:1.5}
+        max-daily-hours: ${MAX_OVERTIME_DAILY_HOURS:4}
+        max-monthly-hours: ${MAX_OVERTIME_MONTHLY_HOURS:80}
+
+    # 假期管理
+    leave:
+      types: ${ATTENDANCE_LEAVE_TYPES:annual,sick,maternity,paternity,marriage,bereavement,personal}
+      approval-workflow: ${ATTENDANCE_LEAVE_APPROVAL:true}
+      auto-deduct: ${ATTENDANCE_LEAVE_AUTO_DEDUCT:true}
+      carry-forward: ${LEAVE_CARRY_FORWARD_ENABLED:true}
+      leave-balance-notification: ${LEAVE_BALANCE_NOTIFICATION:true}
+
+    # 补卡规则
+    make-up:
+      enabled: ${MAKE_UP_CLOCK_ENABLED:true}
+      approval-required: ${MAKE_UP_APPROVAL:true}
+      max-monthly-times: ${MAX_MAKE_UP_TIMES:3}
+      make-up-reason-required: ${MAKE_UP_REASON_REQUIRED:true}
+
+  exception:
+    # 异常处理
+    detection:
+      enabled: ${ATTENDANCE_EXCEPTION_ENABLED:true}
+      check-interval-minutes: ${ATTENDANCE_EXCEPTION_CHECK:30}
+      auto-notification: ${EXCEPTION_AUTO_NOTIFICATION:true}
+
+    # 异常类型
+    types:
+      missed-clock: ${ATTENDANCE_MISSED_CLOCK:true}
+      late: ${ATTENDANCE_LATE_EXCEPTION:true}
+      early-leave: ${ATTENDANCE_EARLY_LEAVE_EXCEPTION:true}
+      absent: ${ATTENDANCE_ABSENT_EXCEPTION:true}
+      overtime: ${ATTENDANCE_OVERTIME_EXCEPTION:false}
+      insufficient-hours: ${INSUFFICIENT_HOURS_EXCEPTION:true}
+
+    # 自动处理
+    auto-process:
+      enabled: ${ATTENDANCE_AUTO_PROCESS:false}
+      auto-fill-missed: ${ATTENDANCE_AUTO_FILL_MISSED:false}
+      auto-approve-overtime: ${ATTENDANCE_AUTO_APPROVE_OVERTIME:false}
+      auto-send-reminders: ${AUTO_SEND_REMINDERS:true}
+
+  report:
+    # 报表生成
+    daily:
+      enabled: ${ATTENDANCE_DAILY_REPORT_ENABLED:true}
+      generate-time: ${ATTENDANCE_DAILY_REPORT_TIME:00:30}
+      auto-email: ${DAILY_REPORT_EMAIL_ENABLED:false}
+      email-recipients: ${DAILY_REPORT_RECIPIENTS:}
+
+    weekly:
+      enabled: ${ATTENDANCE_WEEKLY_REPORT_ENABLED:true}
+      generate-day: ${ATTENDANCE_WEEKLY_REPORT_DAY:monday}
+      generate-time: ${ATTENDANCE_WEEKLY_REPORT_TIME:01:00}
+      auto-email: ${WEEKLY_REPORT_EMAIL_ENABLED:true}
+
+    monthly:
+      enabled: ${ATTENDANCE_MONTHLY_REPORT_ENABLED:true}
+      generate-day: ${ATTENDANCE_MONTHLY_REPORT_DAY:1}
+      generate-time: ${ATTENDANCE_MONTHLY_REPORT_TIME:02:00}
+      auto-email: ${MONTHLY_REPORT_EMAIL_ENABLED:true}
+
+    # 报表格式
+    formats:
+      excel: ${REPORT_EXCEL_ENABLED:true}
+      pdf: ${REPORT_PDF_ENABLED:true}
+      csv: ${REPORT_CSV_ENABLED:true}
+
+  integration:
+    # 第三方集成
+    access:
+      enabled: ${ATTENDANCE_ACCESS_INTEGRATION_ENABLED:true}
+      auto-clock-in: ${ATTENDANCE_AUTO_CLOCK_IN:true}
+      sync-interval: ${ATTENDANCE_SYNC_INTERVAL:60}
+      data-validation: ${ACCESS_DATA_VALIDATION:true}
+
+    hr:
+      enabled: ${ATTENDANCE_HR_INTEGRATION_ENABLED:true}
+      employee-sync: ${ATTENDANCE_EMPLOYEE_SYNC:true}
+      department-sync: ${ATTENDANCE_DEPARTMENT_SYNC:true}
+      position-sync: ${POSITION_SYNC_ENABLED:true}
+
+    payroll:
+      enabled: ${PAYROLL_INTEGRATION_ENABLED:false}
+      data-sync: ${PAYROLL_DATA_SYNC:true}
+      calculation-rules: ${PAYROLL_CALCULATION_RULES:}
+
+  notification:
+    # 通知配置
+    reminders:
+      clock-in:
+        enabled: ${ATTENDANCE_CLOCK_IN_REMINDER:true}
+        time: ${ATTENDANCE_CLOCK_IN_REMINDER_TIME:08:30}
+        channels: ${CLOCK_IN_CHANNELS:system,push}
+
+      clock-out:
+        enabled: ${ATTENDANCE_CLOCK_OUT_REMINDER:true}
+        time: ${ATTENDANCE_CLOCK_OUT_REMINDER_TIME:17:30}
+        channels: ${CLOCK_OUT_CHANNELS:system,push}
+
+      overtime-warning:
+        enabled: ${OVERTIME_WARNING_ENABLED:true}
+        threshold-hours: ${OVERTIME_WARNING_THRESHOLD:8}
+
+    exceptions:
+      enabled: ${ATTENDANCE_EXCEPTION_NOTIFICATION:true}
+      channels: ${ATTENDANCE_NOTIFICATION_CHANNELS:system,email}
+      escalation-rules: ${EXCEPTION_ESCALATION:true}
+
+  cache:
+    # 缓存配置
+    user-schedule:
+      ttl: ${ATTENDANCE_SCHEDULE_TTL:1800}      # 30分钟
+      max-size: ${ATTENDANCE_SCHEDULE_MAX_SIZE:20000}
+
+    clock-records:
+      ttl: ${ATTENDANCE_RECORDS_TTL:300}        # 5分钟
+      max-size: ${ATTENDANCE_RECORDS_MAX_SIZE:10000}
+
+    calculation-results:
+      ttl: ${ATTENDANCE_CALCULATION_TTL:900}    # 15分钟
+      max-size: ${ATTENDANCE_CALCULATION_MAX_SIZE:5000}
+
+    user-info:
+      ttl: ${USER_INFO_TTL:3600}                # 1小时
+      max-size: ${USER_INFO_MAX_SIZE:10000}
+
+  performance:
+    # 性能优化
+    batch-processing:
+      enabled: ${BATCH_PROCESSING_ENABLED:true}
+      batch-size: ${BATCH_PROCESS_SIZE:1000}
+      batch-timeout: ${BATCH_TIMEOUT:30}
+
+    # 异步处理
+    async-processing:
+      enabled: ${ASYNC_PROCESSING_ENABLED:true}
+      thread-pool-size: ${ASYNC_THREAD_POOL:20}
+      queue-size: ${ASYNC_QUEUE_SIZE:1000}
+
+    # 数据归档
+    archiving:
+      enabled: ${DATA_ARCHIVING_ENABLED:true}
+      archive-after-days: ${ARCHIVE_AFTER_DAYS:365}
+      archive-retention-days: ${ARCHIVE_RETENTION_DAYS:1825}  # 5年
+
+  compliance:
+    # 合规管理
+    labor-law:
+      enabled: ${LABOR_LAW_COMPLIANCE_ENABLED:true}
+      max-weekly-hours: ${MAX_WEEKLY_HOURS:44}
+      max-daily-hours: ${MAX_DAILY_HOURS:8}
+      rest-day-requirements: ${REST_DAY_REQUIREMENTS:true}
+
+    audit-trail:
+      enabled: ${ATTENDANCE_AUDIT_TRAIL:true}
+      log-all-changes: ${LOG_ALL_CHANGES:true}
+      retention-years: ${AUDIT_RETENTION_YEARS:7}
+
+    data-protection:
+      enabled: ${ATTENDANCE_DATA_PROTECTION:true}
+      anonymization-enabled: ${ANONYMIZATION_ENABLED:false}
+      data-retention-policy: ${DATA_RETENTION_POLICY:}
+
+  # 设备配置
+  device:
+    # 考勤设备管理
+    management:
+      enabled: ${ATTENDANCE_DEVICE_MANAGEMENT:true}
+      device-sync: ${DEVICE_SYNC_ENABLED:true}
+      health-monitoring: ${DEVICE_HEALTH_MONITORING:true}
+
+    # 设备状态
+    status:
+      online-check-interval: ${DEVICE_ONLINE_CHECK:60}
+      offline-threshold: ${DEVICE_OFFLINE_THRESHOLD:300}
+      auto-recovery: ${DEVICE_AUTO_RECOVERY:false}

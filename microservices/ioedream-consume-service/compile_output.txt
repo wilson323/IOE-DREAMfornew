@@ -1,0 +1,606 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------< net.lab1024.sa:ioedream-consume-service >---------------
+[INFO] Building IOE-DREAM Consume Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The POM for com.mysql:mysql-connector-j:jar:8.0.35 is missing, no dependency information available
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-consume-service ---
+[INFO] Copying 8 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ioedream-consume-service ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 137 source files with javac [debug release 17] to target\classes
+[INFO] 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[4,43] 程序包net.lab1024.sa.common.common.domain不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[10,26] 程序包javax.servlet.http不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[26,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[34,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[42,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[50,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[58,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[67,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[77,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[86,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[95,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[104,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[112,56] 找不到符号
+  符号:   类 HttpServletResponse
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[120,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[128,5] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[184,63] 找不到符号
+  符号:   类 HttpServletResponse
+  位置: 类 net.lab1024.sa.consume.controller.ConsumeAccountController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/dto/MobileQuickConsumeRequestDTO.java:[31,25] 不兼容的类型: double无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/dto/MobileScanConsumeRequestDTO.java:[28,25] 不兼容的类型: double无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/dto/MobileRechargeRequestDTO.java:[32,25] 不兼容的类型: double无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/entity/ConsumeRecordEntity.java:[211,55] 不兼容的类型: org.apache.ibatis.type.JdbcType无法转换为com.baomidou.mybatisplus.annotation.FieldFill
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/entity/ConsumeRecordEntity.java:[217,55] 不兼容的类型: org.apache.ibatis.type.JdbcType无法转换为com.baomidou.mybatisplus.annotation.FieldFill
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[55,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[56,21] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[56,39] 找不到符号
+  符号:   方法 getReimbursementAmount()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[56,70] 找不到符号
+  符号:   方法 getReimbursementType()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[60,15] 找不到符号
+  符号:   方法 setReimbursementNo(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[61,30] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[62,43] 找不到符号
+  符号:   方法 getReimbursementAmount()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[63,41] 找不到符号
+  符号:   方法 getReimbursementType()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[64,30] 找不到符号
+  符号:   方法 getReason()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[65,15] 找不到符号
+  符号:   方法 setStatus(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[70,47] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[71,36] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[72,49] 找不到符号
+  符号:   方法 getReimbursementAmount()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[73,47] 找不到符号
+  符号:   方法 getReimbursementType()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[74,36] 找不到符号
+  符号:   方法 getReason()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[79,37] 找不到符号
+  符号:   方法 getReimbursementAmount()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[85,33] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[84,23] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[86,21] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[93,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[93,67] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[100,15] 找不到符号
+  符号:   方法 setWorkflowInstanceId(java.lang.Long)
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[103,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[104,23] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[112,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[116,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[120,15] 找不到符号
+  符号:   方法 setStatus(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[121,15] 找不到符号
+  符号:   方法 setApprovalComment(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[122,15] 找不到符号
+  符号:   方法 setApprovalTime(java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[130,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[145,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[146,23] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[146,52] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[146,72] 找不到符号
+  符号:   方法 getReimbursementAmount()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[147,23] 找不到符号
+  符号:   方法 getReimbursementType()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[151,67] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[153,17] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[154,31] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[154,51] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[159,80] 找不到符号
+  符号:   方法 getReimbursementAmount()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[161,17] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[162,48] 找不到符号
+  符号:   方法 getReimbursementAmount()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[162,81] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[166,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[167,27] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[167,73] 找不到符号
+  符号:   方法 getReimbursementAmount()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[168,27] 找不到符号
+  符号:   方法 getReimbursementType()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[175,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[175,65] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[178,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[178,65] 找不到符号
+  符号:   方法 getReimbursementNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[87,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.ConsumeServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[88,21] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[88,39] 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[88,59] 找不到符号
+  符号:   方法 getAreaId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[92,21] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[95,21] 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[98,21] 找不到符号
+  符号:   方法 getAreaId()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[106,23] 找不到符号
+  符号:   方法 setTransactionStatus(int)
+  位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[107,23] 找不到符号
+  符号:   方法 setErrorMessage(response ![...]8d25")
+  位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[113,21] 找不到符号
+  符号:   方法 getTransactionNo()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[114,79] 找不到符号
+  符号:   方法 getTransactionNo()
+  位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[120,52] 找不到符号
+  符号:   方法 getId()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[121,52] 找不到符号
+  符号:   方法 getTransactionNo()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[122,56] 找不到符号
+  符号:   方法 getTransactionStatus()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[123,23] 找不到符号
+  符号:   方法 setAmount(java.math.BigDecimal)
+  位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[124,23] 找不到符号
+  符号:   方法 setBalanceAfter(transactio[...].ZERO)
+  位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[124,51] 找不到符号
+  符号:   方法 getBalanceAfter()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[125,65] 找不到符号
+  符号:   方法 getBalanceAfter()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[128,54] 找不到符号
+  符号:   方法 getTransactionTime()
+  位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[130,23] 找不到符号
+  符号:   方法 setTransactionStatus(int)
+  位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[133,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.ConsumeServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[133,64] 找不到符号
+  符号:   方法 getTransactionNo()
+  位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[137,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.ConsumeServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[139,19] 找不到符号
+  符号:   方法 setTransactionStatus(int)
+  位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[140,19] 找不到符号
+  符号:   方法 setErrorMessage(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[154,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.consume.service.impl.ConsumeServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[155,24] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.consume.domain.request.ConsumeRequest的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[155,45] 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为net.lab1024.sa.consume.domain.request.ConsumeRequest的变量 request
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.240 s
+[INFO] Finished at: 2025-12-09T10:01:30+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project ioedream-consume-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[4,43] 程序包net.lab1024.sa.common.common.domain不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[10,26] 程序包javax.servlet.http不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[26,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[34,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[42,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[50,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[58,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[67,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[77,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[86,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[95,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[104,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[112,56] 找不到符号
+[ERROR]   符号:   类 HttpServletResponse
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[120,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/ConsumeAccountService.java:[128,5] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 接口 net.lab1024.sa.consume.service.ConsumeAccountService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/ConsumeAccountController.java:[184,63] 找不到符号
+[ERROR]   符号:   类 HttpServletResponse
+[ERROR]   位置: 类 net.lab1024.sa.consume.controller.ConsumeAccountController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/dto/MobileQuickConsumeRequestDTO.java:[31,25] 不兼容的类型: double无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/dto/MobileScanConsumeRequestDTO.java:[28,25] 不兼容的类型: double无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/dto/MobileRechargeRequestDTO.java:[32,25] 不兼容的类型: double无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/entity/ConsumeRecordEntity.java:[211,55] 不兼容的类型: org.apache.ibatis.type.JdbcType无法转换为com.baomidou.mybatisplus.annotation.FieldFill
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/domain/entity/ConsumeRecordEntity.java:[217,55] 不兼容的类型: org.apache.ibatis.type.JdbcType无法转换为com.baomidou.mybatisplus.annotation.FieldFill
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[55,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[56,21] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[56,39] 找不到符号
+[ERROR]   符号:   方法 getReimbursementAmount()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[56,70] 找不到符号
+[ERROR]   符号:   方法 getReimbursementType()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[60,15] 找不到符号
+[ERROR]   符号:   方法 setReimbursementNo(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[61,30] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[62,43] 找不到符号
+[ERROR]   符号:   方法 getReimbursementAmount()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[63,41] 找不到符号
+[ERROR]   符号:   方法 getReimbursementType()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[64,30] 找不到符号
+[ERROR]   符号:   方法 getReason()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[65,15] 找不到符号
+[ERROR]   符号:   方法 setStatus(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[70,47] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[71,36] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[72,49] 找不到符号
+[ERROR]   符号:   方法 getReimbursementAmount()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[73,47] 找不到符号
+[ERROR]   符号:   方法 getReimbursementType()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[74,36] 找不到符号
+[ERROR]   符号:   方法 getReason()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[79,37] 找不到符号
+[ERROR]   符号:   方法 getReimbursementAmount()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[85,33] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[84,23] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[86,21] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[93,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[93,67] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[100,15] 找不到符号
+[ERROR]   符号:   方法 setWorkflowInstanceId(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[103,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[104,23] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[112,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[116,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[120,15] 找不到符号
+[ERROR]   符号:   方法 setStatus(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[121,15] 找不到符号
+[ERROR]   符号:   方法 setApprovalComment(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[122,15] 找不到符号
+[ERROR]   符号:   方法 setApprovalTime(java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[130,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[145,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[146,23] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[146,52] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[146,72] 找不到符号
+[ERROR]   符号:   方法 getReimbursementAmount()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[147,23] 找不到符号
+[ERROR]   符号:   方法 getReimbursementType()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[151,67] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[153,17] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[154,31] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[154,51] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[159,80] 找不到符号
+[ERROR]   符号:   方法 getReimbursementAmount()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[161,17] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[162,48] 找不到符号
+[ERROR]   符号:   方法 getReimbursementAmount()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[162,81] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[166,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[167,27] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[167,73] 找不到符号
+[ERROR]   符号:   方法 getReimbursementAmount()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[168,27] 找不到符号
+[ERROR]   符号:   方法 getReimbursementType()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[175,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[175,65] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[178,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.reimbursement.ReimbursementApplicationServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImpl.java:[178,65] 找不到符号
+[ERROR]   符号:   方法 getReimbursementNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity的变量 entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[87,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.ConsumeServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[88,21] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[88,39] 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[88,59] 找不到符号
+[ERROR]   符号:   方法 getAreaId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[92,21] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[95,21] 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[98,21] 找不到符号
+[ERROR]   符号:   方法 getAreaId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[106,23] 找不到符号
+[ERROR]   符号:   方法 setTransactionStatus(int)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[107,23] 找不到符号
+[ERROR]   符号:   方法 setErrorMessage(response ![...]8d25")
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[113,21] 找不到符号
+[ERROR]   符号:   方法 getTransactionNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[114,79] 找不到符号
+[ERROR]   符号:   方法 getTransactionNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.form.ConsumeTransactionForm的变量 form
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[120,52] 找不到符号
+[ERROR]   符号:   方法 getId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[121,52] 找不到符号
+[ERROR]   符号:   方法 getTransactionNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[122,56] 找不到符号
+[ERROR]   符号:   方法 getTransactionStatus()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[123,23] 找不到符号
+[ERROR]   符号:   方法 setAmount(java.math.BigDecimal)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[124,23] 找不到符号
+[ERROR]   符号:   方法 setBalanceAfter(transactio[...].ZERO)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[124,51] 找不到符号
+[ERROR]   符号:   方法 getBalanceAfter()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[125,65] 找不到符号
+[ERROR]   符号:   方法 getBalanceAfter()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[128,54] 找不到符号
+[ERROR]   符号:   方法 getTransactionTime()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity的变量 transaction
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[130,23] 找不到符号
+[ERROR]   符号:   方法 setTransactionStatus(int)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[133,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.ConsumeServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[133,64] 找不到符号
+[ERROR]   符号:   方法 getTransactionNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[137,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.ConsumeServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[139,19] 找不到符号
+[ERROR]   符号:   方法 setTransactionStatus(int)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[140,19] 找不到符号
+[ERROR]   符号:   方法 setErrorMessage(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO的变量 result
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[154,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.consume.service.impl.ConsumeServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[155,24] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.request.ConsumeRequest的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/service/impl/ConsumeServiceImpl.java:[155,45] 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.request.ConsumeRequest的变量 request
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

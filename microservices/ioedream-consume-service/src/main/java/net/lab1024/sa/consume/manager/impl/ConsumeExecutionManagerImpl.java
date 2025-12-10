@@ -3,6 +3,7 @@ package net.lab1024.sa.consume.manager.impl;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
@@ -252,7 +253,7 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
         transaction.setTransactionNo(transactionNo);
 
         // 用户信息
-        transaction.setUserId(form.getUserId() != null ? form.getUserId().toString() : null);
+        transaction.setUserId(form.getUserId());
         // 通过网关获取用户姓名和部门信息
         if (form.getUserId() != null) {
             try {
@@ -267,9 +268,10 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                     UserDetailVO userDetail = userResponse.getData();
                     // 设置用户姓名（优先使用realName，否则使用username）
                     transaction.setUserName(userDetail.getRealName() != null ? userDetail.getRealName() : userDetail.getUsername());
-                    // 设置部门ID（由于UserDetailVO没有departmentId，暂时使用departmentName，后续可通过部门名称查询部门ID）
-                    // 注意：ConsumeTransactionEntity.deptId是String类型，存储部门名称或ID
-                    transaction.setDeptId(userDetail.getDepartmentName());
+                    // 设置部门ID（通过部门名称查询部门ID）
+                    // 注意：ConsumeTransactionEntity.deptId是Long类型
+                    Long departmentId = getDepartmentIdByName(userDetail.getDepartmentName());
+                    transaction.setDeptId(departmentId);
                 } else {
                     log.warn("[消费执行] 获取用户信息失败，userId={}", form.getUserId());
                 }
@@ -280,17 +282,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
         }
 
         // 账户信息
-        transaction.setAccountId(form.getAccountId() != null ? form.getAccountId().toString() : null);
-        transaction.setAccountKindId(account.getAccountKindId() != null ? account.getAccountKindId().toString() : null);
+        transaction.setAccountId(form.getAccountId());
+        transaction.setAccountKindId(account.getAccountKindId());
 
         // 区域信息
-        transaction.setAreaId(form.getAreaId());
+        transaction.setAreaId(form.getAreaId() != null && !form.getAreaId().trim().isEmpty()
+                ? Long.parseLong(form.getAreaId()) : null);
         transaction.setAreaName(area.getName());
         transaction.setAreaManageMode(area.getManageMode());
         transaction.setAreaSubType(area.getAreaSubType());
 
         // 设备信息
-        transaction.setDeviceId(form.getDeviceId() != null ? form.getDeviceId().toString() : null);
+        transaction.setDeviceId(form.getDeviceId());
         // 通过设备管理器获取设备名称
         // 类型安全改进：getDeviceById现在返回DeviceEntity，无需instanceof检查
         if (form.getDeviceId() != null) {
@@ -305,17 +308,16 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             }
         }
 
-        // 金额信息（转换为分）
-        Long amountInCents = finalAmount.multiply(BigDecimal.valueOf(100)).longValue();
-        transaction.setConsumeMoney(amountInCents.intValue());
-        transaction.setDiscountMoney(0); // 默认无折扣
-        transaction.setFinalMoney(amountInCents.intValue());
+        // 金额信息（保持BigDecimal类型）
+        transaction.setConsumeMoney(finalAmount);
+        transaction.setDiscountMoney(BigDecimal.ZERO); // 默认无折扣
+        transaction.setFinalMoney(finalAmount);
 
-        // 余额信息
-        transaction.setBalanceBefore(account.getBalance() != null ? account.getBalance().intValue() : 0);
+        // 余额信息（保持BigDecimal类型）
+        transaction.setBalanceBefore(account.getBalance() != null ? account.getBalance() : BigDecimal.ZERO);
         // 消费后余额 = 消费前余额 - 消费金额
-        Long balanceAfter = (account.getBalance() != null ? account.getBalance() : 0L) - amountInCents;
-        transaction.setBalanceAfter(balanceAfter.intValue());
+        BigDecimal balanceAfter = (account.getBalance() != null ? account.getBalance() : BigDecimal.ZERO).subtract(finalAmount);
+        transaction.setBalanceAfter(balanceAfter);
 
         // 消费模式
         transaction.setConsumeMode(form.getConsumeMode() != null ? form.getConsumeMode() : "FIXED");
@@ -409,7 +411,7 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             // 1. 使用策略模式获取计算器
             ConsumeAmountCalculator calculator = calculatorFactory.getCalculator(consumeMode);
             if (calculator == null) {
-                log.warn("[消费执行] 未找到消费模式对应的计算器，accountId={}, areaId={}, consumeMode={}", 
+                log.warn("[消费执行] 未找到消费模式对应的计算器，accountId={}, areaId={}, consumeMode={}",
                         accountId, areaId, consumeMode);
                 return BigDecimal.ZERO;
             }
@@ -423,19 +425,19 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
 
             // 3. 验证消费模式是否支持
             if (!calculator.isSupported(accountId, areaId, account)) {
-                log.warn("[消费执行] 消费模式不支持，accountId={}, areaId={}, consumeMode={}", 
+                log.warn("[消费执行] 消费模式不支持，accountId={}, areaId={}, consumeMode={}",
                         accountId, areaId, consumeMode);
                 return BigDecimal.ZERO;
             }
 
             // 4. 使用策略计算金额
             BigDecimal result = calculator.calculate(accountId, areaId, account, request);
-            log.debug("[消费执行] 消费金额计算完成，accountId={}, areaId={}, consumeMode={}, amount={}", 
+            log.debug("[消费执行] 消费金额计算完成，accountId={}, areaId={}, consumeMode={}, amount={}",
                     accountId, areaId, consumeMode, result);
             return result;
 
         } catch (Exception e) {
-            log.error("[消费执行] 计算消费金额失败，accountId={}, areaId={}, consumeMode={}", 
+            log.error("[消费执行] 计算消费金额失败，accountId={}, areaId={}, consumeMode={}",
                     accountId, areaId, consumeMode, e);
             return BigDecimal.ZERO;
         }
@@ -1154,5 +1156,64 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             log.error("[消费执行] 获取计次模式折扣率失败", e);
             return BigDecimal.ZERO;
         }
+    }
+
+    /**
+     * 通过部门名称查询部门ID
+     * <p>
+     * 通过网关服务查询部门信息，如果查询失败则返回null
+     * </p>
+     *
+     * @param departmentName 部门名称
+     * @return 部门ID，如果查询失败则返回null
+     */
+    private Long getDepartmentIdByName(String departmentName) {
+        if (departmentName == null || departmentName.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+            // 通过网关查询部门列表，根据名称匹配
+            // 注意：这里使用通用的部门查询API，如果API不存在则返回null
+            ResponseDTO<?> response = gatewayServiceClient.callCommonService(
+                    "/api/v1/departments?name=" + java.net.URLEncoder.encode(departmentName, "UTF-8"),
+                    org.springframework.http.HttpMethod.GET,
+                    null,
+                    Object.class
+            );
+
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                // 尝试从响应中提取部门ID
+                // 注意：这里需要根据实际的API响应格式进行解析
+                // 如果API返回的是列表，取第一个匹配的部门ID
+                if (response.getData() instanceof java.util.List) {
+                    @SuppressWarnings("unchecked")
+                    java.util.List<Map<String, Object>> departments = (java.util.List<Map<String, Object>>) response.getData();
+                    if (!departments.isEmpty()) {
+                        Object deptId = departments.get(0).get("departmentId");
+                        if (deptId instanceof Long) {
+                            return (Long) deptId;
+                        } else if (deptId instanceof Number) {
+                            return ((Number) deptId).longValue();
+                        }
+                    }
+                } else if (response.getData() instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> department = (Map<String, Object>) response.getData();
+                    Object deptId = department.get("departmentId");
+                    if (deptId instanceof Long) {
+                        return (Long) deptId;
+                    } else if (deptId instanceof Number) {
+                        return ((Number) deptId).longValue();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("[消费执行] 通过部门名称查询部门ID失败，departmentName={}, error={}",
+                    departmentName, e.getMessage());
+            // 查询失败不影响主流程，返回null
+        }
+
+        return null;
     }
 }

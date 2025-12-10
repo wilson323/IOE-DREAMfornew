@@ -169,7 +169,7 @@ class ConsumeRecommendServiceTest {
                 .thenReturn(mockResults);
 
         ConsumeAreaEntity mockArea = new ConsumeAreaEntity();
-        mockArea.setAreaId(1L);
+        mockArea.setId(1L); // AreaEntity使用id作为主键，映射到area_id列
         // GPS位置信息存储在AreaEntity的gpsLocation字段中，通过父类方法设置
         // 注意：如果AreaEntity没有setGpsLocation方法，可能需要通过其他方式设置
         when(consumeAreaManager.getAreaById(anyString()))
@@ -197,7 +197,7 @@ class ConsumeRecommendServiceTest {
         lunchTransaction.setTransactionStatus(2);
         transactions.add(lunchTransaction);
 
-        when(consumeTransactionDao.selectByUserIdAndTimeRange(eq(1001L), any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(consumeTransactionDao.selectByUserIdAndTimeRange(eq("1001"), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(transactions);
 
         // When
@@ -207,7 +207,7 @@ class ConsumeRecommendServiceTest {
         assertNotNull(predictedAmount);
         assertTrue(predictedAmount > 0);
         verify(consumeTransactionDao, times(1))
-                .selectByUserIdAndTimeRange(eq(1001L), any(LocalDateTime.class), any(LocalDateTime.class));
+                .selectByUserIdAndTimeRange(eq("1001"), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
     @Test
@@ -215,7 +215,7 @@ class ConsumeRecommendServiceTest {
     void testPredictConsumeAmount_NoHistory() {
         // Given
         String timeOfDay = "BREAKFAST";
-        when(consumeTransactionDao.selectByUserIdAndTimeRange(eq(1001L), any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(consumeTransactionDao.selectByUserIdAndTimeRange(eq("1001"), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
 
         // When
@@ -231,7 +231,7 @@ class ConsumeRecommendServiceTest {
     void testPredictConsumeAmount_Exception() {
         // Given
         String timeOfDay = "DINNER";
-        when(consumeTransactionDao.selectByUserIdAndTimeRange(eq(1001L), any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(consumeTransactionDao.selectByUserIdAndTimeRange(eq("1001"), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenThrow(new RuntimeException("数据库连接失败"));
 
         // When

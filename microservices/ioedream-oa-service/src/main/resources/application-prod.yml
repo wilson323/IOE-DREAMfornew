@@ -1,0 +1,382 @@
+# ============================================================
+# IOE-DREAM OA Service 生产环境配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Copyright:  IOE-DREAM智慧园区一卡通管理平台
+# ============================================================
+
+# ==================== 服务基础配置 ====================
+server:
+  port: ${SERVER_PORT:8089}
+  servlet:
+    context-path: /
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:100MB}
+      max-request-size: ${MAX_REQUEST_SIZE:500MB}
+      enabled: true
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    min-spare-threads: 20
+
+# ==================== Spring配置 ====================
+spring:
+  profiles:
+    active: prod
+
+  # ==================== 数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
+      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
+      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+      # 连接池配置
+      initial-size: 20
+      min-idle: 20
+      max-active: 100
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+      # 监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: ${DRUID_USERNAME:admin}
+        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
+        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
+        deny: ${DRUID_DENY:}
+
+  # ==================== Redis配置 ====================
+  redis:
+    host: ${REDIS_HOST:prod-redis-cluster}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: 0
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 10
+        min-idle: 5
+        max-wait: 1000
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30
+
+  # ==================== 缓存配置 ====================
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # 30分钟
+      cache-null-values: false
+      key-prefix: oa_cache_
+
+  # ==================== 文件存储配置 ====================
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 500MB
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    multiple-result-sets-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    auto-mapping-behavior: partial
+    default-executor-type: reuse
+    default-statement-timeout: 25
+    default-fetch-size: 100
+
+  global-config:
+    db-config:
+      id-type: assign_id
+      table-underline: true
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+  # ==================== Activiti工作流配置 ====================
+  activiti:
+    # 数据库配置
+    database-schema-update: true
+    database-type: mysql
+    # 历史记录级别
+    history-level: audit
+    # 自动部署
+    auto-deployment-enabled: false
+    # 异步执行器
+    async-executor-activate: true
+    async-executor-core-pool-size: 10
+    async-executor-max-pool-size: 50
+    async-executor-queue-capacity: 100
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,configprops,activiti
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+
+# ==================== Zipkin分布式追踪配置 ====================
+  sleuth:
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
+      enabled: ${ZIPKIN_ENABLED:true}
+    sampler:
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1}
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  circuitbreaker:
+    instances:
+      oa-service:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        sliding-window-type: count_based
+
+  ratelimiter:
+    instances:
+      oa-service:
+        limit-for-period: 100
+        limit-refresh-period: 60s
+        timeout-duration: 5s
+        register-health-indicator: true
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    net.lab1024.sa.oa: INFO
+    org.activiti: INFO
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# ==================== OA服务特定配置 ====================
+oa:
+  # 工作流配置
+  workflow:
+    # 流程定义
+    process:
+      deployment-path: ${OA_PROCESS_DEPLOYMENT_PATH:/opt/ioedream/oa/processes}
+      auto-deploy: ${OA_PROCESS_AUTO_DEPLOY:false}
+      watch-changes: ${OA_PROCESS_WATCH_CHANGES:true}
+
+    # 流程监控
+    monitoring:
+      enabled: ${WORKFLOW_MONITORING_ENABLED:true}
+      process-timeout-hours: ${PROCESS_TIMEOUT_HOURS:72}
+      notification-enabled: ${WORKFLOW_NOTIFICATION_ENABLED:true}
+
+  # 文档管理
+  document:
+    # 存储配置
+    storage:
+      type: ${OA_STORAGE_TYPE:minio}
+      endpoint: ${MINIO_ENDPOINT:http://minio-prod:9000}
+      access-key: ${MINIO_ACCESS_KEY:ENC(AES256:encrypted_minio_key)}
+      secret-key: ${MINIO_SECRET_KEY:ENC(AES256:encrypted_minio_secret)}
+      bucket-name: ${MINIO_BUCKET:ioedream-oa-documents}
+      region: ${MINIO_REGION:us-east-1}
+
+    # 文件处理
+    processing:
+      max-file-size: ${OA_MAX_FILE_SIZE:100MB}
+      allowed-extensions: ${OA_ALLOWED_EXTENSIONS:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png,gif}
+      thumbnail-enabled: ${OA_THUMBNAIL_ENABLED:true}
+      thumbnail-size: ${OA_THUMBNAIL_SIZE:200x200}
+      preview-enabled: ${OA_PREVIEW_ENABLED:true}
+
+    # 版本控制
+    version-control:
+      enabled: ${OA_VERSION_CONTROL_ENABLED:true}
+      max-versions: ${OA_MAX_VERSIONS:10}
+      auto-save-interval: ${OA_AUTO_SAVE_INTERVAL:300}  # 5分钟
+      major-version-threshold: ${MAJOR_VERSION_THRESHOLD:10}
+
+    # 安全配置
+    security:
+      encryption-enabled: ${DOC_ENCRYPTION_ENABLED:true}
+      encryption-algorithm: ${DOC_ENCRYPTION_ALGORITHM:AES-256}
+      digital-signature: ${DIGITAL_SIGNATURE_ENABLED:true}
+      watermark-enabled: ${WATERMARK_ENABLED:true}
+
+  # 审批流程
+  approval:
+    # 审批配置
+    timeout:
+      default-approval-timeout: ${OA_DEFAULT_APPROVAL_TIMEOUT:86400000}  # 24小时
+      reminder-interval: ${OA_REMINDER_INTERVAL:3600000}  # 1小时
+      max-reminders: ${OA_MAX_REMINDERS:3}
+
+    # 委托配置
+    delegation:
+      enabled: ${OA_DELEGATION_ENABLED:true}
+      auto-approve-delegated: ${OA_AUTO_APPROVE_DELEGATED:false}
+      delegation-expire-days: ${OA_DELEGATION_EXPIRE_DAYS:30}
+
+    # 审批权限
+    permissions:
+      parallel-approval: ${PARALLEL_APPROVAL_ENABLED:true}
+      sequential-approval: ${SEQUENTIAL_APPROVAL_ENABLED:true}
+      conditional-approval: ${CONDITIONAL_APPROVAL_ENABLED:true}
+
+  # 通知系统
+  notification:
+    # 邮件通知
+    email:
+      enabled: ${OA_EMAIL_NOTIFICATION_ENABLED:true}
+      smtp-host: ${SMTP_HOST:smtp.example.com}
+      smtp-port: ${SMTP_PORT:587}
+      username: ${SMTP_USERNAME:ENC(AES256:encrypted_email_username)}
+      password: ${SMTP_PASSWORD:ENC(AES256:encrypted_email_password)}
+      from: ${EMAIL_FROM:noreply@ioedream.com}
+      use-tls: ${SMTP_USE_TLS:true}
+
+    # 短信通知
+    sms:
+      enabled: ${OA_SMS_NOTIFICATION_ENABLED:true}
+      provider: ${SMS_PROVIDER:aliyun}
+      access-key: ${SMS_ACCESS_KEY:ENC(AES256:encrypted_sms_key)}
+      secret-key: ${SMS_SECRET_KEY:ENC(AES256:encrypted_sms_secret)}
+
+    # 系统通知
+    system:
+      enabled: ${OA_SYSTEM_NOTIFICATION_ENABLED:true}
+      max-messages: ${OA_MAX_SYSTEM_MESSAGES:100}
+      auto-cleanup-days: ${OA_AUTO_CLEANUP_DAYS:90}
+
+  # 表单管理
+  form:
+    # 表单设计
+    designer:
+      enabled: ${FORM_DESIGNER_ENABLED:true}
+      max-fields: ${MAX_FORM_FIELDS:100}
+      complex-validation: ${COMPLEX_VALIDATION_ENABLED:true}
+
+    # 表单存储
+    storage:
+      max-form-size: ${MAX_FORM_SIZE:1MB}
+      form-templates-path: ${FORM_TEMPLATES_PATH:/opt/ioedream/oa/templates}
+      form-cache-ttl: ${FORM_CACHE_TTL:1800}
+
+  # 日程管理
+  calendar:
+    # 日历配置
+    enabled: ${CALENDAR_ENABLED:true}
+    default-timezone: ${DEFAULT_TIMEZONE:Asia/Shanghai}
+    working-hours-start: ${WORKING_HOURS_START:09:00}
+    working-hours-end: ${WORKING_HOURS_END:18:00}
+
+    # 会议管理
+    meeting:
+      max-participants: ${MAX_MEETING_PARTICIPANTS:100}
+      room-booking-enabled: ${ROOM_BOOKING_ENABLED:true}
+      video-conference: ${VIDEO_CONFERENCE_ENABLED:true}
+
+  # 公告管理
+  announcement:
+    # 公告配置
+    enabled: ${ANNOUNCEMENT_ENABLED:true}
+    max-attachments: ${MAX_ATTACHMENTS:10}
+      auto-publish: ${AUTO_PUBLISH_ENABLED:false}
+      expiry-notification: ${EXPIRY_NOTIFICATION_ENABLED:true}
+
+    # 公告分类
+    categories: ${ANNOUNCEMENT_CATEGORIES:general,urgent,policy,event,maintenance}
+
+  # 任务管理
+  task:
+    # 任务配置
+    enabled: ${TASK_ENABLED:true}
+    max-assignees: ${MAX_ASSIGNEES:10}
+      priority-levels: ${PRIORITY_LEVELS:low,normal,high,urgent}
+      task-templates: ${TASK_TEMPLATES_ENABLED:true}
+
+    # 任务提醒
+    reminder:
+      enabled: ${TASK_REMINDER_ENABLED:true}
+      default-reminder-time: ${DEFAULT_REMINDER_TIME:1}
+      reminder-channels: ${REMINDER_CHANNELS:system,email}
+
+  # 知识管理
+  knowledge:
+    # 知识库配置
+    enabled: ${KNOWLEDGE_ENABLED:true}
+    full-text-search: ${FULLTEXT_SEARCH_ENABLED:true}
+      file-indexing: ${FILE_INDEXING_ENABLED:true}
+      version-control: ${KNOWLEDGE_VERSION_CONTROL:true}
+
+    # 知识分类
+    categories: ${KNOWLEDGE_CATEGORIES:policy,manual,guideline,faq,best-practice}
+
+  # 集成配置
+  integration:
+    # 第三方系统
+    erp:
+      enabled: ${ERP_INTEGRATION_ENABLED:false}
+      api-url: ${ERP_API_URL:}
+      api-key: ${ERP_API_KEY:ENC(AES256:encrypted_erp_key)}
+
+    # HR系统集成
+    hr:
+      enabled: ${HR_INTEGRATION_ENABLED:false}
+      api-url: ${HR_API_URL:}
+      sync-interval: ${HR_SYNC_INTERVAL:3600}
+
+  # 缓存配置
+  cache:
+    # 流程缓存
+    process-definitions:
+      ttl: ${PROCESS_CACHE_TTL:3600}
+      max-size: ${PROCESS_CACHE_SIZE:1000}
+
+    # 用户缓存
+    user-permissions:
+      ttl: ${USER_PERMISSIONS_TTL:1800}
+      max-size: ${USER_PERMISSIONS_SIZE:5000}
+
+    # 表单缓存
+    form-templates:
+      ttl: ${FORM_CACHE_TTL:1800}
+      max-size: ${FORM_CACHE_SIZE:1000}

@@ -79,7 +79,7 @@ public class NotificationManager {
      * @param alert 告警信息
      */
     public void sendAlertNotification(AlertEntity alert) {
-        log.info("开始发送告警通知，告警ID：{}，标题：{}", alert.getAlertId(), alert.getAlertTitle());
+        log.info("开始发送告警通知，告警ID：{}，标题：{}", alert.getId(), alert.getAlertTitle());
 
         try {
             // 创建通知记录
@@ -89,14 +89,14 @@ public class NotificationManager {
             for (NotificationEntity notification : notifications) {
                 CompletableFuture.runAsync(() -> sendNotification(notification), executorService)
                         .exceptionally(throwable -> {
-                            log.error("发送通知失败，通知ID：{}", notification.getNotificationId(), throwable);
+                            log.error("发送通知失败，通知ID：{}", notification.getId(), throwable);
                             handleNotificationFailure(notification);
                             return null;
                         });
             }
 
         } catch (Exception e) {
-            log.error("创建告警通知失败，告警ID：{}", alert.getAlertId(), e);
+            log.error("创建告警通知失败，告警ID：{}", alert.getId(), e);
         }
     }
 
@@ -118,7 +118,7 @@ public class NotificationManager {
             // 检查渠道
             Integer channel = notification.getChannel();
             if (channel == null) {
-                log.warn("通知渠道为空，通知ID：{}", notification.getNotificationId());
+                log.warn("通知渠道为空，通知ID：{}", notification.getId());
                 return;
             }
 
@@ -191,7 +191,7 @@ public class NotificationManager {
             // 1. 查询告警规则
             AlertRuleEntity alertRule = getAlertRule(alert);
             if (alertRule == null) {
-                log.warn("告警规则不存在，使用默认配置，告警ID：{}", alert.getAlertId());
+                log.warn("告警规则不存在，使用默认配置，告警ID：{}", alert.getId());
                 // 使用默认配置创建通知
                 NotificationEntity defaultNotification = createDefaultNotification(alert);
                 notificationDao.insert(defaultNotification);
@@ -201,21 +201,21 @@ public class NotificationManager {
 
             // 2. 检查规则状态
             if (!"ENABLED".equals(alertRule.getStatus())) {
-                log.warn("告警规则已禁用，不创建通知，规则ID：{}", alertRule.getRuleId());
+                log.warn("告警规则已禁用，不创建通知，规则ID：{}", alertRule.getId());
                 return notifications;
             }
 
             // 3. 解析通知渠道
             List<Integer> channels = parseNotificationChannels(alertRule.getNotificationChannels());
             if (channels.isEmpty()) {
-                log.warn("告警规则未配置通知渠道，使用默认渠道，规则ID：{}", alertRule.getRuleId());
+                log.warn("告警规则未配置通知渠道，使用默认渠道，规则ID：{}", alertRule.getId());
                 channels.add(1); // 默认使用邮件渠道
             }
 
             // 4. 解析接收人
             List<String> receiverIds = parseNotificationUsers(alertRule.getNotificationUsers());
             if (receiverIds.isEmpty()) {
-                log.warn("告警规则未配置接收人，使用默认接收人，规则ID：{}", alertRule.getRuleId());
+                log.warn("告警规则未配置接收人，使用默认接收人，规则ID：{}", alertRule.getId());
                 receiverIds.add("1"); // 默认发送给管理员
             }
 
@@ -240,15 +240,15 @@ public class NotificationManager {
                     notifications.add(notification);
 
                     log.debug("创建通知记录成功，通知ID：{}，渠道：{}，接收人：{}",
-                            notification.getNotificationId(), channel, receiverId);
+                            notification.getId(), channel, receiverId);
                 }
             }
 
             log.info("根据告警规则创建通知完成，告警ID：{}，规则ID：{}，通知数量：{}",
-                    alert.getAlertId(), alertRule.getRuleId(), notifications.size());
+                    alert.getId(), alertRule.getId(), notifications.size());
 
         } catch (Exception e) {
-            log.error("根据告警规则创建通知失败，告警ID：{}", alert.getAlertId(), e);
+            log.error("根据告警规则创建通知失败，告警ID：{}", alert.getId(), e);
             // 异常情况下创建默认通知
             try {
                 NotificationEntity defaultNotification = createDefaultNotification(alert);
@@ -496,7 +496,7 @@ public class NotificationManager {
             Integer retryCount = notification.getRetryCount() != null ? notification.getRetryCount() : 0;
 
             notificationDao.updateSendStatus(
-                    notification.getNotificationId(),
+                    notification.getId(),
                     String.valueOf(status),
                     LocalDateTime.now(),
                     success ? "发送成功" : "发送失败",
@@ -521,7 +521,7 @@ public class NotificationManager {
 
                 // 状态码：2-失败
                 notificationDao.updateSendStatus(
-                        notification.getNotificationId(),
+                        notification.getId(),
                         "2",
                         LocalDateTime.now(),
                         "发送失败，等待重试",
@@ -530,7 +530,7 @@ public class NotificationManager {
             } else {
                 // 状态码：3-已取消
                 notificationDao.updateSendStatus(
-                        notification.getNotificationId(),
+                        notification.getId(),
                         "3",
                         LocalDateTime.now(),
                         "超过最大重试次数，取消发送",

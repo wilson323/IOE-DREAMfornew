@@ -232,57 +232,72 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import videoApi from '@/api/business/video/video-api'
 import { useWebSocket } from '@/utils/websocket'
 
-export default {
-  name: 'VideoMonitor',
+// 系统信息
+const systemInfo = uni.getSystemInfoSync()
+const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
 
-  setup() {
-    // 系统信息
-    const systemInfo = uni.getSystemInfoSync()
-    const statusBarHeight = ref(systemInfo.statusBarHeight || 20)
+// 页面状态
+const loading = ref(false)
+const showDeviceList = ref(false)
+const showPTZMenuModal = ref(false)
+const currentLayout = ref('1x1')
 
-    // 页面状态
-    const loading = ref(false)
-    const showDeviceList = ref(false)
-    const showPTZMenuModal = ref(false)
-    const currentLayout = ref('1x1')
+// 数据
+const statistics = reactive({
+  onlineCount: 0,
+  totalCount: 0,
+  recordingCount: 0,
+  alarmCount: 0
+})
+const devices = ref([])
+const currentMonitor = ref(null)
+const displayMonitors = ref([])
+const presetList = ref([])
+const alarmCount = ref(0)
 
-    // 数据
-    const statistics = reactive({
-      onlineCount: 0,
-      totalCount: 0,
-      recordingCount: 0,
-      alarmCount: 0
-    })
-    const devices = ref([])
-    const currentMonitor = ref(null)
-    const displayMonitors = ref([])
-    const presetList = ref([])
-    const alarmCount = ref(0)
+// WebSocket
+const wsClient = ref(null)
 
-    // WebSocket
-    const wsClient = ref(null)
+// 页面生命周期
+onMounted(() => {
+  init()
+})
 
-    // 页面生命周期
-    onMounted(() => {
-      init()
-    })
+onUnmounted(() => {
+  cleanup()
+})
 
-    onUnmounted(() => {
-      cleanup()
-    })
+onShow(() => {
+  // 页面显示时刷新数据
+  refreshData()
+})
 
-    // 初始化
-    const init = async () => {
-      await loadDevices()
-      await loadStatistics()
-      await loadAlarmCount()
-      initWebSocket()
-    }
+onPullDownRefresh(() => {
+  refreshData()
+  uni.stopPullDownRefresh()
+})
+
+// 方法实现
+const init = async () => {
+  await loadDevices()
+  await loadStatistics()
+  await loadAlarmCount()
+  initWebSocket()
+}
+
+const refreshData = async () => {
+  await Promise.all([
+    loadDevices(),
+    loadStatistics(),
+    loadAlarmCount()
+  ])
+  uni.showToast({ title: '刷新成功', icon: 'success' })
+}
 
     // 加载设备列表
     const loadDevices = async () => {
@@ -531,16 +546,7 @@ export default {
       }
     }
 
-    // 刷新数据
-    const refreshData = async () => {
-      await Promise.all([
-        loadDevices(),
-        loadStatistics(),
-        loadAlarmCount()
-      ])
-      uni.showToast({ title: '刷新成功', icon: 'success' })
-    }
-
+  
     // 获取网络类型
     const getNetworkType = () => {
       return new Promise((resolve) => {
@@ -597,37 +603,7 @@ export default {
       }
     }
 
-    return {
-      statusBarHeight,
-      loading,
-      showDeviceList,
-      showPTZMenuModal,
-      currentLayout,
-      statistics,
-      devices,
-      currentMonitor,
-      displayMonitors,
-      presetList,
-      alarmCount,
-      switchDevice,
-      switchLayout,
-      selectMonitor,
-      handlePTZ,
-      handlePTZStop,
-      showPTZMenu,
-      gotoPreset,
-      handleQuickAction,
-      refreshData,
-      getStatusText,
-      handleVideoError,
-      handleFullscreenChange,
-      goToAlarms,
-      goToPlayback,
-      goToDeviceList
-    }
-  }
-}
-</script>
+  </script>
 
 <style lang="scss" scoped>
 .video-monitor-page {

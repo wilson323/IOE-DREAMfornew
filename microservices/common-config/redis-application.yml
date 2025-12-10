@@ -1,0 +1,439 @@
+# ============================================================
+# IOE-DREAM 微服务Redis缓存统一配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-09
+# @Description: 基于Redis的缓存管理配置，包含多级缓存、集群模式、分布式锁等
+# ============================================================
+
+spring:
+  # ============================================================
+  # Redis 基础配置
+  # ============================================================
+  redis:
+    # 单机模式配置
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+    database: ${REDIS_DATABASE:0}
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 20                                    # 最大连接数
+        max-idle: 10                                     # 最大空闲连接数
+        min-idle: 5                                      # 最小空闲连接数
+        max-wait: 5000                                   # 获取连接最大等待时间
+        time-between-eviction-runs: 30000                # 空闲连接回收时间间隔
+        min-evictable-idle-time-millis: 60000            # 空闲连接最小生存时间
+        test-while-idle: true                             # 空闲时检查连接有效性
+        test-on-borrow: false                             # 获取连接时不检查（性能优化）
+        test-on-return: false                             # 返回连接时不检查
+      shutdown-timeout: 200ms                            # 关闭超时时间
+
+    # 集群模式配置（生产环境推荐）
+    cluster:
+      nodes: ${REDIS_CLUSTER_NODES:}
+      max-redirects: 3
+      timeout: 5000
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 5000
+
+    # 哨兵模式配置（高可用）
+    sentinel:
+      master: ${REDIS_SENTINEL_MASTER:mymaster}
+      nodes: ${REDIS_SENTINEL_NODES:}
+      password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+      database: 0
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+
+    # SSL配置（生产环境推荐）
+    ssl: false
+    # ssl-bundle: redis-ssl
+
+# ============================================================
+  # Redis 缓存配置
+  # ============================================================
+  cache:
+    type: redis
+    redis:
+      # 缓存key前缀
+      key-prefix: ${spring.application.name}:cache:
+      # 缓存过期时间
+      time-to-live: 30m
+      # 是否缓存null值
+      cache-null-values: false
+      # 缓存key生成器
+      use-key-prefix: true
+      # 是否启用统计
+      enable-statistics: true
+
+# ============================================================
+  # Spring Cache 注解配置
+  # ============================================================
+  cache:
+    # 缓存类型
+    type: redis
+    # 缓存名称
+    cache-names:
+      - user-cache                    # 用户缓存
+      - permission-cache             # 权限缓存
+      - menu-cache                   # 菜单缓存
+      - dict-cache                   # 字典缓存
+      - config-cache                 # 配置缓存
+      - device-cache                 # 设备缓存
+      - area-cache                   # 区域缓存
+      - biometric-cache              # 生物特征缓存
+      - attendance-cache             # 考勤缓存
+      - consume-cache                # 消费缓存
+      - visitor-cache                # 访客缓存
+      - video-cache                  # 视频缓存
+
+# ============================================================
+# IOE-DREAM 业务缓存配置
+# ============================================================
+ioedream:
+  redis:
+    # 多级缓存配置
+    multi-cache:
+      # L1本地缓存配置
+      l1-local:
+        enabled: true
+        cache-names:
+          - user-local
+          - permission-local
+          - dict-local
+        caffeine:
+          spec: maximumSize=1000,expireAfterWrite=5m,recordStats
+        refresh-after-write: 1m
+
+      # L2 Redis缓存配置
+      l2-redis:
+        enabled: true
+        cache-names:
+          - user-redis
+          - permission-redis
+          - dict-redis
+        ttl: 30m
+        key-prefix: "l2:"
+
+      # L3数据库缓存配置
+      l3-database:
+        enabled: true
+        cache-names:
+          - user-db
+          - permission-db
+          - dict-db
+        ttl: 60m
+        refresh-interval: 10m
+
+    # 分布式锁配置
+    distributed-lock:
+      # Redisson配置
+      redisson:
+        config-file: classpath:redisson.yml
+        # 单机模式
+        single-server-config:
+          address: "redis://${spring.redis.host}:${spring.redis.port}"
+          password: ${spring.redis.password}
+          database: ${spring.redis.database}
+          connection-pool-size: 64
+          connection-minimum-idle-size: 10
+          idle-connection-timeout: 10000
+          connect-timeout: 10000
+          timeout: 3000
+          retry-attempts: 3
+          retry-interval: 1500
+        # 集群模式
+        cluster-servers-config:
+          node-addresses: ${ioedream.redis.distributed-lock.cluster-nodes:}
+          password: ${spring.redis.password}
+          scan-interval: 1000
+          slave-connection-pool-size: 64
+          master-connection-pool-size: 64
+          idle-connection-timeout: 10000
+          connect-timeout: 10000
+          timeout: 3000
+          retry-attempts: 3
+          retry-interval: 1500
+
+    # 缓存策略配置
+    cache-strategies:
+      # 用户缓存策略
+      user:
+        l1-ttl: 5m
+        l2-ttl: 30m
+        l3-ttl: 60m
+        refresh-interval: 10m
+        max-size: 10000
+        async-refresh: true
+
+      # 权限缓存策略
+      permission:
+        l1-ttl: 10m
+        l2-ttl: 60m
+        l3-ttl: 120m
+        refresh-interval: 15m
+        max-size: 5000
+        async-refresh: false
+
+      # 字典缓存策略
+      dict:
+        l1-ttl: 60m
+        l2-ttl: 120m
+        l3-ttl: 240m
+        refresh-interval: 30m
+        max-size: 1000
+        async-refresh: false
+
+      # 设备缓存策略
+      device:
+        l1-ttl: 2m
+        l2-ttl: 10m
+        l3-ttl: 30m
+        refresh-interval: 5m
+        max-size: 5000
+        async-refresh: true
+
+      # 区域缓存策略
+      area:
+        l1-ttl: 10m
+        l2-ttl: 30m
+        l3-ttl: 60m
+        refresh-interval: 15m
+        max-size: 1000
+        async-refresh: false
+
+    # 缓存预热配置
+    warmup:
+      enabled: true
+      cache-names:
+        - dict-cache
+        - permission-cache
+        - config-cache
+      async: true
+      parallelism: 10
+      retry-attempts: 3
+
+    # 缓存同步配置
+    sync:
+      enabled: true
+      # 广播通道
+      channel: "ioedream:cache:sync"
+      # 同步策略
+      strategy: publish
+      # 同步延迟
+      delay: 100ms
+      # 重试次数
+      retry-attempts: 3
+
+    # 缓存统计配置
+    statistics:
+      enabled: true
+      # 统计间隔
+      interval: 60s
+      # 保留时间
+      retention: 24h
+      # 导出指标
+      export-prometheus: true
+      # 导出文件
+      export-file: false
+
+# ============================================================
+# Redis 监控配置
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,redis,cache
+  endpoint:
+    health:
+      show-details: always
+    redis:
+      enabled: true
+    cache:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      component: redis
+    distribution:
+      percentiles-histogram:
+        spring.cache: true
+        redis: true
+      percentiles:
+        spring.cache: 0.5,0.9,0.95,0.99
+        redis: 0.5,0.9,0.95,0.99
+
+# ============================================================
+# Redis 日志配置
+# ============================================================
+logging:
+  level:
+    org.springframework.data.redis: DEBUG
+    io.lettuce.core: INFO
+    org.redisson: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+
+# ============================================================
+# 生产环境优化配置
+# ============================================================
+---
+spring:
+  config:
+    activate:
+      profile: prod
+
+spring:
+  redis:
+    # 生产环境连接优化
+    timeout: 5000
+    lettuce:
+      pool:
+        max-active: 50                                # 增加最大连接数
+        max-idle: 20
+        min-idle: 10
+        max-wait: 3000
+        time-between-eviction-runs: 60000              # 增加回收间隔
+        min-evictable-idle-time-millis: 120000         # 增加最小生存时间
+        test-while-idle: true
+        test-on-borrow: false
+        test-on-return: false
+      shutdown-timeout: 100ms
+
+    # 生产环境集群配置
+    cluster:
+      nodes: ${REDIS_CLUSTER_NODES:redis1:6379,redis2:6379,redis3:6379,redis4:6379,redis5:6379,redis6:6379}
+      max-redirects: 5                                 # 增加重定向次数
+      timeout: 10000
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 10
+          max-wait: 3000
+
+    # 生产环境哨兵配置
+    sentinel:
+      master: ${REDIS_SENTINEL_MASTER:mymaster}
+      nodes: ${REDIS_SENTINEL_NODES:sentinel1:26379,sentinel2:26379,sentinel3:26379}
+      password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+      database: 0
+      timeout: 5000
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 10
+
+    # 生产环境SSL配置
+    ssl: ${REDIS_SSL_ENABLED:false}
+    # ssl-bundle: redis-ssl
+
+# 生产环境缓存配置优化
+spring:
+  cache:
+    type: redis
+    redis:
+      key-prefix: ${spring.application.name}:cache:
+      time-to-live: 60m                                # 增加默认TTL
+      cache-null-values: false
+      use-key-prefix: true
+      enable-statistics: true
+
+# 生产环境业务缓存配置优化
+ioedream:
+  redis:
+    # 多级缓存配置
+    multi-cache:
+      l1-local:
+        enabled: true
+        caffeine:
+          spec: maximumSize=5000,expireAfterWrite=10m,recordStats
+        refresh-after-write: 2m
+
+      l2-redis:
+        enabled: true
+        ttl: 60m
+        key-prefix: "l2:"
+
+      l3-database:
+        enabled: true
+        ttl: 120m
+        refresh-interval: 20m
+
+    # 分布式锁配置优化
+    distributed-lock:
+      redisson:
+        single-server-config:
+          connection-pool-size: 128                     # 增加连接池大小
+          connection-minimum-idle-size: 20
+          idle-connection-timeout: 15000
+          connect-timeout: 15000
+          timeout: 5000
+          retry-attempts: 5                              # 增加重试次数
+          retry-interval: 2000
+
+        cluster-servers-config:
+          node-addresses: ${ioedream.redis.distributed-lock.cluster-nodes:}
+          scan-interval: 2000
+          slave-connection-pool-size: 128
+          master-connection-pool-size: 128
+          idle-connection-timeout: 15000
+          connect-timeout: 15000
+          timeout: 5000
+          retry-attempts: 5
+          retry-interval: 2000
+
+    # 缓存策略配置优化
+    cache-strategies:
+      user:
+        l1-ttl: 10m
+        l2-ttl: 60m
+        l3-ttl: 120m
+        refresh-interval: 20m
+        max-size: 20000                                 # 增加缓存大小
+
+      permission:
+        l1-ttl: 20m
+        l2-ttl: 120m
+        l3-ttl: 240m
+        refresh-interval: 30m
+        max-size: 10000
+
+      dict:
+        l1-ttl: 120m
+        l2-ttl: 240m
+        l3-ttl: 480m
+        refresh-interval: 60m
+        max-size: 5000
+
+    # 缓存同步配置优化
+    sync:
+      enabled: true
+      channel: "ioedream:cache:sync"
+      strategy: publish
+      delay: 50ms                                        # 减少同步延迟
+      retry-attempts: 5                                 # 增加重试次数
+
+    # 缓存统计配置优化
+    statistics:
+      enabled: true
+      interval: 30s                                      # 减少统计间隔
+      retention: 48h                                    # 增加保留时间
+      export-prometheus: true
+      export-file: false

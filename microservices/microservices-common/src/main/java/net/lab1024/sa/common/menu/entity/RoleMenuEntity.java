@@ -36,11 +36,15 @@ import java.time.LocalDateTime;
 public class RoleMenuEntity extends BaseEntity {
 
     /**
-     * 关联ID
+     * 关联ID（主键）
+     * <p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列role_menu_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
     @TableId(value = "role_menu_id", type = IdType.AUTO)
     @Schema(description = "关联ID")
-    private Long roleMenuId;
+    private Long id;
 
     /**
      * 角色ID

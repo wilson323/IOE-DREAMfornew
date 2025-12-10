@@ -1,4 +1,33 @@
-# 生物识别架构专家
+# 生物识别架构专家技能
+## Biometric Architecture Specialist
+
+**🎯 技能定位**: IOE-DREAM智慧园区生物识别架构专家，精通多模态生物特征管理、设备下发、模板管理等核心架构设计
+
+**⚡ 技能等级**: ★★★★★★ (顶级专家)
+**🎯 适用场景**: 生物识别架构设计、多模态生物特征管理、设备下发同步、模板版本控制
+**📊 技能覆盖**: 生物识别架构 | 多模态融合 | 设备下发 | 模板管理 | 安全管控 | 数据流转
+**🔧 技术栈**: Spring Boot 3.5.8 + OpenCV + TensorFlow + Redis + MinIO + 设备协议适配
+
+---
+
+## 📋 技能概述
+
+### **核心专长**
+- **生物识别架构设计**: 多模态生物识别系统架构、数据流设计、模块化分解
+- **生物特征数据管理**: 人脸、指纹、虹膜、掌纹等多模态生物特征统一管理
+- **设备下发同步**: 向各类设备下发生物特征模板，确保实时同步和一致性
+- **模板版本控制**: 生物特征模板版本管理、增量更新、回滚机制
+- **安全架构设计**: 生物特征数据加密、隐私保护、安全传输
+- **性能优化**: 大规模生物特征数据管理、高并发识别性能优化
+
+### **解决能力**
+- **生物识别系统架构**: 高可用、高性能、可扩展的生物识别架构设计
+- **多模态融合**: 不同生物特征数据的统一管理和融合验证
+- **设备集成**: 各种生物识别设备的协议适配和统一管理
+- **数据安全**: 生物特征数据的全生命周期安全管理
+- **性能调优**: 大规模生物特征数据的存储和检索性能优化
+
+---
 
 ## 核心架构理解
 
@@ -50,18 +79,188 @@
 - **device-biometric-sync**: 设备下发和同步
 - **biometric-security**: 生物特征安全加密
 
-### 设备集成接口
+### 设备集成接口 (Jakarta EE 3.0+)
 ```java
-// 下发生物特征到设备
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import jakarta.transaction.Transactional;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+
+// 下发生物特征到设备接口
 public interface BiometricDeviceService {
+
+    /**
+     * 同步用户生物特征到设备
+     */
     boolean syncUserBiometric(Long userId, BiometricType type, byte[] template);
+
+    /**
+     * 从设备移除用户生物特征
+     */
     boolean removeUserBiometric(Long userId, BiometricType type);
+
+    /**
+     * 检查设备状态
+     */
     List<BiometricDeviceStatus> checkDeviceStatus();
+
+    /**
+     * 批量同步生物特征
+     */
+    BatchSyncResult batchSyncBiometric(List<BiometricSyncRequest> requests);
 }
 
-// 接收设备识别结果
+// 接收设备识别结果接口
 public interface BiometricResultHandler {
-    void handleRecognitionResult(BiometricRecognitionResult result);
+
+    /**
+     * 处理生物识别结果
+     */
+    void handleRecognitionResult(@Valid BiometricRecognitionResult result);
+
+    /**
+     * 处理识别异常
+     */
+    void handleRecognitionError(BiometricRecognitionError error);
+}
+
+// 生物特征管理服务实现
+@Service
+@Transactional(rollbackFor = Exception.class)
+public class BiometricManagementServiceImpl implements BiometricManagementService {
+
+    @Resource
+    private BiometricDeviceService biometricDeviceService;
+
+    @Resource
+    private BiometricTemplateManager biometricTemplateManager;
+
+    @Resource
+    private GatewayServiceClient gatewayServiceClient;
+
+    @Override
+    public SyncResult syncUserToAllDevices(Long userId, BiometricType type) {
+        try {
+            // 1. 获取用户生物特征模板
+            BiometricTemplate template = biometricTemplateManager.getTemplate(userId, type);
+            if (template == null) {
+                throw new BusinessException("TEMPLATE_NOT_FOUND", "生物特征模板不存在");
+            }
+
+            // 2. 获取需要同步的设备列表
+            List<DeviceEntity> devices = getDevicesForBiometricType(type);
+
+            // 3. 批量同步到所有设备
+            return batchSyncToDevices(userId, type, template.getTemplateData(), devices);
+        } catch (Exception e) {
+            log.error("[生物特征同步] 同步失败, userId={}, type={}", userId, type, e);
+            throw new BusinessException("BIOMETRIC_SYNC_ERROR", "生物特征同步失败");
+        }
+    }
+
+    private List<DeviceEntity> getDevicesForBiometricType(BiometricType type) {
+        // 通过网关调用设备通讯服务获取支持指定生物特征类型的设备
+        ResponseDTO<List<DeviceEntity>> result = gatewayServiceClient.callDeviceCommService(
+                "/api/v1/device/biometric/supported-devices",
+                HttpMethod.POST,
+                Map.of("biometricType", type.getCode()),
+                new ParameterizedTypeReference<ResponseDTO<List<DeviceEntity>>>() {}
+        );
+
+        if (result.getCode() == 200) {
+            return result.getData();
+        }
+
+        throw new BusinessException("DEVICE_QUERY_FAILED", "设备信息查询失败");
+    }
+}
+
+// 实体类 - 生物特征模板
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("t_biometric_template")
+public class BiometricTemplateEntity extends BaseEntity {
+
+    @TableId(type = IdType.AUTO)
+    private Long templateId;
+
+    @TableField("user_id")
+    private Long userId;
+
+    @TableField("biometric_type")
+    private Integer biometricType;  // 1-人脸 2-指纹 3-虹膜 4-掌纹
+
+    @TableField("template_data")
+    @Lob
+    @Convert(converter = EncryptedByteArrayConverter.class)
+    private byte[] templateData;  // 生物特征模板数据(加密)
+
+    @TableField("template_version")
+    private Integer templateVersion;  // 模板版本
+
+    @TableField("quality_score")
+    private BigDecimal qualityScore;  // 质量评分
+
+    @TableField("capture_device_id")
+    private String captureDeviceId;  // 采集设备ID
+
+    @TableField("algorithm_version")
+    private String algorithmVersion;  // 算法版本
+
+    @TableField("status")
+    private Integer status;  // 1-正常 2-过期 3-禁用
+
+    @TableField("valid_until")
+    private LocalDateTime validUntil;  // 有效期
+
+    @TableField("last_sync_time")
+    private LocalDateTime lastSyncTime;  // 最后同步时间
+
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+
+    @TableLogic
+    @TableField("deleted_flag")
+    private Integer deletedFlag;
+
+    @Version
+    private Integer version;
+}
+
+// 生物识别结果数据传输对象
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BiometricRecognitionResultDTO {
+
+    @NotNull
+    private String deviceId;  // 设备ID
+
+    @NotNull
+    private String recognitionId;  // 识别ID
+
+    @NotNull
+    private Long userId;  // 识别的用户ID
+
+    @NotNull
+    private BiometricType biometricType;  // 生物特征类型
+
+    @NotNull
+    private Double confidence;  // 置信度
+
+    private LocalDateTime recognitionTime;  // 识别时间
+
+    private String recognitionImage;  // 识别图像URL
+
+    private Map<String, Object> metadata;  // 附加元数据
 }
 ```
 

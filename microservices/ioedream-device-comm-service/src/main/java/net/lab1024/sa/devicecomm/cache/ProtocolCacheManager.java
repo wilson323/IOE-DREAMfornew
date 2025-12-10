@@ -168,7 +168,7 @@ public class ProtocolCacheManager {
 
         try {
             // 缓存到L1
-            String cacheKeyById = CACHE_KEY_PREFIX_DEVICE + device.getDeviceId();
+            String cacheKeyById = CACHE_KEY_PREFIX_DEVICE + device.getId();
             localCache.put(cacheKeyById, device);
 
             // 缓存到L2
@@ -181,12 +181,12 @@ public class ProtocolCacheManager {
                 redisTemplate.opsForValue().set(cacheKeyByCode, device, L2_CACHE_EXPIRE_MINUTES, TimeUnit.MINUTES);
             }
 
-            log.debug("[协议缓存] 设备信息已缓存，deviceId={}, deviceCode={}", 
-                    device.getDeviceId(), device.getDeviceCode());
+            log.debug("[协议缓存] 设备信息已缓存，deviceId={}, deviceCode={}",
+                    device.getId(), device.getDeviceCode());
 
         } catch (Exception e) {
-            log.warn("[协议缓存] 缓存设备信息异常，deviceId={}, 错误={}", 
-                    device.getDeviceId(), e.getMessage());
+            log.warn("[协议缓存] 缓存设备信息异常，deviceId={}, 错误={}",
+                    device.getId(), e.getMessage());
         }
     }
 
