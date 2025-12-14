@@ -13,18 +13,20 @@
 | 时间 | 操作 | 结果 |
 |------|------|------|
 | 2025-12-14 20:46:12 | 执行完整动态验证 | 基础设施验证通过，微服务未启动 |
+| 2025-12-14 21:16:58 | 执行完整动态验证 | 7个服务运行中，2个服务未启动 |
+| 2025-12-14 21:22:27 | 执行完整动态验证 | 6个服务运行中，3个服务未启动 |
 
 ### 验证结果汇总
 
 | 验证项 | 状态 | 通过数 | 失败数 | 通过率 |
 |--------|------|--------|--------|--------|
 | **基础设施验证** | ✅ 通过 | 3/3 | 0 | 100% |
-| **服务启动验证** | ⏳ 待执行 | 0/9 | 9 | 0% |
+| **服务启动验证** | ⚠️ 部分通过 | 6/9 | 3 | 66.7% |
 | **Nacos注册验证** | ⏳ 待执行 | 0/9 | 9 | 0% |
-| **数据库连接验证** | ⏳ 待执行 | 0/8 | 8 | 0% |
-| **健康检查验证** | ⏳ 待执行 | 0/9 | 9 | 0% |
+| **数据库连接验证** | ⚠️ 部分通过 | 5/8 | 3 | 62.5% |
+| **健康检查验证** | ⚠️ 部分通过 | 5/9 | 4 | 55.6% |
 
-**总体通过率**: 20% (1/5项验证通过)
+**总体通过率**: 20% (1/5项验证完全通过，3项部分通过)
 
 ---
 
@@ -50,19 +52,19 @@
 
 | 微服务 | 端口 | 状态 | 说明 |
 |--------|------|------|------|
-| ioedream-gateway-service | 8080 | ❌ 未运行 | 需要启动 |
-| ioedream-common-service | 8088 | ❌ 未运行 | 需要启动 |
-| ioedream-device-comm-service | 8087 | ❌ 未运行 | 需要启动 |
-| ioedream-oa-service | 8089 | ❌ 未运行 | 需要启动 |
-| ioedream-access-service | 8090 | ❌ 未运行 | 需要启动 |
-| ioedream-attendance-service | 8091 | ❌ 未运行 | 需要启动 |
+| ioedream-gateway-service | 8080 | ✅ 运行中 | 已启动 |
+| ioedream-common-service | 8088 | ✅ 运行中 | 已启动 |
+| ioedream-device-comm-service | 8087 | ⚠️ 运行中但健康检查失败 | 端口监听但服务未就绪 |
+| ioedream-oa-service | 8089 | ✅ 运行中 | 已启动 |
+| ioedream-access-service | 8090 | ✅ 运行中 | 已启动 |
+| ioedream-attendance-service | 8091 | ✅ 运行中 | 已启动 |
 | ioedream-video-service | 8092 | ❌ 未运行 | 需要启动 |
 | ioedream-consume-service | 8094 | ❌ 未运行 | 需要启动 |
 | ioedream-visitor-service | 8095 | ❌ 未运行 | 需要启动 |
 
 ### 2.2 验证结论
 
-⏳ **服务启动验证待执行** - 所有9个微服务都未启动。需要先启动微服务才能继续后续验证。
+⚠️ **服务启动验证部分通过** - 6个微服务已启动并运行正常，3个微服务未启动（ioedream-video-service、ioedream-consume-service、ioedream-visitor-service）。ioedream-device-comm-service端口在监听但健康检查失败，可能仍在启动中。
 
 **启动方法**:
 ```powershell
@@ -142,6 +144,16 @@ mvn spring-boot:run
   - 基础设施服务（MySQL、Redis、Nacos）都在运行
   - 所有9个微服务都未启动
   - 需要启动微服务后重新执行验证
+
+[2025-12-14 21:22:27] 验证项: 完整动态验证
+- 操作: 执行 verify-dynamic-validation.ps1 脚本
+- 结果: ⚠️ 部分通过 - 6个服务运行中，3个服务未启动
+- 备注: 
+  - 基础设施服务（MySQL、Redis、Nacos）都在运行
+  - 6个微服务已启动并运行正常
+  - 3个微服务未启动（ioedream-video-service、ioedream-consume-service、ioedream-visitor-service）
+  - ioedream-device-comm-service端口监听但健康检查返回503
+  - 5个服务健康检查通过
 ```
 
 ---
