@@ -4,8 +4,8 @@
 **🎯 技能定位**: IOE-DREAM智慧园区Spring Boot 3.5.8 + Jakarta EE 3.0+技术栈守护专家，确保项目完全符合Jakarta EE规范，预防编译错误和技术栈不兼容问题
 
 **⚡ 技能等级**: ★★★★★★ (顶级专家)
-**🎯 适用场景**: Jakarta EE迁移、技术栈升级、依赖管理、编译错误修复、版本兼容性检查
-**📊 技能覆盖**: 包名迁移 | 依赖检查 | 编译验证 | 版本兼容 | 技术栈升级 | 错误修复
+**🎯 适用场景**: Jakarta EE迁移、技术栈升级、依赖管理、编译错误修复、版本兼容性检查、包结构优化
+**📊 技能覆盖**: 包名迁移 | 依赖检查 | 编译验证 | 版本兼容 | 技术栈升级 | 错误修复 | 包结构规范
 
 ---
 
@@ -18,6 +18,7 @@
 - **依赖版本管理**: 确保所有依赖版本兼容且符合技术栈要求
 - **编译错误预防**: 预防和解决因包名不匹配导致的编译问题
 - **技术栈升级指导**: 安全的技术栈升级路径和最佳实践
+- **技术栈统一检查**: 强制执行统一技术栈规范，禁止违规技术栈
 
 ### **解决能力**
 - **Jakarta EE合规检查**: 全面检查项目Jakarta EE合规性
@@ -26,6 +27,7 @@
 - **技术栈冲突解决**: 解决技术栈版本冲突和兼容性问题
 - **升级风险评估**: 评估技术栈升级的风险和影响
 - **最佳实践指导**: 提供Jakarta EE迁移和使用的最佳实践
+- **技术栈违规检测**: 检测和修复技术栈规范违规问题
 
 ---
 
@@ -817,28 +819,28 @@ public class DependencyVersionManager {
 
 ### Jakarta EE迁移最佳实践
 ```java
-// ✅ 正确的Jakarta EE使用示例
+// ✅ 正确的Jakarta EE使用示例 - 强制技术栈规范
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
 
-    @Resource  // 使用jakarta.annotation.Resource
+    @Resource  // 🔴 强制：使用jakarta.annotation.Resource，禁止javax.annotation.Resource
     private UserService userService;
 
     @PostMapping("/create")
     public ResponseDTO<UserVO> createUser(@Valid @RequestBody CreateUserRequestDTO request) {
-        // @Valid 来自 jakarta.validation.Valid
+        // 🔴 强制：@Valid 来自 jakarta.validation.Valid，禁止javax.validation.Valid
         UserVO user = userService.createUser(request);
         return ResponseDTO.ok(user);
     }
 }
 
 @Service
-@Transactional(rollbackFor = Exception.class)  // 使用jakarta.transaction.Transactional
+@Transactional(rollbackFor = Exception.class)  // 🔴 强制：使用jakarta.transaction.Transactional
 public class UserServiceImpl implements UserService {
 
-    @Resource
-    private UserDao userDao;  // 使用jakarta.annotation.Resource
+    @Resource  // 🔴 强制：使用jakarta.annotation.Resource，禁止javax.annotation.Resource
+    private UserDao userDao;
 
     @Override
     @Transactional(readOnly = true)  // 只读事务
@@ -846,13 +848,34 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userDao.selectById(userId);
         return convertToUserVO(user);
     }
+
+    // ❌ 严格禁止示例
+    // 1. ❌ 禁止使用javax包名下的任何注解
+    // 2. ❌ 禁止import javax.annotation.*
+    // 3. ❌ 禁止import javax.validation.*
+    // 4. ❌ 禁止import javax.transaction.*
+    // 5. ❌ 禁止import javax.persistence.*
+    // 6. ❌ 禁止import javax.servlet.*
 }
 
-@Mapper  // 使用MyBatis注解，不需要Jakarta相关注解
+@Mapper  // 🔴 强制：使用MyBatis注解，不需要Jakarta相关注解
 public interface UserDao extends BaseMapper<UserEntity> {
 
     @Select("SELECT * FROM t_user WHERE status = 1")
     List<UserEntity> selectActiveUsers();
+}
+
+// ❌ 严重错误示例 - 技术栈违规
+@RestController
+public class BadController {
+    @Autowired  // 🔴 严重违规：必须使用@Resource
+    private UserService service;
+
+    @PostMapping("/create")
+    public ResponseDTO<UserVO> create(@javax.validation.Valid @RequestBody CreateUserRequestDTO request) {
+        // 🔴 严重违规：必须使用jakarta.validation.Valid
+        return service.create(request);
+    }
 }
 ```
 

@@ -18,6 +18,7 @@
 - **事务管理检查**: 事务注解使用规范验证
 - **Jakarta EE包名检查**: javax vs jakarta包名验证
 - **跨层访问检测**: 禁止跨层直接访问的违规检测
+- **技术栈统一检查**: 强制执行统一技术栈规范
 
 ### **解决能力**
 - **架构违规预防**: 在代码开发阶段预防架构违规
@@ -25,6 +26,7 @@
 - **违规代码修复**: 系统性修复架构违规问题
 - **架构规范培训**: 团队架构规范培训和指导
 - **代码质量保障**: 确保代码符合企业级架构标准
+- **技术栈统一**: 确保所有代码使用统一技术栈标准
 
 ---
 
@@ -41,14 +43,14 @@
 
 **代码规范**：
 ```java
-// ✅ 正确示例
+// ✅ 正确示例 - 强制技术栈规范
 @RestController
 @RequestMapping("/api/v1/user")
 @Tag(name = "用户管理")
 public class UserController {
 
-    @Resource
-    private UserService userService;  // 必须使用@Resource
+    @Resource  // 🔴 强制：必须使用@Resource，禁止@Autowired
+    private UserService userService;
 
     @PostMapping("/create")
     @Operation(summary = "创建用户")
@@ -64,11 +66,13 @@ public class UserController {
         return ResponseDTO.ok(userDetail);
     }
 
-    // ❌ 禁止示例
-    // 1. 禁止直接调用Manager层
-    // 2. 禁止直接调用DAO层
-    // 3. 禁止在Controller中处理业务逻辑
-    // 4. 禁止在Controller中管理事务
+    // ❌ 严格禁止示例
+    // 1. ❌ 禁止使用@Autowired注解
+    // 2. ❌ 禁止直接调用Manager层
+    // 3. ❌ 禁止直接调用DAO层
+    // 4. ❌ 禁止在Controller中处理业务逻辑
+    // 5. ❌ 禁止在Controller中管理事务
+    // 6. ❌ 禁止使用javax包名，必须使用jakarta包名
 }
 ```
 
@@ -81,16 +85,16 @@ public class UserController {
 
 **代码规范**：
 ```java
-// ✅ 正确示例
+// ✅ 正确示例 - 强制技术栈规范
 @Service
 @Transactional(rollbackFor = Exception.class)  // 类级别事务
 public class UserServiceImpl implements UserService {
 
-    @Resource
-    private UserManager userManager;  // 必须使用@Resource
+    @Resource  // 🔴 强制：必须使用@Resource，禁止@Autowired
+    private UserManager userManager;
 
-    @Resource
-    private UserDao userDao;  // 必要时可直接调用DAO
+    @Resource  // 🔴 强制：必须使用@Resource，禁止@Autowired
+    private UserDao userDao;
 
     @Override
     public UserVO createUser(CreateUserRequestDTO request) {
@@ -110,10 +114,12 @@ public class UserServiceImpl implements UserService {
         return userManager.buildUserDetail(userId);
     }
 
-    // ❌ 禁止示例
-    // 1. 禁止跨过Manager直接调用复杂业务
-    // 2. 禁止在Service中处理数据库直接查询（简单查询除外）
-    // 3. 禁止在Service中包含Controller层逻辑
+    // ❌ 严格禁止示例
+    // 1. ❌ 禁止使用@Autowired注解
+    // 2. ❌ 禁止跨过Manager直接调用复杂业务
+    // 3. ❌ 禁止在Service中处理数据库直接查询（简单查询除外）
+    // 4. ❌ 禁止在Service中包含Controller层逻辑
+    // 5. ❌ 禁止使用javax包名，必须使用jakarta包名
 }
 ```
 
@@ -200,9 +206,9 @@ public class UserManager {
 
 **代码规范**：
 ```java
-// ✅ 正确示例
-@Mapper  // 必须使用@Mapper注解
-public interface UserDao extends BaseMapper<UserEntity> {  // 必须继承BaseMapper
+// ✅ 正确示例 - 强制技术栈规范
+@Mapper  // 🔴 强制：必须使用@Mapper注解，禁止@Repository
+public interface UserDao extends BaseMapper<UserEntity> {  // 🔴 强制：必须继承BaseMapper
 
     @Transactional(readOnly = true)
     UserEntity selectByUsername(@Param("username") String username);
@@ -216,17 +222,21 @@ public interface UserDao extends BaseMapper<UserEntity> {  // 必须继承BaseMa
     @Select("SELECT * FROM t_common_user WHERE deleted_flag = 0 ORDER BY create_time DESC LIMIT #{limit}")
     List<UserEntity> selectRecentUsers(@Param("limit") int limit);
 
-    // ❌ DAO层禁止事项
-    // 1. 禁止包含业务逻辑
-    // 2. 禁止使用@Service或@Component注解
-    // 3. 禁止使用@Repository注解
-    // 4. 禁止处理事务外的业务逻辑
+    // ❌ 严格禁止示例
+    // 1. ❌ 禁止使用@Repository注解
+    // 2. ❌ 禁止使用JpaRepository和JPA
+    // 3. ❌ 禁止使用Repository后缀命名
+    // 4. ❌ 禁止包含业务逻辑
+    // 5. ❌ 禁止使用@Service或@Component注解
+    // 6. ❌ 禁止处理事务外的业务逻辑
+    // 7. ❌ 禁止使用javax包名，必须使用jakarta包名
 }
 
-// ❌ 错误示例
-@Repository  // 禁止使用@Repository注解
-public interface UserRepository extends JpaRepository<UserEntity, Long> {  // 禁止使用JPA
-    // JPA相关代码被禁止
+// ❌ 严重错误示例 - 技术栈违规
+@Repository  // 🔴 严重违规：禁止使用@Repository注解
+public interface UserRepository extends JpaRepository<UserEntity, Long> {  // 🔴 严重违规：禁止使用JPA
+    // JPA相关代码被完全禁止
+    // 必须改为：@Mapper public interface UserDao extends BaseMapper<UserEntity>
 }
 ```
 
@@ -636,25 +646,51 @@ public class DependencyInjectionChecker {
 
 ## 🛠️ 开发规范和最佳实践
 
-### 项目结构规范
+### 项目结构规范（重要更新 2025-01-15）
+
+**统一业务微服务包结构**:
 ```
-src/main/java/
-├── controller/          # Controller层
-│   ├── UserController.java
-│   └── ...
-├── service/             # Service接口层
-│   ├── UserService.java
-│   └── ...
-├── service/impl/        # Service实现层
-│   ├── UserServiceImpl.java
-│   └── ...
-├── manager/             # Manager层
-│   ├── UserManager.java  # 纯Java类，不使用Spring注解
-│   └── ...
-└── dao/                 # DAO层
-    ├── UserDao.java     # @Mapper注解
-    └── ...
+net.lab1024.sa.{service}/
+├── config/                   # 配置类
+│   ├── DatabaseConfig.java
+│   ├── RedisConfig.java
+│   └── SecurityConfig.java
+├── controller/              # REST控制器
+│   ├── {Module}Controller.java
+│   └── support/             # 支撑控制器
+├── service/                 # 服务接口和实现
+│   ├── {Module}Service.java
+│   └── impl/
+│       └── {Module}ServiceImpl.java
+├── manager/                 # 业务编排层
+│   ├── {Module}Manager.java
+│   └── impl/
+│       └── {Module}ManagerImpl.java
+├── dao/                     # 数据访问层
+│   ├── {Module}Dao.java
+│   └── custom/              # 自定义查询
+├── domain/                  # 领域对象
+│   ├── form/               # 请求表单
+│   │   ├── {Module}AddForm.java
+│   │   ├── {Module}UpdateForm.java
+│   │   └── {Module}QueryForm.java
+│   └── vo/                 # 响应视图
+│       ├── {Module}VO.java
+│       ├── {Module}DetailVO.java
+│       └── {Module}ListVO.java
+└── {Service}Application.java
 ```
+
+**严格禁止事项**:
+- ❌ **禁止重复包名**: 如`access.access.entity`、`consume.consume.entity`等冗余命名
+- ❌ **禁止Entity分散存储**: 所有Entity必须统一在公共模块管理
+- ❌ **禁止Manager使用Spring注解**: Manager必须是纯Java类，使用构造函数注入
+- ❌ **禁止包结构不统一**: 所有微服务必须遵循统一的包结构规范
+
+**相关技能**:
+- 📦 [Package Structure Guardian](package-structure-guardian.md) - 包目录结构守护专家
+- 🔧 [自动化工具](../../../scripts/fix-package-structure.ps1) - 包结构修复脚本
+- 🔍 [检查工具](../../../scripts/check-package-structure.ps1) - 包结构检查脚本
 
 ### 命名规范
 - **Controller**: `XxxController`

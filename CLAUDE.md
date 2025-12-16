@@ -21,7 +21,8 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 > **项目定位**: 企业级智慧安防管理平台  
 > **核心价值**: 多模态生物识别 + 一卡通 + 智能安防一体化解决方案  
-> **技术架构**: Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Spring Cloud Alibaba 2025.0.0.0 + Vue3 + 微服务架构  
+> **技术架构**: Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Spring Cloud Alibaba 2025.0.0.0 + Vue3 + 微服务架构
+> **数据库架构**: 统一MySQL 8.0 + Flyway 9.x企业级迁移 + MyBatis-Plus 3.5.15
 > **安全等级**: 国家三级等保合规 + 金融级安全防护
 
 ---
@@ -272,9 +273,12 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 - **🎨 Vue3开发规范**: [documentation/technical/repowiki/zh/content/开发规范体系/Vue3开发规范.md](./documentation/technical/repowiki/zh/content/开发规范体系/Vue3开发规范.md)
 - **📋 统一开发标准**: [documentation/technical/UNIFIED_DEVELOPMENT_STANDARDS.md](./documentation/technical/UNIFIED_DEVELOPMENT_STANDARDS.md)
 
-### 🗄️ 数据库设计
+### 🗄️ 数据库设计与迁移
 - **🗃️ 数据库设计规范**: [documentation/technical/repowiki/zh/content/后端架构/数据模型与ORM/](./documentation/technical/repowiki/zh/content/后端架构/数据模型与ORM/)
 - **📊 SQL性能优化**: [documentation/technical/repowiki/zh/content/后端架构/数据模型与ORM/SQL映射与动态SQL/SQL性能优化.md](./documentation/technical/repowiki/zh/content/后端架构/数据模型与ORM/SQL映射与动态SQL/SQL性能优化.md)
+- **🚀 数据库迁移策略**: [documentation/technical/DATABASE_MIGRATION_COMPREHENSIVE_STRATEGY.md](./documentation/technical/DATABASE_MIGRATION_COMPREHENSIVE_STRATEGY.md)
+- **🛠️ 迁移自动化工具**: [scripts/database/migration-automation.ps1](./scripts/database/migration-automation.ps1)
+- **⚙️ Flyway配置模板**: [microservices/config-templates/flyway-standard-template.yml](./microservices/config-templates/flyway-standard-template.yml)
 
 ### 🔒 安全体系
 - **🛡️ 安全体系规范**: [documentation/security/](./documentation/security/)
@@ -2845,25 +2849,94 @@ area:device:user:{userId}:devices       # 用户可访问设备
 | Form | `XxxAddForm`, `XxxUpdateForm`, `XxxQueryForm` | `UserAddForm`, `UserUpdateForm` |
 | VO | `XxxVO`, `XxxDetailVO`, `XxxListVO` | `UserVO`, `UserDetailVO` |
 
-#### 1.2 包结构规范
+#### 1.2 包结构规范（强制执行）
 
+**重要更新（2025-01-15）**: 基于全局包目录结构分析，新增严格的包结构规范，禁止重复包名和Entity分散存储。
+
+**统一业务微服务包结构**:
 ```java
-// microservices-common 包结构
+net.lab1024.sa.{service}/
+├── config/                   # 配置类
+│   ├── DatabaseConfig.java
+│   ├── RedisConfig.java
+│   └── SecurityConfig.java
+├── controller/              # REST控制器
+│   ├── {Module}Controller.java
+│   └── support/             # 支撑控制器
+├── service/                 # 服务接口和实现
+│   ├── {Module}Service.java
+│   └── impl/
+│       └── {Module}ServiceImpl.java
+├── manager/                 # 业务编排层
+│   ├── {Module}Manager.java
+│   └── impl/
+│       └── {Module}ManagerImpl.java
+├── dao/                     # 数据访问层
+│   ├── {Module}Dao.java
+│   └── custom/              # 自定义查询
+├── domain/                  # 领域对象
+│   ├── form/               # 请求表单
+│   │   ├── {Module}AddForm.java
+│   │   ├── {Module}UpdateForm.java
+│   │   └── {Module}QueryForm.java
+│   └── vo/                 # 响应视图
+│       ├── {Module}VO.java
+│       ├── {Module}DetailVO.java
+│       └── {Module}ListVO.java
+└── {Service}Application.java
+```
+
+**公共模块包结构**:
+```java
+net.lab1024.sa.common/
+├── core/                    # 核心模块（最小稳定内核，尽量纯 Java）
+│   ├── domain/             # 通用领域对象
+│   ├── entity/             # 基础实体
+│   ├── config/             # 核心配置
+│   └── util/               # 核心工具
+├── auth/                    # 认证授权
+│   ├── entity/
+│   ├── dao/
+│   ├── service/
+│   ├── manager/
+│   └── domain/
+├── organization/            # 组织架构
+│   ├── entity/             # User, Department, Area, Device
+│   ├── dao/
+│   ├── service/
+│   ├── manager/
+│   └── domain/
+├── dict/                    # 字典管理
+├── menu/                    # 菜单管理
+├── notification/           # 通知推送
+├── scheduler/              # 定时任务
+├── audit/                   # 审计日志
+└── workflow/               # 工作流
+```
+
+**microservices-common 包结构**:
+```java
 net.lab1024.sa.common.{module}/
-├── entity/          // 实体类
-├── dao/             // 数据访问层
-├── manager/         // 业务编排层
-├── service/         // 服务接口
-│   └── impl/        // 服务实现
+├── entity/          # 实体类（统一在公共模块管理）
+├── dao/             # 数据访问层
+├── manager/         # 业务编排层（纯Java类，不使用Spring注解）
+├── service/         # 服务接口
+│   └── impl/        # 服务实现
 ├── domain/
-│   ├── form/        // 表单对象
-│   └── vo/          // 视图对象
-└── config/          // 配置类
+│   ├── form/        # 表单对象
+│   └── vo/          # 视图对象
+└── config/          # 配置类
 
 // ioedream-common-service 包结构
 net.lab1024.sa.common.{module}/
-└── controller/      // 控制器
+└── controller/      # 控制器
 ```
+
+**严格禁止事项**:
+- ❌ **禁止重复包名**: 如`access.access.entity`、`consume.consume.entity`等冗余命名
+- ❌ **禁止Entity分散存储**: 所有Entity必须统一在公共模块管理
+- ❌ **禁止Manager使用Spring注解**: Manager必须是纯Java类，使用构造函数注入
+- ❌ **禁止包结构不统一**: 所有微服务必须遵循统一的包结构规范
 
 #### 1.3 注解使用规范
 

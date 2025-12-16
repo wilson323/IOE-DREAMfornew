@@ -85,9 +85,11 @@ jobs:
           MODE: standalone
           SPRING_DATASOURCE_PLATFORM: mysql
           MYSQL_SERVICE_HOST: mysql
-          MYSQL_SERVICE_DB_NAME: ioedream_test
+          MYSQL_SERVICE_DB_NAME: nacos
           MYSQL_SERVICE_USER: root
           MYSQL_SERVICE_PASSWORD: root
+          NACOS_AUTH_ENABLE: true
+          NACOS_AUTH_TOKEN: SecretKey012345678901234567890123456789012345678901234567890123456789
         ports:
           - 8848:8848
 
