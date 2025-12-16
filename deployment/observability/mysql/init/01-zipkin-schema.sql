@@ -1,0 +1,8 @@
+-- Zipkin数据库初始化脚本
+CREATE DATABASE IF NOT EXISTS zipkin CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE zipkin;
+
+-- 创建zipkin用户并授权
+CREATE USER IF NOT EXISTS 'zipkin'@'%' IDENTIFIED BY 'L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A';
+GRANT ALL PRIVILEGES ON zipkin.* TO 'zipkin'@'%';
+FLUSH PRIVILEGES;

@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.manager.VideoDeviceManager;
 import net.lab1024.sa.video.manager.VideoStreamManager;
+import net.lab1024.sa.video.manager.VideoSystemIntegrationManager;
+import net.lab1024.sa.video.manager.FaceRecognitionManager;
+import net.lab1024.sa.video.manager.BehaviorDetectionManager;
+import net.lab1024.sa.video.manager.CrowdAnalysisManager;
 
 /**
  * Manager配置类
@@ -55,5 +59,65 @@ public class ManagerConfiguration {
     public VideoStreamManager videoStreamManager() {
         log.info("[VideoStreamManager] 初始化视频流管理器");
         return new VideoStreamManager();
+    }
+
+    /**
+     * 注册VideoSystemIntegrationManager为Spring Bean
+     * <p>
+     * 系统集成管理器，负责协调视频服务内部各子系统的集成和监控
+     * </p>
+     *
+     * @return 系统集成管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(VideoSystemIntegrationManager.class)
+    public VideoSystemIntegrationManager videoSystemIntegrationManager() {
+        log.info("[VideoSystemIntegrationManager] 初始化系统集成管理器");
+        return new VideoSystemIntegrationManager();
+    }
+
+    /**
+     * 注册FaceRecognitionManager为Spring Bean
+     * <p>
+     * 人脸识别管理器，负责人脸识别算法的调用、结果处理和模型管理
+     * </p>
+     *
+     * @return 人脸识别管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(FaceRecognitionManager.class)
+    public FaceRecognitionManager faceRecognitionManager() {
+        log.info("[FaceRecognitionManager] 初始化人脸识别管理器");
+        return new FaceRecognitionManager();
+    }
+
+    /**
+     * 注册BehaviorDetectionManager为Spring Bean
+     * <p>
+     * 行为检测管理器，负责行为分析算法的调用、异常检测和模式识别
+     * </p>
+     *
+     * @return 行为检测管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(BehaviorDetectionManager.class)
+    public BehaviorDetectionManager behaviorDetectionManager() {
+        log.info("[BehaviorDetectionManager] 初始化行为检测管理器");
+        return new BehaviorDetectionManager();
+    }
+
+    /**
+     * 注册CrowdAnalysisManager为Spring Bean
+     * <p>
+     * 人群分析管理器，负责人群密度分析、人数统计、异常聚集检测等
+     * </p>
+     *
+     * @return 人群分析管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(CrowdAnalysisManager.class)
+    public CrowdAnalysisManager crowdAnalysisManager() {
+        log.info("[CrowdAnalysisManager] 初始化人群分析管理器");
+        return new CrowdAnalysisManager();
     }
 }

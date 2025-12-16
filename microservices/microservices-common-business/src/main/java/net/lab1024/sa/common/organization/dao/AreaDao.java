@@ -271,4 +271,150 @@ public interface AreaDao extends BaseMapper<AreaEntity> {
      */
     @Select("SELECT COALESCE(SUM(file_size), 0) FROM t_video_record WHERE area_id = #{areaId} AND deleted_flag = 0")
     long getVideoRecordSize(@Param("areaId") Long areaId);
+
+    // ==================== 区域层级管理相关查询 ====================
+
+    /**
+     * 根据父级区域ID和区域级别查询子区域列表
+     *
+     * @param parentId 父级区域ID，null表示查询顶级区域
+     * @param areaLevel 区域级别，null表示查询所有级别
+     * @return 子区域列表
+     */
+    @Select("<script>" +
+            "SELECT * FROM t_area WHERE deleted_flag = 0 " +
+            "<if test='parentId != null'> AND parent_id = #{parentId} </if>" +
+            "<if test='parentId == null'> AND (parent_id IS NULL OR parent_id = 0) </if>" +
+            "<if test='areaLevel != null'> AND area_level = #{areaLevel} </if>" +
+            "ORDER BY area_level ASC, sort_order ASC, area_name ASC" +
+            "</script>")
+    List<AreaEntity> selectByParentIdAndLevel(@Param("parentId") Long parentId, @Param("areaLevel") Integer areaLevel);
+
+    /**
+     * 根据区域级别查询区域列表
+     *
+     * @param areaLevel 区域级别
+     * @return 区域列表
+     */
+    @Select("SELECT * FROM t_area WHERE area_level = #{areaLevel} AND deleted_flag = 0 ORDER BY sort_order ASC, area_name ASC")
+    List<AreaEntity> selectByLevel(@Param("areaLevel") Integer areaLevel);
+
+    /**
+     * 根据关键词搜索区域（按名称或编码）
+     *
+     * @param keyword 关键词
+     * @return 搜索结果
+     */
+    @Select("SELECT * FROM t_area WHERE (area_name LIKE CONCAT('%', #{keyword}, '%') OR area_code LIKE CONCAT('%', #{keyword}, '%')) AND deleted_flag = 0 ORDER BY area_level ASC, area_name ASC")
+    List<AreaEntity> selectByKeyword(@Param("keyword") String keyword);
+
+    /**
+     * 获取区域完整路径信息
+     * 通过递归CTE查询获取从顶级到当前区域的完整路径
+     *
+     * @param areaId 区域ID
+     * @return 路径区域列表（从顶级到当前区域）
+     */
+    @Select("WITH RECURSIVE area_path AS (" +
+            "SELECT area_id, parent_id, area_name, area_code, area_level, 1 as path_level " +
+            "FROM t_area WHERE area_id = #{areaId} AND deleted_flag = 0 " +
+            "UNION ALL " +
+            "SELECT a.area_id, a.parent_id, a.area_name, a.area_code, a.area_level, ap.path_level + 1 " +
+            "FROM t_area a " +
+            "INNER JOIN area_path ap ON a.area_id = ap.parent_id " +
+            "WHERE a.deleted_flag = 0" +
+            ") " +
+            "SELECT * FROM area_path ORDER BY path_level DESC")
+    List<AreaEntity> selectAreaPath(@Param("areaId") Long areaId);
+
+    /**
+     * 检查区域层级结构是否合法
+     * 验证父区域级别是否为当前区域级别-1
+     *
+     * @param areaId 区域ID
+     * @return 验证结果：1表示合法，0表示不合法
+     */
+    @Select("SELECT CASE " +
+            "WHEN parent_id IS NULL OR parent_id = 0 THEN 1 " +
+            "WHEN EXISTS (SELECT 1 FROM t_area parent WHERE parent.area_id = t_area.parent_id AND parent.area_level = t_area.area_level - 1 AND parent.deleted_flag = 0) THEN 1 " +
+            "ELSE 0 " +
+            "END as is_valid " +
+            "FROM t_area WHERE area_id = #{areaId} AND deleted_flag = 0")
+    int validateAreaHierarchy(@Param("areaId") Long areaId);
+
+    /**
+     * 获取同级区域列表
+     *
+     * @param areaId 区域ID
+     * @return 同级区域列表
+     */
+    @Select("SELECT * FROM t_area WHERE parent_id = (SELECT parent_id FROM t_area WHERE area_id = #{areaId} AND deleted_flag = 0) AND area_id != #{areaId} AND deleted_flag = 0 ORDER BY sort_order ASC, area_name ASC")
+    List<AreaEntity> selectSiblingAreas(@Param("areaId") Long areaId);
+
+    /**
+     * 按区域级别统计区域数量
+     *
+     * @param parentAreaId 父区域ID，null表示统计所有
+     * @return 级别统计结果
+     */
+    @Select("<script>" +
+            "SELECT " +
+            "area_level, " +
+            "COUNT(1) as count " +
+            "FROM t_area " +
+            "WHERE deleted_flag = 0 " +
+            "<if test='parentAreaId != null'> AND parent_id = #{parentAreaId} </if>" +
+            "<if test='parentAreaId == null'> AND (parent_id IS NULL OR parent_id = 0) </if>" +
+            "GROUP BY area_level " +
+            "ORDER BY area_level" +
+            "</script>")
+    List<java.util.Map<String, Object>> countAreasByLevel(@Param("parentAreaId") Long parentAreaId);
+
+    /**
+     * 按状态统计区域数量
+     *
+     * @param parentAreaId 父区域ID，null表示统计所有
+     * @return 状态统计结果
+     */
+    @Select("<script>" +
+            "SELECT " +
+            "status, " +
+            "COUNT(1) as count " +
+            "FROM t_area " +
+            "WHERE deleted_flag = 0 " +
+            "<if test='parentAreaId != null'> AND parent_id = #{parentAreaId} </if>" +
+            "<if test='parentAreaId == null'> AND (parent_id IS NULL OR parent_id = 0) </if>" +
+            "GROUP BY status " +
+            "ORDER BY status" +
+            "</script>")
+    List<java.util.Map<String, Object>> countAreasByStatus(@Param("parentAreaId") Long parentAreaId);
+
+    /**
+     * 检查区域编码是否存在
+     *
+     * @param areaCode 区域编码
+     * @param excludeAreaId 排除的区域ID（用于更新时检查）
+     * @return 是否存在
+     */
+    @Select("<script>" +
+            "SELECT COUNT(1) > 0 FROM t_area WHERE area_code = #{areaCode} AND deleted_flag = 0 " +
+            "<if test='excludeAreaId != null'> AND area_id != #{excludeAreaId} </if>" +
+            "</script>")
+    boolean existsByAreaCode(@Param("areaCode") String areaCode, @Param("excludeAreaId") Long excludeAreaId);
+
+    /**
+     * 检查区域名称在同一级别下是否存在
+     *
+     * @param areaName 区域名称
+     * @param parentAreaId 父区域ID
+     * @param areaLevel 区域级别
+     * @param excludeAreaId 排除的区域ID
+     * @return 是否存在
+     */
+    @Select("<script>" +
+            "SELECT COUNT(1) > 0 FROM t_area " +
+            "WHERE area_name = #{areaName} AND parent_id = #{parentAreaId} AND area_level = #{areaLevel} AND deleted_flag = 0 " +
+            "<if test='excludeAreaId != null'> AND area_id != #{excludeAreaId} </if>" +
+            "</script>")
+    boolean existsByNameInLevel(@Param("areaName") String areaName, @Param("parentAreaId") Long parentAreaId, @Param("areaLevel") Integer areaLevel, @Param("excludeAreaId") Long excludeAreaId);
 }

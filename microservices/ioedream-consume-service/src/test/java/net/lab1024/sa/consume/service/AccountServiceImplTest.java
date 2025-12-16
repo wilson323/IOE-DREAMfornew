@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.consume.dao.AccountDao;
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.AccountAddForm;
 import net.lab1024.sa.consume.domain.form.AccountUpdateForm;
 import net.lab1024.sa.consume.manager.AccountManager;

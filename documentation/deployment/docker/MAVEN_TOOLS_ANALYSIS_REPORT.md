@@ -87,7 +87,7 @@
 
 **兼容性问题**：
 - ⚠️ Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Spring Cloud Alibaba 2022.0.0.0
-- ⚠️ **版本不匹配**: Spring Cloud Alibaba 2022.0.0.0设计用于Spring Boot 3.0.0
+- ⚠️ **版本不匹配**: Spring Cloud Alibaba 2022.0.0.0设计用于Spring Boot 3.5.8
 - ⚠️ **功能不完整**: `optional:nacos:`在2022.0.0.0中可能不完整支持
 
 **推荐版本组合**：
@@ -108,7 +108,7 @@
    - 即使使用`optional:`前缀，解析器仍会尝试解析dataId
 
 2. **版本兼容性问题**
-   - 设计用于Spring Boot 3.0.0
+   - 设计用于Spring Boot 3.5.8
    - 当前使用Spring Boot 3.5.8
    - 可能存在API变更和功能差异
 

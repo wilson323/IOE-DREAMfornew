@@ -23,7 +23,7 @@ import net.lab1024.sa.common.auth.domain.entity.UserSessionEntity;
  * - 过期会话清理
  *
  * 符合CLAUDE.md规范：
- * - 使用@Mapper注解（禁止@Repository）
+ * - 使用@Mapper注解（禁止@Mapper）
  * - 继承BaseMapper<Entity>
  * - 查询方法使用@Transactional(readOnly = true)
  * - 写操作使用@Transactional(rollbackFor = Exception.class)

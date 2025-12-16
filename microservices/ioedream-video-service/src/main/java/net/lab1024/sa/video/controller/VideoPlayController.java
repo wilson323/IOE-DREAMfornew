@@ -1,6 +1,6 @@
 package net.lab1024.sa.video.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +45,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/video/play")
 @Tag(name = "视频播放管理PC端", description = "实时视频流、录像回放、视频截图等API")
+@PermissionCheck(value = "VIDEO_PLAY", description = "视频播放管理模块权限")
 public class VideoPlayController {
 
     @Resource
@@ -61,7 +62,7 @@ public class VideoPlayController {
     @Observed(name = "video.play.getVideoStream", contextualName = "video-play-get-stream")
     @PostMapping("/stream")
     @Operation(summary = "获取视频流地址", description = "获取视频设备的实时流播放地址")
-    @PreAuthorize("hasRole('VIDEO_MANAGER') or hasRole('VIDEO_USER')")
+    @PermissionCheck(value = {"VIDEO_MANAGER", "VIDEO_USER"}, description = "视频管理或使用权限")
     public ResponseDTO<Map<String, Object>> getVideoStream(
             @RequestParam @NotNull Long deviceId,
             @RequestParam(required = false) Long channelId,
@@ -86,7 +87,7 @@ public class VideoPlayController {
     @Observed(name = "video.play.getSnapshot", contextualName = "video-play-get-snapshot")
     @GetMapping("/snapshot/{deviceId}")
     @Operation(summary = "获取视频截图", description = "获取视频设备的实时截图")
-    @PreAuthorize("hasRole('VIDEO_MANAGER') or hasRole('VIDEO_USER')")
+    @PermissionCheck(value = {"VIDEO_MANAGER", "VIDEO_USER"}, description = "视频管理或使用权限")
     public ResponseDTO<Map<String, Object>> getSnapshot(
             @Parameter(description = "设备ID", required = true) @PathVariable @NotNull Long deviceId,
             @RequestParam(required = false) Long channelId) {

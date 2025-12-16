@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity;
 
 /**
  * 消费交易DAO接口

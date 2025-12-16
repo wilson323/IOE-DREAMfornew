@@ -15,7 +15,7 @@ import net.lab1024.sa.common.system.employee.domain.entity.EmployeeEntity;
  * 员工DAO（System模块专用）
  * <p>
  * 严格遵循CLAUDE.md规范:
- * - 使用@Mapper注解（禁止@Repository）
+ * - 使用@Mapper注解（禁止@Mapper）
  * - 使用Dao后缀（禁止Repository后缀）
  * - 继承BaseMapper提供基础CRUD
  * - 使用MyBatis-Plus（禁止JPA）

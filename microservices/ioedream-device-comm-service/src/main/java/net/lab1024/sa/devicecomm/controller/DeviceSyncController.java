@@ -5,6 +5,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.devicecomm.domain.form.DeviceQueryForm;
 import net.lab1024.sa.devicecomm.domain.vo.DeviceListVO;
 import net.lab1024.sa.devicecomm.service.DeviceSyncService;
@@ -33,6 +34,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/device")
+@PermissionCheck(value = "DEVICE_SYNC", description = "设备同步管理模块权限")
 public class DeviceSyncController {
 
     @Resource
@@ -46,6 +48,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.listDevices", contextualName = "device-list")
     @GetMapping("/list")
+    @PermissionCheck(value = "DEVICE_SYNC_VIEW", description = "查询设备列表")
     public ResponseDTO<PageResult<DeviceListVO>> listDevices(DeviceQueryForm queryForm) {
         try {
             return ResponseDTO.ok(deviceSyncService.queryDevices(queryForm));
@@ -63,6 +66,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.deleteDevice", contextualName = "device-delete")
     @DeleteMapping("/{deviceId}")
+    @PermissionCheck(value = "DEVICE_SYNC_DELETE", description = "删除设备")
     public ResponseDTO<Void> deleteDevice(@PathVariable("deviceId") Long deviceId) {
         try {
             deviceSyncService.deleteDevice(deviceId);
@@ -87,6 +91,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.syncUser", contextualName = "device-sync-user")
     @PostMapping("/user/sync")
+    @PermissionCheck(value = "DEVICE_SYNC_USER", description = "同步用户信息到设备")
     public ResponseDTO<Map<String, Object>> syncUser(@RequestBody Map<String, Object> request) {
         log.info("[设备同步] 同步用户信息, request={}", request);
 
@@ -135,6 +140,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.revokeUserPermission", contextualName = "device-revoke-permission")
     @DeleteMapping("/user/{deviceId}/{userId}")
+    @PermissionCheck(value = "DEVICE_SYNC_REVOKE", description = "撤销用户在设备上的权限")
     public ResponseDTO<Map<String, Object>> revokeUserPermission(
             @PathVariable("deviceId") String deviceId,
             @PathVariable("userId") String userId) {
@@ -173,6 +179,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.getDeviceUsers", contextualName = "device-get-users")
     @GetMapping("/users/{deviceId}")
+    @PermissionCheck(value = "DEVICE_SYNC_VIEW", description = "获取设备上的用户列表")
     public ResponseDTO<List<String>> getDeviceUsers(@PathVariable("deviceId") String deviceId) {
         log.debug("[设备同步] 获取设备用户列表, deviceId={}", deviceId);
 
@@ -207,6 +214,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.syncBusinessAttributes", contextualName = "device-sync-attributes")
     @PostMapping("/business-attributes/sync")
+    @PermissionCheck(value = "DEVICE_SYNC_ATTRIBUTES", description = "同步业务属性到设备")
     public ResponseDTO<Map<String, Object>> syncBusinessAttributes(@RequestBody Map<String, Object> request) {
         log.info("[设备同步] 同步业务属性, deviceId={}", request.get("deviceId"));
 
@@ -253,6 +261,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.healthCheck", contextualName = "device-health-check")
     @GetMapping("/health/check/{deviceId}")
+    @PermissionCheck(value = "DEVICE_SYNC_HEALTH", description = "设备健康检查")
     public ResponseDTO<Map<String, Object>> healthCheck(@PathVariable("deviceId") String deviceId) {
         log.debug("[设备同步] 设备健康检查, deviceId={}", deviceId);
 
@@ -286,6 +295,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.getDeviceMetrics", contextualName = "device-get-metrics")
     @GetMapping("/metrics/{deviceId}")
+    @PermissionCheck(value = "DEVICE_SYNC_METRICS", description = "获取设备性能指标")
     public ResponseDTO<Map<String, Object>> getDeviceMetrics(@PathVariable("deviceId") String deviceId) {
         log.debug("[设备同步] 获取设备性能指标, deviceId={}", deviceId);
 
@@ -319,6 +329,7 @@ public class DeviceSyncController {
      */
     @Observed(name = "deviceSync.heartbeat", contextualName = "device-heartbeat")
     @PostMapping("/heartbeat")
+    @PermissionCheck(value = "DEVICE_SYNC_HEARTBEAT", description = "设备心跳接口")
     public ResponseDTO<Map<String, Object>> heartbeat(@RequestBody Map<String, Object> request) {
         log.debug("[设备同步] 设备心跳, deviceId={}", request.get("deviceId"));
 

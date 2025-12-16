@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.lab1024.sa.access.domain.entity.AccessRecordEntity;
+import net.lab1024.sa.common.access.entity.AccessRecordEntity;
 
 /**
  * 门禁记录DAO

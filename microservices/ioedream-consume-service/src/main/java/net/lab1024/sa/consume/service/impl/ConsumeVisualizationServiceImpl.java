@@ -28,7 +28,7 @@ import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.security.identity.domain.vo.UserDetailVO;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeStatisticsForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeComparisonVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeForecastAnalysisVO;

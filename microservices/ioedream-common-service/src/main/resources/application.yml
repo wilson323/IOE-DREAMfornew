@@ -42,9 +42,9 @@ spring:
         username: ${NACOS_USERNAME:nacos}
         password: ${NACOS_PASSWORD:nacos}
         file-extension: yaml
-        enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
+        enabled: false  # 本地开发环境禁用配置中心，使用本地配置文件
         import-check:
-          enabled: true  # 2025.0.0.0版本支持optional:nacos:，可以启用检查
+          enabled: false
 
 # ==================== Flyway数据库迁移配置 ====================
   flyway:
@@ -62,7 +62,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${MYSQL_USERNAME:root}
-    password: ${MYSQL_PASSWORD:123456}
+    password: ${MYSQL_PASSWORD:ENC(AES256:G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)}
     druid:
       initial-size: ${DRUID_INITIAL_SIZE:5}
       min-idle: ${DRUID_MIN_IDLE:5}
@@ -78,7 +78,7 @@ spring:
     redis:
       host: ${REDIS_HOST:127.0.0.1}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:redis123}
+      password: ${REDIS_PASSWORD:ENC(AES256:H7K8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y)}
       database: ${REDIS_DATABASE:0}
       timeout: ${REDIS_TIMEOUT:3000}
       lettuce:

@@ -183,6 +183,10 @@ public class SecurityConfig {
                                 // 认证相关接口（登录、验证码、刷新令牌等）
                                 "/api/v1/auth/**",
                                 "/auth/**",
+                                // 兼容前端legacy登录路径
+                                "/login/**",
+                                "/logout/**",
+                                "/captcha/**",
                                 // 菜单接口（需要登录后访问，但验证码和登录不需要）
                                 "/api/v1/menu/**",
                                 "/menu/**")

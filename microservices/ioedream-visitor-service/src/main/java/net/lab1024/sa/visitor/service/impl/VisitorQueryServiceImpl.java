@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
-import net.lab1024.sa.visitor.domain.entity.VisitorAppointmentEntity;
+import net.lab1024.sa.common.visitor.entity.VisitorAppointmentEntity;
 import net.lab1024.sa.visitor.domain.vo.VisitorAppointmentDetailVO;
 import net.lab1024.sa.visitor.domain.vo.VisitorVO;
 import net.lab1024.sa.visitor.service.VisitorQueryService;

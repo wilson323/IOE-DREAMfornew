@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.devicecomm.biometric.BiometricDataManager;
 import net.lab1024.sa.devicecomm.protocol.enums.VerifyTypeEnum;
 import net.lab1024.sa.devicecomm.service.BiometricService;
@@ -36,6 +37,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/api/v1/biometric")
 @Tag(name = "生物识别管理", description = "生物识别相关接口")
+@PermissionCheck(value = "DEVICE_BIOMETRIC", description = "生物识别管理模块权限")
 @Validated
 public class BiometricController {
 
@@ -48,6 +50,7 @@ public class BiometricController {
     @Observed(name = "biometric.register", contextualName = "biometric-register")
     @PostMapping("/register")
     @Operation(summary = "注册生物识别", description = "为用户注册生物识别特征")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_REGISTER", description = "注册生物识别特征")
     public ResponseDTO<Void> registerBiometric(
             @Parameter(description = "用户ID", required = true) @RequestParam @NotNull Long userId,
             @Parameter(description = "验证类型", required = true) @RequestParam @NotNull VerifyTypeEnum verifyType,
@@ -68,6 +71,7 @@ public class BiometricController {
     @Observed(name = "biometric.registerAsync", contextualName = "biometric-register-async")
     @PostMapping("/register-async")
     @Operation(summary = "异步注册生物识别", description = "异步为用户注册生物识别特征")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_REGISTER", description = "异步注册生物识别特征")
     public CompletableFuture<ResponseDTO<Void>> registerBiometricAsync(
             @Parameter(description = "用户ID", required = true) @RequestParam @NotNull Long userId,
             @Parameter(description = "验证类型", required = true) @RequestParam @NotNull VerifyTypeEnum verifyType,
@@ -88,6 +92,7 @@ public class BiometricController {
     @Observed(name = "biometric.verify", contextualName = "biometric-verify")
     @PostMapping("/verify")
     @Operation(summary = "验证生物识别", description = "验证用户的生物识别特征")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_VERIFY", description = "验证生物识别特征")
     public ResponseDTO<BiometricDataManager.BiometricMatchResult> verifyBiometric(
             @Parameter(description = "用户ID", required = true) @RequestParam @NotNull Long userId,
             @Parameter(description = "验证类型", required = true) @RequestParam @NotNull VerifyTypeEnum verifyType,
@@ -103,6 +108,7 @@ public class BiometricController {
     @Observed(name = "biometric.findBestMatch", contextualName = "biometric-find-match")
     @PostMapping("/match")
     @Operation(summary = "查找最佳匹配", description = "根据生物特征查找最佳匹配用户")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_MATCH", description = "查找最佳匹配用户")
     public ResponseDTO<BiometricDataManager.BiometricMatchResult> findBestMatch(
             @Parameter(description = "验证类型", required = true) @RequestParam @NotNull VerifyTypeEnum verifyType,
             @Valid @RequestBody BiometricMatchRequest request) {
@@ -118,6 +124,7 @@ public class BiometricController {
     @Observed(name = "biometric.deleteData", contextualName = "biometric-delete-data")
     @DeleteMapping("/data")
     @Operation(summary = "删除生物数据", description = "删除用户的生物识别数据")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_DELETE", description = "删除生物识别数据")
     public ResponseDTO<Void> deleteBiometricData(
             @Parameter(description = "用户ID", required = true) @RequestParam @NotNull Long userId,
             @Parameter(description = "验证类型", required = true) @RequestParam @NotNull VerifyTypeEnum verifyType) {
@@ -132,6 +139,7 @@ public class BiometricController {
     @Observed(name = "biometric.getSupportedVerifyTypes", contextualName = "biometric-get-verify-types")
     @GetMapping("/verify-types/{userId}")
     @Operation(summary = "获取验证方式", description = "获取用户支持的生物识别验证方式")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_VIEW", description = "获取用户验证方式")
     public ResponseDTO<List<VerifyTypeEnum>> getSupportedVerifyTypes(
             @Parameter(description = "用户ID", required = true) @PathVariable @NotNull Long userId) {
         log.debug("[获取验证方式] 接口调用: userId={}", userId);
@@ -145,6 +153,7 @@ public class BiometricController {
     @Observed(name = "biometric.getUserBiometricData", contextualName = "biometric-get-user-data")
     @GetMapping("/data/{userId}")
     @Operation(summary = "获取生物数据", description = "获取用户的所有生物识别数据")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_VIEW", description = "获取用户生物识别数据")
     public ResponseDTO<List<BiometricDataManager.BiometricData>> getUserBiometricData(
             @Parameter(description = "用户ID", required = true) @PathVariable @NotNull Long userId) {
         log.debug("[获取生物数据] 接口调用: userId={}", userId);
@@ -158,6 +167,7 @@ public class BiometricController {
     @Observed(name = "biometric.processDeviceMessage", contextualName = "biometric-process-device-message")
     @PostMapping("/device-message/{deviceId}")
     @Operation(summary = "处理设备消息", description = "处理来自生物识别设备的消息")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_PROCESS", description = "处理设备生物识别消息")
     public ResponseDTO<String> processDeviceBiometricMessage(
             @Parameter(description = "设备ID", required = true) @PathVariable @NotNull Long deviceId,
             @RequestBody byte[] rawData) {
@@ -173,6 +183,7 @@ public class BiometricController {
     @Observed(name = "biometric.batchRegister", contextualName = "biometric-batch-register")
     @PostMapping("/batch-register")
     @Operation(summary = "批量注册", description = "批量注册用户的多个生物识别特征")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_BATCH", description = "批量注册生物识别特征")
     public ResponseDTO<Void> batchRegisterBiometric(
             @Parameter(description = "用户ID", required = true) @RequestParam @NotNull Long userId,
             @Valid @RequestBody List<BiometricService.BiometricRegisterRequest> requestList) {
@@ -187,6 +198,7 @@ public class BiometricController {
     @Observed(name = "biometric.cleanExpiredData", contextualName = "biometric-clean-expired")
     @PostMapping("/clean-expired")
     @Operation(summary = "清理过期数据", description = "清理过期的生物识别数据")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_MAINTAIN", description = "清理过期生物识别数据")
     public ResponseDTO<String> cleanExpiredData() {
         log.info("[清理过期数据] 接口调用");
 
@@ -199,6 +211,7 @@ public class BiometricController {
     @Observed(name = "biometric.getStatistics", contextualName = "biometric-get-statistics")
     @GetMapping("/statistics")
     @Operation(summary = "获取统计信息", description = "获取生物识别系统统计信息")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_VIEW", description = "获取生物识别统计信息")
     public ResponseDTO<BiometricDataManager.BiometricDataStatistics> getStatistics() {
         log.debug("[获取统计信息] 接口调用");
 
@@ -211,6 +224,7 @@ public class BiometricController {
     @Observed(name = "biometric.getSupportedTypes", contextualName = "biometric-get-supported-types")
     @GetMapping("/supported-types")
     @Operation(summary = "获取支持的验证类型", description = "获取系统支持的所有生物识别验证类型")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_VIEW", description = "获取支持的验证类型列表")
     public ResponseDTO<List<VerifyTypeInfo>> getSupportedTypes() {
         log.debug("[获取支持类型] 接口调用");
 
@@ -232,6 +246,7 @@ public class BiometricController {
     @Observed(name = "biometric.health", contextualName = "biometric-health")
     @GetMapping("/health")
     @Operation(summary = "健康检查", description = "生物识别服务健康检查")
+    @PermissionCheck(value = "DEVICE_BIOMETRIC_HEALTH", description = "生物识别服务健康检查")
     public ResponseDTO<String> health() {
         return ResponseDTO.ok("生物识别服务运行正常");
     }

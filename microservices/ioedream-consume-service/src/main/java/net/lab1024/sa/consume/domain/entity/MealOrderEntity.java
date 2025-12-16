@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.domain.entity;
+package net.lab1024.sa.common.consume.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.domain.entity;
+package net.lab1024.sa.common.attendance.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

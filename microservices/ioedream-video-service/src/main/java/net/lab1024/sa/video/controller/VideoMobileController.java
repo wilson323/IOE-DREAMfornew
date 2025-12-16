@@ -1,6 +1,6 @@
 package net.lab1024.sa.video.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +48,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/mobile/video")
 @Tag(name = "视频监控移动端", description = "移动端视频监控相关API")
+@PermissionCheck(value = "VIDEO_MOBILE", description = "视频监控移动端模块权限")
 public class VideoMobileController {
 
     @Resource
@@ -64,7 +65,7 @@ public class VideoMobileController {
     @Observed(name = "video.mobile.getDeviceList", contextualName = "video-mobile-get-device-list")
     @GetMapping("/device/list")
     @Operation(summary = "获取设备列表", description = "获取视频设备列表")
-    @PreAuthorize("hasRole('VIDEO_USER')")
+    @PermissionCheck(value = "VIDEO_USER", description = "视频使用权限")
     public ResponseDTO<List<VideoDeviceVO>> getDeviceList(
             @RequestParam(required = false) String areaId,
             @RequestParam(required = false) String deviceType,
@@ -99,7 +100,7 @@ public class VideoMobileController {
     @Observed(name = "video.mobile.getVideoStream", contextualName = "video-mobile-get-stream")
     @PostMapping("/play/stream")
     @Operation(summary = "获取视频流地址", description = "获取视频设备的实时流播放地址")
-    @PreAuthorize("hasRole('VIDEO_USER')")
+    @PermissionCheck(value = "VIDEO_USER", description = "视频使用权限")
     public ResponseDTO<Map<String, Object>> getVideoStream(
             @RequestParam @NotNull Long deviceId,
             @RequestParam(required = false) Long channelId,

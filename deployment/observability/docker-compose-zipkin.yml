@@ -1,0 +1,53 @@
+# ============================================================
+# IOE-DREAM 分布式追踪服务 - Zipkin
+# ============================================================
+version: '3.8'
+
+services:
+  zipkin:
+    image: openzipkin/zipkin:2.27
+    container_name: ioedream-zipkin
+    ports:
+      - "9411:9411"        # Zipkin Web UI
+      - "9410:9410"        # Admin API
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC
+      - STORAGE_TYPE=mysql
+      - MYSQL_HOST=mysql
+      - MYSQL_TCP_PORT=3306
+      - MYSQL_USER=zipkin
+      - MYSQL_PASS=ENC(AES256:L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A)
+      - MYSQL_DB=zipkin
+    depends_on:
+      - mysql
+    networks:
+      - ioedream-observability
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9411/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  mysql:
+    image: mysql:8.0
+    container_name: ioedream-zipkin-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=ENC(AES256:M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z4A5B)
+      - MYSQL_DATABASE=zipkin
+      - MYSQL_USER=zipkin
+      - MYSQL_PASSWORD=ENC(AES256:L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A)
+    volumes:
+      - zipkin_mysql_data:/var/lib/mysql
+      - ./deployment/observability/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - ioedream-observability
+    restart: unless-stopped
+
+volumes:
+  zipkin_mysql_data:
+
+networks:
+  ioedream-observability:
+    driver: bridge

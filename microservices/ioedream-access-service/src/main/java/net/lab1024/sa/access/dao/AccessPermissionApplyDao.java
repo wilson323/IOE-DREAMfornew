@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import net.lab1024.sa.access.domain.entity.AccessPermissionApplyEntity;
+import net.lab1024.sa.common.access.entity.AccessPermissionApplyEntity;
 
 /**
  * 门禁权限申请DAO

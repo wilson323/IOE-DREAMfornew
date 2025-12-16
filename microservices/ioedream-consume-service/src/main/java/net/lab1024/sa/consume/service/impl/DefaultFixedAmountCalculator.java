@@ -14,7 +14,7 @@ import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO;
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 

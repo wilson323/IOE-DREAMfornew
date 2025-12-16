@@ -17,7 +17,7 @@ java.lang.IllegalArgumentException: dataId must be specified
 
 ### 根本原因
 
-**Docker容器中运行的JAR文件是用旧版本的Spring Cloud Alibaba（2022.0.0.0）构建的**，该版本不支持 `optional:nacos:` 功能。
+**Docker容器中运行的JAR文件是用旧版本的Spring Cloud Alibaba（2025.0.0.0）构建的**，该版本不支持 `optional:nacos:` 功能。
 
 **关键证据**:
 - ✅ 配置文件已正确更新（`pom.xml`、`application.yml`、`docker-compose-all.yml`）
@@ -88,7 +88,7 @@ cd D:\IOE-DREAM
 docker-compose -f docker-compose-all.yml down
 
 # 2. 清理Maven缓存（可选但推荐）
-Remove-Item -Recurse -Force "$env:USERPROFILE\.m2\repository\com\alibaba\cloud\spring-cloud-alibaba-dependencies\2022.0.0.0" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force "$env:USERPROFILE\.m2\repository\com\alibaba\cloud\spring-cloud-alibaba-2025.0.0.0" -ErrorAction SilentlyContinue
 
 # 3. 构建microservices-common（必须第一步）
 cd microservices
@@ -146,7 +146,7 @@ docker-compose -f docker-compose-all.yml logs gateway-service | Select-String "d
    - 容器中运行的仍然是旧的JAR文件
 
 3. **旧JAR文件不支持新功能** ❌
-   - Spring Cloud Alibaba 2022.0.0.0 不支持 `optional:nacos:`
+   - Spring Cloud Alibaba 2025.0.0.0 不支持 `optional:nacos:`
    - 旧代码在 `NacosConfigDataLocationResolver.java:168` 处抛出异常
 
 ### 解决方案

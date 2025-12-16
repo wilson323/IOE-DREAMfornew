@@ -6,7 +6,7 @@ import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.gateway.config.CaptchaConfig;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import javax.imageio.ImageIO;
+import jakarta.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;

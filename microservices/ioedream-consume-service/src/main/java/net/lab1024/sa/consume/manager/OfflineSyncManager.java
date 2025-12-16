@@ -3,8 +3,8 @@ package net.lab1024.sa.consume.manager;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.dao.AccountDao;
 import net.lab1024.sa.consume.dao.OfflineConsumeRecordDao;
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
-import net.lab1024.sa.consume.domain.entity.OfflineConsumeRecordEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.OfflineConsumeRecordEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

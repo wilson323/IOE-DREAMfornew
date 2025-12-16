@@ -28,7 +28,7 @@ import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -1391,10 +1391,10 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
             }
 
             // 幂等性：同一 paymentId 存在未完成退款时，直接返回已有申请
-            java.util.List<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> existedRefunds =
+            java.util.List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> existedRefunds =
                     paymentRefundRecordDao.selectByPaymentId(form.getPaymentId());
             if (existedRefunds != null && !existedRefunds.isEmpty()) {
-                net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity latest = existedRefunds.get(0);
+                net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity latest = existedRefunds.get(0);
                 Integer refundStatus = latest.getRefundStatus();
                 // 1-待审核 2-审核中 3-待处理 4-已拒绝 5-处理中 6-成功 7-失败（以 common 模型为准）
                 if (refundStatus != null && refundStatus < 6) {
@@ -1419,8 +1419,8 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
             }
 
             // 创建退款记录
-            net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity refundRecord =
-                    new net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity();
+            net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity refundRecord =
+                    new net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity();
             refundRecord.setRefundId(UUID.randomUUID().toString());
             refundRecord.setPaymentId(form.getPaymentId());
             refundRecord.setUserId(form.getUserId());
@@ -1461,7 +1461,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
     public Map<String, Object> auditRefund(String refundId, Integer auditStatus, String auditComment) {
         log.info("[退款审核] 审核退款，refundId={}, auditStatus={}", refundId, auditStatus);
         try {
-            net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity refundRecord =
+            net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity refundRecord =
                     paymentRefundRecordDao.selectById(refundId);
             if (refundRecord == null) {
                 throw new BusinessException("退款记录不存在");
@@ -1497,7 +1497,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
     public Map<String, Object> executeRefund(String refundId) {
         log.info("[退款执行] 执行退款，refundId={}", refundId);
         try {
-            net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity refundRecord =
+            net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity refundRecord =
                     paymentRefundRecordDao.selectById(refundId);
             if (refundRecord == null) {
                 throw new BusinessException("退款记录不存在");
@@ -1555,7 +1555,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 支付记录
      */
     @Override
-    public net.lab1024.sa.consume.consume.entity.PaymentRecordEntity getPaymentRecord(String paymentId) {
+    public net.lab1024.sa.common.consume.entity.PaymentRecordEntity getPaymentRecord(String paymentId) {
         PaymentRecordEntity localEntity = paymentRecordDao.selectById(paymentId);
         if (localEntity == null) {
             return null;
@@ -1573,7 +1573,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 支付记录列表
      */
     @Override
-    public List<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> getUserPaymentRecords(Long userId, Integer pageNum, Integer pageSize) {
+    public List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> getUserPaymentRecords(Long userId, Integer pageNum, Integer pageSize) {
         com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper =
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
         wrapper.eq(PaymentRecordEntity::getUserId, userId);
@@ -1593,7 +1593,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 退款记录
      */
     @Override
-    public net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity getRefundRecord(String refundId) {
+    public net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity getRefundRecord(String refundId) {
         return paymentRefundRecordDao.selectById(refundId);
     }
 
@@ -1606,17 +1606,17 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 退款记录列表
      */
     @Override
-    public List<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> getUserRefundRecords(
+    public List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> getUserRefundRecords(
             Long userId, Integer pageNum, Integer pageSize) {
         com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<
-                net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> wrapper =
+                net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> wrapper =
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
-        wrapper.eq(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
-        wrapper.orderByDesc(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getCreateTime);
+        wrapper.eq(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
+        wrapper.orderByDesc(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime);
 
-        Page<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> page =
+        Page<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> page =
                 new Page<>(pageNum != null ? pageNum : 1, pageSize != null ? pageSize : 20);
-        IPage<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> pageResult =
+        IPage<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> pageResult =
                 paymentRefundRecordDao.selectPage(page, wrapper);
         return pageResult.getRecords();
     }
@@ -1632,7 +1632,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @param lastTime 上一页最后一条记录的创建时间（首次查询传null）
      * @return 游标分页结果
      */
-    public CursorPagination.CursorPageResult<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> cursorPageUserPaymentRecords(
+    public CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> cursorPageUserPaymentRecords(
             Long userId, Integer pageSize, LocalDateTime lastTime) {
         log.debug("[支付服务] 游标分页查询用户支付记录，userId={}, pageSize={}, lastTime={}",
                 userId, pageSize, lastTime);
@@ -1676,7 +1676,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
 
             // 3. 直接使用查询结果，因为已经是正确的实体类型
             // 4. 构建公共实体游标分页结果
-            return CursorPagination.CursorPageResult.<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity>builder()
+            return CursorPagination.CursorPageResult.<net.lab1024.sa.common.consume.entity.PaymentRecordEntity>builder()
                     .list(entityResult.getList())
                     .hasNext(entityResult.getHasNext())
                     .lastId(entityResult.getLastId())
@@ -1701,30 +1701,30 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @param lastTime 上一页最后一条记录的创建时间（首次查询传null）
      * @return 游标分页结果
      */
-    public CursorPagination.CursorPageResult<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> cursorPageUserRefundRecords(
+    public CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> cursorPageUserRefundRecords(
             Long userId, Integer pageSize, LocalDateTime lastTime) {
         log.debug("[支付服务] 游标分页查询用户退款记录，userId={}, pageSize={}, lastTime={}",
                 userId, pageSize, lastTime);
 
         try {
             // 1. 构建查询条件
-            LambdaQueryWrapper<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> queryWrapper =
+            LambdaQueryWrapper<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> queryWrapper =
                 new LambdaQueryWrapper<>();
-            queryWrapper.eq(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
+            queryWrapper.eq(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
 
             // 2. 使用游标分页（基于时间）
             // 使用新方法，传入SFunction参数
             // 注意：PaymentRefundRecordEntity的refundId是String类型，但getCreateTime来自BaseEntity
-            CursorPagination.CursorPageResult<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> result =
+            CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> result =
                 CursorPagination.queryByTimeCursor(
                     paymentRefundRecordDao,
                     queryWrapper,
-                    CursorPagination.CursorPageRequest.<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity>builder()
+                    CursorPagination.CursorPageRequest.<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity>builder()
                         .pageSize(pageSize)
                         .lastTime(lastTime)
                         .desc(true)
                         .build(),
-                    net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getCreateTime,  // 获取创建时间的Lambda表达式
+                    net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime,  // 获取创建时间的Lambda表达式
                     entity -> {  // 获取ID的Lambda表达式（refundId是String类型，转换为Long）
                         try {
                             String refundIdStr = entity.getRefundId();
@@ -1801,21 +1801,21 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
         Map<String, Object> statistics = new HashMap<>();
         try {
             com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<
-                    net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> wrapper =
+                    net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> wrapper =
                     new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
-            wrapper.eq(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
+            wrapper.eq(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getUserId, userId);
             if (startTime != null) {
-                wrapper.ge(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getCreateTime, startTime);
+                wrapper.ge(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime, startTime);
             }
             if (endTime != null) {
-                wrapper.le(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getCreateTime, endTime);
+                wrapper.le(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime, endTime);
             }
 
-            List<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> records =
+            List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> records =
                     paymentRefundRecordDao.selectList(wrapper);
             BigDecimal totalAmount = records.stream()
                     .filter(r -> r.getRefundStatus() != null && r.getRefundStatus() == 6)
-                    .map(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getRefundAmount)
+                    .map(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getRefundAmount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             statistics.put("totalCount", records.size());
@@ -1865,7 +1865,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
             log.info("[对账] 查询到支付记录数：{}", paymentRecords.size());
 
             // 3. 查询消费记录
-            List<net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity> consumeRecords =
+            List<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeRecords =
                     consumeRecordDao.selectByTimeRange(startTime, endTime);
             log.info("[对账] 查询到消费记录数：{}", consumeRecords.size());
 
@@ -1913,7 +1913,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      */
     private Map<String, Object> buildReconciliationResult(
             List<PaymentRecordEntity> paymentRecords,
-            List<net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity> consumeRecords,
+            List<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeRecords,
             Long merchantId) {
 
         Map<String, Object> result = new HashMap<>();
@@ -1935,9 +1935,9 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
         }
 
         // 构建消费记录索引（按交易流水号或订单号）
-        Map<String, net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity> consumeByTransactionMap = new HashMap<>();
-        Map<String, net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity> consumeByOrderMap = new HashMap<>();
-        for (net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity consume : consumeRecords) {
+        Map<String, net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeByTransactionMap = new HashMap<>();
+        Map<String, net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeByOrderMap = new HashMap<>();
+        for (net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consume : consumeRecords) {
             if (consume.getTransactionNo() != null) {
                 consumeByTransactionMap.put(consume.getTransactionNo(), consume);
             }
@@ -1948,7 +1948,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
 
         // 对比支付记录和消费记录
         for (PaymentRecordEntity payment : paymentRecords) {
-            net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity consume = null;
+            net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consume = null;
             String matchKey = null;
 
             // 优先使用交易ID匹配
@@ -2009,7 +2009,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
         }
 
         // 检查消费记录中是否有未匹配的支付记录
-        for (net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity consume : consumeRecords) {
+        for (net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consume : consumeRecords) {
             boolean found = false;
             if (consume.getTransactionNo() != null && paymentByTransactionMap.containsKey(consume.getTransactionNo())) {
                 found = true;
@@ -2059,7 +2059,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      */
     private boolean comparePaymentAndConsume(
             PaymentRecordEntity payment,
-            net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity consume) {
+            net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consume) {
 
         // 对比金额（允许0.01的误差）
         BigDecimal paymentAmount = payment.getPaymentAmount() != null ? payment.getPaymentAmount() : BigDecimal.ZERO;
@@ -2124,16 +2124,16 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
             }
 
             // 3. 查询该商户的消费记录
-            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity> wrapper =
+            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> wrapper =
                     new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
-            wrapper.eq(net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity::getMerchantName, merchantName)
-                    .ge(net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity::getCreateTime, startTime)
-                    .le(net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity::getCreateTime, endTime)
-                    .eq(net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity::getDeletedFlag, 0)
-                    .in(net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity::getStatus,
+            wrapper.eq(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getMerchantName, merchantName)
+                    .ge(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getCreateTime, startTime)
+                    .le(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getCreateTime, endTime)
+                    .eq(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getDeletedFlag, 0)
+                    .in(net.lab1024.sa.common.consume.entity.ConsumeRecordEntity::getStatus,
                             "SUCCESS", "COMPLETED"); // 只统计成功的消费记录
 
-            List<net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity> consumeRecords =
+            List<net.lab1024.sa.common.consume.entity.ConsumeRecordEntity> consumeRecords =
                     consumeRecordDao.selectList(wrapper);
             log.info("[结算统计] 查询到消费记录数：{}", consumeRecords.size());
 
@@ -2142,7 +2142,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
             BigDecimal totalFeeAmount = BigDecimal.ZERO;
             int transactionCount = consumeRecords.size();
 
-            for (net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity record : consumeRecords) {
+            for (net.lab1024.sa.common.consume.entity.ConsumeRecordEntity record : consumeRecords) {
                 // 累计总金额（实际支付金额）
                 BigDecimal amount = record.getActualAmount() != null ? record.getActualAmount() : record.getAmount();
                 if (amount != null) {
@@ -2226,7 +2226,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 待审核退款列表
      */
     @Override
-    public List<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> getPendingAuditRefunds() {
+    public List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> getPendingAuditRefunds() {
         return paymentRefundRecordDao.selectPendingAudit();
     }
 
@@ -2236,7 +2236,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 待处理退款列表
      */
     @Override
-    public List<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> getPendingProcessRefunds() {
+    public List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> getPendingProcessRefunds() {
         return paymentRefundRecordDao.selectPendingProcess();
     }
 
@@ -2247,7 +2247,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 高风险支付记录列表
      */
     @Override
-    public List<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> getHighRiskPayments(Integer hours) {
+    public List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> getHighRiskPayments(Integer hours) {
         LocalDateTime startTime = LocalDateTime.now().minusHours(hours != null ? hours : 24);
         com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper =
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
@@ -2268,20 +2268,20 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 高风险退款记录列表
      */
     @Override
-    public List<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> getHighRiskRefunds(Integer hours) {
+    public List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> getHighRiskRefunds(Integer hours) {
         log.info("[高风险退款] 查询高风险退款记录，hours={}", hours);
         LocalDateTime startTime = LocalDateTime.now().minusHours(hours != null ? hours : 24);
         com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<
-                net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> wrapper =
+                net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> wrapper =
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
-        wrapper.ge(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getCreateTime, startTime)
+        wrapper.ge(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime, startTime)
                 // 风险等级：3-高风险 4-极高风险
-                .ge(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getRiskLevel, 3)
-                .eq(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getDeletedFlag, 0)
-                .orderByDesc(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getRiskLevel)
-                .orderByDesc(net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity::getCreateTime);
+                .ge(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getRiskLevel, 3)
+                .eq(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getDeletedFlag, 0)
+                .orderByDesc(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getRiskLevel)
+                .orderByDesc(net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity::getCreateTime);
 
-        List<net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity> result =
+        List<net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity> result =
                 paymentRefundRecordDao.selectList(wrapper);
         log.info("[高风险退款] 查询到高风险退款记录数：{}", result.size());
         return result;
@@ -2294,7 +2294,7 @@ public class PaymentService implements net.lab1024.sa.consume.consume.service.Pa
      * @return 异常支付记录列表
      */
     @Override
-    public List<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> getAbnormalPayments(Integer hours) {
+    public List<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> getAbnormalPayments(Integer hours) {
         LocalDateTime startTime = LocalDateTime.now().minusHours(hours != null ? hours : 24);
         com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentRecordEntity> wrapper =
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();

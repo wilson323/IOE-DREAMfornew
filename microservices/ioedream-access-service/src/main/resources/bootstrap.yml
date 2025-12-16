@@ -47,44 +47,44 @@ spring:
         username: ${NACOS_USERNAME:nacos}
         password: ${NACOS_PASSWORD:nacos}
         file-extension: yaml
-        enabled: false  # 本地开发时禁用配置中心
-        refresh-enabled: false
+        enabled: ${NACOS_CONFIG_ENABLED:true}
+        refresh-enabled: ${NACOS_CONFIG_REFRESH_ENABLED:true}
         # 配置文件导入顺序
         import-check:
           enabled: true
-        # 共享配置 - 本地开发时禁用，使用application.yml中的配置
-        # shared-configs:
-        #   - data-id: common-database.yaml
-        #     group: ${NACOS_GROUP:IOE-DREAM}
-        #     refresh: true
-        #   - data-id: common-redis.yaml
-        #     group: ${NACOS_GROUP:IOE-DREAM}
-        #     refresh: true
-        #   - data-id: common-monitoring.yaml
-        #     group: ${NACOS_GROUP:IOE-DREAM}
-        #     refresh: true
-        #   - data-id: common-security.yaml
-        #     group: ${NACOS_GROUP:IOE-DREAM}
-        #     refresh: true
-        #   - data-id: access-control-config.yaml
-        #     group: ${NACOS_GROUP:IOE-DREAM}
-        #     refresh: true
-        # 扩展配置 - 本地开发时禁用
-        # extension-configs:
-        #   - data-id: ioedream-access-service-ext.yaml
-        #     group: ${NACOS_GROUP:IOE-DREAM}
-        #     refresh: true
-        #   - data-id: ${spring.application.name}-${spring.profiles.active:dev}.yaml
-        #     group: ${NACOS_GROUP:IOE-DREAM}
-        #     refresh: true
+        # 共享配置 - 所有服务共享
+        shared-configs:
+          - data-id: common-database.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-redis.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-monitoring.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: common-security.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: access-control-config.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+        # 扩展配置 - 服务特定配置
+        extension-configs:
+          - data-id: ioedream-access-service-ext.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
+          - data-id: ${spring.application.name}-${spring.profiles.active:dev}.yaml
+            group: ${NACOS_GROUP:IOE-DREAM}
+            refresh: true
   # ==================== 配置文件导入 ====================
-  # 本地开发时禁用Nacos配置导入，使用application.yml中的配置
-  # config:
-  #   import:
-  #     - "optional:nacos:ioedream-access-service.yaml"
-  #     - "optional:nacos:ioedream-access-service-docker.yaml"
-  #     - "optional:nacos:common-config.yaml"
-  #     - "optional:nacos:access-control-config.yaml"
+  # 注意：Spring Cloud Alibaba 2025.0.0.0版本在config.import阶段无法解析占位符，需要直接指定dataId
+  config:
+    import:
+      - "optional:nacos:ioedream-access-service.yaml"
+      - "optional:nacos:ioedream-access-service-docker.yaml"
+      - "optional:nacos:common-config.yaml"
+      - "optional:nacos:access-control-config.yaml"
 
 # ==================== 加密配置 ====================
 jasypt:

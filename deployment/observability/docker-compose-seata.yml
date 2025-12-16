@@ -1,0 +1,84 @@
+# ============================================================
+# IOE-DREAM Seata分布式事务服务
+# ============================================================
+version: '3.8'
+
+services:
+  seata-server:
+    image: seataio/seata-server:2.0.0
+    container_name: ioedream-seata-server
+    ports:
+      - "8091:8091"        # Seata RPC端口
+      - "7091:7091"        # Seata UI端口
+    environment:
+      # SEATA_IP自动获取
+      - SEATA_IP=seata-server
+      # 注册中心配置
+      - SEATA_PORT=8091
+      - STORE_MODE=db
+      - NACOS_SERVER_ADDR=nacos:8848
+      - NACOS_NAMESPACE=dev
+      - NACOS_GROUP=IOE-DREAM
+      # 数据库配置
+      - SEATA_DB_HOST=mysql
+      - SEATA_PORT=3306
+      - SEATA_DB_NAME=seata
+      - SEATA_DB_USER=seata
+      - SEATA_DB_PASSWORD=ENC(AES256:K1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A)
+      # 事务组配置
+      - SEATA_TRANSACTION_LOG_TABLE=global_table
+      - SEATA_BRANCH_LOG_TABLE=branch_table
+    depends_on:
+      - mysql
+      - nacos
+    networks:
+      - ioedream-observability
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8091/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    volumes:
+      - ./seata-config:/seata-server/config
+
+  mysql:
+    image: mysql:8.0
+    container_name: ioedream-seata-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=ENC(AES256:M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z4A5B)
+      - MYSQL_DATABASE=seata
+      - MYSQL_USER=seata
+      - MYSQL_PASSWORD=ENC(AES256:K1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A)
+    volumes:
+      - seata_mysql_data:/var/lib/mysql
+      - ./deployment/observability/mysql/seata-init:/docker-entrypoint-initdb.d
+    networks:
+      - ioedream-observability
+    restart: unless-stopped
+
+  nacos:
+    image: nacos/nacos-server:v2.4.2
+    container_name: ioedream-seata-nacos
+    ports:
+      - "8848:8848"
+    environment:
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_DB_NAME=nacos
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=ENC(AES256:M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z4A5B)
+    networks:
+      - ioedream-observability
+    restart: unless-stopped
+
+volumes:
+  seata_mysql_data:
+  seata-config:
+
+networks:
+  ioedream-observability:
+    driver: bridge

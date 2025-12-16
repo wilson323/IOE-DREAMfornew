@@ -1,9 +1,7 @@
 package net.lab1024.sa.oa.workflow.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,27 +26,20 @@ import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
 import net.lab1024.sa.oa.workflow.websocket.WorkflowWebSocketController;
+import net.lab1024.sa.oa.workflow.metrics.WorkflowEngineMetricsCollector;
 
-/**
- * 工作流引擎说明
- * <p>
- * warm-flow工作流引擎依赖已移除，当前使用基于数据库的简单工作流实现。
- * 如需使用完整的工作流引擎，请选择以下方案之一：
- * </p>
- * <ol>
- * <li>Activiti 7.x - 成熟的企业级工作流引擎，支持BPMN 2.0</li>
- * <li>Flowable 6.x - Activiti的分支，功能更强大，社区活跃</li>
- * <li>Camunda 7.x - 企业级工作流引擎，性能优秀</li>
- * <li>自定义工作流实现 - 基于数据库的轻量级实现（当前方案）</li>
- * </ol>
- * <p>
- * 当前实现说明：
- * - 流程定义、实例、任务管理基于数据库实现
- * - 流程推进逻辑需要手动实现（见completeTask方法）
- * - 支持基本的任务受理、完成、驳回、转交、委派功能
- * - 如需复杂流程控制（并行网关、条件分支等），建议集成Flowable或Camunda
- * </p>
- */
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableRepositoryService;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableRuntimeService;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableTaskService;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableHistoryService;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableManagementService;
+
+import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.task.api.history.HistoricProcessInstance;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 
@@ -60,6 +51,18 @@ import java.time.LocalDateTime;
  * @author IOE-DREAM Team
  * @since 2025-01-30
  * @version 3.0.0
+ */
+/**
+ * 工作流引擎服务实现类 - 集成Flowable 6.8.0
+ * <p>
+ * 提供企业级工作流流程定义、实例、任务管理的完整业务逻辑实现
+ * 基于Flowable 6.8.0工作流引擎，支持BPMN 2.0标准
+ * 严格遵循CLAUDE.md架构规范和四层架构设计
+ * </p>
+ *
+ * @author IOE-DREAM Team
+ * @since 2025-01-16
+ * @version 4.0.0 - Flowable 6.8.0 集成版
  */
 @Slf4j
 @Service
@@ -78,20 +81,30 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     @Resource
     private WorkflowWebSocketController webSocketController;
 
+    // Flowable 6.8.0 工作流引擎服务
+    @Resource
+    private FlowableRepositoryService flowableRepositoryService;
+
+    @Resource
+    private FlowableRuntimeService flowableRuntimeService;
+
+    @Resource
+    private FlowableTaskService flowableTaskService;
+
+    @Resource
+    private FlowableHistoryService flowableHistoryService;
+
+    @Resource
+    private FlowableManagementService flowableManagementService;
+
+    @Resource
+    private WorkflowEngineMetricsCollector metricsCollector;
+
     /**
      * 工作流引擎实例
      * <p>
-     * 当前未集成工作流引擎，使用基于数据库的简单实现。
-     * 如需集成工作流引擎，请取消注释并配置相应的引擎实例。
-     * </p>
-     * <p>
-     * 示例（Flowable）：
-     * <pre>
-     * @Resource
-     * private RuntimeService runtimeService;
-     * @Resource
-     * private TaskService taskService;
-     * </pre>
+     * 已集成Flowable 6.8.0工作流引擎，提供完整的BPMN 2.0流程管理功能。
+     * 支持流程部署、实例启动、任务管理、历史追踪等企业级功能。
      * </p>
      */
     // @Resource
@@ -106,49 +119,71 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     @Observed(name = "workflow.deploy", contextualName = "workflow-deploy-process")
     @Transactional(rollbackFor = Exception.class)
     public ResponseDTO<String> deployProcess(String bpmnXml, String processName, String processKey, String description, String category) {
-        log.info("部署流程定义，流程Key: {}, 流程名称: {}", processKey, processName);
+        log.info("部署Flowable 6.8.0流程定义，流程Key: {}, 流程名称: {}", processKey, processName);
+        long startTime = System.currentTimeMillis();
+
         try {
-            // 1. 验证流程Key是否已存在
-            int existCount = workflowDefinitionDao.countByProcessKey(processKey, null);
-            if (existCount > 0) {
-                throw new BusinessException("PROCESS_KEY_EXISTS", "流程Key已存在: " + processKey);
+            // 1. 参数验证
+            if (processKey == null || processKey.trim().isEmpty()) {
+                throw new ParamException("PROCESS_KEY_REQUIRED", "流程Key不能为空");
+            }
+            if (processName == null || processName.trim().isEmpty()) {
+                throw new ParamException("PROCESS_NAME_REQUIRED", "流程名称不能为空");
+            }
+            if (bpmnXml == null || bpmnXml.trim().isEmpty()) {
+                throw new ParamException("BPMN_XML_REQUIRED", "BPMN XML不能为空");
             }
 
-            // 2. 创建流程定义实体
+            // 2. 使用Flowable引擎部署流程定义
+            org.flowable.engine.repository.Deployment deployment = flowableRepositoryService.deployProcessDefinition(
+                processKey, processName, category, bpmnXml, description
+            );
+
+            if (deployment == null) {
+                throw new SystemException("DEPLOY_PROCESS_SYSTEM_ERROR", "Flowable引擎部署失败");
+            }
+
+            // 3. 获取部署后的流程定义
+            ProcessDefinition processDefinition = flowableRepositoryService.getLatestProcessDefinition(processKey);
+            if (processDefinition == null) {
+                throw new SystemException("DEPLOY_PROCESS_SYSTEM_ERROR", "Flowable流程定义获取失败");
+            }
+
+            // 4. 检查本地数据库是否已存在相同流程Key的激活定义
+            int existCount = workflowDefinitionDao.countByProcessKey(processKey, "PUBLISHED");
+            if (existCount > 0) {
+                // 将旧版本设为非最新
+                workflowDefinitionDao.updateLatestStatus(processKey, 0);
+            }
+
+            // 5. 保存到本地数据库（用于业务管理）
             WorkflowDefinitionEntity definition = new WorkflowDefinitionEntity();
             definition.setProcessKey(processKey);
             definition.setProcessName(processName);
             definition.setCategory(category != null ? category : "DEFAULT");
             definition.setDescription(description);
-            definition.setProcessDefinition(bpmnXml); // 保存BPMN XML或warm-flow流程定义
-
-            // 3. 设置版本信息（首次部署为版本1）
-            definition.setVersion(1);
+            definition.setProcessDefinition(bpmnXml);
+            definition.setVersion(processDefinition.getVersion());
             definition.setIsLatest(1); // 标记为最新版本
-
-            // 4. 设置状态为草稿（需要激活后才可使用）
-            definition.setStatus("DRAFT");
+            definition.setStatus("PUBLISHED"); // Flowable部署成功后直接设为已发布
             definition.setInstanceCount(0);
             definition.setSortOrder(0);
+            definition.setFlowableDeploymentId(deployment.getId());
+            definition.setFlowableProcessDefId(processDefinition.getId());
 
-            // 5. 保存到数据库
             workflowDefinitionDao.insert(definition);
 
-            // 6. 如果提供了BPMN XML，保存到数据库
-            // 注意：当前实现仅保存BPMN XML，不进行解析和转换
-            // 如需使用工作流引擎（如Flowable、Camunda），可以在启动流程时解析BPMN XML
-            // 示例（Flowable）：
-            // BpmnModel bpmnModel = bpmnXmlConverter.convertToBpmnModel(bpmnXml);
-            // Process process = bpmnModel.getMainProcess();
-            if (bpmnXml != null && !bpmnXml.trim().isEmpty()) {
-                log.info("流程定义包含BPMN XML，已保存。如需使用工作流引擎，需要在启动流程时解析BPMN XML");
-            }
-
-            // 7. 更新最后部署时间
+            // 6. 更新最后部署时间
             workflowDefinitionDao.updateLastDeployTime(definition.getId());
 
-            log.info("流程定义部署成功，定义ID: {}, 流程Key: {}", definition.getId(), processKey);
-            return ResponseDTO.ok("流程部署成功，定义ID: " + definition.getId());
+            // 7. 记录性能指标
+            long duration = System.currentTimeMillis() - startTime;
+            metricsCollector.recordProcessDeployment(processKey);
+            metricsCollector.recordProcessDeploymentTime(processKey, duration);
+
+            log.info("Flowable流程定义部署成功，本地定义ID: {}, 流程Key: {}, Flowable部署ID: {}, 流程定义ID: {}, 耗时: {}ms",
+                definition.getId(), processKey, deployment.getId(), processDefinition.getId(), duration);
+            return ResponseDTO.ok("流程部署成功，定义ID: " + definition.getId() + ", Flowable部署ID: " + deployment.getId());
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[工作流引擎] 部署流程定义参数错误: processKey={}, error={}", processKey, e.getMessage());
             throw new ParamException("DEPLOY_PARAM_ERROR", "参数错误：" + e.getMessage(), e);
@@ -371,6 +406,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     @Transactional(rollbackFor = Exception.class)
     public ResponseDTO<Long> startProcess(Long definitionId, String businessKey, String instanceName, Map<String, Object> variables, Map<String, Object> formData) {
         log.info("启动流程实例，定义ID: {}, 业务Key: {}", definitionId, businessKey);
+        long startTime = System.currentTimeMillis();
+
         try {
             // 1. 验证流程定义是否存在且已激活
             WorkflowDefinitionEntity definition = workflowDefinitionDao.selectById(definitionId);
@@ -435,38 +472,44 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                 }
             }
 
-            // 5. 保存流程实例
+            // 5. 使用Flowable引擎启动流程实例
+            ProcessInstance flowableInstance = flowableRuntimeService.startProcessInstanceByKey(
+                definition.getProcessKey(), businessKey, flowVariables
+            );
+
+            if (flowableInstance == null) {
+                throw new SystemException("START_PROCESS_SYSTEM_ERROR", "Flowable引擎启动流程实例失败");
+            }
+
+            log.info("Flowable流程实例启动成功，引擎实例ID: {}, 流程Key: {}",
+                flowableInstance.getId(), definition.getProcessKey());
+
+            // 6. 创建本地流程实例记录（用于业务管理）
+            instance.setFlowableInstanceId(flowableInstance.getId());
+            instance.setFlowableProcessDefId(flowableInstance.getProcessDefinitionId());
+
             workflowInstanceDao.insert(instance);
             Long instanceId = instance.getId();
 
             // 添加instanceId到流程变量
             flowVariables.put("instanceId", instanceId);
-            // 更新流程变量（包含instanceId）
+
+            // 保存流程变量到本地数据库
             try {
                 instance.setVariables(objectMapper.writeValueAsString(flowVariables));
                 workflowInstanceDao.updateById(instance);
-            } catch (IllegalArgumentException | ParamException e) {
-                log.warn("[工作流引擎] 更新流程变量参数错误: {}", e.getMessage());
-            } catch (BusinessException e) {
-                log.warn("[工作流引擎] 更新流程变量业务异常: code={}, message={}", e.getCode(), e.getMessage());
-            } catch (SystemException e) {
-                log.error("[工作流引擎] 更新流程变量系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
             } catch (Exception e) {
-                log.warn("[工作流引擎] 更新流程变量失败: {}", e.getMessage());
+                log.warn("[工作流引擎] 保存流程变量到本地数据库失败: {}", e.getMessage());
             }
 
-            // 6. 注意：当前实现基于数据库，不包含复杂的工作流引擎逻辑
-            // 如需使用工作流引擎（如Flowable、Camunda），可以在这里调用引擎的启动方法
-            // 示例（Flowable）：
-            // ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
-            //     definition.getProcessKey(), businessKey, flowVariables);
-            // if (processInstance != null) {
-            //     log.info("工作流流程启动成功，引擎实例ID: {}", processInstance.getId());
-            //     // 可以保存引擎实例ID到流程实例的扩展字段中
-            // }
-            // 当前实现仅创建流程实例记录，不自动创建初始任务
-            // 如需自动创建初始任务，需要解析流程定义并创建第一个任务节点
-            log.info("流程实例创建成功，实例ID: {}。注意：当前实现不自动创建初始任务，如需自动创建请集成工作流引擎", instanceId);
+            // 7. 自动创建初始任务记录（Flowable引擎已自动创建）
+            List<Task> initialTasks = flowableTaskService.getTasksByProcessInstanceId(flowableInstance.getId());
+            if (!initialTasks.isEmpty()) {
+                log.info("Flowable引擎自动创建初始任务数量: {}", initialTasks.size());
+                // 可以在这里创建本地任务记录，或者通过任务查询API同步
+            }
+
+            log.info("流程实例启动成功，本地实例ID: {}, Flowable引擎实例ID: {}", instanceId, flowableInstance.getId());
 
             // 7. 更新流程定义的实例数量
             workflowDefinitionDao.updateInstanceCount(definitionId, 1);
@@ -481,7 +524,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                 webSocketController.sendInstanceStatusChangedNotification(initiatorId, instanceData);
             }
 
-            log.info("流程实例启动成功，实例ID: {}, 业务Key: {}", instanceId, businessKey);
+            // 9. 记录性能指标
+            long duration = System.currentTimeMillis() - startTime;
+            metricsCollector.recordProcessStart(definition.getProcessKey(), businessKey);
+            metricsCollector.recordProcessStartTime(definition.getProcessKey(), duration);
+
+            log.info("流程实例启动成功，实例ID: {}, 业务Key: {}, 耗时: {}ms", instanceId, businessKey, duration);
             return ResponseDTO.ok(instanceId);
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[工作流引擎] 启动流程实例参数错误: definitionId={}, businessKey={}, error={}", definitionId, businessKey, e.getMessage());
@@ -1048,12 +1096,17 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     @Observed(name = "workflow.task.complete", contextualName = "workflow-task-complete")
     @Transactional(rollbackFor = Exception.class)
     public ResponseDTO<String> completeTask(Long taskId, String outcome, String comment, Map<String, Object> variables, Map<String, Object> formData) {
-        log.info("完成任务，任务ID: {}, 结果: {}", taskId, outcome);
+        log.info("完成Flowable任务，任务ID: {}, 结果: {}", taskId, outcome);
         try {
             // 验证任务是否存在
             WorkflowTaskEntity task = workflowTaskDao.selectById(taskId);
             if (task == null) {
                 throw new BusinessException("WORKFLOW_TASK_NOT_FOUND", "任务不存在");
+            }
+
+            // 验证任务状态（只有待处理的任务才能完成）
+            if (task.getStatus() != 1) { // 1-待处理
+                throw new BusinessException("TASK_ALREADY_COMPLETED", "任务已完成，无法重复完成");
             }
 
             // 转换outcome字符串为整数（1-同意, 2-驳回）
@@ -1069,68 +1122,112 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                 outcomeInt = 1; // 默认为同意
             }
 
-            // 调用DAO层完成方法
-            int updateCount = workflowTaskDao.completeTask(taskId, outcomeInt, comment);
-            if (updateCount > 0) {
-                // 获取流程实例
-                WorkflowInstanceEntity instance = workflowInstanceDao.selectById(task.getInstanceId());
-
-                // 更新流程变量（如果提供了variables参数）
-                if (variables != null && !variables.isEmpty() && instance != null) {
-                    try {
-                        // 合并现有变量
-                        Map<String, Object> existingVariables = new HashMap<>();
-                        if (instance.getVariables() != null && !instance.getVariables().isEmpty()) {
-                            existingVariables = objectMapper.readValue(instance.getVariables(),
-                                objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
-                        }
-                        existingVariables.putAll(variables);
-                        existingVariables.put("lastTaskId", taskId);
-                        existingVariables.put("lastTaskOutcome", outcome);
-                        instance.setVariables(objectMapper.writeValueAsString(existingVariables));
-                        workflowInstanceDao.updateById(instance);
-                    } catch (IllegalArgumentException | ParamException e) {
-                        log.warn("[工作流引擎] 更新流程变量参数错误: {}", e.getMessage());
-                    } catch (BusinessException e) {
-                        log.warn("[工作流引擎] 更新流程变量业务异常: code={}, message={}", e.getCode(), e.getMessage());
-                    } catch (SystemException e) {
-                        log.error("[工作流引擎] 更新流程变量系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
-                    } catch (Exception e) {
-                        log.warn("[工作流引擎] 更新流程变量失败: {}", e.getMessage());
-                    }
-                }
-
-                // 注意：当前实现基于数据库，不包含复杂的工作流引擎逻辑
-                // 如需实现流程推进（创建下一个任务），需要：
-                // 1. 解析流程定义（BPMN XML或自定义格式）
-                // 2. 根据当前节点和任务结果，确定下一个节点
-                // 3. 创建下一个任务
-                // 建议：集成Flowable或Camunda工作流引擎来实现完整的流程推进逻辑
-                // 当前实现仅完成当前任务，不自动创建下一个任务
-                log.info("任务完成，任务ID: {}。注意：当前实现不自动推进流程，如需自动推进请集成工作流引擎", taskId);
-
-                // 发送WebSocket通知
-                Map<String, Object> taskData = new HashMap<>();
-                taskData.put("taskId", taskId);
-                taskData.put("status", "COMPLETED");
-                taskData.put("outcome", outcome);
-                if (task.getAssigneeId() != null) {
-                    webSocketController.sendTaskStatusChangedNotification(task.getAssigneeId(), taskData);
-                }
-
-                return ResponseDTO.ok("任务完成成功");
-            } else {
-                throw new BusinessException("COMPLETE_TASK_FAILED", "完成任务失败，任务状态可能不正确");
+            // 获取流程实例信息（用于获取Flowable实例ID）
+            WorkflowInstanceEntity instance = workflowInstanceDao.selectById(task.getInstanceId());
+            if (instance == null) {
+                throw new BusinessException("WORKFLOW_INSTANCE_NOT_FOUND", "流程实例不存在");
             }
+
+            // 准备任务变量
+            Map<String, Object> taskVariables = new HashMap<>();
+            if (variables != null) {
+                taskVariables.putAll(variables);
+            }
+            taskVariables.put("lastTaskId", taskId);
+            taskVariables.put("lastTaskOutcome", outcome);
+            taskVariables.put("lastTaskComment", comment);
+            if (formData != null) {
+                taskVariables.put("formData", formData);
+            }
+
+            // 使用Flowable引擎完成任务
+            String flowableTaskId = task.getFlowableTaskId();
+            if (flowableTaskId == null || flowableTaskId.isEmpty()) {
+                // 如果本地任务没有Flowable任务ID，尝试通过流程实例ID和任务名称查找
+                List<Task> flowableTasks = flowableTaskService.getTasksByProcessInstanceId(instance.getFlowableInstanceId());
+                Optional<Task> matchingTask = flowableTasks.stream()
+                    .filter(t -> task.getTaskName().equals(t.getName()))
+                    .findFirst();
+
+                if (matchingTask.isPresent()) {
+                    flowableTaskId = matchingTask.get().getId();
+                    // 更新本地任务的Flowable任务ID
+                    task.setFlowableTaskId(flowableTaskId);
+                    workflowTaskDao.updateById(task);
+                } else {
+                    throw new BusinessException("FLOWABLE_TASK_NOT_FOUND", "未找到对应的Flowable任务");
+                }
+            }
+
+            // 使用Flowable引擎完成任务并推进流程
+            flowableTaskService.completeTask(flowableTaskId, taskVariables, comment);
+
+            log.info("Flowable任务完成成功，任务ID: {}, 本地任务ID: {}", flowableTaskId, taskId);
+
+            // 更新本地任务状态
+            task.setStatus(2); // 2-已完成
+            task.setOutcome(outcomeInt);
+            task.setComment(comment);
+            task.setCompleteTime(LocalDateTime.now());
+            workflowTaskDao.updateById(task);
+
+            // 更新本地流程实例变量
+            if (instance != null) {
+                try {
+                    // 合并现有变量
+                    Map<String, Object> existingVariables = new HashMap<>();
+                    if (instance.getVariables() != null && !instance.getVariables().isEmpty()) {
+                        existingVariables = objectMapper.readValue(instance.getVariables(),
+                            objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+                    }
+                    existingVariables.putAll(taskVariables);
+                    instance.setVariables(objectMapper.writeValueAsString(existingVariables));
+                    workflowInstanceDao.updateById(instance);
+                } catch (Exception e) {
+                    log.warn("[工作流引擎] 更新本地流程变量失败: {}", e.getMessage());
+                }
+            }
+
+            log.info("任务完成并自动推进流程，任务ID: {}, Flowable任务ID: {}", taskId, flowableTaskId);
+
+            // 发送WebSocket通知
+            Map<String, Object> taskData = new HashMap<>();
+            taskData.put("taskId", taskId);
+            taskData.put("flowableTaskId", flowableTaskId);
+            taskData.put("status", "COMPLETED");
+            taskData.put("outcome", outcome);
+            if (task.getAssigneeId() != null) {
+                webSocketController.sendTaskStatusChangedNotification(task.getAssigneeId(), taskData);
+            }
+
+            return ResponseDTO.ok("任务完成成功，流程已自动推进");
+        } catch (FlowableException e) {
+            log.error("[工作流引擎] Flowable引擎异常: taskId={}, errorCode={}, message={}", taskId, e.getErrorCode(), e.getMessage(), e);
+            throw new SystemException("FLOWABLE_ENGINE_ERROR", "工作流引擎错误: " + e.getMessage(), e);
+        } catch (DataAccessException e) {
+            log.error("[工作流引擎] 数据访问异常: taskId={}, error={}", taskId, e.getMessage(), e);
+            throw new SystemException("WORKFLOW_DATA_ACCESS_ERROR", "数据访问失败: " + e.getMessage(), e);
+        } catch (WorkflowBusinessException e) {
+            log.warn("[工作流引擎] 工作流业务异常: taskId={}, code={}, message={}", taskId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (ProcessDeploymentException e) {
+            log.error("[工作流引擎] 流程部署异常: taskId={}, stage={}, error={}", taskId, e.getDeploymentStage(), e.getMessage(), e);
+            throw new SystemException("PROCESS_DEPLOYMENT_ERROR", "流程部署失败: " + e.getDeploymentStage(), e);
+        } catch (ProcessStartException e) {
+            log.error("[工作流引擎] 流程启动异常: taskId={}, stage={}, error={}", taskId, e.getFailedStep(), e.getMessage(), e);
+            throw new SystemException("PROCESS_START_ERROR", "流程启动失败: " + e.getFailedStep(), e);
+        } catch (TaskCompletionException e) {
+            log.error("[工作流引擎] 任务完成异常: taskId={}, stage={}, error={}", taskId, e.getFailedStep(), e.getMessage(), e);
+            throw new SystemException("TASK_COMPLETION_ERROR", "任务完成失败: " + e.getFailedStep(), e);
+        } catch (ProcessInstanceQueryException e) {
+            log.error("[工作流引擎] 流程实例查询异常: taskId={}, queryType={}, error={}", taskId, e.getQueryType(), e.getMessage(), e);
+            throw new SystemException("PROCESS_QUERY_ERROR", "流程实例查询失败: " + e.getQueryType(), e);
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[工作流引擎] 完成任务参数错误: taskId={}, error={}", taskId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
-        } catch (BusinessException e) {
-            log.warn("[工作流引擎] 完成任务业务异常: taskId={}, code={}, message={}", taskId, e.getCode(), e.getMessage());
-            throw e;
         } catch (SystemException e) {
             log.error("[工作流引擎] 完成任务系统异常: taskId={}, code={}, message={}", taskId, e.getCode(), e.getMessage(), e);
-            throw new SystemException("COMPLETE_TASK_SYSTEM_ERROR", "完成任务失败：" + e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
             log.error("[工作流引擎] 完成任务未知异常: taskId={}", taskId, e);
             throw new SystemException("COMPLETE_TASK_SYSTEM_ERROR", "完成任务失败：" + e.getMessage(), e);
@@ -1191,12 +1288,16 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                         workflowInstanceDao.updateById(instance);
                     } catch (IllegalArgumentException | ParamException e) {
                         log.warn("[工作流引擎] 更新流程变量参数错误: {}", e.getMessage());
-                    } catch (BusinessException e) {
+                    } catch (FlowableException e) {
+                        log.error("[工作流引擎] 更新流程变量Flowable异常: errorCode={}, message={}", e.getErrorCode(), e.getMessage());
+                    } catch (DataAccessException e) {
+                        log.error("[工作流引擎] 更新流程变量数据访问异常: {}", e.getMessage());
+                    } catch (WorkflowBusinessException e) {
                         log.warn("[工作流引擎] 更新流程变量业务异常: code={}, message={}", e.getCode(), e.getMessage());
                     } catch (SystemException e) {
-                        log.error("[工作流引擎] 更新流程变量系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+                        log.error("[工作流引擎] 更新流程变量系统异常: code={}, message={}", e.getCode(), e.getMessage());
                     } catch (Exception e) {
-                        log.warn("[工作流引擎] 更新流程变量失败: {}", e.getMessage());
+                        log.warn("[工作流引擎] 更新流程变量未知异常: {}", e.getMessage());
                     }
                 }
 

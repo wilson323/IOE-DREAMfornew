@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.access.entity;
+package net.lab1024.sa.access.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.AccessPermissionApplyDao;
-import net.lab1024.sa.access.domain.entity.AccessPermissionApplyEntity;
+import net.lab1024.sa.common.access.entity.AccessPermissionApplyEntity;
 import net.lab1024.sa.access.domain.form.AccessPermissionApplyForm;
 import net.lab1024.sa.access.service.AccessPermissionApplyService;
 import net.lab1024.sa.common.dto.ResponseDTO;

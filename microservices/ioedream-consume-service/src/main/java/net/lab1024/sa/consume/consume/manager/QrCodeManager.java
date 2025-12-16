@@ -1,7 +1,7 @@
 package net.lab1024.sa.consume.consume.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.consume.entity.QrCodeEntity;
+import net.lab1024.sa.common.consume.entity.QrCodeEntity;
 import net.lab1024.sa.consume.consume.dao.QrCodeDao;
 import net.lab1024.sa.consume.consume.domain.form.QrCodeGenerateForm;
 import net.lab1024.sa.consume.consume.domain.form.QrCodeConsumeForm;

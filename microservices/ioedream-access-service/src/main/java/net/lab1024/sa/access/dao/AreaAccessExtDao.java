@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.access.access.entity.AreaAccessExtEntity;
+import net.lab1024.sa.access.entity.AreaAccessExtEntity;
 
 /**
  * 区域门禁扩展Repository

@@ -2,7 +2,7 @@ package net.lab1024.sa.attendance.controller;
 
 import io.micrometer.observation.annotation.Observed;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +52,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/v1/attendance/record")
 @Tag(name = "考勤记录管理PC端", description = "考勤记录查询、统计、导出等API")
+@PermissionCheck(description = "考勤记录管理")
 public class AttendanceRecordController {
 
     @Resource
@@ -93,7 +94,7 @@ public class AttendanceRecordController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class)
         )
     )
-    @PreAuthorize("hasRole('ATTENDANCE_MANAGER')")
+    @PermissionCheck(value = {"ATTENDANCE_MANAGE"}, description = "考勤记录管理操作")
     public ResponseDTO<PageResult<AttendanceRecordVO>> queryAttendanceRecords(
             @Parameter(description = "页码（从1开始）", example = "1")
             @RequestParam(defaultValue = "1") Integer pageNum,
@@ -200,7 +201,7 @@ public class AttendanceRecordController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = AttendanceRecordStatisticsVO.class)
         )
     )
-    @PreAuthorize("hasRole('ATTENDANCE_MANAGER')")
+    @PermissionCheck(value = {"ATTENDANCE_MANAGE"}, description = "考勤记录管理操作")
     public ResponseDTO<AttendanceRecordStatisticsVO> getAttendanceRecordStatistics(
             @Parameter(description = "开始日期，格式：yyyy-MM-dd", required = true, example = "2025-01-01")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,

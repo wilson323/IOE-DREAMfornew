@@ -17,7 +17,7 @@ import net.lab1024.sa.common.organization.entity.DeviceEntity;
  * 统一设备数据访问接口，用于所有业务模块的设备数据访问
  * 严格遵循DAO架构规范：
  * - 统一DAO模式，使用Dao命名
- * - 使用@Mapper注解，禁止使用@Repository
+ * - 使用@Mapper注解，禁止使用@Mapper
  * - 查询方法使用@Transactional(readOnly = true)
  * - 继承BaseMapper使用MyBatis-Plus
  * - 职责单一：只负责设备数据访问

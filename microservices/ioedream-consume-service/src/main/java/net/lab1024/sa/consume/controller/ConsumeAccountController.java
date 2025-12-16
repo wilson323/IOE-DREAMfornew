@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.AccountQueryForm;
 import net.lab1024.sa.consume.domain.vo.AccountVO;
 import net.lab1024.sa.consume.service.ConsumeAccountService;
@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/consume/account")
+@RequestMapping("/api/v1/consume/account")
 @Tag(name = "消费账户管理", description = "消费账户相关接口")
 @Validated
 public class ConsumeAccountController {

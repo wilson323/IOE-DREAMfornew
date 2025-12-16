@@ -1,6 +1,6 @@
 package net.lab1024.sa.consume.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +59,7 @@ import net.lab1024.sa.consume.service.ConsumeService;
 @RestController
 @RequestMapping("/api/v1/consume/transaction")
 @Tag(name = "消费管理", description = "消费交易管理相关接口")
+@PermissionCheck(value = "CONSUME_TRANSACTION", description = "消费交易管理模块权限")
 public class ConsumeController {
 
     @Resource
@@ -100,7 +101,7 @@ public class ConsumeController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ConsumeTransactionResultVO.class)
         )
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<ConsumeTransactionResultVO> executeTransaction(
             @Parameter(description = "消费交易表单", required = true)
             @Valid @RequestBody ConsumeTransactionForm form) {
@@ -156,7 +157,7 @@ public class ConsumeController {
         responseCode = "404",
         description = "交易记录不存在"
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<ConsumeTransactionDetailVO> getTransactionDetail(
             @Parameter(description = "交易流水号", required = true, example = "TXN2025013012345678")
             @PathVariable String transactionNo) {
@@ -219,7 +220,7 @@ public class ConsumeController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class)
         )
     )
-	    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+	    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
 	    public ResponseDTO<PageResult<ConsumeTransactionDetailVO>> queryTransactions(
 	            @Parameter(description = "页码（从1开始）")
 	            @RequestParam(defaultValue = "1") Integer pageNum,
@@ -302,7 +303,7 @@ public class ConsumeController {
         responseCode = "404",
         description = "设备不存在"
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<ConsumeDeviceVO> getDeviceDetail(
             @Parameter(description = "设备ID", required = true, example = "3001")
             @PathVariable Long deviceId) {
@@ -353,7 +354,7 @@ public class ConsumeController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ConsumeDeviceStatisticsVO.class)
         )
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<ConsumeDeviceStatisticsVO> getDeviceStatistics(
             @Parameter(description = "区域ID（可选）", example = "AREA001")
             @RequestParam(required = false) String areaId) {
@@ -401,7 +402,7 @@ public class ConsumeController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ConsumeRealtimeStatisticsVO.class)
         )
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<ConsumeRealtimeStatisticsVO> getRealtimeStatistics(
             @Parameter(description = "区域ID（可选）", example = "AREA001")
             @RequestParam(required = false) String areaId) {

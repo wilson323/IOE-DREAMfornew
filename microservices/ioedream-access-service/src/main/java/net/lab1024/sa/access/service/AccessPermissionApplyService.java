@@ -1,6 +1,6 @@
 package net.lab1024.sa.access.service;
 
-import net.lab1024.sa.access.domain.entity.AccessPermissionApplyEntity;
+import net.lab1024.sa.common.access.entity.AccessPermissionApplyEntity;
 import net.lab1024.sa.access.domain.form.AccessPermissionApplyForm;
 
 /**

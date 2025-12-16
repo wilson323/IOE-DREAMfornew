@@ -2,7 +2,7 @@ package net.lab1024.sa.consume.strategy;
 
 import java.math.BigDecimal;
 
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
 
 /**
  * 消费金额计算器接口（策略模式）

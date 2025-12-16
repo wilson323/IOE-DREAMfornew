@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.consume.domain.entity.RefundApplicationEntity;
+import net.lab1024.sa.common.consume.entity.RefundApplicationEntity;
 import net.lab1024.sa.consume.domain.form.RefundApplicationForm;
 import net.lab1024.sa.consume.service.refund.RefundApplicationService;
 

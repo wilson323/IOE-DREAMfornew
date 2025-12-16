@@ -3,7 +3,7 @@ package net.lab1024.sa.access.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.AccessPermissionApplyDao;
 import net.lab1024.sa.access.dao.AreaPersonDao;
-import net.lab1024.sa.access.domain.entity.AccessPermissionApplyEntity;
+import net.lab1024.sa.common.access.entity.AccessPermissionApplyEntity;
 import net.lab1024.sa.access.domain.form.AccessPermissionApplyForm;
 import net.lab1024.sa.access.service.AccessEmergencyPermissionService;
 import net.lab1024.sa.common.dto.ResponseDTO;

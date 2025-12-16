@@ -3,9 +3,10 @@ package net.lab1024.sa.common.config;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.SystemException;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 import com.alibaba.druid.pool.DruidDataSource;
 import java.sql.SQLException;
+import jakarta.sql.Connection;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -202,7 +203,7 @@ public class DatabaseOptimizationManager {
                     // 注意：这是类型转换，不是资源创建，不存在资源泄漏
                     @SuppressWarnings("resource")
                     DruidDataSource dataSource = (DruidDataSource) entry.getValue();
-                    java.sql.Connection connection = null;
+                    Connection connection = null;
                     try {
                         connection = dataSource.getConnection();
                         return connection.isValid(5); // 5秒超时

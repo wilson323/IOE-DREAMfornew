@@ -20,8 +20,8 @@ import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.consume.dao.RefundApplicationDao;
-import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.consume.domain.entity.RefundApplicationEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.common.consume.entity.RefundApplicationEntity;
 import net.lab1024.sa.consume.domain.form.RefundApplicationForm;
 import net.lab1024.sa.consume.manager.AccountManager;
 

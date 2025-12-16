@@ -1,6 +1,6 @@
 package net.lab1024.sa.consume.service.reimbursement;
 
-import net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity;
+import net.lab1024.sa.common.consume.entity.ReimbursementApplicationEntity;
 import net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm;
 
 /**

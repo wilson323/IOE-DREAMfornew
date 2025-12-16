@@ -143,6 +143,65 @@ public interface ApprovalService {
      * @return 撤回结果信息
      */
     String withdrawApplication(Long instanceId, Long applicantId, String reason);
+
+    // ==================== Flowable工作流引擎集成方法 ====================
+
+    /**
+     * 处理任务创建事件（Flowable事件监听器调用）
+     *
+     * @param taskId 任务ID
+     * @param processInstanceId 流程实例ID
+     */
+    void handleTaskCreated(String taskId, String processInstanceId);
+
+    /**
+     * 处理任务分配事件（Flowable事件监听器调用）
+     *
+     * @param taskId 任务ID
+     * @param assigneeId 分配人ID
+     */
+    void handleTaskAssigned(String taskId, Long assigneeId);
+
+    /**
+     * 处理任务完成事件（Flowable事件监听器调用）
+     *
+     * @param taskId 任务ID
+     * @param outcome 完成结果
+     * @param comment 完成意见
+     */
+    void handleTaskCompleted(String taskId, Integer outcome, String comment);
+
+    /**
+     * 处理流程启动事件（Flowable事件监听器调用）
+     *
+     * @param processInstanceId 流程实例ID
+     * @param processDefinitionId 流程定义ID
+     */
+    void handleProcessStarted(String processInstanceId, String processDefinitionId);
+
+    /**
+     * 处理流程完成事件（Flowable事件监听器调用）
+     *
+     * @param processInstanceId 流程实例ID
+     * @param processDefinitionId 流程定义ID
+     */
+    void handleProcessCompleted(String processInstanceId, String processDefinitionId);
+
+    /**
+     * 处理开始节点业务逻辑
+     *
+     * @param processInstanceId 流程实例ID
+     * @param variables 流程变量
+     */
+    void handleStartNode(String processInstanceId, Map<String, Object> variables);
+
+    /**
+     * 验证业务规则
+     *
+     * @param variables 流程变量
+     * @return 验证结果
+     */
+    boolean validateBusinessRule(Map<String, Object> variables);
 }
 
 

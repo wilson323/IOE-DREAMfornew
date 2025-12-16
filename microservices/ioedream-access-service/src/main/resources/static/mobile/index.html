@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>IOE-DREAM 智慧门禁</title>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="css/mobile-common.css">
+    <link rel="stylesheet" href="css/bluetooth-access.css">
+    <link rel="stylesheet" href="css/offline-mode.css">
+    <link rel="stylesheet" href="css/ai-analysis.css">
+    <link rel="stylesheet" href="css/video-monitoring.css">
+    <link rel="stylesheet" href="css/device-management.css">
+    <link rel="stylesheet" href="css/personal-center.css">
+
+    <!-- 引入图标字体 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vant/icon/index.css">
+
+    <!-- 引入Vue 3和Vant 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@4.8.6/lib/vant.min.js"></script>
+
+    <!-- 引入Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+
+    <!-- 引入蓝牙API封装 -->
+    <script src="js/bluetooth-api.js"></script>
+
+    <!-- 引入工具函数 -->
+    <script src="js/utils.js"></script>
+
+    <!-- 引入页面脚本 -->
+    <script src="js/main.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- 主应用容器 -->
+        <van-tabbar v-model="active" route>
+            <van-tabbar-item to="/home" icon="home-o">首页</van-tabbar-item>
+            <van-tabbar-item to="/bluetooth" icon="phone-o">蓝牙门禁</van-tabbar-item>
+            <van-tabbar-item to="/device" icon="setting-o">设备管理</van-tabbar-item>
+            <van-tabbar-item to="/ai-analysis" icon="chart-trending-o">AI分析</van-tabbar-item>
+            <van-tabbar-item to="/video" icon="video-o">视频监控</van-tabbar-item>
+            <van-tabbar-item to="/profile" icon="user-o">我的</van-tabbar-item>
+        </van-tabbar>
+
+        <!-- 路由视图 -->
+        <router-view />
+
+        <!-- 全局加载提示 -->
+        <van-loading v-if="globalLoading" type="spinner" color="#1989fa" vertical>
+            加载中...
+        </van-loading>
+
+        <!-- 全局错误提示 -->
+        <van-notify v-model:show="notifyShow" :type="notifyType" :message="notifyMessage" />
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        const { showToast, showConfirmDialog, showLoadingToast, closeToast } = vant;
+
+        const app = createApp({
+            data() {
+                return {
+                    active: 0,
+                    globalLoading: false,
+                    notifyShow: false,
+                    notifyType: 'success',
+                    notifyMessage: '',
+                    user: null,
+                    token: localStorage.getItem('token') || '',
+                    apiBase: '/api/v1/mobile/access'
+                };
+            },
+
+            created() {
+                this.initializeApp();
+                this.setupAxiosInterceptors();
+                this.checkLoginStatus();
+            },
+
+            methods: {
+                // 初始化应用
+                initializeApp() {
+                    // 设置Vue Router
+                    this.setupRouter();
+
+                    // 初始化蓝牙
+                    this.initializeBluetooth();
+
+                    // 检查网络状态
+                    this.checkNetworkStatus();
+                },
+
+                // 设置路由
+                setupRouter() {
+                    // 路由配置将在main.js中实现
+                    console.log('路由配置完成');
+                },
+
+                // 初始化蓝牙
+                initializeBluetooth() {
+                    if (window.BluetoothAPI) {
+                        BluetoothAPI.initialize()
+                            .then(() => {
+                                console.log('蓝牙API初始化成功');
+                            })
+                            .catch(error => {
+                                console.error('蓝牙API初始化失败:', error);
+                            });
+                    }
+                },
+
+                // 检查网络状态
+                checkNetworkStatus() {
+                    const isOnline = navigator.onLine;
+                    if (!isOnline) {
+                        this.showNotify('网络连接不可用', 'warning');
+                    }
+                },
+
+                // 设置axios拦截器
+                setupAxiosInterceptors() {
+                    // 请求拦截器
+                    axios.interceptors.request.use(
+                        config => {
+                            this.globalLoading = true;
+
+                            // 添加token
+                            if (this.token) {
+                                config.headers.Authorization = `Bearer ${this.token}`;
+                            }
+
+                            // 添加设备信息
+                            config.headers['X-Device-ID'] = this.getDeviceId();
+                            config.headers['X-App-Version'] = '1.0.0';
+                            config.headers['X-Platform'] = 'mobile';
+
+                            console.log('请求拦截器:', config);
+                            return config;
+                        },
+                        error => {
+                            this.globalLoading = false;
+                            console.error('请求拦截器错误:', error);
+                            return Promise.reject(error);
+                        }
+                    );
+
+                    // 响应拦截器
+                    axios.interceptors.response.use(
+                        response => {
+                            this.globalLoading = false;
+                            console.log('响应拦截器:', response);
+
+                            const { code, message, data } = response.data;
+
+                            if (code === 200) {
+                                return response;
+                            } else if (code === 401) {
+                                // Token过期，重新登录
+                                this.handleTokenExpired();
+                                return Promise.reject(new Error('Token expired'));
+                            } else {
+                                this.showNotify(message || '请求失败', 'error');
+                                return Promise.reject(new Error(message));
+                            }
+                        },
+                        error => {
+                            this.globalLoading = false;
+
+                            let message = '网络请求失败';
+                            if (error.response) {
+                                const { status, data } = error.response;
+                                if (status === 401) {
+                                    message = '登录已过期，请重新登录';
+                                    this.handleTokenExpired();
+                                } else if (status === 403) {
+                                    message = '权限不足';
+                                } else if (status === 404) {
+                                    message = '接口不存在';
+                                } else if (status >= 500) {
+                                    message = '服务器内部错误';
+                                }
+
+                                if (data && data.message) {
+                                    message = data.message;
+                                }
+                            } else if (error.message) {
+                                message = error.message;
+                            }
+
+                            this.showNotify(message, 'error');
+                            console.error('响应拦截器错误:', error);
+                            return Promise.reject(error);
+                        }
+                    );
+                },
+
+                // 检查登录状态
+                checkLoginStatus() {
+                    if (!this.token) {
+                        this.showNotify('请先登录', 'warning');
+                        this.$router.push('/login');
+                        return;
+                    }
+
+                    this.getUserInfo();
+                },
+
+                // 获取用户信息
+                async getUserInfo() {
+                    try {
+                        const response = await axios.get(`${this.apiBase}/user/info`);
+                        const { data } = response.data;
+                        this.user = data;
+                        localStorage.setItem('user', JSON.stringify(data));
+                    } catch (error) {
+                        console.error('获取用户信息失败:', error);
+                        this.showNotify('获取用户信息失败', 'error');
+                    }
+                },
+
+                // 处理token过期
+                handleTokenExpired() {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    this.token = '';
+                    this.user = null;
+                    this.showNotify('登录已过期，请重新登录', 'warning');
+                    this.$router.push('/login');
+                },
+
+                // 获取设备ID
+                getDeviceId() {
+                    let deviceId = localStorage.getItem('deviceId');
+                    if (!deviceId) {
+                        deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                        localStorage.setItem('deviceId', deviceId);
+                    }
+                    return deviceId;
+                },
+
+                // 显示通知
+                showNotify(message, type = 'success') {
+                    this.notifyMessage = message;
+                    this.notifyType = type;
+                    this.notifyShow = true;
+
+                    setTimeout(() => {
+                        this.notifyShow = false;
+                    }, 3000);
+                },
+
+                // 显示确认对话框
+                showConfirm(message, title = '确认') {
+                    return showConfirmDialog({
+                        title: title,
+                        message: message,
+                    });
+                },
+
+                // 显示加载提示
+                showLoading(message = '加载中...') {
+                    return showLoadingToast({
+                        message: message,
+                        forbidClick: true,
+                        duration: 0,
+                    });
+                },
+
+                // 关闭加载提示
+                hideLoading() {
+                    closeToast();
+                },
+
+                // 格式化时间
+                formatTime(time) {
+                    if (!time) return '';
+                    const date = new Date(time);
+                    return date.toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                },
+
+                // 格式化日期
+                formatDate(date) {
+                    if (!date) return '';
+                    const d = new Date(date);
+                    return d.toLocaleDateString('zh-CN');
+                },
+
+                // 跳转到页面
+                navigateTo(path) {
+                    this.$router.push(path);
+                },
+
+                // 返回上一页
+                goBack() {
+                    this.$router.go(-1);
+                }
+            }
+        });
+
+        // 注册Vant组件
+        app.use(vant);
+
+        // 挂载应用
+        app.mount('#app');
+    </script>
+</body>
+</html>

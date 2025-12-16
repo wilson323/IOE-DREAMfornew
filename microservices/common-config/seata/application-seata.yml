@@ -1,0 +1,91 @@
+# ============================================================
+# IOE-DREAM 分布式事务配置 - Seata 2.0.0
+# 统一企业级分布式事务解决方案
+# ============================================================
+
+# ==================== Seata客户端配置 ====================
+seata:
+  enabled: ${SEATA_ENABLED:true}
+  # Seata应用ID，需要与TC配置一致
+  application-id: ${spring.application.name}
+
+  # 事务组配置，需要与TC配置一致
+  tx-service-group: ${SEATA_TX_SERVICE_GROUP:default_tx_group}
+
+  # Seata服务器配置
+  config:
+    type: nacos  # 使用Nacos配置中心
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+      namespace: ${NACOS_NAMESPACE:dev}
+      group: ${NACOS_GROUP:IOE-DREAM}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+
+  # Seata注册中心配置
+  registry:
+    type: nacos  # 使用Nacos注册中心
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+      namespace: ${NACOS_NAMESPACE:dev}
+      group: ${NACOS_GROUP:IOE-DREAM}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      cluster: default
+
+# ==================== Spring事务配置 ====================
+spring:
+  # 启用事务管理
+  transaction:
+    # 默认事务管理器
+    default-transaction-manager: DataSourceTransactionManager
+    # 自动回滚
+    rollback-on-commit-failure: true
+
+  # JDBC配置
+  datasource:
+    druid:
+      # 启用事务
+      default-auto-commit: false
+      test-on-borrow: true
+      test-on-return: false
+      test-while-idle: true
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    io.seata: INFO
+    com.alibaba.cloud.seata: INFO
+    org.springframework.transaction: DEBUG
+  pattern:
+      console: "[%d{yyyy-MM-dd HH:mm:ss}] [%X{traceId:-},%X{spanId:-}] [%thread] %-5level %logger{36} - %msg%n"
+
+# ==================== 监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,seata
+
+  # Seata健康检查
+  health:
+    seata:
+      enabled: true
+
+# ==================== 业务特定配置 ====================
+business:
+  transaction:
+    # 超时配置（毫秒）
+    timeout: ${SEATA_TRANSACTION_TIMEOUT:30000}
+
+    # 重试次数
+    retry-times: ${SEATA_TRANSACTION_RETRY_TIMES:3}
+
+    # 重试间隔（毫秒）
+    retry-interval: ${SEATA_TRANSACTION_RETRY_INTERVAL:1000}
+
+    # 高风险操作配置
+    high-risk-operations:
+      - "/api/v1/consume/transaction/execute"
+      - "/api/v1/access/permission/grant"
+      - "/api/v1/visitor/registration/create"

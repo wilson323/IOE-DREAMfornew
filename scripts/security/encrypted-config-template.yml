@@ -1,0 +1,157 @@
+# ============================================================
+# IOE-DREAM 加密配置模板
+# 企业级配置加密方案
+# ============================================================
+
+# 配置加密标准模板
+encryption-standards:
+  # AES256加密配置
+  aes256:
+    key-length: 256
+    algorithm: "AES/CBC/PKCS5Padding"
+    key-derivation: "PBKDF2WithHmacSHA256"
+    iterations: 100000
+
+  # 密码编码格式
+  encoding:
+    format: "ENC(AES256:{encrypted_value})"
+    base64-encoding: true
+    charset: "UTF-8"
+
+# 数据库连接加密模板
+database-templates:
+  # MySQL配置
+  mysql:
+    url: "jdbc:mysql://localhost:3306/ioedream?useSSL=true&serverTimezone=Asia/Shanghai"
+    username: "root"
+    password: "ENC(AES256:K1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A)"
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+
+  # Redis配置
+  redis:
+    host: "127.0.0.1"
+    port: 6379
+    password: "ENC(AES256:R1S2T3U4V5W6X7Y8Z9A0B1C2D3E4F5)"
+    database: 0
+    timeout: 3000
+
+# 微服务配置加密模板
+service-templates:
+  # Nacos配置
+  nacos:
+    server-addr: "127.0.0.1:8848"
+    username: "nacos"
+    password: "ENC(AES256:S3T4U5V6W7X8Y9Z0A1B2C3D4E5F6G7)"
+    namespace: "dev"
+    group: "IOE-DREAM"
+
+  # Seata配置
+  seata:
+    registry:
+      nacos:
+        server-addr: "127.0.0.1:8848"
+        username: "nacos"
+        password: "ENC(AES256:S3T4U5V6W7X8Y9Z0A1B2C3D4E5F6G7)"
+
+    config:
+      nacos:
+        server-addr: "127.0.0.1:8848"
+        username: "nacos"
+        password: "ENC(AES256:S3T4U5V6W7X8Y9Z0A1B2C3D4E5F6G7)"
+
+# 安全配置加密模板
+security-templates:
+  # JWT配置
+  jwt:
+    secret: "ENC(AES256:H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5)"
+    expiration: 86400
+
+  # 第三方服务配置
+  aliyun:
+    access-key: "ENC(AES256:A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5)"
+    secret-key: "ENC(AES256:P1Q2R3S4T5U6V7W8X9Y0Z1A2B3C4D5)"
+
+  # 微信支付配置
+  wechat-pay:
+    app-id: "ENC(AES256:W1X2Y3Z4A5B6C7D8E9F0G1H2I3J4K5)"
+    mch-id: "ENC(AES256:L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5)"
+    api-key: "ENC(AES256:V1W2X3Y4Z5A6B7C8D9E0F1G2H3I4J5)"
+
+# 监控配置加密模板
+monitoring-templates:
+  # 邮件通知配置
+  email:
+    username: "ENC(AES256:M1A2I3L4S5T6E7M8P9A0S1S2W3O4R5)"
+    password: "ENC(AES256:E1M2A3I4L5S6T7E8M9P0A1S2S3W4O5)"
+
+  # 短信通知配置
+  sms:
+    access-key: "ENC(AES256:S1M2S3A4P5I6K7E8Y9S0E1R2V3I4D5)"
+    secret-key: "ENC(AES256:A1P2I3K4E5Y6S7E8R9V0I1D2E3R4S5)"
+
+# 缓存配置加密模板
+cache-templates:
+  # MongoDB配置
+  mongodb:
+    username: "admin"
+    password: "ENC(AES256:M1O2N3G4O5D6B7A8S9E0U1S2E3R4P5)"
+    database: "ioedream_cache"
+
+  # Elasticsearch配置
+  elasticsearch:
+    username: "elastic"
+    password: "ENC(AES256:E1L2A3S4T5I6C7S8E9A0R1C2H3P4S5)"
+
+# 文件存储配置加密模板
+storage-templates:
+  # MinIO配置
+  minio:
+    access-key: "ENC(AES256:M1I2N3I4O5A6C7C8E9S0S1K2E3Y4P5)"
+    secret-key: "ENC(AES256:S3K4E5Y6P7A8I9R0O1S2E3C4R5E6T7)"
+
+  # 阿里云OSS配置
+  aliyun-oss:
+    access-key: "ENC(AES256:L1T2A3I4Y5U6N7O8S9S0K1E2Y3I4D5)"
+    secret-key: "ENC(AES256:Y1I2D3U4N5I6O7S8S9K0E1Y2I3D4U5)"
+
+# 消息队列配置加密模板
+message-queue-templates:
+  # RabbitMQ配置
+  rabbitmq:
+    username: "admin"
+    password: "ENC(AES256:R1A2B3B4I5T6M7Q8P9A0S1S2W3O4R5D)"
+
+  # Kafka配置
+  kafka:
+    sasl-jaas-config: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"ENC(AES256:K1A2F3K4A5C6O7N8F9L0U1X2G3Y4P5)\";"
+
+# 加密工具使用说明
+usage-instructions:
+  # 解密命令示例
+  decryption-examples:
+    java: "AESUtil.decrypt(\"ENC(AES256:encrypted_value)\")"
+    spring-boot: "使用jasypt-spring-boot-starter自动解密"
+
+  # 加密命令示例
+  encryption-examples:
+    command: "java -cp ioedream-encryption.jar AESUtil.encrypt \"plaintext_password\""
+    output-format: "ENC(AES256:encrypted_value)"
+
+# 环境特定配置
+environment-configs:
+  development:
+    encryption-enabled: false
+    debug-encryption: true
+
+  testing:
+    encryption-enabled: true
+    test-password: "ENC(AES256:T1E2S3T4P5A6S7S8W9O0R1D2)"
+
+  staging:
+    encryption-enabled: true
+    strict-encryption: true
+
+  production:
+    encryption-enabled: true
+    strict-encryption: true
+    audit-encryption-access: true

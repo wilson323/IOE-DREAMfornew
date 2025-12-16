@@ -17,7 +17,7 @@ import net.lab1024.sa.common.security.entity.UserEntity;
  * 用户DAO接口（Auth模块专用）
  * <p>
  * 符合CLAUDE.md规范：
- * - 使用@Mapper注解（禁止@Repository）
+ * - 使用@Mapper注解（禁止@Mapper）
  * - 使用Dao后缀（禁止Repository后缀）
  * - 使用@Resource依赖注入
  * - 完整的事务管理

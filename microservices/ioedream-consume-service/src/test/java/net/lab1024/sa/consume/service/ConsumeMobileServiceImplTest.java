@@ -23,7 +23,7 @@ import net.lab1024.sa.consume.service.impl.ConsumeMobileServiceImpl;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileQuickForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileScanForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileNfcForm;
@@ -266,15 +266,15 @@ class ConsumeMobileServiceImplTest {
     void test_getBillDetail_Success() {
         // Given
         String orderId = "ORDER001";
-        net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity consumeRecord =
-            new net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity();
+        net.lab1024.sa.common.consume.entity.ConsumeRecordEntity consumeRecord =
+            new net.lab1024.sa.common.consume.entity.ConsumeRecordEntity();
         consumeRecord.setOrderNo(orderId);
         consumeRecord.setTransactionNo("TXN001");
         consumeRecord.setAmount(new BigDecimal("50.00"));
         consumeRecord.setConsumeTime(LocalDateTime.now());
 
-        net.lab1024.sa.consume.consume.entity.PaymentRecordEntity paymentRecord =
-            new net.lab1024.sa.consume.consume.entity.PaymentRecordEntity();
+        net.lab1024.sa.common.consume.entity.PaymentRecordEntity paymentRecord =
+            new net.lab1024.sa.common.consume.entity.PaymentRecordEntity();
         paymentRecord.setTransactionNo("TXN001");
         paymentRecord.setPaymentAmount(new BigDecimal("50.00"));
         paymentRecord.setActualAmount(new BigDecimal("50.00"));

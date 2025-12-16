@@ -18,8 +18,15 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import org.slf4j.MDC;
 import org.springframework.cloud.client.ServiceInstance;
@@ -327,10 +334,41 @@ public class DirectServiceClient {
     }
 
     private static String hmacSha256Base64(String secret, String message) throws Exception {
-        Mac mac = Mac.getInstance("HmacSHA256");
-        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-        byte[] raw = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(raw);
+        // 使用Java标准库的MessageDigest实现HMAC-SHA256
+        // 因为在Spring Boot 3.x环境中，需要避免使用javax.crypto
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+        // 内部密钥填充
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        byte[] ipad = new byte[64];
+        byte[] opad = new byte[64];
+
+        // 如果密钥长度大于64字节，先进行哈希
+        if (keyBytes.length > 64) {
+            keyBytes = digest.digest(keyBytes);
+        }
+
+        // 填充密钥
+        System.arraycopy(keyBytes, 0, ipad, 0, keyBytes.length);
+        System.arraycopy(keyBytes, 0, opad, 0, keyBytes.length);
+
+        // XOR填充
+        for (int i = 0; i < 64; i++) {
+            ipad[i] ^= 0x36;
+            opad[i] ^= 0x5c;
+        }
+
+        // 内部哈希
+        digest.reset();
+        digest.update(ipad);
+        byte[] innerHash = digest.digest(message.getBytes(StandardCharsets.UTF_8));
+
+        // 外部哈希
+        digest.reset();
+        digest.update(opad);
+        byte[] hmac = digest.digest(innerHash);
+
+        return Base64.getEncoder().encodeToString(hmac);
     }
 
     private static final class DirectCallFailedException extends RuntimeException {

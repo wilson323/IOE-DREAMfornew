@@ -1,0 +1,148 @@
+# 🛠️ IOE-DREAM 技术栈标准规范
+
+**版本**: v1.0.0  
+**生效日期**: 2025-01-30  
+**适用范围**: 所有项目文档  
+**维护责任人**: 架构委员会
+
+---
+
+## 📋 技术栈标准版本（唯一真相源）
+
+> **重要**: 本文档为IOE-DREAM项目技术栈的唯一标准来源，所有文档必须引用此标准。
+
+### 后端技术栈标准
+
+| 类别 | 技术选型 | 版本 | 用途 | 来源 |
+|------|---------|------|------|------|
+| **语言** | Java | 17 LTS | 主开发语言 | `microservices/pom.xml` |
+| **框架** | Spring Boot | **3.5.8** | 应用框架 | `microservices/pom.xml` |
+| **微服务** | Spring Cloud | **2025.0.0** | 微服务框架 | `microservices/pom.xml` |
+| **微服务** | Spring Cloud Alibaba | **2025.0.0.0** | 阿里巴巴微服务套件 | `microservices/pom.xml` |
+| **ORM** | MyBatis-Plus | **3.5.15** | 数据访问 | `microservices/pom.xml` |
+| **数据库** | MySQL | **8.0.35** | 关系型数据库 | `microservices/pom.xml` |
+| **缓存** | Redis | 7.x | 缓存、会话 | 文档约定 |
+| **消息队列** | RabbitMQ | 3.12+ | 异步消息 | 文档约定 |
+| **注册中心** | Nacos | 2.3.2+ | 服务注册与配置 | 文档约定 |
+| **连接池** | Druid | **1.2.25** | 数据库连接池 | `microservices/pom.xml` |
+| **API文档** | Knife4j | 4.4.0 | API文档生成 | 文档约定 |
+| **认证** | JWT | 0.12.6 | 身份认证 | `microservices/pom.xml` |
+| **工具** | Lombok | **1.18.42** | 代码简化 | `microservices/pom.xml` |
+| **分布式事务** | Seata | 2.0.0 | 分布式事务 | `microservices/pom.xml` |
+| **容错机制** | Resilience4j | 2.1.0 | 重试、熔断、限流 | `microservices/pom.xml` |
+| **监控指标** | Micrometer | 1.13.6 | 监控指标 | `microservices/pom.xml` |
+
+### 前端技术栈标准
+
+| 类别 | 技术选型 | 版本 | 用途 | 来源 |
+|------|---------|------|------|------|
+| **框架** | Vue | **3.4.x** | 前端框架 | `smart-admin-web-javascript/package.json` |
+| **构建** | Vite | **5.x** | 构建工具 | `smart-admin-web-javascript/package.json` |
+| **状态管理** | Pinia | **2.1.x** | 状态管理 | `smart-admin-web-javascript/package.json` |
+| **路由** | Vue Router | **4.x** | 路由管理 | `smart-admin-web-javascript/package.json` |
+| **UI组件** | Ant Design Vue | **4.x** | UI组件库 | `smart-admin-web-javascript/package.json` |
+| **HTTP** | Axios | **1.6.x** | HTTP客户端 | `smart-admin-web-javascript/package.json` |
+| **图表** | ECharts | **5.4.x** | 图表库 | `smart-admin-web-javascript/package.json` |
+| **国际化** | Vue I18n | **9.x** | 多语言 | `smart-admin-web-javascript/package.json` |
+| **代码规范** | ESLint + Prettier | - | 代码规范 | 文档约定 |
+| **类型检查** | TypeScript | 5.3.x | 类型系统 | 文档约定 |
+
+### 移动端技术栈标准
+
+| 类别 | 技术选型 | 版本 | 用途 | 来源 |
+|------|---------|------|------|------|
+| **框架** | uni-app | **3.0.x** | 跨平台框架 | `smart-app/package.json` |
+| **语言** | Vue 3 | **3.2.x** | 开发语言 | `smart-app/package.json` |
+| **状态管理** | Pinia | **2.0.x** | 状态管理 | `smart-app/package.json` |
+| **UI组件** | uni-ui | **1.5.x** | UI组件库 | `smart-app/package.json` |
+| **构建** | Vite | **4.x** | 构建工具 | `smart-app/package.json` |
+| **样式** | Sass | **1.69.x** | CSS预处理 | `smart-app/package.json` |
+
+---
+
+## 🔧 Jakarta EE 3.0+ 标准（强制）
+
+### 包名迁移规范
+
+| 旧包名（禁止） | 新包名（必须） | 说明 |
+|--------------|--------------|------|
+| `javax.annotation.Resource` | `jakarta.annotation.Resource` | 依赖注入 |
+| `javax.validation.Valid` | `jakarta.validation.Valid` | 参数验证 |
+| `javax.persistence.Entity` | `jakarta.persistence.Entity` | JPA实体 |
+| `javax.servlet.http.HttpServletRequest` | `jakarta.servlet.http.HttpServletRequest` | Servlet API |
+| `javax.transaction.Transactional` | `jakarta.transaction.Transactional` | 事务管理 |
+
+### 不需要迁移的包（JDK标准库）
+
+- ✅ `javax.crypto.*` - JDK标准库
+- ✅ `javax.sql.*` - JDK标准库
+- ✅ `javax.imageio.*` - JDK标准库
+
+---
+
+## 📝 文档引用规范
+
+### 在文档中引用技术栈标准
+
+```markdown
+## 技术栈
+
+本项目技术栈遵循 [技术栈标准规范](./technical/TECHNOLOGY_STACK_STANDARD.md)：
+
+- **后端**: Spring Boot 3.5.8 + Java 17 + MyBatis-Plus 3.5.15
+- **前端**: Vue 3.4.x + Vite 5.x + Ant Design Vue 4.x
+- **移动端**: uni-app 3.0.x + Vue 3.2.x
+
+详细版本信息请参考 [技术栈标准规范](./technical/TECHNOLOGY_STACK_STANDARD.md)。
+```
+
+### 禁止事项
+
+- ❌ **禁止在文档中硬编码技术栈版本**（除非是历史版本说明）
+- ❌ **禁止使用过时的技术栈版本**（如Spring Boot 3.2.5）
+- ❌ **禁止在多个文档中重复定义技术栈**（统一引用标准文档）
+
+---
+
+## 🔄 版本更新流程
+
+1. **版本变更**: 在 `microservices/pom.xml` 或 `package.json` 中更新版本
+2. **标准更新**: 更新本文档中的标准版本
+3. **文档扫描**: 扫描所有文档，识别需要更新的引用
+4. **批量修复**: 使用脚本批量更新文档中的版本引用
+5. **验证检查**: 验证所有文档技术栈描述一致性
+
+---
+
+## 📊 技术栈一致性检查
+
+### 检查脚本
+
+```powershell
+# 检查文档中的技术栈版本
+Get-ChildItem -Path "documentation" -Recurse -Filter "*.md" | 
+    Select-String -Pattern "Spring Boot\s+3\.[0-4]\.|Spring Boot\s+3\.2\." | 
+    Select-Object Path, LineNumber, Line
+```
+
+### 检查标准
+
+- ✅ **Spring Boot**: 必须为 3.5.8
+- ✅ **Java**: 必须为 17
+- ✅ **Spring Cloud**: 必须为 2025.0.0
+- ✅ **Spring Cloud Alibaba**: 必须为 2025.0.0.0
+- ✅ **MyBatis-Plus**: 必须为 3.5.15
+- ✅ **Druid**: 必须为 1.2.25
+
+---
+
+## 📚 相关文档
+
+- [CLAUDE.md - 全局架构规范](../CLAUDE.md)
+- [README.md - 项目概述](../README.md)
+- [架构设计文档](../architecture/)
+
+---
+
+**最后更新**: 2025-01-30  
+**维护团队**: IOE-DREAM 架构委员会

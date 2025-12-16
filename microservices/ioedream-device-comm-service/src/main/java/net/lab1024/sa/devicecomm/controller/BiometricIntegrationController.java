@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.devicecomm.integration.BiometricIntegrationService;
 import net.lab1024.sa.devicecomm.protocol.enums.VerifyTypeEnum;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/api/v1/biometric/integration")
 @Tag(name = "生物识别集成", description = "生物识别与其他业务模块集成接口")
+@PermissionCheck(value = "BIOMETRIC_INTEGRATION", description = "生物识别集成管理模块权限")
 @Validated
 public class BiometricIntegrationController {
 
@@ -48,6 +50,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.verifyAccess", contextualName = "biometric-access-verify")
     @PostMapping("/access/verify")
     @Operation(summary = "门禁生物识别验证", description = "验证用户门禁权限并进行生物识别")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_ACCESS", description = "门禁生物识别验证")
     public ResponseDTO<BiometricIntegrationService.BiometricAccessResult> verifyAccessBiometric(
             @Parameter(description = "用户ID", required = true) @RequestParam @NotNull Long userId,
             @Parameter(description = "设备ID", required = true) @RequestParam @NotNull Long deviceId,
@@ -67,6 +70,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.punchAttendance", contextualName = "biometric-attendance-punch")
     @PostMapping("/attendance/punch")
     @Operation(summary = "考勤生物识别打卡", description = "进行考勤打卡并进行生物识别验证")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_ATTENDANCE", description = "考勤生物识别打卡")
     public ResponseDTO<BiometricIntegrationService.BiometricAttendanceResult> punchAttendanceBiometric(
             @Parameter(description = "用户ID", required = true) @RequestParam @NotNull Long userId,
             @Parameter(description = "设备ID", required = true) @RequestParam @NotNull Long deviceId,
@@ -86,6 +90,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.verifyVisitor", contextualName = "biometric-visitor-verify")
     @PostMapping("/visitor/verify")
     @Operation(summary = "访客生物识别验证", description = "验证访客身份并进行生物识别")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_VISITOR", description = "访客生物识别验证")
     public ResponseDTO<BiometricIntegrationService.BiometricVisitorResult> verifyVisitorBiometric(
             @Parameter(description = "访客ID", required = true) @RequestParam @NotNull Long visitorId,
             @Parameter(description = "设备ID", required = true) @RequestParam @NotNull Long deviceId,
@@ -105,6 +110,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.verifyConsume", contextualName = "biometric-consume-verify")
     @PostMapping("/consume/verify")
     @Operation(summary = "消费生物识别验证", description = "进行消费支付并进行生物识别验证")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_CONSUME", description = "消费生物识别验证")
     public ResponseDTO<BiometricIntegrationService.BiometricConsumeResult> verifyConsumeBiometric(
             @Parameter(description = "用户ID", required = true) @RequestParam @NotNull Long userId,
             @Parameter(description = "设备ID", required = true) @RequestParam @NotNull Long deviceId,
@@ -124,6 +130,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.batchRegister", contextualName = "biometric-batch-register")
     @PostMapping("/batch-register/{userId}")
     @Operation(summary = "批量注册生物识别", description = "为用户批量注册多个生物识别特征")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_BATCH", description = "批量注册生物识别")
     public ResponseDTO<BiometricIntegrationService.BiometricBatchRegisterResult> batchRegisterUserBiometric(
             @Parameter(description = "用户ID", required = true) @PathVariable @NotNull Long userId,
             @Valid @RequestBody List<BiometricRegisterRequest> requestList) {
@@ -149,6 +156,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.batchRegisterAsync", contextualName = "biometric-batch-register-async")
     @PostMapping("/batch-register-async/{userId}")
     @Operation(summary = "异步批量注册生物识别", description = "异步为用户批量注册多个生物识别特征")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_BATCH", description = "异步批量注册生物识别")
     public CompletableFuture<ResponseDTO<BiometricIntegrationService.BiometricBatchRegisterResult>> batchRegisterUserBiometricAsync(
             @Parameter(description = "用户ID", required = true) @PathVariable @NotNull Long userId,
             @Valid @RequestBody List<BiometricRegisterRequest> requestList) {
@@ -174,6 +182,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.quickVerifyAccess", contextualName = "biometric-quick-access-verify")
     @PostMapping("/access/quick-verify")
     @Operation(summary = "快速门禁验证", description = "快速门禁生物识别验证，自动获取设备信息")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_ACCESS", description = "快速门禁验证")
     public ResponseDTO<BiometricIntegrationService.BiometricAccessResult> quickVerifyAccess(
             @Valid @RequestBody QuickAccessRequest request) {
         log.info("[快速门禁验证] 接口调用: userId={}, verifyType={}",
@@ -190,6 +199,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.quickPunchAttendance", contextualName = "biometric-quick-attendance-punch")
     @PostMapping("/attendance/quick-punch")
     @Operation(summary = "快速考勤打卡", description = "快速考勤生物识别打卡，自动获取设备信息")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_ATTENDANCE", description = "快速考勤打卡")
     public ResponseDTO<BiometricIntegrationService.BiometricAttendanceResult> quickPunchAttendance(
             @Valid @RequestBody QuickAttendanceRequest request) {
         log.info("[快速考勤打卡] 接口调用: userId={}, verifyType={}, punchType={}",
@@ -206,6 +216,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.quickPayConsume", contextualName = "biometric-quick-consume-pay")
     @PostMapping("/consume/quick-pay")
     @Operation(summary = "快速消费支付", description = "快速消费生物识别支付，自动获取设备信息")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_CONSUME", description = "快速消费支付")
     public ResponseDTO<BiometricIntegrationService.BiometricConsumeResult> quickPayConsume(
             @Valid @RequestBody QuickConsumeRequest request) {
         log.info("[快速消费支付] 接口调用: userId={}, amount={}, verifyType={}",
@@ -222,6 +233,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.health", contextualName = "biometric-integration-health")
     @GetMapping("/health")
     @Operation(summary = "集成服务健康检查", description = "生物识别集成服务健康检查")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_HEALTH", description = "集成服务健康检查")
     public ResponseDTO<String> health() {
         return ResponseDTO.ok("生物识别集成服务运行正常");
     }
@@ -232,6 +244,7 @@ public class BiometricIntegrationController {
     @Observed(name = "biometricIntegration.getFunctions", contextualName = "biometric-integration-functions")
     @GetMapping("/functions")
     @Operation(summary = "获取集成功能列表", description = "获取支持的所有生物识别集成功能")
+    @PermissionCheck(value = "BIOMETRIC_INTEGRATION_VIEW", description = "获取集成功能列表")
     public ResponseDTO<List<IntegrationFunction>> getIntegrationFunctions() {
         List<IntegrationFunction> functions = List.of(
                 new IntegrationFunction("access", "门禁集成", "与门禁系统集成的生物识别验证"),

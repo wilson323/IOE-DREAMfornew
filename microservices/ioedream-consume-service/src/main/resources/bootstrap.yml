@@ -27,7 +27,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         enabled: true
         register-enabled: true
         # 服务注册元数据
@@ -44,10 +44,10 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         file-extension: yaml
-        enabled: true
-        refresh-enabled: true
+        enabled: ${NACOS_CONFIG_ENABLED:true}
+        refresh-enabled: ${NACOS_CONFIG_REFRESH_ENABLED:true}
         # 配置文件导入顺序
         import-check:
           enabled: true
@@ -80,10 +80,9 @@ spring:
   # 注意：Spring Cloud Alibaba 2025.0.0.0版本在config.import阶段无法解析占位符，需要直接指定dataId
   config:
     import:
-      - "optional:nacos:ioedream-consume-service.yaml"
-      - "optional:nacos:ioedream-consume-service-docker.yaml"
+      - "optional:nacos:${spring.application.name}.yaml"
+      - "optional:nacos:${spring.application.name}-docker.yaml"
       - "optional:nacos:common-config.yaml"
-      - "optional:nacos:consume-payment-config.yaml"
 
 # ==================== Seata客户端配置 ====================
 seata:

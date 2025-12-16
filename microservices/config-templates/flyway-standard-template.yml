@@ -1,0 +1,90 @@
+# ============================================================
+# IOE-DREAM 统一Flyway数据库迁移配置模板
+# 版本: v3.0.0
+# 技术栈: Spring Boot 3.5.8 + Spring Cloud Alibaba 2025.0.0 + Flyway 9.x
+# 适用范围: 所有IOE-DREAM微服务
+# 创建时间: 2025-12-15
+# ============================================================
+
+# ==================== Flyway数据库迁移配置 ====================
+spring:
+  flyway:
+    # 基础配置
+    enabled: ${FLYWAY_ENABLED:true}
+    locations: ${FLYWAY_LOCATIONS:classpath:db/migration}
+    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE:true}
+    baseline-version: ${FLYWAY_BASELINE_VERSION:0}
+    baseline-description: ${FLYWAY_BASELINE_DESCRIPTION:Initial schema for ${spring.application.name}}
+
+    # 表配置
+    table: ${FLYWAY_TABLE:flyway_schema_history}
+    validate-on-migrate: ${FLYWAY_VALIDATE_ON_MIGRATE:true}
+    clean-disabled: ${FLYWAY_CLEAN_DISABLED:true}
+
+    # 执行配置
+    out-of-order: ${FLYWAY_OUT_OF_ORDER:false}
+    ignore-migration-patterns: ${FLYWAY_IGNORE_PATTERNS:*:ignore}
+
+    # 环境特定配置
+    placeholders:
+      service.name: ${spring.application.name}
+      environment: ${spring.profiles.active:dev}
+      schema.name: ${FLYWAY_SCHEMA_NAME:ioedream}
+
+    # 超时配置
+    connect-retries: ${FLYWAY_CONNECT_RETRIES:3}
+    lock-retry-count: ${FLYWAY_LOCK_RETRY_COUNT:10}
+
+    # SQL脚本配置
+    sql-migration-prefix: ${FLYWAY_SQL_PREFIX:V}
+    sql-migration-separator: ${FLYWAY_SQL_SEPARATOR:__}
+    sql-migration-suffixes: ${FLYWAY_SQL_SUFFIXES:.sql}
+
+    # 企业级安全配置
+    mixed: ${FLYWAY_MIXED:false}
+    group: ${FLYWAY_GROUP:false}
+    stream: ${FLYWAY_STREAM:false}
+
+    # 批量配置
+    batch: ${FLYWAY_BATCH:true}
+
+# ==================== 环境特定配置覆盖 ====================
+---
+# 开发环境配置
+spring:
+  config:
+    activate:
+      on-profile: dev
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    clean-disabled: false  # 开发环境允许清理
+    validate-on-migrate: false  # 开发环境跳过验证
+
+---
+# 测试环境配置
+spring:
+  config:
+    activate:
+      on-profile: test
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    clean-disabled: true
+    validate-on-migrate: true
+    out-of-order: false
+
+---
+# 生产环境配置
+spring:
+  config:
+    activate:
+      on-profile: prod
+  flyway:
+    enabled: true
+    baseline-on-migrate: false  # 生产环境不自动baseline
+    clean-disabled: true  # 生产环境禁止清理
+    validate-on-migrate: true  # 生产环境强制验证
+    out-of-order: false
+    connect-retries: 5  # 生产环境增加重试次数
+    lock-retry-count: 20

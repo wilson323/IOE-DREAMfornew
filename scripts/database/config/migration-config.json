@@ -1,0 +1,126 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-15T00:00:00Z",
+  "project": {
+    "name": "IOE-DREAM",
+    "description": "智慧园区一卡通管理平台",
+    "database": {
+      "name": "ioedream",
+      "type": "MySQL",
+      "version": "8.0+"
+    }
+  },
+  "microservices": [
+    {
+      "name": "ioedream-gateway-service",
+      "port": 8080,
+      "path": "microservices/ioedream-gateway-service",
+      "hasFlyway": true,
+      "status": "configured"
+    },
+    {
+      "name": "ioedream-common-service",
+      "port": 8088,
+      "path": "microservices/ioedream-common-service",
+      "hasFlyway": true,
+      "status": "configured"
+    },
+    {
+      "name": "ioedream-device-comm-service",
+      "port": 8087,
+      "path": "microservices/ioedream-device-comm-service",
+      "hasFlyway": true,
+      "status": "configured"
+    },
+    {
+      "name": "ioedream-oa-service",
+      "port": 8089,
+      "path": "microservices/ioedream-oa-service",
+      "hasFlyway": true,
+      "status": "configured"
+    },
+    {
+      "name": "ioedream-access-service",
+      "port": 8090,
+      "path": "microservices/ioedream-access-service",
+      "hasFlyway": true,
+      "status": "configured"
+    },
+    {
+      "name": "ioedream-attendance-service",
+      "port": 8091,
+      "path": "microservices/ioedream-attendance-service",
+      "hasFlyway": true,
+      "status": "configured"
+    },
+    {
+      "name": "ioedream-video-service",
+      "port": 8092,
+      "path": "microservices/ioedream-video-service",
+      "hasFlyway": true,
+      "status": "configured"
+    },
+    {
+      "name": "ioedream-consume-service",
+      "port": 8094,
+      "path": "microservices/ioedream-consume-service",
+      "hasFlyway": true,
+      "status": "configured"
+    },
+    {
+      "name": "ioedream-visitor-service",
+      "port": 8095,
+      "path": "microservices/ioedream-visitor-service",
+      "hasFlyway": true,
+      "status": "configured"
+    }
+  ],
+  "migration": {
+    "locations": [
+      "microservices/ioedream-db-init/src/main/resources/db/migration",
+      "microservices/*/src/main/resources/db/migration"
+    ],
+    "baselineVersion": "0",
+    "flywayTable": "flyway_schema_history",
+    "validateOnMigrate": true,
+    "cleanDisabled": true
+  },
+  "environment": {
+    "dev": {
+      "mysql_host": "127.0.0.1",
+      "mysql_port": "3306",
+      "mysql_database": "ioedream",
+      "mysql_username": "root",
+      "mysql_password": "123456",
+      "flyway_enabled": true
+    },
+    "test": {
+      "mysql_host": "127.0.0.1",
+      "mysql_port": "3306",
+      "mysql_database": "ioedream_test",
+      "mysql_username": "root",
+      "mysql_password": "123456",
+      "flyway_enabled": true
+    },
+    "prod": {
+      "mysql_host": "${MYSQL_HOST}",
+      "mysql_port": "${MYSQL_PORT}",
+      "mysql_database": "${MYSQL_DATABASE}",
+      "mysql_username": "${MYSQL_USERNAME}",
+      "mysql_password": "${MYSQL_PASSWORD}",
+      "flyway_enabled": true
+    }
+  },
+  "backup": {
+    "enabled": true,
+    "location": "scripts/database/backup",
+    "retentionDays": 30,
+    "compression": true
+  },
+  "logging": {
+    "level": "INFO",
+    "location": "scripts/database/logs",
+    "maxFiles": 10,
+    "maxSize": "100MB"
+  }
+}

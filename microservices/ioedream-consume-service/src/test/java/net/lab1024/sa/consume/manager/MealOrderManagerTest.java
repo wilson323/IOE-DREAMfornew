@@ -2,8 +2,8 @@ package net.lab1024.sa.consume.manager;
 
 import net.lab1024.sa.consume.dao.MealOrderDao;
 import net.lab1024.sa.consume.dao.MealOrderItemDao;
-import net.lab1024.sa.consume.domain.entity.MealOrderEntity;
-import net.lab1024.sa.consume.domain.entity.MealOrderItemEntity;
+import net.lab1024.sa.common.consume.entity.MealOrderEntity;
+import net.lab1024.sa.common.consume.entity.MealOrderItemEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

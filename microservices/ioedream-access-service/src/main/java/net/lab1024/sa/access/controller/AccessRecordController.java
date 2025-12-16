@@ -2,7 +2,7 @@ package net.lab1024.sa.access.controller;
 
 import io.micrometer.observation.annotation.Observed;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +52,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/v1/access/record")
 @Tag(name = "门禁记录管理PC端", description = "门禁记录查询、统计、导出等API")
+@PermissionCheck(value = "ACCESS_RECORD", description = "门禁记录管理模块权限")
 public class AccessRecordController {
 
     @Resource
@@ -122,7 +123,7 @@ public class AccessRecordController {
     @Observed(name = "accessRecord.queryAccessRecords", contextualName = "access-record-query")
     @GetMapping("/query")
     @Operation(summary = "分页查询门禁记录", description = "根据条件分页查询门禁记录")
-    @PreAuthorize("hasRole('ACCESS_MANAGER')")
+    @PermissionCheck(value = "ACCESS_RECORD_VIEW", description = "查询门禁记录")
     public ResponseDTO<PageResult<net.lab1024.sa.access.domain.vo.AccessRecordVO>> queryAccessRecords(
             @Parameter(description = "页码，从1开始")
             @RequestParam(defaultValue = "1") Integer pageNum,
@@ -182,7 +183,7 @@ public class AccessRecordController {
     @Observed(name = "accessRecord.getAccessRecordStatistics", contextualName = "access-record-statistics")
     @GetMapping("/statistics")
     @Operation(summary = "获取门禁记录统计", description = "根据时间范围和区域获取门禁记录统计数据")
-    @PreAuthorize("hasRole('ACCESS_MANAGER')")
+    @PermissionCheck(value = "ACCESS_RECORD_VIEW", description = "获取门禁记录统计")
     public ResponseDTO<net.lab1024.sa.access.domain.vo.AccessRecordStatisticsVO> getAccessRecordStatistics(
             @Parameter(description = "开始日期，格式：yyyy-MM-dd")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,

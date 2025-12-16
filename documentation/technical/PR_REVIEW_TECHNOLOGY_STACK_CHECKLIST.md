@@ -28,7 +28,7 @@
   - 检查项: 文档中是否直接写死技术栈版本号
   - 违规示例:
     ```markdown
-    ❌ Spring Boot 3.2.5  # 错误：硬编码版本
+    ❌ Spring Boot 3.5.8  # 错误：硬编码版本
     ❌ Spring Cloud 2023.0.4  # 错误：硬编码版本
     ```
   - 正确示例:
@@ -44,7 +44,7 @@
 - [ ] **Spring Boot版本检查**
   - 标准版本: **3.5.8**
   - 检查项: 文档中所有Spring Boot版本必须为3.5.8
-  - 违规示例: `Spring Boot 3.2.5`, `Spring Boot 3.3.x`, `Spring Boot 3.4.x`
+  - 违规示例: `Spring Boot 3.5.8`, `Spring Boot 3.3.x`, `Spring Boot 3.4.x`
 
 - [ ] **Spring Cloud版本检查**
   - 标准版本: **2025.0.0**
@@ -88,7 +88,7 @@
   - 正确示例:
     ```markdown
     ✅ Spring Cloud Alibaba 2022.0.0.0（历史版本，当前已升级至2025.0.0.0）
-    ✅ 在升级前，项目使用Spring Boot 3.2.5（已升级至3.5.8）
+    ✅ 在升级前，项目使用Spring Boot 3.5.8（已升级至3.5.8）
     ```
 
 ### 4. 前端技术栈检查 (P1级)

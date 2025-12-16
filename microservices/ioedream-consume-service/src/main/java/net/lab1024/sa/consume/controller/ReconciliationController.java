@@ -3,7 +3,7 @@ package net.lab1024.sa.consume.controller;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +39,7 @@ import net.lab1024.sa.consume.service.consistency.ReconciliationService;
 @RestController
 @RequestMapping("/api/v1/consume/reconciliation")
 @Tag(name = "对账管理", description = "消费对账相关接口")
+@PermissionCheck(value = "CONSUME_RECONCILIATION", description = "消费对账管理模块权限")
 public class ReconciliationController {
 
     @Resource
@@ -60,7 +61,7 @@ public class ReconciliationController {
     @PostMapping("/daily")
     @Observed(name = "reconciliation.performDailyReconciliation", contextualName = "reconciliation-daily")
     @Operation(summary = "执行日终对账", description = "对指定日期的所有账户进行对账")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<ReconciliationService.ReconciliationResult> performDailyReconciliation(
             @Parameter(description = "对账日期，格式：yyyy-MM-dd，默认为昨天")
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate reconcileDate) {
@@ -109,7 +110,7 @@ public class ReconciliationController {
     @PostMapping("/realtime")
     @Observed(name = "reconciliation.performRealtimeReconciliation", contextualName = "reconciliation-realtime")
     @Operation(summary = "执行实时对账", description = "对指定账户或所有账户进行实时余额验证")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<ReconciliationService.ReconciliationResult> performRealtimeReconciliation(
             @Parameter(description = "账户ID，可选，null表示对所有账户对账")
             @RequestParam(required = false) Long accountId) {
@@ -155,7 +156,7 @@ public class ReconciliationController {
     @GetMapping("/history")
     @Observed(name = "reconciliation.queryReconciliationHistory", contextualName = "reconciliation-history")
     @Operation(summary = "查询对账历史", description = "查询指定日期范围内的对账历史记录")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<PageResult<ReconciliationService.ReconciliationResult>> queryReconciliationHistory(
             @Parameter(description = "开始日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,

@@ -8,10 +8,7 @@
     2. 确保所有子模块继承这些编码设置
     3. 设置IDE和JVM的编码参数
 -->
-<configuration xmlns="http://maven.apache.org/CONFIG/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/CONFIG/1.0.0
-    http://maven.apache.org/xsd/config-1.0.0.xsd">
+<encoding-standard-config>
 
     <!-- 编码标准配置说明 -->
     <encodingStandard>
@@ -173,4 +170,4 @@
         </vscode>
     </ideConfiguration>
 
-</configuration>
+</encoding-standard-config>

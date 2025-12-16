@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.monitoring.ExceptionMetricsCollector;
 import org.slf4j.MDC;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -20,27 +21,32 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import jakarta.annotation.Resource;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * 全局异常处理器
+ * 全局异常处理器（内存优化+指标收集版本）
  * <p>
  * 统一处理系统中的所有异常，返回标准的响应格式
  * 严格遵循CLAUDE.md规范：
  * - 统一异常处理，禁止多个异常处理器并存
  * - 包含TraceId追踪，便于分布式追踪和问题定位
- * - 完整的异常分类和处理
+ * - 集成企业级指标收集和监控
+ * - 内存优化：减少对象创建和字符串拼接
  * </p>
  *
  * @author IOE-DREAM架构团队
- * @version 1.0.0
- * @since 2025-01-30
+ * @version 2.0.0 - 企业级监控版本
+ * @since 2025-12-16
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @Resource
+    private ExceptionMetricsCollector exceptionMetricsCollector;
 
     /**
      * 获取TraceId（从MDC获取，如果没有则生成新的）
@@ -56,37 +62,68 @@ public class GlobalExceptionHandler {
         return traceId;
     }
 
+    /**
+     * 记录异常指标（内存优化版本）
+     *
+     * @param exception 异常对象
+     * @param startTime 开始时间（纳秒）
+     */
+    private void recordExceptionMetrics(Exception exception, long startTime) {
+        long handlingTime = (System.nanoTime() - startTime) / 1_000_000; // 转换为毫秒
+        exceptionMetricsCollector.recordException(exception, handlingTime);
+    }
+
     // ==================== 业务异常处理 ====================
 
     /**
-     * 处理业务异常
+     * 处理业务异常（带指标收集）
      */
     @ExceptionHandler(BusinessException.class)
     @ResponseStatus(HttpStatus.OK)
     public ResponseDTO<Void> handleBusinessException(BusinessException e) {
+        long startTime = System.nanoTime();
         String traceId = getTraceId();
+
+        // 内存优化：使用参数化日志而非字符串拼接
         log.warn("[业务异常] traceId={}, code={}, message={}", traceId, e.getCode(), e.getMessage());
+
+        // 记录异常指标
+        recordExceptionMetrics(e, startTime);
+
         return ResponseDTO.error(e.getCode(), e.getMessage());
     }
 
     /**
-     * 处理系统异常
+     * 处理系统异常（带指标收集）
      */
     @ExceptionHandler(SystemException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseDTO<Void> handleSystemException(SystemException e) {
+        long startTime = System.nanoTime();
         String traceId = getTraceId();
+
+        // 记录系统异常指标（关键指标）
         log.error("[系统异常] traceId={}, code={}, message={}", traceId, e.getCode(), e.getMessage(), e);
+
+        // 记录异常指标
+        recordExceptionMetrics(e, startTime);
+
         return ResponseDTO.error(e.getCode(), "系统繁忙，请稍后重试");
     }
 
     /**
-     * 处理参数验证异常
+     * 处理参数验证异常（带指标收集）
      */
     @ExceptionHandler(ParamException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDTO<Void> handleParamException(ParamException e) {
+        long startTime = System.nanoTime();
+
         log.warn("[参数异常] code={}, message={}", e.getCode(), e.getMessage());
+
+        // 记录异常指标
+        recordExceptionMetrics(e, startTime);
+
         return ResponseDTO.error(e.getCode(), e.getMessage());
     }
 
@@ -250,24 +287,39 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理其他未捕获的异常
+     * 处理其他未捕获的异常（带指标收集）
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseDTO<Void> handleException(Exception e) {
+        long startTime = System.nanoTime();
         String traceId = getTraceId();
+
+        // 内存优化：避免字符串拼接，使用参数化日志
         log.error("[未知异常] traceId={}, error={}", traceId, e.getMessage(), e);
+
+        // 记录异常指标（所有异常都记录）
+        recordExceptionMetrics(e, startTime);
+
         return ResponseDTO.error("SYSTEM_ERROR", "系统内部错误，请稍后重试");
     }
 
     /**
-     * 处理Throwable
+     * 处理Throwable（最严重错误，带指标收集）
      */
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseDTO<Void> handleThrowable(Throwable t) {
+        long startTime = System.nanoTime();
         String traceId = getTraceId();
+
+        // 记录严重错误
         log.error("[严重错误] traceId={}, error={}", traceId, t.getMessage(), t);
+
+        // 转换为Exception记录指标
+        Exception exception = t instanceof Exception ? (Exception) t : new RuntimeException(t);
+        recordExceptionMetrics(exception, startTime);
+
         return ResponseDTO.error("CRITICAL_ERROR", "系统严重错误");
     }
 }

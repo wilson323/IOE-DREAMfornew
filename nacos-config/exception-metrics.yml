@@ -1,0 +1,99 @@
+# IOE-DREAM 异常处理指标监控配置
+# 版本: v1.0.0
+# 企业级异常处理Prometheus监控规则
+# 配置空间: IOE-DREAM
+# 配置分组: MONITORING
+# Data ID: exception-metrics.yml
+
+# Spring Boot Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,resilience4j
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+        descriptions: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        spring.data.repository.invocations: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+        spring.data.repository.invocations: 0.5,0.9,0.95,0.99
+      # 内存优化：只收集关键指标，减少内存消耗
+      minimum-expected-value:
+        http.server.requests: 10ms
+      maximum-expected-value:
+        http.server.requests: 5s
+    tags:
+      application: ${spring.application.name:unknown}
+      environment: ${spring.profiles.active:dev}
+      service: ${spring.application.name:unknown}
+      instance: ${spring.cloud.client.ip-address:${random.value}}
+
+# 自定义异常监控指标配置
+exception:
+  monitoring:
+    # 启用异常指标收集
+    enabled: true
+    # 异常类型分类
+    types:
+      business: "业务异常"
+      system: "系统异常"
+      param: "参数异常"
+      security: "安全异常"
+    # 关键异常码配置
+    critical-codes:
+      - "DATABASE_CONNECTION_ERROR"
+      - "FILE_SYSTEM_ERROR"
+      - "MEMORY_ERROR"
+      - "NETWORK_ERROR"
+      - "EXTERNAL_SERVICE_ERROR"
+    # 异常统计窗口配置
+    statistics:
+      window-size: 5m
+      buffer-size: 1000
+      cleanup-interval: 10m
+
+# Resilience4j监控配置优化（内存优化版）
+resilience4j:
+  metrics:
+    enabled: true
+    # 减少内存消耗：只收集核心指标
+    legacy:
+      enabled: false  # 禁用legacy指标减少内存
+    observer:
+      enabled: true
+      buffer-size: 50  # 减少缓冲区大小
+      window-size: 10s  # 减少窗口大小
+
+# JVM监控配置（内存优化）
+jvm:
+  monitoring:
+    # GC监控
+    gc:
+      enabled: true
+      threshold: 80%  # GC时间超过80%告警
+    # 内存监控
+    memory:
+      enabled: true
+      heap-threshold: 80%  # 堆内存使用超过80%告警
+      non-heap-threshold: 70%  # 非堆内存使用超过70%告警
+    # 线程监控
+    threads:
+      enabled: true
+      threshold: 100  # 活跃线程数超过100告警

@@ -19,7 +19,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.consume.dao.ReimbursementApplicationDao;
-import net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity;
+import net.lab1024.sa.common.consume.entity.ReimbursementApplicationEntity;
 import net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm;
 import net.lab1024.sa.consume.manager.AccountManager;
 
@@ -147,7 +147,7 @@ class ReimbursementApplicationServiceImplTest {
         when(reimbursementApplicationDao.selectByReimbursementNo(reimbursementNo)).thenReturn(mockEntity);
         when(reimbursementApplicationDao.updateById(any(ReimbursementApplicationEntity.class))).thenReturn(1);
 
-        net.lab1024.sa.consume.domain.entity.AccountEntity account = new net.lab1024.sa.consume.domain.entity.AccountEntity();
+        net.lab1024.sa.common.consume.entity.AccountEntity account = new net.lab1024.sa.common.consume.entity.AccountEntity();
         account.setAccountId(10L);
         when(accountManager.getAccountByUserId(mockEntity.getUserId())).thenReturn(account);
         when(accountManager.addBalance(eq(account.getId()), eq(mockEntity.getReimbursementAmount()))).thenReturn(true);

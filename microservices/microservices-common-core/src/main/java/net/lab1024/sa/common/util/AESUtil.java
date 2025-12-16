@@ -3,8 +3,8 @@ package net.lab1024.sa.common.util;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
+import jakarta.crypto.Cipher;
+import jakarta.crypto.spec.SecretKeySpec;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.SystemException;

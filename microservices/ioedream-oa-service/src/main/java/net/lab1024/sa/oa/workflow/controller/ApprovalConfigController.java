@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalConfigForm;
 import net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity;
 import net.lab1024.sa.oa.workflow.service.ApprovalConfigService;
@@ -41,6 +42,7 @@ import net.lab1024.sa.oa.workflow.service.ApprovalConfigService;
 @RestController
 @RequestMapping("/api/v1/workflow/approval-config")
 @Tag(name = "审批配置管理", description = "审批配置的CRUD操作，支持自定义审批类型和流程配置")
+@PermissionCheck(value = "OA_CONFIG", description = "审批配置管理模块权限")
 public class ApprovalConfigController {
 
     @Resource
@@ -49,6 +51,7 @@ public class ApprovalConfigController {
     @Observed(name = "approvalConfig.pageConfigs", contextualName = "approval-config-page-configs")
     @GetMapping("/page")
     @Operation(summary = "分页查询审批配置", description = "支持按业务类型、模块、状态筛选")
+    @PermissionCheck(value = "OA_CONFIG_VIEW", description = "查看审批配置")
     public ResponseDTO<PageResult<ApprovalConfigEntity>> pageConfigs(
             PageParam pageParam,
             @RequestParam(required = false) String businessType,
@@ -60,6 +63,7 @@ public class ApprovalConfigController {
     @Observed(name = "approvalConfig.getConfig", contextualName = "approval-config-get-config")
     @GetMapping("/{id}")
     @Operation(summary = "根据ID查询审批配置")
+    @PermissionCheck(value = "OA_CONFIG_VIEW", description = "查看审批配置详情")
     public ResponseDTO<ApprovalConfigEntity> getConfig(@PathVariable Long id) {
         return approvalConfigService.getConfig(id);
     }
@@ -67,6 +71,7 @@ public class ApprovalConfigController {
     @Observed(name = "approvalConfig.getConfigByBusinessType", contextualName = "approval-config-get-by-business-type")
     @GetMapping("/business-type/{businessType}")
     @Operation(summary = "根据业务类型查询审批配置", description = "支持自定义业务类型")
+    @PermissionCheck(value = "OA_CONFIG_VIEW", description = "按业务类型查看配置")
     public ResponseDTO<ApprovalConfigEntity> getConfigByBusinessType(@PathVariable String businessType) {
         return approvalConfigService.getConfigByBusinessType(businessType);
     }
@@ -74,6 +79,7 @@ public class ApprovalConfigController {
     @Observed(name = "approvalConfig.createConfig", contextualName = "approval-config-create-config")
     @PostMapping
     @Operation(summary = "创建审批配置", description = "支持自定义业务类型和审批流程配置")
+    @PermissionCheck(value = "OA_CONFIG_MANAGE", description = "创建审批配置")
     public ResponseDTO<ApprovalConfigEntity> createConfig(@Valid @RequestBody ApprovalConfigForm form) {
         return approvalConfigService.createConfig(form);
     }
@@ -81,6 +87,7 @@ public class ApprovalConfigController {
     @Observed(name = "approvalConfig.updateConfig", contextualName = "approval-config-update-config")
     @PutMapping("/{id}")
     @Operation(summary = "更新审批配置")
+    @PermissionCheck(value = "OA_CONFIG_MANAGE", description = "更新审批配置")
     public ResponseDTO<ApprovalConfigEntity> updateConfig(
             @PathVariable Long id,
             @Valid @RequestBody ApprovalConfigForm form) {
@@ -90,6 +97,7 @@ public class ApprovalConfigController {
     @Observed(name = "approvalConfig.deleteConfig", contextualName = "approval-config-delete-config")
     @DeleteMapping("/{id}")
     @Operation(summary = "删除审批配置")
+    @PermissionCheck(value = "OA_CONFIG_DELETE", description = "删除审批配置")
     public ResponseDTO<Void> deleteConfig(@PathVariable Long id) {
         return approvalConfigService.deleteConfig(id);
     }
@@ -97,6 +105,7 @@ public class ApprovalConfigController {
     @Observed(name = "approvalConfig.enableConfig", contextualName = "approval-config-enable-config")
     @PutMapping("/{id}/enable")
     @Operation(summary = "启用审批配置")
+    @PermissionCheck(value = "OA_CONFIG_MANAGE", description = "启用审批配置")
     public ResponseDTO<Void> enableConfig(@PathVariable Long id) {
         return approvalConfigService.enableConfig(id);
     }
@@ -104,6 +113,7 @@ public class ApprovalConfigController {
     @Observed(name = "approvalConfig.disableConfig", contextualName = "approval-config-disable-config")
     @PutMapping("/{id}/disable")
     @Operation(summary = "禁用审批配置")
+    @PermissionCheck(value = "OA_CONFIG_MANAGE", description = "禁用审批配置")
     public ResponseDTO<Void> disableConfig(@PathVariable Long id) {
         return approvalConfigService.disableConfig(id);
     }

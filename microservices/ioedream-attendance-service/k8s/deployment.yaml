@@ -1,0 +1,418 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: attendance-service
+  namespace: ioedream-attendance
+  labels:
+    app: attendance-service
+    version: v1.0.0
+    tier: backend
+    component: attendance
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    app.kubernetes.io/name: attendance-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/version: v1.0.0
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+      progressDeadlineSeconds: 600
+  selector:
+    matchLabels:
+      app: attendance-service
+      version: v1.0.0
+  template:
+    metadata:
+      labels:
+        app: attendance-service
+        version: v1.0.0
+        tier: backend
+        component: attendance
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8091"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      serviceAccountName: attendance-service
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: Always
+      containers:
+      - name: attendance-service
+        image: ioedream/attendance-service:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8091
+          protocol: TCP
+        - name: debug
+          containerPort: 5005
+          protocol: TCP
+        env:
+        # Spring Boot配置
+        - name: SPRING_PROFILES_ACTIVE
+          value: "k8s"
+        - name: SERVER_PORT
+          value: "8091"
+
+        # 数据库配置
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            secretKeyRef:
+              name: attendance-secret
+              key: database-url
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: attendance-secret
+              key: database-username
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: attendance-secret
+              key: database-password
+
+        # Redis配置
+        - name: SPRING_REDIS_HOST
+          value: "redis-service.ioedream-attendance.svc.cluster.local"
+        - name: SPRING_REDIS_PORT
+          value: "6379"
+        - name: SPRING_REDIS_DATABASE
+          value: "0"
+        - name: SPRING_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: attendance-secret
+              key: redis-password
+
+        # RabbitMQ配置
+        - name: SPRING_RABBITMQ_HOST
+          value: "rabbitmq-service.ioedream-attendance.svc.cluster.local"
+        - name: SPRING_RABBITMQ_PORT
+          value: "5672"
+        - name: SPRING_RABBITMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: attendance-secret
+              key: rabbitmq-username
+        - name: SPRING_RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: attendance-secret
+              key: rabbitmq-password
+
+        # Nacos配置
+        - name: SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR
+          value: "nacos-service.ioedream-attendance.svc.cluster.local:8848"
+        - name: SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR
+          value: "nacos-service.ioedream-attendance.svc.cluster.local:8848"
+        - name: SPRING_CLOUD_NACOS_DISCOVERY_NAMESPACE
+          value: "prod"
+        - name: SPRING_CLOUD_NACOS_CONFIG_NAMESPACE
+          value: "prod"
+        - name: SPRING_CLOUD_NACOS_DISCOVERY_GROUP
+          value: "IOE-DREAM"
+        - name: SPRING_CLOUD_NACOS_CONFIG_GROUP
+          value: "IOE-DREAM"
+
+        # Seata配置
+        - name: SEATA_ENABLED
+          value: "true"
+        - name: SEATA_APPLICATION_ID
+          value: "ioedream-attendance-service"
+        - name: SEATA_TX_SERVICE_GROUP
+          value: "default_tx_group"
+        - name: SEATA_CONFIG_TYPE
+          value: "nacos"
+        - name: SEATA_CONFIG_NACOS_SERVER_ADDR
+          value: "nacos-service.ioedream-attendance.svc.cluster.local:8848"
+        - name: SEATA_CONFIG_NACOS_NAMESPACE
+          value: "prod"
+        - name: SEATA_CONFIG_NACOS_GROUP
+          value: "SEATA_GROUP"
+
+        # JVM配置
+        - name: JAVA_OPTS
+          value: "-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/app/logs -Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai"
+        - name: JAVA_DEBUG_ENABLED
+          value: "false"
+
+        # 监控配置
+        - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
+          value: "health,info,metrics,prometheus"
+        - name: MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS
+          value: "always"
+        - name: MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED
+          value: "true"
+
+        # 日志配置
+        - name: LOGGING_LEVEL_ROOT
+          value: "INFO"
+        - name: LOGGING_LEVEL_NET_LAB1024_SA_ATTENDANCE
+          value: "INFO"
+        - name: LOGGING_FILE_NAME
+          value: "/app/logs/attendance-service.log"
+
+        # 考勤服务配置
+        - name: ATTENDANCE_REALTIME_ENABLED
+          value: "true"
+        - name: ATTENDANCE_REALTIME_EVENT_QUEUE_SIZE
+          value: "50000"
+        - name: ATTENDANCE_REALTIME_BATCH_SIZE
+          value: "200"
+        - name: ATTENDANCE_REALTIME_BATCH_TIMEOUT_MS
+          value: "3000"
+
+        - name: ATTENDANCE_RULE_ENGINE_ENABLED
+          value: "true"
+        - name: ATTENDANCE_RULE_ENGINE_MAX_RULES
+          value: "200"
+        - name: ATTENDANCE_RULE_ENGINE_CACHE_SIZE
+          value: "2000"
+        - name: ATTENDANCE_RULE_ENGINE_CACHE_TTL_MINUTES
+          value: "60"
+
+        - name: ATTENDANCE_SCHEDULING_ALGORITHM
+          value: "genetic"
+        - name: ATTENDANCE_SCHEDULING_POPULATION_SIZE
+          value: "200"
+        - name: ATTENDANCE_SCHEDULING_MAX_ITERATIONS
+          value: "2000"
+        - name: ATTENDANCE_SCHEDULING_CROSSOVER_RATE
+          value: "0.8"
+        - name: ATTENDANCE_SCHEDULING_MUTATION_RATE
+          value: "0.2"
+
+        - name: ATTENDANCE_MOBILE_CACHE_TIMEOUT
+          value: "7200"
+        - name: ATTENDANCE_MOBILE_MAX_RETRY
+          value: "5"
+        - name: ATTENDANCE_MOBILE_ASYNC_ENABLED
+          value: "true"
+        - name: ATTENDANCE_MOBILE_LOCATION_CHECK_ENABLED
+          value: "true"
+
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config
+          readOnly: true
+        - name: logs-volume
+          mountPath: /app/logs
+        - name: timezone-volume
+          mountPath: /etc/localtime
+          readOnly: true
+
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8091
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
+
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8091
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8091
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 5
+          failureThreshold: 30
+          successThreshold: 1
+
+      volumes:
+      - name: config-volume
+        configMap:
+          name: attendance-config
+      - name: logs-volume
+        emptyDir: {}
+      - name: timezone-volume
+        hostPath:
+          path: /etc/localtime
+      - name: jvm-dumps-volume
+        emptyDir: {}
+
+      # 镜像拉取策略
+      imagePullSecrets:
+      - name: registry-secret
+      - name: dockerhub-secret
+
+      # 节点亲和性
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - attendance-service
+              topologyKey: kubernetes.io/hostname
+
+      # 节点容忍
+      tolerations:
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+
+      # 安全上下文
+      securityContext:
+        capabilities:
+          drop:
+          - NET_RAW
+          - SYS_ADMIN
+          - SYS_PTRACE
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: false
+
+      # 优雅关闭
+      lifecycle:
+        preStop:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "sleep 15 && curl -X POST http://localhost:8091/actuator/shutdown"
+
+  # 历史版本保留
+  revisionHistoryLimit: 10
+
+  # 部署策略
+  paused: false
+
+  # 最短就绪时间
+  minReadySeconds: 30
+
+  # 进度截止时间
+  progressDeadlineSeconds: 600
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: attendance-service
+  namespace: ioedream-attendance
+  labels:
+    app: attendance-service
+    version: v1.0.0
+    tier: backend
+    component: attendance
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-policy: "ELBSecurityPolicy-TLS13-1-2017-06"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "Environment=prod,Application=Attendance,Team=IOE-DREAM"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8091"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8091
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 8091
+    protocol: TCP
+  selector:
+    app: attendance-service
+    version: v1.0.0
+  sessionAffinity: ClientIP
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: attendance-service
+  namespace: ioedream-attendance
+  annotations:
+    iam.amazonaws.com/role: arn:aws:iam::123456789012:role/attendance-service-role
+    iam.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/attendance-service-role
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: attendance-service
+  labels:
+    app: attendance-service
+    tier: backend
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints", "configmaps", "secrets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: attendance-service-binding
+  labels:
+    app: attendance-service
+    tier: backend
+subjects:
+- kind: ServiceAccount
+  name: attendance-service
+  namespace: ioedream-attendance
+roleRef:
+  kind: ClusterRole
+  name: attendance-service
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: PodDisruptionBudget
+metadata:
+  name: attendance-service-pdb
+  namespace: ioedream-attendance
+  labels:
+    app: attendance-service
+    tier: backend
+spec:
+  minAvailable: 2
+  maxUnavailable: 1

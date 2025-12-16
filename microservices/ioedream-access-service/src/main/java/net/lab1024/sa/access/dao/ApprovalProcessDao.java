@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.access.access.entity.ApprovalProcessEntity;
+import net.lab1024.sa.access.entity.ApprovalProcessEntity;
 
 /**
  * 审批流程DAO

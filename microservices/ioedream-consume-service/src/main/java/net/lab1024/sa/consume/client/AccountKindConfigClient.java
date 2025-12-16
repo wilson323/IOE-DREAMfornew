@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.DirectServiceClient;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
@@ -27,7 +26,7 @@ public class AccountKindConfigClient {
     @Resource
     private GatewayServiceClient gatewayServiceClient;
 
-    @Autowired(required = false)
+    @Resource
     private DirectServiceClient directServiceClient;
 
     @Value("${ioedream.direct-call.enabled:false}")

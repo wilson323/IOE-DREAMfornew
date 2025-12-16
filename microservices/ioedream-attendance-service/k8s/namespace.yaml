@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ioedream-attendance
+  labels:
+    name: ioedream-attendance
+    app: ioedream
+    tier: attendance
+spec:
+  finalizers:
+  - kubernetes

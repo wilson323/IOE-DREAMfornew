@@ -16,7 +16,7 @@ import net.lab1024.sa.common.monitor.domain.entity.NotificationEntity;
  * 监控通知DAO
  * <p>
  * 严格遵循CLAUDE.md规范:
- * - 使用@Mapper注解（禁止@Repository）
+ * - 使用@Mapper注解（禁止@Mapper）
  * - 使用Dao后缀（禁止Repository后缀）
  * - 继承BaseMapper提供基础CRUD
  * - 使用MyBatis-Plus（禁止JPA）

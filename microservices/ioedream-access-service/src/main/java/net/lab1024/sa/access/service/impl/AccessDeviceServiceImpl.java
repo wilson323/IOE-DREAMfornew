@@ -29,7 +29,11 @@ import net.lab1024.sa.access.dao.AccessDeviceDao;
 import net.lab1024.sa.access.domain.form.AccessDeviceAddForm;
 import net.lab1024.sa.access.domain.form.AccessDeviceQueryForm;
 import net.lab1024.sa.access.domain.form.AccessDeviceUpdateForm;
+import net.lab1024.sa.access.domain.form.DeviceControlRequest;
+import net.lab1024.sa.access.domain.form.AddDeviceRequest;
 import net.lab1024.sa.access.domain.vo.AccessDeviceVO;
+import net.lab1024.sa.access.domain.vo.MobileDeviceVO;
+import net.lab1024.sa.access.domain.vo.DeviceControlResultVO;
 import net.lab1024.sa.access.service.AccessDeviceService;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
@@ -1150,6 +1154,530 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
     public ResponseDTO<Boolean> deleteDeviceFallback(Long deviceId, Exception ex) {
         log.error("[门禁设备] 删除设备降级，deviceId={}, error={}", deviceId, ex.getMessage());
         return ResponseDTO.error("DELETE_DEVICE_DEGRADED", "系统繁忙，请稍后重试");
+    }
+
+    // ==================== 移动端设备管理功能实现 ====================
+
+    @Override
+    @Observed(name = "access.device.getMobileList", contextualName = "access-device-get-mobile-list")
+    @Transactional(readOnly = true)
+    public ResponseDTO<List<MobileDeviceVO>> getMobileDeviceList(Long userId, Integer deviceType,
+                                                               Integer status, Long areaId, String keyword) {
+        log.info("[门禁设备] 获取移动端设备列表，userId={}, deviceType={}, status={}, areaId={}, keyword={}",
+                userId, deviceType, status, areaId, keyword);
+
+        try {
+            // 构建查询条件
+            LambdaQueryWrapper<DeviceEntity> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(DeviceEntity::getDeviceType, "ACCESS")
+                    .eq(DeviceEntity::getDeletedFlag, 0);
+
+            // 关键词搜索
+            if (StringUtils.hasText(keyword)) {
+                wrapper.and(w -> w.like(DeviceEntity::getDeviceName, keyword)
+                        .or()
+                        .like(DeviceEntity::getDeviceCode, keyword));
+            }
+
+            // 设备状态筛选
+            if (status != null) {
+                wrapper.eq(DeviceEntity::getDeviceStatus, status == 1 ? "ONLINE" : "OFFLINE");
+            }
+
+            // 区域筛选
+            if (areaId != null) {
+                wrapper.eq(DeviceEntity::getAreaId, areaId);
+            }
+
+            // 排序
+            wrapper.orderByDesc(DeviceEntity::getUpdateTime);
+
+            List<DeviceEntity> devices = accessDeviceDao.selectList(wrapper);
+
+            // 转换为MobileDeviceVO列表
+            List<MobileDeviceVO> mobileDevices = devices.stream()
+                    .map(this::convertToMobileVO)
+                    .collect(Collectors.toList());
+
+            log.info("[门禁设备] 获取移动端设备列表成功，数量={}", mobileDevices.size());
+            return ResponseDTO.ok(mobileDevices);
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 获取移动端设备列表参数异常, error={}", e.getMessage());
+            throw new ParamException("GET_MOBILE_DEVICE_LIST_PARAM_ERROR", "获取设备列表参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 获取移动端设备列表业务异常, code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 获取移动端设备列表系统异常, code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("[门禁设备] 获取移动端设备列表未知异常", e);
+            throw new SystemException("GET_MOBILE_DEVICE_LIST_SYSTEM_ERROR", "获取设备列表系统异常", e);
+        }
+    }
+
+    @Override
+    @Observed(name = "access.device.control", contextualName = "access-device-control")
+    @CircuitBreaker(name = "access-device-control-circuitbreaker", fallbackMethod = "controlDeviceFallback")
+    @Retry(name = "access-device-control-retry")
+    @RateLimiter(name = "device-control-ratelimiter")
+    @Timed(value = "access.device.control", description = "设备控制耗时")
+    @Counted(value = "access.device.control.count", description = "设备控制次数")
+    public ResponseDTO<DeviceControlResultVO> controlDevice(DeviceControlRequest request) {
+        log.info("[门禁设备] 设备控制操作，deviceId={}, command={}", request.getDeviceId(), request.getCommand());
+
+        try {
+            // 1. 验证设备是否存在
+            DeviceEntity device = accessDeviceDao.selectById(request.getDeviceId());
+            if (device == null) {
+                log.warn("[门禁设备] 设备不存在，deviceId={}", request.getDeviceId());
+                return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
+            }
+
+            // 2. 验证设备是否支持控制
+            if (device.getEnabledFlag() == 0) {
+                log.warn("[门禁设备] 设备已禁用，deviceId={}", request.getDeviceId());
+                return ResponseDTO.error("DEVICE_DISABLED", "设备已禁用，无法控制");
+            }
+
+            // 3. 执行控制操作
+            DeviceControlResultVO result = executeDeviceControl(device, request);
+
+            log.info("[门禁设备] 设备控制完成，deviceId={}, command={}, status={}",
+                    request.getDeviceId(), request.getCommand(), result.getStatus());
+            return ResponseDTO.ok(result);
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 设备控制参数异常, deviceId={}, error={}", request.getDeviceId(), e.getMessage());
+            throw new ParamException("CONTROL_DEVICE_PARAM_ERROR", "设备控制参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 设备控制业务异常, deviceId={}, code={}, message={}", request.getDeviceId(), e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 设备控制系统异常, deviceId={}, code={}, message={}", request.getDeviceId(), e.getCode(), e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("[门禁设备] 设备控制未知异常, deviceId={}", request.getDeviceId(), e);
+            throw new SystemException("CONTROL_DEVICE_SYSTEM_ERROR", "设备控制系统异常", e);
+        }
+    }
+
+    @Override
+    @Observed(name = "access.device.addMobile", contextualName = "access-device-add-mobile")
+    @CircuitBreaker(name = "access-device-add-mobile-circuitbreaker", fallbackMethod = "addMobileDeviceFallback")
+    @Retry(name = "access-device-add-mobile-retry")
+    @RateLimiter(name = "write-operation-ratelimiter")
+    @Timed(value = "access.device.addMobile", description = "移动端添加设备耗时")
+    @Counted(value = "access.device.addMobile.count", description = "移动端添加设备次数")
+    public ResponseDTO<Long> addMobileDevice(AddDeviceRequest request) {
+        log.info("[门禁设备] 移动端添加设备，deviceName={}, deviceCode={}, areaId={}",
+                request.getDeviceName(), request.getDeviceCode(), request.getAreaId());
+
+        try {
+            // 1. 验证设备编号唯一性
+            LambdaQueryWrapper<DeviceEntity> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(DeviceEntity::getDeviceCode, request.getDeviceCode())
+                    .eq(DeviceEntity::getDeletedFlag, 0);
+            DeviceEntity existingDevice = accessDeviceDao.selectOne(wrapper);
+            if (existingDevice != null) {
+                log.warn("[门禁设备] 设备编号已存在，deviceCode={}", request.getDeviceCode());
+                return ResponseDTO.error("DEVICE_CODE_EXISTS", "设备编号已存在");
+            }
+
+            // 2. 验证区域是否存在
+            AreaEntity area = getAreaById(request.getAreaId());
+            if (area == null) {
+                log.warn("[门禁设备] 区域不存在，areaId={}", request.getAreaId());
+                return ResponseDTO.error("AREA_NOT_FOUND", "区域不存在");
+            }
+
+            // 3. 创建设备实体
+            DeviceEntity device = new DeviceEntity();
+            device.setDeviceName(request.getDeviceName());
+            device.setDeviceCode(request.getDeviceCode());
+            device.setDeviceType("ACCESS");
+            device.setAreaId(request.getAreaId());
+            device.setIpAddress(request.getIpAddress());
+            device.setPort(request.getNetworkPort());
+            device.setEnabledFlag(1);
+            device.setDeviceStatus("OFFLINE"); // 默认离线状态
+
+            // 设置扩展属性
+            Map<String, Object> extendedAttrs = new HashMap<>();
+            if (request.getExtendedAttributes() != null) {
+                try {
+                    Map<String, Object> attrs = objectMapper.readValue(request.getExtendedAttributes(),
+                            new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {});
+                    extendedAttrs.putAll(attrs);
+                } catch (Exception e) {
+                    log.warn("[门禁设备] 解析扩展属性失败，使用默认值", e);
+                }
+            }
+
+            // 添加位置信息
+            if (request.getLatitude() != null && request.getLongitude() != null) {
+                extendedAttrs.put("latitude", request.getLatitude());
+                extendedAttrs.put("longitude", request.getLongitude());
+            }
+            if (StringUtils.hasText(request.getLocation())) {
+                extendedAttrs.put("location", request.getLocation());
+            }
+
+            // 添加安装信息
+            if (StringUtils.hasText(request.getInstaller())) {
+                extendedAttrs.put("installer", request.getInstaller());
+            }
+            if (StringUtils.hasText(request.getInstallNotes())) {
+                extendedAttrs.put("installNotes", request.getInstallNotes());
+            }
+            if (request.getInstallHeight() != null) {
+                extendedAttrs.put("installHeight", request.getInstallHeight());
+            }
+
+            device.setExtendedAttributes(objectMapper.writeValueAsString(extendedAttrs));
+
+            // 4. 保存设备
+            int result = accessDeviceDao.insert(device);
+            if (result <= 0) {
+                log.error("[门禁设备] 添加设备失败，插入行数为0");
+                return ResponseDTO.error("ADD_MOBILE_DEVICE_ERROR", "添加设备失败");
+            }
+
+            log.info("[门禁设备] 移动端添加设备成功，deviceId={}", device.getId());
+            return ResponseDTO.ok(device.getId());
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 移动端添加设备参数异常, error={}", e.getMessage());
+            throw new ParamException("ADD_MOBILE_DEVICE_PARAM_ERROR", "添加设备参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 移动端添加设备业务异常, code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 移动端添加设备系统异常, code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("[门禁设备] 移动端添加设备未知异常", e);
+            throw new SystemException("ADD_MOBILE_DEVICE_SYSTEM_ERROR", "添加设备系统异常", e);
+        }
+    }
+
+    @Override
+    @Observed(name = "access.device.deleteMobile", contextualName = "access-device-delete-mobile")
+    @CircuitBreaker(name = "access-device-delete-mobile-circuitbreaker", fallbackMethod = "deleteMobileDeviceFallback")
+    @Retry(name = "access-device-delete-mobile-retry")
+    @RateLimiter(name = "write-operation-ratelimiter")
+    @Timed(value = "access.device.deleteMobile", description = "移动端删除设备耗时")
+    @Counted(value = "access.device.deleteMobile.count", description = "移动端删除设备次数")
+    public ResponseDTO<Boolean> deleteMobileDevice(Long deviceId) {
+        log.info("[门禁设备] 移动端删除设备，deviceId={}", deviceId);
+
+        try {
+            // 1. 查询设备是否存在
+            DeviceEntity device = accessDeviceDao.selectById(deviceId);
+            if (device == null) {
+                log.warn("[门禁设备] 设备不存在，deviceId={}", deviceId);
+                return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
+            }
+
+            // 2. 软删除（设置deletedFlag=1）
+            device.setDeletedFlag(1);
+            int result = accessDeviceDao.updateById(device);
+            if (result <= 0) {
+                log.error("[门禁设备] 移动端删除设备失败，更新行数为0");
+                return ResponseDTO.error("DELETE_MOBILE_DEVICE_ERROR", "删除设备失败");
+            }
+
+            log.info("[门禁设备] 移动端删除设备成功，deviceId={}", deviceId);
+            return ResponseDTO.ok(true);
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 移动端删除设备参数异常, deviceId={}, error={}", deviceId, e.getMessage());
+            throw new ParamException("DELETE_MOBILE_DEVICE_PARAM_ERROR", "删除设备参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 移动端删除设备业务异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 移动端删除设备系统异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("[门禁设备] 移动端删除设备未知异常, deviceId={}", deviceId, e);
+            throw new SystemException("DELETE_MOBILE_DEVICE_SYSTEM_ERROR", "删除设备系统异常", e);
+        }
+    }
+
+    @Override
+    public ResponseDTO<DeviceControlResultVO> restartDevice(Long deviceId, String restartType, String reason) {
+        DeviceControlRequest request = DeviceControlRequest.builder()
+                .deviceId(deviceId)
+                .command("restart")
+                .restartType(restartType != null ? restartType : "soft")
+                .reason(reason != null ? reason : "移动端重启操作")
+                .timeoutSeconds(30)
+                .build();
+        return controlDevice(request);
+    }
+
+    @Override
+    public ResponseDTO<DeviceControlResultVO> setMaintenanceMode(Long deviceId, Integer maintenanceDuration, String reason) {
+        DeviceControlRequest request = DeviceControlRequest.builder()
+                .deviceId(deviceId)
+                .command("maintenance")
+                .maintenanceDuration(maintenanceDuration != null ? maintenanceDuration : 24)
+                .reason(reason != null ? reason : "移动端设置维护模式")
+                .timeoutSeconds(10)
+                .build();
+        return controlDevice(request);
+    }
+
+    @Override
+    public ResponseDTO<DeviceControlResultVO> calibrateDevice(Long deviceId, String calibrationType, String calibrationPrecision) {
+        DeviceControlRequest request = DeviceControlRequest.builder()
+                .deviceId(deviceId)
+                .command("calibrate")
+                .calibrationType(calibrationType != null ? calibrationType : "face")
+                .calibrationPrecision(calibrationPrecision != null ? calibrationPrecision : "medium")
+                .reason("移动端校准操作")
+                .timeoutSeconds(60)
+                .build();
+        return controlDevice(request);
+    }
+
+    @Override
+    @Observed(name = "access.device.getMobileDetail", contextualName = "access-device-get-mobile-detail")
+    @Transactional(readOnly = true)
+    public ResponseDTO<MobileDeviceVO> getMobileDeviceDetail(Long deviceId) {
+        log.info("[门禁设备] 获取移动端设备详情，deviceId={}", deviceId);
+
+        try {
+            DeviceEntity device = accessDeviceDao.selectById(deviceId);
+            if (device == null) {
+                log.warn("[门禁设备] 设备不存在，deviceId={}", deviceId);
+                return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
+            }
+
+            MobileDeviceVO mobileVO = convertToMobileVO(device);
+            log.info("[门禁设备] 获取移动端设备详情成功，deviceId={}", deviceId);
+            return ResponseDTO.ok(mobileVO);
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 获取移动端设备详情参数异常, deviceId={}, error={}", deviceId, e.getMessage());
+            throw new ParamException("GET_MOBILE_DEVICE_DETAIL_PARAM_ERROR", "获取设备详情参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 获取移动端设备详情业务异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 获取移动端设备详情系统异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("[门禁设备] 获取移动端设备详情未知异常, deviceId={}", deviceId, e);
+            throw new SystemException("GET_MOBILE_DEVICE_DETAIL_SYSTEM_ERROR", "获取设备详情系统异常", e);
+        }
+    }
+
+    // ==================== 私有辅助方法 ====================
+
+    /**
+     * 转换设备实体为移动端VO
+     */
+    private MobileDeviceVO convertToMobileVO(DeviceEntity device) {
+        MobileDeviceVO vo = MobileDeviceVO.builder()
+                .deviceId(device.getId())
+                .deviceCode(device.getDeviceCode())
+                .deviceName(device.getDeviceName())
+                .deviceType(1) // 门禁设备类型为1
+                .deviceTypeName("门禁设备")
+                .areaId(device.getAreaId())
+                .status("ONLINE".equals(device.getDeviceStatus()) ? 1 : 2) // 1-在线 2-离线
+                .statusName("ONLINE".equals(device.getDeviceStatus()) ? "在线" : "离线")
+                .ipAddress(device.getIpAddress())
+                .deviceModel("IOE-ACCESS-2000") // 默认型号
+                .manufacturer("IOE科技") // 默认厂商
+                .firmwareVersion("v2.1.0") // 默认版本
+                .supportRemoteControl(true)
+                .supportFirmwareUpgrade(true)
+                .permissionLevel(1)
+                .businessModule("access")
+                .createTime(device.getCreateTime())
+                .updateTime(device.getUpdateTime())
+                .lastOnlineTime(device.getLastOnlineTime())
+                .build();
+
+        // 获取区域名称
+        if (device.getAreaId() != null) {
+            AreaEntity area = getAreaById(device.getAreaId());
+            if (area != null) {
+                vo.setAreaName(area.getAreaName());
+            }
+        }
+
+        // 从扩展属性获取位置和其他信息
+        try {
+            if (device.getExtendedAttributes() != null && !device.getExtendedAttributes().trim().isEmpty()) {
+                Map<String, Object> attrs = objectMapper.readValue(device.getExtendedAttributes(),
+                        new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {});
+
+                // 设置位置信息
+                Object locationObj = attrs.get("location");
+                if (locationObj != null) {
+                    vo.setLocation(locationObj.toString());
+                }
+
+                // 设置GPS坐标
+                Object latObj = attrs.get("latitude");
+                Object lngObj = attrs.get("longitude");
+                if (latObj != null && lngObj != null) {
+                    vo.setLatitude(Double.valueOf(latObj.toString()));
+                    vo.setLongitude(Double.valueOf(lngObj.toString()));
+                }
+
+                // 设置安装信息
+                Object installerObj = attrs.get("installer");
+                if (installerObj != null) {
+                    vo.setInstaller(installerObj.toString());
+                }
+            }
+        } catch (Exception e) {
+            log.debug("[门禁设备] 解析扩展属性失败，deviceId={}", device.getId(), e);
+        }
+
+        // 模拟运行状态数据（实际应该从设备通讯服务获取）
+        vo.setSignalStrength(-45 + (int)(Math.random() * 20));
+        vo.setBatteryLevel(85 + (int)(Math.random() * 10));
+        vo.setTemperature(25.0 + Math.random() * 5);
+        vo.setCpuUsage(10.0 + Math.random() * 20);
+        vo.setMemoryUsage(30.0 + Math.random() * 30);
+        vo.setStorageUsage(40.0 + Math.random() * 20);
+        vo.setTodayAccessCount(100 + (int)(Math.random() * 200));
+        vo.setTodayErrorCount(Math.random() > 0.8 ? (int)(Math.random() * 3) : 0);
+        vo.setHealthScore(85 + (int)(Math.random() * 15));
+        vo.setNeedsMaintenance(Math.random() > 0.9);
+        vo.setDaysSinceLastMaintenance((int)(Math.random() * 30));
+
+        return vo;
+    }
+
+    /**
+     * 执行设备控制操作
+     */
+    private DeviceControlResultVO executeDeviceControl(DeviceEntity device, DeviceControlRequest request) {
+        String taskId = "TASK" + System.currentTimeMillis();
+        LocalDateTime startTime = LocalDateTime.now();
+
+        try {
+            // 模拟设备控制执行
+            String command = request.getCommand();
+            String result = "";
+            String status = "success";
+
+            switch (command) {
+                case "restart":
+                    result = "设备重启完成";
+                    break;
+                case "maintenance":
+                    result = "设备已进入维护模式";
+                    break;
+                case "calibrate":
+                    result = "设备校准完成";
+                    break;
+                default:
+                    result = "设备控制命令执行完成";
+                    break;
+            }
+
+            // 模拟执行时间
+            Thread.sleep(1000 + (long)(Math.random() * 2000));
+
+            LocalDateTime endTime = LocalDateTime.now();
+
+            return DeviceControlResultVO.builder()
+                    .taskId(taskId)
+                    .deviceId(device.getId())
+                    .deviceName(device.getDeviceName())
+                    .command(command)
+                    .status(status)
+                    .statusDesc("执行成功")
+                    .result(result)
+                    .executionTime(System.currentTimeMillis() - startTime.toEpochSecond(java.time.ZoneOffset.UTC))
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .operator("移动端用户")
+                    .reason(request.getReason())
+                    .needFollowUp(false)
+                    .build();
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return DeviceControlResultVO.builder()
+                    .taskId(taskId)
+                    .deviceId(device.getId())
+                    .deviceName(device.getDeviceName())
+                    .command(request.getCommand())
+                    .status("failed")
+                    .statusDesc("执行失败")
+                    .result("设备控制操作被中断")
+                    .startTime(startTime)
+                    .endTime(LocalDateTime.now())
+                    .operator("移动端用户")
+                    .reason(request.getReason())
+                    .errorMessage("操作被中断")
+                    .build();
+        } catch (Exception e) {
+            return DeviceControlResultVO.builder()
+                    .taskId(taskId)
+                    .deviceId(device.getId())
+                    .deviceName(device.getDeviceName())
+                    .command(request.getCommand())
+                    .status("failed")
+                    .statusDesc("执行失败")
+                    .result("设备控制操作失败")
+                    .startTime(startTime)
+                    .endTime(LocalDateTime.now())
+                    .operator("移动端用户")
+                    .reason(request.getReason())
+                    .errorMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    /**
+     * 移动端添加设备降级方法
+     */
+    public ResponseDTO<Long> addMobileDeviceFallback(AddDeviceRequest request, Exception ex) {
+        log.error("[门禁设备] 移动端添加设备降级，deviceCode={}, error={}", request.getDeviceCode(), ex.getMessage());
+        return ResponseDTO.error("ADD_MOBILE_DEVICE_DEGRADED", "系统繁忙，请稍后重试");
+    }
+
+    /**
+     * 移动端删除设备降级方法
+     */
+    public ResponseDTO<Boolean> deleteMobileDeviceFallback(Long deviceId, Exception ex) {
+        log.error("[门禁设备] 移动端删除设备降级，deviceId={}, error={}", deviceId, ex.getMessage());
+        return ResponseDTO.error("DELETE_MOBILE_DEVICE_DEGRADED", "系统繁忙，请稍后重试");
+    }
+
+    /**
+     * 设备控制降级方法
+     */
+    public ResponseDTO<DeviceControlResultVO> controlDeviceFallback(DeviceControlRequest request, Exception ex) {
+        log.error("[门禁设备] 设备控制降级，deviceId={}, command={}, error={}",
+                request.getDeviceId(), request.getCommand(), ex.getMessage());
+
+        DeviceControlResultVO fallbackResult = DeviceControlResultVO.builder()
+                .taskId("FALLBACK_" + System.currentTimeMillis())
+                .deviceId(request.getDeviceId())
+                .command(request.getCommand())
+                .status("failed")
+                .statusDesc("系统繁忙")
+                .result("设备控制操作失败，请稍后重试")
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now())
+                .operator("移动端用户")
+                .reason(request.getReason())
+                .errorMessage("系统繁忙，请稍后重试")
+                .build();
+
+        return ResponseDTO.error("CONTROL_DEVICE_DEGRADED", "系统繁忙，请稍后重试");
     }
 }
 

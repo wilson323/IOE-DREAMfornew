@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.AccountAddForm;
 import net.lab1024.sa.consume.domain.form.AccountUpdateForm;
 import net.lab1024.sa.common.domain.PageResult;

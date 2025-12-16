@@ -1,0 +1,105 @@
+# ============================================================
+# IOE-DREAM 分布式追踪配置
+# Micrometer Tracing + Zipkin + Brave
+# ============================================================
+
+# ==================== 分布式追踪配置 ====================
+management:
+  tracing:
+    # 启用分布式追踪
+    enabled: true
+
+    # 采样配置
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.1}  # 10%采样率（生产环境）
+
+    # 追踪导出配置
+    zipkin:
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+
+  # 指标配置
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+      version: ${app.version:1.0.0}
+
+    # Prometheus导出
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+
+  # 健康检查端点
+  health:
+    tracing:
+      enabled: true
+
+# ==================== Spring Boot 追踪配置 ====================
+spring:
+  sleuth:
+    # Spring Cloud Sleuth配置（兼容性）
+    enabled: true
+    zipkin:
+      base-url: ${ZIPKIN_ENDPOINT:http://localhost:9411}
+      enabled: true
+
+    # 采样配置
+    sampler:
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.1}
+
+  application:
+    name: ${SERVICE_NAME:unknown-service}
+
+# ==================== 日志追踪配置 ====================
+logging:
+  pattern:
+    # 包含追踪ID的日志格式
+    level: "[%X{traceId:-},%X{spanId:-}] %5p [%t] %-40.40logger{39} : %m%n"
+
+  # 追踪相关日志级别
+  level:
+    org.springframework.cloud.sleuth: DEBUG
+    io.micrometer.tracing: DEBUG
+    zipkin2: DEBUG
+
+# ==================== 自定义追踪配置 ====================
+tracing:
+  # 自定义标签
+  tags:
+    service: ${spring.application.name}
+    version: ${app.version:1.0.0}
+    environment: ${spring.profiles.active}
+
+  # 高优先级追踪的操作
+  high-priority-operations:
+    - "/api/v1/*/query"
+    - "/api/v1/*/create"
+    - "/api/v1/*/update"
+    - "/api/v1/*/delete"
+
+  # 异步追踪配置
+  async:
+    enabled: true
+    thread-pool-size: 10
+
+# ==================== 性能监控配置 ====================
+performance:
+  tracing:
+    # 慢操作阈值（毫秒）
+    slow-operation-threshold: 1000
+
+    # 数据库查询追踪
+    database:
+      enabled: true
+      slow-query-threshold: 500
+
+    # HTTP请求追踪
+    http:
+      enabled: true
+      slow-request-threshold: 1000
+
+    # 缓存操作追踪
+    cache:
+      enabled: true
+      slow-operation-threshold: 100

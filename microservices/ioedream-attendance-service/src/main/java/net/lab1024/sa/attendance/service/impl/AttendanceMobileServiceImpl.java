@@ -20,7 +20,7 @@ import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.AttendanceShiftDao;
-import net.lab1024.sa.attendance.domain.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.service.AttendanceMobileService;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.AreaEntity;

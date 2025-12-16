@@ -16,7 +16,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity;
+import net.lab1024.sa.common.consume.entity.ReimbursementApplicationEntity;
 import net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm;
 import net.lab1024.sa.consume.service.reimbursement.ReimbursementApplicationService;
 

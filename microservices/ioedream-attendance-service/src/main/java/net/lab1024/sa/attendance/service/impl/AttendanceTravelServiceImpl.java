@@ -19,7 +19,7 @@ import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.attendance.dao.AttendanceTravelDao;
-import net.lab1024.sa.attendance.domain.entity.AttendanceTravelEntity;
+import net.lab1024.sa.common.attendance.entity.AttendanceTravelEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceTravelForm;
 import net.lab1024.sa.attendance.service.AttendanceTravelService;
 

@@ -2,8 +2,8 @@ package net.lab1024.sa.consume.manager;
 
 import net.lab1024.sa.consume.dao.AccountDao;
 import net.lab1024.sa.consume.dao.OfflineConsumeRecordDao;
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
-import net.lab1024.sa.consume.domain.entity.OfflineConsumeRecordEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.OfflineConsumeRecordEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

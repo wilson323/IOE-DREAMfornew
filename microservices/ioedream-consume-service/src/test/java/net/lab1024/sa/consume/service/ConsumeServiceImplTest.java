@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionForm;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeDeviceStatisticsVO;

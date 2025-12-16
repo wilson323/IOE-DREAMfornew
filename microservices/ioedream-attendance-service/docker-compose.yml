@@ -1,0 +1,354 @@
+version: '3.8'
+
+services:
+  # 考勤管理服务
+  attendance-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ioedream-attendance-service
+    restart: unless-stopped
+    ports:
+      - "8091:8091"
+      - "5005:5005"  # Java Debug Port (optional)
+    environment:
+      # 基础配置
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8091
+
+      # 数据库配置
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ioedream_attendance?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=your_password
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_DATASOURCE_TYPE=com.alibaba.druid.pool.DruidDataSource
+      - SPRING_DATASOURCE_DRUID_INITIAL_SIZE=5
+      - SPRING_DATASOURCE_DRUID_MIN_IDLE=5
+      - SPRING_DATASOURCE_DRUID_MAX_ACTIVE=20
+      - SPRING_DATASOURCE_DRUID_MAX_WAIT=60000
+      - SPRING_DATASOURCE_DRUID_VALIDATION_QUERY=SELECT 1
+
+      # Redis配置
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_DATABASE=0
+      - SPRING_REDIS_TIMEOUT=3000
+      - SPRING_REDIS_LETTUCE_POOL_MAX_ACTIVE=8
+      - SPRING_REDIS_LETTUCE_POOL_MAX_IDLE=8
+      - SPRING_REDIS_LETTUCE_POOL_MIN_IDLE=0
+
+      # RabbitMQ配置
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_RABBITMQ_VIRTUAL_HOST=/
+
+      # MyBatis-Plus配置
+      - MYBATIS_PLUS_MAPPER_LOCATIONS=classpath*:mapper/*.xml
+      - MYBATIS_PLUS_TYPE_ALIASES_PACKAGE=net.lab1024.sa.attendance.domain.entity
+      - MYBATIS_PLUS_CONFIGURATION_LOG_IMPL=org.apache.ibatis.logging.stdout.StdOutImpl
+      - MYBATIS_PLUS_CONFIGURATION_MAP_UNDERSCORE_TO_CAMEL_CASE=true
+      - MYBATIS_PLUS_GLOBAL_CONFIG_DB_CONFIG_LOGIC_DELETE_FIELD=deletedFlag
+      - MYBATIS_PLUS_GLOBAL_CONFIG_DB_CONFIG_LOGIC_DELETE_VALUE=1
+      - MYBATIS_PLUS_GLOBAL_CONFIG_DB_CONFIG_LOGIC_NOT_DELETE_VALUE=0
+
+      # Flyway配置
+      - SPRING_FLYWAY_ENABLED=true
+      - SPRING_FLYWAY_LOCATIONS=classpath:db/migration
+      - SPRING_FLYWAY_BASELINE_ON_MIGRATE=true
+      - SPRING_FLYWAY_VALIDATE_ON_MIGRATE=true
+
+      # Nacos配置
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=nacos:8848
+      - SPRING_CLOUD_NACOS_DISCOVERY_NAMESPACE=dev
+      - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=IOE-DREAM
+      - SPRING_CLOUD_NACOS_DISCOVERY_ENABLED=true
+      - SPRING_CLOUD_NACOS_DISCOVERY_REGISTER_ENABLED=true
+      - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=nacos:8848
+      - SPRING_CLOUD_NACOS_CONFIG_NAMESPACE=dev
+      - SPRING_CLOUD_NACOS_CONFIG_GROUP=IOE-DREAM
+      - SPRING_CLOUD_NACOS_CONFIG_FILE_EXTENSION=yaml
+
+      # Seata分布式事务配置
+      - SEATA_ENABLED=true
+      - SEATA_APPLICATION_ID=ioedream-attendance-service
+      - SEATA_TX_SERVICE_GROUP=default_tx_group
+      - SEATA_CONFIG_TYPE=nacos
+      - SEATA_CONFIG_NACOS_SERVER_ADDR=nacos:8848
+      - SEATA_CONFIG_NACOS_NAMESPACE=dev
+      - SEATA_CONFIG_NACOS_GROUP=SEATA_GROUP
+
+      # 考勤服务特定配置
+      - ATTENDANCE_REALTIME_ENABLED=true
+      - ATTENDANCE_REALTIME_EVENT_QUEUE_SIZE=10000
+      - ATTENDANCE_REALTIME_BATCH_SIZE=100
+      - ATTENDANCE_REALTIME_BATCH_TIMEOUT_MS=5000
+
+      - ATTENDANCE_RULE_ENGINE_ENABLED=true
+      - ATTENDANCE_RULE_ENGINE_MAX_RULES=100
+      - ATTENDANCE_RULE_ENGINE_CACHE_SIZE=1000
+      - ATTENDANCE_RULE_ENGINE_CACHE_TTL_MINUTES=30
+
+      - ATTENDANCE_SCHEDULING_ALGORITHM=genetic
+      - ATTENDANCE_SCHEDULING_POPULATION_SIZE=100
+      - ATTENDANCE_SCHEDULING_MAX_ITERATIONS=1000
+      - ATTENDANCE_SCHEDULING_CROSSOVER_RATE=0.8
+      - ATTENDANCE_SCHEDULING_MUTATION_RATE=0.2
+
+      - ATTENDANCE_MOBILE_CACHE_TIMEOUT=3600
+      - ATTENDANCE_MOBILE_MAX_RETRY=3
+      - ATTENDANCE_MOBILE_ASYNC_ENABLED=true
+      - ATTENDANCE_MOBILE_LOCATION_CHECK_ENABLED=false
+
+      # JVM配置
+      - JAVA_XMS=512m
+      - JAVA_XMX=1g
+      - JAVA_DEBUG_ENABLED=false
+      - JFR_ENABLED=false
+
+      # 监控配置
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+
+      # 日志配置
+      - LOGGING_LEVEL_ROOT=INFO
+      - LOGGING_LEVEL_NET_LAB1024_SA_ATTENDANCE=DEBUG
+      - LOGGING_PATTERN_CONSOLE=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+      - LOGGING_PATTERN_FILE=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+      - LOGGING_FILE_NAME=logs/attendance-service.log
+      - LOGGING_FILE_MAX_SIZE=100MB
+      - LOGGING_FILE_MAX_HISTORY=30
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+      - nacos
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8091/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: ioedream-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_password
+      - MYSQL_DATABASE=ioedream_attendance
+      - MYSQL_USER=ioedream
+      - MYSQL_PASSWORD=your_password
+      - MYSQL_CHARACTER_SET_SERVER=utf8mb4
+      - MYSQL_COLLATION_SERVER=utf8mb4_unicode_ci
+      - MYSQL_INNODB_BUFFER_POOL_SIZE=256M
+      - MYSQL_INNODB_LOG_FILE_SIZE=256M
+      - MYSQL_INNODB_FLUSH_LOG_AT_TRX_COMMIT=1
+      - MYSQL_INNODB_LOCK_WAIT_TIMEOUT=50
+      - MYSQL_MAX_CONNECTIONS=1000
+      - MYSQL_MAX_ALLOWED_PACKET=64M
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d:ro
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+      - /etc/localtime:/etc/localtime:ro
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: ioedream-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # RabbitMQ消息队列
+  rabbitmq:
+    image: rabbitmq:3.9-management-alpine
+    container_name: ioedream-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_VHOST=/
+      - RABBITMQ_MANAGEMENT_USER=guest
+      - RABBITMQ_MANAGEMENT_PASSWORD=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nacos注册中心
+  nacos:
+    image: nacos/nacos-server:v2.2.3
+    container_name: ioedream-nacos
+    restart: unless-stopped
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    environment:
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_DB_NAME=ioedream_attendance
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=your_password
+      - NACOS_AUTH_ENABLE=false
+      - NACOS_AUTH_TOKEN=SecretKey012345678901234567890123456789012345678901234567890
+      - JVM_XMS=512m
+      - JVM_XMX=1g
+      - JVM_XMN=256m
+    volumes:
+      - nacos_data:/home/nacos/data
+      - nacos_logs:/home/nacos/logs
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - mysql
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/v1/ns/operator/servers"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Seata分布式事务
+  seata-server:
+    image: seataio/seata-server:1.6.1
+    container_name: ioedream-seata
+    restart: unless-stopped
+    ports:
+      - "8091:8091"  # Seata TC端口
+    environment:
+      - SEATA_PORT=8091
+      - STORE_MODE=db
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=your_password
+      - DB_DATABASE=ioedream_attendance
+      - SEATA_CONFIG_NAME=file
+      - SEATA_CONFIG_FILE=/root/seata/config/file.conf
+    volumes:
+      - ./docker/seata/config:/root/seata/config:ro
+      - seata_logs:/root/seata/logs
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - mysql
+    networks:
+      - ioedream-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8091/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Prometheus监控
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ioedream-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - ioedream-network
+    depends_on:
+      - attendance-service
+
+  # Grafana可视化
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ioedream-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./docker/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - ioedream-network
+    depends_on:
+      - prometheus
+
+# 网络配置
+networks:
+  ioedream-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+
+# 数据卷
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  nacos_data:
+    driver: local
+  nacos_logs:
+    driver: local
+  seata_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local

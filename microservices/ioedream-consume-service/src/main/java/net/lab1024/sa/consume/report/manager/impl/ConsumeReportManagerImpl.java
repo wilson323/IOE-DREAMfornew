@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.report.dao.ConsumeReportTemplateDao;
 import net.lab1024.sa.consume.report.domain.entity.ConsumeReportTemplateEntity;
 import net.lab1024.sa.consume.report.domain.form.ReportParams;

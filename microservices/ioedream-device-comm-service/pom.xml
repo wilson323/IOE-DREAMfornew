@@ -47,6 +47,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- 依赖统一权限验证模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-permission</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Cloud Nacos Discovery (服务发现) -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

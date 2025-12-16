@@ -40,6 +40,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- 依赖统一权限验证模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-permission</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- 依赖监控模块 -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
@@ -116,33 +123,26 @@
             <version>5.3.3</version>
         </dependency>
 
-        <!-- 工作流引擎依赖 -->
-        <!--
-        说明：warm-flow-spring-boot-starter:2.1.0 不存在于Maven Central，已移除。
-        当前使用基于数据库的简单工作流实现。
+        <!-- Flowable 6.8.0 工作流引擎 -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter</artifactId>
+            <version>6.8.0</version>
+        </dependency>
 
-        如需集成完整的工作流引擎，可以选择以下方案之一：
-        1. Flowable 6.x（推荐）：
-           <dependency>
-               <groupId>org.flowable</groupId>
-               <artifactId>flowable-spring-boot-starter</artifactId>
-               <version>6.8.0</version>
-           </dependency>
+        <!-- Flowable UI模块（可选，用于流程图展示） -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-ui-modeler-rest</artifactId>
+            <version>6.8.0</version>
+        </dependency>
 
-        2. Camunda 7.x：
-           <dependency>
-               <groupId>org.camunda.bpm.springboot</groupId>
-               <artifactId>camunda-bpm-spring-boot-starter</artifactId>
-               <version>7.19.0</version>
-           </dependency>
-
-        3. Activiti 7.x：
-           <dependency>
-               <groupId>org.activiti</groupId>
-               <artifactId>activiti-spring-boot-starter</artifactId>
-               <version>7.1.0.M6</version>
-           </dependency>
-        -->
+        <!-- Flowable JSON支持 -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-json-converter</artifactId>
+            <version>6.8.0</version>
+        </dependency>
 
         <!-- ============================================================= -->
         <!-- 测试依赖 -->

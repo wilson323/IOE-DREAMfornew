@@ -1,6 +1,6 @@
 package net.lab1024.sa.attendance.service;
 
-import net.lab1024.sa.attendance.domain.entity.AttendanceLeaveEntity;
+import net.lab1024.sa.common.attendance.entity.AttendanceLeaveEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceLeaveForm;
 
 /**

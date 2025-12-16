@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.common.util.SmartRequestUtil;
 import net.lab1024.sa.oa.workflow.entity.WorkflowDefinitionEntity;
 import net.lab1024.sa.oa.workflow.entity.WorkflowInstanceEntity;
@@ -41,6 +42,7 @@ import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
 @RestController
 @RequestMapping("/api/v1/workflow/engine")
 @Tag(name = "工作流引擎", description = "工作流流程定义、实例、任务管理API")
+@PermissionCheck(value = "OA_WORKFLOW", description = "工作流引擎管理模块权限")
 @Validated
 public class WorkflowEngineController {
 
@@ -52,6 +54,7 @@ public class WorkflowEngineController {
     @Observed(name = "workflow.deployProcess", contextualName = "workflow-deploy-process")
     @Operation(summary = "部署流程定义", description = "部署新的工作流流程定义")
     @PostMapping("/definition/deploy")
+    @PermissionCheck(value = "OA_WORKFLOW_DEPLOY", description = "部署流程定义")
     public ResponseDTO<String> deployProcess(
             @Parameter(description = "BPMN XML", required = true) @RequestParam String bpmnXml,
             @Parameter(description = "流程名称", required = true) @RequestParam String processName,
@@ -64,6 +67,7 @@ public class WorkflowEngineController {
     @Observed(name = "workflow.pageDefinitions", contextualName = "workflow-page-definitions")
     @Operation(summary = "分页查询流程定义", description = "分页查询工作流流程定义列表")
     @GetMapping("/definition/page")
+    @PermissionCheck(value = "OA_WORKFLOW_VIEW", description = "查看流程定义")
     public ResponseDTO<PageResult<WorkflowDefinitionEntity>> pageDefinitions(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页数量") @RequestParam(defaultValue = "20") Long pageSize,
@@ -79,6 +83,7 @@ public class WorkflowEngineController {
     @Observed(name = "workflow.getDefinition", contextualName = "workflow-get-definition")
     @Operation(summary = "获取流程定义详情", description = "根据ID获取流程定义详细信息")
     @GetMapping("/definition/{definitionId}")
+    @PermissionCheck(value = "OA_WORKFLOW_VIEW", description = "查看流程定义详情")
     public ResponseDTO<WorkflowDefinitionEntity> getDefinition(
             @Parameter(description = "定义ID", required = true) @PathVariable Long definitionId) {
         return workflowEngineService.getDefinition(definitionId);
@@ -114,6 +119,7 @@ public class WorkflowEngineController {
     @Observed(name = "workflow.startProcess", contextualName = "workflow-start-process")
     @Operation(summary = "启动流程实例", description = "启动新的工作流流程实例")
     @PostMapping("/instance/start")
+    @PermissionCheck(value = "OA_WORKFLOW_START", description = "启动流程实例")
     public ResponseDTO<Long> startProcess(@RequestBody(required = false) Map<String, Object> request) {
         if (request == null) {
             return ResponseDTO.error("PARAM_ERROR", "请求体不能为空");

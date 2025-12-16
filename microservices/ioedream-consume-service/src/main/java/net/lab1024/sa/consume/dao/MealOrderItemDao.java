@@ -1,7 +1,7 @@
 package net.lab1024.sa.consume.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.consume.domain.entity.MealOrderItemEntity;
+import net.lab1024.sa.common.consume.entity.MealOrderItemEntity;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

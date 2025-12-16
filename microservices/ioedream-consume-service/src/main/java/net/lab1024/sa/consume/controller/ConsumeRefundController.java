@@ -36,7 +36,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/consume/refund")
+@RequestMapping("/api/v1/consume/refund")
 @Tag(name = "消费退款管理", description = "消费退款相关接口")
 @Validated
 public class ConsumeRefundController {

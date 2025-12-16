@@ -18,7 +18,7 @@ import net.lab1024.sa.oa.workflow.entity.WorkflowInstanceEntity;
  * 工作流实例DAO接口
  * <p>
  * 严格遵循四层架构规范：
- * - 使用@Mapper注解，禁止使用@Repository注解
+ * - 使用@Mapper注解，禁止使用@Mapper注解
  * - 继承BaseMapper提供基础CRUD功能
  * - 只负责数据访问，不包含业务逻辑
  *
@@ -158,6 +158,16 @@ public interface WorkflowInstanceDao extends BaseMapper<WorkflowInstanceEntity> 
             @Param("startDate") String startDate,
             @Param("endDate") String endDate
     );
+
+    /**
+     * 根据Flowable流程实例ID查询本地流程实例
+     *
+     * @param flowableProcessInstanceId Flowable流程实例ID
+     * @return 流程实例实体
+     */
+    @Transactional(readOnly = true)
+    @Select("SELECT * FROM t_common_workflow_instance WHERE flowable_process_instance_id = #{flowableProcessInstanceId} AND deleted_flag = 0")
+    WorkflowInstanceEntity selectByFlowableInstanceId(@Param("flowableProcessInstanceId") String flowableProcessInstanceId);
 }
 
 

@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.dao.ConsumeAreaDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeAreaEntity;
+import net.lab1024.sa.common.consume.entity.ConsumeAreaEntity;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 
@@ -128,7 +128,7 @@ public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
         log.debug("[区域管理] 验证区域权限，accountId={}, areaId={}", accountId, areaId);
         try {
             // 1. 获取账户信息
-            net.lab1024.sa.consume.domain.entity.AccountEntity account = accountManager.getAccountById(accountId);
+            net.lab1024.sa.common.consume.entity.AccountEntity account = accountManager.getAccountById(accountId);
             if (account == null) {
                 log.warn("[区域管理] 账户不存在，accountId={}", accountId);
                 return false;

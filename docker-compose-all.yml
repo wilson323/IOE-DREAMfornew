@@ -270,13 +270,13 @@ services:
       - NACOS_AUTH_TOKEN=${NACOS_AUTH_TOKEN}
       - NACOS_AUTH_IDENTITY_KEY=nacos
       - NACOS_AUTH_IDENTITY_VALUE=nacos
-      # JVM配置优化（增加内存以避免OOM）
-      - JVM_XMS=512m
-      - JVM_XMX=1024m
-      - JVM_XMN=256m
+      # JVM配置优化（低内存环境）
+      - JVM_XMS=256m
+      - JVM_XMX=512m
+      - JVM_XMN=128m
       - TZ=Asia/Shanghai
-    mem_limit: 1536m
-    mem_reservation: 1024m
+    mem_limit: 768m
+    mem_reservation: 512m
     ports:
       - "8848:8848"
       - "9848:9848"
@@ -339,12 +339,14 @@ services:
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（低内存环境）
+      - JAVA_OPTS=-Xms128m -Xmx256m -XX:MaxMetaspaceSize=96m -XX:+UseSerialGC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-gateway-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -390,12 +392,14 @@ services:
     environment:
       - SERVER_PORT=8088
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（低内存环境）
+      - JAVA_OPTS=-Xms128m -Xmx256m -XX:MaxMetaspaceSize=96m -XX:+UseSerialGC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-common-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -441,12 +445,14 @@ services:
     environment:
       - SERVER_PORT=8087
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（低内存环境）
+      - JAVA_OPTS=-Xms128m -Xmx256m -XX:MaxMetaspaceSize=96m -XX:+UseSerialGC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-device-comm-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -494,12 +500,14 @@ services:
     environment:
       - SERVER_PORT=8089
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（复杂业务服务）
+      - JAVA_OPTS=-Xms256m -Xmx512m -XX:MaxMetaspaceSize=128m -XX:+UseG1GC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-oa-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -547,12 +555,14 @@ services:
     environment:
       - SERVER_PORT=8090
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（低内存环境）
+      - JAVA_OPTS=-Xms128m -Xmx256m -XX:MaxMetaspaceSize=96m -XX:+UseSerialGC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-access-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -600,12 +610,14 @@ services:
     environment:
       - SERVER_PORT=8091
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（低内存环境）
+      - JAVA_OPTS=-Xms128m -Xmx256m -XX:MaxMetaspaceSize=96m -XX:+UseSerialGC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-attendance-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -653,12 +665,14 @@ services:
     environment:
       - SERVER_PORT=8092
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（低内存环境）
+      - JAVA_OPTS=-Xms128m -Xmx256m -XX:MaxMetaspaceSize=96m -XX:+UseSerialGC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-video-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -706,12 +720,14 @@ services:
     environment:
       - SERVER_PORT=8094
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（复杂业务服务）
+      - JAVA_OPTS=-Xms256m -Xmx512m -XX:MaxMetaspaceSize=128m -XX:+UseG1GC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-consume-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -759,12 +775,14 @@ services:
     environment:
       - SERVER_PORT=8095
       - SPRING_PROFILES_ACTIVE=docker
+      # JVM内存优化配置（低内存环境）
+      - JAVA_OPTS=-Xms128m -Xmx256m -XX:MaxMetaspaceSize=96m -XX:+UseSerialGC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # 注释掉环境变量，使用application.yml中的配置（支持占位符，自动推断dataId）
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-visitor-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
-      - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=${NACOS_USERNAME}
-      - NACOS_PASSWORD=${NACOS_PASSWORD}
+      - NACOS_NAMESPACE=$${NACOS_NAMESPACE:-dev}
+      - NACOS_USERNAME=$${NACOS_USERNAME}
+      - NACOS_PASSWORD=$${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}

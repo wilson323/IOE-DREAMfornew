@@ -19,7 +19,7 @@
 #### 第二层：技术原因
 - **版本限制**: Spring Cloud Alibaba 2022.0.0.0版本中，`optional:nacos:`功能不完整
 - **代码逻辑**: `NacosConfigDataLocationResolver`强制要求dataId，即使使用optional前缀
-- **兼容性**: 2022.0.0.0设计用于Spring Boot 3.0.0，当前使用3.5.8
+- **兼容性**: 2022.0.0.0设计用于Spring Boot 3.5.8，当前使用3.5.8
 
 #### 第三层：根本原因
 - **版本过时**: 2022.0.0.0版本已2年4个月未更新

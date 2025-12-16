@@ -1,0 +1,349 @@
+# IOE-DREAM 统一异常处理配置模板
+# 版本: v1.0.0
+# 适用于: 所有微服务
+# 配置方式: Nacos配置中心
+
+# ========================================
+# 应用基础配置
+# ========================================
+spring:
+  application:
+    name: ${SERVICE_NAME:ioedream-xxx-service}
+
+  # 分页配置
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+      date: yyyy-MM-dd
+      time: HH:mm:ss
+
+# ========================================
+# 统一异常处理配置
+# ========================================
+exception:
+  handling:
+    # 是否启用全局异常处理器
+    enabled: true
+
+    # 异常处理器类名（common-service中的GlobalExceptionHandler）
+    global-handler: net.lab1024.sa.common.exception.GlobalExceptionHandler
+
+    # 错误码前缀
+    error-code-prefix: IOE_DREAM
+
+    # 是否记录异常详细信息（仅内部使用）
+    log-detailed-errors: true
+
+    # 是否发送异常告警
+    send-alerts: true
+
+    # 告警错误码列表（触发告警的异常类型）
+    critical-error-codes:
+      - DATABASE_CONNECTION_ERROR
+      - FILE_SYSTEM_ERROR
+      - MEMORY_ERROR
+      - NETWORK_ERROR
+      - EXTERNAL_SERVICE_ERROR
+
+# ========================================
+# Resilience4j 容错配置（统一管理）
+# ========================================
+resilience4j:
+  # 重试配置
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 1000ms
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - java.io.IOException
+          - org.springframework.web.client.HttpServerErrorException
+        ignore-exceptions:
+          - net.lab1024.sa.common.exception.BusinessException
+          - net.lab1024.sa.common.exception.ParamException
+    instances:
+      # 外部服务调用重试
+      external-service:
+        base-config: default
+        max-attempts: 5
+        wait-duration: 2000ms
+        exponential-backoff-multiplier: 1.5
+
+      # 数据库操作重试
+      database-operation:
+        base-config: default
+        max-attempts: 2
+        wait-duration: 500ms
+
+      # 消费服务重试
+      consume-service:
+        base-config: default
+        max-attempts: 2
+
+  # 熔断器配置
+  circuitbreaker:
+    configs:
+      default:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s
+        sliding-window-size: 100
+        minimum-number-of-calls: 10
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-half-open-state: 10s
+    instances:
+      # 外部服务熔断器
+      external-service:
+        base-config: default
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 50
+
+      # 数据库连接熔断器
+      database-connection:
+        base-config: default
+        failure-rate-threshold: 70
+        wait-duration-in-open-state: 90s
+
+      # 支付服务熔断器
+      payment-service:
+        base-config: default
+        failure-rate-threshold: 20
+        wait-duration-in-open-state: 120s
+
+  # 限流器配置
+  rate-limiter:
+    configs:
+      default:
+        limit-for-period: 10
+        limit-refresh-period: 1s
+        timeout-duration: 0
+    instances:
+      # API接口限流
+      api-endpoint:
+        base-config: default
+        limit-for-period: 100
+        limit-refresh-period: 1s
+
+      # 消费接口限流
+      consume-api:
+        base-config: default
+        limit-for-period: 20
+        limit-refresh-period: 1s
+
+      # 支付接口限流
+      payment-api:
+        base-config: default
+        limit-for-period: 5
+        limit-refresh-period: 1s
+
+      # 外部服务调用限流
+      external-service:
+        base-config: default
+        limit-for-period: 2
+        limit-refresh-period: 1s
+
+  # 舱舱隔离配置
+  bulkhead:
+    configs:
+      default:
+        max-concurrent-calls: 10
+        max-wait-duration: 1000ms
+    instances:
+      # 文件处理舱舱
+      file-processing:
+        base-config: default
+        max-concurrent-calls: 5
+        max-wait-duration: 2000ms
+
+      # 外部服务调用舱舱
+      external-service:
+        base-config: default
+        max-concurrent-calls: 3
+        max-wait-duration: 1500ms
+
+  # 时间限制器配置
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s
+        cancel-running-future: true
+    instances:
+      # 外部服务调用超时
+      external-service:
+        base-config: default
+        timeout-duration: 5s
+
+      # 数据库查询超时
+      database-query:
+        base-config: default
+        timeout-duration: 2s
+
+# ========================================
+# 监控和指标配置
+# ========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,loggers
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        resilience4j:
+          circuitbreaker:
+            calls: true
+          retry:
+            calls: true
+          ratelimiter:
+            calls: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+        resilience4j:
+          circuitbreaker:
+            calls: 0.5,0.9,0.95,0.99
+          retry:
+            calls: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:dev}
+      service: ${spring.application.name}
+
+# ========================================
+# 日志配置
+# ========================================
+logging:
+  level:
+    net.lab1024.sa: INFO
+    org.springframework.web: INFO
+    io.github.resilience4j: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId:-}] [%X{userId:-}] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId:-}] [%X{userId:-}] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/${spring.application.name}.log
+    max-size: 100MB
+    max-history: 30
+
+# ========================================
+# 分布式追踪配置
+# ========================================
+spring:
+  sleuth:
+    sampler:
+      probability: 1.0
+      rate: 10
+    zipkin:
+      base-url: ${ZIPKIN_BASE_URL:http://localhost:9411}
+    trace-id128: true
+
+# ========================================
+# 国际化配置
+# ========================================
+spring:
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    cache-duration: 3600s
+    fallback-to-system-locale: true
+
+# ========================================
+# 异常处理自定义配置
+# =================================-------
+ioedream:
+  exception:
+    # 自定义异常处理器（可选）
+    custom-handlers: []
+
+    # 异常映射配置
+    error-mapping:
+      # 系统异常映射
+      system-exceptions:
+        java.sql.SQLException: DATABASE_ERROR
+        java.net.ConnectException: NETWORK_ERROR
+        java.io.IOException: IO_ERROR
+        java.lang.OutOfMemoryError: MEMORY_ERROR
+
+      # 业务异常映射
+      business-exceptions:
+        org.springframework.dao.DataIntegrityViolationException: DATA_INTEGRITY_ERROR
+        org.springframework.dao.OptimisticLockingFailureException: OPTIMISTIC_LOCK_ERROR
+
+    # 异常响应配置
+    response:
+      # 是否包含异常详情（仅开发环境）
+      include-details: ${EXCEPTION_INCLUDE_DETAILS:false}
+
+      # 是否包含堆栈信息（仅开发环境）
+      include-stack-trace: ${EXCEPTION_INCLUDE_STACK_TRACE:false}
+
+      # 异常信息国际化
+      use-i18n: true
+
+      # 默认错误信息（当国际化失败时使用）
+      default-messages:
+        UNKNOWN_ERROR: "系统异常，请联系管理员"
+        SYSTEM_ERROR: "系统繁忙，请稍后重试"
+        VALIDATION_ERROR: "请求参数验证失败"
+        PERMISSION_DENIED: "权限不足"
+        RESOURCE_NOT_FOUND: "资源不存在"
+
+# ========================================
+# 环境特定配置覆盖
+# =================================-------
+---
+spring:
+  profiles: dev
+
+ioedream:
+  exception:
+    response:
+      include-details: true
+      include-stack-trace: true
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 2  # 开发环境减少重试次数
+
+---
+spring:
+  profiles: test
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 1  # 测试环境不重试
+
+---
+spring:
+  profiles: prod
+
+ioedream:
+  exception:
+    response:
+      include-details: false
+      include-stack-trace: false
+
+    send-alerts: true
+
+# 生产环境增加监控频率
+management:
+  metrics:
+    export:
+      prometheus:
+        step: 30s

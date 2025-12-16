@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.*;
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,8 +23,8 @@ import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.consume.consume.service.PaymentService;
 import net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm;
 import net.lab1024.sa.consume.consume.domain.form.RefundApplyForm;
-import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
 
 /**
  * 支付管理控制器
@@ -41,6 +41,7 @@ import net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity;
 @RestController
 @RequestMapping("/api/v1/payment")
 @Tag(name = "支付管理", description = "支付管理相关接口")
+@PermissionCheck(value = "CONSUME_PAYMENT", description = "消费支付管理模块权限")
 public class PaymentController {
 
     @Resource
@@ -550,7 +551,7 @@ public class PaymentController {
         summary = "创建微信支付订单",
         description = "创建微信支付V3预支付订单，支持多种支付方式（JSAPI、APP、H5、Native）"
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<Map<String, Object>> createWechatPayOrder(
             @Parameter(description = "订单ID（业务订单号）", required = true) @RequestParam @NotBlank String orderId,
             @Parameter(description = "金额（单位：元）", required = true) @RequestParam @NotNull BigDecimal amount,
@@ -638,7 +639,7 @@ public class PaymentController {
     @PostMapping("/alipay/createOrder")
     @Observed(name = "payment.createAlipayOrder", contextualName = "payment-create-alipay-order")
     @Operation(summary = "创建支付宝支付订单", description = "创建支付宝预支付订单，返回支付所需参数")
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<Map<String, Object>> createAlipayOrder(
             @RequestParam @NotBlank String orderId,
             @RequestParam @NotNull BigDecimal amount,
@@ -705,7 +706,7 @@ public class PaymentController {
     @PostMapping("/wechat/refund")
     @Observed(name = "payment.wechatRefund", contextualName = "payment-wechat-refund")
     @Operation(summary = "微信支付退款", description = "发起微信支付订单的退款申请")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Map<String, Object>> wechatRefund(
             @RequestParam @NotBlank String orderId,
             @RequestParam @NotBlank String refundId,
@@ -742,7 +743,7 @@ public class PaymentController {
     @PostMapping("/alipay/refund")
     @Observed(name = "payment.alipayRefund", contextualName = "payment-alipay-refund")
     @Operation(summary = "支付宝退款", description = "发起支付宝支付订单的退款申请")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Map<String, Object>> alipayRefund(
             @RequestParam @NotBlank String orderId,
             @RequestParam @NotNull BigDecimal refundAmount,
@@ -780,7 +781,7 @@ public class PaymentController {
     @PostMapping("/bank/createOrder")
     @Observed(name = "payment.createBankPaymentOrder", contextualName = "payment-create-bank-payment-order")
     @Operation(summary = "创建银行支付订单", description = "创建银行支付订单，调用银行支付网关API")
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<Map<String, Object>> createBankPaymentOrder(
             @RequestParam @NotNull Long accountId,
             @RequestParam @NotNull BigDecimal amount,
@@ -819,7 +820,7 @@ public class PaymentController {
     @PostMapping("/credit/processPayment")
     @Observed(name = "payment.processCreditLimitPayment", contextualName = "payment-process-credit-limit-payment")
     @Operation(summary = "处理信用额度支付", description = "使用信用额度进行支付，扣除信用额度")
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<Map<String, Object>> processCreditLimitPayment(
             @RequestParam @NotNull Long accountId,
             @RequestParam @NotNull BigDecimal amount,

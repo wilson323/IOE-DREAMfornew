@@ -23,7 +23,7 @@ import java.util.Objects;
  * @description 提供统一的服务降级处理，当微服务不可用时返回友好响应
  */
 @RestController
-@RequestMapping("/fallback")
+@RequestMapping("/api/v1/fallback")
 @Slf4j
 public class GatewayFallbackController {
 

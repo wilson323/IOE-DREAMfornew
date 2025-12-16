@@ -17,7 +17,7 @@ import java.util.Map;
  * 严格遵循本项目技术栈：
  * - 使用MyBatis-Plus作为ORM框架
  * - 遵循四层架构规范：DAO层只负责数据访问
- * - 使用@Mapper注解，禁用@Repository
+ * - 使用@Mapper注解，禁用@Mapper
  * - 统一使用BaseMapper<Entity>模式
  * </p>
  *

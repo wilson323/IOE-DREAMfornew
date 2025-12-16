@@ -1,0 +1,170 @@
+# ============================================================
+# IOE-DREAM 微服务边界规范配置
+# 明确各微服务职责边界，防止服务职责混乱
+# ============================================================
+
+service-boundaries:
+  # 网关服务 - 基础设施层
+  gateway-service:
+    port: 8080
+    responsibilities:
+      - API路由转发
+      - 统一认证鉴权
+      - 限流熔断
+      - 协议转换
+    forbidden-features:
+      - 业务逻辑处理
+      - 数据库直接访问
+      - 文件存储服务
+
+  # 公共服务 - 基础能力层
+  common-service:
+    port: 8088
+    responsibilities:
+      - 用户认证授权
+      - 组织架构管理
+      - 字典配置管理
+      - 系统配置管理
+      - 审计日志管理
+      - 通知服务
+    forbidden-features:
+      - 业务流程处理
+      - 设备管理
+      - 第三方集成
+
+  # 设备通讯服务 - 设备抽象层
+  device-comm-service:
+    port: 8087
+    responsibilities:
+      - 设备协议适配
+      - 设备连接管理
+      - 设备状态监控
+      - 设备指令下发
+      - 设备数据采集
+    forbidden-features:
+      - 业务逻辑判断
+      - 用户权限管理
+      - 业务数据存储
+
+  # OA办公服务 - 企业管理层
+  oa-service:
+    port: 8089
+    responsibilities:
+      - 企业组织管理
+      - 员工信息管理
+      - 考勤规则配置
+      - 审批流程管理
+      - 报表统计
+    forbidden-features:
+      - 设备直接控制
+      - 门禁实时控制
+      - 消费交易处理
+
+  # 门禁服务 - 门禁业务层
+  access-service:
+    port: 8090
+    responsibilities:
+      - 门禁权限管理
+      - 通行记录处理
+      - 门禁策略配置
+      - 门禁状态监控
+      - 异常告警处理
+    forbidden-features:
+      - 用户基础信息管理
+      - 设备协议处理
+      - 考勤统计处理
+
+  # 考勤服务 - 考勤业务层
+  attendance-service:
+    port: 8091
+    responsibilities:
+      - 考勤记录处理
+      - 考勤统计计算
+      - 排班管理
+      - 请假管理
+      - 考勤报表生成
+    forbidden-features:
+      - 用户权限管理
+      - 设备协议处理
+      - 门禁实时控制
+
+  # 视频服务 - 视频业务层
+  video-service:
+    port: 8092
+    responsibilities:
+      - 视频流管理
+      - 录像存储管理
+      - 视频分析处理
+      - 视频播放服务
+      - AI事件检测
+    forbidden-features:
+      - 用户权限管理
+      - 设备协议处理
+      - 门禁业务逻辑
+
+  # 消费服务 - 消费业务层
+  consume-service:
+    port: 8094
+    responsibilities:
+      - 消费交易处理
+      - 账户余额管理
+      - 充值退款管理
+      - 消费统计分析
+      - 补贴发放管理
+    forbidden-features:
+      - 用户基础信息管理
+      - 设备协议处理
+      - 门禁权限控制
+
+  # 访客服务 - 访客业务层
+  visitor-service:
+    port: 8095
+    responsibilities:
+      - 访客预约管理
+      - 访客登记处理
+      - 访客权限管理
+      - 访客记录统计
+      - 访客轨迹追踪
+    forbidden-features:
+      - 用户权限管理
+      - 设备协议处理
+      - 门禁实时控制
+
+# 跨服务调用规范
+cross-service-calls:
+  # 禁止的直接调用
+  forbidden-direct-calls:
+    - access-service → user-service
+    - attendance-service → device-service
+    - consume-service → auth-service
+
+  # 必须通过网关的调用
+  gateway-required-calls:
+    - any-service → internal-service
+    - frontend → backend-service
+    - external-api → backend-service
+
+  # 允许的直连调用（白名单）
+  allowed-direct-calls:
+    - common-service ← any-service
+    - device-comm-service ← access-service
+    - device-comm-service ← attendance-service
+    - device-comm-service ← video-service
+
+# 数据边界规范
+data-boundaries:
+  # 数据库所有权
+  database-ownership:
+    common-db: [common-service]
+    access-db: [access-service]
+    attendance-db: [attendance-service]
+    consume-db: [consume-service]
+    visitor-db: [visitor-service]
+    video-db: [video-service]
+    device-db: [device-comm-service]
+
+  # 禁止跨库访问
+  cross-database-forbidden:
+    - access-service → consume-db
+    - attendance-service → video-db
+    - consume-service → access-db

@@ -16,7 +16,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.controller.AccessMobileController.MobileAccessRecord;
 import net.lab1024.sa.access.dao.AccessRecordDao;
-import net.lab1024.sa.access.domain.entity.AccessRecordEntity;
+import net.lab1024.sa.common.access.entity.AccessRecordEntity;
 import net.lab1024.sa.access.domain.form.AccessRecordAddForm;
 import net.lab1024.sa.access.domain.form.AccessRecordQueryForm;
 import net.lab1024.sa.access.domain.vo.AccessRecordStatisticsVO;

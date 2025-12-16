@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/workflow")
 @Tag(name = "工作流兼容入口", description = "兼容旧版工作流启动接口")
+@PermissionCheck(value = "OA_WORKFLOW", description = "工作流引擎管理模块权限")
 @Validated
 public class WorkflowStartCompatController {
 
@@ -46,6 +48,7 @@ public class WorkflowStartCompatController {
     @Observed(name = "workflow.start.compat", contextualName = "workflow-start-compat")
     @Operation(summary = "启动流程实例（兼容接口）", description = "兼容旧版 /api/v1/workflow/start 调用路径")
     @PostMapping("/start")
+    @PermissionCheck(value = "OA_WORKFLOW_START", description = "启动流程实例")
     public ResponseDTO<Long> start(@RequestBody Map<String, Object> request) {
         if (request == null) {
             return ResponseDTO.error("PARAM_ERROR", "请求体不能为空");

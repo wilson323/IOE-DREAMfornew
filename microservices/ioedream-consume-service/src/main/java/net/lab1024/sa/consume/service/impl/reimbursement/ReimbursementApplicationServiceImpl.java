@@ -19,7 +19,7 @@ import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.consume.dao.ReimbursementApplicationDao;
-import net.lab1024.sa.consume.domain.entity.ReimbursementApplicationEntity;
+import net.lab1024.sa.common.consume.entity.ReimbursementApplicationEntity;
 import net.lab1024.sa.consume.domain.form.ReimbursementApplicationForm;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.service.reimbursement.ReimbursementApplicationService;

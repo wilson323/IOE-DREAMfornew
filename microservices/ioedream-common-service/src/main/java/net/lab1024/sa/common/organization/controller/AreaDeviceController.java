@@ -1,226 +1,319 @@
 package net.lab1024.sa.common.organization.controller;
 
-import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
+import net.lab1024.sa.common.organization.manager.AreaDeviceManager;
 import net.lab1024.sa.common.organization.service.AreaDeviceService;
+import net.lab1024.sa.common.response.ResponseDTO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 区域设备管理控制器
- * <p>
- * 企业级区域设备管理REST API
- * 提供设备关联、状态监控、权限管理等接口
- * 严格遵循CLAUDE.md全局架构规范
- * </p>
+ * 区域设备关联管理控制器
+ * 提供区域与设备的双向关联管理API接口
  *
- * @author IOE-DREAM架构团队
+ * @author IOE-DREAM Team
  * @version 1.0.0
- * @since 2025-12-09
+ * @since 2025-01-16
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/area-device")
-@Tag(name = "区域设备管理", description = "区域设备管理相关接口")
+@RequestMapping("/api/v1/organization/area-device")
+@RequiredArgsConstructor
+@Tag(name = "区域设备关联管理", description = "区域设备关联管理相关接口")
 @Validated
 public class AreaDeviceController {
 
-    @Resource
-    private AreaDeviceService areaDeviceService;
+    private final AreaDeviceService areaDeviceService;
 
-    @Operation(summary = "添加设备到区域")
-    @Observed(name = "areaDevice.addDeviceToArea", contextualName = "area-device-add")
     @PostMapping("/add")
-    public ResponseDTO<AreaDeviceEntity> addDeviceToArea(
-            @Parameter(description = "区域ID", required = true)
-            @RequestParam @NotNull(message = "区域ID不能为空") Long areaId,
-            @Parameter(description = "设备ID", required = true)
-            @RequestParam @NotBlank(message = "设备ID不能为空") String deviceId,
-            @Parameter(description = "设备编码", required = true)
-            @RequestParam @NotBlank(message = "设备编码不能为空") String deviceCode,
-            @Parameter(description = "设备名称", required = true)
-            @RequestParam @NotBlank(message = "设备名称不能为空") String deviceName,
-            @Parameter(description = "设备类型", required = true)
-            @RequestParam @NotNull(message = "设备类型不能为空") Integer deviceType,
-            @Parameter(description = "业务模块", required = true)
-            @RequestParam @NotBlank(message = "业务模块不能为空") String businessModule) {
-
-        log.info("[区域设备API] 添加设备到区域: areaId={}, deviceId={}, deviceType={}, module={}",
-                areaId, deviceId, deviceType, businessModule);
-
-        AreaDeviceEntity result = areaDeviceService.addDeviceToArea(areaId, deviceId, deviceCode, deviceName, deviceType, businessModule);
-        return ResponseDTO.ok(result);
+    @Operation(summary = "添加设备到区域", description = "将设备添加到指定区域，建立关联关系")
+    public ResponseDTO<String> addDeviceToArea(@Valid @RequestBody AreaDeviceAddRequest request) {
+        return ResponseDTO.ok(areaDeviceService.addDeviceToArea(
+                request.getAreaId(),
+                request.getDeviceId(),
+                request.getDeviceCode(),
+                request.getDeviceName(),
+                request.getDeviceType(),
+                request.getDeviceSubType(),
+                request.getBusinessModule(),
+                request.getPriority()
+        ));
     }
 
-    @Operation(summary = "移除区域中的设备")
-    @Observed(name = "areaDevice.removeDeviceFromArea", contextualName = "area-device-remove")
     @DeleteMapping("/remove")
-    public ResponseDTO<Void> removeDeviceFromArea(
+    @Operation(summary = "从区域移除设备", description = "将设备从指定区域中移除")
+    public ResponseDTO<Boolean> removeDeviceFromArea(
             @Parameter(description = "区域ID", required = true)
-            @RequestParam @NotNull(message = "区域ID不能为空") Long areaId,
+            @RequestParam @NotNull Long areaId,
             @Parameter(description = "设备ID", required = true)
-            @RequestParam @NotBlank(message = "设备ID不能为空") String deviceId) {
-
-        log.info("[区域设备API] 移除区域中的设备: areaId={}, deviceId={}", areaId, deviceId);
-
-        boolean result = areaDeviceService.removeDeviceFromArea(areaId, deviceId);
-        return result ? ResponseDTO.ok() : ResponseDTO.error("REMOVE_FAILED", "移除设备失败");
+            @RequestParam @NotBlank String deviceId) {
+        return ResponseDTO.ok(areaDeviceService.removeDeviceFromArea(areaId, deviceId));
     }
 
-    @Operation(summary = "获取区域中的所有设备")
-    @Observed(name = "areaDevice.getAreaDevices", contextualName = "area-device-get-area-devices")
-    @GetMapping("/area/{areaId}/devices")
-    public ResponseDTO<List<AreaDeviceEntity>> getAreaDevices(
-            @Parameter(description = "区域ID", required = true) @PathVariable Long areaId) {
-
-        log.debug("[区域设备API] 获取区域设备: areaId={}", areaId);
-
-        List<AreaDeviceEntity> devices = areaDeviceService.getAreaDevices(areaId);
-        return ResponseDTO.ok(devices);
+    @PutMapping("/move")
+    @Operation(summary = "移动设备到新区域", description = "将设备从一个区域移动到另一个区域")
+    public ResponseDTO<Boolean> moveDeviceToArea(
+            @Parameter(description = "设备ID", required = true)
+            @RequestParam @NotBlank String deviceId,
+            @Parameter(description = "原区域ID", required = true)
+            @RequestParam @NotNull Long oldAreaId,
+            @Parameter(description = "新区域ID", required = true)
+            @RequestParam @NotNull Long newAreaId) {
+        return ResponseDTO.ok(areaDeviceService.moveDeviceToArea(deviceId, oldAreaId, newAreaId));
     }
 
-    @Operation(summary = "获取区域中指定业务模块的设备")
-    @Observed(name = "areaDevice.getAreaDevicesByModule", contextualName = "area-device-get-by-module")
-    @GetMapping("/area/{areaId}/devices/module/{businessModule}")
-    public ResponseDTO<List<AreaDeviceEntity>> getAreaDevicesByModule(
-            @Parameter(description = "区域ID", required = true) @PathVariable Long areaId,
-            @Parameter(description = "业务模块", required = true) @PathVariable String businessModule) {
-
-        log.debug("[区域设备API] 获取区域业务模块设备: areaId={}, module={}", areaId, businessModule);
-
-        List<AreaDeviceEntity> devices = areaDeviceService.getAreaDevicesByModule(areaId, businessModule);
-        return ResponseDTO.ok(devices);
+    @PostMapping("/batch-add")
+    @Operation(summary = "批量添加设备到区域", description = "批量将多个设备添加到指定区域")
+    public ResponseDTO<Integer> batchAddDevicesToArea(
+            @Parameter(description = "区域ID", required = true)
+            @RequestParam @NotNull Long areaId,
+            @RequestBody @Valid List<AreaDeviceManager.DeviceRequest> deviceRequests) {
+        return ResponseDTO.ok(areaDeviceService.batchAddDevicesToArea(areaId, deviceRequests));
     }
 
-    @Operation(summary = "获取用户可访问的设备")
-    @Observed(name = "areaDevice.getUserAccessibleDevices", contextualName = "area-device-get-user-devices")
-    @GetMapping("/user/{userId}/devices")
-    public ResponseDTO<List<AreaDeviceEntity>> getUserAccessibleDevices(
-            @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
-            @Parameter(description = "业务模块") @RequestParam(required = false) String businessModule) {
-
-        log.debug("[区域设备API] 获取用户可访问设备: userId={}, module={}", userId, businessModule);
-
-        List<AreaDeviceEntity> devices = areaDeviceService.getUserAccessibleDevices(userId, businessModule);
-        return ResponseDTO.ok(devices);
+    @PutMapping("/attributes")
+    @Operation(summary = "设置设备业务属性", description = "为指定区域中的设备设置业务属性")
+    public ResponseDTO<Boolean> setDeviceBusinessAttributes(
+            @Parameter(description = "设备ID", required = true)
+            @RequestParam @NotBlank String deviceId,
+            @Parameter(description = "区域ID", required = true)
+            @RequestParam @NotNull Long areaId,
+            @RequestBody Map<String, Object> attributes) {
+        return ResponseDTO.ok(areaDeviceService.setDeviceBusinessAttributes(deviceId, areaId, attributes));
     }
 
-    @Operation(summary = "检查设备是否在区域中")
-    @Observed(name = "areaDevice.isDeviceInArea", contextualName = "area-device-check")
-    @GetMapping("/area/{areaId}/device/{deviceId}/check")
-    public ResponseDTO<Boolean> isDeviceInArea(
-            @Parameter(description = "区域ID", required = true) @PathVariable Long areaId,
-            @Parameter(description = "设备ID", required = true) @PathVariable String deviceId) {
-
-        log.debug("[区域设备API] 检查设备是否在区域: areaId={}, deviceId={}", areaId, deviceId);
-
-        boolean inArea = areaDeviceService.isDeviceInArea(areaId, deviceId);
-        return ResponseDTO.ok(inArea);
-    }
-
-    @Operation(summary = "设置设备业务属性")
-    @Observed(name = "areaDevice.setDeviceBusinessAttributes", contextualName = "area-device-set-attributes")
-    @PostMapping("/device/{deviceId}/area/{areaId}/attributes")
-    public ResponseDTO<Void> setDeviceBusinessAttributes(
-            @Parameter(description = "设备ID", required = true) @PathVariable String deviceId,
-            @Parameter(description = "区域ID", required = true) @PathVariable Long areaId,
-            @Valid @RequestBody Map<String, Object> businessAttributes) {
-
-        log.info("[区域设备API] 设置设备业务属性: deviceId={}, areaId={}", deviceId, areaId);
-
-        areaDeviceService.setDeviceBusinessAttributes(deviceId, areaId, businessAttributes);
-        return ResponseDTO.ok();
-    }
-
-    @Operation(summary = "获取设备业务属性")
-    @Observed(name = "areaDevice.getDeviceBusinessAttributes", contextualName = "area-device-get-attributes")
-    @GetMapping("/device/{deviceId}/attributes")
+    @GetMapping("/attributes")
+    @Operation(summary = "获取设备业务属性", description = "获取指定区域中设备的业务属性")
     public ResponseDTO<Map<String, Object>> getDeviceBusinessAttributes(
-            @Parameter(description = "设备ID", required = true) @PathVariable String deviceId,
-            @Parameter(description = "区域ID") @RequestParam(required = false) Long areaId) {
-
-        log.debug("[区域设备API] 获取设备业务属性: deviceId={}, areaId={}", deviceId, areaId);
-
-        Map<String, Object> attributes = areaDeviceService.getDeviceBusinessAttributes(deviceId, areaId);
-        return ResponseDTO.ok(attributes);
+            @Parameter(description = "设备ID", required = true)
+            @RequestParam @NotBlank String deviceId,
+            @Parameter(description = "区域ID", required = true)
+            @RequestParam @NotNull Long areaId) {
+        return ResponseDTO.ok(areaDeviceService.getDeviceBusinessAttributes(deviceId, areaId));
     }
 
-    @Operation(summary = "更新设备状态")
-    @Observed(name = "areaDevice.updateDeviceRelationStatus", contextualName = "area-device-update-status")
-    @PutMapping("/relation/{relationId}/status")
-    public ResponseDTO<Void> updateDeviceRelationStatus(
-            @Parameter(description = "关联ID", required = true) @PathVariable String relationId,
-            @Parameter(description = "关联状态", required = true)
-            @RequestParam @NotNull(message = "关联状态不能为空") Integer relationStatus) {
-
-        log.info("[区域设备API] 更新设备状态: relationId={}, status={}", relationId, relationStatus);
-
-        areaDeviceService.updateDeviceRelationStatus(relationId, relationStatus);
-        return ResponseDTO.ok();
+    @PutMapping("/status/{relationId}")
+    @Operation(summary = "更新设备关联状态", description = "更新指定设备关联的状态")
+    public ResponseDTO<Boolean> updateDeviceRelationStatus(
+            @Parameter(description = "关联ID", required = true)
+            @PathVariable @NotBlank String relationId,
+            @Parameter(description = "新状态", required = true)
+            @RequestParam @NotNull Integer status) {
+        return ResponseDTO.ok(areaDeviceService.updateDeviceRelationStatus(relationId, status));
     }
 
-    @Operation(summary = "获取区域设备统计信息")
-    @Observed(name = "areaDevice.getAreaDeviceStatistics", contextualName = "area-device-get-statistics")
-    @GetMapping("/area/{areaId}/statistics")
-    public ResponseDTO<Map<String, Object>> getAreaDeviceStatistics(
-            @Parameter(description = "区域ID", required = true) @PathVariable Long areaId) {
-
-        log.debug("[区域设备API] 获取区域设备统计: areaId={}", areaId);
-
-        Map<String, Object> statistics = areaDeviceService.getAreaDeviceStatistics(areaId);
-        return ResponseDTO.ok(statistics);
+    @PutMapping("/batch-status")
+    @Operation(summary = "批量更新区域设备状态", description = "批量更新指定区域中所有设备的状态")
+    public ResponseDTO<Integer> batchUpdateAreaDeviceStatus(
+            @Parameter(description = "区域ID", required = true)
+            @RequestParam @NotNull Long areaId,
+            @Parameter(description = "新状态", required = true)
+            @RequestParam @NotNull Integer status) {
+        return ResponseDTO.ok(areaDeviceService.batchUpdateAreaDeviceStatus(areaId, status));
     }
 
-    @Operation(summary = "获取设备属性模板")
-    @Observed(name = "areaDevice.getDeviceAttributeTemplate", contextualName = "area-device-get-template")
-    @GetMapping("/device/template")
-    public ResponseDTO<Map<String, Object>> getDeviceAttributeTemplate(
+    @GetMapping("/check")
+    @Operation(summary = "检查设备是否在区域中", description = "检查指定设备是否在指定区域中")
+    public ResponseDTO<Boolean> isDeviceInArea(
+            @Parameter(description = "区域ID", required = true)
+            @RequestParam @NotNull Long areaId,
+            @Parameter(description = "设备ID", required = true)
+            @RequestParam @NotBlank String deviceId) {
+        return ResponseDTO.ok(areaDeviceService.isDeviceInArea(areaId, deviceId));
+    }
+
+    @GetMapping("/area/{areaId}")
+    @Operation(summary = "获取区域的所有设备", description = "获取指定区域中的所有设备关联")
+    public ResponseDTO<List<AreaDeviceEntity>> getAreaDevices(
+            @Parameter(description = "区域ID", required = true)
+            @PathVariable @NotNull Long areaId) {
+        return ResponseDTO.ok(areaDeviceService.getAreaDevices(areaId));
+    }
+
+    @GetMapping("/area/{areaId}/type/{deviceType}")
+    @Operation(summary = "获取区域指定类型的设备", description = "获取指定区域中指定类型的所有设备")
+    public ResponseDTO<List<AreaDeviceEntity>> getAreaDevicesByType(
+            @Parameter(description = "区域ID", required = true)
+            @PathVariable @NotNull Long areaId,
             @Parameter(description = "设备类型", required = true)
-            @RequestParam @NotNull(message = "设备类型不能为空") Integer deviceType,
-            @Parameter(description = "设备子类型") @RequestParam(required = false) Integer deviceSubType) {
-
-        log.debug("[区域设备API] 获取设备属性模板: deviceType={}, deviceSubType={}", deviceType, deviceSubType);
-
-        Map<String, Object> template = areaDeviceService.getDeviceAttributeTemplate(deviceType, deviceSubType);
-        return ResponseDTO.ok(template);
+            @PathVariable @NotNull Integer deviceType) {
+        return ResponseDTO.ok(areaDeviceService.getAreaDevicesByType(areaId, deviceType));
     }
 
-    @Operation(summary = "同步区域用户权限到设备")
-    @Observed(name = "areaDevice.syncAreaUserPermissionsToDevice", contextualName = "area-device-sync-permissions")
-    @PostMapping("/area/{areaId}/device/{deviceId}/sync-users")
-    public ResponseDTO<Void> syncAreaUserPermissionsToDevice(
-            @Parameter(description = "区域ID", required = true) @PathVariable Long areaId,
-            @Parameter(description = "设备ID", required = true) @PathVariable String deviceId) {
-
-        log.info("[区域设备API] 同步区域用户权限到设备: areaId={}, deviceId={}", areaId, deviceId);
-
-        areaDeviceService.syncAreaUserPermissionsToDevice(areaId, deviceId);
-        return ResponseDTO.ok();
+    @GetMapping("/area/{areaId}/module/{businessModule}")
+    @Operation(summary = "获取区域指定业务模块的设备", description = "获取指定区域中指定业务模块的所有设备")
+    public ResponseDTO<List<AreaDeviceEntity>> getAreaDevicesByModule(
+            @Parameter(description = "区域ID", required = true)
+            @PathVariable @NotNull Long areaId,
+            @Parameter(description = "业务模块", required = true)
+            @PathVariable @NotBlank String businessModule) {
+        return ResponseDTO.ok(areaDeviceService.getAreaDevicesByModule(areaId, businessModule));
     }
 
-    @Operation(summary = "检查用户是否有设备访问权限")
-    @Observed(name = "areaDevice.hasDeviceAccessPermission", contextualName = "area-device-check-permission")
-    @GetMapping("/user/{userId}/area/{areaId}/device/{deviceId}/check-permission")
-    public ResponseDTO<Boolean> hasDeviceAccessPermission(
-            @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
-            @Parameter(description = "区域ID", required = true) @PathVariable Long areaId,
-            @Parameter(description = "设备ID", required = true) @PathVariable String deviceId) {
+    @GetMapping("/area/{areaId}/primary")
+    @Operation(summary = "获取区域的主设备", description = "获取指定区域中的所有主设备")
+    public ResponseDTO<List<AreaDeviceEntity>> getAreaPrimaryDevices(
+            @Parameter(description = "区域ID", required = true)
+            @PathVariable @NotNull Long areaId) {
+        return ResponseDTO.ok(areaDeviceService.getAreaPrimaryDevices(areaId));
+    }
 
-        log.debug("[区域设备API] 检查设备访问权限: userId={}, areaId={}, deviceId={}", userId, areaId, deviceId);
+    @GetMapping("/device/{deviceId}")
+    @Operation(summary = "获取设备所属的所有区域", description = "获取指定设备所属的所有区域关联")
+    public ResponseDTO<List<AreaDeviceEntity>> getDeviceAreas(
+            @Parameter(description = "设备ID", required = true)
+            @PathVariable @NotBlank String deviceId) {
+        return ResponseDTO.ok(areaDeviceService.getDeviceAreas(deviceId));
+    }
 
-        boolean hasPermission = areaDeviceService.hasDeviceAccessPermission(userId, areaId, deviceId);
-        return ResponseDTO.ok(hasPermission);
+    @GetMapping("/device/code/{deviceCode}")
+    @Operation(summary = "根据设备编码获取所属区域", description = "根据设备编码查找设备所属的区域")
+    public ResponseDTO<List<AreaDeviceEntity>> getDeviceAreasByCode(
+            @Parameter(description = "设备编码", required = true)
+            @PathVariable @NotBlank String deviceCode) {
+        return ResponseDTO.ok(areaDeviceService.getDeviceAreasByCode(deviceCode));
+    }
+
+    @GetMapping("/statistics/{areaId}")
+    @Operation(summary = "获取区域设备统计信息", description = "获取指定区域中设备的详细统计信息")
+    public ResponseDTO<AreaDeviceManager.AreaDeviceStatistics> getAreaDeviceStatistics(
+            @Parameter(description = "区域ID", required = true)
+            @PathVariable @NotNull Long areaId) {
+        return ResponseDTO.ok(areaDeviceService.getAreaDeviceStatistics(areaId));
+    }
+
+    @GetMapping("/health/{areaId}")
+    @Operation(summary = "获取区域设备健康状态统计", description = "获取指定区域中设备的健康状态分布")
+    public ResponseDTO<AreaDeviceHealthStatistics> getAreaDeviceHealthStatistics(
+            @Parameter(description = "区域ID", required = true)
+            @PathVariable @NotNull Long areaId) {
+        return ResponseDTO.ok(areaDeviceService.getAreaDeviceHealthStatistics(areaId));
+    }
+
+    @GetMapping("/distribution/{businessModule}")
+    @Operation(summary = "获取业务模块设备分布", description = "获取指定业务模块在各区域的设备分布统计")
+    public ResponseDTO<List<AreaDeviceManager.ModuleDeviceDistribution>> getModuleDeviceDistribution(
+            @Parameter(description = "业务模块", required = true)
+            @PathVariable @NotBlank String businessModule) {
+        return ResponseDTO.ok(areaDeviceService.getModuleDeviceDistribution(businessModule));
+    }
+
+    @GetMapping("/distribution/all")
+    @Operation(summary = "获取所有模块设备分布统计", description = "获取所有业务模块的设备分布统计")
+    public ResponseDTO<Map<String, List<AreaDeviceManager.ModuleDeviceDistribution>>> getAllModuleDeviceDistribution() {
+        return ResponseDTO.ok(areaDeviceService.getAllModuleDeviceDistribution());
+    }
+
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "获取用户有权限访问的设备", description = "获取指定用户有权限访问的指定业务模块设备")
+    public ResponseDTO<List<AreaDeviceEntity>> getUserAccessibleDevices(
+            @Parameter(description = "用户ID", required = true)
+            @PathVariable @NotNull Long userId,
+            @Parameter(description = "业务模块", required = true)
+            @RequestParam @NotBlank String businessModule) {
+        return ResponseDTO.ok(areaDeviceService.getUserAccessibleDevices(userId, businessModule));
+    }
+
+    @GetMapping("/online/{areaId}")
+    @Operation(summary = "获取区域的在线设备数量", description = "获取指定区域中在线设备的数量")
+    public ResponseDTO<Integer> getAreaOnlineDeviceCount(
+            @Parameter(description = "区域ID", required = true)
+            @PathVariable @NotNull Long areaId) {
+        return ResponseDTO.ok(areaDeviceService.getAreaOnlineDeviceCount(areaId));
+    }
+
+    @PutMapping("/expire/{deviceId}")
+    @Operation(summary = "设置设备为过期状态", description = "将指定设备的所有关联设置为过期状态")
+    public ResponseDTO<Integer> expireDeviceRelations(
+            @Parameter(description = "设备ID", required = true)
+            @PathVariable @NotBlank String deviceId) {
+        return ResponseDTO.ok(areaDeviceService.expireDeviceRelations(deviceId));
+    }
+
+    @PostMapping("/batch-move")
+    @Operation(summary = "批量移动设备到新区域", description = "批量将多个设备移动到新的区域")
+    public ResponseDTO<Integer> batchMoveDevices(@RequestBody @Valid List<DeviceMoveRequest> moveRequests) {
+        return ResponseDTO.ok(areaDeviceService.batchMoveDevices(moveRequests));
+    }
+
+    // ================ 请求DTO ================
+
+    /**
+     * 区域设备添加请求
+     */
+    public static class AreaDeviceAddRequest {
+        @NotNull(message = "区域ID不能为空")
+        private Long areaId;
+
+        @NotBlank(message = "设备ID不能为空")
+        private String deviceId;
+
+        @NotBlank(message = "设备编码不能为空")
+        private String deviceCode;
+
+        @NotBlank(message = "设备名称不能为空")
+        private String deviceName;
+
+        @NotNull(message = "设备类型不能为空")
+        private Integer deviceType;
+
+        private Integer deviceSubType;
+
+        @NotBlank(message = "业务模块不能为空")
+        private String businessModule;
+
+        private Integer priority;
+
+        // getters and setters
+        public Long getAreaId() { return areaId; }
+        public void setAreaId(Long areaId) { this.areaId = areaId; }
+        public String getDeviceId() { return deviceId; }
+        public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+        public String getDeviceCode() { return deviceCode; }
+        public void setDeviceCode(String deviceCode) { this.deviceCode = deviceCode; }
+        public String getDeviceName() { return deviceName; }
+        public void setDeviceName(String deviceName) { this.deviceName = deviceName; }
+        public Integer getDeviceType() { return deviceType; }
+        public void setDeviceType(Integer deviceType) { this.deviceType = deviceType; }
+        public Integer getDeviceSubType() { return deviceSubType; }
+        public void setDeviceSubType(Integer deviceSubType) { this.deviceSubType = deviceSubType; }
+        public String getBusinessModule() { return businessModule; }
+        public void setBusinessModule(String businessModule) { this.businessModule = businessModule; }
+        public Integer getPriority() { return priority; }
+        public void setPriority(Integer priority) { this.priority = priority; }
+    }
+
+    /**
+     * 设备移动请求
+     */
+    public static class DeviceMoveRequest {
+        @NotBlank(message = "设备ID不能为空")
+        private String deviceId;
+
+        @NotNull(message = "原区域ID不能为空")
+        private Long oldAreaId;
+
+        @NotNull(message = "新区域ID不能为空")
+        private Long newAreaId;
+
+        // getters and setters
+        public String getDeviceId() { return deviceId; }
+        public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+        public Long getOldAreaId() { return oldAreaId; }
+        public void setOldAreaId(Long oldAreaId) { this.oldAreaId = oldAreaId; }
+        public Long getNewAreaId() { return newAreaId; }
+        public void setNewAreaId(Long newAreaId) { this.newAreaId = newAreaId; }
     }
 }

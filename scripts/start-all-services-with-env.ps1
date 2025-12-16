@@ -110,51 +110,24 @@ function Start-Microservice {
     Write-ColorOutput Cyan $infoMsg
 
     try {
-        # 创建临时批处理文件来设置环境变量并启动服务
-        $batFile = Join-Path $env:TEMP "start-$($Service.Name)-$(Get-Date -Format 'yyyyMMddHHmmss').bat"
-        
-        # 构建批处理文件内容
-        $batContent = "@echo off`r`n"
-        $batContent += "cd /d `"$servicePath`"`r`n`r`n"
-        $batContent += "REM 设置环境变量`r`n"
-        
-        # 添加所有环境变量
+        # 构建环境变量设置命令
+        $envVars = @()
         Get-ChildItem Env: | Where-Object { 
-            $_.Name -match '^(MYSQL_|REDIS_|NACOS_|SPRING_|GATEWAY_|JAVA_|MAVEN_|LOG_|MANAGEMENT_|DOCKER_|DRUID_|REDIS_POOL_|.*_SERVICE_PORT)' 
+            $_.Name -match '^(MYSQL_|REDIS_|NACOS_|SPRING_|GATEWAY_|JAVA_|MAVEN_)' 
         } | ForEach-Object {
-            $value = $_.Value
-            # 转义特殊字符：双引号、&、|、<、>、^
-            $value = $value -replace '"', '""'  # 转义双引号
-            $value = $value -replace '&', '^&'   # 转义&符号（命令分隔符）
-            $value = $value -replace '\|', '^|'  # 转义|符号（管道符）
-            $value = $value -replace '<', '^<'   # 转义<符号
-            $value = $value -replace '>', '^>'   # 转义>符号
-            $value = $value -replace '\^', '^^'  # 转义^符号（需要双写）
-            # 如果值包含空格或特殊字符，用引号包裹
-            if ($value -match '[ &|<>^]' -or $value.Contains(' ')) {
-                $batContent += "set $($_.Name)=`"$value`"`r`n"
-            } else {
-                $batContent += "set $($_.Name)=$value`r`n"
-            }
+            $envVars += "set $($_.Name)=$($_.Value)"
         }
         
-        $batContent += "`r`nREM 显示关键环境变量（用于调试）`r`n"
-        $batContent += "echo [INFO] Starting $($Service.Name) service...`r`n"
-        $batContent += "echo [INFO] MYSQL_HOST=%MYSQL_HOST%`r`n"
-        $batContent += "echo [INFO] NACOS_SERVER_ADDR=%NACOS_SERVER_ADDR%`r`n"
-        $batContent += "echo [INFO] REDIS_HOST=%REDIS_HOST%`r`n"
-        $batContent += "echo.`r`n"
-        $batContent += "`r`nREM 启动服务`r`n"
-        $batContent += "mvn spring-boot:run`r`n"
-        $batContent += "pause`r`n"
-        
-        # 写入批处理文件（使用ASCII编码避免编码问题）
-        [System.IO.File]::WriteAllText($batFile, $batContent, [System.Text.Encoding]::ASCII)
+        $envVarsCmd = if ($envVars.Count -gt 0) {
+            ($envVars -join " && ") + " && "
+        } else {
+            ""
+        }
 
-        # Start service in new window using batch file
+        # Start service in new window with environment variables
         $startInfo = New-Object System.Diagnostics.ProcessStartInfo
         $startInfo.FileName = "cmd.exe"
-        $startInfo.Arguments = "/k `"$batFile`""
+        $startInfo.Arguments = "/k cd /d `"$servicePath`" && $envVarsCmd mvn spring-boot:run"
         $startInfo.UseShellExecute = $true
         $startInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Normal
 

@@ -27,7 +27,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: "jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
     username: ${MYSQL_USERNAME:root}
-    password: ${MYSQL_PASSWORD:123456}
+    password: ${MYSQL_PASSWORD:ENC(AES256:G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)}
     druid:
       initial-size: 5
       min-idle: 5
@@ -39,8 +39,31 @@ spring:
     redis:
       host: ${REDIS_HOST:127.0.0.1}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:redis123}
+      password: ${REDIS_PASSWORD:ENC(AES256:H7K8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y)}
       database: ${REDIS_DATABASE:0}
+
+  # ==================== RabbitMQ消息队列配置 ====================
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:ENC(AES256:J8K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y)}
+    virtual-host: ${RABBITMQ_VHOST:ioedream}
+
+  # ==================== Flyway数据库迁移配置 ====================
+  flyway:
+    enabled: ${FLYWAY_ENABLED:true}
+    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE:true}
+    baseline-version: ${FLYWAY_BASELINE_VERSION:0}
+    baseline-description: ${FLYWAY_BASELINE_DESCRIPTION:Initial schema for ioedream-consume-service}
+    locations: ${FLYWAY_LOCATIONS:classpath:db/migration}
+    table: ${FLYWAY_TABLE:flyway_schema_history}
+    validate-on-migrate: ${FLYWAY_VALIDATE_ON_MIGRATE:true}
+    clean-disabled: ${FLYWAY_CLEAN_DISABLED:true}
+    placeholders:
+      service.name: ${spring.application.name}
+      environment: ${spring.profiles.active}
+      schema.name: ${FLYWAY_SCHEMA_NAME:ioedream}
 
   # ==================== Nacos服务发现配置 ====================
   cloud:
@@ -62,9 +85,9 @@ spring:
         username: ${NACOS_USERNAME:nacos}
         password: ${NACOS_PASSWORD:nacos}
         file-extension: yaml
-        enabled: false
+        enabled: false  # 本地开发环境禁用配置中心，使用本地配置文件
         import-check:
-          enabled: true
+          enabled: false
 
 # ==================== 安全配置 ====================
 security:

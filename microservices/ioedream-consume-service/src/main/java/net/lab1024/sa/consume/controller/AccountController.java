@@ -3,7 +3,7 @@ package net.lab1024.sa.consume.controller;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +26,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.AccountAddForm;
 import net.lab1024.sa.consume.domain.form.AccountUpdateForm;
 import net.lab1024.sa.consume.service.AccountService;
@@ -57,6 +57,7 @@ import net.lab1024.sa.consume.service.AccountService;
 @RestController
 @RequestMapping("/api/v1/consume/account")
 @Tag(name = "账户管理", description = "消费账户管理相关接口")
+@PermissionCheck(value = "CONSUME_ACCOUNT", description = "消费账户管理模块权限")
 public class AccountController {
 
     @Resource
@@ -98,7 +99,7 @@ public class AccountController {
         responseCode = "400",
         description = "账户已存在或参数错误"
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Long> createAccount(
             @Parameter(description = "账户创建表单", required = true)
             @Valid @RequestBody AccountAddForm form) {
@@ -131,7 +132,7 @@ public class AccountController {
     @PutMapping("/update")
     @Observed(name = "account.updateAccount", contextualName = "account-update-account")
     @Operation(summary = "更新账户信息", description = "更新账户基本信息")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> updateAccount(@Valid @RequestBody AccountUpdateForm form) {
         log.info("[账户管理] 更新账户请求，accountId={}", form.getAccountId());
         try {
@@ -180,7 +181,7 @@ public class AccountController {
         responseCode = "404",
         description = "账户不存在"
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<AccountEntity> getAccountById(
             @Parameter(description = "账户ID", required = true, example = "2001")
             @PathVariable Long id) {
@@ -215,7 +216,7 @@ public class AccountController {
     @GetMapping("/user/{userId}")
     @Observed(name = "account.getAccountByUserId", contextualName = "account-get-account-by-user-id")
     @Operation(summary = "根据用户ID查询账户", description = "根据用户ID查询账户信息")
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<AccountEntity> getAccountByUserId(@PathVariable Long userId) {
         log.info("[账户管理] 根据用户ID查询账户，userId={}", userId);
         try {
@@ -256,7 +257,7 @@ public class AccountController {
     @GetMapping("/query")
     @Observed(name = "account.queryAccounts", contextualName = "account-query-accounts")
     @Operation(summary = "分页查询账户列表", description = "分页查询账户列表，支持多条件筛选")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<PageResult<AccountEntity>> queryAccounts(
             @Parameter(description = "页码（从1开始）")
             @RequestParam(defaultValue = "1") Integer pageNum,
@@ -301,7 +302,7 @@ public class AccountController {
     @DeleteMapping("/{id}")
     @Observed(name = "account.deleteAccount", contextualName = "account-delete-account")
     @Operation(summary = "删除账户", description = "删除指定账户")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> deleteAccount(@PathVariable Long id) {
         log.info("[账户管理] 删除账户请求，accountId={}", id);
         if (id == null) {
@@ -336,7 +337,7 @@ public class AccountController {
     @PostMapping("/balance/add")
     @Observed(name = "account.addBalance", contextualName = "account-add-balance")
     @Operation(summary = "增加账户余额", description = "增加指定账户的余额")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> addBalance(
             @RequestParam Long accountId,
             @Parameter(description = "增加金额，单位：元") @RequestParam BigDecimal amount,
@@ -371,7 +372,7 @@ public class AccountController {
     @PostMapping("/balance/deduct")
     @Observed(name = "account.deductBalance", contextualName = "account-deduct-balance")
     @Operation(summary = "扣减账户余额", description = "扣减指定账户的余额")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> deductBalance(
             @RequestParam Long accountId,
             @Parameter(description = "扣减金额，单位：元") @RequestParam BigDecimal amount,
@@ -409,7 +410,7 @@ public class AccountController {
     @PutMapping("/balance/freeze")
     @Observed(name = "account.freezeBalance", contextualName = "account-freeze-balance")
     @Operation(summary = "冻结账户余额", description = "冻结指定账户的余额")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> freezeBalance(
             @RequestParam Long accountId,
             @Parameter(description = "冻结金额，单位：元") @RequestParam BigDecimal amount,
@@ -447,7 +448,7 @@ public class AccountController {
     @PutMapping("/balance/unfreeze")
     @Observed(name = "account.unfreezeBalance", contextualName = "account-unfreeze-balance")
     @Operation(summary = "解冻账户余额", description = "解冻指定账户的余额")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> unfreezeBalance(
             @RequestParam Long accountId,
             @Parameter(description = "解冻金额，单位：元") @RequestParam BigDecimal amount,
@@ -483,7 +484,7 @@ public class AccountController {
     @PutMapping("/status/enable")
     @Observed(name = "account.enableAccount", contextualName = "account-enable-account")
     @Operation(summary = "启用账户", description = "启用指定账户")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> enableAccount(@RequestParam Long accountId) {
         log.info("[账户管理] 启用账户，accountId={}", accountId);
         try {
@@ -516,7 +517,7 @@ public class AccountController {
     @PutMapping("/status/disable")
     @Observed(name = "account.disableAccount", contextualName = "account-disable-account")
     @Operation(summary = "禁用账户", description = "禁用指定账户")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> disableAccount(@RequestParam Long accountId) {
         log.info("[账户管理] 禁用账户，accountId={}", accountId);
         try {
@@ -549,7 +550,7 @@ public class AccountController {
     @PutMapping("/status/freeze")
     @Observed(name = "account.freezeAccountStatus", contextualName = "account-freeze-account-status")
     @Operation(summary = "冻结账户状态", description = "冻结指定账户状态")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> freezeAccountStatus(
             @RequestParam Long accountId,
             @RequestParam(required = false) String reason) {
@@ -584,7 +585,7 @@ public class AccountController {
     @PutMapping("/status/unfreeze")
     @Observed(name = "account.unfreezeAccountStatus", contextualName = "account-unfreeze-account-status")
     @Operation(summary = "解冻账户状态", description = "解冻指定账户状态")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> unfreezeAccountStatus(@RequestParam Long accountId) {
         log.info("[账户管理] 解冻账户状态，accountId={}", accountId);
         try {
@@ -617,7 +618,7 @@ public class AccountController {
     @PutMapping("/status/close")
     @Observed(name = "account.closeAccount", contextualName = "account-close-account")
     @Operation(summary = "关闭账户", description = "关闭指定账户")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Boolean> closeAccount(
             @RequestParam Long accountId,
             @RequestParam(required = false) String reason) {
@@ -649,7 +650,7 @@ public class AccountController {
     @GetMapping("/balance/{accountId}")
     @Observed(name = "account.getAccountBalance", contextualName = "account-get-account-balance")
     @Operation(summary = "获取账户余额", description = "获取指定账户的余额")
-    @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
+    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
     public ResponseDTO<BigDecimal> getAccountBalance(@PathVariable Long accountId) {
         log.info("[账户管理] 获取账户余额，accountId={}", accountId);
         try {
@@ -748,7 +749,7 @@ public class AccountController {
     @PostMapping("/batch/search")
     @Observed(name = "account.getAccountsByIds", contextualName = "account-get-accounts-by-ids")
     @Operation(summary = "批量查询账户信息", description = "根据账户ID列表批量查询账户信息。使用POST方法接收请求体，避免URL过长问题。注意：虽然这是查询操作，但为支持大批量ID列表，使用POST避免URL长度限制。")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<List<AccountEntity>> getAccountsByIds(@RequestBody List<Long> accountIds) {
         log.info("[账户管理] 批量查询账户信息，accountIds={}", accountIds);
         try {

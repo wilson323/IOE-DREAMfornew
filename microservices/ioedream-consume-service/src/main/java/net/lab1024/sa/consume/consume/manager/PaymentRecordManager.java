@@ -1,8 +1,8 @@
 package net.lab1024.sa.consume.consume.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.consume.consume.dao.PaymentRefundRecordDao;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;

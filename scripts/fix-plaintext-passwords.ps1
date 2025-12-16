@@ -1,71 +1,63 @@
-# =====================================================
-# 修复配置中的明文密码默认值
-# 版本: v1.0.0
-# 描述: 将配置中的明文密码默认值替换为安全配置
-# 创建时间: 2025-12-14
-# =====================================================
-
-$ErrorActionPreference = "Stop"
-
-Write-Host "[修复] 开始修复配置中的明文密码默认值..." -ForegroundColor Cyan
-
-# 需要修复的配置文件列表
-$configFiles = @(
-    "microservices\ioedream-common-service\src\main\resources\application.yml",
-    "microservices\ioedream-access-service\src\main\resources\application.yml",
-    "microservices\ioedream-attendance-service\src\main\resources\application.yml",
-    "microservices\ioedream-consume-service\src\main\resources\application.yml",
-    "microservices\ioedream-visitor-service\src\main\resources\application.yml",
-    "microservices\ioedream-video-service\src\main\resources\application.yml",
-    "microservices\ioedream-oa-service\src\main\resources\application.yml",
-    "microservices\ioedream-device-comm-service\src\main\resources\application.yml",
-    "microservices\ioedream-gateway-service\src\main\resources\application.yml"
+# IOE-DREAM 明文密码修复脚本
+param(
+    [switch]$DryRun,
+    [switch]$Backup
 )
 
-$fixedCount = 0
-$errorCount = 0
+Write-Host "========================================" -ForegroundColor Red
+Write-Host "  IOE-DREAM 明文密码修复脚本" -ForegroundColor Red
+Write-Host "========================================" -ForegroundColor Red
 
-foreach ($file in $configFiles) {
-    $fullPath = Join-Path $PSScriptRoot ".." $file
+# 创建备份
+if ($Backup) {
+    Write-Host "创建备份..." -ForegroundColor Yellow
+    $backupDir = "backup-configs-$(Get-Date -Format yyyyMMdd-HHmmss)"
+    New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+    
+    if (Test-Path ".env") { Copy-Item ".env" "$backupDir/.env" -Force }
+    Write-Host "备份完成: $backupDir" -ForegroundColor Green
+}
 
-    if (-not (Test-Path $fullPath)) {
-        Write-Host "[跳过] 文件不存在: $file" -ForegroundColor Yellow
-        continue
-    }
-
-    try {
-        $content = Get-Content $fullPath -Raw -Encoding UTF8
-        $originalContent = $content
-
-        # 修复MySQL密码默认值
-        $content = $content -replace 'password:\s*\$\{MYSQL_PASSWORD:123456\}', 'password: ${MYSQL_PASSWORD:}'
-        $content = $content -replace 'password:\s*\$\{MYSQL_PASSWORD:root\}', 'password: ${MYSQL_PASSWORD:}'
-
-        # 修复Redis密码默认值
-        $content = $content -replace 'password:\s*\$\{REDIS_PASSWORD:redis123\}', 'password: ${REDIS_PASSWORD:}'
-        $content = $content -replace 'password:\s*\$\{REDIS_PASSWORD:123456\}', 'password: ${REDIS_PASSWORD:}'
-
-        # 修复其他密码默认值
-        $content = $content -replace 'password:\s*\$\{SWAGGER_PASSWORD:swagger123\}', 'password: ${SWAGGER_PASSWORD:}'
-        $content = $content -replace 'password:\s*\$\{DRUID_STAT_PASSWORD:admin\}', 'password: ${DRUID_STAT_PASSWORD:}'
-
-        if ($content -ne $originalContent) {
-            # 使用UTF-8 without BOM保存
-            $utf8NoBom = New-Object System.Text.UTF8Encoding $false
-            [System.IO.File]::WriteAllText($fullPath, $content, $utf8NoBom)
-            Write-Host "[修复] $file" -ForegroundColor Green
-            $fixedCount++
-        } else {
-            Write-Host "[通过] $file (无需修复)" -ForegroundColor Gray
+# 修复.env文件
+Write-Host "`n修复 .env 文件..." -ForegroundColor Yellow
+if (Test-Path ".env") {
+    $content = Get-Content ".env" -Raw
+    $fixCount = 0
+    
+    # 修复明文密码
+    if ($content -match "MYSQL_PASSWORD=123456") {
+        if (-not $DryRun) {
+            $content = $content -replace "MYSQL_PASSWORD=123456", "MYSQL_PASSWORD=`$`{MYSQL_ENCRYPTED_PASSWORD}"
         }
-    } catch {
-        Write-Host "[错误] 修复失败: $file - $($_.Exception.Message)" -ForegroundColor Red
-        $errorCount++
+        $fixCount++
+        Write-Host "  ✓ 修复: MYSQL_PASSWORD=123456" -ForegroundColor Green
+    }
+    
+    if ($content -match "MYSQL_ROOT_PASSWORD=123456") {
+        if (-not $DryRun) {
+            $content = $content -replace "MYSQL_ROOT_PASSWORD=123456", "MYSQL_ROOT_PASSWORD=`$`{MYSQL_ENCRYPTED_ROOT_PASSWORD}"
+        }
+        $fixCount++
+        Write-Host "  ✓ 修复: MYSQL_ROOT_PASSWORD=123456" -ForegroundColor Green
+    }
+    
+    if ($content -match "REDIS_PASSWORD=redis123") {
+        if (-not $DryRun) {
+            $content = $content -replace "REDIS_PASSWORD=redis123", "REDIS_PASSWORD=`$`{REDIS_ENCRYPTED_PASSWORD}"
+        }
+        $fixCount++
+        Write-Host "  ✓ 修复: REDIS_PASSWORD=redis123" -ForegroundColor Green
+    }
+    
+    if ($fixCount -gt 0 -and -not $DryRun) {
+        Set-Content ".env" -Value $content -NoNewline -Encoding UTF8
+        Write-Host "  ✓ .env 已更新，修复 $fixCount 个问题" -ForegroundColor Green
+    } elseif ($DryRun) {
+        Write-Host "  ✓ 预览模式: 将修复 $fixCount 个问题" -ForegroundColor Yellow
     }
 }
 
-Write-Host "`n[完成] 修复完成: 修复$fixedCount个文件, 错误$errorCount个" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Green
+Write-Host "  明文密码修复完成\!" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green
 
-if ($errorCount -gt 0) {
-    exit 1
-}

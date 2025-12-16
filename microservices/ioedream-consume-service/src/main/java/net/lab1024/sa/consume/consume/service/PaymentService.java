@@ -1,7 +1,7 @@
 package net.lab1024.sa.consume.consume.service;
 
-import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
 import net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm;
 import net.lab1024.sa.consume.consume.domain.form.RefundApplyForm;
 

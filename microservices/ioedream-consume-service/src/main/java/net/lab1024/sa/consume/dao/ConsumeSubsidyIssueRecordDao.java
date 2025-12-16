@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.consume.domain.entity.ConsumeSubsidyIssueRecordEntity;
+import net.lab1024.sa.common.consume.entity.ConsumeSubsidyIssueRecordEntity;
 
 /**
  * 消费补贴发放记录DAO接口

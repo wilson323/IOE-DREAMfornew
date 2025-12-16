@@ -16,7 +16,7 @@ import net.lab1024.sa.common.organization.entity.AreaEntity;
  * <p>
  * 严格遵循四层架构规范：
  * - 统一DAO模式，使用Dao命名
- * - 使用@Mapper注解，禁止使用@Repository
+ * - 使用@Mapper注解，禁止使用@Mapper
  * - 查询方法使用@Transactional(readOnly = true)
  * - 继承BaseMapper使用MyBatis-Plus
  * - 职责单一：只负责门禁区域数据访问

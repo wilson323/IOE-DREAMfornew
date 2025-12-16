@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity;
+import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -16,7 +16,7 @@ import java.util.List;
  * <p>
  * 企业级退款记录数据访问接口，提供完整的CRUD操作和复杂查询功能
  * 严格遵循CLAUDE.md全局架构规范：
- * - 统一使用 @Mapper 注解，禁止使用 @Repository
+ * - 统一使用 @Mapper 注解，禁止使用 @Mapper
  * - 必须继承 BaseMapper<Entity>
  * </p>
  *

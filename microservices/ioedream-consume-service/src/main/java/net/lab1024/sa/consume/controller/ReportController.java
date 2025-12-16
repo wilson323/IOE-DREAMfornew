@@ -2,7 +2,7 @@ package net.lab1024.sa.consume.controller;
 
 import java.util.Map;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,6 +48,7 @@ import net.lab1024.sa.consume.service.ConsumeReportService;
 @RestController
 @RequestMapping("/api/v1/consume/report")
 @Tag(name = "报表管理", description = "消费报表管理相关接口")
+@PermissionCheck(value = "CONSUME_REPORT", description = "消费报表管理模块权限")
 public class ReportController {
 
     @Resource
@@ -91,7 +92,7 @@ public class ReportController {
         responseCode = "404",
         description = "模板不存在"
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Map<String, Object>> generateReport(
             @Parameter(description = "模板ID", required = true, example = "1")
             @RequestParam Long templateId,
@@ -155,7 +156,7 @@ public class ReportController {
         responseCode = "400",
         description = "导出格式不支持或参数错误"
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<String> exportReport(
             @Parameter(description = "模板ID", required = true, example = "1")
             @RequestParam Long templateId,
@@ -192,7 +193,7 @@ public class ReportController {
     @GetMapping("/templates")
     @Observed(name = "report.getReportTemplates", contextualName = "report-get-report-templates")
     @Operation(summary = "获取报表模板列表", description = "获取报表模板列表，支持按类型筛选")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<?> getReportTemplates(
             @RequestParam(required = false) String templateType) {
         log.info("[报表管理] 获取报表模板列表，templateType={}", templateType);
@@ -225,7 +226,7 @@ public class ReportController {
     @PostMapping("/statistics")
     @Observed(name = "report.getReportStatistics", contextualName = "report-get-report-statistics")
     @Operation(summary = "获取报表统计数据", description = "获取指定时间范围和维度的报表统计数据")
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+    @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Map<String, Object>> getReportStatistics(
             @Parameter(description = "开始时间，ISO格式：yyyy-MM-ddTHH:mm:ss")
             @RequestParam String startTime,

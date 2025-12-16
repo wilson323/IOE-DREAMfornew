@@ -15,7 +15,7 @@ param(
     [switch]$QuickStart
 )
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  IOE-DREAM 标准启动脚本 (依赖修复版)" -ForegroundColor Cyan
@@ -77,7 +77,9 @@ if ($StartInfra -or $QuickStart) {
     } catch {
         Write-Host "[错误] Docker未安装或未运行" -ForegroundColor Red
         Write-Host "请先启动Docker Desktop" -ForegroundColor Yellow
-        exit 1
+        Write-Host "按任意键继续..." -ForegroundColor Yellow
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        return
     }
 
     # 启动基础设施
@@ -108,11 +110,15 @@ if ($StartInfra -or $QuickStart) {
             Write-Host "[成功] 所有基础设施服务已启动" -ForegroundColor Green
         } else {
             Write-Host "[错误] 基础设施服务启动失败" -ForegroundColor Red
-            exit 1
+            Write-Host "按任意键继续..." -ForegroundColor Yellow
+            $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            return
         }
     } else {
         Write-Host "[错误] docker-compose-all.yml 不存在" -ForegroundColor Red
-        exit 1
+        Write-Host "按任意键继续..." -ForegroundColor Yellow
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        return
     }
     Write-Host ""
 }
@@ -149,9 +155,11 @@ if (-not $SkipBuild) {
         Write-Host "[完成] 所有服务构建完成" -ForegroundColor Green
 
     } catch {
-        Write-Host "[错误] 构建失败: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "请检查Maven配置和依赖" -ForegroundColor Yellow
-        exit 1
+        Write-Host "[ERROR] Build failed: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "Please check Maven configuration and dependencies" -ForegroundColor Yellow
+        Write-Host "Press any key to continue..." -ForegroundColor Yellow
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        return
     } finally {
         Pop-Location
     }

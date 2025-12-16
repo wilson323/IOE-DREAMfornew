@@ -1,0 +1,289 @@
+# IOE-DREAM Resilience4j 统一容错配置
+# 版本: v1.0.0
+# 适用范围: 所有微服务
+# 配置空间: IOE-DREAM
+# 配置分组: RESILIENCE4J
+# Data ID: resilience4j-common.yml
+
+resilience4j:
+  # 重试配置
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 1000ms
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - java.io.IOException
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.dao.QueryTimeoutException
+          - org.springframework.transaction.TransactionTimedOutException
+        ignore-exceptions:
+          - net.lab1024.sa.common.exception.BusinessException
+          - net.lab1024.sa.common.exception.ParamException
+          - org.springframework.web.bind.MethodArgumentNotValidException
+    instances:
+      # 外部服务调用重试
+      external-service:
+        base-config: default
+        max-attempts: 5
+        wait-duration: 2000ms
+        exponential-backoff-multiplier: 1.5
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - java.net.ConnectException
+          - java.io.IOException
+        ignore-exceptions:
+          - net.lab1024.sa.common.exception.BusinessException
+
+      # 数据库操作重试
+      database-operation:
+        base-config: default
+        max-attempts: 2
+        wait-duration: 500ms
+        retry-exceptions:
+          - org.springframework.dao.TransientDataAccessException
+          - org.springframework.dao.CannotGetJdbcConnectionException
+        ignore-exceptions:
+          - net.lab1024.sa.common.exception.BusinessException
+
+      # 支付服务重试
+      payment-service:
+        base-config: default
+        max-attempts: 2
+        wait-duration: 1500ms
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - java.io.IOException
+        ignore-exceptions:
+          - net.lab1024.sa.common.exception.BusinessException
+
+      # 消费服务重试
+      consume-service:
+        base-config: default
+        max-attempts: 2
+
+      # 考勤服务重试
+      attendance-service:
+        base-config: default
+        max-attempts: 2
+
+      # 访客服务重试
+      visitor-service:
+        base-config: default
+        max-attempts: 2
+
+  # 熔断器配置
+  circuitbreaker:
+    configs:
+      default:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s
+        sliding-window-size: 100
+        minimum-number-of-calls: 10
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-half-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        slow-call-duration-threshold: 2s
+        slow-call-rate-threshold: 60
+        record-exceptions:
+          - java.lang.RuntimeException
+          - java.lang.Exception
+        ignore-exceptions:
+          - net.lab1024.sa.common.exception.BusinessException
+          - net.lab1024.sa.common.exception.ParamException
+    instances:
+      # 外部服务熔断器
+      external-service:
+        base-config: default
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 50
+        minimum-number-of-calls: 5
+        wait-duration-in-half-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 2
+
+      # 数据库连接熔断器
+      database-connection:
+        base-config: default
+        failure-rate-threshold: 70
+        wait-duration-in-open-state: 90s
+        sliding-window-size: 30
+        minimum-number-of-calls: 5
+
+      # 支付服务熔断器（重要业务，更低阈值）
+      payment-service:
+        base-config: default
+        failure-rate-threshold: 20
+        wait-duration-in-open-state: 120s
+        sliding-window-size: 50
+        minimum-number-of-calls: 10
+        wait-duration-in-half-open-state: 15s
+
+      # 消费API熔断器
+      consume-api:
+        base-config: default
+        failure-rate-threshold: 40
+        wait-duration-in-open-state: 45s
+        sliding-window-size: 80
+        minimum-number-of-calls: 8
+
+      # 设备通讯熔断器
+      device-comm:
+        base-config: default
+        failure-rate-threshold: 60
+        wait-duration-in-open-state: 90s
+        sliding-window-size: 40
+        minimum-number-of-calls: 5
+
+  # 限流器配置
+  rate-limiter:
+    configs:
+      default:
+        limit-for-period: 10
+        limit-refresh-period: 1s
+        timeout-duration: 0
+        register-health-indicator: true
+    instances:
+      # API接口限流
+      api-endpoint:
+        base-config: default
+        limit-for-period: 100
+        limit-refresh-period: 1s
+        timeout-duration: 100ms
+
+      # 消费接口限流（重要接口，更高限制）
+      consume-api:
+        base-config: default
+        limit-for-period: 50
+        limit-refresh-period: 1s
+        timeout-duration: 50ms
+
+      # 支付接口限流（最高优先级，严格控制）
+      payment-api:
+        base-config: default
+        limit-for-period: 5
+        limit-refresh-period: 1s
+        timeout-duration: 0
+
+      # 外部服务调用限流（防止雪崩）
+      external-service:
+        base-config: default
+        limit-for-period: 3
+        limit-refresh-period: 1s
+        timeout-duration: 0
+
+      # 文件上传限流
+      file-upload:
+        base-config: default
+        limit-for-period: 2
+        limit-refresh-period: 1s
+        timeout-duration: 200ms
+
+      # 批量操作限流
+      batch-operation:
+        base-config: default
+        limit-for-period: 20
+        limit-refresh-period: 1s
+        timeout-duration: 100ms
+
+  # 舱舱隔离配置
+  bulkhead:
+    configs:
+      default:
+        max-concurrent-calls: 10
+        max-wait-duration: 1000ms
+    instances:
+      # 文件处理舱舱（资源密集型）
+      file-processing:
+        base-config: default
+        max-concurrent-calls: 5
+        max-wait-duration: 2000ms
+
+      # 外部服务调用舱舱
+      external-service:
+        base-config: default
+        max-concurrent-calls: 3
+        max-wait-duration: 1500ms
+
+      # 长时间任务舱舱
+      long-running-task:
+        base-config: default
+        max-concurrent-calls: 2
+        max-wait-duration: 5000ms
+
+      # 支付处理舱舱（重要业务，最小并发）
+      payment-processing:
+        base-config: default
+        max-concurrent-calls: 1
+        max-wait-duration: 10000ms
+
+  # 时间限制器配置
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s
+        cancel-running-future: true
+        register-health-indicator: true
+    instances:
+      # 外部服务调用超时
+      external-service:
+        base-config: default
+        timeout-duration: 5s
+        cancel-running-future: true
+
+      # 数据库查询超时
+      database-query:
+        base-config: default
+        timeout-duration: 2s
+        cancel-running-future: true
+
+      # 支付请求超时（重要业务，较长超时）
+      payment-request:
+        base-config: default
+        timeout-duration: 10s
+        cancel-running-future: true
+
+      # 文件处理超时
+      file-processing:
+        base-config: default
+        timeout-duration: 30s
+        cancel-running-future: true
+
+# 监控配置
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,resilience4j
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name:unknown}
+      environment: ${spring.profiles.active:dev}
+      service: ${spring.application.name:unknown}
+
+# 内存优化配置
+spring:
+  jvm:
+    # 堆内存配置（根据容器大小调整）
+    -Xms512m
+    -Xmx1024m
+    # GC配置优化
+    -XX:+UseG1GC
+    -XX:MaxGCPauseMillis: 200
+    -XX:+UseStringDeduplication
+    -XX:+OptimizeStringConcat
+    # 内存诊断
+    -XX:+HeapDumpOnOutOfMemoryError
+    -XX:HeapDumpPath=/var/log/app/
+    -XX:+PrintGCDetails
+    -XX:+PrintGCTimeStamps

@@ -17,6 +17,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.devicecomm.cache.ProtocolCacheService;
 import net.lab1024.sa.common.exception.BusinessException;
@@ -46,6 +47,7 @@ import net.lab1024.sa.devicecomm.protocol.router.MessageRouter;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/device/protocol")
+@PermissionCheck(value = "DEVICE_PROTOCOL", description = "设备协议管理模块权限")
 public class ProtocolController {
 
     /**
@@ -85,6 +87,7 @@ public class ProtocolController {
      */
     @PostMapping("/push")
     @Observed(name = "protocol.receivePush", contextualName = "protocol-receive-push")
+    @PermissionCheck(value = "DEVICE_PROTOCOL_PUSH", description = "接收设备推送数据")
     public ResponseDTO<String> receivePush(
             @RequestParam("protocolType") String protocolType,
             @RequestParam("deviceId") Long deviceId,
@@ -133,6 +136,7 @@ public class ProtocolController {
      */
     @PostMapping("/push/auto")
     @Observed(name = "protocol.receivePushAuto", contextualName = "protocol-receive-push-auto")
+    @PermissionCheck(value = "DEVICE_PROTOCOL_PUSH_AUTO", description = "接收设备推送数据(自动识别)")
     public ResponseDTO<String> receivePushAuto(
             @RequestParam("deviceType") String deviceType,
             @RequestParam("manufacturer") String manufacturer,
@@ -196,6 +200,7 @@ public class ProtocolController {
     @PostMapping(value = "/push/text", consumes = {"text/plain", "text/html;charset=utf-8", "application/x-www-form-urlencoded;charset=UTF-8", "application/x-www-form-urlencoded;charset=GB18030"})
     @Observed(name = "protocol.receivePushText", contextualName = "protocol-receive-push-text")
     @RateLimiter(name = "protocol-push", fallbackMethod = "receivePushTextFallback")
+    @PermissionCheck(value = "DEVICE_PROTOCOL_PUSH_TEXT", description = "接收设备推送数据(文本格式)")
     public ResponseDTO<String> receivePushText(
             @RequestParam(value = "SN", required = false) String serialNumber,
             @RequestParam(value = "table", required = false) String table,

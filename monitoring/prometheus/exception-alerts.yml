@@ -1,0 +1,146 @@
+# IOE-DREAM 异常处理告警规则
+# 版本: v1.0.0
+# 企业级异常告警配置
+# Prometheus Alert Rules
+
+groups:
+  - name: exception_handling.rules
+    rules:
+      # 业务异常率过高告警
+      - alert: BusinessExceptionRateHigh
+        expr: |
+          (
+            sum(rate(http_server_requests_seconds_count{exception_type="business"}[5m]))
+            /
+            sum(rate(http_server_requests_seconds_count[5m]))
+          ) * 100 > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: "{{ $labels.application }}"
+          environment: "{{ $labels.environment }}"
+        annotations:
+          summary: "业务异常率过高"
+          description: "服务 {{ $labels.application }} 业务异常率为 {{ $value }}%，超过阈值10%"
+          runbook_url: "https://wiki.ioe-dream.com/runbooks/exceptions"
+
+      # 系统异常告警
+      - alert: SystemExceptionDetected
+        expr: |
+          sum(increase(http_server_requests_seconds_count{exception_type="system"}[2m])) > 5
+        for: 0m
+        labels:
+          severity: critical
+          service: "{{ $labels.application }}"
+          environment: "{{ $labels.environment }}"
+        annotations:
+          summary: "检测到系统异常"
+          description: "服务 {{ $labels.application }} 在过去2分钟内有 {{ $value }} 个系统异常"
+          runbook_url: "https://wiki.ioe-dream.com/runbooks/system-exceptions"
+
+      # 关键异常码告警
+      - alert: CriticalExceptionDetected
+        expr: |
+          sum(increase(http_server_requests_seconds_count{exception_code=~"DATABASE_CONNECTION_ERROR|FILE_SYSTEM_ERROR|MEMORY_ERROR"}[1m])) > 0
+        for: 0m
+        labels:
+          severity: critical
+          service: "{{ $labels.application }}"
+          environment: "{{ $labels.environment }}"
+        annotations:
+          summary: "检测到关键异常"
+          description: "服务 {{ $labels.application }} 检测到关键异常: {{ $labels.exception_code }}"
+
+      # 异常处理响应时间过长
+      - alert: ExceptionHandlingSlow
+        expr: |
+          histogram_quantile(0.95,
+            rate(http_server_requests_seconds_bucket{status=~"5.."}[5m])
+          ) > 2
+        for: 3m
+        labels:
+          severity: warning
+          service: "{{ $labels.application }}"
+          environment: "{{ $labels.environment }}"
+        annotations:
+          summary: "异常处理响应时间过长"
+          description: "服务 {{ $labels.application }} 95%的异常处理时间超过2秒"
+
+  - name: memory_optimization.rules
+    rules:
+      # 堆内存使用率过高
+      - alert: HeapMemoryUsageHigh
+        expr: |
+          (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: "{{ $labels.application }}"
+        annotations:
+          summary: "堆内存使用率过高"
+          description: "服务 {{ $labels.application }} 堆内存使用率为 {{ $value }}%"
+
+      # 非堆内存使用率过高
+      - alert: NonHeapMemoryUsageHigh
+        expr: |
+          (jvm_memory_used_bytes{area="nonheap"} / jvm_memory_max_bytes{area="nonheap"}) * 100 > 75
+        for: 5m
+        labels:
+          severity: warning
+          service: "{{ $labels.application }}"
+        annotations:
+          summary: "非堆内存使用率过高"
+          description: "服务 {{ $labels.application }} 非堆内存使用率为 {{ $value }}%"
+
+      # GC时间过长
+      - alert: GCTimeHigh
+        expr: |
+          rate(jvm_gc_pause_seconds_sum[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          service: "{{ $labels.application }}"
+        annotations:
+          summary: "GC时间过长"
+          description: "服务 {{ $labels.application }} GC时间占比为 {{ $value }}%"
+
+  - name: resilience4j.rules
+    rules:
+      # 熔断器打开告警
+      - alert: CircuitBreakerOpen
+        expr: |
+          resilience4j_circuitbreaker_state{state="open"} == 1
+        for: 1m
+        labels:
+          severity: critical
+          service: "{{ $labels.application }}"
+          circuit_breaker: "{{ $labels.name }}"
+        annotations:
+          summary: "熔断器已打开"
+          description: "服务 {{ $labels.application }} 的熔断器 {{ $labels.name }} 已打开"
+
+      # 熔断器失败率过高
+      - alert: CircuitBreakerFailureRateHigh
+        expr: |
+          resilience4j_circuitbreaker_failure_rate > 50
+        for: 2m
+        labels:
+          severity: warning
+          service: "{{ $labels.application }}"
+          circuit_breaker: "{{ $labels.name }}"
+        annotations:
+          summary: "熔断器失败率过高"
+          description: "服务 {{ $labels.application }} 熔断器 {{ $labels.name }} 失败率为 {{ $value }}%"
+
+      # 重试次数过多
+      - alert: RetryAttemptsHigh
+        expr: |
+          sum(rate(resilience4j_retry_calls_seconds_count[5m])) >
+          sum(rate(resilience4j_retry_calls_seconds_count{kind="successful_without_retry"}[5m])) * 2
+        for: 3m
+        labels:
+          severity: warning
+          service: "{{ $labels.application }}"
+        annotations:
+          summary: "重试次数过多"
+          description: "服务 {{ $labels.application }} 重试次数过多，可能存在系统问题"

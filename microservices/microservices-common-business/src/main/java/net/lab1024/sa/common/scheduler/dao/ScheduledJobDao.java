@@ -11,7 +11,7 @@ import net.lab1024.sa.common.scheduler.domain.entity.ScheduledJobEntity;
  * 定时任务Dao接口
  * <p>
  * 严格遵循四层架构规范：
- * - 使用@Mapper注解，禁止使用@Repository
+ * - 使用@Mapper注解，禁止使用@Mapper
  * - 统一使用BaseMapper作为基础接口
  * - 只负责数据访问，不包含业务逻辑
  * </p>

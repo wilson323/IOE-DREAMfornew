@@ -1,0 +1,221 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "IOE-DREAM 异常处理监控面板",
+    "tags": ["ioe-dream", "exceptions", "monitoring"],
+    "timezone": "Asia/Shanghai",
+    "panels": [
+      {
+        "id": 1,
+        "title": "异常总数趋势",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(exceptions_total[5m])) by (application)",
+            "legendFormat": "{{application}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "异常/秒"
+          }
+        ],
+        "options": {
+          "displayMode": "list",
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "异常类型分布",
+        "type": "piechart",
+        "gridPos": {
+          "x": 12,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum by (type) (rate(exceptions_total[5m]))",
+            "legendFormat": "{{type}}"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "业务异常趋势",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 8,
+          "w": 8,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(exceptions_business[5m])) by (application)",
+            "legendFormat": "{{application}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "业务异常/秒"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "系统异常趋势",
+        "type": "graph",
+        "gridPos": {
+          "x": 8,
+          "y": 8,
+          "w": 8,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(exceptions_system[5m])) by (application)",
+            "legendFormat": "{{application}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "系统异常/秒"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "参数异常趋势",
+        "type": "graph",
+        "gridPos": {
+          "x": 16,
+          "y": 8,
+          "w": 8,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(exceptions_param[5m])) by (application)",
+            "legendFormat": "{{application}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "参数异常/秒"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "异常处理时间分布",
+        "type": "heatmap",
+        "gridPos": {
+          "x": 0,
+          "y": 16,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(exception_handling_time_bucket[5m])",
+            "legendFormat": "{{le}}"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Top 10 异常码",
+        "type": "table",
+        "gridPos": {
+          "x": 12,
+          "y": 16,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "topk(10, sum by (code) (rate(exceptions_total[5m])))",
+            "format": "table",
+            "instant": true
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "内存使用监控",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 24,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "jvm_memory_exception_usage",
+            "legendFormat": "异常处理内存(MB)"
+          },
+          {
+            "expr": "jvm_memory_used_bytes{area=\"heap\"}/1024/1024",
+            "legendFormat": "堆内存(MB)"
+          },
+          {
+            "expr": "jvm_memory_used_bytes{area=\"nonheap\"}/1024/1024",
+            "legendFormat": "非堆内存(MB)"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "熔断器状态",
+        "type": "stat",
+        "gridPos": {
+          "x": 12,
+          "y": 24,
+          "w": 6,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(resilience4j_circuitbreaker_state{state=\"open\"})",
+            "legendFormat": "熔断器开启数量"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "异常缓存大小",
+        "type": "stat",
+        "gridPos": {
+          "x": 18,
+          "y": 24,
+          "w": 6,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "exception_cache_size",
+            "legendFormat": "缓存条目数"
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}

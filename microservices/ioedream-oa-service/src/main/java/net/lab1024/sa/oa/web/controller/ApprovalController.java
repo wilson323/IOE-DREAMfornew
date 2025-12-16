@@ -12,6 +12,7 @@ import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.oa.workflow.service.ApprovalService;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalTaskQueryForm;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalActionForm;
@@ -51,6 +52,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/approval")
 @Tag(name = "审批管理", description = "企业级审批流管理相关接口")
+@PermissionCheck(value = "OA_APPROVAL", description = "审批管理模块权限")
 public class ApprovalController {
 
     @Resource
@@ -59,6 +61,7 @@ public class ApprovalController {
     @Observed(name = "approval.getTodoTasks", contextualName = "approval-get-todo-tasks")
     @Operation(summary = "获取待办任务列表")
     @GetMapping("/tasks/todo")
+    @PermissionCheck(value = "OA_APPROVAL_VIEW", description = "查看待办任务")
     public ResponseDTO<PageResult<ApprovalTaskVO>> getTodoTasks(
             @Parameter(description = "查询条件") @ModelAttribute ApprovalTaskQueryForm queryForm) {
         log.info("[审批管理] 查询待办任务: userId={}, status={}, pageNum={}, pageSize={}",
@@ -94,6 +97,7 @@ public class ApprovalController {
     @Observed(name = "approval.getCompletedTasks", contextualName = "approval-get-completed-tasks")
     @Operation(summary = "获取已办任务列表")
     @GetMapping("/tasks/completed")
+    @PermissionCheck(value = "OA_APPROVAL_VIEW", description = "查看已办任务")
     public ResponseDTO<PageResult<ApprovalTaskVO>> getCompletedTasks(
             @Parameter(description = "查询条件") @ModelAttribute ApprovalTaskQueryForm queryForm) {
         log.info("[审批管理] 查询已办任务: userId={}, pageNum={}, pageSize={}",
@@ -129,6 +133,7 @@ public class ApprovalController {
     @Observed(name = "approval.getMyApplications", contextualName = "approval-get-my-applications")
     @Operation(summary = "获取我的申请任务")
     @GetMapping("/tasks/my-applications")
+    @PermissionCheck(value = "OA_APPROVAL_VIEW", description = "查看我的申请")
     public ResponseDTO<PageResult<ApprovalTaskVO>> getMyApplications(
             @Parameter(description = "查询条件") @ModelAttribute ApprovalTaskQueryForm queryForm) {
         log.info("[审批管理] 查询我的申请: applicantId={}, pageNum={}, pageSize={}",
@@ -164,6 +169,7 @@ public class ApprovalController {
     @Observed(name = "approval.approveTask", contextualName = "approval-approve-task")
     @Operation(summary = "审批同意")
     @PostMapping("/tasks/approve")
+    @PermissionCheck(value = "OA_APPROVAL_PROCESS", description = "审批同意操作")
     public ResponseDTO<String> approveTask(
             @Parameter(description = "审批操作表单") @Valid @RequestBody ApprovalActionForm actionForm) {
         log.info("[审批管理] 审批同意: taskId={}, userId={}, comment={}",
@@ -208,6 +214,7 @@ public class ApprovalController {
     @Observed(name = "approval.rejectTask", contextualName = "approval-reject-task")
     @Operation(summary = "审批驳回")
     @PostMapping("/tasks/reject")
+    @PermissionCheck(value = "OA_APPROVAL_PROCESS", description = "审批驳回操作")
     public ResponseDTO<String> rejectTask(
             @Parameter(description = "审批操作表单") @Valid @RequestBody ApprovalActionForm actionForm) {
         log.info("[审批管理] 审批驳回: taskId={}, userId={}, comment={}",
@@ -255,6 +262,7 @@ public class ApprovalController {
     @Observed(name = "approval.transferTask", contextualName = "approval-transfer-task")
     @Operation(summary = "审批转办")
     @PostMapping("/tasks/transfer")
+    @PermissionCheck(value = "OA_APPROVAL_MANAGE", description = "审批转办操作")
     public ResponseDTO<String> transferTask(
             @Parameter(description = "审批操作表单") @Valid @RequestBody ApprovalActionForm actionForm) {
         log.info("[审批管理] 审批转办: taskId={}, userId={}, targetUserId={}",
@@ -302,6 +310,7 @@ public class ApprovalController {
     @Observed(name = "approval.delegateTask", contextualName = "approval-delegate-task")
     @Operation(summary = "审批委派")
     @PostMapping("/tasks/delegate")
+    @PermissionCheck(value = "OA_APPROVAL_MANAGE", description = "审批委派操作")
     public ResponseDTO<String> delegateTask(
             @Parameter(description = "审批操作表单") @Valid @RequestBody ApprovalActionForm actionForm) {
         log.info("[审批管理] 审批委派: taskId={}, userId={}, targetUserId={}",
@@ -349,6 +358,7 @@ public class ApprovalController {
     @Observed(name = "approval.getTaskDetail", contextualName = "approval-get-task-detail")
     @Operation(summary = "获取审批任务详情")
     @GetMapping("/tasks/{taskId}")
+    @PermissionCheck(value = "OA_APPROVAL_VIEW", description = "查看审批任务详情")
     public ResponseDTO<ApprovalTaskVO> getTaskDetail(
             @Parameter(description = "任务ID") @PathVariable Long taskId) {
         log.info("[审批管理] 获取审批任务详情: taskId={}", taskId);
@@ -387,6 +397,7 @@ public class ApprovalController {
     @Observed(name = "approval.getInstanceDetail", contextualName = "approval-get-instance-detail")
     @Operation(summary = "获取审批流程实例详情")
     @GetMapping("/instances/{instanceId}")
+    @PermissionCheck(value = "OA_APPROVAL_VIEW", description = "查看审批流程详情")
     public ResponseDTO<ApprovalInstanceVO> getInstanceDetail(
             @Parameter(description = "流程实例ID") @PathVariable Long instanceId) {
         log.info("[审批管理] 获取审批流程详情: instanceId={}", instanceId);
@@ -425,6 +436,7 @@ public class ApprovalController {
     @Observed(name = "approval.getApprovalStatistics", contextualName = "approval-get-statistics")
     @Operation(summary = "获取审批统计信息")
     @GetMapping("/statistics")
+    @PermissionCheck(value = "OA_APPROVAL_VIEW", description = "查看审批统计")
     public ResponseDTO<ApprovalStatisticsVO> getApprovalStatistics(
             @Parameter(description = "用户ID") @RequestParam(required = false) Long userId,
             @Parameter(description = "部门ID") @RequestParam(required = false) Long departmentId,
@@ -462,6 +474,7 @@ public class ApprovalController {
     @Observed(name = "approval.getBusinessTypes", contextualName = "approval-get-business-types")
     @Operation(summary = "获取业务类型列表")
     @GetMapping("/business-types")
+    @PermissionCheck(value = "OA_APPROVAL_VIEW", description = "查看业务类型")
     public ResponseDTO<List<Map<String, Object>>> getBusinessTypes() {
         log.info("[审批管理] 获取业务类型列表");
 
@@ -490,6 +503,7 @@ public class ApprovalController {
     @Observed(name = "approval.getPriorities", contextualName = "approval-get-priorities")
     @Operation(summary = "获取审批优先级列表")
     @GetMapping("/priorities")
+    @PermissionCheck(value = "OA_APPROVAL_VIEW", description = "查看审批优先级")
     public ResponseDTO<List<Map<String, Object>>> getPriorities() {
         log.info("[审批管理] 获取审批优先级列表");
 
@@ -518,6 +532,7 @@ public class ApprovalController {
     @Observed(name = "approval.batchProcessTasks", contextualName = "approval-batch-process-tasks")
     @Operation(summary = "批量审批处理")
     @PostMapping("/tasks/batch-action")
+    @PermissionCheck(value = "OA_APPROVAL_PROCESS", description = "批量审批操作")
     public ResponseDTO<Map<String, Object>> batchProcessTasks(
             @Parameter(description = "批量操作参数") @RequestBody Map<String, Object> batchParams) {
         log.info("[审批管理] 批量审批处理: params={}", batchParams);

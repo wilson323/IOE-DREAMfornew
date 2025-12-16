@@ -1,7 +1,7 @@
 package net.lab1024.sa.visitor.controller;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,6 +53,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/visitor")
 @Tag(name = "访客管理PC端", description = "访客预约查询、记录查询、统计等API")
+@PermissionCheck(description = "访客管理")
 public class VisitorController {
 
     @Resource
@@ -100,7 +101,7 @@ public class VisitorController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class)
         )
     )
-    @PreAuthorize("hasRole('VISITOR_MANAGER')")
+    @PermissionCheck(value = {"VISITOR_MANAGE"}, description = "访客管理操作")
     public ResponseDTO<PageResult<VisitorAppointmentDetailVO>> queryAppointments(
             @Parameter(description = "页码（从1开始）")
             @RequestParam(defaultValue = "1") Integer pageNum,
@@ -175,7 +176,7 @@ public class VisitorController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Map.class)
         )
     )
-    @PreAuthorize("hasRole('VISITOR_MANAGER')")
+    @PermissionCheck(value = {"VISITOR_MANAGE"}, description = "访客管理操作")
     public ResponseDTO<Map<String, Object>> getVisitorStatistics(
             @Parameter(description = "开始日期，格式：yyyy-MM-dd", required = true, example = "2025-01-01")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,

@@ -1,7 +1,7 @@
 package net.lab1024.sa.access.controller;
 
 import io.micrometer.observation.annotation.Observed;
-import org.springframework.security.access.prepost.PreAuthorize;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +51,7 @@ import net.lab1024.sa.access.service.AccessDeviceService;
 @RestController
 @RequestMapping("/api/v1/access/device")
 @Tag(name = "门禁设备管理PC端", description = "设备查询、添加、更新、删除、状态管理等API")
+@PermissionCheck(value = "ACCESS_DEVICE", description = "门禁设备管理模块权限")
 public class AccessDeviceController {
 
     @Resource
@@ -90,7 +91,7 @@ public class AccessDeviceController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class)
         )
     )
-    @PreAuthorize("hasRole('ACCESS_MANAGER')")
+    @PermissionCheck(value = "ACCESS_DEVICE_VIEW", description = "查询门禁设备")
     public ResponseDTO<PageResult<net.lab1024.sa.access.domain.vo.AccessDeviceVO>> queryDevices(
             @Parameter(description = "页码（从1开始）", example = "1")
             @RequestParam(defaultValue = "1") Integer pageNum,
@@ -142,7 +143,7 @@ public class AccessDeviceController {
     @Observed(name = "accessDevice.getDeviceDetail", contextualName = "access-device-get-detail")
     @GetMapping("/{deviceId}")
     @Operation(summary = "查询设备详情", description = "根据设备ID查询设备详细信息")
-    @PreAuthorize("hasRole('ACCESS_MANAGER')")
+    @PermissionCheck(value = "ACCESS_DEVICE_VIEW", description = "查询设备详情")
     public ResponseDTO<net.lab1024.sa.access.domain.vo.AccessDeviceVO> getDeviceDetail(
             @Parameter(description = "设备ID", required = true) @PathVariable @NotNull Long deviceId) {
         log.info("[门禁设备] 查询设备详情，deviceId={}", deviceId);
@@ -173,7 +174,7 @@ public class AccessDeviceController {
     @Observed(name = "accessDevice.addDevice", contextualName = "access-device-add")
     @PostMapping("/add")
     @Operation(summary = "添加设备", description = "添加新的门禁设备")
-    @PreAuthorize("hasRole('ACCESS_MANAGER')")
+    @PermissionCheck(value = "ACCESS_DEVICE_ADD", description = "添加门禁设备")
     public ResponseDTO<Long> addDevice(@Valid @RequestBody net.lab1024.sa.access.domain.form.AccessDeviceAddForm form) {
         log.info("[门禁设备] 添加设备，deviceName={}, deviceCode={}", form.getDeviceName(), form.getDeviceCode());
         try {
@@ -203,7 +204,7 @@ public class AccessDeviceController {
     @Observed(name = "accessDevice.updateDevice", contextualName = "access-device-update")
     @PutMapping("/update")
     @Operation(summary = "更新设备", description = "更新门禁设备信息")
-    @PreAuthorize("hasRole('ACCESS_MANAGER')")
+    @PermissionCheck(value = "ACCESS_DEVICE_UPDATE", description = "更新门禁设备")
     public ResponseDTO<Boolean> updateDevice(@Valid @RequestBody net.lab1024.sa.access.domain.form.AccessDeviceUpdateForm form) {
         log.info("[门禁设备] 更新设备，deviceId={}", form.getDeviceId());
         try {
@@ -233,7 +234,7 @@ public class AccessDeviceController {
     @Observed(name = "accessDevice.deleteDevice", contextualName = "access-device-delete")
     @DeleteMapping("/{deviceId}")
     @Operation(summary = "删除设备", description = "删除门禁设备（软删除）")
-    @PreAuthorize("hasRole('ACCESS_MANAGER')")
+    @PermissionCheck(value = "ACCESS_DEVICE_DELETE", description = "删除门禁设备")
     public ResponseDTO<Boolean> deleteDevice(
             @Parameter(description = "设备ID", required = true) @PathVariable @NotNull Long deviceId) {
         log.info("[门禁设备] 删除设备，deviceId={}", deviceId);
@@ -265,7 +266,7 @@ public class AccessDeviceController {
     @Observed(name = "accessDevice.updateDeviceStatus", contextualName = "access-device-update-status")
     @PutMapping("/{deviceId}/status")
     @Operation(summary = "更新设备状态", description = "更新门禁设备状态")
-    @PreAuthorize("hasRole('ACCESS_MANAGER')")
+    @PermissionCheck(value = "ACCESS_DEVICE_UPDATE", description = "更新设备状态")
     public ResponseDTO<Boolean> updateDeviceStatus(
             @Parameter(description = "设备ID") @PathVariable @NotNull Long deviceId,
             @Parameter(description = "设备状态") @RequestParam @NotNull Integer status) {

@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionForm;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionQueryForm;
 import net.lab1024.sa.consume.domain.request.ConsumeRequest;
@@ -697,7 +697,7 @@ public class ConsumeServiceImpl implements ConsumeService {
             }
 
             // 1. 验证账户存在
-            net.lab1024.sa.consume.domain.entity.AccountEntity account;
+            net.lab1024.sa.common.consume.entity.AccountEntity account;
             try {
                 account = accountService.getByUserId(request.getUserId());
             } catch (BusinessException e) {
@@ -756,11 +756,11 @@ public class ConsumeServiceImpl implements ConsumeService {
 
         try {
             // 构建分页对象
-            Page<net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity> page =
+            Page<net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity> page =
                 new Page<>(queryDTO.getPageNum(), queryDTO.getPageSize());
 
             // 调用DAO进行分页查询
-            IPage<net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity> transactionPage =
+            IPage<net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity> transactionPage =
                 consumeTransactionDao.queryTransactions(
                     page,
                     queryDTO.getUserId(),
@@ -916,7 +916,7 @@ public class ConsumeServiceImpl implements ConsumeService {
      * @return 消费记录VO
      */
     private net.lab1024.sa.consume.domain.vo.ConsumeRecordVO convertTransactionToRecordVO(
-            net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity transaction) {
+            net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity transaction) {
         if (transaction == null) {
             return null;
         }

@@ -1,0 +1,642 @@
+{
+  "dashboard": {
+    "name": "IOE-DREAM Performance Dashboard",
+    "version": "1.0.0",
+    "description": "IOE-DREAM智慧园区一卡通管理平台性能监控仪表板",
+    "refreshInterval": "30s",
+    "panels": [
+      {
+        "id": "jvm-memory-overview",
+        "title": "JVM内存概览",
+        "type": "pie-chart",
+        "position": {
+          "x": 0,
+          "y": 0,
+          "width": 6,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{area=\"heap\"}",
+            "legendFormat": "堆内存使用"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{area=\"heap\"}",
+            "legendFormat": "堆内存最大"
+          },
+          {
+            "expr": "jvm_memory_used_bytes{area=\"nonheap\"}",
+            "legendFormat": "非堆内存使用"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{area=\"nonheap\"}",
+            "legendFormat": "非堆内存最大"
+          }
+        ],
+        "options": {
+          "colors": ["#5470c6", "#91cc75", "#fac858", "#ee6666"],
+          "showPercent": true
+        }
+      },
+      {
+        "id": "gc-performance",
+        "title": "GC性能指标",
+        "type": "stats",
+        "position": {
+          "x": 6,
+          "y": 0,
+          "width": 6,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(jvm_gc_collection_seconds_sum[5m])",
+            "legendFormat": "GC频率"
+          },
+          {
+            "expr": "jvm_gc_pause_seconds_max",
+            "legendFormat": "最大GC暂停时间"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center"
+        }
+      },
+      {
+        "id": "thread-pool-status",
+        "title": "线程池状态",
+        "type": "bargauge",
+        "position": {
+          "x": 12,
+          "y": 0,
+          "width": 6,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "tomcat_threads_active_threads",
+            "legendFormat": "活跃线程"
+          },
+          {
+            "expr": "tomcat_threads_max_threads",
+            "legendFormat": "最大线程"
+          }
+        ],
+        "options": {
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "cache-hit-rate",
+        "title": "缓存命中率",
+        "type": "gauge",
+        "position": {
+          "x": 18,
+          "y": 0,
+          "width": 6,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "cache_get_total / (cache_get_total + cache_miss_total) * 100",
+            "legendFormat": "缓存命中率"
+          }
+        ],
+        "options": {
+          "max": 100,
+          "min": 0,
+          "unit": "percent",
+          "thresholds": {
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 75
+              },
+              {
+                "color": "green",
+                "value": 90
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "response-time-trend",
+        "title": "响应时间趋势",
+        "type": "time-series",
+        "position": {
+          "x": 0,
+          "y": 8,
+          "width": 12,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, http_server_requests_seconds_bucket)",
+            "legendFormat": "P50响应时间"
+          },
+          {
+            "expr": "histogram_quantile(0.95, http_server_requests_seconds_bucket)",
+            "legendFormat": "P95响应时间"
+          },
+          {
+            "expr": "histogram_quantile(0.99, http_server_requests_seconds_bucket)",
+            "legendFormat": "P99响应时间"
+          }
+        ],
+        "options": {
+          "yAxis": {
+            "unit": "ms",
+            "scale": "time"
+          }
+        }
+      },
+      {
+        "id": "throughput-metrics",
+        "title": "吞吐量指标",
+        "type": "time-series",
+        "position": {
+          "x": 12,
+          "y": 8,
+          "width": 12,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(http_server_requests_seconds_count[5m]) * 60",
+            "legendFormat": "请求/分钟"
+          },
+          {
+            "expr": "rate(http_server_requests_seconds_sum[5m])",
+            "legendFormat": "平均响应时间"
+          }
+        ],
+        "options": {
+          "yAxis": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": "database-connections",
+        "title": "数据库连接池",
+        "type": "bargauge",
+        "position": {
+          "x": 0,
+          "y": 16,
+          "width": 8,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "hikaricp_connections_active",
+            "legendFormat": "活跃连接"
+          },
+          {
+            "expr": "hikaricp_connections_idle",
+            "legendFormat": "空闲连接"
+          },
+          {
+            "expr": "hikaricp_connections_max",
+            "legendFormat": "最大连接"
+          }
+        ],
+        "options": {
+          "stack": true,
+          "percentage": true
+        }
+      },
+      {
+        "id": "redis-connections",
+        "title": "Redis连接状态",
+        "type": "stats",
+        "position": {
+          "x": 8,
+          "y": 16,
+          "width": 8,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "redis_connected_clients",
+            "legendFormat": "客户端连接"
+          },
+          {
+            "expr": "redis_memory_used_bytes / 1024 / 1024",
+            "legendFormat": "内存使用MB"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none"
+        }
+      },
+      {
+        "id": "error-rate",
+        "title": "错误率监控",
+        "type": "single-stat",
+        "position": {
+          "x": 16,
+          "y": 16,
+          "width": 6,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(http_server_requests_seconds_count{status=~\"5..\"}[5m]) / rate(http_server_requests_seconds_count[5m]) * 100",
+            "legendFormat": "5xx错误率"
+          }
+        ],
+        "options": {
+          "unit": "percent",
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "service-health",
+        "title": "服务健康状态",
+        "type": "table",
+        "position": {
+          "x": 22,
+          "y": 16,
+          "width": 2,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "up",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none"
+        }
+      },
+      {
+        "id": "memory-usage-trend",
+        "title": "内存使用趋势",
+        "type": "time-series",
+        "position": {
+          "x": 0,
+          "y": 24,
+          "width": 12,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{area=\"heap\"} / 1024 / 1024",
+            "legendFormat": "堆内存MB"
+          },
+          {
+            "expr": "jvm_memory_used_bytes{area=\"nonheap\"} / 1024 / 1024",
+            "legendFormat": "非堆内存MB"
+          }
+        ]
+      },
+      {
+        "id": "system-cpu",
+        "title": "CPU使用率",
+        "type": "time-series",
+        "position": {
+          "x": 12,
+          "y": 24,
+          "width": 12,
+          "height": 8
+        },
+        "targets": [
+          {
+            "expr": "process_cpu_seconds_total * 100",
+            "legendFormat": "应用CPU使用率"
+          },
+          {
+            "expr": "system_cpu_usage * 100",
+            "legendFormat": "系统CPU使用率"
+          }
+        ],
+        "options": {
+          "yAxis": {
+            "unit": "percent",
+            "max": 100
+          }
+        }
+      }
+    ],
+    "variables": [
+      {
+        "name": "service",
+        "type": "query",
+        "query": "label_values(up, instance)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*"
+      },
+      {
+        "name": "instance",
+        "type": "query",
+        "query": "label_values(up{service=~\"$service\"}, instance)",
+        "refresh": 1,
+        "includeAll": false,
+        "multi": false
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "name": "内存告警",
+          "expr": "jvm_memory_used_bytes / jvm_memory_max_bytes > 0.85",
+          "time": "now",
+          "tags": ["memory", "alert"],
+          "text": "JVM内存使用率超过85%"
+        },
+        {
+          "name": "GC告警",
+          "expr": "jvm_gc_pause_seconds_max > 1",
+          "time": "now",
+          "tags": ["gc", "alert"],
+          "text": "GC暂停时间超过1秒"
+        },
+        {
+          "name": "响应时间告警",
+          "expr": "histogram_quantile(0.95, http_server_requests_seconds_bucket) > 2",
+          "time": "now",
+          "tags": ["response-time", "alert"],
+          "text": "95%请求响应时间超过2秒"
+        },
+        {
+          "name": "错误率告警",
+          "expr": "rate(http_server_requests_seconds_count{status=~\"5..\"}[5m]) / rate(http_server_requests_seconds_count[5m]) > 0.05",
+          "time": "now",
+          "tags": ["error-rate", "alert"],
+          "text": "5xx错误率超过5%"
+        }
+      ]
+    },
+    "templates": [
+      {
+        "name": "性能报告模板",
+        "time": {
+          "from": "now-1h",
+          "to": "now"
+        },
+        "panels": [
+          "jvm-memory-overview",
+          "gc-performance",
+          "response-time-trend",
+          "throughput-metrics"
+        ]
+      },
+      {
+        "name": "系统监控模板",
+        "time": {
+          "from": "now-24h",
+          "to": "now"
+        },
+        "panels": [
+          "thread-pool-status",
+          "cache-hit-rate",
+          "database-connections",
+          "redis-connections",
+          "error-rate",
+          "service-health"
+        ]
+      }
+    ],
+    "alerts": [
+      {
+        "name": "高内存使用率告警",
+        "condition": "jvm_memory_used_bytes / jvm_memory_max_bytes > 0.85",
+        "time": "5m",
+        "severity": "warning",
+        "description": "JVM内存使用率过高，可能导致性能问题"
+      },
+      {
+        "name": "GC性能告警",
+        "condition": "jvm_gc_pause_seconds_max > 1",
+        "time": "5m",
+        "severity": "warning",
+        "description": "GC暂停时间过长，影响应用响应性能"
+      },
+      {
+        "name": "响应时间告警",
+        "condition": "histogram_quantile(0.95, http_server_requests_seconds_bucket) > 3",
+        "time": "5m",
+        "severity": "critical",
+        "description": "95%请求响应时间过长，用户体验受影响"
+      },
+      {
+        "name": "错误率告警",
+        "condition": "rate(http_server_requests_seconds_count{status=~\"5..\"}[5m]) / rate(http_server_requests_seconds_count[5m]) > 0.1",
+        "time": "5m",
+        "severity": "critical",
+        "description": "系统错误率过高，可能存在严重问题"
+      },
+      {
+        "name": "线程池满载告警",
+        "condition": "tomcat_threads_active_threads / tomcat_threads_max_threads > 0.9",
+        "time": "5m",
+        "severity": "warning",
+        "description": "线程池使用率过高，可能出现线程阻塞"
+      },
+      {
+        "name": "缓存命中率低告警",
+        "condition": "cache_get_total / (cache_get_total + cache_miss_total) * 100 < 80",
+        "time": "10m",
+        "severity": "warning",
+        "description": "缓存命中率过低，影响系统性能"
+      }
+    ],
+    "export": {
+      "formats": ["json", "yaml"],
+      "destination": "./monitoring-configs/",
+      "includeAlerts": true,
+      "includeTemplates": true
+    }
+  },
+  "prometheus": {
+    "scrapeConfigs": [
+      {
+        "jobName": "ioedream-gateway-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8080"]
+      },
+      {
+        "jobName": "ioedream-common-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8088"]
+      },
+      {
+        "jobName": "ioedream-access-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8090"]
+      },
+      {
+        "jobName": "ioedream-attendance-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8091"]
+      },
+      {
+        "jobName": "ioedream-consume-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8094"]
+      },
+      {
+        "jobName": "ioedream-visitor-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8095"]
+      },
+      {
+        "jobName": "ioedream-video-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8092"]
+      },
+      {
+        "jobName": "ioedream-oa-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8089"]
+      },
+      {
+        "jobName": "ioedream-device-comm-service",
+        "metricsPath": "/actuator/prometheus",
+        "scrapeInterval": "30s",
+        "targets": ["localhost:8087"]
+      }
+    ],
+    "rules": [
+      {
+        "name": "ioedream-jvm-rules.yml",
+        "rules": [
+          {
+            "alert": "JVMMemoryHigh",
+            "expr": "jvm_memory_used_bytes / jvm_memory_max_bytes > 0.85",
+            "for": "5m",
+            "labels": {
+              "severity": "warning"
+            },
+            "annotations": {
+              "summary": "JVM内存使用率过高",
+              "description": "实例 {{ $labels.instance }} 的JVM内存使用率已超过85%，当前值: {{ $value | humanizePercentage }}"
+            }
+          },
+          {
+            "alert": "GCPerformanceLow",
+            "expr": "rate(jvm_gc_collection_seconds_sum[5m]) > 0.1",
+            "for": "5m",
+            "labels": {
+              "severity": "warning"
+            },
+            "annotations": {
+              "summary": "GC性能低下",
+              "description": "实例 {{ $labels.instance }} 的GC频率过高，可能影响应用性能"
+            }
+          }
+        ]
+      },
+      {
+        "name": "ioedream-application-rules.yml",
+        "rules": [
+          {
+            "alert": "HighResponseTime",
+            "expr": "histogram_quantile(0.95, http_server_requests_seconds_bucket) > 3",
+            "for": "5m",
+            "labels": {
+              "severity": "critical"
+            },
+            "annotations": {
+              "summary": "响应时间过长",
+              "description": "95%的请求响应时间超过3秒，当前值: {{ $value }}s"
+            }
+          },
+          {
+            "alert": "HighErrorRate",
+            "expr": "rate(http_server_requests_seconds_count{status=~\"5..\"}[5m]) / rate(http_server_requests_seconds_count[5m]) > 0.05",
+            "for": "2m",
+            "labels": {
+              "severity": "critical"
+            },
+            "annotations": {
+              "summary": "错误率过高",
+              "description": "5xx错误率已超过5%，当前值: {{ $value | humanizePercentage }}"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grafana": {
+    "dashboards": [
+      {
+        "name": "IOE-DREAM Service Overview",
+        "file": "ioedream-service-overview.json"
+      },
+      {
+        "name": "IOE-DREAM JVM Performance",
+        "file": "ioedream-jvm-performance.json"
+      },
+      {
+        "name": "IOE-DREAM Database Performance",
+        "file": "ioedream-database-performance.json"
+      },
+      {
+        "name": "IOE-DREAM Cache Performance",
+        "file": "ioedream-cache-performance.json"
+      }
+    ],
+    "datasources": [
+      {
+        "name": "Prometheus",
+        "type": "prometheus",
+        "url": "http://localhost:9090",
+        "access": "proxy",
+        "isDefault": true
+      }
+    ]
+  }
+}

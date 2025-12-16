@@ -864,6 +864,417 @@ public class ApprovalServiceImpl implements ApprovalService {
         }
     }
 
+    // ==================== Flowable工作流引擎集成方法实现 ====================
+
+    @Override
+    @Observed(name = "approval.handleTaskCreated", contextualName = "approval-handle-task-created")
+    public void handleTaskCreated(String taskId, String processInstanceId) {
+        log.info("[审批服务] 处理Flowable任务创建事件: taskId={}, processInstanceId={}", taskId, processInstanceId);
+
+        try {
+            // 参数验证
+            if (taskId == null || processInstanceId == null) {
+                log.warn("[审批服务] 任务创建事件参数为空: taskId={}, processInstanceId={}", taskId, processInstanceId);
+                return;
+            }
+
+            // 查询本地流程实例
+            WorkflowInstanceEntity instance = approvalInstanceDao.selectByFlowableInstanceId(processInstanceId);
+            if (instance == null) {
+                log.warn("[审批服务] 未找到本地流程实例: flowableInstanceId={}", processInstanceId);
+                return;
+            }
+
+            // 检查是否已存在本地任务记录
+            WorkflowTaskEntity existingTask = workflowTaskDao.selectByFlowableTaskId(taskId);
+            if (existingTask != null) {
+                log.debug("[审批服务] 本地任务记录已存在: taskId={}", taskId);
+                return;
+            }
+
+            // 创建本地任务记录
+            WorkflowTaskEntity task = new WorkflowTaskEntity();
+            task.setFlowableTaskId(taskId);
+            task.setFlowableProcessInstanceId(processInstanceId);
+            task.setInstanceId(instance.getId());
+            task.setTaskName(instance.getProcessName() + "-待审批");
+            task.setTaskType("APPROVAL");
+            task.setNodeId("approval");
+            task.setNodeName("审批节点");
+            task.setAssigneeId(instance.getCurrentApproverId());
+            task.setAssigneeName(instance.getCurrentApproverName());
+            task.setPriority(instance.getPriority() != null ? instance.getPriority() : 3);
+            task.setStatus(1); // 1-待受理
+            task.setOutcome(0); // 0-未处理
+            task.setTaskCreateTime(LocalDateTime.now());
+            task.setStartTime(LocalDateTime.now());
+            task.setCreateTime(LocalDateTime.now());
+            task.setUpdateTime(LocalDateTime.now());
+
+            int inserted = workflowTaskDao.insert(task);
+            if (inserted > 0) {
+                log.info("[审批服务] 本地任务记录创建成功: taskId={}, localTaskId={}", taskId, task.getId());
+            } else {
+                log.error("[审批服务] 本地任务记录创建失败: taskId={}", taskId);
+            }
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批服务] 处理任务创建事件参数错误: taskId={}, processInstanceId={}, error={}",
+                    taskId, processInstanceId, e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批服务] 处理任务创建事件业务异常: taskId={}, processInstanceId={}, code={}, message={}",
+                    taskId, processInstanceId, e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批服务] 处理任务创建事件系统异常: taskId={}, processInstanceId={}, code={}, message={}",
+                    taskId, processInstanceId, e.getCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[审批服务] 处理任务创建事件未知异常: taskId={}, processInstanceId={}",
+                    taskId, processInstanceId, e);
+        }
+    }
+
+    @Override
+    @Observed(name = "approval.handleTaskAssigned", contextualName = "approval-handle-task-assigned")
+    public void handleTaskAssigned(String taskId, Long assigneeId) {
+        log.info("[审批服务] 处理Flowable任务分配事件: taskId={}, assigneeId={}", taskId, assigneeId);
+
+        try {
+            // 参数验证
+            if (taskId == null || assigneeId == null) {
+                log.warn("[审批服务] 任务分配事件参数为空: taskId={}, assigneeId={}", taskId, assigneeId);
+                return;
+            }
+
+            // 查询本地任务记录
+            WorkflowTaskEntity task = workflowTaskDao.selectByFlowableTaskId(taskId);
+            if (task == null) {
+                log.warn("[审批服务] 未找到本地任务记录: flowableTaskId={}", taskId);
+                return;
+            }
+
+            // 更新任务分配信息
+            task.setAssigneeId(assigneeId);
+            task.setAssigneeTime(LocalDateTime.now());
+            task.setUpdateTime(LocalDateTime.now());
+
+            int updated = workflowTaskDao.updateById(task);
+            if (updated > 0) {
+                log.info("[审批服务] 任务分配信息更新成功: taskId={}, assigneeId={}", taskId, assigneeId);
+            } else {
+                log.error("[审批服务] 任务分配信息更新失败: taskId={}", taskId);
+            }
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批服务] 处理任务分配事件参数错误: taskId={}, assigneeId={}, error={}",
+                    taskId, assigneeId, e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批服务] 处理任务分配事件业务异常: taskId={}, assigneeId={}, code={}, message={}",
+                    taskId, assigneeId, e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批服务] 处理任务分配事件系统异常: taskId={}, assigneeId={}, code={}, message={}",
+                    taskId, assigneeId, e.getCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[审批服务] 处理任务分配事件未知异常: taskId={}, assigneeId={}",
+                    taskId, assigneeId, e);
+        }
+    }
+
+    @Override
+    @Observed(name = "approval.handleTaskCompleted", contextualName = "approval-handle-task-completed")
+    public void handleTaskCompleted(String taskId, Integer outcome, String comment) {
+        log.info("[审批服务] 处理Flowable任务完成事件: taskId={}, outcome={}, comment={}", taskId, outcome, comment);
+
+        try {
+            // 参数验证
+            if (taskId == null || outcome == null) {
+                log.warn("[审批服务] 任务完成事件参数为空: taskId={}, outcome={}", taskId, outcome);
+                return;
+            }
+
+            // 查询本地任务记录
+            WorkflowTaskEntity task = workflowTaskDao.selectByFlowableTaskId(taskId);
+            if (task == null) {
+                log.warn("[审批服务] 未找到本地任务记录: flowableTaskId={}", taskId);
+                return;
+            }
+
+            // 更新任务完成信息
+            task.setStatus(3); // 3-已完成
+            task.setResult(outcome); // 1-同意 2-驳回
+            task.setComment(comment);
+            task.setEndTime(LocalDateTime.now());
+            task.setUpdateTime(LocalDateTime.now());
+
+            // 计算处理时长
+            if (task.getStartTime() != null) {
+                long duration = java.time.Duration.between(task.getStartTime(), LocalDateTime.now()).toMinutes();
+                task.setDuration(duration.intValue());
+            }
+
+            int updated = workflowTaskDao.updateById(task);
+            if (updated > 0) {
+                log.info("[审批服务] 任务完成信息更新成功: taskId={}, outcome={}", taskId, outcome);
+            } else {
+                log.error("[审批服务] 任务完成信息更新失败: taskId={}", taskId);
+            }
+
+            // 更新流程实例状态
+            updateInstanceStatusAfterTask(task.getInstanceId(), task.getAssigneeId());
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批服务] 处理任务完成事件参数错误: taskId={}, outcome={}, error={}",
+                    taskId, outcome, e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批服务] 处理任务完成事件业务异常: taskId={}, outcome={}, code={}, message={}",
+                    taskId, outcome, e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批服务] 处理任务完成事件系统异常: taskId={}, outcome={}, code={}, message={}",
+                    taskId, outcome, e.getCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[审批服务] 处理任务完成事件未知异常: taskId={}, outcome={}",
+                    taskId, outcome, e);
+        }
+    }
+
+    @Override
+    @Observed(name = "approval.handleProcessStarted", contextualName = "approval-handle-process-started")
+    public void handleProcessStarted(String processInstanceId, String processDefinitionId) {
+        log.info("[审批服务] 处理Flowable流程启动事件: processInstanceId={}, processDefinitionId={}", processInstanceId, processDefinitionId);
+
+        try {
+            // 参数验证
+            if (processInstanceId == null || processDefinitionId == null) {
+                log.warn("[审批服务] 流程启动事件参数为空: processInstanceId={}, processDefinitionId={}", processInstanceId, processDefinitionId);
+                return;
+            }
+
+            // 查询本地流程实例
+            WorkflowInstanceEntity instance = approvalInstanceDao.selectByFlowableInstanceId(processInstanceId);
+            if (instance == null) {
+                log.warn("[审批服务] 未找到本地流程实例: flowableInstanceId={}", processInstanceId);
+                return;
+            }
+
+            // 更新流程实例状态为运行中
+            instance.setStatus(1); // 1-运行中
+            instance.setUpdateTime(LocalDateTime.now());
+
+            int updated = approvalInstanceDao.updateById(instance);
+            if (updated > 0) {
+                log.info("[审批服务] 流程实例状态更新成功: processInstanceId={}, status=RUNNING", processInstanceId);
+            } else {
+                log.error("[审批服务] 流程实例状态更新失败: processInstanceId={}", processInstanceId);
+            }
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批服务] 处理流程启动事件参数错误: processInstanceId={}, processDefinitionId={}, error={}",
+                    processInstanceId, processDefinitionId, e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批服务] 处理流程启动事件业务异常: processInstanceId={}, processDefinitionId={}, code={}, message={}",
+                    processInstanceId, processDefinitionId, e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批服务] 处理流程启动事件系统异常: processInstanceId={}, processDefinitionId={}, code={}, message={}",
+                    processInstanceId, processDefinitionId, e.getCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[审批服务] 处理流程启动事件未知异常: processInstanceId={}, processDefinitionId={}",
+                    processInstanceId, processDefinitionId, e);
+        }
+    }
+
+    @Override
+    @Observed(name = "approval.handleProcessCompleted", contextualName = "approval-handle-process-completed")
+    public void handleProcessCompleted(String processInstanceId, String processDefinitionId) {
+        log.info("[审批服务] 处理Flowable流程完成事件: processInstanceId={}, processDefinitionId={}", processInstanceId, processDefinitionId);
+
+        try {
+            // 参数验证
+            if (processInstanceId == null || processDefinitionId == null) {
+                log.warn("[审批服务] 流程完成事件参数为空: processInstanceId={}, processDefinitionId={}", processInstanceId, processDefinitionId);
+                return;
+            }
+
+            // 查询本地流程实例
+            WorkflowInstanceEntity instance = approvalInstanceDao.selectByFlowableInstanceId(processInstanceId);
+            if (instance == null) {
+                log.warn("[审批服务] 未找到本地流程实例: flowableInstanceId={}", processInstanceId);
+                return;
+            }
+
+            // 更新流程实例状态为已完成
+            instance.setStatus(2); // 2-已完成
+            instance.setEndTime(LocalDateTime.now());
+            instance.setUpdateTime(LocalDateTime.now());
+
+            // 计算流程总时长
+            if (instance.getStartTime() != null) {
+                long duration = java.time.Duration.between(instance.getStartTime(), LocalDateTime.now()).toMinutes();
+                instance.setDuration(duration.intValue());
+            }
+
+            int updated = approvalInstanceDao.updateById(instance);
+            if (updated > 0) {
+                log.info("[审批服务] 流程实例完成状态更新成功: processInstanceId={}, status=COMPLETED", processInstanceId);
+            } else {
+                log.error("[审批服务] 流程实例完成状态更新失败: processInstanceId={}", processInstanceId);
+            }
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批服务] 处理流程完成事件参数错误: processInstanceId={}, processDefinitionId={}, error={}",
+                    processInstanceId, processDefinitionId, e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批服务] 处理流程完成事件业务异常: processInstanceId={}, processDefinitionId={}, code={}, message={}",
+                    processInstanceId, processDefinitionId, e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批服务] 处理流程完成事件系统异常: processInstanceId={}, processDefinitionId={}, code={}, message={}",
+                    processInstanceId, processDefinitionId, e.getCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[审批服务] 处理流程完成事件未知异常: processInstanceId={}, processDefinitionId={}",
+                    processInstanceId, processDefinitionId, e);
+        }
+    }
+
+    @Override
+    @Observed(name = "approval.handleStartNode", contextualName = "approval-handle-start-node")
+    public void handleStartNode(String processInstanceId, Map<String, Object> variables) {
+        log.info("[审批服务] 处理开始节点业务逻辑: processInstanceId={}", processInstanceId);
+
+        try {
+            // 参数验证
+            if (processInstanceId == null) {
+                log.warn("[审批服务] 开始节点处理参数为空: processInstanceId={}", processInstanceId);
+                return;
+            }
+
+            if (variables == null || variables.isEmpty()) {
+                log.debug("[审批服务] 开始节点无流程变量: processInstanceId={}", processInstanceId);
+                return;
+            }
+
+            // 查询本地流程实例
+            WorkflowInstanceEntity instance = approvalInstanceDao.selectByFlowableInstanceId(processInstanceId);
+            if (instance == null) {
+                log.warn("[审批服务] 未找到本地流程实例: flowableInstanceId={}", processInstanceId);
+                return;
+            }
+
+            // 处理开始节点的业务逻辑
+            // 1. 初始化流程变量
+            if (!variables.containsKey("initiatorId")) {
+                variables.put("initiatorId", instance.getInitiatorId());
+            }
+            if (!variables.containsKey("businessType")) {
+                variables.put("businessType", instance.getBusinessType());
+            }
+            if (!variables.containsKey("businessId")) {
+                variables.put("businessId", instance.getBusinessId());
+            }
+
+            // 2. 设置当前审批节点信息
+            instance.setCurrentNodeId("approval");
+            instance.setCurrentNodeName("审批节点");
+            instance.setUpdateTime(LocalDateTime.now());
+
+            int updated = approvalInstanceDao.updateById(instance);
+            if (updated > 0) {
+                log.info("[审批服务] 开始节点处理完成: processInstanceId={}", processInstanceId);
+            } else {
+                log.error("[审批服务] 开始节点处理失败: processInstanceId={}", processInstanceId);
+            }
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批服务] 开始节点处理参数错误: processInstanceId={}, error={}", processInstanceId, e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批服务] 开始节点处理业务异常: processInstanceId={}, code={}, message={}", processInstanceId, e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批服务] 开始节点处理系统异常: processInstanceId={}, code={}, message={}", processInstanceId, e.getCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[审批服务] 开始节点处理未知异常: processInstanceId={}", processInstanceId, e);
+        }
+    }
+
+    @Override
+    @Observed(name = "approval.validateBusinessRule", contextualName = "approval-validate-business-rule")
+    public boolean validateBusinessRule(Map<String, Object> variables) {
+        log.info("[审批服务] 验证业务规则: variables={}", variables);
+
+        try {
+            if (variables == null || variables.isEmpty()) {
+                log.warn("[审批服务] 业务规则验证失败: 流程变量为空");
+                return false;
+            }
+
+            // 业务规则验证逻辑
+            // 1. 检查必要的流程变量
+            String businessType = (String) variables.get("businessType");
+            Long initiatorId = (Long) variables.get("initiatorId");
+            Long businessId = (Long) variables.get("businessId");
+
+            if (businessType == null || initiatorId == null || businessId == null) {
+                log.warn("[审批服务] 业务规则验证失败: 缺少必要变量 businessType={}, initiatorId={}, businessId={}",
+                        businessType, initiatorId, businessId);
+                return false;
+            }
+
+            // 2. 根据业务类型进行特定验证
+            boolean isValid = true;
+            String validationMessage = null;
+
+            switch (businessType.toUpperCase()) {
+                case "LEAVE":
+                    // 请假申请验证：检查请假天数、余额等
+                    Integer leaveDays = (Integer) variables.get("leaveDays");
+                    if (leaveDays != null && leaveDays > 30) {
+                        isValid = false;
+                        validationMessage = "请假天数不能超过30天";
+                    }
+                    break;
+
+                case "EXPENSE":
+                    // 报销申请验证：检查金额限制等
+                    Double expenseAmount = (Double) variables.get("expenseAmount");
+                    if (expenseAmount != null && expenseAmount > 10000.0) {
+                        isValid = false;
+                        validationMessage = "报销金额不能超过10000元";
+                    }
+                    break;
+
+                case "TRAVEL":
+                    // 出差申请验证：检查出差天数等
+                    Integer travelDays = (Integer) variables.get("travelDays");
+                    if (travelDays != null && travelDays > 15) {
+                        isValid = false;
+                        validationMessage = "出差天数不能超过15天";
+                    }
+                    break;
+
+                default:
+                    // 其他业务类型默认通过
+                    break;
+            }
+
+            if (!isValid) {
+                log.warn("[审批服务] 业务规则验证失败: businessType={}, message={}", businessType, validationMessage);
+            } else {
+                log.info("[审批服务] 业务规则验证通过: businessType={}", businessType);
+            }
+
+            return isValid;
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批服务] 业务规则验证参数错误: error={}", e.getMessage());
+            return false;
+        } catch (BusinessException e) {
+            log.warn("[审批服务] 业务规则验证业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return false;
+        } catch (SystemException e) {
+            log.error("[审批服务] 业务规则验证系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("[审批服务] 业务规则验证未知异常", e);
+            return false;
+        }
+    }
+
     // ==================== 私有辅助方法 ====================
 
     /**

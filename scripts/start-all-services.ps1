@@ -94,76 +94,57 @@ function Start-Microservice {
     $servicePath = Join-Path $ProjectRoot $Service.Path
 
     if (-not (Test-Path $servicePath)) {
-        Write-Host "[ERROR] Service not found: $($Service.Name)" -ForegroundColor Red
+        $errMsg = "[ERROR] Service not found: $($Service.Name)"
+        Write-ColorOutput Red $errMsg
         return $false
     }
 
     # Check if port is already in use
     if (Test-PortInUse -Port $Service.Port) {
-        Write-Host "[WARN] Port $($Service.Port) already in use, skipping $($Service.Name)" -ForegroundColor Yellow
+        $warnMsg = "[WARN] Port $($Service.Port) already in use, skipping $($Service.Name)"
+        Write-ColorOutput Yellow $warnMsg
         return $true
     }
 
-    Write-Host "[START] Starting $($Service.Name) (Port: $($Service.Port))..." -ForegroundColor Cyan
+    $infoMsg = "[START] Starting $($Service.Name) (Port: $($Service.Port))..."
+    Write-ColorOutput Cyan $infoMsg
 
     try {
-        # 加载环境变量（如果未加载）
-        $loadEnvScript = Join-Path $PSScriptRoot "load-env.ps1"
-        if (Test-Path $loadEnvScript) {
-            & $loadEnvScript -Silent
-        }
-
-        # 创建临时批处理文件来设置环境变量并启动服务
-        $batFile = Join-Path $env:TEMP "start-$($Service.Name)-$(Get-Date -Format 'yyyyMMddHHmmss').bat"
-
-        # 构建批处理文件内容
-        $batContent = "@echo off`r`n"
-        $batContent += "cd /d `"$servicePath`"`r`n`r`n"
-        $batContent += "REM Setting environment variables`r`n"
-
-        # 添加环境变量
-        $envVars = Get-ChildItem Env: | Where-Object {
-            $_.Name -match '^(MYSQL_|REDIS_|NACOS_|SPRING_|GATEWAY_|JAVA_|MAVEN_|LOG_|MANAGEMENT_|DOCKER_|DRUID_|REDIS_POOL_|RABBITMQ_|JASYPT_|JWT_)'
-        }
-
-        foreach ($envVar in $envVars) {
-            $varName = $envVar.Name
-            $varValue = $envVar.Value
-            # 转义特殊字符
-            $varValue = $varValue -replace '"', '""'
-            $varValue = $varValue -replace '&', '^&'
-            $varValue = $varValue -replace '\|', '^|'
-            $varValue = $varValue -replace '<', '^<'
-            $varValue = $varValue -replace '>', '^>'
-            # 如果值包含空格或特殊字符，用引号包裹
-            if ($varValue -match '[ &|<>^]') {
-                $batContent += "set ${varName}=`"${varValue}`"`r`n"
-            } else {
-                $batContent += "set ${varName}=${varValue}`r`n"
-            }
-        }
-
-        $batContent += "`r`nREM Starting service`r`n"
-        $batContent += "mvn spring-boot:run -DskipTests -Dpmd.skip=true`r`n"
-        $batContent += "pause`r`n"
-
-        # 写入批处理文件
-        [System.IO.File]::WriteAllText($batFile, $batContent, [System.Text.Encoding]::ASCII)
-
-        # Start service in new window using batch file
+        # Start service in new window with environment variables
         $startInfo = New-Object System.Diagnostics.ProcessStartInfo
         $startInfo.FileName = "cmd.exe"
-        $startInfo.Arguments = "/k `"$batFile`""
+
+        # 构建启动命令，包含环境变量设置
+        $envVars = @()
+        if ($env:MYSQL_HOST) { $envVars += "set MYSQL_HOST=$env:MYSQL_HOST" }
+        if ($env:MYSQL_PORT) { $envVars += "set MYSQL_PORT=$env:MYSQL_PORT" }
+        if ($env:MYSQL_DATABASE) { $envVars += "set MYSQL_DATABASE=$env:MYSQL_DATABASE" }
+        if ($env:MYSQL_USERNAME) { $envVars += "set MYSQL_USERNAME=$env:MYSQL_USERNAME" }
+        if ($env:MYSQL_PASSWORD) { $envVars += "set MYSQL_PASSWORD=$env:MYSQL_PASSWORD" }
+        if ($env:REDIS_HOST) { $envVars += "set REDIS_HOST=$env:REDIS_HOST" }
+        if ($env:REDIS_PORT) { $envVars += "set REDIS_PORT=$env:REDIS_PORT" }
+        if ($env:REDIS_PASSWORD) { $envVars += "set REDIS_PASSWORD=$env:REDIS_PASSWORD" }
+        if ($env:NACOS_SERVER_ADDR) { $envVars += "set NACOS_SERVER_ADDR=$env:NACOS_SERVER_ADDR" }
+        if ($env:NACOS_NAMESPACE) { $envVars += "set NACOS_NAMESPACE=$env:NACOS_NAMESPACE" }
+        if ($env:NACOS_GROUP) { $envVars += "set NACOS_GROUP=$env:NACOS_GROUP" }
+        if ($env:NACOS_USERNAME) { $envVars += "set NACOS_USERNAME=$env:NACOS_USERNAME" }
+        if ($env:NACOS_PASSWORD) { $envVars += "set NACOS_PASSWORD=$env:NACOS_PASSWORD" }
+        if ($env:SPRING_PROFILES_ACTIVE) { $envVars += "set SPRING_PROFILES_ACTIVE=$env:SPRING_PROFILES_ACTIVE" }
+
+        $envVarsCmd = $envVars -join " && "
+        $startInfo.Arguments = "/k cd /d `"$servicePath`" && $envVarsCmd && mvn spring-boot:run"
         $startInfo.UseShellExecute = $true
         $startInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Normal
 
         $process = [System.Diagnostics.Process]::Start($startInfo)
 
-        Write-Host "[OK] $($Service.Name) started (PID: $($process.Id))" -ForegroundColor Green
+        $okMsg = "[OK] $($Service.Name) started (PID: $($process.Id))"
+        Write-ColorOutput Green $okMsg
         return $true
-    }
-    catch {
-        Write-Host "[ERROR] Failed to start $($Service.Name) - $($_.Exception.Message)" -ForegroundColor Red
+
+    } catch {
+        $errMsg = "[ERROR] Failed to start $($Service.Name): $($_.Exception.Message)"
+        Write-ColorOutput Red $errMsg
         return $false
     }
 }

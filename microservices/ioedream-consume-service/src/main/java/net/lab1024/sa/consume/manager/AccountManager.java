@@ -2,7 +2,7 @@ package net.lab1024.sa.consume.manager;
 
 import java.math.BigDecimal;
 
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
 
 /**
  * 账户管理Manager接口

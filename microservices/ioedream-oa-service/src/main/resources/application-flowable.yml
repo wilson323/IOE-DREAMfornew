@@ -1,0 +1,84 @@
+# Flowable工作流引擎配置
+flowable:
+  # 数据库配置
+  database-schema-update: true
+  db-history-used: true
+
+  # 流程定义配置
+  process:
+    definition-cache-limit: 100
+    enable-safe-xml: true
+
+  # 历史配置
+  history-level: audit
+  custom-mybatis-mappers: false
+  custom-mybatis-xml-mappers: false
+
+  # 邮件配置
+  mail:
+    server:
+      host: ${spring.mail.host}
+      port: ${spring.mail.port:587}
+      username: ${spring.mail.username}
+      password: ${spring.mail.password}
+
+  # 批处理配置
+  async-executor-activate: true
+  job-executor-activate: true
+
+  # 事件监听器配置
+  event-listeners:
+    - class: net.lab1024.sa.oa.workflow.listener.FlowableEventListener
+      events:
+        - "PROCESS_STARTED"
+        - "PROCESS_COMPLETED"
+        - "TASK_CREATED"
+        - "TASK_COMPLETED"
+        - "TASK_ASSIGNED"
+
+  # 执行监听器配置
+  execution-listeners:
+    - event: "start"
+      class: net.lab1024.sa.oa.workflow.listener.WorkflowExecutionListener
+    - event: "end"
+      class: net.lab1024.sa.oa.workflow.listener.WorkflowExecutionListener
+
+  # 任务监听器配置
+  task-listeners:
+    - event: "create"
+      class: net.lab1024.sa.oa.workflow.listener.WorkflowTaskListener
+    - event: "complete"
+      class: net.lab1024.sa.oa.workflow.listener.WorkflowTaskListener
+    - event: "assignment"
+      class: net.lab1024.sa.oa.workflow.listener.WorkflowTaskListener
+
+# Spring Boot 自动配置优化
+spring:
+  datasource:
+    # Flowable专用数据源配置（如果需要分离）
+    flowable:
+      url: ${spring.datasource.url}
+      username: ${spring.datasource.username}
+      password: ${spring.datasource.password}
+      driver-class-name: ${spring.datasource.driver-class-name}
+
+  # 邮件配置
+  mail:
+    host: ${MAIL_HOST:smtp.example.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# 日志配置（Flowable相关）
+logging:
+  level:
+    org.flowable: INFO
+    org.flowable.engine: DEBUG
+    org.flowable.task: DEBUG
+    org.flowable.job: DEBUG

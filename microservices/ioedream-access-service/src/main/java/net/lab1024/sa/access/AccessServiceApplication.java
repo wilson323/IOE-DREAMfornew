@@ -67,8 +67,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     "net.lab1024.sa.common.auth.dao",
     "net.lab1024.sa.common.rbac.dao",
     "net.lab1024.sa.common.system.employee.dao",
+    "net.lab1024.sa.common.system.dao",
     "net.lab1024.sa.common.access.dao",
     "net.lab1024.sa.common.organization.dao",
+    "net.lab1024.sa.common.audit.dao",
+    "net.lab1024.sa.common.dict.dao",
+    "net.lab1024.sa.common.menu.dao",
+    // Workflow模块DAO（支持审批流程）
+    "net.lab1024.sa.common.workflow.dao",
     // Access模块DAO
     "net.lab1024.sa.access.dao"
 })

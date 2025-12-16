@@ -19,7 +19,7 @@ import net.lab1024.sa.oa.workflow.entity.WorkflowTaskEntity;
  * 工作流任务DAO接口
  * <p>
  * 严格遵循四层架构规范：
- * - 使用@Mapper注解，禁止使用@Repository注解
+ * - 使用@Mapper注解，禁止使用@Mapper注解
  * - 继承BaseMapper提供基础CRUD功能
  * - 只负责数据访问，不包含业务逻辑
  *
@@ -317,6 +317,16 @@ public interface WorkflowTaskDao extends BaseMapper<WorkflowTaskEntity> {
     @Transactional(readOnly = true)
     @Select("SELECT * FROM t_common_workflow_task WHERE deleted_flag = 0 AND instance_id = #{instanceId} AND status IN (1, 2)")
     List<WorkflowTaskEntity> selectPendingTasksByInstance(@Param("instanceId") Long instanceId);
+
+    /**
+     * 根据Flowable任务ID查询本地任务
+     *
+     * @param flowableTaskId Flowable任务ID
+     * @return 任务实体
+     */
+    @Transactional(readOnly = true)
+    @Select("SELECT * FROM t_common_workflow_task WHERE flowable_task_id = #{flowableTaskId} AND deleted_flag = 0")
+    WorkflowTaskEntity selectByFlowableTaskId(@Param("flowableTaskId") String flowableTaskId);
 }
 
 

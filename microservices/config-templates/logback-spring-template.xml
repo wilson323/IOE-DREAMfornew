@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- IOE-DREAM Logback配置模板（包含TraceId分布式追踪） -->
+    <!-- 版本: v1.0.0 -->
+    <!-- 企业级日志配置，支持TraceId追踪 -->
+
+    <!-- Spring Boot默认属性 -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="ioe-dream"/>
+    <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="logs"/>
+    <springProperty scope="context" name="LOG_LEVEL" source="logging.level.root" defaultValue="INFO"/>
+    <springProperty scope="context" name="LOG_DATEFORMAT_PATTERN" source="logging.pattern.dateformat" defaultValue="yyyy-MM-dd HH:mm:ss.SSS"/>
+
+    <!-- 控制台日志输出（包含TraceId） -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- 控制台日志模式：包含TraceId、SpanId和彩色输出 -->
+            <pattern>
+                %clr(%d{${LOG_DATEFORMAT_PATTERN}}){faint}
+                %clr(%-5p){blue}
+                %clr(${PID:- }){magenta}
+                %clr(---){faint}
+                %clr([%X{traceId:-},%X{spanId:-}]){cyan}
+                %clr([%15.15t]){yellow}
+                %clr(%-40.40logger{39}){green}
+                %clr(:){faint}
+                %clr(%m){white}%n
+                %clr(%wEx){red}
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 文件日志输出（包含TraceId） -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- 文件日志模式：包含TraceId、SpanId和结构化输出 -->
+            <pattern>
+                %d{${LOG_DATEFORMAT_PATTERN}}
+                %-5p
+                ${PID:- }
+                ---
+                [%X{traceId:-},%X{spanId:-}]
+                [%thread]
+                [%logger{39}]
+                : %m%n
+                %wEx
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <!-- 日志文件滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 错误日志单独文件（包含TraceId） -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}-error.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- 错误日志模式：包含完整TraceId信息 -->
+            <pattern>
+                %d{${LOG_DATEFORMAT_PATTERN}}
+                %-5p
+                ${PID:- }
+                ---
+                [%X{traceId:-},%X{spanId:-},%X{userId:-}]
+                [%thread]
+                [%logger{39}]
+                : %m%n
+                %wEx
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 异步日志输出（提高性能，包含TraceId） -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失WARNING及以上级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 队列大小 -->
+        <queueSize>1024</queueSize>
+        <!-- 异步输出目标 -->
+        <appender-ref ref="FILE"/>
+        <!-- 包含调用数据 -->
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <!-- 异步错误日志输出 -->
+    <appender name="ASYNC_ERROR_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>512</queueSize>
+        <appender-ref ref="ERROR_FILE"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <!-- 特定包的日志级别配置 -->
+    <logger name="net.lab1024.sa" level="${LOG_LEVEL}" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_ERROR_FILE"/>
+    </logger>
+
+    <!-- ExceptionUtils日志级别（详细记录） -->
+    <logger name="net.lab1024.sa.common.exception.ExceptionUtils" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+    </logger>
+
+    <!-- ExceptionMetricsCollector日志级别 -->
+    <logger name="net.lab1024.sa.common.monitoring.ExceptionMetricsCollector" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+    </logger>
+
+    <!-- GlobalExceptionHandler日志级别 -->
+    <logger name="net.lab1024.sa.common.exception.GlobalExceptionHandler" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_ERROR_FILE"/>
+    </logger>
+
+    <!-- Spring框架日志级别 -->
+    <logger name="org.springframework" level="WARN" additivity="false"/>
+    <logger name="org.springframework.cloud" level="INFO" additivity="false"/>
+    <logger name="org.springframework.web" level="INFO" additivity="false"/>
+
+    <!-- 数据库相关日志 -->
+    <logger name="org.mybatis" level="DEBUG" additivity="false"/>
+    <logger name="com.alibaba.druid" level="INFO" additivity="false"/>
+
+    <!-- Resilience4j日志 -->
+    <logger name="io.github.resilience4j" level="INFO" additivity="false"/>
+
+    <!-- Nacos相关日志 -->
+    <logger name="com.alibaba.nacos" level="INFO" additivity="false"/>
+
+    <!-- HTTP客户端日志 -->
+    <logger name="org.apache.http" level="WARN" additivity="false"/>
+
+    <!-- 根日志级别 -->
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_ERROR_FILE"/>
+    </root>
+
+    <!-- 开发环境配置 -->
+    <springProfile name="dev">
+        <logger name="net.lab1024.sa" level="DEBUG"/>
+        <logger name="org.springframework.web" level="DEBUG"/>
+        <logger name="org.springframework.cloud" level="DEBUG"/>
+    </springProfile>
+
+    <!-- 测试环境配置 -->
+    <springProfile name="test">
+        <logger name="net.lab1024.sa" level="INFO"/>
+        <logger name="org.springframework.web" level="WARN"/>
+    </springProfile>
+
+    <!-- 生产环境配置 -->
+    <springProfile name="prod">
+        <logger name="net.lab1024.sa" level="WARN"/>
+        <logger name="org.springframework.web" level="ERROR"/>
+        <logger name="org.springframework.cloud" level="ERROR"/>
+    </springProfile>
+
+</configuration>

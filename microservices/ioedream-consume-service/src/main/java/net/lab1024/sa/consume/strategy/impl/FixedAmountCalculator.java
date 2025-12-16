@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.common.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 import net.lab1024.sa.consume.service.impl.DefaultFixedAmountCalculator;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
@@ -118,7 +118,7 @@ public class FixedAmountCalculator implements ConsumeAmountCalculator {
                 return false;
             }
 
-            net.lab1024.sa.consume.domain.entity.ConsumeAreaEntity area = 
+            net.lab1024.sa.common.consume.entity.ConsumeAreaEntity area = 
                     consumeAreaManager.getAreaById(areaId);
             if (area == null) {
                 log.warn("[定值策略] 区域不存在，areaId={}", areaId);
