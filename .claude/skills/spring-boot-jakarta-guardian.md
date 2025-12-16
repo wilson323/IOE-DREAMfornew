@@ -33,7 +33,45 @@
 
 ## 🎯 Jakarta EE 3.0+ 包名映射体系
 
-### 📋 核心包名映射表
+### ⚠️ 关键更新：Java标准库包特殊处理（2025-12-17）
+**基于实际项目经验，发现重要的Java标准库包在Jakarta EE 9+中保持javax命名空间不变！**
+
+#### 📋 Java标准库包 - 保持javax命名空间
+| javax包名 | 是否迁移到jakarta | 说明 | 示例用途 |
+|---------|-------------------|------|----------|
+| `javax.sql.DataSource` | ❌ **不迁移** | Java标准库数据库接口 | 数据库连接池 |
+| `javax.sql.Connection` | ❌ **不迁移** | Java标准库数据库连接 | 数据库操作 |
+| `javax.sql.SQLException` | ❌ **不迁移** | Java标准库SQL异常 | 数据库异常处理 |
+| `javax.crypto.Cipher` | ❌ **不迁移** | Java标准库加密接口 | AES加密解密 |
+| `javax.crypto.spec.SecretKeySpec` | ❌ **不迁移** | Java标准库密钥规范 | 密钥管理 |
+| `javax.crypto.KeyGenerator` | ❌ **不迁移** | Java标准库密钥生成器 | 密钥生成 |
+| `javax.security.auth.*` | ❌ **不迁移** | Java标准库安全认证 | 安全认证 |
+| `javax.management.*` | ❌ **不迁移** | Java标准库管理接口 | JVM监控 |
+
+#### 🔍 技术原理说明
+```java
+// ✅ 正确处理：Java标准库包保持javax命名空间
+import javax.sql.DataSource;              // 不迁移到jakarta.sql - Java标准库
+import javax.crypto.Cipher;               // 不迁移到jakarta.crypto - Java标准库
+import javax.crypto.spec.SecretKeySpec;      // 不迁移到jakarta.crypto.spec - Java标准库
+
+// ❌ 错误处理：这些jakarta包不存在
+import jakarta.sql.DataSource;            // 包不存在！程序包jakarta.sql不存在
+import jakarta.crypto.Cipher;             // 包不存在！程序包jakarta.crypto不存在
+```
+
+#### 🎯 判断规则
+**保持javax的包类型**：
+- ✅ **Java SE标准库包**：`javax.sql.*`, `javax.crypto.*`, `javax.security.*`, `javax.management.*`
+- ✅ **JDK核心功能包**：不属于Jakarta EE规范范围的javax包
+- ✅ **底层系统包**：与JVM直接相关的包
+
+**迁移到jakarta的包类型**：
+- ✅ **Jakarta EE规范包**：`javax.annotation.*`, `javax.validation.*`, `javax.persistence.*`
+- ✅ **企业级组件包**：`javax.ejb.*`, `javax.jms.*`, `javax.servlet.*`
+- ✅ **Web应用包**：`javax.faces.*`, `javax.websocket.*`, `javax.rest.*`
+
+### 📋 Jakarta EE包名映射表
 | javax包名 | jakarta包名 | 说明 | 影响范围 |
 |---------|-------------|------|----------|
 | `javax.annotation.Resource` | `jakarta.annotation.Resource` | 依赖注入注解 | 全局依赖注入 |
@@ -51,13 +89,55 @@
 | `javax.jms.*` | `jakarta.jms.*` | JMS API | 消息队列 |
 | `javax.mail.*` | `jakarta.mail.*` | Mail API | 邮件服务 |
 
-### 🔍 包名迁移检测工具
+### 🔍 包名迁移检测工具（更新版本）
 ```java
-// Jakarta EE包名迁移检测和修复工具
+// Jakarta EE包名迁移检测和修复工具 - 支持Java标准库包特殊处理
 @Component
 @Slf4j
 public class JakartaMigrationTool {
 
+    /**
+     * Java标准库包 - 保持javax命名空间（不迁移）
+     * 这些包在Jakarta EE 9+中保持javax命名空间不变
+     */
+    private static final Set<String> JAVA_STANDARD_LIB_PACKAGES = Set.of(
+        "javax.sql",
+        "javax.sql.DataSource",
+        "javax.sql.Connection",
+        "javax.sql.SQLException",
+        "javax.sql.Statement",
+        "javax.sql.PreparedStatement",
+        "javax.sql.CallableStatement",
+        "javax.sql.ResultSet",
+        "javax.sql.DatabaseMetaData",
+        "javax.crypto",
+        "javax.crypto.Cipher",
+        "javax.crypto.spec.SecretKeySpec",
+        "javax.crypto.spec.IvParameterSpec",
+        "javax.crypto.KeyGenerator",
+        "javax.crypto.Mac",
+        "javax.crypto.SecretKey",
+        "javax.crypto.KeyFactory",
+        "javax.security.auth",
+        "javax.security.auth.Subject",
+        "javax.security.auth.login",
+        "javax.security.auth.x500",
+        "javax.management",
+        "javax.management.MBeanServer",
+        "javax.management.ObjectName",
+        "javax.management.Attribute",
+        "javax.naming",
+        "javax.naming.InitialContext",
+        "javax.naming.Context",
+        "javax.xml.bind",
+        "javax.xml.bind.annotation",
+        "javax.xml.parsers",
+        "javax.xml.transform"
+    );
+
+    /**
+     * Jakarta EE规范包 - 迁移到jakarta命名空间
+     */
     private final Map<String, String> JAKARTA_MAPPINGS = Map.of(
         // Annotation
         "javax.annotation.Resource", "jakarta.annotation.Resource",
@@ -180,6 +260,17 @@ public class JakartaMigrationTool {
                 if (line.startsWith("import javax.")) {
                     String javaxImport = line.substring(7); // 移除"import "
 
+                    // 🔍 新增：检查是否为Java标准库包（不应迁移）
+                    if (isJavaStandardLibraryPackage(javaxImport)) {
+                        report.addStandardLibraryUsage(new StandardLibraryUsageItem(
+                            filePath,
+                            i + 1,
+                            javaxImport,
+                            "Java标准库包，保持javax命名空间，不应迁移到jakarta"
+                        ));
+                        continue;
+                    }
+
                     if (JAKARTA_MAPPINGS.containsKey(javaxImport)) {
                         String jakartaImport = JAKARTA_MAPPINGS.get(javaxImport);
 
@@ -191,6 +282,14 @@ public class JakartaMigrationTool {
                             jakartaImport,
                             "需要将javax import替换为jakarta import",
                             MigrationPriority.HIGH
+                        ));
+                    } else {
+                        // 未知的javax包，标记为需要人工检查
+                        report.addUnknownJavaxUsage(new UnknownJavaxUsageItem(
+                            filePath,
+                            i + 1,
+                            javaxImport,
+                            "未知的javax包，需要检查是否属于Jakarta EE规范"
                         ));
                     }
                 }
@@ -205,6 +304,25 @@ public class JakartaMigrationTool {
         } catch (IOException e) {
             log.warn("扫描文件失败: {}", javaFile.getPath(), e);
         }
+    }
+
+    /**
+     * 检查是否为Java标准库包（不应迁移到jakarta）
+     */
+    private boolean isJavaStandardLibraryPackage(String packageOrClass) {
+        // 精确匹配
+        if (JAVA_STANDARD_LIB_PACKAGES.contains(packageOrClass)) {
+            return true;
+        }
+
+        // 前缀匹配
+        for (String standardPackage : JAVA_STANDARD_LIB_PACKAGES) {
+            if (packageOrClass.startsWith(standardPackage + ".")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void checkFullyQualifiedNames(String line, String filePath, int lineNumber, JakartaMigrationReport report) {
@@ -817,7 +935,7 @@ public class DependencyVersionManager {
 
 ## 🛠️ 开发规范和最佳实践
 
-### Jakarta EE迁移最佳实践
+### Jakarta EE迁移最佳实践（含Java标准库包特殊处理）
 ```java
 // ✅ 正确的Jakarta EE使用示例 - 强制技术栈规范
 @RestController
@@ -848,14 +966,82 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userDao.selectById(userId);
         return convertToUserVO(user);
     }
+}
 
-    // ❌ 严格禁止示例
-    // 1. ❌ 禁止使用javax包名下的任何注解
-    // 2. ❌ 禁止import javax.annotation.*
-    // 3. ❌ 禁止import javax.validation.*
-    // 4. ❌ 禁止import javax.transaction.*
-    // 5. ❌ 禁止import javax.persistence.*
-    // 6. ❌ 禁止import javax.servlet.*
+// ✅ 正确的Java标准库包使用示例
+@Component
+@Slf4j
+public class DatabaseManager {
+
+    /**
+     * 数据库连接管理 - 正确使用Java标准库包
+     * 这些包在Spring Boot 3.x中保持javax命名空间不变
+     */
+    private final Map<String, DataSource> dataSourceCache = new ConcurrentHashMap<>();
+
+    public Connection getConnection(String dataSourceName) throws SQLException {
+        // ✅ 正确：javax.sql.DataSource是Java标准库，保持javax命名空间
+        DataSource dataSource = dataSourceCache.get(dataSourceName);
+        if (dataSource == null) {
+            throw new SQLException("数据源不存在: " + dataSourceName);
+        }
+        // ✅ 正确：javax.sql.Connection是Java标准库
+        return dataSource.getConnection();
+    }
+}
+
+@Component
+@Slf4j
+public class CryptoManager {
+
+    /**
+     * AES加密管理 - 正确使用Java标准库包
+     * 这些包在Spring Boot 3.x中保持javax命名空间不变
+     */
+    public String encrypt(String data, String secretKey) throws Exception {
+        // ✅ 正确：javax.crypto.Cipher是Java标准库，保持javax命名空间
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+
+        // ✅ 正确：javax.crypto.spec.SecretKeySpec是Java标准库
+        SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), "AES");
+
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+        byte[] encrypted = cipher.doFinal(data.getBytes());
+
+        return Base64.getEncoder().encodeToString(encrypted);
+    }
+
+    public String decrypt(String encryptedData, String secretKey) throws Exception {
+        // ✅ 正确：javax.crypto相关包保持javax命名空间
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), "AES");
+
+        cipher.init(Cipher.DECRYPT_MODE, keySpec);
+        byte[] decoded = Base64.getDecoder().decode(encryptedData);
+        byte[] decrypted = cipher.doFinal(decoded);
+
+        return new String(decrypted);
+    }
+}
+
+// ❌ 严格禁止示例
+// 1. ❌ 禁止使用jakarta包名下的Java标准库包
+// 2. ❌ 禁止import jakarta.sql.DataSource（包不存在）
+// 3. ❌ 禁止import jakarta.crypto.Cipher（包不存在）
+
+// ❌ 严重错误示例 - Java标准库包错误迁移
+@Component
+public class BadDatabaseManager {
+    private DataSource dataSource;  // ❌ 错误：如果使用jakarta.sql.DataSource会编译失败
+}
+
+@Component
+public class BadCryptoManager {
+    public String encrypt(String data, String secretKey) throws Exception {
+        // ❌ 严重错误：jakarta.crypto.Cipher包不存在
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");  // 编译错误
+        return null;
+    }
 }
 
 @Mapper  // 🔴 强制：使用MyBatis注解，不需要Jakarta相关注解
@@ -968,19 +1154,53 @@ validation:
 
 ---
 
-**📋 重要提醒**:
+**📋 重要提醒（2025-12-17更新）**:
 1. 本技能严格守护IOE-DREAM的Spring Boot 3.5.8 + Jakarta EE 3.0+技术栈
-2. 所有代码必须100%使用jakarta包名，禁止javax包名
-3. 依赖版本必须符合Spring Boot 3.5.8兼容性要求
-4. 定期检查技术栈版本和兼容性问题
-5. 在升级前进行充分的测试和验证
-6. 保持完整的迁移记录和回滚机制
+2. **Jakarta EE规范包**：必须100%使用jakarta包名，禁止javax包名
+3. **Java标准库包**：必须保持javax命名空间，禁止错误迁移到jakarta
+4. 依赖版本必须符合Spring Boot 3.5.8兼容性要求
+5. 定期检查技术栈版本和兼容性问题
+6. 在升级前进行充分的测试和验证
+7. 保持完整的迁移记录和回滚机制
 
-**让我们一起建设现代化的Jakarta EE技术栈！** 🚀
+### ⚠️ 关键技术要点总结
+
+#### 🎯 必须保持javax的包（Java标准库）
+```java
+// ✅ 正确 - Java标准库包
+import javax.sql.DataSource;           // 数据库接口
+import javax.crypto.Cipher;            // 加密接口
+import javax.security.auth.Subject;     // 安全认证
+import javax.management.MBeanServer;   // JVM管理
+```
+
+#### 🎯 必须使用jakarta的包（Jakarta EE规范）
+```java
+// ✅ 正确 - Jakarta EE规范包
+import jakarta.annotation.Resource;      // 依赖注入
+import jakarta.validation.Valid;          // 参数验证
+import jakarta.persistence.Entity;        // JPA实体
+import jakarta.transaction.Transactional;  // 事务管理
+import jakarta.servlet.http.*;           // Servlet API
+```
+
+#### ❌ 严格禁止的错误操作
+```java
+// ❌ 错误1：将Java标准库包迁移到jakarta
+import jakarta.sql.DataSource;            // 包不存在！
+import jakarta.crypto.Cipher;             // 包不存在！
+
+// ❌ 错误2：将Jakarta EE规范包保持为javax
+import javax.annotation.Resource;         // 应该是jakarta.annotation.Resource
+import javax.validation.Valid;            // 应该是jakarta.validation.Valid
+```
+
+**让我们一起建设现代化的Jakarta EE技术栈，正确处理Java标准库包的特殊情况！** 🚀
 
 ---
-**文档版本**: v2.0.0 - IOE-DREAM七微服务专业版
+**文档版本**: v2.1.0 - IOE-DREAM七微服务专业版（Java标准库包特殊处理）
 **创建时间**: 2025-12-08
-**最后更新**: 2025-12-08
+**最后更新**: 2025-12-17
 **技能等级**: ★★★★★★ (顶级专家)
 **适用架构**: Spring Boot 3.5.8 + Jakarta EE 3.0+
+**重大更新**: 基于实际项目经验，新增Java标准库包特殊处理规则，修复javax.sql和javax.crypto等包的迁移问题

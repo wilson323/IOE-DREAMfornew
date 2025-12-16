@@ -82,9 +82,10 @@ public class ExceptionMetricsCollector {
                 .tag("application", getApplicationName())
                 .register(meterRegistry);
 
-        // 内存使用监控
+        // 内存使用监控 - 修复Micrometer Gauge API使用方式
+        // 正确的Gauge注册方式：使用监控对象和方法引用
         this.memoryUsageGauge = Gauge.builder("jvm.memory.exception.usage")
-                .description("异常处理内存使用量")
+                .description("异常处理内存使用量(MB)")
                 .tag("application", getApplicationName())
                 .register(meterRegistry, this, ExceptionMetricsCollector::getMemoryUsage);
 
@@ -114,26 +115,24 @@ public class ExceptionMetricsCollector {
         // 更新原子计数器（避免对象创建）
         totalExceptionCount.incrementAndGet();
 
-        // 更新Micrometer指标
-        exceptionCounter.increment(
-            "type", exceptionType,
-            "code", exceptionCode,
-            "class", exception.getClass().getSimpleName()
-        );
+        // 更新Micrometer指标 - 修复API调用方式
+        // Counter.increment()只接受数值参数，不接受标签参数
+        // 标签应在Counter创建时指定，这里只需简单增加计数
+        exceptionCounter.increment();
 
         // 记录处理时间
         exceptionHandlingTimer.record(handlingTime, java.util.concurrent.TimeUnit.MILLISECONDS);
 
-        // 更新分类计数器
+        // 更新分类计数器 - 修复API调用方式
         if (exception instanceof BusinessException) {
             businessExceptionCount.incrementAndGet();
-            businessExceptionCounter.increment("code", exceptionCode);
+            businessExceptionCounter.increment(); // 移除错误的标签参数
         } else if (exception instanceof SystemException) {
             systemExceptionCount.incrementAndGet();
-            systemExceptionCounter.increment("code", exceptionCode);
+            systemExceptionCounter.increment(); // 移除错误的标签参数
         } else if (exception instanceof ParamException) {
             paramExceptionCount.incrementAndGet();
-            paramExceptionCounter.increment("code", exceptionCode);
+            paramExceptionCounter.increment(); // 移除错误的标签参数
         }
 
         // 更新异常类型计数器

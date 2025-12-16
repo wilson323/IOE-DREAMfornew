@@ -3,10 +3,11 @@ package net.lab1024.sa.common.config;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.SystemException;
 
-import jakarta.sql.DataSource;
-import com.alibaba.druid.pool.DruidDataSource;
-import java.sql.SQLException;
-import jakarta.sql.Connection;
+import javax.sql.DataSource;              // Spring Boot 3.x Jakarta EE迁移特殊处理: javax.sql保持不变，不迁移到jakarta.sql
+                                        // 原因: javax.sql是Java标准库包，在Jakarta EE 9+中保持javax命名空间
+import com.alibaba.druid.pool.DruidDataSource;  // Druid连接池，用于数据库连接池优化配置
+import java.sql.SQLException;              // SQL异常处理，标准Java库
+import java.sql.Connection;               // 数据库连接接口，标准Java库
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -3,8 +3,10 @@ package net.lab1024.sa.common.util;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import jakarta.crypto.Cipher;
-import jakarta.crypto.spec.SecretKeySpec;
+import javax.crypto.Cipher;                    // Spring Boot 3.x Jakarta EE迁移特殊处理: javax.crypto保持不变
+                                             // 原因: javax.crypto是Java标准库包，在Jakarta EE 9+中保持javax命名空间
+                                             // 说明: 虽然是标准库，但 cryptographic API 不在 Jakarta EE 迁移范围内
+import javax.crypto.spec.SecretKeySpec;      // AES密钥规范，用于AES加密解密
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.SystemException;
