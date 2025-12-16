@@ -148,8 +148,12 @@ management:
   # Zipkin追踪配置
   zipkin:
     tracing:
-      # Zipkin服务器端点
-      endpoint: ${ZIPKIN_ENDPOINT:http://127.0.0.1:9411/api/v2/spans}
+      # Zipkin服务器端点（Docker环境使用服务名，本地环境使用127.0.0.1）
+      endpoint: ${ZIPKIN_ENDPOINT:http://zipkin:9411/api/v2/spans}
+      # 连接超时（毫秒）
+      connect-timeout: ${ZIPKIN_CONNECT_TIMEOUT:1000}
+      # 读取超时（毫秒）
+      read-timeout: ${ZIPKIN_READ_TIMEOUT:6000}
 
 # ============================================================
 # 日志配置

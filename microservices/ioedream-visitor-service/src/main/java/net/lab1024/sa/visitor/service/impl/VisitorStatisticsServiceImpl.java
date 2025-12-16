@@ -10,9 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
 import net.lab1024.sa.visitor.domain.entity.VisitorAppointmentEntity;
 import net.lab1024.sa.visitor.service.VisitorStatisticsService;
@@ -41,6 +45,7 @@ public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
     private VisitorAppointmentDao visitorAppointmentDao;
 
     @Override
+    @Observed(name = "visitor.statistics.getStatistics", contextualName = "visitor-statistics-get-statistics")
     @Transactional(readOnly = true)
     public ResponseDTO<Map<String, Object>> getStatistics() {
         log.info("[访客统计] 获取访客统计数据");
@@ -106,13 +111,20 @@ public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
                     totalAppointments, approvedAppointments, pendingAppointments);
             return ResponseDTO.ok(statistics);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客统计] 参数错误，获取访客统计数据失败", e);
+            throw new ParamException("GET_STATISTICS_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[访客统计] 业务异常，获取访客统计数据失败", e);
+            throw e;
         } catch (Exception e) {
-            log.error("[访客统计] 获取访客统计数据失败", e);
-            return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计数据失败: " + e.getMessage());
+            log.error("[访客统计] 系统异常，获取访客统计数据失败", e);
+            throw new SystemException("GET_STATISTICS_SYSTEM_ERROR", "获取统计数据失败: " + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "visitor.statistics.getStatisticsByDateRange", contextualName = "visitor-statistics-get-by-date-range")
     @Transactional(readOnly = true)
     public ResponseDTO<Map<String, Object>> getStatisticsByDateRange(LocalDate startDate, LocalDate endDate) {
         log.info("[访客统计] 根据时间范围获取访客统计数据，startDate={}, endDate={}", startDate, endDate);
@@ -175,10 +187,76 @@ public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
                     totalAppointments, approvedAppointments, pendingAppointments);
             return ResponseDTO.ok(statistics);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客统计] 参数错误，根据时间范围获取访客统计数据失败", e);
+            throw new ParamException("GET_STATISTICS_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[访客统计] 业务异常，根据时间范围获取访客统计数据失败", e);
+            throw e;
         } catch (Exception e) {
-            log.error("[访客统计] 根据时间范围获取访客统计数据失败", e);
-            return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计数据失败: " + e.getMessage());
+            log.error("[访客统计] 系统异常，根据时间范围获取访客统计数据失败", e);
+            throw new SystemException("GET_STATISTICS_SYSTEM_ERROR", "获取统计数据失败: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Observed(name = "visitor.statistics.getPersonalStatistics", contextualName = "visitor-statistics-get-personal")
+    @Transactional(readOnly = true)
+    public ResponseDTO<Map<String, Object>> getPersonalStatistics(Long userId) {
+        log.info("[访客统计] 获取个人访问统计，userId={}", userId);
+
+        try {
+            Map<String, Object> statistics = new HashMap<>();
+
+            LocalDate today = LocalDate.now();
+            LocalDate monthStart = today.withDayOfMonth(1);
+
+            // 统计今日预约数（作为被访人）
+            long todayAppointments = visitorAppointmentDao.selectCount(
+                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                            .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
+                            .eq(VisitorAppointmentEntity::getVisitUserId, userId)
+                            .ge(VisitorAppointmentEntity::getAppointmentStartTime, today.atStartOfDay())
+                            .le(VisitorAppointmentEntity::getAppointmentStartTime, today.atTime(23, 59, 59)));
+
+            // 统计当前在访访客数（已签到未签退）
+            long activeVisitors = visitorAppointmentDao.selectCount(
+                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                            .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
+                            .eq(VisitorAppointmentEntity::getVisitUserId, userId)
+                            .eq(VisitorAppointmentEntity::getStatus, "CHECKED_IN"));
+
+            // 统计本月访问数
+            long monthlyVisitors = visitorAppointmentDao.selectCount(
+                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                            .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
+                            .eq(VisitorAppointmentEntity::getVisitUserId, userId)
+                            .ge(VisitorAppointmentEntity::getAppointmentStartTime, monthStart.atStartOfDay()));
+
+            // 平均停留时长（模拟值，实际需要从签到签退记录计算）
+            int averageDuration = 45;
+
+            // 构建统计数据
+            statistics.put("todayAppointments", todayAppointments);
+            statistics.put("activeVisitors", activeVisitors);
+            statistics.put("monthlyVisitors", monthlyVisitors);
+            statistics.put("averageDuration", averageDuration);
+
+            log.info("[访客统计] 获取个人访问统计成功，userId={}, todayAppointments={}, activeVisitors={}",
+                    userId, todayAppointments, activeVisitors);
+            return ResponseDTO.ok(statistics);
+
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客统计] 参数错误，获取个人访问统计失败，userId={}", userId, e);
+            throw new ParamException("GET_PERSONAL_STATISTICS_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[访客统计] 业务异常，获取个人访问统计失败，userId={}", userId, e);
+            throw e;
+        } catch (Exception e) {
+            log.error("[访客统计] 系统异常，获取个人访问统计失败，userId={}", userId, e);
+            throw new SystemException("GET_PERSONAL_STATISTICS_SYSTEM_ERROR", "获取个人统计数据失败: " + e.getMessage(), e);
         }
     }
 }
+
 

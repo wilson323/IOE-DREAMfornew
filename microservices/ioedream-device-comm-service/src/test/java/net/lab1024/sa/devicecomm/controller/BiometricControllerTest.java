@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.StandardCharsets;
@@ -25,6 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -68,7 +70,7 @@ class BiometricControllerTest {
         request.setFeatureData(featureData);
         request.setTemplateData(new byte[]{});
 
-        when(biometricService.registerBiometric(eq(userId), eq(verifyType), eq(featureData), eq(new byte[]{}), eq(deviceId)))
+        when(biometricService.registerBiometric(eq(userId), eq(verifyType), any(byte[].class), any(byte[].class), eq(deviceId)))
                 .thenReturn(ResponseDTO.ok());
 
         // When & Then
@@ -101,7 +103,7 @@ class BiometricControllerTest {
         BiometricController.BiometricVerifyRequest request = new BiometricController.BiometricVerifyRequest();
         request.setFeatureData(featureData);
 
-        when(biometricService.verifyBiometric(eq(userId), eq(verifyType), eq(featureData)))
+        when(biometricService.verifyBiometric(eq(userId), eq(verifyType), any(byte[].class)))
                 .thenReturn(ResponseDTO.ok(matchResult));
 
         // When & Then
@@ -138,7 +140,7 @@ class BiometricControllerTest {
         request.setFeatureData(featureData);
         request.setCandidateUserIds(candidateIds);
 
-        when(biometricService.findBestMatch(eq(verifyType), eq(featureData), eq(candidateIds)))
+        when(biometricService.findBestMatch(eq(verifyType), any(byte[].class), eq(candidateIds)))
                 .thenReturn(ResponseDTO.ok(matchResult));
 
         // When & Then
@@ -221,7 +223,7 @@ class BiometricControllerTest {
                 createMockRegisterRequest(VerifyTypeEnum.FINGERPRINT)
         );
 
-        when(biometricService.batchRegisterBiometric(eq(userId), eq(requestList)))
+        when(biometricService.batchRegisterBiometric(eq(userId), anyList()))
                 .thenReturn(ResponseDTO.ok());
 
         // When & Then
@@ -291,16 +293,20 @@ class BiometricControllerTest {
         request.setTemplateData(new byte[]{});
 
         CompletableFuture<ResponseDTO<Void>> future = CompletableFuture.completedFuture(ResponseDTO.ok());
-        when(biometricService.registerBiometricAsync(eq(userId), eq(verifyType), eq(featureData), eq(new byte[]{}), eq(deviceId)))
+        when(biometricService.registerBiometricAsync(eq(userId), eq(verifyType), any(byte[].class), any(byte[].class), eq(deviceId)))
                 .thenReturn(future);
 
         // When & Then
-        mockMvc.perform(post("/api/v1/biometric/register-async")
+        MvcResult result = mockMvc.perform(post("/api/v1/biometric/register-async")
                 .param("userId", "1")
                 .param("verifyType", "FACE")
                 .param("deviceId", "1001")
                 .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                 .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
+                .andExpect(request().asyncStarted())
+                .andReturn();
+
+        mockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200));
     }
@@ -313,7 +319,7 @@ class BiometricControllerTest {
         byte[] rawData = "test_device_message".getBytes(StandardCharsets.UTF_8);
         String response = "SUCCESS_RESPONSE";
 
-        when(biometricService.processDeviceBiometricMessage(eq(deviceId), eq(rawData)))
+        when(biometricService.processDeviceBiometricMessage(eq(deviceId), any(byte[].class)))
                 .thenReturn(ResponseDTO.ok(response));
 
         // When & Then

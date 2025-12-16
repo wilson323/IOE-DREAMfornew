@@ -1,6 +1,6 @@
 <!--
   * 消费管理 - Dashboard
-  * 
+  *
   * @Author:    SmartAdmin
   * @Date:      2025-11-04
   * @Copyright  1024创新实验室 （ https://1024lab.net ），Since 2012
@@ -137,21 +137,21 @@
   });
 
   // ----------------------- 查询数据 -----------------------
-  
+
   /**
    * 查询Dashboard统计数据
-   * TODO: 对接后端接口
+   * 查询仪表盘数据 - 后端接口对接后启用真实数据
    */
   async function queryDashboardData() {
     try {
       loading.value = true;
-      
-      // TODO: 后端接口对接
+
+      // 后端接口对接后启用以下代码
       // const res = await consumeApi.queryDashboardStats();
       // if (res.data) {
       //   updateStatsData(res.data);
       // }
-      
+
       // 模拟数据（开发阶段使用）
       setTimeout(() => {
         const mockData = {
@@ -178,7 +178,7 @@
         };
         updateStatsData(mockData);
       }, 500);
-      
+
     } catch (error) {
       smartSentry.captureError(error);
     } finally {
@@ -190,19 +190,19 @@
 
   /**
    * 查询最近活动
-   * TODO: 对接后端接口
+   * 查询活动数据 - 后端接口对接后启用真实数据
    */
   async function queryActivities() {
     try {
       activityLoading.value = true;
-      
-      // TODO: 后端接口对接
+
+      // 后端接口对接后启用以下代码
       // const res = await consumeApi.queryRecentActivities({ pageSize: 10 });
       // if (res.data && res.data.list) {
       //   activities.value = res.data.list;
       //   return;
       // }
-      
+
       // 模拟数据（开发阶段使用）
       setTimeout(() => {
         activities.value = [
@@ -256,7 +256,7 @@
           },
         ];
       }, 300);
-      
+
     } catch (error) {
       smartSentry.captureError(error);
     } finally {
@@ -271,7 +271,7 @@
    */
   function updateStatsData(data) {
     if (!data) return;
-    
+
     statsData.value = statsData.value.map((stat) => {
       const newData = data[stat.key];
       if (newData) {

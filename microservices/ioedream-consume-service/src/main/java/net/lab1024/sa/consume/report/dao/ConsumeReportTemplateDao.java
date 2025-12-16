@@ -40,3 +40,6 @@ public interface ConsumeReportTemplateDao extends BaseMapper<ConsumeReportTempla
      */
     List<ConsumeReportTemplateEntity> selectEnabledTemplates();
 }
+
+
+

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,9 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.consume.service.consistency.ReconciliationService;
 
 /**
@@ -54,6 +58,7 @@ public class ReconciliationController {
      * @return 对账结果
      */
     @PostMapping("/daily")
+    @Observed(name = "reconciliation.performDailyReconciliation", contextualName = "reconciliation-daily")
     @Operation(summary = "执行日终对账", description = "对指定日期的所有账户进行对账")
     @PreAuthorize("hasRole('CONSUME_MANAGER')")
     public ResponseDTO<ReconciliationService.ReconciliationResult> performDailyReconciliation(
@@ -73,8 +78,17 @@ public class ReconciliationController {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[对账管理] 执行日终对账参数错误: reconcileDate={}, error={}", reconcileDate, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[对账管理] 执行日终对账业务异常: reconcileDate={}, code={}, message={}", reconcileDate, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[对账管理] 执行日终对账系统异常: reconcileDate={}, code={}, message={}", reconcileDate, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("RECONCILIATION_SYSTEM_ERROR", "执行日终对账失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[对账管理] 执行日终对账失败: reconcileDate={}", reconcileDate, e);
+            log.error("[对账管理] 执行日终对账未知异常: reconcileDate={}", reconcileDate, e);
             return ResponseDTO.error("RECONCILIATION_ERROR", "执行日终对账失败: " + e.getMessage());
         }
     }
@@ -93,6 +107,7 @@ public class ReconciliationController {
      * @return 实时对账结果
      */
     @PostMapping("/realtime")
+    @Observed(name = "reconciliation.performRealtimeReconciliation", contextualName = "reconciliation-realtime")
     @Operation(summary = "执行实时对账", description = "对指定账户或所有账户进行实时余额验证")
     @PreAuthorize("hasRole('CONSUME_MANAGER')")
     public ResponseDTO<ReconciliationService.ReconciliationResult> performRealtimeReconciliation(
@@ -107,8 +122,17 @@ public class ReconciliationController {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[对账管理] 执行实时对账参数错误: accountId={}, error={}", accountId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[对账管理] 执行实时对账业务异常: accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[对账管理] 执行实时对账系统异常: accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("REALTIME_RECONCILIATION_SYSTEM_ERROR", "执行实时对账失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[对账管理] 执行实时对账失败: accountId={}", accountId, e);
+            log.error("[对账管理] 执行实时对账未知异常: accountId={}", accountId, e);
             return ResponseDTO.error("REALTIME_RECONCILIATION_ERROR", "执行实时对账失败: " + e.getMessage());
         }
     }
@@ -129,6 +153,7 @@ public class ReconciliationController {
      * @return 对账历史分页结果
      */
     @GetMapping("/history")
+    @Observed(name = "reconciliation.queryReconciliationHistory", contextualName = "reconciliation-history")
     @Operation(summary = "查询对账历史", description = "查询指定日期范围内的对账历史记录")
     @PreAuthorize("hasRole('CONSUME_MANAGER')")
     public ResponseDTO<PageResult<ReconciliationService.ReconciliationResult>> queryReconciliationHistory(
@@ -173,9 +198,21 @@ public class ReconciliationController {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[对账管理] 查询对账历史参数错误: startDate={}, endDate={}, error={}", startDate, endDate, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[对账管理] 查询对账历史业务异常: startDate={}, endDate={}, code={}, message={}", startDate, endDate, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[对账管理] 查询对账历史系统异常: startDate={}, endDate={}, code={}, message={}", startDate, endDate, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("QUERY_RECONCILIATION_HISTORY_SYSTEM_ERROR", "查询对账历史失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[对账管理] 查询对账历史失败: startDate={}, endDate={}", startDate, endDate, e);
+            log.error("[对账管理] 查询对账历史未知异常: startDate={}, endDate={}", startDate, endDate, e);
             return ResponseDTO.error("QUERY_RECONCILIATION_HISTORY_ERROR", "查询对账历史失败: " + e.getMessage());
         }
     }
 }
+
+
+

@@ -29,11 +29,20 @@ public interface AccessPermissionApplyDao extends BaseMapper<AccessPermissionApp
 
     /**
      * 根据申请编号查询
+     * <p>
+     * 使用MyBatis-Plus的LambdaQueryWrapper实现
+     * </p>
      *
      * @param applyNo 申请编号
      * @return 权限申请实体
      */
-    AccessPermissionApplyEntity selectByApplyNo(@Param("applyNo") String applyNo);
+    default AccessPermissionApplyEntity selectByApplyNo(String applyNo) {
+        LambdaQueryWrapper<AccessPermissionApplyEntity> wrapper = Wrappers.lambdaQuery(AccessPermissionApplyEntity.class)
+                .eq(AccessPermissionApplyEntity::getApplyNo, applyNo)
+                .eq(AccessPermissionApplyEntity::getDeletedFlag, false)
+                .last("LIMIT 1");
+        return selectOne(wrapper);
+    }
 
     /**
      * 查询所有已过期的紧急权限申请
@@ -57,4 +66,5 @@ public interface AccessPermissionApplyDao extends BaseMapper<AccessPermissionApp
         return selectList(wrapper);
     }
 }
+
 

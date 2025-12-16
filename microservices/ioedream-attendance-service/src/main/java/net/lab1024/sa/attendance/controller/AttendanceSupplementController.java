@@ -1,5 +1,6 @@
 package net.lab1024.sa.attendance.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class AttendanceSupplementController {
     @Resource
     private AttendanceSupplementService attendanceSupplementService;
 
+    @Observed(name = "attendanceSupplement.submitSupplementApplication", contextualName = "attendance-supplement-submit")
     @PostMapping("/submit")
     @Operation(summary = "提交补签申请", description = "提交补签申请并启动审批流程")
     public ResponseDTO<AttendanceSupplementEntity> submitSupplementApplication(
@@ -37,6 +39,7 @@ public class AttendanceSupplementController {
         return ResponseDTO.ok(entity);
     }
 
+    @Observed(name = "attendanceSupplement.updateSupplementStatus", contextualName = "attendance-supplement-update-status")
     @PutMapping("/{supplementNo}/status")
     @Operation(summary = "更新补签申请状态", description = "由审批结果监听器调用，更新补签申请状态")
     public ResponseDTO<Void> updateSupplementStatus(
@@ -49,4 +52,6 @@ public class AttendanceSupplementController {
         return ResponseDTO.ok();
     }
 }
+
+
 

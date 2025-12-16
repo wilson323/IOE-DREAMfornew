@@ -420,7 +420,7 @@ const handleSearch = () => {
  * 添加规则
  */
 const handleAddRule = () => {
-  isEditMode.value = false;
+  isEdit.value = false;
   currentRule.value = null;
   ruleModalVisible.value = true;
 };
@@ -472,7 +472,6 @@ const handleBatchOperation = () => {
  * 查看全部历史
  */
 const viewAllHistory = () => {
-  // TODO: 实现查看全部历史功能
   message.info('查看全部历史功能开发中');
 };
 

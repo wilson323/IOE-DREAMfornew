@@ -1,0 +1,134 @@
+groups:
+  - name: micrometer_business_alerts
+    interval: 30s
+    rules:
+      # Resilience4j 熔断器告警
+      - alert: CircuitBreakerOpen
+        expr: |
+          resilience4j_circuitbreaker_state{name=~".*",state="OPEN"} == 1
+        for: 1m
+        labels:
+          severity: critical
+          category: resilience
+        annotations:
+          summary: "熔断器已打开"
+          description: "服务 {{ $labels.name }} 的熔断器已打开，当前状态: OPEN"
+
+      - alert: CircuitBreakerHalfOpen
+        expr: |
+          resilience4j_circuitbreaker_state{name=~".*",state="HALF_OPEN"} == 1
+        for: 5m
+        labels:
+          severity: warning
+          category: resilience
+        annotations:
+          summary: "熔断器半开状态"
+          description: "服务 {{ $labels.name }} 的熔断器处于半开状态，正在测试恢复"
+
+      # Resilience4j 重试失败率告警
+      - alert: HighRetryFailureRate
+        expr: |
+          rate(resilience4j_retry_calls_total{kind="failed",name=~".*"}[5m]) 
+          / 
+          rate(resilience4j_retry_calls_total{kind="successful",name=~".*"}[5m]) 
+          > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          category: resilience
+        annotations:
+          summary: "重试失败率过高"
+          description: "服务 {{ $labels.name }} 重试失败率: {{ $value | humanizePercentage }}"
+
+      # Resilience4j 限流触发告警
+      - alert: RateLimitExceeded
+        expr: |
+          rate(resilience4j_ratelimiter_calls_total{kind="not_permitted",name=~".*"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          category: resilience
+        annotations:
+          summary: "限流频繁触发"
+          description: "服务 {{ $labels.name }} 限流触发频率: {{ $value }} 次/秒"
+
+      # Micrometer 业务方法执行时间告警
+      - alert: BusinessMethodSlowExecution
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(method_timed_seconds_bucket{application=~"ioedream-.*"}[5m])) by (le, application, method)
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "业务方法执行时间过长"
+          description: "应用 {{ $labels.application }} 方法 {{ $labels.method }} P95执行时间: {{ $value }}秒"
+
+      # Micrometer 业务方法执行次数告警（异常下降）
+      - alert: BusinessMethodCallDrop
+        expr: |
+          (rate(method_counted_total{application=~"ioedream-.*"}[5m]) 
+          / 
+          rate(method_counted_total{application=~"ioedream-.*"}[15m])) < 0.5
+        for: 10m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: "业务方法调用量异常下降"
+          description: "应用 {{ $labels.application }} 方法 {{ $labels.method }} 调用量下降超过50%"
+
+      # Micrometer HTTP 请求错误率告警（基于@Counted注解）
+      - alert: HighHttpErrorRate
+        expr: |
+          (sum(rate(http_server_requests_seconds_count{status=~"5..",application=~"ioedream-.*"}[5m])) by (application)
+          /
+          sum(rate(http_server_requests_seconds_count{application=~"ioedream-.*"}[5m])) by (application)) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "HTTP错误率过高"
+          description: "应用 {{ $labels.application }} HTTP错误率: {{ $value }}%"
+
+      # Micrometer JVM GC 时间告警
+      - alert: HighGCPauseTime
+        expr: |
+          rate(jvm_gc_pause_seconds_sum{application=~"ioedream-.*"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "GC暂停时间过长"
+          description: "应用 {{ $labels.application }} GC暂停时间: {{ $value }}秒/秒"
+
+      # Micrometer JVM 内存使用率告警
+      - alert: HighJVMMemoryUsage
+        expr: |
+          (jvm_memory_used_bytes{area="heap",application=~"ioedream-.*"} 
+          / 
+          jvm_memory_max_bytes{area="heap",application=~"ioedream-.*"}) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "JVM内存使用率过高"
+          description: "应用 {{ $labels.application }} JVM堆内存使用率: {{ $value }}%"
+
+      # Micrometer 线程数告警
+      - alert: HighThreadCount
+        expr: |
+          jvm_threads_live_threads{application=~"ioedream-.*"} > 500
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "线程数过高"
+          description: "应用 {{ $labels.application }} 线程数: {{ $value }}"
+

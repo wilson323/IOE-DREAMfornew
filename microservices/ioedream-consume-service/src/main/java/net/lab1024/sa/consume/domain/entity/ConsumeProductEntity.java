@@ -186,3 +186,6 @@ public class ConsumeProductEntity extends BaseEntity {
      */
     private Boolean isNew;
 }
+
+
+

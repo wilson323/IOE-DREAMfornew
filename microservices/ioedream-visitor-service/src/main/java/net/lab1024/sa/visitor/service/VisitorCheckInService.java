@@ -34,3 +34,4 @@ public interface VisitorCheckInService {
      */
     ResponseDTO<Void> checkOut(Long appointmentId);
 }
+

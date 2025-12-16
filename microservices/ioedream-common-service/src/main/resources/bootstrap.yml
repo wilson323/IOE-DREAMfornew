@@ -72,16 +72,17 @@ spring:
             group: ${NACOS_GROUP:IOE-DREAM}
             refresh: true
   # ==================== 配置文件导入 ====================
+  # 注意：Spring Cloud Alibaba 2025.0.0.0版本在config.import阶段无法解析占位符，需要直接指定dataId
   config:
     import:
-      - "optional:nacos:${spring.application.name}.yaml"
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:ioedream-common-service.yaml"
+      - "optional:nacos:ioedream-common-service-docker.yaml"
       - "optional:nacos:common-config.yaml"
 
 # ==================== 加密配置 ====================
 jasypt:
   encryptor:
-    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    password: ${JASYPT_PASSWORD}
     algorithm: PBEWITHHMACSHA512ANDAES_256
     key-obtention-iterations: 1000
     pool-size: 1
@@ -94,18 +95,19 @@ jasypt:
       suffix: )
 
 # ==================== JVM配置 ====================
+# 开发环境使用较小内存配置，生产环境通过环境变量覆盖
 java:
-  # 公共服务JVM优化参数
   opts:
+    # 开发环境默认配置 (512MB堆内存)
     - "-server"
-    - "-Xms512m"
-    - "-Xmx1024m"
+    - "-Xms${JVM_XMS:256m}"
+    - "-Xmx${JVM_XMX:512m}"
     - "-XX:+UseG1GC"
     - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+UseStringDeduplication"
+    - "-XX:MaxMetaspaceSize=${JVM_METASPACE:128m}"
     - "-XX:+HeapDumpOnOutOfMemoryError"
     - "-XX:HeapDumpPath=/var/log/ioedream/common-service"
-    - "-XX:+PrintGCDetails"
-    - "-XX:+PrintGCTimeStamps"
     - "-Dfile.encoding=UTF-8"
     - "-Duser.timezone=Asia/Shanghai"
 
@@ -114,5 +116,5 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: INFO
-    net.lab1024.sa.common: DEBUG
-    org.springframework: INFO
+    "[net.lab1024.sa.common]": DEBUG
+    "[org.springframework]": INFO

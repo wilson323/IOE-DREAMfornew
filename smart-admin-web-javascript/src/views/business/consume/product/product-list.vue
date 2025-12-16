@@ -43,7 +43,7 @@
           </template>
 
           <template v-else-if="column.key === 'price'">
-            <span class="price-text">￥{{ record.price.toFixed(2) }}</span>
+            <span class="price-text">￥{{ Number(record.price || 0).toFixed(2) }}</span>
           </template>
 
           <template v-else-if="column.key === 'status'">
@@ -82,6 +82,8 @@
     PlusOutlined,
     ReloadOutlined,
   } from '@ant-design/icons-vue';
+  import { consumeApi } from '/@/api/business/consume/consume-api';
+  import { smartSentry } from '/@/lib/smart-sentry';
 
   // 表格数据
   const tableData = ref([]);
@@ -145,11 +147,16 @@
   const loadProductList = async () => {
     loading.value = true;
     try {
-      // TODO: 调用API获取商品列表
-      // const result = await productApi.getProductList();
-      tableData.value = [];
-      pagination.total = 0;
+      const result = await consumeApi.pageProducts({
+        pageNum: pagination.current,
+        pageSize: pagination.pageSize,
+      });
+      if (result.code === 200 && result.data) {
+        tableData.value = result.data.list || [];
+        pagination.total = result.data.total || 0;
+      }
     } catch (error) {
+      smartSentry.captureError(error);
       message.error('加载商品列表失败');
     } finally {
       loading.value = false;
@@ -189,10 +196,11 @@
       content: `确定要${action}商品 ${record.productName} 吗？`,
       onOk: async () => {
         try {
-          // TODO: 调用状态切换API
+          await consumeApi.setProductAvailable(record.productId, record.status !== 1);
           message.success(`${action}成功`);
           loadProductList();
         } catch (error) {
+          smartSentry.captureError(error);
           message.error(`${action}失败`);
         }
       },
@@ -206,10 +214,11 @@
       content: `确定要删除商品 ${record.productName} 吗？`,
       onOk: async () => {
         try {
-          // TODO: 调用删除API
+          await consumeApi.deleteProduct(record.productId);
           message.success('删除成功');
           loadProductList();
         } catch (error) {
+          smartSentry.captureError(error);
           message.error('删除失败');
         }
       },

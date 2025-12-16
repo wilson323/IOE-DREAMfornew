@@ -43,3 +43,6 @@ public class ConsumeMobileUserStatsVO {
     private BigDecimal monthAmount;
 }
 
+
+
+

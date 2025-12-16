@@ -41,3 +41,6 @@ public class ConsumeMobileFaceForm {
      */
     private Long areaId;
 }
+
+
+

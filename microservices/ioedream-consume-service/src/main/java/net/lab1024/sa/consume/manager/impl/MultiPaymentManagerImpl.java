@@ -13,7 +13,7 @@ import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.dao.AccountDao;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.consume.domain.entity.AccountEntity;
-import net.lab1024.sa.consume.domain.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.manager.MultiPaymentManager;
 import org.springframework.http.HttpStatus;
@@ -474,9 +474,9 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
             // 2. 调用银行支付网关API
             org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
             headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-            org.springframework.http.HttpEntity<Map<String, Object>> httpEntity = 
+            org.springframework.http.HttpEntity<Map<String, Object>> httpEntity =
                     new org.springframework.http.HttpEntity<>(request, headers);
-            
+
             @SuppressWarnings({"rawtypes", "null"})
             ResponseEntity<Map> httpResponse = restTemplate.exchange(
                     bankGatewayUrl + "/api/payment/create",
@@ -548,10 +548,10 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
             // 1. 创建支付记录
             PaymentRecordEntity paymentRecord = new PaymentRecordEntity();
             paymentRecord.setPaymentId(orderId);
-            paymentRecord.setPaymentMethod("BANK");
-            paymentRecord.setAmount(amount);
-            paymentRecord.setStatus("SUCCESS");
-            paymentRecord.setThirdPartyTransactionId((String) response.get("transactionId"));
+            paymentRecord.setPaymentMethod(4); // 4-银行卡
+            paymentRecord.setPaymentAmount(amount);
+            paymentRecord.setPaymentStatus(3); // 3-支付成功
+            paymentRecord.setThirdPartyTransactionNo((String) response.get("transactionId"));
             paymentRecord.setCreateTime(LocalDateTime.now());
 
             // 2. 保存支付记录
@@ -590,4 +590,7 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
         }
     }
 }
+
+
+
 

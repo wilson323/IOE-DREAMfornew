@@ -55,3 +55,5 @@ public interface AttendanceRecordService {
     ResponseDTO<Long> createAttendanceRecord(net.lab1024.sa.attendance.domain.form.AttendanceRecordAddForm form);
 }
 
+
+

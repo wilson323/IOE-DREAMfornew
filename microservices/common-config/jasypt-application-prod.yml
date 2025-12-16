@@ -12,7 +12,7 @@
 jasypt:
   encryptor:
     # 从环境变量读取加密密钥（生产环境必须设置）
-    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    password: ${JASYPT_PASSWORD}
 
     # 加密算法 - 使用AES-256 + SHA-512
     algorithm: PBEWITHHMACSHA512ANDAES_256
@@ -109,7 +109,7 @@ spring:
 
 jasypt:
   encryptor:
-    password: dev-default-key-please-change
+    password: ${JASYPT_PASSWORD}
 
 # 测试环境
 ---
@@ -120,7 +120,7 @@ spring:
 
 jasypt:
   encryptor:
-    password: test-default-key-please-change
+    password: ${JASYPT_PASSWORD}
 
 # 生产环境（必须设置环境变量）
 ---

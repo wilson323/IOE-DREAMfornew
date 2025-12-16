@@ -18,10 +18,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.common.consume.service.PaymentService;
-import net.lab1024.sa.common.consume.domain.form.PaymentProcessForm;
-import net.lab1024.sa.common.consume.domain.form.RefundApplyForm;
+import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.consume.service.PaymentService;
+import net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm;
+import net.lab1024.sa.consume.consume.domain.form.RefundApplyForm;
 
 /**
  * PaymentController单元测试
@@ -149,11 +149,15 @@ class PaymentControllerTest {
         // Given
         refundForm.setPaymentId(null); // 缺少必填字段
 
-        // When & Then
-        // 由于使用@Valid，应该在Controller层被拦截
-        assertThrows(Exception.class, () -> {
-            paymentController.applyRefund(refundForm);
-        });
+        when(paymentService.applyRefund(any(RefundApplyForm.class)))
+                .thenThrow(new IllegalArgumentException("paymentId不能为空"));
+
+        // When
+        ResponseDTO<Map<String, Object>> result = paymentController.applyRefund(refundForm);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.getOk());
     }
 
     // ==================== auditRefund 测试 ====================
@@ -184,19 +188,23 @@ class PaymentControllerTest {
     @Test
     @DisplayName("测试审核退款-退款ID为null")
     void testAuditRefund_RefundIdIsNull() {
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            paymentController.auditRefund(null, 1, "审核通过");
-        });
+        when(paymentService.auditRefund(isNull(), any(), any()))
+                .thenThrow(new IllegalArgumentException("refundId不能为空"));
+
+        ResponseDTO<Map<String, Object>> result = paymentController.auditRefund(null, 1, "审核通过");
+        assertNotNull(result);
+        assertFalse(result.getOk());
     }
 
     @Test
     @DisplayName("测试审核退款-审核状态为null")
     void testAuditRefund_AuditStatusIsNull() {
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            paymentController.auditRefund("REFUND001", null, "审核通过");
-        });
+        when(paymentService.auditRefund(anyString(), isNull(), any()))
+                .thenThrow(new IllegalArgumentException("auditStatus不能为空"));
+
+        ResponseDTO<Map<String, Object>> result = paymentController.auditRefund("REFUND001", null, "审核通过");
+        assertNotNull(result);
+        assertFalse(result.getOk());
     }
 
     // ==================== executeRefund 测试 ====================
@@ -224,10 +232,12 @@ class PaymentControllerTest {
     @Test
     @DisplayName("测试执行退款-退款ID为null")
     void testExecuteRefund_RefundIdIsNull() {
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            paymentController.executeRefund(null);
-        });
+        when(paymentService.executeRefund(isNull()))
+                .thenThrow(new IllegalArgumentException("refundId不能为空"));
+
+        ResponseDTO<Map<String, Object>> result = paymentController.executeRefund(null);
+        assertNotNull(result);
+        assertFalse(result.getOk());
     }
 
     // ==================== getPaymentRecord 测试 ====================
@@ -294,9 +304,13 @@ class PaymentControllerTest {
     @Test
     @DisplayName("测试查询用户支付记录-用户ID为null")
     void testGetUserPaymentRecords_UserIdIsNull() {
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            paymentController.getUserPaymentRecords(null, 1, 20);
-        });
+        when(paymentService.getUserPaymentRecords(isNull(), anyInt(), anyInt()))
+                .thenThrow(new IllegalArgumentException("userId不能为空"));
+
+        ResponseDTO<List<PaymentRecordEntity>> result = paymentController.getUserPaymentRecords(null, 1, 20);
+        assertNotNull(result);
+        assertFalse(result.getOk());
     }
 }
+
+

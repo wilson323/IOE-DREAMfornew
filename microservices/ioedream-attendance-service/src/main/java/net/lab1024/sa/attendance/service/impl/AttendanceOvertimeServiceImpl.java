@@ -7,10 +7,14 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
@@ -31,10 +35,12 @@ public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService 
     private WorkflowApprovalManager workflowApprovalManager;
 
     @Resource
-    private net.lab1024.sa.common.attendance.manager.AttendanceManager attendanceManager;
+    private net.lab1024.sa.attendance.attendance.manager.AttendanceManager attendanceManager;
 
     @Override
+    @Observed(name = "attendance.overtime.submit", contextualName = "attendance-overtime-submit")
     @Transactional(rollbackFor = Exception.class)
+    @Retry(name = "external-service-retry", fallbackMethod = "submitOvertimeApplicationFallback")
     public AttendanceOvertimeEntity submitOvertimeApplication(AttendanceOvertimeForm form) {
         log.info("[加班申请] 提交加班申请，employeeId={}, overtimeDate={}", form.getEmployeeId(), form.getOvertimeDate());
 
@@ -88,6 +94,18 @@ public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService 
 
         log.info("[加班申请] 加班申请提交成功，overtimeNo={}, workflowInstanceId={}", entity.getOvertimeNo(), workflowInstanceId);
         return entity;
+    }
+
+    /**
+     * 加班申请提交降级方法
+     * <p>
+     * 当工作流服务调用失败时，使用此降级方法
+     * </p>
+     */
+    public AttendanceOvertimeEntity submitOvertimeApplicationFallback(
+            AttendanceOvertimeForm form, Exception e) {
+        log.error("[加班申请] 启动审批流程失败，使用降级方案, employeeId={}, error={}", form.getEmployeeId(), e.getMessage(), e);
+        throw new BusinessException("启动审批流程失败: " + e.getMessage());
     }
 
     @Override
@@ -145,9 +163,18 @@ public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService 
                 log.warn("[加班申请] 加班审批通过处理失败，overtimeNo={}, employeeId={}", entity.getOvertimeNo(), entity.getEmployeeId());
                 // 不抛出异常，避免影响审批流程
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[加班申请] 加班审批通过处理参数错误: overtimeNo={}, employeeId={}, error={}", entity.getOvertimeNo(), entity.getEmployeeId(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[加班申请] 加班审批通过处理业务异常: overtimeNo={}, employeeId={}, code={}, message={}", entity.getOvertimeNo(), entity.getEmployeeId(), e.getCode(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[加班申请] 加班审批通过处理系统异常: overtimeNo={}, employeeId={}, code={}, message={}", entity.getOvertimeNo(), entity.getEmployeeId(), e.getCode(), e.getMessage(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         } catch (Exception e) {
-            log.error("[加班申请] 加班审批通过处理异常，overtimeNo={}, employeeId={}", entity.getOvertimeNo(), entity.getEmployeeId(), e);
-            // 不抛出异常，避免影响审批流程
+            log.error("[加班申请] 加班审批通过处理未知异常: overtimeNo={}, employeeId={}", entity.getOvertimeNo(), entity.getEmployeeId(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         }
     }
 
@@ -155,4 +182,6 @@ public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService 
         return "OT" + System.currentTimeMillis();
     }
 }
+
+
 

@@ -3,7 +3,9 @@ package net.lab1024.sa.consume.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.consume.entity.ConsumeRecordEntity;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.dao.RefundApplicationDao;
@@ -19,6 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -73,6 +76,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
      * @return 退款ID
      */
     @Override
+    @Observed(name = "consume.refund.applyRefund", contextualName = "consume-refund-apply")
     public Long applyRefund(RefundRequestForm refundRequest) {
         log.info("[退款服务] 申请退款，transactionNo={}, amount={}",
                 refundRequest.getTransactionNo(), refundRequest.getRefundAmount());
@@ -157,13 +161,19 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return refundApplication.getId();
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 退款申请参数错误，transactionNo={}, error={}", refundRequest.getTransactionNo(), e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[退款服务] 退款申请业务异常，transactionNo={}, error={}",
-                    refundRequest.getTransactionNo(), e.getMessage());
+            log.warn("[退款服务] 退款申请业务异常，transactionNo={}, code={}, message={}",
+                    refundRequest.getTransactionNo(), e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 退款申请系统异常，transactionNo={}, code={}, message={}", refundRequest.getTransactionNo(), e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_APPLY_SYSTEM_ERROR", "退款申请失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 退款申请系统异常，transactionNo={}", refundRequest.getTransactionNo(), e);
-            throw new BusinessException("退款申请失败：" + e.getMessage());
+            log.error("[退款服务] 退款申请未知异常，transactionNo={}", refundRequest.getTransactionNo(), e);
+            throw new SystemException("REFUND_APPLY_SYSTEM_ERROR", "退款申请失败：" + e.getMessage(), e);
         }
     }
 
@@ -183,6 +193,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
     }
 
     @Override
+    @Observed(name = "consume.refund.getRefundDetail", contextualName = "consume-refund-get-detail")
     @Transactional(readOnly = true)
     public RefundRecordVO getRefundDetail(Long refundId) {
         log.info("[退款服务] 查询退款详情，refundId={}", refundId);
@@ -209,16 +220,23 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return refundRecord;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 查询退款详情参数错误，refundId={}, error={}", refundId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[退款服务] 查询退款详情业务异常，refundId={}, error={}", refundId, e.getMessage());
+            log.warn("[退款服务] 查询退款详情业务异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 查询退款详情系统异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_DETAIL_QUERY_SYSTEM_ERROR", "查询退款详情失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 查询退款详情系统异常，refundId={}", refundId, e);
-            throw new BusinessException("查询退款详情失败：" + e.getMessage());
+            log.error("[退款服务] 查询退款详情未知异常，refundId={}", refundId, e);
+            throw new SystemException("REFUND_DETAIL_QUERY_SYSTEM_ERROR", "查询退款详情失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.getRefundPage", contextualName = "consume-refund-get-page")
     @Transactional(readOnly = true)
     public PageResult<RefundRecordVO> getRefundPage(RefundQueryForm queryForm) {
         log.info("[退款服务] 分页查询退款记录，pageNum={}, pageSize={}, userId={}, status={}",
@@ -319,9 +337,18 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return result;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 分页查询退款记录参数错误: {}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[退款服务] 分页查询退款记录业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 分页查询退款记录系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_PAGE_QUERY_SYSTEM_ERROR", "分页查询退款记录失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 分页查询退款记录失败", e);
-            throw new BusinessException("分页查询退款记录失败：" + e.getMessage());
+            log.error("[退款服务] 分页查询退款记录未知异常", e);
+            throw new SystemException("REFUND_PAGE_QUERY_SYSTEM_ERROR", "分页查询退款记录失败：" + e.getMessage(), e);
         }
     }
 
@@ -434,6 +461,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
     }
 
     @Override
+    @Observed(name = "consume.refund.batchApplyRefund", contextualName = "consume-refund-batch-apply")
     public int batchApplyRefund(List<String> transactionNos, String reason) {
         log.info("[退款服务] 批量申请退款，transactionNos={}, reason={}",
                 transactionNos.size(), reason);
@@ -461,8 +489,16 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
                 applyRefund(refundRequest);
                 successCount++;
 
+            } catch (BusinessException e) {
+                log.warn("[退款服务] 批量申请退款业务异常，transactionNo={}, code={}, message={}",
+                        transactionNo, e.getCode(), e.getMessage());
+                failCount++;
+            } catch (SystemException e) {
+                log.error("[退款服务] 批量申请退款系统异常，transactionNo={}, code={}, message={}",
+                        transactionNo, e.getCode(), e.getMessage(), e);
+                failCount++;
             } catch (Exception e) {
-                log.error("[退款服务] 批量申请退款失败，transactionNo={}, error={}",
+                log.error("[退款服务] 批量申请退款未知异常，transactionNo={}, error={}",
                         transactionNo, e.getMessage());
                 failCount++;
             }
@@ -475,6 +511,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
     }
 
     @Override
+    @Observed(name = "consume.refund.batchApplyRefundWithAmount", contextualName = "consume-refund-batch-apply-amount")
     public int batchApplyRefundWithAmount(List<Map<String, Object>> refundRequests) {
         log.info("[退款服务] 批量申请退款（带金额），count={}", refundRequests.size());
 
@@ -522,8 +559,16 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
                 applyRefund(refundRequest);
                 successCount++;
 
+            } catch (BusinessException e) {
+                log.warn("[退款服务] 批量申请退款（带金额）业务异常，requestMap={}, code={}, message={}",
+                        requestMap, e.getCode(), e.getMessage());
+                failCount++;
+            } catch (SystemException e) {
+                log.error("[退款服务] 批量申请退款（带金额）系统异常，requestMap={}, code={}, message={}",
+                        requestMap, e.getCode(), e.getMessage(), e);
+                failCount++;
             } catch (Exception e) {
-                log.error("[退款服务] 批量申请退款（带金额）失败，requestMap={}, error={}",
+                log.error("[退款服务] 批量申请退款（带金额）未知异常，requestMap={}, error={}",
                         requestMap, e.getMessage());
                 failCount++;
             }
@@ -536,6 +581,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
     }
 
     @Override
+    @Observed(name = "consume.refund.approveRefund", contextualName = "consume-refund-approve")
     public boolean approveRefund(Long refundId, Boolean approved, String comment) {
         log.info("[退款服务] 审批退款，refundId={}, approved={}, comment={}",
                 refundId, approved, comment);
@@ -573,16 +619,23 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
             log.info("[退款服务] 退款审批成功，refundId={}, approved={}", refundId, approved);
             return true;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 退款审批参数错误，refundId={}, error={}", refundId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[退款服务] 退款审批业务异常，refundId={}, error={}", refundId, e.getMessage());
+            log.warn("[退款服务] 退款审批业务异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 退款审批系统异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_APPROVE_SYSTEM_ERROR", "退款审批失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 退款审批系统异常，refundId={}", refundId, e);
-            throw new BusinessException("退款审批失败：" + e.getMessage());
+            log.error("[退款服务] 退款审批未知异常，refundId={}", refundId, e);
+            throw new SystemException("REFUND_APPROVE_SYSTEM_ERROR", "退款审批失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.batchApproveRefund", contextualName = "consume-refund-batch-approve")
     public int batchApproveRefund(List<Long> refundIds, Boolean approved, String comment) {
         log.info("[退款服务] 批量审批退款，refundIds={}, approved={}",
                 refundIds.size(), approved);
@@ -594,8 +647,16 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
             try {
                 approveRefund(refundId, approved, comment);
                 successCount++;
+            } catch (BusinessException e) {
+                log.warn("[退款服务] 批量审批退款业务异常，refundId={}, code={}, message={}",
+                        refundId, e.getCode(), e.getMessage());
+                failCount++;
+            } catch (SystemException e) {
+                log.error("[退款服务] 批量审批退款系统异常，refundId={}, code={}, message={}",
+                        refundId, e.getCode(), e.getMessage(), e);
+                failCount++;
             } catch (Exception e) {
-                log.error("[退款服务] 批量审批退款失败，refundId={}, error={}",
+                log.error("[退款服务] 批量审批退款未知异常，refundId={}, error={}",
                         refundId, e.getMessage());
                 failCount++;
             }
@@ -608,6 +669,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
     }
 
     @Override
+    @Observed(name = "consume.refund.cancelRefund", contextualName = "consume-refund-cancel")
     public boolean cancelRefund(Long refundId, String reason) {
         log.info("[退款服务] 取消退款，refundId={}, reason={}", refundId, reason);
 
@@ -641,16 +703,23 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
             log.info("[退款服务] 取消退款成功，refundId={}", refundId);
             return true;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 取消退款参数错误，refundId={}, error={}", refundId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[退款服务] 取消退款业务异常，refundId={}, error={}", refundId, e.getMessage());
+            log.warn("[退款服务] 取消退款业务异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 取消退款系统异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_CANCEL_SYSTEM_ERROR", "取消退款失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 取消退款系统异常，refundId={}", refundId, e);
-            throw new BusinessException("取消退款失败：" + e.getMessage());
+            log.error("[退款服务] 取消退款未知异常，refundId={}", refundId, e);
+            throw new SystemException("REFUND_CANCEL_SYSTEM_ERROR", "取消退款失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.processRefund", contextualName = "consume-refund-process")
     public boolean processRefund(Long refundId) {
         log.info("[退款服务] 处理退款，refundId={}", refundId);
 
@@ -717,16 +786,23 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return true;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 退款处理参数错误，refundId={}, error={}", refundId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[退款服务] 退款处理业务异常，refundId={}, error={}", refundId, e.getMessage());
+            log.warn("[退款服务] 退款处理业务异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 退款处理系统异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_PROCESS_SYSTEM_ERROR", "退款处理失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 退款处理系统异常，refundId={}", refundId, e);
-            throw new BusinessException("退款处理失败：" + e.getMessage());
+            log.error("[退款服务] 退款处理未知异常，refundId={}", refundId, e);
+            throw new SystemException("REFUND_PROCESS_SYSTEM_ERROR", "退款处理失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.getRefundStatistics", contextualName = "consume-refund-get-statistics")
     @Transactional(readOnly = true)
     public Map<String, Object> getRefundStatistics() {
         log.info("[退款服务] 获取退款统计信息");
@@ -784,13 +860,20 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return statistics;
 
+        } catch (BusinessException e) {
+            log.warn("[退款服务] 获取退款统计信息业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 获取退款统计信息系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_STATISTICS_SYSTEM_ERROR", "获取退款统计信息失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 获取退款统计信息失败", e);
-            throw new BusinessException("获取退款统计信息失败：" + e.getMessage());
+            log.error("[退款服务] 获取退款统计信息未知异常", e);
+            throw new SystemException("REFUND_STATISTICS_SYSTEM_ERROR", "获取退款统计信息失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.getUserRefundStatistics", contextualName = "consume-refund-get-user-statistics")
     @Transactional(readOnly = true)
     public Map<String, Object> getUserRefundStatistics(Long userId) {
         log.info("[退款服务] 获取用户退款统计，userId={}", userId);
@@ -846,13 +929,23 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return statistics;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 获取用户退款统计参数错误，userId={}, error={}", userId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[退款服务] 获取用户退款统计业务异常，userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 获取用户退款统计系统异常，userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("USER_REFUND_STATISTICS_SYSTEM_ERROR", "获取用户退款统计失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 获取用户退款统计失败，userId={}", userId, e);
-            throw new BusinessException("获取用户退款统计失败：" + e.getMessage());
+            log.error("[退款服务] 获取用户退款统计未知异常，userId={}", userId, e);
+            throw new SystemException("USER_REFUND_STATISTICS_SYSTEM_ERROR", "获取用户退款统计失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.getRefundTrend", contextualName = "consume-refund-get-trend")
     @Transactional(readOnly = true)
     public Map<String, Object> getRefundTrend(String startDate, String endDate, String statisticsType) {
         log.info("[退款服务] 获取退款趋势，startDate={}, endDate={}, type={}",
@@ -926,10 +1019,18 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return trend;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 获取退款趋势参数错误，startDate={}, endDate={}, type={}, error={}", startDate, endDate, statisticsType, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[退款服务] 获取退款趋势业务异常，startDate={}, endDate={}, type={}, code={}, message={}", startDate, endDate, statisticsType, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 获取退款趋势系统异常，startDate={}, endDate={}, type={}, code={}, message={}", startDate, endDate, statisticsType, e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_TREND_SYSTEM_ERROR", "获取退款趋势失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 获取退款趋势失败，startDate={}, endDate={}, type={}",
-                    startDate, endDate, statisticsType, e);
-            throw new BusinessException("获取退款趋势失败：" + e.getMessage());
+            log.error("[退款服务] 获取退款趋势未知异常，startDate={}, endDate={}, type={}", startDate, endDate, statisticsType, e);
+            throw new SystemException("REFUND_TREND_SYSTEM_ERROR", "获取退款趋势失败：" + e.getMessage(), e);
         }
     }
 
@@ -955,6 +1056,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
     }
 
     @Override
+    @Observed(name = "consume.refund.exportRefundData", contextualName = "consume-refund-export")
     public void exportRefundData(RefundQueryForm queryForm, HttpServletResponse response) {
         log.info("[退款服务] 导出退款数据");
 
@@ -1040,12 +1142,21 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
             writer.flush();
             log.info("[退款服务] 导出退款数据成功，记录数={}", refunds.size());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 导出退款数据参数错误: {}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (IOException e) {
-            log.error("[退款服务] 导出退款数据失败", e);
-            throw new BusinessException("导出退款数据失败：" + e.getMessage());
+            log.error("[退款服务] 导出退款数据IO异常", e);
+            throw new SystemException("REFUND_EXPORT_IO_ERROR", "导出退款数据IO异常：" + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[退款服务] 导出退款数据业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 导出退款数据系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_EXPORT_SYSTEM_ERROR", "导出退款数据失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 导出退款数据失败", e);
-            throw new BusinessException("导出退款数据失败：" + e.getMessage());
+            log.error("[退款服务] 导出退款数据未知异常", e);
+            throw new SystemException("REFUND_EXPORT_SYSTEM_ERROR", "导出退款数据失败：" + e.getMessage(), e);
         } finally {
             if (writer != null) {
                 writer.close();
@@ -1054,6 +1165,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
     }
 
     @Override
+    @Observed(name = "consume.refund.checkRefundStatus", contextualName = "consume-refund-check-status")
     @Transactional(readOnly = true)
     public Map<String, Object> checkRefundStatus(Long refundId) {
         log.info("[退款服务] 检查退款状态，refundId={}", refundId);
@@ -1093,16 +1205,23 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return statusInfo;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 检查退款状态参数错误，refundId={}, error={}", refundId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[退款服务] 检查退款状态业务异常，refundId={}, error={}", refundId, e.getMessage());
+            log.warn("[退款服务] 检查退款状态业务异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 检查退款状态系统异常，refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_STATUS_CHECK_SYSTEM_ERROR", "检查退款状态失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 检查退款状态系统异常，refundId={}", refundId, e);
-            throw new BusinessException("检查退款状态失败：" + e.getMessage());
+            log.error("[退款服务] 检查退款状态未知异常，refundId={}", refundId, e);
+            throw new SystemException("REFUND_STATUS_CHECK_SYSTEM_ERROR", "检查退款状态失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.getAvailableRefundAmount", contextualName = "consume-refund-get-available-amount")
     @Transactional(readOnly = true)
     public Map<String, Object> getAvailableRefundAmount(String transactionNo) {
         log.info("[退款服务] 获取可退款金额，transactionNo={}", transactionNo);
@@ -1160,17 +1279,24 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return amountInfo;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 获取可退款金额参数错误，transactionNo={}, error={}", transactionNo, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[退款服务] 获取可退款金额业务异常，transactionNo={}, error={}",
-                    transactionNo, e.getMessage());
+            log.warn("[退款服务] 获取可退款金额业务异常，transactionNo={}, code={}, message={}",
+                    transactionNo, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 获取可退款金额系统异常，transactionNo={}, code={}, message={}", transactionNo, e.getCode(), e.getMessage(), e);
+            throw new SystemException("AVAILABLE_REFUND_AMOUNT_SYSTEM_ERROR", "获取可退款金额失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 获取可退款金额系统异常，transactionNo={}", transactionNo, e);
-            throw new BusinessException("获取可退款金额失败：" + e.getMessage());
+            log.error("[退款服务] 获取可退款金额未知异常，transactionNo={}", transactionNo, e);
+            throw new SystemException("AVAILABLE_REFUND_AMOUNT_SYSTEM_ERROR", "获取可退款金额失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.getRefundByTransactionNo", contextualName = "consume-refund-get-by-transaction")
     @Transactional(readOnly = true)
     public List<RefundRecordVO> getRefundByTransactionNo(String transactionNo) {
         log.info("[退款服务] 根据交易号查询退款记录，transactionNo={}", transactionNo);
@@ -1200,13 +1326,27 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return voList;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 根据交易号查询退款记录参数错误，transactionNo={}, error={}", transactionNo, e.getMessage());
+            // 降级：返回空列表
+            return new ArrayList<>();
+        } catch (BusinessException e) {
+            log.warn("[退款服务] 根据交易号查询退款记录业务异常，transactionNo={}, code={}, message={}", transactionNo, e.getCode(), e.getMessage());
+            // 降级：返回空列表
+            return new ArrayList<>();
+        } catch (SystemException e) {
+            log.error("[退款服务] 根据交易号查询退款记录系统异常，transactionNo={}, code={}, message={}", transactionNo, e.getCode(), e.getMessage(), e);
+            // 降级：返回空列表
+            return new ArrayList<>();
         } catch (Exception e) {
-            log.error("[退款服务] 根据交易号查询退款记录失败，transactionNo={}", transactionNo, e);
-            throw new BusinessException("根据交易号查询退款记录失败：" + e.getMessage());
+            log.error("[退款服务] 根据交易号查询退款记录未知异常，transactionNo={}", transactionNo, e);
+            // 降级：返回空列表
+            return new ArrayList<>();
         }
     }
 
     @Override
+    @Observed(name = "consume.refund.validateRefundRequest", contextualName = "consume-refund-validate")
     @Transactional(readOnly = true)
     public Map<String, Object> validateRefundRequest(RefundRequestForm refundRequest) {
         log.info("[退款服务] 验证退款申请，transactionNo={}", refundRequest.getTransactionNo());
@@ -1288,10 +1428,21 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
             boolean valid = errors.isEmpty();
             return buildValidationResult(valid, errors, warnings);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款服务] 验证退款申请参数错误，transactionNo={}, error={}", refundRequest.getTransactionNo(), e.getMessage());
+            errors.add("参数错误：" + e.getMessage());
+            return buildValidationResult(false, errors, warnings);
+        } catch (BusinessException e) {
+            log.warn("[退款服务] 验证退款申请业务异常，transactionNo={}, code={}, message={}", refundRequest.getTransactionNo(), e.getCode(), e.getMessage());
+            errors.add("业务异常：" + e.getMessage());
+            return buildValidationResult(false, errors, warnings);
+        } catch (SystemException e) {
+            log.error("[退款服务] 验证退款申请系统异常，transactionNo={}, code={}, message={}", refundRequest.getTransactionNo(), e.getCode(), e.getMessage(), e);
+            errors.add("系统异常，请稍后重试");
+            return buildValidationResult(false, errors, warnings);
         } catch (Exception e) {
-            log.error("[退款服务] 验证退款申请失败，transactionNo={}",
-                    refundRequest.getTransactionNo(), e);
-            errors.add("验证退款申请失败：" + e.getMessage());
+            log.error("[退款服务] 验证退款申请未知异常，transactionNo={}", refundRequest.getTransactionNo(), e);
+            errors.add("系统异常，请稍后重试");
             return buildValidationResult(false, errors, warnings);
         }
     }
@@ -1313,6 +1464,7 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
     }
 
     @Override
+    @Observed(name = "consume.refund.getRefundPolicy", contextualName = "consume-refund-get-policy")
     @Transactional(readOnly = true)
     public Map<String, Object> getRefundPolicy() {
         log.info("[退款服务] 获取退款政策信息");
@@ -1381,9 +1533,18 @@ public class ConsumeRefundServiceImpl implements ConsumeRefundService {
 
             return policyInfo;
 
+        } catch (BusinessException e) {
+            log.warn("[退款服务] 获取退款政策信息业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[退款服务] 获取退款政策信息系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_POLICY_SYSTEM_ERROR", "获取退款政策信息失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款服务] 获取退款政策信息失败", e);
-            throw new BusinessException("获取退款政策信息失败：" + e.getMessage());
+            log.error("[退款服务] 获取退款政策信息未知异常", e);
+            throw new SystemException("REFUND_POLICY_SYSTEM_ERROR", "获取退款政策信息失败：" + e.getMessage(), e);
         }
     }
 }
+
+
+

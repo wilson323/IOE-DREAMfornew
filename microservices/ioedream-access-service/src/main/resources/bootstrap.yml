@@ -45,50 +45,51 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         file-extension: yaml
-        enabled: true
-        refresh-enabled: true
+        enabled: false  # 本地开发时禁用配置中心
+        refresh-enabled: false
         # 配置文件导入顺序
         import-check:
           enabled: true
-        # 共享配置 - 所有服务共享
-        shared-configs:
-          - data-id: common-database.yaml
-            group: ${NACOS_GROUP:IOE-DREAM}
-            refresh: true
-          - data-id: common-redis.yaml
-            group: ${NACOS_GROUP:IOE-DREAM}
-            refresh: true
-          - data-id: common-monitoring.yaml
-            group: ${NACOS_GROUP:IOE-DREAM}
-            refresh: true
-          - data-id: common-security.yaml
-            group: ${NACOS_GROUP:IOE-DREAM}
-            refresh: true
-          - data-id: access-control-config.yaml
-            group: ${NACOS_GROUP:IOE-DREAM}
-            refresh: true
-        # 扩展配置 - 服务特定配置
-        extension-configs:
-          - data-id: ioedream-access-service-ext.yaml
-            group: ${NACOS_GROUP:IOE-DREAM}
-            refresh: true
-          - data-id: ${spring.application.name}-${spring.profiles.active:dev}.yaml
-            group: ${NACOS_GROUP:IOE-DREAM}
-            refresh: true
+        # 共享配置 - 本地开发时禁用，使用application.yml中的配置
+        # shared-configs:
+        #   - data-id: common-database.yaml
+        #     group: ${NACOS_GROUP:IOE-DREAM}
+        #     refresh: true
+        #   - data-id: common-redis.yaml
+        #     group: ${NACOS_GROUP:IOE-DREAM}
+        #     refresh: true
+        #   - data-id: common-monitoring.yaml
+        #     group: ${NACOS_GROUP:IOE-DREAM}
+        #     refresh: true
+        #   - data-id: common-security.yaml
+        #     group: ${NACOS_GROUP:IOE-DREAM}
+        #     refresh: true
+        #   - data-id: access-control-config.yaml
+        #     group: ${NACOS_GROUP:IOE-DREAM}
+        #     refresh: true
+        # 扩展配置 - 本地开发时禁用
+        # extension-configs:
+        #   - data-id: ioedream-access-service-ext.yaml
+        #     group: ${NACOS_GROUP:IOE-DREAM}
+        #     refresh: true
+        #   - data-id: ${spring.application.name}-${spring.profiles.active:dev}.yaml
+        #     group: ${NACOS_GROUP:IOE-DREAM}
+        #     refresh: true
   # ==================== 配置文件导入 ====================
-  config:
-    import:
-      - "optional:nacos:${spring.application.name}.yaml"
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
-      - "optional:nacos:common-config.yaml"
-      - "optional:nacos:access-control-config.yaml"
+  # 本地开发时禁用Nacos配置导入，使用application.yml中的配置
+  # config:
+  #   import:
+  #     - "optional:nacos:ioedream-access-service.yaml"
+  #     - "optional:nacos:ioedream-access-service-docker.yaml"
+  #     - "optional:nacos:common-config.yaml"
+  #     - "optional:nacos:access-control-config.yaml"
 
 # ==================== 加密配置 ====================
 jasypt:
   encryptor:
-    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    password: ${JASYPT_PASSWORD}
     algorithm: PBEWITHHMACSHA512ANDAES_256
     key-obtention-iterations: 1000
     pool-size: 1
@@ -101,18 +102,19 @@ jasypt:
       suffix: )
 
 # ==================== JVM配置 ====================
+# 开发环境使用较小内存配置，生产环境通过环境变量覆盖
 java:
-  # 门禁服务JVM优化参数（实时响应）
   opts:
+    # 开发环境默认配置 (1GB堆内存)
     - "-server"
-    - "-Xms1g"
-    - "-Xmx2g"
+    - "-Xms${JVM_XMS:512m}"
+    - "-Xmx${JVM_XMX:1g}"
     - "-XX:+UseG1GC"
     - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+UseStringDeduplication"
+    - "-XX:MaxMetaspaceSize=${JVM_METASPACE:192m}"
     - "-XX:+HeapDumpOnOutOfMemoryError"
     - "-XX:HeapDumpPath=/var/log/ioedream/access-service"
-    - "-XX:+PrintGCDetails"
-    - "-XX:+PrintGCTimeStamps"
     - "-Dfile.encoding=UTF-8"
     - "-Duser.timezone=Asia/Shanghai"
 
@@ -121,8 +123,8 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: INFO
-    net.lab1024.sa.access: DEBUG
-    org.springframework: INFO
+    "[net.lab1024.sa.access]": DEBUG
+    "[org.springframework]": INFO
 
 # ==================== 门禁服务特定配置 ====================
 access:

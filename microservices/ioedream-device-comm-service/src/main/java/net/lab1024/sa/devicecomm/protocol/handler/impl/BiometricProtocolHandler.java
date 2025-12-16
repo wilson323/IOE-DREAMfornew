@@ -400,6 +400,7 @@ public class BiometricProtocolHandler implements ProtocolHandler {
             message.addAttribute("timestamp", System.currentTimeMillis());
 
         } catch (NumberFormatException e) {
+            log.debug("[生物识别协议] 字段格式错误: error={}", e.getMessage());
             throw new ProtocolParseException("字段格式错误: " + e.getMessage());
         }
 
@@ -423,6 +424,7 @@ public class BiometricProtocolHandler implements ProtocolHandler {
         try {
             sum += Integer.parseInt(message.getMessageType());
         } catch (NumberFormatException e) {
+            log.debug("[生物识别协议] 消息类型不是数字格式，校验和计算时使用0: messageType={}", message.getMessageType());
             sum += 0;
         }
         sum += message.getSequenceNumber();

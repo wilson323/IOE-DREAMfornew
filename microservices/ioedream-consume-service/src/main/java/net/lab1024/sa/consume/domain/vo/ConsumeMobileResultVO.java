@@ -38,3 +38,6 @@ public class ConsumeMobileResultVO {
      */
     private BigDecimal balance;
 }
+
+
+

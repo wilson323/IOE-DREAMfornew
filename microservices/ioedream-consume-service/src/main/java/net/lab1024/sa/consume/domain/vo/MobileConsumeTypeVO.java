@@ -90,3 +90,5 @@ public class MobileConsumeTypeVO {
     @Schema(description = "扩展属性", example = "{}")
     private Object extendedAttributes;
 }
+
+

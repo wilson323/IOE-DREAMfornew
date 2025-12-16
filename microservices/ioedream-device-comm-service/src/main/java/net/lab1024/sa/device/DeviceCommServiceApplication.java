@@ -32,8 +32,24 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @SpringBootApplication(
     scanBasePackages = {
-        "net.lab1024.sa.common",
-        "net.lab1024.sa.device"
+        // 设备通讯服务自身包
+        "net.lab1024.sa.device",
+        "net.lab1024.sa.devicecomm",
+        // 核心配置（必需）
+        "net.lab1024.sa.common.config",
+        // 响应和异常处理
+        "net.lab1024.sa.common.response",
+        "net.lab1024.sa.common.exception",
+        // 工具类
+        "net.lab1024.sa.common.util",
+        // 安全认证
+        "net.lab1024.sa.common.security",
+        // 设备相关公共模块
+        "net.lab1024.sa.common.organization",
+        // RBAC权限
+        "net.lab1024.sa.common.rbac",
+        // 系统配置
+        "net.lab1024.sa.common.system"
     },
     exclude = {
         HibernateJpaAutoConfiguration.class
@@ -43,16 +59,13 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @MapperScan(basePackages = {
     // Common模块DAO（18个包）
     "net.lab1024.sa.common.auth.dao",
-    "net.lab1024.sa.common.security.dao",
-    "net.lab1024.sa.common.hr.dao",
+    "net.lab1024.sa.common.rbac.dao",
     "net.lab1024.sa.common.system.employee.dao",
     "net.lab1024.sa.common.access.dao",
     "net.lab1024.sa.common.visitor.dao",
     "net.lab1024.sa.common.audit.dao",
     "net.lab1024.sa.common.monitor.dao",
     "net.lab1024.sa.common.config.dao",
-    "net.lab1024.sa.common.document.dao",
-    "net.lab1024.sa.common.file.dao",
     "net.lab1024.sa.common.menu.dao",
     "net.lab1024.sa.common.dict.dao",
     "net.lab1024.sa.common.organization.dao",

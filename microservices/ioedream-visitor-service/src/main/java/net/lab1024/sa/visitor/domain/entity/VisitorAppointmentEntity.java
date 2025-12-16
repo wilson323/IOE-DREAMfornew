@@ -126,3 +126,4 @@ public class VisitorAppointmentEntity extends BaseEntity {
     private Long workflowInstanceId;
 }
 
+

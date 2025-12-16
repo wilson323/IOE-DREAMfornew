@@ -1,0 +1,24 @@
+groups:
+  - name: cache_alerts
+    interval: 30s
+    rules:
+      - alert: LowCacheHitRate
+        expr: (cache_hits_total / (cache_hits_total + cache_misses_total)) * 100 < 70
+        for: 10m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: "缓存命中率过低"
+          description: "缓存命中率: {{ $value }}%，低于70%阈值"
+
+      - alert: CacheConnectionFailure
+        expr: up{job=~".*redis.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: cache
+        annotations:
+          summary: "Redis连接失败"
+          description: "Redis服务不可用"
+

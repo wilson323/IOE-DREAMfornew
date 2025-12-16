@@ -32,7 +32,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         enabled: true
         register-enabled: true
       config:
@@ -40,7 +40,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         file-extension: yaml
         enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
         import-check:
@@ -62,7 +62,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${MYSQL_USERNAME:root}
-    password: ${MYSQL_PASSWORD}
+    password: ${MYSQL_PASSWORD:123456}
     druid:
       initial-size: ${DRUID_INITIAL_SIZE:5}
       min-idle: ${DRUID_MIN_IDLE:5}
@@ -78,7 +78,7 @@ spring:
     redis:
       host: ${REDIS_HOST:127.0.0.1}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD}
+      password: ${REDIS_PASSWORD:redis123}
       database: ${REDIS_DATABASE:0}
       timeout: ${REDIS_TIMEOUT:3000}
       lettuce:
@@ -125,6 +125,13 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
+# ==================== 安全配置 ====================
+security:
+  jwt:
+    secret: ${JWT_SECRET:ioedream-common-service-jwt-secret-key-2025-must-be-at-least-256-bits-long}
+    expiration: ${JWT_EXPIRATION:86400000}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
 # ==================== Actuator监控配置 ====================
 management:
   endpoints:
@@ -139,3 +146,11 @@ management:
     metrics:
       export:
         enabled: true
+  # 分布式追踪配置（Micrometer Tracing）
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${SLEUTH_SAMPLER_PROBABILITY:1.0}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}

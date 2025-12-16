@@ -66,3 +66,6 @@ public interface ConsumeAreaManager {
      */
     java.util.Map<String, Object> parseFixedValueConfig(String areaId);
 }
+
+
+

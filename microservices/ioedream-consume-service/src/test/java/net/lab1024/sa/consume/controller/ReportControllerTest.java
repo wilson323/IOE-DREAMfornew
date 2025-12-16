@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import org.mockito.stubbing.Answer;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.report.domain.form.ReportParams;
-import net.lab1024.sa.consume.report.manager.ConsumeReportManager;
+import net.lab1024.sa.consume.service.ConsumeReportService;
 
 /**
  * ReportController单元测试
@@ -36,7 +34,7 @@ import net.lab1024.sa.consume.report.manager.ConsumeReportManager;
 class ReportControllerTest {
 
     @Mock
-    private ConsumeReportManager consumeReportManager;
+    private ConsumeReportService consumeReportService;
 
     @InjectMocks
     private ReportController reportController;
@@ -62,7 +60,7 @@ class ReportControllerTest {
         mockReportData.put("totalCount", 100);
 
         ResponseDTO<Map<String, Object>> mockResponse = ResponseDTO.ok(mockReportData);
-        when(consumeReportManager.generateReport(eq(templateId), any(ReportParams.class)))
+        when(consumeReportService.generateReport(eq(templateId), any(ReportParams.class)))
             .thenReturn(mockResponse);
 
         // When
@@ -72,7 +70,7 @@ class ReportControllerTest {
         assertNotNull(result);
         assertTrue(result.getOk());
         assertNotNull(result.getData());
-        verify(consumeReportManager, times(1)).generateReport(eq(templateId), any(ReportParams.class));
+        verify(consumeReportService, times(1)).generateReport(eq(templateId), any(ReportParams.class));
     }
 
     @Test
@@ -83,7 +81,7 @@ class ReportControllerTest {
         Map<String, Object> mockReportData = new HashMap<>();
 
         ResponseDTO<Map<String, Object>> mockResponse = ResponseDTO.ok(mockReportData);
-        when(consumeReportManager.generateReport(eq(templateId), isNull()))
+        when(consumeReportService.generateReport(eq(templateId), isNull()))
             .thenReturn(mockResponse);
 
         // When
@@ -92,7 +90,7 @@ class ReportControllerTest {
         // Then
         assertNotNull(result);
         assertTrue(result.getOk());
-        verify(consumeReportManager, times(1)).generateReport(eq(templateId), isNull());
+        verify(consumeReportService, times(1)).generateReport(eq(templateId), isNull());
     }
 
     @Test
@@ -100,7 +98,7 @@ class ReportControllerTest {
     void testGenerateReport_Exception() {
         // Given
         Long templateId = 1L;
-        when(consumeReportManager.generateReport(eq(templateId), any(ReportParams.class)))
+        when(consumeReportService.generateReport(eq(templateId), any(ReportParams.class)))
             .thenThrow(new RuntimeException("生成报表失败"));
 
         // When
@@ -122,7 +120,7 @@ class ReportControllerTest {
         String format = "EXCEL";
         ResponseDTO<String> mockResponse = ResponseDTO.ok("/path/to/report.xlsx");
 
-        when(consumeReportManager.exportReport(
+        when(consumeReportService.exportReport(
             eq(templateId), any(ReportParams.class), eq(format)))
             .thenReturn(mockResponse);
 
@@ -132,7 +130,7 @@ class ReportControllerTest {
         // Then
         assertNotNull(result);
         assertTrue(result.getOk());
-        verify(consumeReportManager, times(1)).exportReport(
+        verify(consumeReportService, times(1)).exportReport(
             eq(templateId), any(ReportParams.class), eq(format));
     }
 
@@ -144,7 +142,7 @@ class ReportControllerTest {
         String format = "PDF";
         ResponseDTO<String> mockResponse = ResponseDTO.ok("/path/to/report.pdf");
 
-        when(consumeReportManager.exportReport(
+        when(consumeReportService.exportReport(
             eq(templateId), any(ReportParams.class), eq(format)))
             .thenReturn(mockResponse);
 
@@ -154,7 +152,7 @@ class ReportControllerTest {
         // Then
         assertNotNull(result);
         assertTrue(result.getOk());
-        verify(consumeReportManager, times(1)).exportReport(
+        verify(consumeReportService, times(1)).exportReport(
             eq(templateId), any(ReportParams.class), eq(format));
     }
 
@@ -164,11 +162,15 @@ class ReportControllerTest {
         // Given
         Long templateId = 1L;
         String format = null;
+        ResponseDTO<String> mockResponse = ResponseDTO.ok("/path/to/report.xlsx");
+        when(consumeReportService.exportReport(eq(templateId), any(ReportParams.class), isNull()))
+                .thenReturn(mockResponse);
 
         // When & Then
         // 根据实际实现，可能使用默认格式或抛出异常
         ResponseDTO<String> result = reportController.exportReport(templateId, reportParams, format);
         assertNotNull(result);
+        assertTrue(result.getOk());
     }
 
     // ==================== getReportTemplates 测试 ====================
@@ -177,9 +179,11 @@ class ReportControllerTest {
     @DisplayName("测试获取报表模板列表-成功")
     void testGetReportTemplates_Success() {
         // Given
+        // 使用doReturn().when()方式避免泛型通配符类型捕获问题
         @SuppressWarnings("rawtypes")
         ResponseDTO mockResponse = ResponseDTO.ok(java.util.Collections.emptyList());
-        when(consumeReportManager.getReportTemplates(anyString())).thenAnswer((Answer<ResponseDTO<?>>) invocation -> mockResponse);
+        // 使用doReturn避免泛型类型检查
+        doReturn(mockResponse).when(consumeReportService).getReportTemplates(any());
 
         // When
         ResponseDTO<?> result = reportController.getReportTemplates(null);
@@ -187,7 +191,7 @@ class ReportControllerTest {
         // Then
         assertNotNull(result);
         assertTrue(result.getOk());
-        verify(consumeReportManager, times(1)).getReportTemplates(anyString());
+        verify(consumeReportService, times(1)).getReportTemplates(isNull());
     }
 
     // ==================== getReportStatistics 测试 ====================
@@ -205,7 +209,7 @@ class ReportControllerTest {
         mockStatistics.put("todayConsume", 5000.00);
 
         ResponseDTO<Map<String, Object>> mockResponse = ResponseDTO.ok(mockStatistics);
-        when(consumeReportManager.getReportStatistics(
+        when(consumeReportService.getReportStatistics(
             any(java.time.LocalDateTime.class),
             any(java.time.LocalDateTime.class),
             any()))
@@ -219,7 +223,7 @@ class ReportControllerTest {
         assertNotNull(result);
         assertTrue(result.getOk());
         assertNotNull(result.getData());
-        verify(consumeReportManager, times(1)).getReportStatistics(
+        verify(consumeReportService, times(1)).getReportStatistics(
             any(java.time.LocalDateTime.class),
             any(java.time.LocalDateTime.class),
             any());
@@ -234,7 +238,7 @@ class ReportControllerTest {
 
         Map<String, Object> mockStatistics = new HashMap<>();
         ResponseDTO<Map<String, Object>> mockResponse = ResponseDTO.ok(mockStatistics);
-        when(consumeReportManager.getReportStatistics(
+        when(consumeReportService.getReportStatistics(
             any(java.time.LocalDateTime.class),
             any(java.time.LocalDateTime.class),
             isNull()))
@@ -247,9 +251,11 @@ class ReportControllerTest {
         // Then
         assertNotNull(result);
         assertTrue(result.getOk());
-        verify(consumeReportManager, times(1)).getReportStatistics(
+        verify(consumeReportService, times(1)).getReportStatistics(
             any(java.time.LocalDateTime.class),
             any(java.time.LocalDateTime.class),
             isNull());
     }
 }
+
+

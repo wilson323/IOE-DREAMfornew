@@ -27,6 +27,7 @@
 - [ ] **七微服务架构描述**: 必须准确描述7个核心微服务
 - [ ] **四层架构规范**: 必须正确描述Controller → Service → Manager → DAO
 - [ ] **技术栈一致性**: Spring Boot 3.5.8 + Java 17 + Jakarta EE
+- [ ] **技术栈标准引用**: 必须引用 [技术栈标准规范](../technical/TECHNOLOGY_STACK_STANDARD.md)
 - [ ] **架构边界清晰**: 明确各层职责和边界
 
 #### ✅ 合规标准
@@ -35,9 +36,24 @@
   微服务数量: 7个 (Gateway, Common, DeviceComm, OA, Access, Attendance, Video, Consume, Visitor)
   架构分层: 4层 (Controller, Service, Manager, DAO)
   技术栈: Spring Boot 3.5.8, Java 17, Jakarta EE 3.0+
+  技术栈标准: 必须引用 TECHNOLOGY_STACK_STANDARD.md
   连接池: Druid (强制)
   缓存: Redis + Caffeine多级缓存
 ```
+
+#### 🔍 技术栈一致性检查 (P0级)
+- [ ] **技术栈标准引用**: 文档必须引用 [技术栈标准规范](../technical/TECHNOLOGY_STACK_STANDARD.md)
+- [ ] **版本一致性**: 所有技术栈版本必须与标准规范一致
+- [ ] **无硬编码版本**: 禁止在文档中硬编码技术栈版本
+- [ ] **标准版本检查**:
+  - Spring Boot: 必须为 **3.5.8**
+  - Spring Cloud: 必须为 **2025.0.0**
+  - Spring Cloud Alibaba: 必须为 **2025.0.0.0**
+  - Java: 必须为 **17**
+  - MyBatis-Plus: 必须为 **3.5.15**
+  - MySQL: 必须为 **8.0.35**
+  - Druid: 必须为 **1.2.25**
+  - Lombok: 必须为 **1.18.42**
 
 ### 2. 零容忍规则审查 (P0级)
 

@@ -1,5 +1,6 @@
 package net.lab1024.sa.oa.web.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,12 +9,15 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.oa.workflow.service.ApprovalService;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalTaskQueryForm;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalActionForm;
-import net.lab1024.sa.common.workflow.domain.vo.ApprovalTaskVO;
-import net.lab1024.sa.common.workflow.domain.vo.ApprovalInstanceVO;
-import net.lab1024.sa.common.workflow.domain.vo.ApprovalStatisticsVO;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalTaskQueryForm;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalActionForm;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalTaskVO;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalInstanceVO;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalStatisticsVO;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +56,7 @@ public class ApprovalController {
     @Resource
     private ApprovalService approvalService;
 
+    @Observed(name = "approval.getTodoTasks", contextualName = "approval-get-todo-tasks")
     @Operation(summary = "获取待办任务列表")
     @GetMapping("/tasks/todo")
     public ResponseDTO<PageResult<ApprovalTaskVO>> getTodoTasks(
@@ -67,13 +72,26 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 待办任务查询参数错误: userId={}, error={}",
+                    queryForm.getUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 待办任务查询业务异常: userId={}, error={}",
+                    queryForm.getUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 待办任务查询系统异常: userId={}, error={}",
+                    queryForm.getUserId(), e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 待办任务查询异常: userId={}, error={}",
                     queryForm.getUserId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "查询待办任务失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "查询待办任务失败");
         }
     }
 
+    @Observed(name = "approval.getCompletedTasks", contextualName = "approval-get-completed-tasks")
     @Operation(summary = "获取已办任务列表")
     @GetMapping("/tasks/completed")
     public ResponseDTO<PageResult<ApprovalTaskVO>> getCompletedTasks(
@@ -89,13 +107,26 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 已办任务查询参数错误: userId={}, error={}",
+                    queryForm.getUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 已办任务查询业务异常: userId={}, error={}",
+                    queryForm.getUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 已办任务查询系统异常: userId={}, error={}",
+                    queryForm.getUserId(), e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 已办任务查询异常: userId={}, error={}",
                     queryForm.getUserId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "查询已办任务失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "查询已办任务失败");
         }
     }
 
+    @Observed(name = "approval.getMyApplications", contextualName = "approval-get-my-applications")
     @Operation(summary = "获取我的申请任务")
     @GetMapping("/tasks/my-applications")
     public ResponseDTO<PageResult<ApprovalTaskVO>> getMyApplications(
@@ -111,13 +142,26 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 我的申请查询参数错误: applicantId={}, error={}",
+                    queryForm.getApplicantId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 我的申请查询业务异常: applicantId={}, error={}",
+                    queryForm.getApplicantId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 我的申请查询系统异常: applicantId={}, error={}",
+                    queryForm.getApplicantId(), e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 我的申请查询异常: applicantId={}, error={}",
                     queryForm.getApplicantId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "查询我的申请失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "查询我的申请失败");
         }
     }
 
+    @Observed(name = "approval.approveTask", contextualName = "approval-approve-task")
     @Operation(summary = "审批同意")
     @PostMapping("/tasks/approve")
     public ResponseDTO<String> approveTask(
@@ -142,13 +186,26 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 审批同意参数错误: taskId={}, userId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 审批同意业务异常: taskId={}, userId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 审批同意系统异常: taskId={}, userId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 审批同意异常: taskId={}, userId={}, error={}",
                     actionForm.getTaskId(), actionForm.getUserId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "审批同意失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "审批同意失败");
         }
     }
 
+    @Observed(name = "approval.rejectTask", contextualName = "approval-reject-task")
     @Operation(summary = "审批驳回")
     @PostMapping("/tasks/reject")
     public ResponseDTO<String> rejectTask(
@@ -176,13 +233,26 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 审批驳回参数错误: taskId={}, userId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 审批驳回业务异常: taskId={}, userId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 审批驳回系统异常: taskId={}, userId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 审批驳回异常: taskId={}, userId={}, error={}",
                     actionForm.getTaskId(), actionForm.getUserId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "审批驳回失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "审批驳回失败");
         }
     }
 
+    @Observed(name = "approval.transferTask", contextualName = "approval-transfer-task")
     @Operation(summary = "审批转办")
     @PostMapping("/tasks/transfer")
     public ResponseDTO<String> transferTask(
@@ -210,13 +280,26 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 审批转办参数错误: taskId={}, userId={}, targetUserId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 审批转办业务异常: taskId={}, userId={}, targetUserId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 审批转办系统异常: taskId={}, userId={}, targetUserId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 审批转办异常: taskId={}, userId={}, targetUserId={}, error={}",
                     actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "审批转办失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "审批转办失败");
         }
     }
 
+    @Observed(name = "approval.delegateTask", contextualName = "approval-delegate-task")
     @Operation(summary = "审批委派")
     @PostMapping("/tasks/delegate")
     public ResponseDTO<String> delegateTask(
@@ -244,13 +327,26 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 审批委派参数错误: taskId={}, userId={}, targetUserId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 审批委派业务异常: taskId={}, userId={}, targetUserId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 审批委派系统异常: taskId={}, userId={}, targetUserId={}, error={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 审批委派异常: taskId={}, userId={}, targetUserId={}, error={}",
                     actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "审批委派失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "审批委派失败");
         }
     }
 
+    @Observed(name = "approval.getTaskDetail", contextualName = "approval-get-task-detail")
     @Operation(summary = "获取审批任务详情")
     @GetMapping("/tasks/{taskId}")
     public ResponseDTO<ApprovalTaskVO> getTaskDetail(
@@ -273,12 +369,22 @@ public class ApprovalController {
 
             return ResponseDTO.ok(taskDetail);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 获取审批任务详情参数错误: taskId={}, error={}", taskId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 获取审批任务详情业务异常: taskId={}, error={}", taskId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 获取审批任务详情系统异常: taskId={}, error={}", taskId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 获取审批任务详情异常: taskId={}, error={}", taskId, e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "获取审批任务详情失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "获取审批任务详情失败");
         }
     }
 
+    @Observed(name = "approval.getInstanceDetail", contextualName = "approval-get-instance-detail")
     @Operation(summary = "获取审批流程实例详情")
     @GetMapping("/instances/{instanceId}")
     public ResponseDTO<ApprovalInstanceVO> getInstanceDetail(
@@ -301,12 +407,22 @@ public class ApprovalController {
 
             return ResponseDTO.ok(instanceDetail);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 获取审批流程详情参数错误: instanceId={}, error={}", instanceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 获取审批流程详情业务异常: instanceId={}, error={}", instanceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 获取审批流程详情系统异常: instanceId={}, error={}", instanceId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 获取审批流程详情异常: instanceId={}, error={}", instanceId, e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "获取审批流程详情失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "获取审批流程详情失败");
         }
     }
 
+    @Observed(name = "approval.getApprovalStatistics", contextualName = "approval-get-statistics")
     @Operation(summary = "获取审批统计信息")
     @GetMapping("/statistics")
     public ResponseDTO<ApprovalStatisticsVO> getApprovalStatistics(
@@ -324,13 +440,26 @@ public class ApprovalController {
 
             return ResponseDTO.ok(statistics);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 获取审批统计参数错误: userId={}, departmentId={}, type={}, error={}",
+                    userId, departmentId, statisticsType, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 获取审批统计业务异常: userId={}, departmentId={}, type={}, error={}",
+                    userId, departmentId, statisticsType, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 获取审批统计系统异常: userId={}, departmentId={}, type={}, error={}",
+                    userId, departmentId, statisticsType, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 获取审批统计异常: userId={}, departmentId={}, type={}, error={}",
                     userId, departmentId, statisticsType, e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "获取审批统计失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "获取审批统计失败");
         }
     }
 
+    @Observed(name = "approval.getBusinessTypes", contextualName = "approval-get-business-types")
     @Operation(summary = "获取业务类型列表")
     @GetMapping("/business-types")
     public ResponseDTO<List<Map<String, Object>>> getBusinessTypes() {
@@ -343,12 +472,22 @@ public class ApprovalController {
 
             return ResponseDTO.ok(businessTypes);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 获取业务类型列表参数错误: error={}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 获取业务类型列表业务异常: error={}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 获取业务类型列表系统异常: error={}", e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 获取业务类型列表异常: error={}", e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "获取业务类型列表失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "获取业务类型列表失败");
         }
     }
 
+    @Observed(name = "approval.getPriorities", contextualName = "approval-get-priorities")
     @Operation(summary = "获取审批优先级列表")
     @GetMapping("/priorities")
     public ResponseDTO<List<Map<String, Object>>> getPriorities() {
@@ -361,12 +500,22 @@ public class ApprovalController {
 
             return ResponseDTO.ok(priorities);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 获取审批优先级列表参数错误: error={}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 获取审批优先级列表业务异常: error={}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 获取审批优先级列表系统异常: error={}", e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 获取审批优先级列表异常: error={}", e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "获取审批优先级列表失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "获取审批优先级列表失败");
         }
     }
 
+    @Observed(name = "approval.batchProcessTasks", contextualName = "approval-batch-process-tasks")
     @Operation(summary = "批量审批处理")
     @PostMapping("/tasks/batch-action")
     public ResponseDTO<Map<String, Object>> batchProcessTasks(
@@ -400,12 +549,22 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 批量审批处理参数错误: params={}, error={}", batchParams, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 批量审批处理业务异常: params={}, error={}", batchParams, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 批量审批处理系统异常: params={}, error={}", batchParams, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 批量审批处理异常: params={}, error={}", batchParams, e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "批量审批处理失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "批量审批处理失败");
         }
     }
 
+    @Observed(name = "approval.withdrawApplication", contextualName = "approval-withdraw-application")
     @Operation(summary = "撤回审批申请")
     @PostMapping("/instances/{instanceId}/withdraw")
     public ResponseDTO<String> withdrawApplication(
@@ -433,10 +592,25 @@ public class ApprovalController {
 
             return ResponseDTO.ok(result);
 
+        } catch (ParamException e) {
+            log.warn("[审批管理] 撤回审批申请参数错误: instanceId={}, applicantId={}, error={}",
+                    instanceId, applicantId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[审批管理] 撤回审批申请业务异常: instanceId={}, applicantId={}, error={}",
+                    instanceId, applicantId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[审批管理] 撤回审批申请系统异常: instanceId={}, applicantId={}, error={}",
+                    instanceId, applicantId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("[审批管理] 撤回审批申请异常: instanceId={}, applicantId={}, error={}",
                     instanceId, applicantId, e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "撤回审批申请失败：" + e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "撤回审批申请失败");
         }
     }
 }
+
+
+

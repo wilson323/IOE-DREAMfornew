@@ -96,6 +96,7 @@ public interface AccessDeviceDao extends BaseMapper<DeviceEntity> {
      * @param status    状态
      * @return 更新行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("<script>" +
             "UPDATE t_common_device SET device_status = #{status}, update_time = NOW() " +
             "WHERE device_id IN " +
@@ -172,3 +173,4 @@ public interface AccessDeviceDao extends BaseMapper<DeviceEntity> {
             "GROUP BY device_status ORDER BY count DESC")
     List<Object> countDevicesByStatus();
 }
+

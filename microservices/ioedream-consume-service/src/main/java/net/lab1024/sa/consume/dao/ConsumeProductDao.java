@@ -56,3 +56,6 @@ public interface ConsumeProductDao extends BaseMapper<ConsumeProductEntity> {
      */
     List<ConsumeProductEntity> selectByAreaId(@Param("areaId") String areaId);
 }
+
+
+

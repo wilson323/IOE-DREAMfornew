@@ -7,6 +7,10 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { performanceMonitor } from '@/utils/performance.js'
 
+const normalizeBaseUrl = (url) => {
+  return url ? url.replace(/\/+$/, '') : ''
+}
+
 export const useAppStore = defineStore('app', () => {
   // ========== 基础状态 ==========
   const systemInfo = ref({})
@@ -28,7 +32,7 @@ export const useAppStore = defineStore('app', () => {
   // ========== 应用配置 ==========
   const config = ref({
     // API配置
-    apiBaseUrl: 'https://api.example.com',
+    apiBaseUrl: normalizeBaseUrl(import.meta.env.VITE_APP_API_URL),
     apiTimeout: 10000,
 
     // 缓存配置
@@ -392,7 +396,7 @@ export const useAppStore = defineStore('app', () => {
       }
 
       config.value = {
-        apiBaseUrl: 'https://api.example.com',
+        apiBaseUrl: normalizeBaseUrl(import.meta.env.VITE_APP_API_URL),
         apiTimeout: 10000,
         cacheEnabled: true,
         cacheExpireTime: 3600,

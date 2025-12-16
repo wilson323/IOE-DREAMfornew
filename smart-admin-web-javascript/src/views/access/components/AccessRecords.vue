@@ -99,8 +99,8 @@
   ];
 
   const handleTimeRangeChange = (value) => {
-    // TODO: 根据时间范围过滤记录
-    console.log('Time range changed:', value);
+    // 触发父组件刷新，传递时间范围参数
+    emit('refresh', { timeRange: value });
   };
 
   const handleViewDetails = (record) => {

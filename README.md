@@ -42,10 +42,13 @@
 #### 后端技术栈
 - **框架**: Spring Boot 3.5.8 + Spring Cloud 2025.0.0
 - **语言**: Java 17 (LTS)
-- **认证**: Sa-Token 1.44.0
+- **认证**: Spring Security 6.x（JWT Bearer）
 - **ORM**: MyBatis-Plus 3.5.15
 - **数据库**: MySQL 8.0+ / 国产数据库（达梦、金仓等）
-- **缓存**: Redis + Caffeine（多级缓存）
+- **缓存**: Spring Cache + Redis + Caffeine（多级缓存）
+- **分布式事务**: Seata（AT/SAGA模式）
+- **容错机制**: Resilience4j（重试、熔断、限流、隔离）
+- **监控指标**: Micrometer + Prometheus + Grafana
 - **消息队列**: RabbitMQ / RocketMQ
 - **服务注册**: Nacos
 - **API文档**: Swagger / Knife4j
@@ -81,7 +84,8 @@
 ```
 IOE-DREAM/
 ├── microservices/              # 微服务模块
-│   ├── microservices-common/  # 公共JAR库（Entity、DAO、Manager等）
+│   ├── microservices-common-core/  # 公共库最小稳定内核（ResponseDTO/异常/常量等）
+│   ├── microservices-common/       # 公共库聚合（逐步拆为 common-spring/common-starter-*/domain-api）
 │   ├── ioedream-gateway-service/      # API网关
 │   ├── ioedream-common-service/       # 公共业务服务
 │   ├── ioedream-device-comm-service/  # 设备通讯服务
@@ -110,8 +114,8 @@ IOE-DREAM/
 ## 🚀 快速开始
 
 > **💡 快速启动**: 
-> - [开发环境快速启动](DEVELOPMENT_QUICK_START.md) ⭐ **推荐阅读**
-> - [3步快速启动](QUICK_START.md)
+> - [开发环境快速启动](documentation/02-开发指南/DEVELOPMENT_QUICK_START.md) ⭐ **推荐阅读**
+> - [3步快速启动](documentation/02-开发指南/QUICK_START.md)
 > - [详细启动指南](documentation/technical/DEVELOPMENT_STARTUP_GUIDE.md)
 
 ### 环境要求
@@ -124,6 +128,25 @@ IOE-DREAM/
 - **Nacos**: 2.2.0+
 - **Docker**: 20.10+
 - **Docker Compose**: 2.0+
+
+### API 基线与兼容窗口（30 天）
+
+- **Canonical API 前缀**：统一使用 `/api/v1`
+- **网关地址**：默认 `http://localhost:8080`
+- **鉴权方式**：Spring Security（JWT Bearer），请求头 `Authorization: Bearer <token>`
+- **内部同步调用策略**：默认经网关（`GatewayServiceClient`），同域高频热路径允许白名单直连（`DirectServiceClient`）
+  - 详见：`documentation/architecture/INTERNAL_CALL_STRATEGY.md`
+  - 公共库拆分与依赖方向：`documentation/architecture/COMMON_LIBRARY_SPLIT.md`
+- **兼容窗口**：legacy 路由与 legacy 登录路径保留 30 天，窗口结束后将下线（建议尽快迁移到 canonical）
+  - legacy 业务前缀（兼容）：`/access/**`、`/attendance/**`、`/consume/**`、`/visitor/**`、`/video/**`、`/device/**`
+  - legacy 登录前缀（兼容）：`/login/**`
+
+### 本地配置（必须）
+
+`docker-compose-all.yml` 已移除默认口令占位，必须通过环境变量注入敏感配置：
+
+- 复制模板：`.env.template` → `.env`（`.env` 已加入 `.gitignore`，不要提交到仓库）
+- 至少配置：`MYSQL_ROOT_PASSWORD`、`REDIS_PASSWORD`、`NACOS_USERNAME`、`NACOS_PASSWORD`、`NACOS_AUTH_TOKEN`、`JWT_SECRET`
 
 ### 一键部署（自动检测并初始化数据库）
 

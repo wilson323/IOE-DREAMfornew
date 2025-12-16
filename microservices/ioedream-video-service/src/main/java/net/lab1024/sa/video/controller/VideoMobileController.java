@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -15,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
 import net.lab1024.sa.video.service.VideoPlayService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 
 import java.util.List;
 import java.util.Map;
@@ -57,6 +61,7 @@ public class VideoMobileController {
      * @param status 设备状态（可选）
      * @return 设备列表
      */
+    @Observed(name = "video.mobile.getDeviceList", contextualName = "video-mobile-get-device-list")
     @GetMapping("/device/list")
     @Operation(summary = "获取设备列表", description = "获取视频设备列表")
     @PreAuthorize("hasRole('VIDEO_USER')")
@@ -68,9 +73,18 @@ public class VideoMobileController {
         try {
             List<VideoDeviceVO> deviceList = videoPlayService.getMobileDeviceList(areaId, deviceType, status);
             return ResponseDTO.ok(deviceList);
+        } catch (ParamException e) {
+            log.warn("[视频监控移动端] 获取设备列表参数错误: {}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[视频监控移动端] 获取设备列表业务异常: {}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[视频监控移动端] 获取设备列表系统异常: {}", e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[视频监控移动端] 获取设备列表失败", e);
-            return ResponseDTO.error("GET_DEVICE_LIST_ERROR", "获取设备列表失败: " + e.getMessage());
+            log.error("[视频监控移动端] 获取设备列表执行异常: {}", e.getMessage(), e);
+            return ResponseDTO.error("GET_DEVICE_LIST_ERROR", "获取设备列表失败");
         }
     }
 
@@ -82,6 +96,7 @@ public class VideoMobileController {
      * @param streamType 流类型（可选）
      * @return 视频流地址
      */
+    @Observed(name = "video.mobile.getVideoStream", contextualName = "video-mobile-get-stream")
     @PostMapping("/play/stream")
     @Operation(summary = "获取视频流地址", description = "获取视频设备的实时流播放地址")
     @PreAuthorize("hasRole('VIDEO_USER')")
@@ -93,9 +108,18 @@ public class VideoMobileController {
         try {
             Map<String, Object> result = videoPlayService.getVideoStream(deviceId, channelId, streamType);
             return ResponseDTO.ok(result);
+        } catch (ParamException e) {
+            log.warn("[视频监控移动端] 获取视频流地址参数错误，deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[视频监控移动端] 获取视频流地址业务异常，deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[视频监控移动端] 获取视频流地址系统异常，deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[视频监控移动端] 获取视频流地址失败，deviceId={}", deviceId, e);
-            return ResponseDTO.error("GET_STREAM_ERROR", "获取视频流地址失败: " + e.getMessage());
+            log.error("[视频监控移动端] 获取视频流地址执行异常，deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error("GET_STREAM_ERROR", "获取视频流地址失败");
         }
     }
 }

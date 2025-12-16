@@ -81,3 +81,6 @@ public class ConsumeTransactionForm {
      */
     private java.util.Map<String, Integer> productQuantities;
 }
+
+
+

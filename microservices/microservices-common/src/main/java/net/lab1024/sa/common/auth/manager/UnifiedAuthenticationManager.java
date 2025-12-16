@@ -1,6 +1,10 @@
 package net.lab1024.sa.common.auth.manager;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.auth.manager.client.UserDirectoryClient;
+import net.lab1024.sa.common.auth.manager.store.AuthRedisKeys;
+import net.lab1024.sa.common.auth.manager.store.AuthRedisStore;
+import net.lab1024.sa.common.auth.manager.store.OneTimeCodeVerifyResult;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.security.entity.UserEntity;
 import net.lab1024.sa.common.auth.domain.dto.*;
@@ -9,13 +13,13 @@ import net.lab1024.sa.common.auth.util.JwtTokenUtil;
 import net.lab1024.sa.common.auth.util.PasswordUtil;
 import net.lab1024.sa.common.auth.util.TotpUtil;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.SystemException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 统一身份认证Manager
@@ -44,22 +48,9 @@ public class UnifiedAuthenticationManager {
 
     private final GatewayServiceClient gatewayServiceClient;
     private final JwtTokenUtil jwtTokenUtil;
-    private final StringRedisTemplate redisTemplate;
-
-    // Redis Key前缀
-    private static final String TOKEN_BLACKLIST_PREFIX = "auth:token:blacklist:";
-    private static final String USER_SESSION_PREFIX = "auth:user:session:";
-    private static final String LOGIN_RETRY_PREFIX = "auth:login:retry:";
-    private static final String SMS_CODE_PREFIX = "auth:sms:code:";
-    private static final String EMAIL_CODE_PREFIX = "auth:email:code:";
-    private static final String TOTP_SECRET_PREFIX = "auth:totp:secret:";
-
-    // 配置参数
-    private static final int MAX_LOGIN_RETRY = 5; // 最大登录失败次数
-    private static final int LOGIN_RETRY_TIMEOUT = 900; // 登录失败锁定时间（秒，15分钟）
-    private static final int SMS_CODE_EXPIRE = 300; // 短信验证码过期时间（秒，5分钟）
-    private static final int EMAIL_CODE_EXPIRE = 600; // 邮件验证码过期时间（秒，10分钟）
-    private static final int TOKEN_BLACKLIST_EXPIRE = 604800; // 令牌黑名单过期时间（秒，7天）
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final AuthRedisStore authRedisStore;
+    private final UserDirectoryClient userDirectoryClient;
 
     /**
      * 获取登录失败锁定时间（秒）
@@ -67,7 +58,7 @@ public class UnifiedAuthenticationManager {
      * @return 锁定时间（秒）
      */
     public static int getLoginRetryTimeout() {
-        return LOGIN_RETRY_TIMEOUT;
+        return AuthRedisKeys.LOGIN_RETRY_TIMEOUT_SECONDS;
     }
 
     /**
@@ -76,7 +67,7 @@ public class UnifiedAuthenticationManager {
      * @return 过期时间（秒）
      */
     public static int getSmsCodeExpire() {
-        return SMS_CODE_EXPIRE;
+        return AuthRedisKeys.SMS_CODE_EXPIRE_SECONDS;
     }
 
     /**
@@ -85,7 +76,7 @@ public class UnifiedAuthenticationManager {
      * @return 过期时间（秒）
      */
     public static int getEmailCodeExpire() {
-        return EMAIL_CODE_EXPIRE;
+        return AuthRedisKeys.EMAIL_CODE_EXPIRE_SECONDS;
     }
 
     /**
@@ -97,15 +88,51 @@ public class UnifiedAuthenticationManager {
      * @param gatewayServiceClient 网关服务客户端
      * @param jwtTokenUtil JWT令牌工具类
      * @param redisTemplate Redis模板
+     * @param passwordEncoder 密码编码器（Spring Security BCryptPasswordEncoder，可选，如果为null则使用PasswordUtil作为fallback）
+     */
+    public UnifiedAuthenticationManager(
+            GatewayServiceClient gatewayServiceClient,
+            JwtTokenUtil jwtTokenUtil,
+            StringRedisTemplate redisTemplate,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+        this(gatewayServiceClient, jwtTokenUtil, passwordEncoder,
+                new UserDirectoryClient(gatewayServiceClient),
+                new AuthRedisStore(redisTemplate));
+    }
+
+    /**
+     * 构造函数注入依赖（可注入组件，便于复用与测试）
+     */
+    public UnifiedAuthenticationManager(
+            GatewayServiceClient gatewayServiceClient,
+            JwtTokenUtil jwtTokenUtil,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder,
+            UserDirectoryClient userDirectoryClient,
+            AuthRedisStore authRedisStore) {
+        this.gatewayServiceClient = gatewayServiceClient;
+        this.jwtTokenUtil = jwtTokenUtil;
+        // 优先使用Spring Security的BCryptPasswordEncoder，如果没有则使用PasswordUtil作为fallback
+        this.passwordEncoder = passwordEncoder;
+        this.userDirectoryClient = userDirectoryClient;
+        this.authRedisStore = authRedisStore;
+        log.info("[统一认证] 统一身份认证管理器初始化完成");
+    }
+
+    /**
+     * 构造函数注入依赖（向后兼容，不包含passwordEncoder）
+     * <p>
+     * 如果未提供passwordEncoder，将使用PasswordUtil作为fallback
+     * </p>
+     *
+     * @param gatewayServiceClient 网关服务客户端
+     * @param jwtTokenUtil JWT令牌工具类
+     * @param redisTemplate Redis模板
      */
     public UnifiedAuthenticationManager(
             GatewayServiceClient gatewayServiceClient,
             JwtTokenUtil jwtTokenUtil,
             StringRedisTemplate redisTemplate) {
-        this.gatewayServiceClient = gatewayServiceClient;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.redisTemplate = redisTemplate;
-        log.info("[统一认证] 统一身份认证管理器初始化完成");
+        this(gatewayServiceClient, jwtTokenUtil, redisTemplate, null);
     }
 
     /**
@@ -122,7 +149,7 @@ public class UnifiedAuthenticationManager {
             validateLoginRequest(request);
 
             // 2. 通过网关调用用户服务获取用户信息
-            UserEntity user = getUserByLoginName(request.getLoginName());
+            UserEntity user = userDirectoryClient.getUserByLoginName(request.getLoginName());
 
             if (user == null) {
                 return AuthenticationResult.builder()
@@ -160,13 +187,13 @@ public class UnifiedAuthenticationManager {
             }
 
             // 6. 更新登录信息
-            updateLoginInfo(user.getId(), request.getClientIp());
+            userDirectoryClient.updateLoginInfo(user.getId(), request.getClientIp());
 
             // 7. 生成认证令牌
             AuthToken token = generateAuthToken(user);
 
             // 8. 获取用户权限
-            List<String> permissions = getUserPermissions(user.getId());
+            List<String> permissions = userDirectoryClient.getUserPermissions(user.getId());
 
             return AuthenticationResult.builder()
                     .success(true)
@@ -203,7 +230,7 @@ public class UnifiedAuthenticationManager {
             validateSmsRequest(request);
 
             // 2. 通过手机号获取用户信息
-            UserEntity user = getUserByPhone(request.getPhone());
+            UserEntity user = userDirectoryClient.getUserByPhone(request.getPhone());
 
             if (user == null) {
                 return AuthenticationResult.builder()
@@ -214,7 +241,7 @@ public class UnifiedAuthenticationManager {
             }
 
             // 3. 验证短信验证码
-            if (!verifySmsCode(user.getId(), request.getSmsCode())) {
+            if (authRedisStore.verifyAndConsumeSmsCode(user.getId(), request.getSmsCode()) != OneTimeCodeVerifyResult.SUCCESS) {
                 return AuthenticationResult.builder()
                         .success(false)
                         .errorCode("SMS_CODE_ERROR")
@@ -235,7 +262,7 @@ public class UnifiedAuthenticationManager {
             AuthToken token = generateAuthToken(user);
 
             // 6. 获取用户权限
-            List<String> permissions = getUserPermissions(user.getId());
+            List<String> permissions = userDirectoryClient.getUserPermissions(user.getId());
 
             return AuthenticationResult.builder()
                     .success(true)
@@ -275,7 +302,7 @@ public class UnifiedAuthenticationManager {
             }
 
             // 2. 获取用户的多因素认证配置
-            UserEntity user = getUserById(primaryResult.getUserId());
+            UserEntity user = userDirectoryClient.getUserById(primaryResult.getUserId());
             if (user == null) {
                 return AuthenticationResult.builder()
                         .success(false)
@@ -347,7 +374,7 @@ public class UnifiedAuthenticationManager {
 
         try {
             // 1. 检查令牌是否在黑名单中
-            if (isTokenBlacklisted(token)) {
+            if (authRedisStore.isTokenBlacklisted(token)) {
                 return TokenValidationResult.builder()
                         .valid(false)
                         .errorCode("TOKEN_BLACKLISTED")
@@ -378,7 +405,7 @@ public class UnifiedAuthenticationManager {
 
             // 4. 获取用户信息并验证状态
             Long userId = Long.valueOf(claims.get("userId").toString());
-            UserEntity user = getUserById(userId);
+            UserEntity user = userDirectoryClient.getUserById(userId);
 
             if (user == null || !isActiveUser(user)) {
                 return TokenValidationResult.builder()
@@ -428,13 +455,13 @@ public class UnifiedAuthenticationManager {
             }
 
             // 2. 获取用户信息
-            UserEntity user = getUserById(validation.getUserId());
+            UserEntity user = userDirectoryClient.getUserById(validation.getUserId());
 
             // 3. 生成新的访问令牌
             AuthToken newToken = generateAuthToken(user);
 
             // 4. 更新用户最后登录时间
-            updateLastLoginTime(user.getId());
+            userDirectoryClient.updateLastLoginTime(user.getId());
 
             return RefreshTokenResult.builder()
                     .success(true)
@@ -464,10 +491,10 @@ public class UnifiedAuthenticationManager {
 
         try {
             // 1. 将令牌加入黑名单
-            addToTokenBlacklist(token);
+            authRedisStore.blacklistToken(token);
 
             // 2. 更新用户最后登出时间
-            updateLastLogoutTime(userId);
+            userDirectoryClient.updateLastLogoutTime(userId);
 
             // 3. 清理用户会话
             clearUserSessions(userId);
@@ -503,50 +530,6 @@ public class UnifiedAuthenticationManager {
         }
     }
 
-    private UserEntity getUserByLoginName(String loginName) {
-        try {
-            return gatewayServiceClient.callCommonService(
-                    "/api/v1/user/username/" + loginName,
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    UserEntity.class
-            ).getData();
-        } catch (Exception e) {
-            log.warn("[统一认证] 获取用户信息失败: loginName={}, error={}", loginName, e.getMessage());
-            return null;
-        }
-    }
-
-    private UserEntity getUserByPhone(String phone) {
-        try {
-            ResponseDTO<UserEntity> response = gatewayServiceClient.callCommonService(
-                    "/api/v1/user/phone/" + phone,
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    UserEntity.class
-            );
-            return response != null && response.getOk() ? response.getData() : null;
-        } catch (Exception e) {
-            log.warn("[统一认证] 通过手机号获取用户失败: phone={}, error={}", phone, e.getMessage());
-            return null;
-        }
-    }
-
-    private UserEntity getUserById(Long userId) {
-        try {
-            ResponseDTO<UserEntity> response = gatewayServiceClient.callCommonService(
-                    "/api/v1/user/" + userId,
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    UserEntity.class
-            );
-            return response != null && response.getOk() ? response.getData() : null;
-        } catch (Exception e) {
-            log.warn("[统一认证] 获取用户信息失败: userId={}, error={}", userId, e.getMessage());
-            return null;
-        }
-    }
-
     private boolean isActiveUser(UserEntity user) {
         return user.getStatus() != null && user.getStatus() == 1 && (user.getDeletedFlag() == null || user.getDeletedFlag() == 0);
     }
@@ -569,8 +552,15 @@ public class UnifiedAuthenticationManager {
         }
 
         try {
-            // 使用PasswordUtil进行BCrypt密码验证
-            boolean isValid = PasswordUtil.verifyPasswordWithSalt(inputPassword, storedPassword, salt);
+            // 优先使用Spring Security的BCryptPasswordEncoder，如果没有则使用PasswordUtil作为fallback
+            boolean isValid;
+            if (passwordEncoder != null) {
+                // 使用Spring Security的BCryptPasswordEncoder
+                isValid = passwordEncoder.matches(inputPassword, storedPassword);
+            } else {
+                // 使用PasswordUtil作为fallback（向后兼容）
+                isValid = PasswordUtil.verifyPasswordWithSalt(inputPassword, storedPassword, salt);
+            }
             if (isValid) {
                 log.debug("[统一认证] 密码验证成功");
             } else {
@@ -597,12 +587,18 @@ public class UnifiedAuthenticationManager {
     @SuppressWarnings("unused")
     private String encryptPassword(String password, String salt) {
         try {
-            // 使用PasswordUtil进行BCrypt密码加密
-            // BCrypt会自动生成盐值，salt参数保留用于兼容性
-            return PasswordUtil.encryptPassword(password);
+            // 优先使用Spring Security的BCryptPasswordEncoder，如果没有则使用PasswordUtil作为fallback
+            if (passwordEncoder != null) {
+                // 使用Spring Security的BCryptPasswordEncoder
+                return passwordEncoder.encode(password);
+            } else {
+                // 使用PasswordUtil作为fallback（向后兼容）
+                // BCrypt会自动生成盐值，salt参数保留用于兼容性
+                return PasswordUtil.encryptPassword(password);
+            }
         } catch (Exception e) {
             log.error("[统一认证] 密码加密异常: {}", e.getMessage(), e);
-            throw new RuntimeException("密码加密失败", e);
+            throw new SystemException("PASSWORD_ENCRYPT_ERROR", "密码加密失败", e);
         }
     }
 
@@ -619,7 +615,7 @@ public class UnifiedAuthenticationManager {
     private boolean isLoginExceeded(Long userId) {
         try {
             // 通过网关获取用户信息，检查账户锁定状态
-            UserEntity user = getUserById(userId);
+            UserEntity user = userDirectoryClient.getUserById(userId);
             if (user == null) {
                 return false;
             }
@@ -637,16 +633,10 @@ public class UnifiedAuthenticationManager {
                 }
             }
 
-            // 检查Redis中的登录失败次数
-            String retryKey = LOGIN_RETRY_PREFIX + userId;
-            String retryCountStr = redisTemplate.opsForValue().get(retryKey);
-
-            if (retryCountStr != null) {
-                int retryCount = Integer.parseInt(retryCountStr);
-                if (retryCount >= MAX_LOGIN_RETRY) {
-                    log.warn("[统一认证] 用户登录失败次数过多: userId={}, 失败次数: {}", userId, retryCount);
-                    return true;
-                }
+            int retryCount = authRedisStore.getLoginRetryCount(userId);
+            if (retryCount >= AuthRedisKeys.MAX_LOGIN_RETRY) {
+                log.warn("[统一认证] 用户登录失败次数过多: userId={}, 失败次数: {}", userId, retryCount);
+                return true;
             }
 
             return false;
@@ -654,24 +644,6 @@ public class UnifiedAuthenticationManager {
             log.error("[统一认证] 检查登录失败次数异常: userId={}, error={}", userId, e.getMessage(), e);
             // 异常情况下不阻止登录，避免影响正常用户
             return false;
-        }
-    }
-
-    private void updateLoginInfo(Long userId, String clientIp) {
-        try {
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            params.put("clientIp", clientIp);
-            params.put("loginTime", LocalDateTime.now());
-
-            gatewayServiceClient.callCommonService(
-                    "/api/v1/user/update-login-info",
-                    org.springframework.http.HttpMethod.POST,
-                    params,
-                    Void.class
-            );
-        } catch (Exception e) {
-            log.warn("[统一认证] 更新登录信息失败: userId={}, error={}", userId, e.getMessage());
         }
     }
 
@@ -688,8 +660,8 @@ public class UnifiedAuthenticationManager {
     private AuthToken generateAuthToken(UserEntity user) {
         try {
             // 获取用户角色和权限
-            List<String> roles = getUserRoles(user.getId());
-            List<String> permissions = getUserPermissions(user.getId());
+            List<String> roles = userDirectoryClient.getUserRoles(user.getId());
+            List<String> permissions = userDirectoryClient.getUserPermissions(user.getId());
 
             // 生成访问令牌（包含完整用户信息）
             String accessToken = jwtTokenUtil.generateAccessToken(
@@ -722,51 +694,7 @@ public class UnifiedAuthenticationManager {
 
         } catch (Exception e) {
             log.error("[统一认证] 生成认证令牌异常: userId={}, error={}", user.getId(), e.getMessage(), e);
-            throw new RuntimeException("生成认证令牌失败", e);
-        }
-    }
-
-    /**
-     * 获取用户角色列表
-     *
-     * @param userId 用户ID
-     * @return 角色列表
-     */
-    @SuppressWarnings("unchecked")
-    private List<String> getUserRoles(Long userId) {
-        try {
-            ResponseDTO<?> response = gatewayServiceClient.callCommonService(
-                    "/api/v1/user/roles/" + userId,
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    List.class
-            );
-            if (response != null && response.getOk() && response.getData() != null) {
-                Object data = response.getData();
-                if (data instanceof List) {
-                    return (List<String>) data;
-                }
-            }
-            return List.of();
-        } catch (Exception e) {
-            log.warn("[统一认证] 获取用户角色失败: userId={}, error={}", userId, e.getMessage());
-            return List.of();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<String> getUserPermissions(Long userId) {
-        try {
-            // 通过网关获取用户权限
-            return gatewayServiceClient.callCommonService(
-                    "/api/v1/user/permissions/" + userId,
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    List.class
-            ).getData();
-        } catch (Exception e) {
-            log.warn("[统一认证] 获取用户权限失败: userId={}, error={}", userId, e.getMessage());
-            return List.of();
+            throw new SystemException("GENERATE_AUTH_TOKEN_ERROR", "生成认证令牌失败", e);
         }
     }
 
@@ -780,6 +708,7 @@ public class UnifiedAuthenticationManager {
      * @param token JWT令牌字符串
      * @return Claims Map，解析失败返回null
      */
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     private Map<String, Object> parseJwtToken(String token) {
         if (token == null || token.trim().isEmpty()) {
             log.warn("[统一认证] JWT令牌为空");
@@ -810,49 +739,6 @@ public class UnifiedAuthenticationManager {
     }
 
     /**
-     * 验证短信验证码
-     * <p>
-     * 从Redis中获取存储的验证码进行验证
-     * 验证成功后清除验证码，防止重复使用
-     * </p>
-     *
-     * @param userId 用户ID
-     * @param smsCode 用户输入的短信验证码
-     * @return true-验证通过，false-验证失败
-     */
-    private boolean verifySmsCode(Long userId, String smsCode) {
-        if (userId == null || smsCode == null || smsCode.trim().isEmpty()) {
-            log.warn("[统一认证] 短信验证码参数为空");
-            return false;
-        }
-
-        try {
-            String codeKey = SMS_CODE_PREFIX + userId;
-            String storedCode = redisTemplate.opsForValue().get(codeKey);
-
-            if (storedCode == null) {
-                log.warn("[统一认证] 短信验证码不存在或已过期: userId={}", userId);
-                return false;
-            }
-
-            // 验证验证码
-            if (smsCode.trim().equals(storedCode)) {
-                // 验证成功，清除验证码
-                redisTemplate.delete(codeKey);
-                log.info("[统一认证] 短信验证码验证成功: userId={}", userId);
-                return true;
-            } else {
-                log.warn("[统一认证] 短信验证码错误: userId={}", userId);
-                return false;
-            }
-
-        } catch (Exception e) {
-            log.error("[统一认证] 验证短信验证码异常: userId={}, error={}", userId, e.getMessage(), e);
-            return false;
-        }
-    }
-
-    /**
      * 邮件认证
      * <p>
      * 通过网关调用邮件服务验证邮件验证码
@@ -867,7 +753,7 @@ public class UnifiedAuthenticationManager {
 
         try {
             // 1. 获取用户信息
-            UserEntity user = getUserById(request.getUserId());
+            UserEntity user = userDirectoryClient.getUserById(request.getUserId());
             if (user == null) {
                 return AuthenticationResult.builder()
                         .success(false)
@@ -895,17 +781,8 @@ public class UnifiedAuthenticationManager {
                         .build();
             }
 
-            // 从Redis验证邮件验证码
-            String codeKey = EMAIL_CODE_PREFIX + user.getEmail();
-            String storedCode = redisTemplate.opsForValue().get(codeKey);
-
-            // 设置验证码过期时间（如果不存在）
-            if (storedCode == null) {
-                // 验证码不存在，可能已过期
-                redisTemplate.expire(codeKey, EMAIL_CODE_EXPIRE, TimeUnit.SECONDS);
-            }
-
-            if (storedCode == null) {
+            OneTimeCodeVerifyResult verifyResult = authRedisStore.verifyAndConsumeEmailCode(user.getEmail(), emailCode);
+            if (verifyResult == OneTimeCodeVerifyResult.CODE_NOT_FOUND) {
                 return AuthenticationResult.builder()
                         .success(false)
                         .errorCode("EMAIL_CODE_EXPIRED")
@@ -913,7 +790,7 @@ public class UnifiedAuthenticationManager {
                         .build();
             }
 
-            if (!emailCode.trim().equals(storedCode)) {
+            if (verifyResult != OneTimeCodeVerifyResult.SUCCESS) {
                 return AuthenticationResult.builder()
                         .success(false)
                         .errorCode("EMAIL_CODE_ERROR")
@@ -921,14 +798,11 @@ public class UnifiedAuthenticationManager {
                         .build();
             }
 
-            // 4. 验证成功，清除验证码
-            redisTemplate.delete(codeKey);
-
             // 5. 生成认证令牌
             AuthToken token = generateAuthToken(user);
 
             // 6. 获取用户权限
-            List<String> permissions = getUserPermissions(user.getId());
+            List<String> permissions = userDirectoryClient.getUserPermissions(user.getId());
 
             log.info("[统一认证] 邮件认证成功: userId={}, email={}", user.getId(), user.getEmail());
 
@@ -963,12 +837,13 @@ public class UnifiedAuthenticationManager {
      * @param request MFA认证请求
      * @return 认证结果
      */
+    @SuppressWarnings("null")
     private AuthenticationResult authenticateByBiometric(MfaRequest request) {
         log.info("[统一认证] 开始生物识别认证: userId={}", request.getUserId());
 
         try {
             // 1. 获取用户信息
-            UserEntity user = getUserById(request.getUserId());
+            UserEntity user = userDirectoryClient.getUserById(request.getUserId());
             if (user == null) {
                 return AuthenticationResult.builder()
                         .success(false)
@@ -994,14 +869,18 @@ public class UnifiedAuthenticationManager {
             verifyRequest.put("biometricType", "FACE"); // 默认人脸识别，可根据实际情况扩展
 
             try {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> verifyResult = gatewayServiceClient.callCommonService(
+                @SuppressWarnings("rawtypes")
+                ResponseDTO<Map> response = gatewayServiceClient.callCommonService(
                         "/api/v1/biometric/verify",
                         org.springframework.http.HttpMethod.POST,
                         verifyRequest,
                         Map.class
-                ).getData();
+                );
 
+                @SuppressWarnings("unchecked")
+                Map<String, Object> verifyResult = response != null && response.getOk() ? (Map<String, Object>) response.getData() : null;
+
+                // 检查验证结果（实际运行时getData()可能返回null）
                 if (verifyResult == null) {
                     return AuthenticationResult.builder()
                             .success(false)
@@ -1033,7 +912,7 @@ public class UnifiedAuthenticationManager {
             AuthToken token = generateAuthToken(user);
 
             // 5. 获取用户权限
-            List<String> permissions = getUserPermissions(user.getId());
+            List<String> permissions = userDirectoryClient.getUserPermissions(user.getId());
 
             log.info("[统一认证] 生物识别认证成功: userId={}", user.getId());
 
@@ -1073,7 +952,7 @@ public class UnifiedAuthenticationManager {
 
         try {
             // 1. 获取用户信息
-            UserEntity user = getUserById(request.getUserId());
+            UserEntity user = userDirectoryClient.getUserById(request.getUserId());
             if (user == null) {
                 return AuthenticationResult.builder()
                         .success(false)
@@ -1116,7 +995,7 @@ public class UnifiedAuthenticationManager {
             AuthToken token = generateAuthToken(user);
 
             // 6. 获取用户权限
-            List<String> permissions = getUserPermissions(user.getId());
+            List<String> permissions = userDirectoryClient.getUserPermissions(user.getId());
 
             log.info("[统一认证] TOTP认证成功: userId={}", user.getId());
 
@@ -1142,67 +1021,6 @@ public class UnifiedAuthenticationManager {
     }
 
     /**
-     * 将令牌加入黑名单
-     * <p>
-     * 使用Redis存储黑名单，支持令牌撤销
-     * 黑名单保留7天，防止令牌重放攻击
-     * </p>
-     *
-     * @param token 要加入黑名单的令牌
-     */
-    private void addToTokenBlacklist(String token) {
-        if (token == null || token.trim().isEmpty()) {
-            log.warn("[统一认证] 令牌为空，无法加入黑名单");
-            return;
-        }
-
-        try {
-            String blacklistKey = TOKEN_BLACKLIST_PREFIX + token;
-
-            // 将令牌加入黑名单，设置7天过期时间
-            redisTemplate.opsForValue().set(blacklistKey, "true", TOKEN_BLACKLIST_EXPIRE, TimeUnit.SECONDS);
-
-            log.info("[统一认证] 令牌已加入黑名单: {}", token.substring(0, Math.min(20, token.length())) + "...");
-        } catch (Exception e) {
-            log.error("[统一认证] 将令牌加入黑名单失败: error={}", e.getMessage(), e);
-            // 不抛出异常，避免影响登出流程
-        }
-    }
-
-    /**
-     * 检查令牌是否在黑名单中
-     *
-     * @param token 令牌
-     * @return true-在黑名单中，false-不在黑名单中
-     */
-    private boolean isTokenBlacklisted(String token) {
-        if (token == null || token.trim().isEmpty()) {
-            return false;
-        }
-
-        try {
-            String blacklistKey = TOKEN_BLACKLIST_PREFIX + token;
-            return Boolean.TRUE.equals(redisTemplate.hasKey(blacklistKey));
-        } catch (Exception e) {
-            log.error("[统一认证] 检查令牌黑名单失败: error={}", e.getMessage(), e);
-            return false;
-        }
-    }
-
-    private void updateLastLogoutTime(Long userId) {
-        try {
-            gatewayServiceClient.callCommonService(
-                    "/api/v1/user/update-logout-time",
-                    org.springframework.http.HttpMethod.POST,
-                    Map.of("userId", userId, "logoutTime", LocalDateTime.now()),
-                    Void.class
-            );
-        } catch (Exception e) {
-            log.warn("[统一认证] 更新登出时间失败: userId={}, error={}", userId, e.getMessage());
-        }
-    }
-
-    /**
      * 清理用户所有会话
      * <p>
      * 清理Redis中的用户会话和数据库会话记录
@@ -1218,19 +1036,17 @@ public class UnifiedAuthenticationManager {
         }
 
         try {
-            String sessionKey = USER_SESSION_PREFIX + userId;
-
             // 1. 获取所有会话令牌
-            java.util.Set<String> tokens = redisTemplate.opsForSet().members(sessionKey);
+            java.util.Set<String> tokens = authRedisStore.getUserSessionTokens(userId);
 
-            if (tokens != null && !tokens.isEmpty()) {
+            if (!tokens.isEmpty()) {
                 // 2. 将所有令牌加入黑名单
                 for (String token : tokens) {
-                    addToTokenBlacklist(token);
+                    authRedisStore.blacklistToken(token);
                 }
 
                 // 3. 删除Redis会话集合
-                redisTemplate.delete(sessionKey);
+                authRedisStore.clearUserSessionTokens(userId);
 
                 log.info("[统一认证] 已清理用户会话: userId={}, 会话数: {}", userId, tokens.size());
             } else {
@@ -1238,33 +1054,11 @@ public class UnifiedAuthenticationManager {
             }
 
             // 4. 通过网关清理数据库会话记录
-            try {
-                gatewayServiceClient.callCommonService(
-                        "/api/v1/user/session/clear/" + userId,
-                        org.springframework.http.HttpMethod.DELETE,
-                        null,
-                        Void.class
-                );
-            } catch (Exception e) {
-                log.warn("[统一认证] 清理数据库会话记录失败: userId={}, error={}", userId, e.getMessage());
-            }
+            userDirectoryClient.clearUserSessionsInDatabase(userId);
 
         } catch (Exception e) {
             log.error("[统一认证] 清理用户会话异常: userId={}, error={}", userId, e.getMessage(), e);
             // 不抛出异常，避免影响登出流程
-        }
-    }
-
-    private void updateLastLoginTime(Long userId) {
-        try {
-            gatewayServiceClient.callCommonService(
-                    "/api/v1/user/update-last-login-time",
-                    org.springframework.http.HttpMethod.POST,
-                    Map.of("userId", userId, "lastLoginTime", LocalDateTime.now()),
-                    Void.class
-            );
-        } catch (Exception e) {
-            log.warn("[统一认证] 更新最后登录时间失败: userId={}, error={}", userId, e.getMessage());
         }
     }
 
@@ -1280,49 +1074,16 @@ public class UnifiedAuthenticationManager {
      */
     private String getUserMfaType(Long userId) {
         try {
-            // 通过网关调用用户偏好服务获取MFA配置
-            // 偏好键：security.mfaType
-            @SuppressWarnings("unchecked")
-            Map<String, Object> preference = (Map<String, Object>) gatewayServiceClient.callCommonService(
-                    "/api/v1/user/preference/" + userId + "/security/mfaType",
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    Map.class
-            ).getData();
-
-            if (preference != null && preference.containsKey("preferenceValue")) {
-                Object mfaTypeObj = preference.get("preferenceValue");
-                if (mfaTypeObj != null) {
-                    String mfaType = mfaTypeObj.toString();
-                    if (!mfaType.trim().isEmpty()) {
-                        log.debug("[统一认证] 获取用户MFA类型: userId={}, mfaType={}", userId, mfaType);
-                        return mfaType.trim().toUpperCase();
-                    }
-                }
+            String mfaType = userDirectoryClient.getUserPreferenceValue(userId, "security", "mfaType");
+            if (mfaType != null && !mfaType.trim().isEmpty()) {
+                log.debug("[统一认证] 获取用户MFA类型: userId={}, mfaType={}", userId, mfaType);
+                return mfaType.trim().toUpperCase();
             }
 
-            // 如果偏好设置中没有，尝试从系统配置获取默认MFA类型
-            try {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> systemConfig = (Map<String, Object>) gatewayServiceClient.callCommonService(
-                        "/api/v1/config/system/mfa/defaultType",
-                        org.springframework.http.HttpMethod.GET,
-                        null,
-                        Map.class
-                ).getData();
-
-                if (systemConfig != null && systemConfig.containsKey("configValue")) {
-                    Object defaultMfaTypeObj = systemConfig.get("configValue");
-                    if (defaultMfaTypeObj != null) {
-                        String defaultMfaType = defaultMfaTypeObj.toString();
-                        if (!defaultMfaType.trim().isEmpty() && !"NONE".equalsIgnoreCase(defaultMfaType)) {
-                            log.debug("[统一认证] 使用系统默认MFA类型: userId={}, mfaType={}", userId, defaultMfaType);
-                            return defaultMfaType.trim().toUpperCase();
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                log.debug("[统一认证] 获取系统默认MFA类型失败: userId={}, error={}", userId, e.getMessage());
+            String defaultMfaType = userDirectoryClient.getSystemConfigValue("mfa/defaultType");
+            if (defaultMfaType != null && !defaultMfaType.trim().isEmpty() && !"NONE".equalsIgnoreCase(defaultMfaType)) {
+                log.debug("[统一认证] 使用系统默认MFA类型: userId={}, mfaType={}", userId, defaultMfaType);
+                return defaultMfaType.trim().toUpperCase();
             }
 
             // 默认返回NONE
@@ -1347,36 +1108,18 @@ public class UnifiedAuthenticationManager {
      */
     private String getTotpSecretKey(Long userId) {
         try {
-            String secretKey = TOTP_SECRET_PREFIX + userId;
-            String totpSecret = redisTemplate.opsForValue().get(secretKey);
+            String cachedSecret = authRedisStore.getTotpSecret(userId);
+            if (cachedSecret != null && !cachedSecret.trim().isEmpty()) {
+                return cachedSecret.trim();
+            }
 
-            if (totpSecret == null || totpSecret.trim().isEmpty()) {
-                // 如果Redis中没有，尝试从数据库获取
-                try {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> preference = (Map<String, Object>) gatewayServiceClient.callCommonService(
-                            "/api/v1/user/preference/" + userId + "/security/totpSecret",
-                            org.springframework.http.HttpMethod.GET,
-                            null,
-                            Map.class
-                    ).getData();
-
-                    if (preference != null && preference.containsKey("preferenceValue")) {
-                        totpSecret = (String) preference.get("preferenceValue");
-                        if (totpSecret != null && !totpSecret.trim().isEmpty()) {
-                            // 缓存到Redis
-                            redisTemplate.opsForValue().set(secretKey, totpSecret, 30, TimeUnit.DAYS);
-                            return totpSecret.trim();
-                        }
-                    }
-                } catch (Exception e) {
-                    log.warn("[统一认证] 从数据库获取TOTP密钥失败: userId={}, error={}", userId, e.getMessage());
-                }
-
+            String preferenceSecret = userDirectoryClient.getUserPreferenceValue(userId, "security", "totpSecret");
+            if (preferenceSecret == null || preferenceSecret.trim().isEmpty()) {
                 return null;
             }
 
-            return totpSecret.trim();
+            authRedisStore.cacheTotpSecret(userId, preferenceSecret.trim());
+            return preferenceSecret.trim();
         } catch (Exception e) {
             log.error("[统一认证] 获取TOTP密钥异常: userId={}, error={}", userId, e.getMessage(), e);
             return null;

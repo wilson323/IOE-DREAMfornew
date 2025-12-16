@@ -1,9 +1,16 @@
 package net.lab1024.sa.devicecomm.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.devicecomm.domain.form.DeviceQueryForm;
+import net.lab1024.sa.devicecomm.domain.vo.DeviceListVO;
 import net.lab1024.sa.devicecomm.service.DeviceSyncService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +39,43 @@ public class DeviceSyncController {
     private DeviceSyncService deviceSyncService;
 
     /**
+     * 查询设备列表（管理端）
+     *
+     * @param queryForm 查询条件
+     * @return 分页结果
+     */
+    @Observed(name = "deviceSync.listDevices", contextualName = "device-list")
+    @GetMapping("/list")
+    public ResponseDTO<PageResult<DeviceListVO>> listDevices(DeviceQueryForm queryForm) {
+        try {
+            return ResponseDTO.ok(deviceSyncService.queryDevices(queryForm));
+        } catch (Exception e) {
+            log.error("[设备管理] 查询设备列表失败, queryForm={}", queryForm, e);
+            return ResponseDTO.error("QUERY_ERROR", "查询设备列表失败");
+        }
+    }
+
+    /**
+     * 删除设备（管理端）
+     *
+     * @param deviceId 设备ID
+     * @return 删除结果
+     */
+    @Observed(name = "deviceSync.deleteDevice", contextualName = "device-delete")
+    @DeleteMapping("/{deviceId}")
+    public ResponseDTO<Void> deleteDevice(@PathVariable("deviceId") Long deviceId) {
+        try {
+            deviceSyncService.deleteDevice(deviceId);
+            return ResponseDTO.ok();
+        } catch (BusinessException e) {
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            log.error("[设备管理] 删除设备失败, deviceId={}", deviceId, e);
+            return ResponseDTO.error("DELETE_ERROR", "删除设备失败");
+        }
+    }
+
+    /**
      * 同步用户信息到设备
      * <p>
      * 将用户信息同步到指定设备
@@ -41,6 +85,7 @@ public class DeviceSyncController {
      * @param request 同步请求（包含deviceId, userId, userInfo等）
      * @return 同步结果
      */
+    @Observed(name = "deviceSync.syncUser", contextualName = "device-sync-user")
     @PostMapping("/user/sync")
     public ResponseDTO<Map<String, Object>> syncUser(@RequestBody Map<String, Object> request) {
         log.info("[设备同步] 同步用户信息, request={}", request);
@@ -62,12 +107,18 @@ public class DeviceSyncController {
 
             return ResponseDTO.ok(result);
 
-        } catch (NumberFormatException e) {
-            log.error("[设备同步] 用户ID格式错误, request={}", request, e);
-            return ResponseDTO.error("PARAM_ERROR", "userId格式错误");
+        } catch (NumberFormatException | ParamException e) {
+            log.warn("[设备同步] 同步用户信息参数错误, request={}: {}", request, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", e instanceof ParamException ? e.getMessage() : "userId格式错误");
+        } catch (BusinessException e) {
+            log.warn("[设备同步] 同步用户信息业务异常, request={}: {}", request, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[设备同步] 同步用户信息系统异常, request={}: {}", request, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[设备同步] 同步用户信息异常, request={}", request, e);
-            return ResponseDTO.error("SYNC_ERROR", "同步用户信息失败：" + e.getMessage());
+            log.error("[设备同步] 同步用户信息执行异常, request={}: {}", request, e.getMessage(), e);
+            return ResponseDTO.error("SYNC_ERROR", "同步用户信息失败");
         }
     }
 
@@ -82,6 +133,7 @@ public class DeviceSyncController {
      * @param userId 用户ID
      * @return 撤销结果
      */
+    @Observed(name = "deviceSync.revokeUserPermission", contextualName = "device-revoke-permission")
     @DeleteMapping("/user/{deviceId}/{userId}")
     public ResponseDTO<Map<String, Object>> revokeUserPermission(
             @PathVariable("deviceId") String deviceId,
@@ -94,12 +146,18 @@ public class DeviceSyncController {
 
             return ResponseDTO.ok(result);
 
-        } catch (NumberFormatException e) {
-            log.error("[设备同步] 用户ID格式错误, deviceId={}, userId={}", deviceId, userId, e);
-            return ResponseDTO.error("PARAM_ERROR", "userId格式错误");
+        } catch (NumberFormatException | ParamException e) {
+            log.warn("[设备同步] 撤销用户权限参数错误, deviceId={}, userId={}: {}", deviceId, userId, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", e instanceof ParamException ? e.getMessage() : "userId格式错误");
+        } catch (BusinessException e) {
+            log.warn("[设备同步] 撤销用户权限业务异常, deviceId={}, userId={}: {}", deviceId, userId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[设备同步] 撤销用户权限系统异常, deviceId={}, userId={}: {}", deviceId, userId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[设备同步] 撤销用户权限异常, deviceId={}, userId={}", deviceId, userId, e);
-            return ResponseDTO.error("REVOKE_ERROR", "撤销用户权限失败：" + e.getMessage());
+            log.error("[设备同步] 撤销用户权限执行异常, deviceId={}, userId={}: {}", deviceId, userId, e.getMessage(), e);
+            return ResponseDTO.error("REVOKE_ERROR", "撤销用户权限失败");
         }
     }
 
@@ -113,6 +171,7 @@ public class DeviceSyncController {
      * @param deviceId 设备ID
      * @return 用户ID列表
      */
+    @Observed(name = "deviceSync.getDeviceUsers", contextualName = "device-get-users")
     @GetMapping("/users/{deviceId}")
     public ResponseDTO<List<String>> getDeviceUsers(@PathVariable("deviceId") String deviceId) {
         log.debug("[设备同步] 获取设备用户列表, deviceId={}", deviceId);
@@ -121,9 +180,18 @@ public class DeviceSyncController {
             List<String> users = deviceSyncService.getDeviceUsers(deviceId);
             return ResponseDTO.ok(users);
 
+        } catch (ParamException e) {
+            log.warn("[设备同步] 获取设备用户列表参数错误, deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[设备同步] 获取设备用户列表业务异常, deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[设备同步] 获取设备用户列表系统异常, deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[设备同步] 获取设备用户列表异常, deviceId={}", deviceId, e);
-            return ResponseDTO.error("QUERY_ERROR", "获取设备用户列表失败：" + e.getMessage());
+            log.error("[设备同步] 获取设备用户列表执行异常, deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error("QUERY_ERROR", "获取设备用户列表失败");
         }
     }
 
@@ -137,6 +205,7 @@ public class DeviceSyncController {
      * @param request 同步请求（包含deviceId, attributes等）
      * @return 同步结果
      */
+    @Observed(name = "deviceSync.syncBusinessAttributes", contextualName = "device-sync-attributes")
     @PostMapping("/business-attributes/sync")
     public ResponseDTO<Map<String, Object>> syncBusinessAttributes(@RequestBody Map<String, Object> request) {
         log.info("[设备同步] 同步业务属性, deviceId={}", request.get("deviceId"));
@@ -157,9 +226,18 @@ public class DeviceSyncController {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[设备同步] 同步业务属性参数错误, request={}: {}", request, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[设备同步] 同步业务属性业务异常, request={}: {}", request, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[设备同步] 同步业务属性系统异常, request={}: {}", request, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[设备同步] 同步业务属性异常, request={}", request, e);
-            return ResponseDTO.error("SYNC_ERROR", "同步业务属性失败：" + e.getMessage());
+            log.error("[设备同步] 同步业务属性执行异常, request={}: {}", request, e.getMessage(), e);
+            return ResponseDTO.error("SYNC_ERROR", "同步业务属性失败");
         }
     }
 
@@ -173,6 +251,7 @@ public class DeviceSyncController {
      * @param deviceId 设备ID
      * @return 健康检查结果
      */
+    @Observed(name = "deviceSync.healthCheck", contextualName = "device-health-check")
     @GetMapping("/health/check/{deviceId}")
     public ResponseDTO<Map<String, Object>> healthCheck(@PathVariable("deviceId") String deviceId) {
         log.debug("[设备同步] 设备健康检查, deviceId={}", deviceId);
@@ -181,9 +260,18 @@ public class DeviceSyncController {
             Map<String, Object> healthStatus = deviceSyncService.checkDeviceHealth(deviceId);
             return ResponseDTO.ok(healthStatus);
 
+        } catch (ParamException e) {
+            log.warn("[设备同步] 设备健康检查参数错误, deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[设备同步] 设备健康检查业务异常, deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[设备同步] 设备健康检查系统异常, deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[设备同步] 设备健康检查异常, deviceId={}", deviceId, e);
-            return ResponseDTO.error("HEALTH_CHECK_ERROR", "设备健康检查失败：" + e.getMessage());
+            log.error("[设备同步] 设备健康检查执行异常, deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error("HEALTH_CHECK_ERROR", "设备健康检查失败");
         }
     }
 
@@ -196,6 +284,7 @@ public class DeviceSyncController {
      * @param deviceId 设备ID
      * @return 性能指标
      */
+    @Observed(name = "deviceSync.getDeviceMetrics", contextualName = "device-get-metrics")
     @GetMapping("/metrics/{deviceId}")
     public ResponseDTO<Map<String, Object>> getDeviceMetrics(@PathVariable("deviceId") String deviceId) {
         log.debug("[设备同步] 获取设备性能指标, deviceId={}", deviceId);
@@ -204,9 +293,18 @@ public class DeviceSyncController {
             Map<String, Object> metrics = deviceSyncService.getDeviceMetrics(deviceId);
             return ResponseDTO.ok(metrics);
 
+        } catch (ParamException e) {
+            log.warn("[设备同步] 获取设备性能指标参数错误, deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[设备同步] 获取设备性能指标业务异常, deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[设备同步] 获取设备性能指标系统异常, deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[设备同步] 获取设备性能指标异常, deviceId={}", deviceId, e);
-            return ResponseDTO.error("METRICS_ERROR", "获取设备性能指标失败：" + e.getMessage());
+            log.error("[设备同步] 获取设备性能指标执行异常, deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error("METRICS_ERROR", "获取设备性能指标失败");
         }
     }
 
@@ -219,6 +317,7 @@ public class DeviceSyncController {
      * @param request 心跳请求（包含deviceId, timestamp等）
      * @return 心跳响应
      */
+    @Observed(name = "deviceSync.heartbeat", contextualName = "device-heartbeat")
     @PostMapping("/heartbeat")
     public ResponseDTO<Map<String, Object>> heartbeat(@RequestBody Map<String, Object> request) {
         log.debug("[设备同步] 设备心跳, deviceId={}", request.get("deviceId"));
@@ -234,9 +333,18 @@ public class DeviceSyncController {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[设备同步] 处理设备心跳参数错误, request={}: {}", request, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[设备同步] 处理设备心跳业务异常, request={}: {}", request, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[设备同步] 处理设备心跳系统异常, request={}: {}", request, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[设备同步] 处理设备心跳异常, request={}", request, e);
-            return ResponseDTO.error("HEARTBEAT_ERROR", "处理设备心跳失败：" + e.getMessage());
+            log.error("[设备同步] 处理设备心跳执行异常, request={}: {}", request, e.getMessage(), e);
+            return ResponseDTO.error("HEARTBEAT_ERROR", "处理设备心跳失败");
         }
     }
 }

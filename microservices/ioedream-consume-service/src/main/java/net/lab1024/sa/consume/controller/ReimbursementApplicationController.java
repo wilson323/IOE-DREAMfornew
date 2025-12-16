@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -49,6 +50,7 @@ public class ReimbursementApplicationController {
      * @return 报销申请实体
      */
     @PostMapping("/submit")
+    @Observed(name = "reimbursement.submitReimbursementApplication", contextualName = "reimbursement-submit-application")
     @Operation(summary = "提交报销申请", description = "提交报销申请并启动审批流程")
     public ResponseDTO<ReimbursementApplicationEntity> submitReimbursementApplication(
             @Valid @RequestBody ReimbursementApplicationForm form) {
@@ -66,6 +68,7 @@ public class ReimbursementApplicationController {
      * @return 操作结果
      */
     @PutMapping("/{reimbursementNo}/status")
+    @Observed(name = "reimbursement.updateReimbursementStatus", contextualName = "reimbursement-update-status")
     @Operation(summary = "更新报销申请状态", description = "由审批结果监听器调用，更新报销申请状态")
     public ResponseDTO<Void> updateReimbursementStatus(
             @PathVariable String reimbursementNo,
@@ -77,4 +80,7 @@ public class ReimbursementApplicationController {
         return ResponseDTO.ok();
     }
 }
+
+
+
 

@@ -6,72 +6,12 @@
 # ============================================================
 
 # ============================================================
-# Sa-Token认证配置
+# JWT配置（统一：Spring Security + JwtTokenUtil）
 # ============================================================
-sa-token:
-  # Token名称（同时也是Cookie名称）
-  token-name: ${SA_TOKEN_NAME:Authorization}
-
-  # Token有效期（单位：秒） - 默认30天
-  timeout: ${SA_TOKEN_TIMEOUT:2592000}
-
-  # Token临时有效期（指定时间内无操作掉线，单位：秒） - 默认-1代表不限制
-  active-timeout: ${SA_TOKEN_ACTIVE_TIMEOUT:7200}
-
-  # 是否允许同一账号并发登录
-  is-concurrent: ${SA_TOKEN_IS_CONCURRENT:true}
-
-  # 在多人登录同一账号时，是否共用一个token
-  is-share: ${SA_TOKEN_IS_SHARE:false}
-
-  # Token风格
-  token-style: ${SA_TOKEN_STYLE:uuid}
-
-  # 是否输出操作日志
-  is-log: ${SA_TOKEN_IS_LOG:true}
-
-  # Cookie配置
-  cookie:
-    # 是否在Cookie中读取Token
-    is-read-cookie: ${SA_TOKEN_COOKIE_IS_READ:false}
-    # 是否在Header中读取Token
-    is-read-header: ${SA_TOKEN_COOKIE_IS_READ_HEADER:true}
-
-  # JWT密钥 - 生产环境必须使用强密钥
-  jwt-secret-key: ${SA_TOKEN_JWT_SECRET_KEY:ENC(I8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y2Z)}
-
-# ============================================================
-# JWT配置
-# ============================================================
-jwt:
-  # JWT密钥（生产环境必须加密）
-  secret: ${JWT_SECRET:ENC(I8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y2Z)}
-
-  # JWT有效期（单位：毫秒）
-  expiration: ${JWT_EXPIRATION:7200000}
-
-  # JWT刷新令牌有效期（单位：毫秒）
-  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
-
-  # JWT发行者
-  issuer: ${JWT_ISSUER:IOE-DREAM}
-
-  # JWT主题
-  subject: ${JWT_SUBJECT:IOE-DREAM Authentication}
-
-  # JWT签名算法
-  algorithm: ${JWT_ALGORITHM:HS256}
-
-  # JWT Claims配置
-  claims:
-    # 用户ID字段名
-    user-id: ${JWT_CLAIMS_USER_ID:userId}
-    # 用户名字段名
-    username: ${JWT_CLAIMS_USERNAME:username}
-    # 角色字段名
-    roles: ${JWT_CLAIMS_ROLES:roles}
-    # 权限字段名
-    permissions: ${JWT_CLAIMS_PERMISSIONS:permissions}
+# 说明：
+# - 统一使用 security.jwt.* 作为配置键
+# - 过期时间单位：秒
+# - JWT_SECRET 必须由环境/配置中心显式提供（无默认值）
 
 # ============================================================
 # 密码加密配置
@@ -104,6 +44,29 @@ password:
 # 接口安全配置
 # ============================================================
 security:
+  # JWT配置（单位：秒）
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:7200}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800}
+    issuer: ${JWT_ISSUER:IOE-DREAM}
+
+  # 网关匿名/白名单（单一真源）
+  whitelist:
+    paths:
+      - /actuator/**
+      - /doc.html
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /swagger-resources/**
+      - /webjars/**
+      - /favicon.ico
+      - /api/v1/auth/**
+      - /login/**
+      - /public/**
+      - /static/**
+      - /gateway/health
+
   # 跨域配置
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:"*"}

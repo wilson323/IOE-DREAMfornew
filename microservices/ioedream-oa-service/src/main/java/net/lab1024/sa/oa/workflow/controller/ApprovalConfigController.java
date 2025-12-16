@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -18,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalConfigForm;
-import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalConfigForm;
+import net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity;
 import net.lab1024.sa.oa.workflow.service.ApprovalConfigService;
 
 /**
@@ -45,6 +46,7 @@ public class ApprovalConfigController {
     @Resource
     private ApprovalConfigService approvalConfigService;
 
+    @Observed(name = "approvalConfig.pageConfigs", contextualName = "approval-config-page-configs")
     @GetMapping("/page")
     @Operation(summary = "分页查询审批配置", description = "支持按业务类型、模块、状态筛选")
     public ResponseDTO<PageResult<ApprovalConfigEntity>> pageConfigs(
@@ -55,24 +57,28 @@ public class ApprovalConfigController {
         return approvalConfigService.pageConfigs(pageParam, businessType, module, status);
     }
 
+    @Observed(name = "approvalConfig.getConfig", contextualName = "approval-config-get-config")
     @GetMapping("/{id}")
     @Operation(summary = "根据ID查询审批配置")
     public ResponseDTO<ApprovalConfigEntity> getConfig(@PathVariable Long id) {
         return approvalConfigService.getConfig(id);
     }
 
+    @Observed(name = "approvalConfig.getConfigByBusinessType", contextualName = "approval-config-get-by-business-type")
     @GetMapping("/business-type/{businessType}")
     @Operation(summary = "根据业务类型查询审批配置", description = "支持自定义业务类型")
     public ResponseDTO<ApprovalConfigEntity> getConfigByBusinessType(@PathVariable String businessType) {
         return approvalConfigService.getConfigByBusinessType(businessType);
     }
 
+    @Observed(name = "approvalConfig.createConfig", contextualName = "approval-config-create-config")
     @PostMapping
     @Operation(summary = "创建审批配置", description = "支持自定义业务类型和审批流程配置")
     public ResponseDTO<ApprovalConfigEntity> createConfig(@Valid @RequestBody ApprovalConfigForm form) {
         return approvalConfigService.createConfig(form);
     }
 
+    @Observed(name = "approvalConfig.updateConfig", contextualName = "approval-config-update-config")
     @PutMapping("/{id}")
     @Operation(summary = "更新审批配置")
     public ResponseDTO<ApprovalConfigEntity> updateConfig(
@@ -81,22 +87,29 @@ public class ApprovalConfigController {
         return approvalConfigService.updateConfig(id, form);
     }
 
+    @Observed(name = "approvalConfig.deleteConfig", contextualName = "approval-config-delete-config")
     @DeleteMapping("/{id}")
     @Operation(summary = "删除审批配置")
     public ResponseDTO<Void> deleteConfig(@PathVariable Long id) {
         return approvalConfigService.deleteConfig(id);
     }
 
+    @Observed(name = "approvalConfig.enableConfig", contextualName = "approval-config-enable-config")
     @PutMapping("/{id}/enable")
     @Operation(summary = "启用审批配置")
     public ResponseDTO<Void> enableConfig(@PathVariable Long id) {
         return approvalConfigService.enableConfig(id);
     }
 
+    @Observed(name = "approvalConfig.disableConfig", contextualName = "approval-config-disable-config")
     @PutMapping("/{id}/disable")
     @Operation(summary = "禁用审批配置")
     public ResponseDTO<Void> disableConfig(@PathVariable Long id) {
         return approvalConfigService.disableConfig(id);
     }
 }
+
+
+
+
 

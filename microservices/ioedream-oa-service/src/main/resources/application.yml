@@ -32,7 +32,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         enabled: true
         register-enabled: true
       config:
@@ -40,11 +40,36 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         file-extension: yaml
         enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
         import-check:
           enabled: true  # 2025.0.0.0版本支持optional:nacos:，可以启用检查
+
+# ==================== 数据源配置 ====================
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:123456}
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+# ==================== Redis配置 ====================
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:redis123}
+      database: ${REDIS_DATABASE:0}
+      timeout: 3000
 
 # ==================== 服务器配置 ====================
 server:
@@ -74,6 +99,13 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
+# ==================== 安全配置 ====================
+security:
+  jwt:
+    secret: ${JWT_SECRET:ioedream-oa-service-jwt-secret-key-2025-must-be-at-least-256-bits-long}
+    expiration: ${JWT_EXPIRATION:86400000}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
 # ==================== Actuator监控配置 ====================
 management:
   endpoints:
@@ -84,7 +116,18 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+  health:
+    redis:
+      enabled: false  # 暂时禁用Redis健康检查，避免503
   prometheus:
     metrics:
       export:
         enabled: true
+  # 分布式追踪配置（Micrometer Tracing）
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${SLEUTH_SAMPLER_PROBABILITY:1.0}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}

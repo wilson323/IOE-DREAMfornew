@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.lab1024.sa.common.workflow.dao.ApprovalStatisticsDao">
+<mapper namespace="net.lab1024.sa.oa.workflow.dao.ApprovalStatisticsDao">
 
     <!-- 根据业务类型和统计日期查询统计 -->
-    <select id="selectByBusinessTypeAndDate" resultType="net.lab1024.sa.common.workflow.entity.ApprovalStatisticsEntity">
+    <select id="selectByBusinessTypeAndDate" resultType="net.lab1024.sa.oa.workflow.entity.ApprovalStatisticsEntity">
         SELECT *
         FROM t_common_approval_statistics
         WHERE business_type = #{businessType}
@@ -14,7 +14,7 @@
     </select>
 
     <!-- 根据业务类型和时间范围查询统计列表 -->
-    <select id="selectByBusinessTypeAndDateRange" resultType="net.lab1024.sa.common.workflow.entity.ApprovalStatisticsEntity">
+    <select id="selectByBusinessTypeAndDateRange" resultType="net.lab1024.sa.oa.workflow.entity.ApprovalStatisticsEntity">
         SELECT *
         FROM t_common_approval_statistics
         WHERE business_type = #{businessType}

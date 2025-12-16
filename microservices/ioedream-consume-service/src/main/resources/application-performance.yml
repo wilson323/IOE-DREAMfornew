@@ -15,14 +15,17 @@ spring:
   application:
     name: ioedream-consume-service
 
-  # ==================== 数据源配置 (交易系统优化) ====================
+  # ==================== 数据源配置 (交易系统优化+内存优化) ====================
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
-      # 交易系统连接池配置
-      initial-size: 20
-      min-idle: 20
-      max-active: 100
+      # 交易系统连接池配置（已优化内存占用）
+      # initial-size: 从20降至10（节眅50%初始连接）
+      # min-idle: 从20降至10（节眅50%空闲连接）
+      # max-active: 从100降至60（节眅40%最大连接）
+      initial-size: 10
+      min-idle: 10
+      max-active: 60
       max-wait: 30000
 
       # 性能优化配置
@@ -62,37 +65,40 @@ spring:
           min-idle: 10
           max-wait: 3000ms
 
-  # ==================== 缓存配置 (消费交易优化) ====================
+  # ==================== 缓存配置 (消费交易优化+内存优化) ====================
   cache:
     type: caffeine
     caffeine:
-      spec: maximumSize=50000,expireAfterWrite=15m,recordStats
-
-  # ==================== MyBatis-Plus配置 (Spring Boot 3.x兼容) ====================
-  mybatis-plus:
-    # 全局配置
-    global-config:
-      db-config:
-        logic-delete-field: deletedFlag
-        logic-delete-value: 1
-        logic-not-delete-value: 0
-        id-type: ASSIGN_ID
-        table-underline: true
-
-    # 配置信息
-    configuration:
-      map-underscore-to-camel-case: true
-      cache-enabled: true
-      call-setters-on-nulls: true
-      log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
-      # 批量操作优化
-      default-executor-type: batch
-      default-fetch-size: 1000
+      # 优化后：从50000降至30000（节眅40%内存）
+      # 消费服务需要较多缓存，但也需要控制内存
+      # weakKeys: 启用弱键引用，允许GC回收
+      # expireAfterAccess: 10m 冷数据10分钟未访问则淘汰
+      spec: maximumSize=30000,expireAfterWrite=15m,expireAfterAccess=10m,weakKeys,recordStats
 
   # ==================== 事务配置 (交易系统关键) ====================
   transaction:
     default-timeout: 60
     rollback-on-commit-failure: true
+
+# ==================== MyBatis-Plus配置 (顶层配置) ====================
+mybatis-plus:
+  # 全局配置
+  global-config:
+    db-config:
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: ASSIGN_ID
+      table-underline: true
+  # 配置信息
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    call-setters-on-nulls: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    # 批量操作优化
+    default-executor-type: batch
+    default-fetch-size: 1000
 
 # ==================== 服务器配置 ====================
 server:
@@ -125,19 +131,19 @@ management:
       show-details: when-authorized
       show-components: always
     metrics:
-      enabled: true
-  metrics:
-    export:
-      prometheus:
+      access: read-only  # Spring Boot 3.4+: 使用access替代enabled
+  prometheus:
+    metrics:
+      export:
         enabled: true
 
 # ==================== 日志配置 (Spring Boot 3.x标准) ====================
 logging:
   level:
     root: INFO
-    net.lab1024.sa.consume: DEBUG
-    org.springframework.web: INFO
-    com.alibaba.druid: INFO
+    "[net.lab1024.sa.consume]": DEBUG
+    "[org.springframework.web]": INFO
+    "[com.alibaba.druid]": INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

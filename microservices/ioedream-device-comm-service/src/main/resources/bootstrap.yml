@@ -77,17 +77,18 @@ spring:
             group: ${NACOS_GROUP:IOE-DREAM}
             refresh: true
   # ==================== 配置文件导入 ====================
+  # 注意：Spring Cloud Alibaba 2025.0.0.0版本在config.import阶段无法解析占位符，需要直接指定dataId
   config:
     import:
-      - "optional:nacos:${spring.application.name}.yaml"
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:ioedream-device-comm-service.yaml"
+      - "optional:nacos:ioedream-device-comm-service-docker.yaml"
       - "optional:nacos:common-config.yaml"
       - "optional:nacos:device-communication-config.yaml"
 
 # ==================== 加密配置 ====================
 jasypt:
   encryptor:
-    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    password: ${JASYPT_PASSWORD}
     algorithm: PBEWITHHMACSHA512ANDAES_256
     key-obtention-iterations: 1000
     pool-size: 1
@@ -100,18 +101,19 @@ jasypt:
       suffix: )
 
 # ==================== JVM配置 ====================
+# 开发环境使用较小内存配置，生产环境通过环境变量覆盖
 java:
-  # 设备通讯服务JVM优化参数（高并发连接）
   opts:
+    # 开发环境默认配置 (1GB堆内存，设备通讯需要更多内存)
     - "-server"
-    - "-Xms1g"
-    - "-Xmx2g"
+    - "-Xms${JVM_XMS:512m}"
+    - "-Xmx${JVM_XMX:1g}"
     - "-XX:+UseG1GC"
     - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+UseStringDeduplication"
+    - "-XX:MaxMetaspaceSize=${JVM_METASPACE:192m}"
     - "-XX:+HeapDumpOnOutOfMemoryError"
     - "-XX:HeapDumpPath=/var/log/ioedream/device-comm-service"
-    - "-XX:+PrintGCDetails"
-    - "-XX:+PrintGCTimeStamps"
     - "-Dfile.encoding=UTF-8"
     - "-Duser.timezone=Asia/Shanghai"
     - "-Dio.netty.leakDetectionLevel=paranoid"
@@ -123,9 +125,14 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: INFO
-    net.lab1024.sa.device: DEBUG
-    io.netty: INFO
-    org.springframework: INFO
+    "[net.lab1024.sa.device]": DEBUG
+    "[io.netty]": INFO
+    "[org.springframework]": INFO
+
+# ==================== 性能监控配置 ====================
+# 禁用轻量级性能配置，使用企业级监控配置（Micrometer）
+performance:
+  enabled: false
 
 # ==================== 设备通讯服务特定配置 ====================
 device:

@@ -1,16 +1,16 @@
 package net.lab1024.sa.attendance.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.dev33.satoken.annotation.SaCheckLogin;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -38,7 +38,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/attendance/mobile")
+@RequestMapping({"/api/v1/attendance/mobile", "/api/attendance/mobile"})
 @Tag(name = "移动端考勤", description = "移动端考勤相关接口")
 public class AttendanceMobileController {
 
@@ -54,10 +54,10 @@ public class AttendanceMobileController {
      * @param request 打卡请求
      * @return 打卡结果
      */
+    @Observed(name = "attendanceMobile.gpsPunch", contextualName = "attendance-mobile-gps-punch")
     @PostMapping("/gps-punch")
     @Operation(summary = "GPS定位打卡", description = "移动端GPS定位打卡")
-    @SaCheckLogin
-    @SaCheckPermission("attendance:punch:gps")
+    @PreAuthorize("hasAuthority('attendance:punch:gps')")
     public ResponseDTO<String> gpsPunch(@Valid @RequestBody GpsPunchRequest request) {
         log.info("GPS定位打卡: 员工ID={}, 经纬度=({},{})",
                 request.getEmployeeId(), request.getLatitude(), request.getLongitude());
@@ -70,10 +70,10 @@ public class AttendanceMobileController {
      * @param request 验证请求
      * @return 验证结果
      */
+    @Observed(name = "attendanceMobile.validateLocation", contextualName = "attendance-mobile-validate-location")
     @PostMapping("/location/validate")
     @Operation(summary = "位置验证", description = "验证GPS位置是否有效")
-    @SaCheckLogin
-    @SaCheckPermission("attendance:location:validate")
+    @PreAuthorize("hasAuthority('attendance:location:validate')")
     public ResponseDTO<Boolean> validateLocation(@Valid @RequestBody LocationValidationRequest request) {
         log.debug("位置验证: 员工ID={}", request.getEmployeeId());
         return ResponseDTO.ok(true);
@@ -85,10 +85,10 @@ public class AttendanceMobileController {
      * @param request 缓存请求
      * @return 缓存结果
      */
+    @Observed(name = "attendanceMobile.cacheOfflinePunch", contextualName = "attendance-mobile-cache-offline")
     @PostMapping("/offline/cache")
     @Operation(summary = "离线打卡缓存", description = "缓存移动端离线打卡数据")
-    @SaCheckLogin
-    @SaCheckPermission("attendance:offline:cache")
+    @PreAuthorize("hasAuthority('attendance:offline:cache')")
     public ResponseDTO<String> cacheOfflinePunch(@Valid @RequestBody OfflinePunchRequest request) {
         log.info("离线打卡缓存: 员工ID={}, 缓存数量={}",
                 request.getEmployeeId(), request.getPunchDataList().size());
@@ -101,10 +101,10 @@ public class AttendanceMobileController {
      * @param employeeId 员工ID
      * @return 同步结果
      */
+    @Observed(name = "attendanceMobile.syncOfflinePunches", contextualName = "attendance-mobile-sync-offline")
     @PostMapping("/offline/sync/{employeeId}")
     @Operation(summary = "离线数据同步", description = "同步移动端离线打卡数据")
-    @SaCheckLogin
-    @SaCheckPermission("attendance:offline:sync")
+    @PreAuthorize("hasAuthority('attendance:offline:sync')")
     public ResponseDTO<String> syncOfflinePunches(@PathVariable Long employeeId) {
         log.info("离线数据同步: 员工ID={}", employeeId);
         return ResponseDTO.ok("离线数据同步成功");
@@ -155,3 +155,5 @@ public class AttendanceMobileController {
         private String photoUrl;
     }
 }
+
+

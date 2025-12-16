@@ -146,3 +146,5 @@ public class ConsumeQueryDTO {
     @Schema(description = "是否导出", example = "false")
     private Boolean export = false;
 }
+
+

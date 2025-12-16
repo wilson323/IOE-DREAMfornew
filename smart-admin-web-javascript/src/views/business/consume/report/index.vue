@@ -1,6 +1,6 @@
 <!--
   * 消费报表管理
-  * 
+  *
   * @Author:    IOE-DREAM Team
   * @Date:      2025-01-30
   * @Copyright  IOE-DREAM智慧园区一卡通管理平台
@@ -172,11 +172,17 @@
   const generateReport = async () => {
     try {
       generating.value = true;
+      const filters = {};
+      if (reportParams.areaId) {
+        filters.areaId = reportParams.areaId;
+      }
+      if (reportParams.userId) {
+        filters.userId = reportParams.userId;
+      }
       const params = {
-        startTime: reportParams.startTime?.format('YYYY-MM-DD'),
-        endTime: reportParams.endTime?.format('YYYY-MM-DD'),
-        areaId: reportParams.areaId || undefined,
-        userId: reportParams.userId || undefined,
+        startTime: reportParams.startTime?.startOf('day').format('YYYY-MM-DD[T]HH:mm:ss'),
+        endTime: reportParams.endTime?.endOf('day').format('YYYY-MM-DD[T]HH:mm:ss'),
+        filters,
       };
 
       const result = await consumeApi.generateReport(selectedTemplateId.value, params);
@@ -203,17 +209,23 @@
 
     try {
       exporting.value = true;
+      const filters = {};
+      if (reportParams.areaId) {
+        filters.areaId = reportParams.areaId;
+      }
+      if (reportParams.userId) {
+        filters.userId = reportParams.userId;
+      }
       const params = {
-        startTime: reportParams.startTime?.format('YYYY-MM-DD'),
-        endTime: reportParams.endTime?.format('YYYY-MM-DD'),
-        areaId: reportParams.areaId || undefined,
-        userId: reportParams.userId || undefined,
+        startTime: reportParams.startTime?.startOf('day').format('YYYY-MM-DD[T]HH:mm:ss'),
+        endTime: reportParams.endTime?.endOf('day').format('YYYY-MM-DD[T]HH:mm:ss'),
+        filters,
       };
 
       const result = await consumeApi.exportReport(selectedTemplateId.value, params, format);
       if (result.code === 200 && result.data) {
         message.success('报表导出成功');
-        // TODO: 下载文件
+        // 文件下载由后端返回的URL自动触发
       } else {
         message.error(result.message || '报表导出失败');
       }
@@ -228,7 +240,16 @@
   // 初始化
   onMounted(() => {
     // 加载报表模板列表
-    // TODO: 对接后端接口
+    consumeApi.getReportTemplates()
+      .then((result) => {
+        if (result.code === 200 && Array.isArray(result.data) && result.data.length > 0) {
+          reportTemplates.value = result.data;
+          selectedTemplateId.value = result.data[0].id;
+        }
+      })
+      .catch((error) => {
+        smartSentry.captureError(error);
+      });
   });
 </script>
 

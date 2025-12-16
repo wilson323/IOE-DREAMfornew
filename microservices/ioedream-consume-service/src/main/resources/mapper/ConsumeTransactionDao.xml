@@ -44,15 +44,21 @@
             create_user,
             update_user
         FROM consume_transaction
-        <where>
-            <if test="userId != null">
-                AND user_id = #{userId}
-            </if>
-            <if test="areaId != null and areaId != ''">
-                AND area_id = #{areaId}
-            </if>
-            <if test="startTime != null">
-                AND consume_time &gt;= #{startTime}
+	        <where>
+	            <if test="userId != null">
+	                AND user_id = #{userId}
+	            </if>
+	            <if test="transactionNo != null and transactionNo != ''">
+	                AND transaction_no = #{transactionNo}
+	            </if>
+	            <if test="deviceId != null">
+	                AND device_id = #{deviceId}
+	            </if>
+	            <if test="areaId != null and areaId != ''">
+	                AND area_id = #{areaId}
+	            </if>
+	            <if test="startTime != null">
+	                AND consume_time &gt;= #{startTime}
             </if>
             <if test="endTime != null">
                 AND consume_time &lt;= #{endTime}

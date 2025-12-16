@@ -3,6 +3,7 @@ package net.lab1024.sa.visitor.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +33,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 public class OcrService {
 
     @Value("${tencent.cloud.ocr.secret-id:}")
@@ -261,3 +263,4 @@ public class OcrService {
         return result;
     }
 }
+

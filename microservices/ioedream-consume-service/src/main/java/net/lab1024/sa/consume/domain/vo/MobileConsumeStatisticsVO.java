@@ -43,3 +43,5 @@ public class MobileConsumeStatisticsVO {
     @Schema(description = "统计更新时间")
     private String statisticsTime;
 }
+
+

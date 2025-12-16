@@ -3,11 +3,15 @@ package net.lab1024.sa.devicecomm.integration;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.devicecomm.biometric.BiometricDataManager;
 import net.lab1024.sa.devicecomm.protocol.enums.VerifyTypeEnum;
 import net.lab1024.sa.devicecomm.service.BiometricService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -28,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BiometricIntegrationService {
 
     @Resource
@@ -92,9 +97,18 @@ public class BiometricIntegrationService {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁生物识别验证] 参数错误: 用户={}, 设备={}, error={}", userId, deviceId, e.getMessage());
+            return ResponseDTO.error("ACCESS_BIOMETRIC_PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁生物识别验证] 业务异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁生物识别验证] 系统异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("ACCESS_BIOMETRIC_SYSTEM_ERROR", "门禁生物识别验证异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁生物识别验证] 异常: 用户={}, 设备={}, 错误={}", userId, deviceId, e.getMessage(), e);
-            return ResponseDTO.error("ACCESS_BIOMETRIC_ERROR", "门禁生物识别验证异常: " + e.getMessage());
+            log.error("[门禁生物识别验证] 未知异常: 用户={}, 设备={}", userId, deviceId, e);
+            return ResponseDTO.error("ACCESS_BIOMETRIC_SYSTEM_ERROR", "门禁生物识别验证异常：" + e.getMessage());
         }
     }
 
@@ -150,9 +164,18 @@ public class BiometricIntegrationService {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[考勤生物识别打卡] 参数错误: 用户={}, 设备={}, error={}", userId, deviceId, e.getMessage());
+            return ResponseDTO.error("ATTENDANCE_BIOMETRIC_PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[考勤生物识别打卡] 业务异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[考勤生物识别打卡] 系统异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("ATTENDANCE_BIOMETRIC_SYSTEM_ERROR", "考勤生物识别打卡异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[考勤生物识别打卡] 异常: 用户={}, 设备={}, 错误={}", userId, deviceId, e.getMessage(), e);
-            return ResponseDTO.error("ATTENDANCE_BIOMETRIC_ERROR", "考勤生物识别打卡异常: " + e.getMessage());
+            log.error("[考勤生物识别打卡] 未知异常: 用户={}, 设备={}", userId, deviceId, e);
+            return ResponseDTO.error("ATTENDANCE_BIOMETRIC_SYSTEM_ERROR", "考勤生物识别打卡异常：" + e.getMessage());
         }
     }
 
@@ -228,9 +251,18 @@ public class BiometricIntegrationService {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客生物识别验证] 参数错误: 访客={}, 设备={}, error={}", visitorId, deviceId, e.getMessage());
+            return ResponseDTO.error("VISITOR_BIOMETRIC_PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[访客生物识别验证] 业务异常: 访客={}, 设备={}, code={}, message={}", visitorId, deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[访客生物识别验证] 系统异常: 访客={}, 设备={}, code={}, message={}", visitorId, deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("VISITOR_BIOMETRIC_SYSTEM_ERROR", "访客生物识别验证异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[访客生物识别验证] 异常: 访客={}, 设备={}, 错误={}", visitorId, deviceId, e.getMessage(), e);
-            return ResponseDTO.error("VISITOR_BIOMETRIC_ERROR", "访客生物识别验证异常: " + e.getMessage());
+            log.error("[访客生物识别验证] 未知异常: 访客={}, 设备={}", visitorId, deviceId, e);
+            return ResponseDTO.error("VISITOR_BIOMETRIC_SYSTEM_ERROR", "访客生物识别验证异常：" + e.getMessage());
         }
     }
 
@@ -305,9 +337,18 @@ public class BiometricIntegrationService {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费生物识别验证] 参数错误: 用户={}, 设备={}, error={}", userId, deviceId, e.getMessage());
+            return ResponseDTO.error("CONSUME_BIOMETRIC_PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费生物识别验证] 业务异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[消费生物识别验证] 系统异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("CONSUME_BIOMETRIC_SYSTEM_ERROR", "消费生物识别验证异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[消费生物识别验证] 异常: 用户={}, 设备={}, 错误={}", userId, deviceId, e.getMessage(), e);
-            return ResponseDTO.error("CONSUME_BIOMETRIC_ERROR", "消费生物识别验证异常: " + e.getMessage());
+            log.error("[消费生物识别验证] 未知异常: 用户={}, 设备={}", userId, deviceId, e);
+            return ResponseDTO.error("CONSUME_BIOMETRIC_SYSTEM_ERROR", "消费生物识别验证异常：" + e.getMessage());
         }
     }
 
@@ -352,18 +393,48 @@ public class BiometricIntegrationService {
                         result.setFailCount(result.getFailCount() + 1);
                     }
 
+                } catch (IllegalArgumentException | ParamException e) {
+                    BiometricRegisterDetail detail = new BiometricRegisterDetail();
+                    detail.setVerifyType(data.getVerifyType());
+                    detail.setDeviceId(data.getDeviceId());
+                    detail.setSuccess(false);
+                    detail.setMessage("注册参数错误: " + e.getMessage());
+                    result.getDetails().add(detail);
+                    result.setFailCount(result.getFailCount() + 1);
+                    log.warn("[批量注册生物识别] 单项参数错误: 用户={}, 验证方式={}, error={}",
+                            userId, data.getVerifyType().getName(), e.getMessage());
+                } catch (BusinessException e) {
+                    BiometricRegisterDetail detail = new BiometricRegisterDetail();
+                    detail.setVerifyType(data.getVerifyType());
+                    detail.setDeviceId(data.getDeviceId());
+                    detail.setSuccess(false);
+                    detail.setMessage("注册业务异常: " + e.getMessage());
+                    result.getDetails().add(detail);
+                    result.setFailCount(result.getFailCount() + 1);
+                    log.warn("[批量注册生物识别] 单项业务异常: 用户={}, 验证方式={}, code={}, message={}",
+                            userId, data.getVerifyType().getName(), e.getCode(), e.getMessage());
+                } catch (SystemException e) {
+                    BiometricRegisterDetail detail = new BiometricRegisterDetail();
+                    detail.setVerifyType(data.getVerifyType());
+                    detail.setDeviceId(data.getDeviceId());
+                    detail.setSuccess(false);
+                    detail.setMessage("注册系统异常: " + e.getMessage());
+                    result.getDetails().add(detail);
+                    result.setFailCount(result.getFailCount() + 1);
+                    log.error("[批量注册生物识别] 单项系统异常: 用户={}, 验证方式={}, code={}, message={}",
+                            userId, data.getVerifyType().getName(), e.getCode(), e.getMessage(), e);
                 } catch (Exception e) {
                     BiometricRegisterDetail detail = new BiometricRegisterDetail();
                     detail.setVerifyType(data.getVerifyType());
                     detail.setDeviceId(data.getDeviceId());
                     detail.setSuccess(false);
-                    detail.setMessage("注册异常: " + e.getMessage());
-
+                    detail.setMessage("注册未知异常: " + e.getMessage());
                     result.getDetails().add(detail);
                     result.setFailCount(result.getFailCount() + 1);
-
-                    log.error("[批量注册生物识别] 单项失败: 用户={}, 验证方式={}, 错误={}",
-                            userId, data.getVerifyType().getName(), e.getMessage());
+                    log.error("[批量注册生物识别] 单项未知异常: 用户={}, 验证方式={}, error={}",
+                            userId, data.getVerifyType().getName(), e.getMessage(), e);
+                    log.error("[批量注册生物识别] 单项未知异常: 用户={}, 验证方式={}",
+                            userId, data.getVerifyType().getName(), e);
                 }
             }
 
@@ -372,9 +443,18 @@ public class BiometricIntegrationService {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[批量注册生物识别] 参数错误: 用户={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("BATCH_REGISTER_PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[批量注册生物识别] 业务异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[批量注册生物识别] 系统异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("BATCH_REGISTER_SYSTEM_ERROR", "批量注册异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[批量注册生物识别] 异常: 用户={}, 错误={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("BATCH_REGISTER_ERROR", "批量注册异常: " + e.getMessage());
+            log.error("[批量注册生物识别] 未知异常: 用户={}", userId, e);
+            return ResponseDTO.error("BATCH_REGISTER_SYSTEM_ERROR", "批量注册异常：" + e.getMessage());
         }
     }
 
@@ -404,8 +484,17 @@ public class BiometricIntegrationService {
                     org.springframework.http.HttpMethod.POST,
                     Map.of("userId", userId, "areaId", areaId, "deviceId", deviceId),
                     Boolean.class);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[验证门禁权限] 调用参数错误: 用户={}, 区域={}, error={}", userId, areaId, e.getMessage());
+            return ResponseDTO.error("PERMISSION_CHECK_PARAM_ERROR", "权限验证参数错误");
+        } catch (BusinessException e) {
+            log.warn("[验证门禁权限] 调用业务异常: 用户={}, 区域={}, code={}, message={}", userId, areaId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[验证门禁权限] 调用系统异常: 用户={}, 区域={}, code={}, message={}", userId, areaId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("PERMISSION_CHECK_ERROR", "权限验证失败");
         } catch (Exception e) {
-            log.error("[验证门禁权限] 调用失败: 用户={}, 区域={}, 错误={}", userId, areaId, e.getMessage());
+            log.error("[验证门禁权限] 调用未知异常: 用户={}, 区域={}", userId, areaId, e);
             return ResponseDTO.error("PERMISSION_CHECK_ERROR", "权限验证失败");
         }
     }
@@ -430,8 +519,17 @@ public class BiometricIntegrationService {
                     org.springframework.http.HttpMethod.POST,
                     eventData,
                     Void.class);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[记录门禁事件] 调用参数错误: 用户={}, 设备={}, error={}", userId, deviceId, e.getMessage());
+            return ResponseDTO.error("RECORD_EVENT_PARAM_ERROR", "记录事件参数错误");
+        } catch (BusinessException e) {
+            log.warn("[记录门禁事件] 调用业务异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[记录门禁事件] 调用系统异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("RECORD_EVENT_ERROR", "记录事件失败");
         } catch (Exception e) {
-            log.error("[记录门禁事件] 调用失败: 用户={}, 设备={}, 错误={}", userId, deviceId, e.getMessage());
+            log.error("[记录门禁事件] 调用未知异常: 用户={}, 设备={}", userId, deviceId, e);
             return ResponseDTO.error("RECORD_EVENT_ERROR", "记录事件失败");
         }
     }
@@ -454,8 +552,17 @@ public class BiometricIntegrationService {
                     org.springframework.http.HttpMethod.POST,
                     punchData,
                     Object.class);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[执行考勤打卡] 调用参数错误: 用户={}, 设备={}, error={}", userId, deviceId, e.getMessage());
+            return ResponseDTO.error("PUNCH_PARAM_ERROR", "打卡参数错误");
+        } catch (BusinessException e) {
+            log.warn("[执行考勤打卡] 调用业务异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[执行考勤打卡] 调用系统异常: 用户={}, 设备={}, code={}, message={}", userId, deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("PUNCH_ERROR", "打卡失败");
         } catch (Exception e) {
-            log.error("[执行考勤打卡] 调用失败: 用户={}, 设备={}, 错误={}", userId, deviceId, e.getMessage());
+            log.error("[执行考勤打卡] 调用未知异常: 用户={}, 设备={}", userId, deviceId, e);
             return ResponseDTO.error("PUNCH_ERROR", "打卡失败");
         }
     }
@@ -472,8 +579,17 @@ public class BiometricIntegrationService {
                     org.springframework.http.HttpMethod.GET,
                     null,
                     mapClass);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[获取访客信息] 调用参数错误: 访客={}, error={}", visitorId, e.getMessage());
+            return ResponseDTO.error("GET_VISITOR_PARAM_ERROR", "获取访客信息参数错误");
+        } catch (BusinessException e) {
+            log.warn("[获取访客信息] 调用业务异常: 访客={}, code={}, message={}", visitorId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[获取访客信息] 调用系统异常: 访客={}, code={}, message={}", visitorId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_VISITOR_ERROR", "获取访客信息失败");
         } catch (Exception e) {
-            log.error("[获取访客信息] 调用失败: 访客={}, 错误={}", visitorId, e.getMessage());
+            log.error("[获取访客信息] 调用未知异常: 访客={}", visitorId, e);
             return ResponseDTO.error("GET_VISITOR_ERROR", "获取访客信息失败");
         }
     }
@@ -493,8 +609,17 @@ public class BiometricIntegrationService {
                     org.springframework.http.HttpMethod.POST,
                     permissionData,
                     Boolean.class);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[验证访客权限] 调用参数错误: 访客={}, 区域={}, error={}", visitorId, areaId, e.getMessage());
+            return ResponseDTO.error("VISITOR_PERMISSION_PARAM_ERROR", "访客权限验证参数错误");
+        } catch (BusinessException e) {
+            log.warn("[验证访客权限] 调用业务异常: 访客={}, 区域={}, code={}, message={}", visitorId, areaId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[验证访客权限] 调用系统异常: 访客={}, 区域={}, code={}, message={}", visitorId, areaId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("VISITOR_PERMISSION_ERROR", "访客权限验证失败");
         } catch (Exception e) {
-            log.error("[验证访客权限] 调用失败: 访客={}, 区域={}, 错误={}", visitorId, areaId, e.getMessage());
+            log.error("[验证访客权限] 调用未知异常: 访客={}, 区域={}", visitorId, areaId, e);
             return ResponseDTO.error("VISITOR_PERMISSION_ERROR", "访客权限验证失败");
         }
     }
@@ -519,8 +644,17 @@ public class BiometricIntegrationService {
                     org.springframework.http.HttpMethod.POST,
                     eventData,
                     Void.class);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[记录访客事件] 调用参数错误: 访客={}, 设备={}, error={}", visitorId, deviceId, e.getMessage());
+            return ResponseDTO.error("RECORD_VISITOR_EVENT_PARAM_ERROR", "记录访客事件参数错误");
+        } catch (BusinessException e) {
+            log.warn("[记录访客事件] 调用业务异常: 访客={}, 设备={}, code={}, message={}", visitorId, deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[记录访客事件] 调用系统异常: 访客={}, 设备={}, code={}, message={}", visitorId, deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("RECORD_VISITOR_EVENT_ERROR", "记录访客事件失败");
         } catch (Exception e) {
-            log.error("[记录访客事件] 调用失败: 访客={}, 设备={}, 错误={}", visitorId, deviceId, e.getMessage());
+            log.error("[记录访客事件] 调用未知异常: 访客={}, 设备={}", visitorId, deviceId, e);
             return ResponseDTO.error("RECORD_VISITOR_EVENT_ERROR", "记录访客事件失败");
         }
     }
@@ -537,8 +671,17 @@ public class BiometricIntegrationService {
                     org.springframework.http.HttpMethod.GET,
                     null,
                     mapClass);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[获取账户信息] 调用参数错误: 用户={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("GET_ACCOUNT_PARAM_ERROR", "获取账户信息参数错误");
+        } catch (BusinessException e) {
+            log.warn("[获取账户信息] 调用业务异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[获取账户信息] 调用系统异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_ACCOUNT_ERROR", "获取账户信息失败");
         } catch (Exception e) {
-            log.error("[获取账户信息] 调用失败: 用户={}, 错误={}", userId, e.getMessage());
+            log.error("[获取账户信息] 调用未知异常: 用户={}", userId, e);
             return ResponseDTO.error("GET_ACCOUNT_ERROR", "获取账户信息失败");
         }
     }
@@ -561,8 +704,17 @@ public class BiometricIntegrationService {
                     org.springframework.http.HttpMethod.POST,
                     paymentData,
                     Object.class);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[执行消费支付] 调用参数错误: 用户={}, 金额={}, error={}", userId, amount, e.getMessage());
+            return ResponseDTO.error("PAYMENT_PARAM_ERROR", "支付参数错误");
+        } catch (BusinessException e) {
+            log.warn("[执行消费支付] 调用业务异常: 用户={}, 金额={}, code={}, message={}", userId, amount, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[执行消费支付] 调用系统异常: 用户={}, 金额={}, code={}, message={}", userId, amount, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("PAYMENT_ERROR", "支付失败");
         } catch (Exception e) {
-            log.error("[执行消费支付] 调用失败: 用户={}, 金额={}, 错误={}", userId, amount, e.getMessage());
+            log.error("[执行消费支付] 调用未知异常: 用户={}, 金额={}", userId, amount, e);
             return ResponseDTO.error("PAYMENT_ERROR", "支付失败");
         }
     }

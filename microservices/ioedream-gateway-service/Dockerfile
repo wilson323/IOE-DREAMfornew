@@ -1,30 +1,5 @@
 # IOE-DREAM Gateway Service Dockerfile
-FROM maven:3.9.5-eclipse-temurin-17 AS builder
-
-# 配置Maven使用阿里云镜像加速(解决SSL握手失败问题)
-COPY microservices/ioedream-gateway-service/maven-settings.xml /root/.m2/settings.xml
-
-# 设置工作目录
-WORKDIR /build
-
-# 复制整个项目（需要父POM和common模块）
-COPY microservices/pom.xml ./microservices/pom.xml
-COPY microservices/microservices-common ./microservices/microservices-common
-COPY microservices/ioedream-gateway-service ./microservices/ioedream-gateway-service
-
-# 先安装父POM,然后安装common,最后构建服务
-# 使用awk创建临时父POM（移除modules部分）以避免模块检查错误
-# 关键：先备份原始pom.xml，创建临时POM，然后重命名临时POM为pom.xml，这样Maven只会读取修改后的版本
-RUN cd microservices && \
-    cp pom.xml pom-original.xml && \
-    awk '/<modules>/,/<\/modules>/ {next} {print}' pom-original.xml > pom.xml && \
-    mvn install:install-file -Dfile=pom.xml -DgroupId=net.lab1024.sa -DartifactId=ioedream-microservices-parent -Dversion=1.0.0 -Dpackaging=pom && \
-    cd microservices-common && \
-    mvn clean install -DskipTests && \
-    cd ../ioedream-gateway-service && \
-    mvn clean package spring-boot:repackage -DskipTests
-
-# ===== 运行阶段 =====
+# 使用预构建的JAR文件，需要先在本地执行: mvn clean install -DskipTests -Dpmd.skip=true
 FROM eclipse-temurin:17-jre-alpine
 
 # 安装必要工具
@@ -36,8 +11,8 @@ RUN apk add --no-cache curl tzdata && \
 # 创建应用目录
 WORKDIR /app
 
-# 从构建阶段复制JAR
-COPY --from=builder /build/microservices/ioedream-gateway-service/target/*.jar app.jar
+# 复制预构建的JAR
+COPY microservices/ioedream-gateway-service/target/ioedream-gateway-service-1.0.0.jar app.jar
 
 # 暴露端口
 EXPOSE 8080

@@ -3,8 +3,12 @@ package net.lab1024.sa.visitor.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.visitor.service.VisitorService;
 import net.lab1024.sa.visitor.domain.vo.VisitorVO;
 import net.lab1024.sa.visitor.domain.entity.VisitorAppointmentEntity;
@@ -47,6 +51,7 @@ public class VisitorServiceImpl implements VisitorService {
      * @return 访客信息
      */
     @Override
+    @Observed(name = "visitor.getInfo", contextualName = "visitor-get-info")
     @Transactional(readOnly = true)
     public ResponseDTO<?> getVisitorInfo(Long visitorId) {
         log.info("[访客服务] 获取访客信息，visitorId={}", visitorId);
@@ -54,14 +59,14 @@ public class VisitorServiceImpl implements VisitorService {
         try {
             // 参数验证
             if (visitorId == null) {
-                return ResponseDTO.error("PARAM_ERROR", "访客ID不能为空");
+                throw new ParamException("PARAM_ERROR", "访客ID不能为空");
             }
 
             // 查询访客预约信息
             VisitorAppointmentEntity appointment = visitorAppointmentDao.selectById(visitorId);
             if (appointment == null) {
                 log.warn("[访客服务] 访客预约信息不存在，visitorId={}", visitorId);
-                return ResponseDTO.error("VISITOR_NOT_FOUND", "访客信息不存在");
+                throw new BusinessException("VISITOR_NOT_FOUND", "访客信息不存在");
             }
 
             // 转换为VO对象
@@ -82,9 +87,15 @@ public class VisitorServiceImpl implements VisitorService {
             log.info("[访客服务] 获取访客信息成功，visitorId={}", visitorId);
             return ResponseDTO.ok(visitorVO);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客服务] 获取访客信息参数错误，visitorId={}", visitorId, e);
+            throw new ParamException("GET_VISITOR_INFO_PARAM_ERROR", "查询参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[访客服务] 获取访客信息业务异常，visitorId={}", visitorId, e);
+            throw e;
         } catch (Exception e) {
-            log.error("[访客服务] 获取访客信息失败，visitorId={}", visitorId, e);
-            return ResponseDTO.error("SYSTEM_ERROR", "获取访客信息失败：" + e.getMessage());
+            log.error("[访客服务] 获取访客信息系统异常，visitorId={}", visitorId, e);
+            throw new SystemException("GET_VISITOR_INFO_ERROR", "获取访客信息失败: " + e.getMessage(), e);
         }
     }
 
@@ -109,3 +120,4 @@ public class VisitorServiceImpl implements VisitorService {
         };
     }
 }
+

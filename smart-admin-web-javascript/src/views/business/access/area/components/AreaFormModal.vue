@@ -70,6 +70,7 @@
 <script setup>
   import { reactive, ref, watch } from 'vue';
   import { message } from 'ant-design-vue';
+  import { areaApi } from '/@/api/system/area-api';
 
   const props = defineProps({
     visible: {
@@ -114,8 +115,25 @@
 
       submitLoading.value = true;
 
-      // TODO: 调用API保存区域信息
-      // const result = await areaApi.saveArea(props.formData);
+      const payload = {
+        areaId: props.formData?.areaId,
+        areaName: props.formData?.areaName,
+        areaCode: props.formData?.areaCode,
+        areaType: props.formData?.areaType,
+        parentId: props.formData?.parentId ?? 0,
+        level: props.formData?.level,
+        sortOrder: props.formData?.sortOrder,
+        managerId: props.formData?.managerId,
+        capacity: props.formData?.capacity,
+        description: props.formData?.description,
+        status: props.formData?.status,
+      };
+
+      if (props.isEdit) {
+        await areaApi.update(payload);
+      } else {
+        await areaApi.add(payload);
+      }
 
       message.success(props.isEdit ? 'Area updated successfully' : 'Area created successfully');
       emit('success');

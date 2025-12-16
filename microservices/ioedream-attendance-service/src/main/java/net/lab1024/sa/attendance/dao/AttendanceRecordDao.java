@@ -22,3 +22,5 @@ import net.lab1024.sa.attendance.domain.entity.AttendanceRecordEntity;
 public interface AttendanceRecordDao extends BaseMapper<AttendanceRecordEntity> {
 }
 
+
+

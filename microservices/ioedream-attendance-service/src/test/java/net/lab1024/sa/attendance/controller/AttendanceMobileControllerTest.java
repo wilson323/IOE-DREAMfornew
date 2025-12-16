@@ -1,24 +1,16 @@
 package net.lab1024.sa.attendance.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jakarta.annotation.Resource;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.attendance.service.AttendanceLocationService;
+import net.lab1024.sa.attendance.service.AttendanceMobileService;
 
 /**
  * 移动端考勤控制器单元测试
@@ -26,96 +18,77 @@ import jakarta.annotation.Resource;
  * @author IOE-DREAM Team
  * @since 2025-12-04
  */
-@SpringBootTest
-@AutoConfigureWebMvc
-@ActiveProfiles("test")
-@Transactional
+@ExtendWith(MockitoExtension.class)
 @DisplayName("移动端考勤控制器单元测试")
 @SuppressWarnings("null")
 class AttendanceMobileControllerTest {
 
-    @Resource
-    private WebApplicationContext webApplicationContext;
+    @Mock
+    private AttendanceMobileService attendanceMobileService;
 
-    @Resource
-    private ObjectMapper objectMapper;
+    @Mock
+    private AttendanceLocationService attendanceLocationService;
 
-    private MockMvc mockMvc;
+    @InjectMocks
+    private AttendanceMobileController attendanceMobileController;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
     @DisplayName("测试GPS定位打卡")
     void testGpsPunch() throws Exception {
-        String requestBody = """
-                {
-                    "employeeId": 1001,
-                    "latitude": 39.9042,
-                    "longitude": 116.4074,
-                    "photoUrl": "https://example.com/photo.jpg",
-                    "address": "北京市朝阳区"
-                }
-                """;
+        AttendanceMobileController.GpsPunchRequest request = new AttendanceMobileController.GpsPunchRequest();
+        request.setEmployeeId(1001L);
+        request.setLatitude(39.9042);
+        request.setLongitude(116.4074);
+        request.setPhotoUrl("https://example.com/photo.jpg");
+        request.setAddress("北京市朝阳区");
 
-        mockMvc.perform(post("/api/attendance/mobile/gps-punch")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").exists());
+        ResponseDTO<String> response = attendanceMobileController.gpsPunch(request);
+        org.junit.jupiter.api.Assertions.assertNotNull(response);
+        org.junit.jupiter.api.Assertions.assertEquals(200, response.getCode());
     }
 
     @Test
     @DisplayName("测试位置验证")
     void testValidateLocation() throws Exception {
-        String requestBody = """
-                {
-                    "employeeId": 1001,
-                    "latitude": 39.9042,
-                    "longitude": 116.4074
-                }
-                """;
+        AttendanceMobileController.LocationValidationRequest request = new AttendanceMobileController.LocationValidationRequest();
+        request.setEmployeeId(1001L);
+        request.setLatitude(39.9042);
+        request.setLongitude(116.4074);
 
-        mockMvc.perform(post("/api/attendance/mobile/location/validate")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").exists());
+        ResponseDTO<Boolean> response = attendanceMobileController.validateLocation(request);
+        org.junit.jupiter.api.Assertions.assertNotNull(response);
+        org.junit.jupiter.api.Assertions.assertEquals(200, response.getCode());
     }
 
     @Test
     @DisplayName("测试离线打卡数据缓存")
     void testCacheOfflinePunch() throws Exception {
-        String requestBody = """
-                {
-                    "employeeId": 1001,
-                    "punchDataList": [
-                        {
-                            "punchType": "上班",
-                            "punchTime": "2025-12-04T09:00:00",
-                            "latitude": 39.9042,
-                            "longitude": 116.4074,
-                            "photoUrl": "https://example.com/photo.jpg"
-                        }
-                    ]
-                }
-                """;
+        AttendanceMobileController.OfflinePunchRequest request = new AttendanceMobileController.OfflinePunchRequest();
+        request.setEmployeeId(1001L);
 
-        mockMvc.perform(post("/api/attendance/mobile/offline/cache")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").exists());
+        AttendanceMobileController.OfflinePunchData data = new AttendanceMobileController.OfflinePunchData();
+        data.setPunchType("上班");
+        data.setPunchTime(java.time.LocalDateTime.parse("2025-12-04T09:00:00"));
+        data.setLatitude(39.9042);
+        data.setLongitude(116.4074);
+        data.setPhotoUrl("https://example.com/photo.jpg");
+        request.setPunchDataList(java.util.List.of(data));
+
+        ResponseDTO<String> response = attendanceMobileController.cacheOfflinePunch(request);
+        org.junit.jupiter.api.Assertions.assertNotNull(response);
+        org.junit.jupiter.api.Assertions.assertEquals(200, response.getCode());
     }
 
     @Test
     @DisplayName("测试离线数据同步")
     void testSyncOfflinePunches() throws Exception {
-        mockMvc.perform(post("/api/attendance/mobile/offline/sync/1001")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").exists());
+        ResponseDTO<String> response = attendanceMobileController.syncOfflinePunches(1001L);
+        org.junit.jupiter.api.Assertions.assertNotNull(response);
+        org.junit.jupiter.api.Assertions.assertEquals(200, response.getCode());
     }
 }
+

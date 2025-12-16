@@ -22,53 +22,24 @@ spring:
   profiles:
     active: prod
 
-  # ==================== 数据源配置 ====================
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    druid:
-      url: ${DATABASE_URL:ENC(AES256:encrypted_prod_db_url)}
-      username: ${DATABASE_USERNAME:ENC(AES256:encrypted_prod_db_username)}
-      password: ${DATABASE_PASSWORD:ENC(AES256:encrypted_prod_db_password)}
-      driver-class-name: com.mysql.cj.jdbc.Driver
-
-      # 连接池配置
-      initial-size: 10
-      min-idle: 10
-      max-active: 50
-      max-wait: 60000
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1 FROM DUAL
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-
-      # 监控配置
-      stat-view-servlet:
-        enabled: true
-        url-pattern: /druid/*
-        login-username: ${DRUID_USERNAME:admin}
-        login-password: ${DRUID_PASSWORD:ENC(AES256:encrypted_druid_password)}
-        allow: ${DRUID_ALLOW:127.0.0.1,localhost}
-        deny: ${DRUID_DENY:}
-
   # ==================== Redis配置 ====================
-  redis:
-    host: ${REDIS_HOST:prod-redis-cluster}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
-    database: 0
-    timeout: 3000
-    lettuce:
-      pool:
-        max-active: 16
-        max-idle: 8
-        min-idle: 2
-        max-wait: 1000
-      cluster:
-        refresh:
-          adaptive: true
-          period: 30
+  data:
+    redis:
+      host: ${REDIS_HOST:prod-redis-cluster}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+      database: 0
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+          max-wait: 1000
+        cluster:
+          refresh:
+            adaptive: true
+            period: 30
 
   # ==================== 网关路由配置 ====================
   cloud:
@@ -77,7 +48,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns: ${CORS_ALLOWED_ORIGINS:*}
+            allowedOriginPatterns: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
             allowedMethods:
               - GET
               - POST
@@ -85,7 +56,7 @@ spring:
               - DELETE
               - OPTIONS
             allowedHeaders: "*"
-            allowCredentials: true
+            allowCredentials: ${CORS_ALLOW_CREDENTIALS:true}
             maxAge: 3600
 
       # 路由配置
@@ -94,10 +65,10 @@ spring:
         - id: common-service
           uri: lb://ioedream-common-service
           predicates:
-            - Path=/api/v1/common/**
+            - Path=/api/v1/system/**,/api/v1/notification/**,/api/v1/area-device/**
             - Weight=common-service, 100
           filters:
-            - StripPrefix=3
+            - StripPrefix=0
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 100
@@ -108,10 +79,10 @@ spring:
         - id: device-comm-service
           uri: lb://ioedream-device-comm-service
           predicates:
-            - Path=/api/v1/device/**
+            - Path=/api/v1/device/**,/api/v1/biometric/**
             - Weight=device-comm-service, 100
           filters:
-            - StripPrefix=3
+            - StripPrefix=0
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 200
@@ -122,55 +93,126 @@ spring:
         - id: oa-service
           uri: lb://ioedream-oa-service
           predicates:
-            - Path=/api/v1/oa/**
+            - Path=/api/v1/approval/**,/api/v1/workflow/**
             - Weight=oa-service, 100
           filters:
-            - StripPrefix=3
+            - StripPrefix=0
 
         # 门禁服务路由
         - id: access-service
           uri: lb://ioedream-access-service
           predicates:
-            - Path=/api/v1/access/**
+            - Path=/api/v1/access/**,/api/v1/mobile/access/**
             - Weight=access-service, 100
           filters:
-            - StripPrefix=3
+            - StripPrefix=0
 
         # 考勤服务路由
         - id: attendance-service
           uri: lb://ioedream-attendance-service
           predicates:
-            - Path=/api/v1/attendance/**
+            - Path=/api/v1/attendance/**,/api/attendance/mobile/**,/api/attendance/mobile
             - Weight=attendance-service, 100
           filters:
-            - StripPrefix=3
+            - StripPrefix=0
 
         # 视频服务路由
         - id: video-service
           uri: lb://ioedream-video-service
           predicates:
-            - Path=/api/v1/video/**
+            - Path=/api/v1/video/**,/api/v1/mobile/video/**
             - Weight=video-service, 100
           filters:
-            - StripPrefix=3
+            - StripPrefix=0
 
         # 消费服务路由
         - id: consume-service
           uri: lb://ioedream-consume-service
           predicates:
-            - Path=/api/v1/consume/**
+            - Path=/api/v1/consume/**,/api/v1/payment/**,/api/consume/**,/api/mobile/v1/consume/**
             - Weight=consume-service, 100
           filters:
-            - StripPrefix=3
+            - StripPrefix=0
 
         # 访客服务路由
         - id: visitor-service
           uri: lb://ioedream-visitor-service
           predicates:
-            - Path=/api/v1/visitor/**
+            - Path=/api/v1/visitor/**,/api/v1/mobile/visitor/**
             - Weight=visitor-service, 100
           filters:
-            - StripPrefix=3
+            - StripPrefix=0
+
+        # ==================== 兼容入口（legacy → canonical / pass-through） ====================
+        - id: legacy-prod-access-to-api-v1
+          uri: lb://ioedream-access-service
+          predicates:
+            - Path=/access/**
+          filters:
+            - RewritePath=/access(?<segment>/?.*), /api/v1/access$\{segment}
+            - StripPrefix=0
+
+        - id: legacy-prod-attendance-to-api-v1
+          uri: lb://ioedream-attendance-service
+          predicates:
+            - Path=/attendance/**
+          filters:
+            - RewritePath=/attendance(?<segment>/?.*), /api/v1/attendance$\{segment}
+            - StripPrefix=0
+
+        - id: legacy-prod-consume-to-api-v1
+          uri: lb://ioedream-consume-service
+          predicates:
+            - Path=/consume/**
+          filters:
+            - RewritePath=/consume(?<segment>/?.*), /api/v1/consume$\{segment}
+            - StripPrefix=0
+
+        - id: legacy-prod-visitor-to-api-v1
+          uri: lb://ioedream-visitor-service
+          predicates:
+            - Path=/visitor/**
+          filters:
+            - RewritePath=/visitor(?<segment>/?.*), /api/v1/visitor$\{segment}
+            - StripPrefix=0
+
+        - id: legacy-prod-video-to-api-v1
+          uri: lb://ioedream-video-service
+          predicates:
+            - Path=/video/**
+          filters:
+            - RewritePath=/video(?<segment>/?.*), /api/v1/video$\{segment}
+            - StripPrefix=0
+
+        - id: legacy-prod-device-to-api-v1
+          uri: lb://ioedream-device-comm-service
+          predicates:
+            - Path=/device/**
+          filters:
+            - RewritePath=/device(?<segment>/?.*), /api/v1/device$\{segment}
+            - StripPrefix=0
+
+        - id: legacy-prod-system-to-api-v1
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/system/**
+          filters:
+            - RewritePath=/system(?<segment>/?.*), /api/v1/system$\{segment}
+            - StripPrefix=0
+
+        - id: legacy-prod-support-pass-through
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/support/**
+          filters:
+            - StripPrefix=0
+
+        - id: legacy-prod-security-pass-through
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/security/**
+          filters:
+            - StripPrefix=0
 
       # 默认过滤器
       default-filters:

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,11 +17,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.consume.service.PaymentService;
-import net.lab1024.sa.common.consume.domain.form.PaymentProcessForm;
-import net.lab1024.sa.common.consume.domain.form.RefundApplyForm;
-import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.consume.consume.service.PaymentService;
+import net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm;
+import net.lab1024.sa.consume.consume.domain.form.RefundApplyForm;
+import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity;
 
 /**
  * 支付管理控制器
@@ -43,6 +47,7 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @Operation(summary = "处理支付")
+    @Observed(name = "payment.processPayment", contextualName = "payment-process-payment")
     @PostMapping("/process")
     public ResponseDTO<Map<String, Object>> processPayment(@Valid @RequestBody PaymentProcessForm form) {
         log.info("[支付API] 处理支付请求: userId={}, amount={}, method={}",
@@ -51,14 +56,27 @@ public class PaymentController {
         try {
             Map<String, Object> result = paymentService.processPayment(form);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 支付处理参数错误: userId={}, amount={}, error={}",
+                    form.getUserId(), form.getPaymentAmount(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 支付处理业务异常: userId={}, amount={}, code={}, message={}",
+                    form.getUserId(), form.getPaymentAmount(), e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 支付处理系统异常: userId={}, amount={}, code={}, message={}",
+                    form.getUserId(), form.getPaymentAmount(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("PAYMENT_PROCESS_SYSTEM_ERROR", "支付处理失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 支付处理失败: userId={}, amount={}, error={}",
+            log.error("[支付API] 支付处理未知异常: userId={}, amount={}, error={}",
                     form.getUserId(), form.getPaymentAmount(), e.getMessage(), e);
             return ResponseDTO.error("PAYMENT_PROCESS_FAILED", "支付处理失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "申请退款")
+    @Observed(name = "payment.applyRefund", contextualName = "payment-apply-refund")
     @PostMapping("/refund/apply")
     public ResponseDTO<Map<String, Object>> applyRefund(@Valid @RequestBody RefundApplyForm form) {
         log.info("[支付API] 申请退款: paymentId={}, amount={}, reason={}",
@@ -67,14 +85,27 @@ public class PaymentController {
         try {
             Map<String, Object> result = paymentService.applyRefund(form);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 退款申请参数错误: paymentId={}, amount={}, error={}",
+                    form.getPaymentId(), form.getRefundAmount(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 退款申请业务异常: paymentId={}, amount={}, code={}, message={}",
+                    form.getPaymentId(), form.getRefundAmount(), e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 退款申请系统异常: paymentId={}, amount={}, code={}, message={}",
+                    form.getPaymentId(), form.getRefundAmount(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("REFUND_APPLY_SYSTEM_ERROR", "退款申请失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 退款申请失败: paymentId={}, amount={}, error={}",
+            log.error("[支付API] 退款申请未知异常: paymentId={}, amount={}, error={}",
                     form.getPaymentId(), form.getRefundAmount(), e.getMessage(), e);
             return ResponseDTO.error("REFUND_APPLY_FAILED", "退款申请失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "审核退款")
+    @Observed(name = "payment.auditRefund", contextualName = "payment-audit-refund")
     @PutMapping("/refund/{refundId}/audit")
     public ResponseDTO<Map<String, Object>> auditRefund(
             @Parameter(description = "退款记录ID", required = true) @PathVariable String refundId,
@@ -86,14 +117,27 @@ public class PaymentController {
         try {
             Map<String, Object> result = paymentService.auditRefund(refundId, auditStatus, auditComment);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 退款审核参数错误: refundId={}, status={}, error={}",
+                    refundId, auditStatus, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 退款审核业务异常: refundId={}, status={}, code={}, message={}",
+                    refundId, auditStatus, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 退款审核系统异常: refundId={}, status={}, code={}, message={}",
+                    refundId, auditStatus, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("REFUND_AUDIT_SYSTEM_ERROR", "退款审核失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 退款审核失败: refundId={}, status={}, error={}",
+            log.error("[支付API] 退款审核未知异常: refundId={}, status={}, error={}",
                     refundId, auditStatus, e.getMessage(), e);
             return ResponseDTO.error("REFUND_AUDIT_FAILED", "退款审核失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "执行退款")
+    @Observed(name = "payment.executeRefund", contextualName = "payment-execute-refund")
     @PostMapping("/refund/execute")
     public ResponseDTO<Map<String, Object>> executeRefund(
             @Parameter(description = "退款记录ID", required = true) @RequestParam String refundId) {
@@ -103,13 +147,23 @@ public class PaymentController {
         try {
             Map<String, Object> result = paymentService.executeRefund(refundId);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 退款执行参数错误: refundId={}, error={}", refundId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 退款执行业务异常: refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 退款执行系统异常: refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("REFUND_EXECUTE_SYSTEM_ERROR", "退款执行失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 退款执行失败: refundId={}, error={}", refundId, e.getMessage(), e);
+            log.error("[支付API] 退款执行未知异常: refundId={}, error={}", refundId, e.getMessage(), e);
             return ResponseDTO.error("REFUND_EXECUTE_FAILED", "退款执行失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询支付记录")
+    @Observed(name = "payment.getPaymentRecord", contextualName = "payment-get-payment-record")
     @GetMapping("/record/{paymentId}")
     public ResponseDTO<PaymentRecordEntity> getPaymentRecord(
             @Parameter(description = "支付记录ID", required = true) @PathVariable String paymentId) {
@@ -119,13 +173,23 @@ public class PaymentController {
         try {
             PaymentRecordEntity record = paymentService.getPaymentRecord(paymentId);
             return ResponseDTO.ok(record);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 支付记录查询参数错误: paymentId={}, error={}", paymentId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 支付记录查询业务异常: paymentId={}, code={}, message={}", paymentId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 支付记录查询系统异常: paymentId={}, code={}, message={}", paymentId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("PAYMENT_RECORD_QUERY_SYSTEM_ERROR", "支付记录查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 支付记录查询失败: paymentId={}, error={}", paymentId, e.getMessage(), e);
+            log.error("[支付API] 支付记录查询未知异常: paymentId={}, error={}", paymentId, e.getMessage(), e);
             return ResponseDTO.error("PAYMENT_RECORD_QUERY_FAILED", "支付记录查询失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询用户支付记录")
+    @Observed(name = "payment.getUserPaymentRecords", contextualName = "payment-get-user-payment-records")
     @GetMapping("/records/user/{userId}")
     public ResponseDTO<List<PaymentRecordEntity>> getUserPaymentRecords(
             @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
@@ -138,13 +202,23 @@ public class PaymentController {
         try {
             List<PaymentRecordEntity> records = paymentService.getUserPaymentRecords(userId, pageNum, pageSize);
             return ResponseDTO.ok(records);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 用户支付记录查询参数错误: userId={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 用户支付记录查询业务异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 用户支付记录查询系统异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("USER_PAYMENT_RECORDS_QUERY_SYSTEM_ERROR", "用户支付记录查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 用户支付记录查询失败: userId={}, error={}", userId, e.getMessage(), e);
+            log.error("[支付API] 用户支付记录查询未知异常: userId={}, error={}", userId, e.getMessage(), e);
             return ResponseDTO.error("USER_PAYMENT_RECORDS_QUERY_FAILED", "用户支付记录查询失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询退款记录")
+    @Observed(name = "payment.getRefundRecord", contextualName = "payment-get-refund-record")
     @GetMapping("/refund/{refundId}")
     public ResponseDTO<PaymentRefundRecordEntity> getRefundRecord(
             @Parameter(description = "退款记录ID", required = true) @PathVariable String refundId) {
@@ -154,13 +228,23 @@ public class PaymentController {
         try {
             PaymentRefundRecordEntity record = paymentService.getRefundRecord(refundId);
             return ResponseDTO.ok(record);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 退款记录查询参数错误: refundId={}, error={}", refundId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 退款记录查询业务异常: refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 退款记录查询系统异常: refundId={}, code={}, message={}", refundId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("REFUND_RECORD_QUERY_SYSTEM_ERROR", "退款记录查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 退款记录查询失败: refundId={}, error={}", refundId, e.getMessage(), e);
+            log.error("[支付API] 退款记录查询未知异常: refundId={}, error={}", refundId, e.getMessage(), e);
             return ResponseDTO.error("REFUND_RECORD_QUERY_FAILED", "退款记录查询失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询用户退款记录")
+    @Observed(name = "payment.getUserRefundRecords", contextualName = "payment-get-user-refund-records")
     @GetMapping("/refunds/user/{userId}")
     public ResponseDTO<List<PaymentRefundRecordEntity>> getUserRefundRecords(
             @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
@@ -173,13 +257,23 @@ public class PaymentController {
         try {
             List<PaymentRefundRecordEntity> records = paymentService.getUserRefundRecords(userId, pageNum, pageSize);
             return ResponseDTO.ok(records);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 用户退款记录查询参数错误: userId={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 用户退款记录查询业务异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 用户退款记录查询系统异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("USER_REFUND_RECORDS_QUERY_SYSTEM_ERROR", "用户退款记录查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 用户退款记录查询失败: userId={}, error={}", userId, e.getMessage(), e);
+            log.error("[支付API] 用户退款记录查询未知异常: userId={}, error={}", userId, e.getMessage(), e);
             return ResponseDTO.error("USER_REFUND_RECORDS_QUERY_FAILED", "用户退款记录查询失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "获取用户支付统计")
+    @Observed(name = "payment.getUserPaymentStatistics", contextualName = "payment-get-user-payment-statistics")
     @GetMapping("/statistics/user/{userId}")
     public ResponseDTO<Map<String, Object>> getUserPaymentStatistics(
             @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
@@ -200,13 +294,23 @@ public class PaymentController {
 
             Map<String, Object> statistics = paymentService.getUserPaymentStatistics(userId, startTime, endTime);
             return ResponseDTO.ok(statistics);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 用户支付统计获取参数错误: userId={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 用户支付统计获取业务异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 用户支付统计获取系统异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("USER_PAYMENT_STATISTICS_SYSTEM_ERROR", "用户支付统计获取失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 用户支付统计获取失败: userId={}, error={}", userId, e.getMessage(), e);
+            log.error("[支付API] 用户支付统计获取未知异常: userId={}, error={}", userId, e.getMessage(), e);
             return ResponseDTO.error("USER_PAYMENT_STATISTICS_FAILED", "用户支付统计获取失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "获取用户退款统计")
+    @Observed(name = "payment.getUserRefundStatistics", contextualName = "payment-get-user-refund-statistics")
     @GetMapping("/statistics/refund/user/{userId}")
     public ResponseDTO<Map<String, Object>> getUserRefundStatistics(
             @Parameter(description = "用户ID", required = true) @PathVariable Long userId,
@@ -227,13 +331,23 @@ public class PaymentController {
 
             Map<String, Object> statistics = paymentService.getUserRefundStatistics(userId, startTime, endTime);
             return ResponseDTO.ok(statistics);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 用户退款统计获取参数错误: userId={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 用户退款统计获取业务异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 用户退款统计获取系统异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("USER_REFUND_STATISTICS_SYSTEM_ERROR", "用户退款统计获取失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 用户退款统计获取失败: userId={}, error={}", userId, e.getMessage(), e);
+            log.error("[支付API] 用户退款统计获取未知异常: userId={}, error={}", userId, e.getMessage(), e);
             return ResponseDTO.error("USER_REFUND_STATISTICS_FAILED", "用户退款统计获取失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "执行对账")
+    @Observed(name = "payment.performReconciliation", contextualName = "payment-perform-reconciliation")
     @PostMapping("/reconciliation")
     public ResponseDTO<Map<String, Object>> performReconciliation(
             @Parameter(description = "开始时间", required = true) @RequestParam LocalDateTime startTime,
@@ -245,14 +359,27 @@ public class PaymentController {
         try {
             Map<String, Object> result = paymentService.performReconciliation(startTime, endTime, merchantId);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 对账执行参数错误: startTime={}, endTime={}, merchantId={}, error={}",
+                    startTime, endTime, merchantId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 对账执行业务异常: startTime={}, endTime={}, merchantId={}, code={}, message={}",
+                    startTime, endTime, merchantId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 对账执行系统异常: startTime={}, endTime={}, merchantId={}, code={}, message={}",
+                    startTime, endTime, merchantId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("RECONCILIATION_SYSTEM_ERROR", "对账执行失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 对账执行失败: startTime={}, endTime={}, merchantId={}, error={}",
+            log.error("[支付API] 对账执行未知异常: startTime={}, endTime={}, merchantId={}, error={}",
                     startTime, endTime, merchantId, e.getMessage(), e);
             return ResponseDTO.error("RECONCILIATION_FAILED", "对账执行失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "获取商户结算统计")
+    @Observed(name = "payment.getMerchantSettlementStatistics", contextualName = "payment-get-merchant-settlement-statistics")
     @GetMapping("/settlement/statistics/merchant/{merchantId}")
     public ResponseDTO<Map<String, Object>> getMerchantSettlementStatistics(
             @Parameter(description = "商户ID", required = true) @PathVariable Long merchantId,
@@ -273,13 +400,23 @@ public class PaymentController {
 
             Map<String, Object> statistics = paymentService.getMerchantSettlementStatistics(merchantId, startTime, endTime);
             return ResponseDTO.ok(statistics);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 商户结算统计获取参数错误: merchantId={}, error={}", merchantId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 商户结算统计获取业务异常: merchantId={}, code={}, message={}", merchantId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 商户结算统计获取系统异常: merchantId={}, code={}, message={}", merchantId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MERCHANT_SETTLEMENT_STATISTICS_SYSTEM_ERROR", "商户结算统计获取失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 商户结算统计获取失败: merchantId={}, error={}", merchantId, e.getMessage(), e);
+            log.error("[支付API] 商户结算统计获取未知异常: merchantId={}, error={}", merchantId, e.getMessage(), e);
             return ResponseDTO.error("MERCHANT_SETTLEMENT_STATISTICS_FAILED", "商户结算统计获取失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询待审核退款列表")
+    @Observed(name = "payment.getPendingAuditRefunds", contextualName = "payment-get-pending-audit-refunds")
     @GetMapping("/refunds/pending-audit")
     public ResponseDTO<List<PaymentRefundRecordEntity>> getPendingAuditRefunds() {
         log.debug("[支付API] 查询待审核退款列表");
@@ -287,13 +424,23 @@ public class PaymentController {
         try {
             List<PaymentRefundRecordEntity> refunds = paymentService.getPendingAuditRefunds();
             return ResponseDTO.ok(refunds);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 待审核退款列表查询参数错误: error={}", e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 待审核退款列表查询业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 待审核退款列表查询系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("PENDING_AUDIT_REFUNDS_QUERY_SYSTEM_ERROR", "待审核退款列表查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 待审核退款列表查询失败: error={}", e.getMessage(), e);
+            log.error("[支付API] 待审核退款列表查询未知异常: error={}", e.getMessage(), e);
             return ResponseDTO.error("PENDING_AUDIT_REFUNDS_QUERY_FAILED", "待审核退款列表查询失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询待处理退款列表")
+    @Observed(name = "payment.getPendingProcessRefunds", contextualName = "payment-get-pending-process-refunds")
     @GetMapping("/refunds/pending-process")
     public ResponseDTO<List<PaymentRefundRecordEntity>> getPendingProcessRefunds() {
         log.debug("[支付API] 查询待处理退款列表");
@@ -301,13 +448,23 @@ public class PaymentController {
         try {
             List<PaymentRefundRecordEntity> refunds = paymentService.getPendingProcessRefunds();
             return ResponseDTO.ok(refunds);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 待处理退款列表查询参数错误: error={}", e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 待处理退款列表查询业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 待处理退款列表查询系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("PENDING_PROCESS_REFUNDS_QUERY_SYSTEM_ERROR", "待处理退款列表查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 待处理退款列表查询失败: error={}", e.getMessage(), e);
+            log.error("[支付API] 待处理退款列表查询未知异常: error={}", e.getMessage(), e);
             return ResponseDTO.error("PENDING_PROCESS_REFUNDS_QUERY_FAILED", "待处理退款列表查询失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询高风险支付记录")
+    @Observed(name = "payment.getHighRiskPayments", contextualName = "payment-get-high-risk-payments")
     @GetMapping("/records/high-risk")
     public ResponseDTO<List<PaymentRecordEntity>> getHighRiskPayments(
             @Parameter(description = "小时数", required = false) @RequestParam(defaultValue = "24") Integer hours) {
@@ -317,13 +474,23 @@ public class PaymentController {
         try {
             List<PaymentRecordEntity> payments = paymentService.getHighRiskPayments(hours);
             return ResponseDTO.ok(payments);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 高风险支付记录查询参数错误: hours={}, error={}", hours, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 高风险支付记录查询业务异常: hours={}, code={}, message={}", hours, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 高风险支付记录查询系统异常: hours={}, code={}, message={}", hours, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("HIGH_RISK_PAYMENTS_QUERY_SYSTEM_ERROR", "高风险支付记录查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 高风险支付记录查询失败: hours={}, error={}", hours, e.getMessage(), e);
+            log.error("[支付API] 高风险支付记录查询未知异常: hours={}, error={}", hours, e.getMessage(), e);
             return ResponseDTO.error("HIGH_RISK_PAYMENTS_QUERY_FAILED", "高风险支付记录查询失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询高风险退款记录")
+    @Observed(name = "payment.getHighRiskRefunds", contextualName = "payment-get-high-risk-refunds")
     @GetMapping("/refunds/high-risk")
     public ResponseDTO<List<PaymentRefundRecordEntity>> getHighRiskRefunds(
             @Parameter(description = "小时数", required = false) @RequestParam(defaultValue = "24") Integer hours) {
@@ -333,13 +500,23 @@ public class PaymentController {
         try {
             List<PaymentRefundRecordEntity> refunds = paymentService.getHighRiskRefunds(hours);
             return ResponseDTO.ok(refunds);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 高风险退款记录查询参数错误: hours={}, error={}", hours, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 高风险退款记录查询业务异常: hours={}, code={}, message={}", hours, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 高风险退款记录查询系统异常: hours={}, code={}, message={}", hours, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("HIGH_RISK_REFUNDS_QUERY_SYSTEM_ERROR", "高风险退款记录查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 高风险退款记录查询失败: hours={}, error={}", hours, e.getMessage(), e);
+            log.error("[支付API] 高风险退款记录查询未知异常: hours={}, error={}", hours, e.getMessage(), e);
             return ResponseDTO.error("HIGH_RISK_REFUNDS_QUERY_FAILED", "高风险退款记录查询失败: " + e.getMessage());
         }
     }
 
     @Operation(summary = "查询异常支付记录")
+    @Observed(name = "payment.getAbnormalPayments", contextualName = "payment-get-abnormal-payments")
     @GetMapping("/records/abnormal")
     public ResponseDTO<List<PaymentRecordEntity>> getAbnormalPayments(
             @Parameter(description = "小时数", required = false) @RequestParam(defaultValue = "24") Integer hours) {
@@ -349,8 +526,17 @@ public class PaymentController {
         try {
             List<PaymentRecordEntity> payments = paymentService.getAbnormalPayments(hours);
             return ResponseDTO.ok(payments);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付API] 异常支付记录查询参数错误: hours={}, error={}", hours, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付API] 异常支付记录查询业务异常: hours={}, code={}, message={}", hours, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付API] 异常支付记录查询系统异常: hours={}, code={}, message={}", hours, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("ABNORMAL_PAYMENTS_QUERY_SYSTEM_ERROR", "异常支付记录查询失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付API] 异常支付记录查询失败: hours={}, error={}", hours, e.getMessage(), e);
+            log.error("[支付API] 异常支付记录查询未知异常: hours={}, error={}", hours, e.getMessage(), e);
             return ResponseDTO.error("ABNORMAL_PAYMENTS_QUERY_FAILED", "异常支付记录查询失败: " + e.getMessage());
         }
     }
@@ -359,6 +545,7 @@ public class PaymentController {
      * 创建微信支付订单（保留原有功能）
      */
     @PostMapping("/wechat/createOrder")
+    @Observed(name = "payment.createWechatPayOrder", contextualName = "payment-create-wechat-pay-order")
     @Operation(
         summary = "创建微信支付订单",
         description = "创建微信支付V3预支付订单，支持多种支付方式（JSAPI、APP、H5、Native）"
@@ -375,8 +562,17 @@ public class PaymentController {
             Map<String, Object> result = paymentService.createWechatPayOrder(
                     orderId, amount, description, openId, payType);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付管理] 创建微信支付订单参数错误，orderId={}, amount={}, error={}", orderId, amount, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付管理] 创建微信支付订单业务异常，orderId={}, amount={}, code={}, message={}", orderId, amount, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付管理] 创建微信支付订单系统异常，orderId={}, amount={}, code={}, message={}", orderId, amount, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("CREATE_WECHAT_ORDER_SYSTEM_ERROR", "创建微信支付订单失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付管理] 创建微信支付订单失败，orderId={}, amount={}", orderId, amount, e);
+            log.error("[支付管理] 创建微信支付订单未知异常，orderId={}, amount={}", orderId, amount, e);
             return ResponseDTO.error("CREATE_WECHAT_ORDER_ERROR", "创建微信支付订单失败: " + e.getMessage());
         }
     }
@@ -393,6 +589,7 @@ public class PaymentController {
      * @apiNote 此接口由微信支付平台调用，不需要认证
      */
     @PostMapping("/wechat/notify")
+    @Observed(name = "payment.handleWechatPayNotify", contextualName = "payment-handle-wechat-pay-notify")
     @Operation(
         summary = "处理微信支付回调",
         description = "接收并处理微信支付平台的回调通知，验证签名、更新订单状态、处理业务逻辑。此接口不需要认证，由微信支付平台直接调用。",
@@ -414,8 +611,17 @@ public class PaymentController {
         try {
             Map<String, Object> result = paymentService.handleWechatPayNotify(notifyData);
             return result;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付管理] 处理微信支付回调参数错误: error={}", e.getMessage());
+            return Map.of("code", "FAIL", "message", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付管理] 处理微信支付回调业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return Map.of("code", "FAIL", "message", e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付管理] 处理微信支付回调系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return Map.of("code", "FAIL", "message", "处理回调失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付管理] 处理微信支付回调失败", e);
+            log.error("[支付管理] 处理微信支付回调未知异常", e);
             return Map.of("code", "FAIL", "message", "处理回调失败: " + e.getMessage());
         }
     }
@@ -430,6 +636,7 @@ public class PaymentController {
      * @return 支付参数
      */
     @PostMapping("/alipay/createOrder")
+    @Observed(name = "payment.createAlipayOrder", contextualName = "payment-create-alipay-order")
     @Operation(summary = "创建支付宝支付订单", description = "创建支付宝预支付订单，返回支付所需参数")
     @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
     public ResponseDTO<Map<String, Object>> createAlipayOrder(
@@ -442,8 +649,17 @@ public class PaymentController {
             Map<String, Object> result = paymentService.createAlipayOrder(
                     orderId, amount, subject, payType);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付管理] 创建支付宝支付订单参数错误，orderId={}, amount={}, error={}", orderId, amount, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付管理] 创建支付宝支付订单业务异常，orderId={}, amount={}, code={}, message={}", orderId, amount, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付管理] 创建支付宝支付订单系统异常，orderId={}, amount={}, code={}, message={}", orderId, amount, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("CREATE_ALIPAY_ORDER_SYSTEM_ERROR", "创建支付宝支付订单失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付管理] 创建支付宝支付订单失败，orderId={}, amount={}", orderId, amount, e);
+            log.error("[支付管理] 创建支付宝支付订单未知异常，orderId={}, amount={}", orderId, amount, e);
             return ResponseDTO.error("CREATE_ALIPAY_ORDER_ERROR", "创建支付宝支付订单失败: " + e.getMessage());
         }
     }
@@ -455,14 +671,24 @@ public class PaymentController {
      * @return 处理结果（"success"或"fail"）
      */
     @PostMapping("/alipay/notify")
+    @Observed(name = "payment.handleAlipayNotify", contextualName = "payment-handle-alipay-notify")
     @Operation(summary = "处理支付宝支付回调", description = "接收并处理支付宝平台的回调通知")
     public String handleAlipayNotify(@RequestParam Map<String, String> params) {
         log.info("[支付管理] 接收支付宝支付回调通知，参数数量={}", params != null ? params.size() : 0);
         try {
             String result = paymentService.handleAlipayNotify(params);
             return result;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付管理] 处理支付宝支付回调参数错误: error={}", e.getMessage());
+            return "fail";
+        } catch (BusinessException e) {
+            log.warn("[支付管理] 处理支付宝支付回调业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return "fail";
+        } catch (SystemException e) {
+            log.error("[支付管理] 处理支付宝支付回调系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return "fail";
         } catch (Exception e) {
-            log.error("[支付管理] 处理支付宝支付回调失败", e);
+            log.error("[支付管理] 处理支付宝支付回调未知异常", e);
             return "fail";
         }
     }
@@ -477,6 +703,7 @@ public class PaymentController {
      * @return 退款结果
      */
     @PostMapping("/wechat/refund")
+    @Observed(name = "payment.wechatRefund", contextualName = "payment-wechat-refund")
     @Operation(summary = "微信支付退款", description = "发起微信支付订单的退款申请")
     @PreAuthorize("hasRole('CONSUME_MANAGER')")
     public ResponseDTO<Map<String, Object>> wechatRefund(
@@ -489,8 +716,17 @@ public class PaymentController {
         try {
             Map<String, Object> result = paymentService.wechatRefund(orderId, refundId, totalAmount, refundAmount);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付管理] 微信支付退款参数错误，orderId={}, refundId={}, error={}", orderId, refundId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付管理] 微信支付退款业务异常，orderId={}, refundId={}, code={}, message={}", orderId, refundId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付管理] 微信支付退款系统异常，orderId={}, refundId={}, code={}, message={}", orderId, refundId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("WECHAT_REFUND_SYSTEM_ERROR", "微信支付退款失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付管理] 微信支付退款失败，orderId={}, refundId={}", orderId, refundId, e);
+            log.error("[支付管理] 微信支付退款未知异常，orderId={}, refundId={}", orderId, refundId, e);
             return ResponseDTO.error("WECHAT_REFUND_ERROR", "微信支付退款失败: " + e.getMessage());
         }
     }
@@ -504,6 +740,7 @@ public class PaymentController {
      * @return 退款结果
      */
     @PostMapping("/alipay/refund")
+    @Observed(name = "payment.alipayRefund", contextualName = "payment-alipay-refund")
     @Operation(summary = "支付宝退款", description = "发起支付宝支付订单的退款申请")
     @PreAuthorize("hasRole('CONSUME_MANAGER')")
     public ResponseDTO<Map<String, Object>> alipayRefund(
@@ -515,8 +752,17 @@ public class PaymentController {
         try {
             Map<String, Object> result = paymentService.alipayRefund(orderId, refundAmount, reason);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付管理] 支付宝退款参数错误，orderId={}, refundAmount={}, error={}", orderId, refundAmount, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付管理] 支付宝退款业务异常，orderId={}, refundAmount={}, code={}, message={}", orderId, refundAmount, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付管理] 支付宝退款系统异常，orderId={}, refundAmount={}, code={}, message={}", orderId, refundAmount, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("ALIPAY_REFUND_SYSTEM_ERROR", "支付宝退款失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付管理] 支付宝退款失败，orderId={}, refundAmount={}", orderId, refundAmount, e);
+            log.error("[支付管理] 支付宝退款未知异常，orderId={}, refundAmount={}", orderId, refundAmount, e);
             return ResponseDTO.error("ALIPAY_REFUND_ERROR", "支付宝退款失败: " + e.getMessage());
         }
     }
@@ -532,6 +778,7 @@ public class PaymentController {
      * @return 支付结果
      */
     @PostMapping("/bank/createOrder")
+    @Observed(name = "payment.createBankPaymentOrder", contextualName = "payment-create-bank-payment-order")
     @Operation(summary = "创建银行支付订单", description = "创建银行支付订单，调用银行支付网关API")
     @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
     public ResponseDTO<Map<String, Object>> createBankPaymentOrder(
@@ -545,8 +792,17 @@ public class PaymentController {
             Map<String, Object> result = paymentService.createBankPaymentOrder(
                     accountId, amount, orderId, description, bankCardNo);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付管理] 创建银行支付订单参数错误，accountId={}, orderId={}, error={}", accountId, orderId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付管理] 创建银行支付订单业务异常，accountId={}, orderId={}, code={}, message={}", accountId, orderId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付管理] 创建银行支付订单系统异常，accountId={}, orderId={}, code={}, message={}", accountId, orderId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("CREATE_BANK_ORDER_SYSTEM_ERROR", "创建银行支付订单失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付管理] 创建银行支付订单失败，accountId={}, orderId={}", accountId, orderId, e);
+            log.error("[支付管理] 创建银行支付订单未知异常，accountId={}, orderId={}", accountId, orderId, e);
             return ResponseDTO.error("CREATE_BANK_ORDER_ERROR", "创建银行支付订单失败: " + e.getMessage());
         }
     }
@@ -561,6 +817,7 @@ public class PaymentController {
      * @return 支付结果
      */
     @PostMapping("/credit/processPayment")
+    @Observed(name = "payment.processCreditLimitPayment", contextualName = "payment-process-credit-limit-payment")
     @Operation(summary = "处理信用额度支付", description = "使用信用额度进行支付，扣除信用额度")
     @PreAuthorize("hasRole('CONSUME_MANAGER') or hasRole('CONSUME_USER')")
     public ResponseDTO<Map<String, Object>> processCreditLimitPayment(
@@ -573,10 +830,22 @@ public class PaymentController {
             Map<String, Object> result = paymentService.processCreditLimitPayment(
                     accountId, amount, orderId, reason);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付管理] 处理信用额度支付参数错误，accountId={}, orderId={}, error={}", accountId, orderId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付管理] 处理信用额度支付业务异常，accountId={}, orderId={}, code={}, message={}", accountId, orderId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付管理] 处理信用额度支付系统异常，accountId={}, orderId={}, code={}, message={}", accountId, orderId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("CREDIT_PAYMENT_SYSTEM_ERROR", "处理信用额度支付失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[支付管理] 处理信用额度支付失败，accountId={}, orderId={}", accountId, orderId, e);
+            log.error("[支付管理] 处理信用额度支付未知异常，accountId={}, orderId={}", accountId, orderId, e);
             return ResponseDTO.error("CREDIT_PAYMENT_ERROR", "处理信用额度支付失败: " + e.getMessage());
         }
     }
 }
+
+
+
 

@@ -18,15 +18,6 @@ rule_files:
 
 # 服务发现配置
 scrape_configs:
-  # 设备通讯服务
-  - job_name: 'device-comm-service'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['device-comm-service:8080']
-        labels:
-          service: 'device-comm-service'
-          application: 'ioedream-device-comm-service'
-
   # 网关服务
   - job_name: 'gateway-service'
     metrics_path: '/actuator/prometheus'
@@ -36,20 +27,38 @@ scrape_configs:
           service: 'gateway-service'
           application: 'ioedream-gateway-service'
 
-  # 消费服务
-  - job_name: 'consume-service'
+  # 公共业务服务
+  - job_name: 'common-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['consume-service:8080']
+      - targets: ['common-service:8088']
         labels:
-          service: 'consume-service'
-          application: 'ioedream-consume-service'
+          service: 'common-service'
+          application: 'ioedream-common-service'
+
+  # 设备通讯服务
+  - job_name: 'device-comm-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['device-comm-service:8087']
+        labels:
+          service: 'device-comm-service'
+          application: 'ioedream-device-comm-service'
+
+  # OA服务
+  - job_name: 'oa-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['oa-service:8089']
+        labels:
+          service: 'oa-service'
+          application: 'ioedream-oa-service'
 
   # 门禁服务
   - job_name: 'access-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['access-service:8080']
+      - targets: ['access-service:8090']
         labels:
           service: 'access-service'
           application: 'ioedream-access-service'
@@ -58,28 +67,37 @@ scrape_configs:
   - job_name: 'attendance-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['attendance-service:8080']
+      - targets: ['attendance-service:8091']
         labels:
           service: 'attendance-service'
           application: 'ioedream-attendance-service'
-
-  # 访客服务
-  - job_name: 'visitor-service'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['visitor-service:8080']
-        labels:
-          service: 'visitor-service'
-          application: 'ioedream-visitor-service'
 
   # 视频服务
   - job_name: 'video-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['video-service:8080']
+      - targets: ['video-service:8092']
         labels:
           service: 'video-service'
           application: 'ioedream-video-service'
+
+  # 消费服务
+  - job_name: 'consume-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['consume-service:8094']
+        labels:
+          service: 'consume-service'
+          application: 'ioedream-consume-service'
+
+  # 访客服务
+  - job_name: 'visitor-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['visitor-service:8095']
+        labels:
+          service: 'visitor-service'
+          application: 'ioedream-visitor-service'
 
   # RabbitMQ监控
   - job_name: 'rabbitmq'

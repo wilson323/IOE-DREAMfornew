@@ -1,0 +1,115 @@
+# Anonymous/Whitelist Inventory
+# Generated: 2025-12-13T13:13:34+08:00
+
+## Gateway (WebFluxSecurityConfig.WHITE_LIST)
+        log.info("[WebFluxSecurity] 初始化BCrypt密码编码器");
+        return new BCryptPasswordEncoder(10);
+    }
+
+    /**
+     * 白名单路径 - 无需认证即可访问
+     */
+    private static final String[] WHITE_LIST = {
+        // Actuator健康检查
+        "/actuator/**",
+        // Swagger文档
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        "/swagger-resources/**",
+        // 认证相关（兼容窗口：30天，legacy /login/** 与 canonical /api/v1/auth/** 并存）
+        "/api/v1/auth/**",
+        "/login/**",
+        // 公开资源
+        "/public/**",
+        "/static/**",
+        // 网关健康检查
+        "/gateway/health"
+    };
+
+    /**
+     * 配置Security过滤链
+     * <p>
+     * 使用ServerHttpSecurity (Reactive) 而非 HttpSecurity (Servlet)
+     * </p>
+     *
+     * @param http ServerHttpSecurity配置
+     * @return SecurityWebFilterChain (Reactive过滤链)
+     */
+    @Bean
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        log.info("[WebFluxSecurity] 初始化企业级Reactive Security配置");
+
+        http
+            // 禁用CSRF (API网关场景，使用Token认证)
+            .csrf(csrf -> csrf.disable())
+            
+            // CORS配置
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            
+            // 路径权限配置
+            .authorizeExchange(exchanges -> exchanges
+                // 白名单路径 - 无需认证
+                .pathMatchers(WHITE_LIST).permitAll()
+                // 其他路径 - 允许所有请求 (由网关过滤器处理Token验证)
+                .anyExchange().permitAll()
+            )
+            
+            // 禁用表单登录 (API网关不使用)
+            .formLogin(formLogin -> formLogin.disable())
+            
+            // 禁用HTTP Basic认证
+            .httpBasic(httpBasic -> httpBasic.disable())
+            
+            // 禁用登出 (由认证服务处理)
+            .logout(logout -> logout.disable());
+
+
+## Gateway Login Endpoints (LoginController class mapping)
+46:@RequestMapping({"/api/v1/auth", "/login"})
+76:    @GetMapping("/getCaptcha")
+105:    @GetMapping("/getTwoFactorLoginFlag")
+132:    @PostMapping("/password")
+188:    @PostMapping("/sms")
+235:    @PostMapping("/mfa")
+294:    @PostMapping({"", "/"})
+312:    @GetMapping("/logout")
+337:    @GetMapping("/getLoginInfo")
+
+## Services (SecurityConfig.requestMatchers/permitAll)
+                // 认证失败/鉴权失败统一返回ResponseDTO
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            objectMapper.writeValue(response.getOutputStream(), ResponseDTO.error(401, "未登录或令牌无效"));
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            objectMapper.writeValue(response.getOutputStream(), ResponseDTO.error(403, "无权限访问"));
+                        }))
+
+                // 配置授权规则
+                .authorizeHttpRequests(auth -> auth
+                        // 公开接口（无需认证）
+                        .requestMatchers(
+                                "/actuator/**",
+                                "/doc.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/webjars/**",
+                                "/favicon.ico")
+                        .permitAll()
+
+                        // 其他接口需要认证
+                        .anyRequest().authenticated())
+
+                // 配置CORS
+                .cors(Customizer.withDefaults())
+
+                // JWT认证过滤器
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+}

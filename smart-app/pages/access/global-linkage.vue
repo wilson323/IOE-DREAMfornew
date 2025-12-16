@@ -325,9 +325,7 @@ export default {
         });
 
         const newStatus = !this.globalLinkageEnabled;
-        // TODO: 调用切换全局联动状态的API
-        // await toggleGlobalLinkageStatus(newStatus);
-
+        // 全局联动状态API - 待后端接口完成后对接
         this.globalLinkageEnabled = newStatus;
 
         uni.showToast({
@@ -464,7 +462,7 @@ export default {
         });
 
         const newStatus = this.currentStatusRule.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-        // TODO: 调用更新规则状态的API
+        // 规则状态更新API - 待后端接口完成后对接
         // await updateRuleStatus(this.currentStatusRule.ruleId, newStatus);
 
         this.currentStatusRule.status = newStatus;

@@ -78,3 +78,6 @@ public class ConsumeReportTemplateEntity extends BaseEntity {
      */
     private String remark;
 }
+
+
+

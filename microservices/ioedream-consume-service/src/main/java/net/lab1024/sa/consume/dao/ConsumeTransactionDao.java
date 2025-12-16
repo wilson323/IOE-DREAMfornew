@@ -106,22 +106,29 @@ public interface ConsumeTransactionDao extends BaseMapper<ConsumeTransactionEnti
      * - 消费模式筛选
      * - 交易状态筛选
      * </p>
-     *
-     * @param page 分页参数
-     * @param userId 用户ID（可选）
-     * @param areaId 区域ID（可选）
-     * @param startTime 开始时间（可选）
-     * @param endTime 结束时间（可选）
-     * @param consumeMode 消费模式（可选）
-     * @param status 交易状态（可选）
-     * @return 分页结果
-     */
-    IPage<ConsumeTransactionEntity> queryTransactions(
-            Page<ConsumeTransactionEntity> page,
-            @Param("userId") Long userId,
-            @Param("areaId") String areaId,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime,
-            @Param("consumeMode") String consumeMode,
-            @Param("status") String status);
+	     *
+	     * @param page 分页参数
+	     * @param userId 用户ID（可选）
+	     * @param transactionNo 交易流水号（可选）
+	     * @param deviceId 设备ID（可选）
+	     * @param areaId 区域ID（可选）
+	     * @param startTime 开始时间（可选）
+	     * @param endTime 结束时间（可选）
+	     * @param consumeMode 消费模式（可选）
+	     * @param status 交易状态（可选）
+	     * @return 分页结果
+	     */
+	    IPage<ConsumeTransactionEntity> queryTransactions(
+	            Page<ConsumeTransactionEntity> page,
+	            @Param("userId") Long userId,
+	            @Param("transactionNo") String transactionNo,
+	            @Param("deviceId") Long deviceId,
+	            @Param("areaId") String areaId,
+	            @Param("startTime") LocalDateTime startTime,
+	            @Param("endTime") LocalDateTime endTime,
+	            @Param("consumeMode") String consumeMode,
+	            @Param("status") String status);
 }
+
+
+

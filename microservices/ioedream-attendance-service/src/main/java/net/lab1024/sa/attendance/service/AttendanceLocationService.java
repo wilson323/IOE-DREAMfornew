@@ -27,3 +27,5 @@ public interface AttendanceLocationService {
      */
     ResponseDTO<Boolean> validateLocation(Long employeeId, Double latitude, Double longitude);
 }
+
+

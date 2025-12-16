@@ -78,57 +78,45 @@ spring:
             group: ${NACOS_GROUP:IOE-DREAM}
             refresh: true
   # ==================== 配置文件导入 ====================
+  # 注意：Spring Cloud Alibaba 2025.0.0.0版本在config.import阶段无法解析占位符，需要直接指定dataId
   config:
     import:
-      - "optional:nacos:${spring.application.name}.yaml"
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:ioedream-video-service.yaml"
+      - "optional:nacos:ioedream-video-service-docker.yaml"
       - "optional:nacos:common-config.yaml"
       - "optional:nacos:video-surveillance-config.yaml"
 
-# ==================== 加密配置 ====================
-jasypt:
-  encryptor:
-    password: ${JASYPT_PASSWORD:default-password-change-in-production}
-    algorithm: PBEWITHHMACSHA512ANDAES_256
-    key-obtention-iterations: 1000
-    pool-size: 1
-    provider-name: SunJCE
-    salt-generator-classname: org.jasypt.salt.RandomSaltGenerator
-    string-output-type: base64
-    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
-    property:
-      prefix: ENC(
-      suffix: )
-
 # ==================== JVM配置 ====================
+# 开发环境使用较小内存配置，生产环境通过环境变量覆盖
 java:
-  # 视频服务JVM优化参数（视频流处理）
   opts:
+    # 开发环境默认配置 (2GB堆内存，视频服务需要更多内存)
     - "-server"
-    - "-Xms2g"
-    - "-Xmx4g"
+    - "-Xms${JVM_XMS:1g}"
+    - "-Xmx${JVM_XMX:2g}"
     - "-XX:+UseG1GC"
     - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+UseStringDeduplication"
+    - "-XX:MaxMetaspaceSize=${JVM_METASPACE:256m}"
     - "-XX:+HeapDumpOnOutOfMemoryError"
     - "-XX:HeapDumpPath=/var/log/ioedream/video-service"
-    - "-XX:+PrintGCDetails"
-    - "-XX:+PrintGCTimeStamps"
     - "-Dfile.encoding=UTF-8"
     - "-Duser.timezone=Asia/Shanghai"
     - "-Djava.awt.headless=true"
-    - "-Dorg.bytedeco.javacpp.maxbytes=1g"
-    - "-Dorg.bytedeco.javacpp.maxphysicalbytes=2g"
+    - "-Dorg.bytedeco.javacpp.maxbytes=${JAVACPP_MAXBYTES:512m}"
+    - "-Dorg.bytedeco.javacpp.maxphysicalbytes=${JAVACPP_MAXPHYSICALBYTES:1g}"
 
 # ==================== 日志配置启动参数 ====================
 logging:
   config: classpath:logback-spring.xml
   level:
     root: INFO
-    net.lab1024.sa.video: DEBUG
-    org.springframework: INFO
-    org.bytedeco.javacv: WARN
+    "[net.lab1024.sa.video]": DEBUG
+    "[org.springframework]": INFO
+    "[org.bytedeco.javacv]": WARN
 
 # ==================== 视频服务特定配置 ====================
+# 注意：video 是应用自定义配置，Spring Boot 语言服务器可能显示警告，但配置有效
 video:
   streaming:
     # 视频流配置

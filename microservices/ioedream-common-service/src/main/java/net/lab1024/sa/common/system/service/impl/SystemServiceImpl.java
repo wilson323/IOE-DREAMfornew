@@ -1,5 +1,6 @@
 package net.lab1024.sa.common.system.service.impl;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
@@ -14,6 +15,10 @@ import net.lab1024.sa.common.system.domain.vo.DictVO;
 import net.lab1024.sa.common.system.manager.ConfigManager;
 import net.lab1024.sa.common.system.manager.DictManager;
 import net.lab1024.sa.common.system.service.SystemService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,10 +64,11 @@ public class SystemServiceImpl implements SystemService {
     @Resource
     private ConfigManager configManager;
 
-    @Resource
+    @Resource(name = "systemDictManager")
     private DictManager dictManager;
 
     @Override
+    @Observed(name = "system.createConfig", contextualName = "system-create-config")
     public ResponseDTO<Long> createConfig(ConfigCreateDTO dto) {
         try {
             SystemConfigEntity config = new SystemConfigEntity();
@@ -93,13 +99,20 @@ public class SystemServiceImpl implements SystemService {
             log.info("创建系统配置成功 - key: {}", config.getConfigKey());
             return ResponseDTO.ok(config.getId());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[创建系统配置] 参数异常，key: {}, error={}", dto.getConfigKey(), e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "创建系统配置参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[创建系统配置] 业务异常，key: {}, error={}", dto.getConfigKey(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("创建系统配置失败", e);
-            return ResponseDTO.error("创建系统配置失败");
+            log.error("[创建系统配置] 系统异常，key: {}", dto.getConfigKey(), e);
+            return ResponseDTO.error("SYSTEM_ERROR", "创建系统配置失败，请稍后重试");
         }
     }
 
     @Override
+    @Observed(name = "system.updateConfig", contextualName = "system-update-config")
     public ResponseDTO<Void> updateConfig(Long configId, ConfigUpdateDTO dto) {
         try {
             SystemConfigEntity config = systemConfigDao.selectById(configId);
@@ -124,19 +137,26 @@ public class SystemServiceImpl implements SystemService {
 
             systemConfigDao.updateById(config);
 
-            // 刷新缓存
-            configManager.refreshConfig(config.getConfigKey());
+            // 刷新缓存（使用@CacheEvict注解）
+            evictConfigCache(config.getConfigKey());
 
             log.info("更新系统配置成功 - key: {}", config.getConfigKey());
             return ResponseDTO.ok();
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[更新系统配置] 参数异常，configId: {}, error={}", configId, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "更新系统配置参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[更新系统配置] 业务异常，configId: {}, error={}", configId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("更新系统配置失败 - configId: {}", configId, e);
-            return ResponseDTO.error("更新系统配置失败");
+            log.error("[更新系统配置] 系统异常，configId: {}", configId, e);
+            return ResponseDTO.error("SYSTEM_ERROR", "更新系统配置失败，请稍后重试");
         }
     }
 
     @Override
+    @Observed(name = "system.deleteConfig", contextualName = "system-delete-config")
     public ResponseDTO<Void> deleteConfig(Long configId) {
         try {
             SystemConfigEntity config = systemConfigDao.selectById(configId);
@@ -150,25 +170,35 @@ public class SystemServiceImpl implements SystemService {
 
             systemConfigDao.deleteById(configId);
 
-            // 刷新缓存
-            configManager.refreshConfig(config.getConfigKey());
+            // 刷新缓存（使用@CacheEvict注解）
+            evictConfigCache(config.getConfigKey());
 
             log.info("删除系统配置成功 - key: {}", config.getConfigKey());
             return ResponseDTO.ok();
 
+        } catch (BusinessException e) {
+            log.warn("[删除系统配置] 业务异常，configId: {}, error={}", configId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("删除系统配置失败 - configId: {}", configId, e);
-            return ResponseDTO.error("删除系统配置失败");
+            log.error("[删除系统配置] 系统异常，configId: {}", configId, e);
+            return ResponseDTO.error("SYSTEM_ERROR", "删除系统配置失败，请稍后重试");
         }
     }
 
     @Override
+    @Observed(name = "system.getConfigValue", contextualName = "system-get-config-value")
+    @Cacheable(value = "system:config", key = "#configKey", unless = "#result == null")
     public String getConfigValue(String configKey) {
-        String value = configManager.getConfigValue(configKey);
+        // 直接查询数据库（缓存由@Cacheable注解处理）
+        SystemConfigEntity config = systemConfigDao.selectByKey(configKey);
+        if (config == null) {
+            return null;
+        }
+
+        String value = config.getConfigValue();
 
         // 如果配置加密，需要解密
-        SystemConfigEntity config = systemConfigDao.selectByKey(configKey);
-        if (config != null && config.getIsEncrypt() == 1) {
+        if (config.getIsEncrypt() == 1) {
             value = configManager.decryptConfigValue(value);
         }
 
@@ -176,18 +206,35 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
+    @Observed(name = "system.refreshConfigCache", contextualName = "system-refresh-config-cache")
+    @CacheEvict(value = "system:config", allEntries = true)
     public ResponseDTO<Void> refreshConfigCache() {
         try {
-            configManager.refreshConfigCache();
+            // 缓存清除由@CacheEvict注解自动处理
+            log.info("刷新配置缓存成功");
             return ResponseDTO.ok();
 
         } catch (Exception e) {
-            log.error("刷新配置缓存失败", e);
-            return ResponseDTO.error("刷新配置缓存失败");
+            log.error("[刷新配置缓存] 系统异常", e);
+            return ResponseDTO.error("SYSTEM_ERROR", "刷新配置缓存失败，请稍后重试");
         }
     }
 
+    /**
+     * 清除指定配置的缓存
+     * <p>
+     * 使用@CacheEvict注解清除缓存
+     * </p>
+     *
+     * @param configKey 配置键
+     */
+    @CacheEvict(value = "system:config", key = "#configKey")
+    public void evictConfigCache(String configKey) {
+        log.debug("清除配置缓存 - configKey: {}", configKey);
+    }
+
     @Override
+    @Observed(name = "system.createDict", contextualName = "system-create-dict")
     public ResponseDTO<Long> createDict(DictCreateDTO dto) {
         try {
             // 验证字典值唯一性
@@ -216,41 +263,67 @@ public class SystemServiceImpl implements SystemService {
 
             systemDictDao.insert(dict);
 
-            // 刷新缓存
-            dictManager.refreshDict(dto.getDictTypeCode());
+            // 刷新缓存（使用@CacheEvict注解）
+            evictDictCache(dto.getDictTypeCode());
 
             log.info("创建字典数据成功 - typeCode: {}, value: {}", dto.getDictTypeCode(), dto.getDictValue());
             return ResponseDTO.ok(dict.getId());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[创建字典数据] 参数异常，typeCode: {}, error={}", dto.getDictTypeCode(), e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "创建字典数据参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[创建字典数据] 业务异常，typeCode: {}, error={}", dto.getDictTypeCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("创建字典数据失败", e);
-            return ResponseDTO.error("创建字典数据失败");
+            log.error("[创建字典数据] 系统异常，typeCode: {}", dto.getDictTypeCode(), e);
+            return ResponseDTO.error("SYSTEM_ERROR", "创建字典数据失败，请稍后重试");
         }
     }
 
     @Override
+    @Observed(name = "system.getDictList", contextualName = "system-get-dict-list")
+    @Cacheable(value = "system:dict", key = "#dictType", unless = "#result == null || !#result.isSuccess() || #result.getData() == null || #result.getData().isEmpty()")
     public ResponseDTO<List<DictVO>> getDictList(String dictType) {
         try {
-            List<SystemDictEntity> list = dictManager.getDictList(dictType);
+            // 直接调用DAO查询，缓存由@Cacheable注解处理
+            List<SystemDictEntity> list = systemDictDao.selectEnabledByTypeCode(dictType);
             List<DictVO> voList = list.stream()
                     .map(this::convertDictToVO)
                     .collect(Collectors.toList());
 
             return ResponseDTO.ok(voList);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[获取字典列表] 参数异常，dictType: {}, error={}", dictType, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "获取字典列表参数错误: " + e.getMessage());
         } catch (Exception e) {
-            log.error("获取字典列表失败 - dictType: {}", dictType, e);
-            return ResponseDTO.error("获取字典列表失败");
+            log.error("[获取字典列表] 系统异常，dictType: {}", dictType, e);
+            return ResponseDTO.error("SYSTEM_ERROR", "获取字典列表失败，请稍后重试");
         }
     }
 
     @Override
+    @Observed(name = "system.getDictTree", contextualName = "system-get-dict-tree")
+    @Cacheable(value = "system:dict:tree", key = "#dictType", unless = "#result == null || !#result.isSuccess() || #result.getData() == null || #result.getData().isEmpty()")
     public ResponseDTO<List<DictVO>> getDictTree(String dictType) {
         try {
             log.debug("[字典树] 获取字典树: dictType={}", dictType);
 
-            // 1. 构建字典树（返回Map结构）
-            List<Map<String, Object>> dictTreeMap = dictManager.buildDictTree(dictType);
+            // 1. 获取字典列表（使用@Cacheable注解缓存）
+            List<SystemDictEntity> list = systemDictDao.selectEnabledByTypeCode(dictType);
+
+            // 2. 构建字典树（返回Map结构）
+            List<Map<String, Object>> dictTreeMap = list.stream()
+                    .map(dict -> {
+                        Map<String, Object> node = new HashMap<>();
+                        node.put("value", dict.getDictValue());
+                        node.put("label", dict.getDictLabel());
+                        node.put("sortOrder", dict.getSortOrder());
+                        node.put("isDefault", dict.getIsDefault());
+                        return node;
+                    })
+                    .collect(Collectors.toList());
 
             // 2. 转换为DictVO列表
             List<DictVO> dictVOList = dictTreeMap.stream()
@@ -268,25 +341,45 @@ public class SystemServiceImpl implements SystemService {
             log.debug("[字典树] 获取字典树成功: dictType={}, count={}", dictType, dictVOList.size());
             return ResponseDTO.ok(dictVOList);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[字典树] 参数异常，dictType: {}, error={}", dictType, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "获取字典树参数错误: " + e.getMessage());
         } catch (Exception e) {
-            log.error("[字典树] 获取字典树失败: dictType={}", dictType, e);
-            return ResponseDTO.error("获取字典树失败: " + e.getMessage());
+            log.error("[字典树] 系统异常，dictType: {}", dictType, e);
+            return ResponseDTO.error("SYSTEM_ERROR", "获取字典树失败，请稍后重试");
         }
     }
 
     @Override
+    @Observed(name = "system.refreshDictCache", contextualName = "system-refresh-dict-cache")
+    @CacheEvict(value = {"system:dict", "system:dict:tree"}, allEntries = true)
     public ResponseDTO<Void> refreshDictCache() {
         try {
-            dictManager.refreshDictCache();
+            // 缓存清除由@CacheEvict注解自动处理
+            log.info("刷新字典缓存成功");
             return ResponseDTO.ok();
 
         } catch (Exception e) {
-            log.error("刷新字典缓存失败", e);
-            return ResponseDTO.error("刷新字典缓存失败");
+            log.error("[刷新字典缓存] 系统异常", e);
+            return ResponseDTO.error("SYSTEM_ERROR", "刷新字典缓存失败，请稍后重试");
         }
     }
 
+    /**
+     * 清除指定字典类型的缓存
+     * <p>
+     * 使用@CacheEvict注解清除缓存
+     * </p>
+     *
+     * @param dictTypeCode 字典类型代码
+     */
+    @CacheEvict(value = {"system:dict", "system:dict:tree"}, key = "#dictTypeCode")
+    public void evictDictCache(String dictTypeCode) {
+        log.debug("清除字典缓存 - dictTypeCode: {}", dictTypeCode);
+    }
+
     @Override
+    @Observed(name = "system.getSystemInfo", contextualName = "system-get-system-info")
     public ResponseDTO<Map<String, Object>> getSystemInfo() {
         try {
             Map<String, Object> info = new HashMap<>();
@@ -311,12 +404,13 @@ public class SystemServiceImpl implements SystemService {
             return ResponseDTO.ok(info);
 
         } catch (Exception e) {
-            log.error("获取系统信息失败", e);
-            return ResponseDTO.error("获取系统信息失败");
+            log.error("[获取系统信息] 系统异常", e);
+            return ResponseDTO.error("SYSTEM_ERROR", "获取系统信息失败，请稍后重试");
         }
     }
 
     @Override
+    @Observed(name = "system.getSystemStatistics", contextualName = "system-get-system-statistics")
     public ResponseDTO<Map<String, Object>> getSystemStatistics() {
         try {
             Map<String, Object> stats = new HashMap<>();
@@ -332,8 +426,8 @@ public class SystemServiceImpl implements SystemService {
             return ResponseDTO.ok(stats);
 
         } catch (Exception e) {
-            log.error("获取系统统计失败", e);
-            return ResponseDTO.error("获取系统统计失败");
+            log.error("[获取系统统计] 系统异常", e);
+            return ResponseDTO.error("SYSTEM_ERROR", "获取系统统计失败，请稍后重试");
         }
     }
 

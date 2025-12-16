@@ -43,3 +43,5 @@ public class MobileQuickConsumeRequestDTO {
     @Schema(description = "消费描述", example = "午餐消费")
     private String description;
 }
+
+

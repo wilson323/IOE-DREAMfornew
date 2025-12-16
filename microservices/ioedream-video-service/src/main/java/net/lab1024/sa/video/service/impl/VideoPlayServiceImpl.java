@@ -11,8 +11,12 @@ import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
@@ -39,6 +43,8 @@ import net.lab1024.sa.video.service.VideoDeviceService;
 @Transactional(rollbackFor = Exception.class)
 public class VideoPlayServiceImpl implements VideoPlayService {
 
+    private static final String DEFAULT_FALLBACK_HOST = "localhost";
+
     @Resource
     private DeviceDao deviceDao;
 
@@ -46,22 +52,29 @@ public class VideoPlayServiceImpl implements VideoPlayService {
     private VideoDeviceService videoDeviceService;
 
     @Override
+    @Observed(name = "video.play.getStream", contextualName = "video-play-get-stream")
     @Transactional(readOnly = true)
     public Map<String, Object> getVideoStream(Long deviceId, Long channelId, String streamType) {
         log.info("[视频播放] 获取视频流地址，deviceId={}, channelId={}, streamType={}", deviceId, channelId, streamType);
 
         try {
+            // 参数验证
+            if (deviceId == null) {
+                log.warn("[视频播放] 设备ID不能为空");
+                throw new ParamException("DEVICE_ID_REQUIRED", "设备ID不能为空");
+            }
+
             // 查询设备信息
             DeviceEntity device = deviceDao.selectById(deviceId);
             if (device == null) {
                 log.warn("[视频播放] 设备不存在，deviceId={}", deviceId);
-                throw new RuntimeException("设备不存在");
+                throw new BusinessException("DEVICE_NOT_FOUND", "设备不存在");
             }
 
             // 验证是否为视频设备
             if (!"CAMERA".equals(device.getDeviceType())) {
                 log.warn("[视频播放] 设备类型不匹配，deviceId={}, deviceType={}", deviceId, device.getDeviceType());
-                throw new RuntimeException("设备类型不匹配");
+                throw new BusinessException("DEVICE_TYPE_MISMATCH", "设备类型不匹配");
             }
 
             // 构建视频流地址
@@ -85,29 +98,45 @@ public class VideoPlayServiceImpl implements VideoPlayService {
             log.info("[视频播放] 获取视频流地址成功，deviceId={}, streamUrl={}", deviceId, streamUrl);
             return result;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[视频播放] 获取视频流地址参数错误: deviceId={}, error={}", deviceId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[视频播放] 获取视频流地址业务异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[视频播放] 获取视频流地址系统异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("GET_VIDEO_STREAM_SYSTEM_ERROR", "获取视频流地址失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[视频播放] 获取视频流地址失败，deviceId={}", deviceId, e);
-            throw new RuntimeException("获取视频流地址失败: " + e.getMessage(), e);
+            log.error("[视频播放] 获取视频流地址未知异常: deviceId={}", deviceId, e);
+            throw new SystemException("GET_VIDEO_STREAM_SYSTEM_ERROR", "获取视频流地址失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "video.play.getSnapshot", contextualName = "video-play-get-snapshot")
     @Transactional(readOnly = true)
     public Map<String, Object> getSnapshot(Long deviceId, Long channelId) {
         log.info("[视频播放] 获取视频截图，deviceId={}, channelId={}", deviceId, channelId);
 
         try {
+            // 参数验证
+            if (deviceId == null) {
+                log.warn("[视频播放] 设备ID不能为空");
+                throw new ParamException("DEVICE_ID_REQUIRED", "设备ID不能为空");
+            }
+
             // 查询设备信息
             DeviceEntity device = deviceDao.selectById(deviceId);
             if (device == null) {
                 log.warn("[视频播放] 设备不存在，deviceId={}", deviceId);
-                throw new RuntimeException("设备不存在");
+                throw new BusinessException("DEVICE_NOT_FOUND", "设备不存在");
             }
 
             // 验证是否为视频设备
             if (!"CAMERA".equals(device.getDeviceType())) {
                 log.warn("[视频播放] 设备类型不匹配，deviceId={}, deviceType={}", deviceId, device.getDeviceType());
-                throw new RuntimeException("设备类型不匹配");
+                throw new BusinessException("DEVICE_TYPE_MISMATCH", "设备类型不匹配");
             }
 
             // 构建截图URL
@@ -127,13 +156,23 @@ public class VideoPlayServiceImpl implements VideoPlayService {
             log.info("[视频播放] 获取视频截图成功，deviceId={}, snapshotUrl={}", deviceId, snapshotUrl);
             return result;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[视频播放] 获取视频截图参数错误: deviceId={}, error={}", deviceId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[视频播放] 获取视频截图业务异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[视频播放] 获取视频截图系统异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("GET_SNAPSHOT_SYSTEM_ERROR", "获取视频截图失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[视频播放] 获取视频截图失败，deviceId={}", deviceId, e);
-            throw new RuntimeException("获取视频截图失败: " + e.getMessage(), e);
+            log.error("[视频播放] 获取视频截图未知异常: deviceId={}", deviceId, e);
+            throw new SystemException("GET_SNAPSHOT_SYSTEM_ERROR", "获取视频截图失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "video.play.getMobileDeviceList", contextualName = "video-play-get-mobile-device-list")
     @Transactional(readOnly = true)
     public List<VideoDeviceVO> getMobileDeviceList(String areaId, String deviceType, Integer status) {
         log.info("[视频播放] 获取移动端设备列表，areaId={}, deviceType={}, status={}", areaId, deviceType, status);
@@ -152,6 +191,7 @@ public class VideoPlayServiceImpl implements VideoPlayService {
                     wrapper.eq(DeviceEntity::getAreaId, areaIdLong);
                 } catch (NumberFormatException e) {
                     log.warn("[视频播放] 区域ID格式错误，areaId={}", areaId);
+                    throw new ParamException("INVALID_AREA_ID_FORMAT", "区域ID格式错误, areaId=" + areaId, e);
                 }
             }
 
@@ -192,9 +232,18 @@ public class VideoPlayServiceImpl implements VideoPlayService {
             log.info("[视频播放] 获取移动端设备列表成功，设备数量={}", voList.size());
             return voList;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[视频播放] 获取移动端设备列表参数错误: error={}", e.getMessage());
+            return new ArrayList<>(); // For read-only operations, return empty list on parameter error
+        } catch (BusinessException e) {
+            log.warn("[视频播放] 获取移动端设备列表业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return new ArrayList<>(); // For read-only operations, return empty list on business error
+        } catch (SystemException e) {
+            log.error("[视频播放] 获取移动端设备列表系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return new ArrayList<>(); // For read-only operations, return empty list on system error
         } catch (Exception e) {
-            log.error("[视频播放] 获取移动端设备列表失败", e);
-            return new ArrayList<>();
+            log.error("[视频播放] 获取移动端设备列表未知异常", e);
+            return new ArrayList<>(); // For read-only operations, return empty list on unknown error
         }
     }
 
@@ -208,40 +257,33 @@ public class VideoPlayServiceImpl implements VideoPlayService {
      * @return 视频流地址
      */
     private String buildStreamUrl(DeviceEntity device, Long channelId, String streamType, String protocol) {
-        // 默认流类型
-        if (streamType == null || streamType.isEmpty()) {
-            streamType = "MAIN";
-        }
-
-        // 默认通道ID
-        if (channelId == null) {
-            channelId = 1L;
-        }
+        String resolvedStreamType = (streamType == null || streamType.isEmpty()) ? "MAIN" : streamType;
+        Long resolvedChannelId = channelId != null ? channelId : 1L;
 
         // 根据协议构建流地址
         switch (protocol) {
             case "RTSP":
                 // RTSP格式：rtsp://username:password@ip:port/path
                 // 实际应从设备配置中获取用户名和密码
-                String rtspPath = String.format("/Streaming/Channels/%d%02d", channelId, 
-                        "MAIN".equals(streamType) ? 1 : 2);
+                String rtspPath = String.format("/Streaming/Channels/%d%02d", resolvedChannelId,
+                        "MAIN".equals(resolvedStreamType) ? 1 : 2);
                 return String.format("rtsp://%s:%d%s",
-                        device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1",
+                        device.getIpAddress() != null ? device.getIpAddress() : DEFAULT_FALLBACK_HOST,
                         device.getPort() != null ? device.getPort() : 554,
                         rtspPath);
             case "RTMP":
                 return String.format("rtmp://%s:%d/live/%d",
-                        device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1",
+                        device.getIpAddress() != null ? device.getIpAddress() : DEFAULT_FALLBACK_HOST,
                         device.getPort() != null ? device.getPort() : 1935,
-                        channelId);
+                        resolvedChannelId);
             case "HLS":
                 return String.format("http://%s:%d/hls/%d.m3u8",
-                        device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1",
+                        device.getIpAddress() != null ? device.getIpAddress() : DEFAULT_FALLBACK_HOST,
                         device.getPort() != null ? device.getPort() : 80,
-                        channelId);
+                        resolvedChannelId);
             default:
                 // 默认使用RTSP
-                return buildStreamUrl(device, channelId, streamType, "RTSP");
+                return buildStreamUrl(device, resolvedChannelId, resolvedStreamType, "RTSP");
         }
     }
 
@@ -253,17 +295,14 @@ public class VideoPlayServiceImpl implements VideoPlayService {
      * @return 截图URL
      */
     private String buildSnapshotUrl(DeviceEntity device, Long channelId) {
-        // 默认通道ID
-        if (channelId == null) {
-            channelId = 1L;
-        }
+        Long resolvedChannelId = channelId != null ? channelId : 1L;
 
         // 构建截图接口地址
         // 实际应从视频设备获取截图，这里返回截图接口地址
         return String.format("http://%s:%d/ISAPI/Streaming/channels/%d/picture",
-                device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1",
+                device.getIpAddress() != null ? device.getIpAddress() : DEFAULT_FALLBACK_HOST,
                 device.getPort() != null ? device.getPort() : 80,
-                channelId);
+                resolvedChannelId);
     }
 
     /**

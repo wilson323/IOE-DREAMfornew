@@ -3,6 +3,10 @@
 > **状态**: ✅ 已解决BOM问题，Maven可正常使用
 > **更新时间**: 2025-12-09 12:08
 
+## ✅ 构建真相源（强制）
+- **仅允许 Maven**：以 `microservices/pom.xml` 为唯一构建入口。
+- 已移除 `build.gradle/settings.gradle`，避免双构建体系造成依赖漂移。
+
 ## 🎯 问题根源
 
 **发现**: 所有pom.xml文件包含BOM字符（UTF-8 BOM），导致Maven解析错误：
@@ -41,7 +45,9 @@ set MAVEN_OPTS=-Xmx1024m -Dfile.encoding=UTF-8
 mvn clean -Duser.language=en -Duser.country=US
 
 # 4. 编译公共模块（必须先编译）
-cd microservices-common
+cd microservices-common-core
+mvn install -DskipTests -Duser.language=en -Duser.country=US
+cd ../microservices-common
 mvn install -DskipTests -Duser.language=en -Duser.country=US
 
 # 5. 返回主目录编译所有模块
@@ -69,7 +75,9 @@ Set-Location "D:\IOE-DREAM\microservices"
 & mvn clean -q -Duser.language=en -Duser.country=US
 
 # 编译公共模块
-Set-Location "microservices-common"
+Set-Location "microservices-common-core"
+& mvn install -DskipTests -q -Duser.language=en -Duser.country=US
+Set-Location "..\\microservices-common"
 & mvn install -DskipTests -q -Duser.language=en -Duser.country=US
 Set-Location ".."
 

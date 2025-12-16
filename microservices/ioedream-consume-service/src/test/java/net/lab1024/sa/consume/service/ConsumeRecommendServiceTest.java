@@ -21,10 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.lab1024.sa.common.cache.CacheService;
 import net.lab1024.sa.common.recommend.RecommendationEngine;
-import net.lab1024.sa.common.util.RedisUtil;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeAreaEntity;
 import net.lab1024.sa.consume.domain.entity.ConsumeProductEntity;
 import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
@@ -35,7 +33,7 @@ import net.lab1024.sa.consume.service.ConsumeRecommendService.RestaurantRecommen
 /**
  * ConsumeRecommendService单元测试
  * <p>
- * 目标覆盖率：≥80%
+ * 目标覆盖率：>= 80%
  * 测试范围：推荐服务核心方法
  * </p>
  *
@@ -60,9 +58,6 @@ class ConsumeRecommendServiceTest {
 
     @Mock
     private CacheService cacheService;
-
-    @Mock
-    private RedisUtil redisUtil;
 
     @Mock
     private ObjectMapper objectMapper;
@@ -116,8 +111,6 @@ class ConsumeRecommendServiceTest {
                 .thenReturn(transactions);
         when(consumeProductDao.selectOnShelfProducts())
                 .thenReturn(products);
-        when(RedisUtil.get(anyString()))
-                .thenReturn(null);
 
         List<RecommendationEngine.RecommendationResult> mockResults = new ArrayList<>();
         RecommendationEngine.RecommendationResult result = mock(RecommendationEngine.RecommendationResult.class);
@@ -167,13 +160,6 @@ class ConsumeRecommendServiceTest {
 
         when(recommendationEngine.hybridRecommendation(anyLong(), anyMap(), anyMap(), anyMap(), anyInt()))
                 .thenReturn(mockResults);
-
-        ConsumeAreaEntity mockArea = new ConsumeAreaEntity();
-        mockArea.setId(1L); // AreaEntity使用id作为主键，映射到area_id列
-        // GPS位置信息存储在AreaEntity的gpsLocation字段中，通过父类方法设置
-        // 注意：如果AreaEntity没有setGpsLocation方法，可能需要通过其他方式设置
-        when(consumeAreaManager.getAreaById(anyString()))
-                .thenReturn(mockArea);
 
         // When
         List<RestaurantRecommendation> recommendations = recommendService.recommendRestaurants(
@@ -242,3 +228,5 @@ class ConsumeRecommendServiceTest {
         assertEquals(15.0, predictedAmount); // 默认金额
     }
 }
+
+

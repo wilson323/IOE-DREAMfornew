@@ -9,14 +9,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalConfigForm;
-import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.oa.workflow.dao.ApprovalConfigDao;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalConfigForm;
+import net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity;
 import net.lab1024.sa.oa.workflow.service.ApprovalConfigService;
 
 /**
@@ -42,6 +46,7 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
     private ApprovalConfigDao approvalConfigDao;
 
     @Override
+    @Observed(name = "approval.config.pageConfigs", contextualName = "approval-config-page")
     public ResponseDTO<PageResult<ApprovalConfigEntity>> pageConfigs(
             PageParam pageParam, String businessType, String module, String status) {
         log.info("分页查询审批配置，businessType={}, module={}, status={}", businessType, module, status);
@@ -70,13 +75,23 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
             result.setPageSize(pageParam.getPageSize());
 
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批配置] 分页查询审批配置参数错误: {}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[审批配置] 分页查询审批配置业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[审批配置] 分页查询审批配置系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("PAGE_CONFIGS_SYSTEM_ERROR", "分页查询审批配置失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("分页查询审批配置异常", e);
-            return ResponseDTO.error("分页查询审批配置失败: " + e.getMessage());
+            log.error("[审批配置] 分页查询审批配置未知异常", e);
+            throw new SystemException("PAGE_CONFIGS_SYSTEM_ERROR", "分页查询审批配置失败：" + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "approval.config.getConfig", contextualName = "approval-config-get")
     public ResponseDTO<ApprovalConfigEntity> getConfig(Long id) {
         log.info("查询审批配置，id={}", id);
 
@@ -93,6 +108,7 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
     }
 
     @Override
+    @Observed(name = "approval.config.getByBusinessType", contextualName = "approval-config-get-by-type")
     public ResponseDTO<ApprovalConfigEntity> getConfigByBusinessType(String businessType) {
         log.info("根据业务类型查询审批配置，businessType={}", businessType);
 
@@ -110,6 +126,7 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @Observed(name = "approval.config.createConfig", contextualName = "approval-config-create")
     public ResponseDTO<ApprovalConfigEntity> createConfig(ApprovalConfigForm form) {
         log.info("创建审批配置，businessType={}", form.getBusinessType());
 
@@ -148,6 +165,7 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @Observed(name = "approval.config.updateConfig", contextualName = "approval-config-update")
     public ResponseDTO<ApprovalConfigEntity> updateConfig(Long id, ApprovalConfigForm form) {
         log.info("更新审批配置，id={}, businessType={}", id, form.getBusinessType());
 
@@ -198,6 +216,7 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @Observed(name = "approval.config.deleteConfig", contextualName = "approval-config-delete")
     public ResponseDTO<Void> deleteConfig(Long id) {
         log.info("删除审批配置，id={}", id);
 
@@ -218,22 +237,32 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @Observed(name = "approval.config.enableConfig", contextualName = "approval-config-enable")
     public ResponseDTO<Void> enableConfig(Long id) {
         log.info("启用审批配置，id={}", id);
 
         try {
             ApprovalConfigEntity entity = approvalConfigDao.selectById(id);
             if (entity == null) {
-                return ResponseDTO.error("审批配置不存在");
+                throw new BusinessException("CONFIG_NOT_FOUND", "审批配置不存在");
             }
 
             entity.setStatus("ENABLED");
             approvalConfigDao.updateById(entity);
             log.info("启用审批配置成功，id={}", id);
             return ResponseDTO.ok();
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批配置] 启用审批配置参数错误，id={}, error={}", id, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[审批配置] 启用审批配置业务异常，id={}, code={}, message={}", id, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[审批配置] 启用审批配置系统异常，id={}, code={}, message={}", id, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ENABLE_CONFIG_SYSTEM_ERROR", "启用审批配置失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("启用审批配置异常，id={}", id, e);
-            return ResponseDTO.error("启用审批配置失败: " + e.getMessage());
+            log.error("[审批配置] 启用审批配置未知异常，id={}", id, e);
+            throw new SystemException("ENABLE_CONFIG_SYSTEM_ERROR", "启用审批配置失败：" + e.getMessage(), e);
         }
     }
 
@@ -245,17 +274,30 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
         try {
             ApprovalConfigEntity entity = approvalConfigDao.selectById(id);
             if (entity == null) {
-                return ResponseDTO.error("审批配置不存在");
+                throw new BusinessException("CONFIG_NOT_FOUND", "审批配置不存在");
             }
 
             entity.setStatus("DISABLED");
             approvalConfigDao.updateById(entity);
             log.info("禁用审批配置成功，id={}", id);
             return ResponseDTO.ok();
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[审批配置] 禁用审批配置参数错误，id={}, error={}", id, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[审批配置] 禁用审批配置业务异常，id={}, code={}, message={}", id, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[审批配置] 禁用审批配置系统异常，id={}, code={}, message={}", id, e.getCode(), e.getMessage(), e);
+            throw new SystemException("DISABLE_CONFIG_SYSTEM_ERROR", "禁用审批配置失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("禁用审批配置异常，id={}", id, e);
-            return ResponseDTO.error("禁用审批配置失败: " + e.getMessage());
+            log.error("[审批配置] 禁用审批配置未知异常，id={}", id, e);
+            throw new SystemException("DISABLE_CONFIG_SYSTEM_ERROR", "禁用审批配置失败：" + e.getMessage(), e);
         }
     }
 }
+
+
+
+
 

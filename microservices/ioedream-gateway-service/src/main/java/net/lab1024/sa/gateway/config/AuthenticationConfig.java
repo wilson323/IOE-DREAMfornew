@@ -1,12 +1,9 @@
 package net.lab1024.sa.gateway.config;
 
-import net.lab1024.sa.common.auth.manager.UnifiedAuthenticationManager;
 import net.lab1024.sa.common.auth.util.JwtTokenUtil;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * 认证配置类
@@ -31,13 +28,13 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Configuration
 public class AuthenticationConfig {
 
-    @Value("${auth.jwt.secret:ioedream-jwt-secret-key-2025-must-be-at-least-256-bits}")
+    @Value("${security.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${auth.jwt.access-token-expiration:86400}")
+    @Value("${security.jwt.expiration:86400}")
     private Long accessTokenExpiration;
 
-    @Value("${auth.jwt.refresh-token-expiration:604800}")
+    @Value("${security.jwt.refresh-expiration:604800}")
     private Long refreshTokenExpiration;
 
     /**
@@ -51,22 +48,8 @@ public class AuthenticationConfig {
         return new JwtTokenUtil(jwtSecret, accessTokenExpiration, refreshTokenExpiration);
     }
 
-    /**
-     * 注册统一认证管理器
-     * <p>
-     * 企业级统一身份认证管理，支持多种认证方式
-     * </p>
-     *
-     * @param gatewayServiceClient 网关服务客户端
-     * @param jwtTokenUtil JWT令牌工具类
-     * @param redisTemplate Redis模板
-     * @return 统一认证管理器实例
-     */
-    @Bean
-    public UnifiedAuthenticationManager unifiedAuthenticationManager(
-            GatewayServiceClient gatewayServiceClient,
-            JwtTokenUtil jwtTokenUtil,
-            StringRedisTemplate redisTemplate) {
-        return new UnifiedAuthenticationManager(gatewayServiceClient, jwtTokenUtil, redisTemplate);
-    }
+    // 架构优化方案A：网关服务轻量化
+    // UnifiedAuthenticationManager依赖阻塞式组件，认证逻辑移至common-service
+    // @Bean
+    // public UnifiedAuthenticationManager unifiedAuthenticationManager(...) { ... }
 }

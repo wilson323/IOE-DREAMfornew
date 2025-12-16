@@ -217,6 +217,8 @@ class ConsumeAccountControllerTest {
     void testUpdateAccountStatus_AccountIdIsNull() {
         // When & Then
         assertThrows(Exception.class, () -> {
+            when(accountService.freezeAccount(isNull(), anyString(), anyInt()))
+                    .thenThrow(new IllegalArgumentException("accountId不能为空"));
             accountController.updateAccountStatus(null, "freeze", "测试", 7);
         });
     }
@@ -226,12 +228,16 @@ class ConsumeAccountControllerTest {
     @Test
     @DisplayName("测试分页查询账户列表-查询表单为null")
     void testGetAccountList_QueryFormIsNull() {
+        @SuppressWarnings("unchecked")
+        IPage<AccountVO> mockPage = mock(IPage.class);
+        when(accountService.queryAccountPage(isNull())).thenReturn(ResponseDTO.ok(mockPage));
+
         // When
         ResponseDTO<IPage<AccountVO>> result = accountController.getAccountList(null);
 
         // Then
         assertNotNull(result);
-        // 根据实际实现，可能返回默认查询结果或错误
+        assertTrue(result.getOk());
     }
 
     @Test
@@ -239,6 +245,7 @@ class ConsumeAccountControllerTest {
     void testGetAccountBalance_UserIdIsNull() {
         // When & Then
         assertThrows(Exception.class, () -> {
+            when(accountService.getUserBalanceInfo(isNull())).thenThrow(new IllegalArgumentException("userId不能为空"));
             accountController.getAccountBalance(null);
         });
     }
@@ -248,7 +255,10 @@ class ConsumeAccountControllerTest {
     void testGetAccountByUserId_UserIdIsNull() {
         // When & Then
         assertThrows(Exception.class, () -> {
+            when(accountService.getAccountByUserId(isNull())).thenThrow(new IllegalArgumentException("userId不能为空"));
             accountController.getAccountByUserId(null);
         });
     }
 }
+
+

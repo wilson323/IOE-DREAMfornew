@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
@@ -31,10 +35,12 @@ public class AttendanceSupplementServiceImpl implements AttendanceSupplementServ
     private WorkflowApprovalManager workflowApprovalManager;
 
     @Resource
-    private net.lab1024.sa.common.attendance.manager.AttendanceManager attendanceManager;
+    private net.lab1024.sa.attendance.attendance.manager.AttendanceManager attendanceManager;
 
     @Override
+    @Observed(name = "attendance.supplement.submit", contextualName = "attendance-supplement-submit")
     @Transactional(rollbackFor = Exception.class)
+    @Retry(name = "external-service-retry", fallbackMethod = "submitSupplementApplicationFallback")
     public AttendanceSupplementEntity submitSupplementApplication(AttendanceSupplementForm form) {
         log.info("[补签申请] 提交补签申请，employeeId={}, supplementDate={}", form.getEmployeeId(), form.getSupplementDate());
 
@@ -85,6 +91,18 @@ public class AttendanceSupplementServiceImpl implements AttendanceSupplementServ
 
         log.info("[补签申请] 补签申请提交成功，supplementNo={}, workflowInstanceId={}", entity.getSupplementNo(), workflowInstanceId);
         return entity;
+    }
+
+    /**
+     * 补签申请提交降级方法
+     * <p>
+     * 当工作流服务调用失败时，使用此降级方法
+     * </p>
+     */
+    public AttendanceSupplementEntity submitSupplementApplicationFallback(
+            AttendanceSupplementForm form, Exception e) {
+        log.error("[补签申请] 启动审批流程失败，使用降级方案, employeeId={}, error={}", form.getEmployeeId(), e.getMessage(), e);
+        throw new BusinessException("启动审批流程失败: " + e.getMessage());
     }
 
     @Override
@@ -143,9 +161,18 @@ public class AttendanceSupplementServiceImpl implements AttendanceSupplementServ
                 log.warn("[补签申请] 补签审批通过处理失败，supplementNo={}, employeeId={}", entity.getSupplementNo(), entity.getEmployeeId());
                 // 不抛出异常，避免影响审批流程
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[补签申请] 补签审批通过处理参数错误: supplementNo={}, employeeId={}, error={}", entity.getSupplementNo(), entity.getEmployeeId(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[补签申请] 补签审批通过处理业务异常: supplementNo={}, employeeId={}, code={}, message={}", entity.getSupplementNo(), entity.getEmployeeId(), e.getCode(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[补签申请] 补签审批通过处理系统异常: supplementNo={}, employeeId={}, code={}, message={}", entity.getSupplementNo(), entity.getEmployeeId(), e.getCode(), e.getMessage(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         } catch (Exception e) {
-            log.error("[补签申请] 补签审批通过处理异常，supplementNo={}, employeeId={}", entity.getSupplementNo(), entity.getEmployeeId(), e);
-            // 不抛出异常，避免影响审批流程
+            log.error("[补签申请] 补签审批通过处理未知异常: supplementNo={}, employeeId={}", entity.getSupplementNo(), entity.getEmployeeId(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         }
     }
 
@@ -153,4 +180,6 @@ public class AttendanceSupplementServiceImpl implements AttendanceSupplementServ
         return "SP" + System.currentTimeMillis();
     }
 }
+
+
 

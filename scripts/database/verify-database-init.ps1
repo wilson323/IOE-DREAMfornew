@@ -14,8 +14,13 @@ param(
     [string]$Host = 'localhost',
     [int]$Port = 3306,
     [string]$Username = 'root',
-    [string]$Password = '123456'
+    [string]$Password = $env:MYSQL_ROOT_PASSWORD
 )
+
+if ([string]::IsNullOrWhiteSpace($Password)) {
+    Write-Host "错误: 缺少数据库密码，请设置环境变量 MYSQL_ROOT_PASSWORD（禁止使用默认口令）" -ForegroundColor Red
+    exit 1
+}
 
 # 颜色输出函数
 function Write-ColorOutput {

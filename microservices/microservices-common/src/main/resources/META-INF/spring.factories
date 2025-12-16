@@ -1,0 +1,3 @@
+# Spring Boot Auto Configuration
+# 自动装配公共Bean配置
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=net.lab1024.sa.common.config.CommonBeanAutoConfiguration

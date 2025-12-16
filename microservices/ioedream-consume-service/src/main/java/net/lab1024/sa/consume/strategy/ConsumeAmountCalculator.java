@@ -55,3 +55,6 @@ public interface ConsumeAmountCalculator {
     boolean isSupported(Long accountId, String areaId, AccountEntity account);
 }
 
+
+
+

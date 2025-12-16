@@ -48,3 +48,5 @@ public abstract class BaseTest {
         cleanTable(Object.class); // 这里需要替换为具体的实体类
     }
 }
+
+

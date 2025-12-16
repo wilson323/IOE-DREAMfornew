@@ -31,3 +31,6 @@ public interface ConsumeAreaDao extends BaseMapper<ConsumeAreaEntity> {
      */
     ConsumeAreaEntity selectByCode(@Param("areaCode") String areaCode);
 }
+
+
+

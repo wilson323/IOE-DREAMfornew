@@ -141,3 +141,6 @@ public class ConsumeComparisonVO {
         private String minDifferenceItem;
     }
 }
+
+
+

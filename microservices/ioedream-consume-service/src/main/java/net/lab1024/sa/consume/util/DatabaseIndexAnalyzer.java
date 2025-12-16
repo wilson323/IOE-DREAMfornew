@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.SystemException;
 
 /**
  * 数据库索引分析工具类
@@ -185,7 +186,7 @@ public class DatabaseIndexAnalyzer {
             return builder.build();
         } catch (SQLException e) {
             log.error("[索引分析] 获取表结构失败: tableName={}", tableName, e);
-            throw new RuntimeException("获取表结构失败: " + e.getMessage(), e);
+            throw new SystemException("DATABASE_TABLE_STRUCTURE_ERROR", "获取表结构失败: " + e.getMessage(), e);
         } finally {
             if (connection != null) {
                 try {
@@ -249,7 +250,7 @@ public class DatabaseIndexAnalyzer {
             }
         } catch (SQLException e) {
             log.error("[索引分析] 获取表索引失败: tableName={}", tableName, e);
-            throw new RuntimeException("获取表索引失败: " + e.getMessage(), e);
+            throw new SystemException("GET_TABLE_INDEX_ERROR", "获取表索引失败: " + e.getMessage(), e);
         } finally {
             if (rs != null) {
                 try {
@@ -301,7 +302,7 @@ public class DatabaseIndexAnalyzer {
             }
         } catch (SQLException e) {
             log.error("[索引分析] 分析字段映射失败: tableName={}", tableName, e);
-            throw new RuntimeException("分析字段映射失败: " + e.getMessage(), e);
+            throw new SystemException("ANALYZE_FIELD_MAPPING_ERROR", "分析字段映射失败: " + e.getMessage(), e);
         } finally {
             if (rs != null) {
                 try {
@@ -481,3 +482,6 @@ public class DatabaseIndexAnalyzer {
         return result.toString();
     }
 }
+
+
+

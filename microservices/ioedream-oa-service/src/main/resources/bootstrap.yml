@@ -77,10 +77,11 @@ spring:
             group: ${NACOS_GROUP:IOE-DREAM}
             refresh: true
   # ==================== 配置文件导入 ====================
+  # 注意：Spring Cloud Alibaba 2025.0.0.0版本在config.import阶段无法解析占位符，需要直接指定dataId
   config:
     import:
-      - "optional:nacos:${spring.application.name}.yaml"
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:ioedream-oa-service.yaml"
+      - "optional:nacos:ioedream-oa-service-docker.yaml"
       - "optional:nacos:common-config.yaml"
       - "optional:nacos:oa-workflow-config.yaml"
 
@@ -88,7 +89,7 @@ spring:
 # 注意: 'jasypt' 是自定义配置属性，VS Code 警告可忽略
 jasypt:
   encryptor:
-    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    password: ${JASYPT_PASSWORD}
     algorithm: PBEWITHHMACSHA512ANDAES_256
     key-obtention-iterations: 1000
     pool-size: 1
@@ -103,17 +104,17 @@ jasypt:
 # ==================== JVM配置 ====================
 # 注意: 'java' 是自定义配置属性，VS Code 警告可忽略
 java:
-  # OA服务JVM优化参数（工作流处理）
   opts:
+    # 开发环境默认配置 (1GB堆内存)
     - "-server"
-    - "-Xms1g"
-    - "-Xmx2g"
+    - "-Xms${JVM_XMS:512m}"
+    - "-Xmx${JVM_XMX:1g}"
     - "-XX:+UseG1GC"
     - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+UseStringDeduplication"
+    - "-XX:MaxMetaspaceSize=${JVM_METASPACE:192m}"
     - "-XX:+HeapDumpOnOutOfMemoryError"
     - "-XX:HeapDumpPath=/var/log/ioedream/oa-service"
-    - "-XX:+PrintGCDetails"
-    - "-XX:+PrintGCTimeStamps"
     - "-Dfile.encoding=UTF-8"
     - "-Duser.timezone=Asia/Shanghai"
 
@@ -122,10 +123,9 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: INFO
-    # Spring Boot 标准格式：使用点号分隔包名（VS Code 警告可忽略）
-    net.lab1024.sa.oa: DEBUG
-    org.activiti: INFO
-    org.springframework: INFO
+    "[net.lab1024.sa.oa]": DEBUG
+    "[org.activiti]": INFO
+    "[org.springframework]": INFO
 
 # ==================== OA服务特定配置 ====================
 # 注意: 'oa' 是自定义业务配置属性，VS Code 警告可忽略

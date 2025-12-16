@@ -145,3 +145,5 @@ public class MobileDeviceInfoVO {
     @Schema(description = "生物识别类型", example = "FACE,FINGERPRINT")
     private String biometricTypes;
 }
+
+

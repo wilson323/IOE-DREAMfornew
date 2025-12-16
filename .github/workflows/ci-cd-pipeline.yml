@@ -51,6 +51,12 @@ jobs:
       run: |
         ./scripts/architecture-compliance-check.ps1
 
+    - name: Manager Bean注册检查
+      shell: pwsh
+      run: |
+        pwsh -ExecutionPolicy Bypass -File ./scripts/check-manager-bean-registration.ps1
+      continue-on-error: false
+
   # 单元测试和集成测试
   testing:
     name: 测试执行

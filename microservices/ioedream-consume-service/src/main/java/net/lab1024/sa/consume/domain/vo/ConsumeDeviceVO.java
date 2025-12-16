@@ -62,3 +62,6 @@ public class ConsumeDeviceVO {
      */
     private String supportedModes;
 }
+
+
+

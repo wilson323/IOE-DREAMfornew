@@ -6,9 +6,9 @@ import java.util.Map;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.workflow.entity.WorkflowDefinitionEntity;
-import net.lab1024.sa.common.workflow.entity.WorkflowInstanceEntity;
-import net.lab1024.sa.common.workflow.entity.WorkflowTaskEntity;
+import net.lab1024.sa.oa.workflow.entity.WorkflowDefinitionEntity;
+import net.lab1024.sa.oa.workflow.entity.WorkflowInstanceEntity;
+import net.lab1024.sa.oa.workflow.entity.WorkflowTaskEntity;
 
 /**
  * 工作流引擎服务接口
@@ -289,4 +289,8 @@ public interface WorkflowEngineService {
      */
     ResponseDTO<Map<String, Object>> getUserWorkloadStatistics(Long userId, String startDate, String endDate);
 }
+
+
+
+
 

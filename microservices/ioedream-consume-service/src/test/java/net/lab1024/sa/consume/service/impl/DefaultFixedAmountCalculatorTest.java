@@ -27,7 +27,7 @@ import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 /**
  * DefaultFixedAmountCalculator单元测试
  * <p>
- * 目标覆盖率：≥80%
+ * 目标覆盖率：>= 80%
  * 测试范围：定值金额计算逻辑
  * </p>
  *
@@ -82,8 +82,6 @@ class DefaultFixedAmountCalculatorTest {
 
         when(consumeAreaManager.parseFixedValueConfig(anyString()))
                 .thenReturn(mockAreaConfig);
-        when(accountManager.getAccountById(anyLong()))
-                .thenReturn(mockAccount);
 
         // When - 使用实际的calculate方法
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
@@ -108,8 +106,6 @@ class DefaultFixedAmountCalculatorTest {
 
         when(consumeAreaManager.parseFixedValueConfig(anyString()))
                 .thenReturn(mockAreaConfig);
-        when(accountManager.getAccountById(anyLong()))
-                .thenReturn(mockAccount);
 
         // When
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
@@ -134,8 +130,6 @@ class DefaultFixedAmountCalculatorTest {
 
         when(consumeAreaManager.parseFixedValueConfig(anyString()))
                 .thenReturn(mockAreaConfig);
-        when(accountManager.getAccountById(anyLong()))
-                .thenReturn(mockAccount);
 
         // When
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
@@ -163,8 +157,6 @@ class DefaultFixedAmountCalculatorTest {
 
         when(consumeAreaManager.parseFixedValueConfig(anyString()))
                 .thenReturn(weekendConfig);
-        when(accountManager.getAccountById(anyLong()))
-                .thenReturn(mockAccount);
 
         // When
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
@@ -194,8 +186,6 @@ class DefaultFixedAmountCalculatorTest {
 
         when(consumeAreaManager.parseFixedValueConfig(anyString()))
                 .thenReturn(mockAreaConfig);
-        when(accountManager.getAccountById(anyLong()))
-                .thenReturn(highConsumeAccount);
 
         // When
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
@@ -220,8 +210,6 @@ class DefaultFixedAmountCalculatorTest {
 
         when(consumeAreaManager.parseFixedValueConfig(anyString()))
                 .thenReturn(null); // 配置加载失败
-        when(accountManager.getAccountById(anyLong()))
-                .thenReturn(mockAccount);
 
         // When
         net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO request =
@@ -235,6 +223,8 @@ class DefaultFixedAmountCalculatorTest {
 
         // Then
         assertNotNull(amount);
-        assertTrue(amount > 0);
+        assertEquals(0, amount);
     }
 }
+
+

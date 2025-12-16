@@ -47,3 +47,5 @@ public class MobileConsumeResultVO {
     @Schema(description = "是否需要签名", example = "false")
     private Boolean requireSignature;
 }
+
+

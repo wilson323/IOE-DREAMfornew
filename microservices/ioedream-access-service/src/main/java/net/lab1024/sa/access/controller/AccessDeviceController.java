@@ -1,5 +1,6 @@
 package net.lab1024.sa.access.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.access.service.AccessDeviceService;
 
 /**
@@ -71,6 +75,7 @@ public class AccessDeviceController {
      * GET /api/v1/access/device/query?pageNum=1&pageSize=20&keyword=门禁&areaId=4001&deviceStatus=ONLINE&enabledFlag=1
      * </pre>
      */
+    @Observed(name = "accessDevice.queryDevices", contextualName = "access-device-query")
     @GetMapping("/query")
     @Operation(
         summary = "分页查询设备",
@@ -113,8 +118,17 @@ public class AccessDeviceController {
 
             // 调用Service层查询
             return accessDeviceService.queryDevices(queryForm);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 分页查询设备参数错误: pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 分页查询设备业务异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁设备] 分页查询设备系统异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("QUERY_DEVICES_SYSTEM_ERROR", "查询设备失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁设备] 分页查询设备失败", e);
+            log.error("[门禁设备] 分页查询设备未知异常: pageNum={}, pageSize={}", pageNum, pageSize, e);
             return ResponseDTO.error("QUERY_DEVICES_ERROR", "查询设备失败: " + e.getMessage());
         }
     }
@@ -125,6 +139,7 @@ public class AccessDeviceController {
      * @param deviceId 设备ID
      * @return 设备详情
      */
+    @Observed(name = "accessDevice.getDeviceDetail", contextualName = "access-device-get-detail")
     @GetMapping("/{deviceId}")
     @Operation(summary = "查询设备详情", description = "根据设备ID查询设备详细信息")
     @PreAuthorize("hasRole('ACCESS_MANAGER')")
@@ -134,8 +149,17 @@ public class AccessDeviceController {
         try {
             // 调用Service层查询
             return accessDeviceService.getDeviceDetail(deviceId);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 查询设备详情参数错误: deviceId={}, error={}", deviceId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 查询设备详情业务异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁设备] 查询设备详情系统异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_DEVICE_SYSTEM_ERROR", "查询设备详情失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁设备] 查询设备详情失败，deviceId={}", deviceId, e);
+            log.error("[门禁设备] 查询设备详情未知异常: deviceId={}", deviceId, e);
             return ResponseDTO.error("GET_DEVICE_ERROR", "查询设备详情失败: " + e.getMessage());
         }
     }
@@ -146,6 +170,7 @@ public class AccessDeviceController {
      * @param form 设备添加表单
      * @return 设备ID
      */
+    @Observed(name = "accessDevice.addDevice", contextualName = "access-device-add")
     @PostMapping("/add")
     @Operation(summary = "添加设备", description = "添加新的门禁设备")
     @PreAuthorize("hasRole('ACCESS_MANAGER')")
@@ -154,8 +179,17 @@ public class AccessDeviceController {
         try {
             // 调用Service层添加
             return accessDeviceService.addDevice(form);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 添加设备参数错误: deviceName={}, deviceCode={}, error={}", form.getDeviceName(), form.getDeviceCode(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 添加设备业务异常: deviceName={}, deviceCode={}, code={}, message={}", form.getDeviceName(), form.getDeviceCode(), e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁设备] 添加设备系统异常: deviceName={}, deviceCode={}, code={}, message={}", form.getDeviceName(), form.getDeviceCode(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("ADD_DEVICE_SYSTEM_ERROR", "添加设备失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁设备] 添加设备失败", e);
+            log.error("[门禁设备] 添加设备未知异常: deviceName={}, deviceCode={}", form.getDeviceName(), form.getDeviceCode(), e);
             return ResponseDTO.error("ADD_DEVICE_ERROR", "添加设备失败: " + e.getMessage());
         }
     }
@@ -166,6 +200,7 @@ public class AccessDeviceController {
      * @param form 设备更新表单
      * @return 是否成功
      */
+    @Observed(name = "accessDevice.updateDevice", contextualName = "access-device-update")
     @PutMapping("/update")
     @Operation(summary = "更新设备", description = "更新门禁设备信息")
     @PreAuthorize("hasRole('ACCESS_MANAGER')")
@@ -174,8 +209,17 @@ public class AccessDeviceController {
         try {
             // 调用Service层更新
             return accessDeviceService.updateDevice(form);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 更新设备参数错误: deviceId={}, error={}", form.getDeviceId(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 更新设备业务异常: deviceId={}, code={}, message={}", form.getDeviceId(), e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁设备] 更新设备系统异常: deviceId={}, code={}, message={}", form.getDeviceId(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("UPDATE_DEVICE_SYSTEM_ERROR", "更新设备失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁设备] 更新设备失败", e);
+            log.error("[门禁设备] 更新设备未知异常: deviceId={}", form.getDeviceId(), e);
             return ResponseDTO.error("UPDATE_DEVICE_ERROR", "更新设备失败: " + e.getMessage());
         }
     }
@@ -186,6 +230,7 @@ public class AccessDeviceController {
      * @param deviceId 设备ID
      * @return 是否成功
      */
+    @Observed(name = "accessDevice.deleteDevice", contextualName = "access-device-delete")
     @DeleteMapping("/{deviceId}")
     @Operation(summary = "删除设备", description = "删除门禁设备（软删除）")
     @PreAuthorize("hasRole('ACCESS_MANAGER')")
@@ -195,8 +240,17 @@ public class AccessDeviceController {
         try {
             // 调用Service层删除
             return accessDeviceService.deleteDevice(deviceId);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 删除设备参数错误: deviceId={}, error={}", deviceId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 删除设备业务异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁设备] 删除设备系统异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("DELETE_DEVICE_SYSTEM_ERROR", "删除设备失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁设备] 删除设备失败，deviceId={}", deviceId, e);
+            log.error("[门禁设备] 删除设备未知异常: deviceId={}", deviceId, e);
             return ResponseDTO.error("DELETE_DEVICE_ERROR", "删除设备失败: " + e.getMessage());
         }
     }
@@ -208,6 +262,7 @@ public class AccessDeviceController {
      * @param status 设备状态
      * @return 是否成功
      */
+    @Observed(name = "accessDevice.updateDeviceStatus", contextualName = "access-device-update-status")
     @PutMapping("/{deviceId}/status")
     @Operation(summary = "更新设备状态", description = "更新门禁设备状态")
     @PreAuthorize("hasRole('ACCESS_MANAGER')")
@@ -218,10 +273,20 @@ public class AccessDeviceController {
         try {
             // 调用Service层更新状态
             return accessDeviceService.updateDeviceStatus(deviceId, status);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 更新设备状态参数错误: deviceId={}, status={}, error={}", deviceId, status, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 更新设备状态业务异常: deviceId={}, status={}, code={}, message={}", deviceId, status, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁设备] 更新设备状态系统异常: deviceId={}, status={}, code={}, message={}", deviceId, status, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("UPDATE_DEVICE_STATUS_SYSTEM_ERROR", "更新设备状态失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁设备] 更新设备状态失败，deviceId={}, status={}", deviceId, status, e);
+            log.error("[门禁设备] 更新设备状态未知异常: deviceId={}, status={}", deviceId, status, e);
             return ResponseDTO.error("UPDATE_DEVICE_STATUS_ERROR", "更新设备状态失败: " + e.getMessage());
         }
     }
 }
+
 

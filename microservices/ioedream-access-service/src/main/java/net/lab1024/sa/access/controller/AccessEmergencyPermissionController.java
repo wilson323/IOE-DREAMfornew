@@ -1,5 +1,6 @@
 package net.lab1024.sa.access.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,21 +59,22 @@ public class AccessEmergencyPermissionController {
      * @param form 紧急权限申请表单
      * @return 权限申请实体
      */
+    @Observed(name = "accessEmergencyPermission.submitEmergencyPermissionApply", contextualName = "access-emergency-permission-submit")
     @PostMapping("/submit")
     @Operation(summary = "提交紧急权限申请", description = "提交紧急权限申请并启动快速审批流程，权限有效期24小时")
     public ResponseDTO<AccessPermissionApplyEntity> submitEmergencyPermissionApply(
             @Valid @RequestBody AccessPermissionApplyForm form) {
         log.info("[紧急权限申请] 接收紧急权限申请请求，applicantId={}, areaId={}, reason={}",
                 form.getApplicantId(), form.getAreaId(), form.getApplyReason());
-        
+
         // 验证申请类型
         if (form.getApplyType() != null && !"EMERGENCY".equals(form.getApplyType())) {
             return ResponseDTO.error("申请类型必须是EMERGENCY");
         }
-        
+
         // 强制设置为紧急权限类型
         form.setApplyType("EMERGENCY");
-        
+
         AccessPermissionApplyEntity entity = accessEmergencyPermissionService.submitEmergencyPermissionApply(form);
         return ResponseDTO.ok(entity);
     }
@@ -84,6 +86,7 @@ public class AccessEmergencyPermissionController {
      * @param requestParams 请求参数（包含status和approvalComment）
      * @return 操作结果
      */
+    @Observed(name = "accessEmergencyPermission.updateEmergencyPermissionStatus", contextualName = "access-emergency-permission-update-status")
     @PutMapping("/{applyNo}/status")
     @Operation(summary = "更新紧急权限申请状态", description = "由审批结果监听器调用，更新紧急权限申请状态")
     public ResponseDTO<Void> updateEmergencyPermissionStatus(
@@ -105,6 +108,7 @@ public class AccessEmergencyPermissionController {
      * @param applyNo 申请编号
      * @return 是否已过期并回收
      */
+    @Observed(name = "accessEmergencyPermission.checkAndRevokeExpiredPermission", contextualName = "access-emergency-permission-revoke-expired")
     @PostMapping("/{applyNo}/revoke-expired")
     @Operation(summary = "检查并回收过期权限", description = "检查紧急权限是否已过期，如果过期则自动回收")
     public ResponseDTO<Boolean> checkAndRevokeExpiredPermission(@PathVariable String applyNo) {
@@ -113,4 +117,5 @@ public class AccessEmergencyPermissionController {
         return ResponseDTO.ok(revoked);
     }
 }
+
 

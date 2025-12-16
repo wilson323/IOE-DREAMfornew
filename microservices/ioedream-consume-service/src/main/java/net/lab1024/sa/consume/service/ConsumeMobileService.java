@@ -150,4 +150,18 @@ public interface ConsumeMobileService {
      * @return 统计数据
      */
     ConsumeMobileUserStatsVO getUserStats(Long userId);
+
+    /**
+     * 获取账单详情
+     * <p>
+     * 根据订单号获取移动端账单详细信息，包括消费记录和支付记录
+     * </p>
+     *
+     * @param orderId 订单ID
+     * @return 账单详情
+     */
+    net.lab1024.sa.consume.domain.vo.MobileBillDetailVO getBillDetail(String orderId);
 }
+
+
+

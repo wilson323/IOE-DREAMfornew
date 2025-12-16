@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,15 +14,36 @@
 
     <artifactId>ioedream-access-service</artifactId>
     <packaging>jar</packaging>
-    
+
     <name>IOE-DREAM Access Service</name>
     <description>门禁管理服务，提供门禁控制、通行记录等业务API</description>
 
     <dependencies>
-        <!-- 依赖 microservices-common -->
+        <!-- 依赖核心模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖公共模块 -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖业务模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-business</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖监控模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-monitor</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -50,11 +71,59 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- Resilience4j (容错机制) -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-spring-boot3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-retry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-circuitbreaker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-ratelimiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-micrometer</artifactId>
+        </dependency>
+
+        <!-- Micrometer (监控指标) -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+
         <!-- MyBatis-Plus (Spring Boot 3.x专用) -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>${mybatis-plus.version}</version>
+        </dependency>
+
+        <!-- MySQL Driver -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Druid 数据源 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+
+        <!-- Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
         <!-- Lombok -->
@@ -64,17 +133,38 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Sa-Token (权限认证) -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-boot3-starter</artifactId>
-            <version>${sa-token.version}</version>
-        </dependency>
+        <!-- ============================================================= -->
+        <!-- 测试依赖 -->
+        <!-- ============================================================= -->
 
-        <!-- Spring Boot Test -->
+        <!-- Spring Boot Test (包含JUnit、Mockito、Spring Test) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Jupiter -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito Core -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito JUnit Jupiter -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

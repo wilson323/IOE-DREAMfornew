@@ -15,6 +15,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.controller.AccessMobileController;
@@ -30,6 +36,9 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -65,6 +74,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
     private ObjectMapper objectMapper;
 
     @Override
+    @Observed(name = "access.device.query", contextualName = "access-device-query")
     @Transactional(readOnly = true)
     public ResponseDTO<PageResult<AccessDeviceVO>> queryDevices(AccessDeviceQueryForm queryForm) {
         log.info("[门禁设备] 分页查询设备，pageNum={}, pageSize={}, keyword={}, areaId={}, deviceStatus={}",
@@ -122,13 +132,23 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             log.info("[门禁设备] 分页查询设备成功，总数={}", pageResult.getTotal());
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 分页查询设备参数异常, error={}", e.getMessage());
+            throw new ParamException("QUERY_DEVICES_PARAM_ERROR", "查询设备参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 分页查询设备业务异常, code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 分页查询设备系统异常, code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 分页查询设备失败", e);
-            return ResponseDTO.error("QUERY_DEVICES_ERROR", "查询设备失败: " + e.getMessage());
+            log.error("[门禁设备] 分页查询设备未知异常", e);
+            throw new SystemException("QUERY_DEVICES_SYSTEM_ERROR", "查询设备系统异常", e);
         }
     }
 
     @Override
+    @Observed(name = "access.device.getDetail", contextualName = "access-device-get-detail")
     @Transactional(readOnly = true)
     public ResponseDTO<AccessDeviceVO> getDeviceDetail(Long deviceId) {
         log.info("[门禁设备] 查询设备详情，deviceId={}", deviceId);
@@ -150,14 +170,28 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             log.info("[门禁设备] 查询设备详情成功，deviceId={}", deviceId);
             return ResponseDTO.ok(vo);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 查询设备详情参数异常, deviceId={}, error={}", deviceId, e.getMessage());
+            throw new ParamException("GET_DEVICE_PARAM_ERROR", "查询设备详情参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 查询设备详情业务异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 查询设备详情系统异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 查询设备详情失败，deviceId={}", deviceId, e);
-            return ResponseDTO.error("GET_DEVICE_ERROR", "查询设备详情失败: " + e.getMessage());
+            log.error("[门禁设备] 查询设备详情未知异常, deviceId={}", deviceId, e);
+            throw new SystemException("GET_DEVICE_SYSTEM_ERROR", "查询设备详情系统异常", e);
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Observed(name = "access.device.add", contextualName = "access-device-add")
+    @CircuitBreaker(name = "access-device-add-circuitbreaker", fallbackMethod = "addDeviceFallback")
+    @Retry(name = "access-device-add-retry")
+    @RateLimiter(name = "write-operation-ratelimiter")
+    @Timed(value = "access.device.add", description = "门禁设备添加耗时")
+    @Counted(value = "access.device.add.count", description = "门禁设备添加次数")
     public ResponseDTO<Long> addDevice(AccessDeviceAddForm addForm) {
         log.info("[门禁设备] 添加设备，deviceName={}, deviceCode={}, areaId={}",
                 addForm.getDeviceName(), addForm.getDeviceCode(), addForm.getAreaId());
@@ -201,14 +235,28 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             log.info("[门禁设备] 添加设备成功，deviceId={}", device.getId());
             return ResponseDTO.ok(device.getId());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 添加设备参数异常, error={}", e.getMessage());
+            throw new ParamException("ADD_DEVICE_PARAM_ERROR", "添加设备参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 添加设备业务异常, code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 添加设备系统异常, code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 添加设备失败", e);
-            return ResponseDTO.error("ADD_DEVICE_ERROR", "添加设备失败: " + e.getMessage());
+            log.error("[门禁设备] 添加设备未知异常", e);
+            throw new SystemException("ADD_DEVICE_SYSTEM_ERROR", "添加设备系统异常", e);
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Observed(name = "access.device.update", contextualName = "access-device-update")
+    @CircuitBreaker(name = "access-device-update-circuitbreaker", fallbackMethod = "updateDeviceFallback")
+    @Retry(name = "access-device-update-retry")
+    @RateLimiter(name = "write-operation-ratelimiter")
+    @Timed(value = "access.device.update", description = "门禁设备更新耗时")
+    @Counted(value = "access.device.update.count", description = "门禁设备更新次数")
     public ResponseDTO<Boolean> updateDevice(AccessDeviceUpdateForm updateForm) {
         log.info("[门禁设备] 更新设备，deviceId={}", updateForm.getDeviceId());
 
@@ -259,14 +307,28 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             log.info("[门禁设备] 更新设备成功，deviceId={}", updateForm.getDeviceId());
             return ResponseDTO.ok(true);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 更新设备参数异常, deviceId={}, error={}", updateForm.getDeviceId(), e.getMessage());
+            throw new ParamException("UPDATE_DEVICE_PARAM_ERROR", "更新设备参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 更新设备业务异常, deviceId={}, code={}, message={}", updateForm.getDeviceId(), e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 更新设备系统异常, deviceId={}, code={}, message={}", updateForm.getDeviceId(), e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 更新设备失败，deviceId={}", updateForm.getDeviceId(), e);
-            return ResponseDTO.error("UPDATE_DEVICE_ERROR", "更新设备失败: " + e.getMessage());
+            log.error("[门禁设备] 更新设备未知异常, deviceId={}", updateForm.getDeviceId(), e);
+            throw new SystemException("UPDATE_DEVICE_SYSTEM_ERROR", "更新设备系统异常", e);
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Observed(name = "access.device.delete", contextualName = "access-device-delete")
+    @CircuitBreaker(name = "access-device-delete-circuitbreaker", fallbackMethod = "deleteDeviceFallback")
+    @Retry(name = "access-device-delete-retry")
+    @RateLimiter(name = "write-operation-ratelimiter")
+    @Timed(value = "access.device.delete", description = "门禁设备删除耗时")
+    @Counted(value = "access.device.delete.count", description = "门禁设备删除次数")
     public ResponseDTO<Boolean> deleteDevice(Long deviceId) {
         log.info("[门禁设备] 删除设备，deviceId={}", deviceId);
 
@@ -289,9 +351,18 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             log.info("[门禁设备] 删除设备成功，deviceId={}", deviceId);
             return ResponseDTO.ok(true);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 删除设备参数异常, deviceId={}, error={}", deviceId, e.getMessage());
+            throw new ParamException("DELETE_DEVICE_PARAM_ERROR", "删除设备参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 删除设备业务异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 删除设备系统异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 删除设备失败，deviceId={}", deviceId, e);
-            return ResponseDTO.error("DELETE_DEVICE_ERROR", "删除设备失败: " + e.getMessage());
+            log.error("[门禁设备] 删除设备未知异常, deviceId={}", deviceId, e);
+            throw new SystemException("DELETE_DEVICE_SYSTEM_ERROR", "删除设备系统异常", e);
         }
     }
 
@@ -325,9 +396,18 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             log.info("[门禁设备] 更新设备状态成功，deviceId={}, status={}", deviceId, status);
             return ResponseDTO.ok(true);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 更新设备状态参数异常, deviceId={}, status={}, error={}", deviceId, status, e.getMessage());
+            throw new ParamException("UPDATE_DEVICE_STATUS_PARAM_ERROR", "更新设备状态参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 更新设备状态业务异常, deviceId={}, status={}, code={}, message={}", deviceId, status, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 更新设备状态系统异常, deviceId={}, status={}, code={}, message={}", deviceId, status, e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 更新设备状态失败，deviceId={}, status={}", deviceId, status, e);
-            return ResponseDTO.error("UPDATE_DEVICE_STATUS_ERROR", "更新设备状态失败: " + e.getMessage());
+            log.error("[门禁设备] 更新设备状态未知异常, deviceId={}, status={}", deviceId, status, e);
+            throw new SystemException("UPDATE_DEVICE_STATUS_SYSTEM_ERROR", "更新设备状态系统异常", e);
         }
     }
 
@@ -346,6 +426,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      * @return 附近设备列表，使用Haversine公式计算距离（按距离排序）
      */
     @Override
+    @Observed(name = "access.device.getNearby", contextualName = "access-device-get-nearby")
     @Transactional(readOnly = true)
     public ResponseDTO<List<AccessMobileController.MobileDeviceItem>> getNearbyDevices(
             Long userId, Double latitude, Double longitude, Integer radius) {
@@ -359,9 +440,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 return ResponseDTO.ok(List.of());
             }
 
-            if (radius == null || radius <= 0) {
-                radius = 500; // 默认500米
-            }
+            int radiusToUse = (radius == null || radius <= 0) ? 500 : radius;
 
             // 1. 查询所有启用的门禁设备
             LambdaQueryWrapper<DeviceEntity> wrapper = new LambdaQueryWrapper<>();
@@ -392,7 +471,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     // 计算距离（使用Haversine公式）
                     double distance = calculateDistance(latitude, longitude, deviceLat, deviceLng);
 
-                    if (distance <= radius) {
+                    if (distance <= radiusToUse) {
                         AccessMobileController.MobileDeviceItem item = new AccessMobileController.MobileDeviceItem();
                         item.setDeviceId(device.getId());
                         item.setDeviceName(device.getDeviceName());
@@ -402,8 +481,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                         item.setDistance((int) Math.round(distance));
                         nearbyDevices.add(item);
                     }
+                } catch (IllegalArgumentException | ParamException e) {
+                    log.warn("[门禁设备] 处理设备参数错误, deviceId={}, error={}", device.getId(), e.getMessage());
+                    // 单个设备处理失败不影响其他设备，继续处理
+                } catch (BusinessException e) {
+                    log.warn("[门禁设备] 处理设备业务异常, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage());
+                    // 单个设备处理失败不影响其他设备，继续处理
+                } catch (SystemException e) {
+                    log.warn("[门禁设备] 处理设备系统异常, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage(), e);
+                    // 单个设备处理失败不影响其他设备，继续处理
                 } catch (Exception e) {
-                    log.warn("[门禁设备] 处理设备异常，deviceId={}", device.getId(), e);
+                    log.warn("[门禁设备] 处理设备未知异常, deviceId={}", device.getId(), e);
                     // 单个设备处理失败不影响其他设备，继续处理
                 }
             }
@@ -414,9 +502,18 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             log.info("[门禁设备] 附近设备查询成功，找到{}个设备", nearbyDevices.size());
             return ResponseDTO.ok(nearbyDevices);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 附近设备查询参数异常, error={}", e.getMessage());
+            throw new ParamException("QUERY_NEARBY_DEVICES_PARAM_ERROR", "查询附近设备参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 附近设备查询业务异常, code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 附近设备查询系统异常, code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 附近设备查询异常", e);
-            return ResponseDTO.error("QUERY_ERROR", "查询附近设备失败：" + e.getMessage());
+            log.error("[门禁设备] 附近设备查询未知异常", e);
+            throw new SystemException("QUERY_NEARBY_DEVICES_SYSTEM_ERROR", "查询附近设备系统异常", e);
         }
     }
 
@@ -439,6 +536,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      * @return 用户权限信息
      */
     @Override
+    @Observed(name = "access.device.getMobilePermissions", contextualName = "access-device-get-mobile-permissions")
     @Transactional(readOnly = true)
     public ResponseDTO<AccessMobileController.MobileUserPermissions> getMobileUserPermissions(Long userId) {
         log.info("[门禁设备] 移动端用户权限查询，userId={}", userId);
@@ -471,9 +569,18 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     userId, allowedAreaIds.size(), allowedDeviceIds.size(), permissionLevel);
             return ResponseDTO.ok(permissions);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 用户权限查询参数异常, userId={}, error={}", userId, e.getMessage());
+            throw new ParamException("QUERY_USER_PERMISSIONS_PARAM_ERROR", "查询用户权限参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 用户权限查询业务异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 用户权限查询系统异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 用户权限查询异常，userId={}", userId, e);
-            return ResponseDTO.error("QUERY_ERROR", "查询用户权限失败：" + e.getMessage());
+            log.error("[门禁设备] 用户权限查询未知异常, userId={}", userId, e);
+            throw new SystemException("QUERY_USER_PERMISSIONS_SYSTEM_ERROR", "查询用户权限系统异常", e);
         }
     }
 
@@ -487,6 +594,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      * @return 设备移动端实时状态，包括在线用户数等信息
      */
     @Override
+    @Observed(name = "access.device.getMobileRealTimeStatus", contextualName = "access-device-get-mobile-realtime")
     @Transactional(readOnly = true)
     public ResponseDTO<AccessMobileController.MobileRealTimeStatus> getMobileRealTimeStatus(Long deviceId) {
         log.info("[门禁设备] 移动端实时状态查询，deviceId={}", deviceId);
@@ -523,9 +631,18 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     deviceId, status.getDeviceStatus(), status.getOnlineCount());
             return ResponseDTO.ok(status);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 实时状态查询参数异常, deviceId={}, error={}", deviceId, e.getMessage());
+            throw new ParamException("QUERY_REALTIME_STATUS_PARAM_ERROR", "查询实时状态参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 实时状态查询业务异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 实时状态查询系统异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 实时状态查询异常，deviceId={}", deviceId, e);
-            return ResponseDTO.error("QUERY_ERROR", "查询实时状态失败：" + e.getMessage());
+            log.error("[门禁设备] 实时状态查询未知异常, deviceId={}", deviceId, e);
+            throw new SystemException("QUERY_REALTIME_STATUS_SYSTEM_ERROR", "查询实时状态系统异常", e);
         }
     }
 
@@ -578,8 +695,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     AreaEntity.class
             );
             return result != null && result.isSuccess() ? result.getData() : null;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 获取区域信息参数错误, areaId={}, error={}", areaId, e.getMessage());
+            return null;
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 获取区域信息业务异常, areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return null;
+        } catch (SystemException e) {
+            log.warn("[门禁设备] 获取区域信息系统异常, areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.error("[门禁设备] 获取区域信息失败，areaId={}", areaId, e);
+            log.warn("[门禁设备] 获取区域信息未知异常, areaId={}", areaId, e);
             return null;
         }
     }
@@ -606,8 +732,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 return Double.valueOf(latObj.toString());
             }
             return null;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.debug("[门禁设备] 解析设备纬度参数错误, deviceId={}, error={}", device.getId(), e.getMessage());
+            return null;
+        } catch (BusinessException e) {
+            log.debug("[门禁设备] 解析设备纬度业务异常, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage());
+            return null;
+        } catch (SystemException e) {
+            log.debug("[门禁设备] 解析设备纬度系统异常, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.debug("[门禁设备] 解析设备纬度失败，deviceId={}", device.getId());
+            log.debug("[门禁设备] 解析设备纬度未知异常, deviceId={}", device.getId(), e);
             return null;
         }
     }
@@ -630,8 +765,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 return Double.valueOf(lngObj.toString());
             }
             return null;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.debug("[门禁设备] 解析设备经度参数错误, deviceId={}, error={}", device.getId(), e.getMessage());
+            return null;
+        } catch (BusinessException e) {
+            log.debug("[门禁设备] 解析设备经度业务异常, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage());
+            return null;
+        } catch (SystemException e) {
+            log.debug("[门禁设备] 解析设备经度系统异常, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.debug("[门禁设备] 解析设备经度失败，deviceId={}", device.getId());
+            log.debug("[门禁设备] 解析设备经度未知异常, deviceId={}", device.getId(), e);
             return null;
         }
     }
@@ -666,8 +810,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             }
 
             return device.getDeviceName() != null ? device.getDeviceName() : "未知位置";
+        } catch (IllegalArgumentException | ParamException e) {
+            log.debug("[门禁设备] 获取设备位置参数错误, deviceId={}, error={}", device.getId(), e.getMessage());
+            return device.getDeviceName() != null ? device.getDeviceName() : "未知位置";
+        } catch (BusinessException e) {
+            log.debug("[门禁设备] 获取设备位置业务异常, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage());
+            return device.getDeviceName() != null ? device.getDeviceName() : "未知位置";
+        } catch (SystemException e) {
+            log.debug("[门禁设备] 获取设备位置系统异常, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage(), e);
+            return device.getDeviceName() != null ? device.getDeviceName() : "未知位置";
         } catch (Exception e) {
-            log.debug("[门禁设备] 获取设备位置失败，deviceId={}", device.getId());
+            log.debug("[门禁设备] 获取设备位置未知异常, deviceId={}", device.getId(), e);
             return device.getDeviceName() != null ? device.getDeviceName() : "未知位置";
         }
     }
@@ -737,8 +890,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     .distinct()
                     .collect(Collectors.toList());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 查询用户权限区域参数错误, userId={}, error={}", userId, e.getMessage());
+            return List.of();
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 查询用户权限区域业务异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return List.of();
+        } catch (SystemException e) {
+            log.error("[门禁设备] 查询用户权限区域系统异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return List.of();
         } catch (Exception e) {
-            log.error("[门禁设备] 查询用户权限区域异常，userId={}", userId, e);
+            log.error("[门禁设备] 查询用户权限区域未知异常, userId={}", userId, e);
             return List.of();
         }
     }
@@ -774,8 +936,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     .filter(deviceId -> deviceId != null)
                     .collect(Collectors.toList());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 查询用户权限设备参数错误, userId={}, error={}", userId, e.getMessage());
+            return List.of();
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 查询用户权限设备业务异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return List.of();
+        } catch (SystemException e) {
+            log.error("[门禁设备] 查询用户权限设备系统异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return List.of();
         } catch (Exception e) {
-            log.error("[门禁设备] 查询用户权限设备异常，userId={}", userId, e);
+            log.error("[门禁设备] 查询用户权限设备未知异常, userId={}", userId, e);
             return List.of();
         }
     }
@@ -811,8 +982,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             } else {
                 return "NORMAL";
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 确定权限级别参数错误, userId={}, error={}", userId, e.getMessage());
+            return "NORMAL";
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 确定权限级别业务异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return "NORMAL";
+        } catch (SystemException e) {
+            log.warn("[门禁设备] 确定权限级别系统异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return "NORMAL";
         } catch (Exception e) {
-            log.warn("[门禁设备] 确定权限级别异常，userId={}", userId, e);
+            log.warn("[门禁设备] 确定权限级别未知异常, userId={}", userId, e);
             return "NORMAL";
         }
     }
@@ -844,8 +1024,17 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                         response != null ? response.getMessage() : "响应为空");
                 return 0;
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 查询设备在线用户数量参数错误, deviceId={}, error={}", deviceId, e.getMessage());
+            return 0;
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 查询设备在线用户数量业务异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            return 0;
+        } catch (SystemException e) {
+            log.warn("[门禁设备] 查询设备在线用户数量系统异常, deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return 0;
         } catch (Exception e) {
-            log.warn("[门禁设备] 查询设备在线用户数量异常，deviceId={}", deviceId, e);
+            log.warn("[门禁设备] 查询设备在线用户数量未知异常, deviceId={}", deviceId, e);
             return 0;
         }
     }
@@ -860,6 +1049,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      * @return 区域列表
      */
     @Override
+    @Observed(name = "access.device.getMobileAreas", contextualName = "access-device-get-mobile-areas")
     @Transactional(readOnly = true)
     public ResponseDTO<List<AccessMobileController.MobileAreaItem>> getMobileAreas(Long userId) {
         log.info("[门禁设备] 获取移动端区域列表，userId={}", userId);
@@ -923,10 +1113,44 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             log.info("[门禁设备] 获取移动端区域列表成功，userId={}, 区域数量={}", userId, areas.size());
             return ResponseDTO.ok(areas);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁设备] 获取移动端区域列表参数异常, userId={}, error={}", userId, e.getMessage());
+            throw new ParamException("QUERY_MOBILE_AREAS_PARAM_ERROR", "获取区域列表参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[门禁设备] 获取移动端区域列表业务异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[门禁设备] 获取移动端区域列表系统异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[门禁设备] 获取移动端区域列表异常，userId={}", userId, e);
-            return ResponseDTO.error("QUERY_ERROR", "获取区域列表失败：" + e.getMessage());
+            log.error("[门禁设备] 获取移动端区域列表未知异常, userId={}", userId, e);
+            throw new SystemException("QUERY_MOBILE_AREAS_SYSTEM_ERROR", "获取区域列表系统异常", e);
         }
     }
+
+    /**
+     * 添加设备降级方法
+     */
+    public ResponseDTO<Long> addDeviceFallback(AccessDeviceAddForm addForm, Exception ex) {
+        log.error("[门禁设备] 添加设备降级，deviceCode={}, error={}", addForm.getDeviceCode(), ex.getMessage());
+        return ResponseDTO.error("ADD_DEVICE_DEGRADED", "系统繁忙，请稍后重试");
+    }
+
+    /**
+     * 更新设备降级方法
+     */
+    public ResponseDTO<Boolean> updateDeviceFallback(AccessDeviceUpdateForm updateForm, Exception ex) {
+        log.error("[门禁设备] 更新设备降级，deviceId={}, error={}", updateForm.getDeviceId(), ex.getMessage());
+        return ResponseDTO.error("UPDATE_DEVICE_DEGRADED", "系统繁忙，请稍后重试");
+    }
+
+    /**
+     * 删除设备降级方法
+     */
+    public ResponseDTO<Boolean> deleteDeviceFallback(Long deviceId, Exception ex) {
+        log.error("[门禁设备] 删除设备降级，deviceId={}, error={}", deviceId, ex.getMessage());
+        return ResponseDTO.error("DELETE_DEVICE_DEGRADED", "系统繁忙，请稍后重试");
+    }
 }
+
 

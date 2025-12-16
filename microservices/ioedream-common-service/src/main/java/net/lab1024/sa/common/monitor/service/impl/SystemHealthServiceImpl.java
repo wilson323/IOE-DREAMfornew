@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.monitor.domain.entity.AlertEntity;
@@ -24,6 +25,9 @@ import net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager;
 import net.lab1024.sa.common.monitor.manager.SystemMonitorManager;
 import net.lab1024.sa.common.monitor.dao.AlertDao;
 import net.lab1024.sa.common.monitor.service.SystemHealthService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 
 /**
  * 系统健康监控服务实现类
@@ -57,6 +61,7 @@ public class SystemHealthServiceImpl implements SystemHealthService {
     private AlertDao alertDao;
 
     @Override
+    @Observed(name = "system.health.overview", contextualName = "system-health-overview")
     @Transactional(readOnly = true)
     public SystemHealthVO getSystemHealthOverview() {
         log.debug("获取系统健康概览");
@@ -127,7 +132,7 @@ public class SystemHealthServiceImpl implements SystemHealthService {
             log.debug("系统健康概览获取完成，整体状态：{}，健康评分：{}", overallStatus, healthScore);
 
         } catch (Exception e) {
-            log.error("获取系统健康概览失败", e);
+            log.error("[系统健康服务] 获取系统健康概览系统异常", e);
             // 设置默认值
             systemHealth.setOverallStatus("UNKNOWN");
             systemHealth.setHealthScore(0);
@@ -138,6 +143,7 @@ public class SystemHealthServiceImpl implements SystemHealthService {
     }
 
     @Override
+    @Observed(name = "system.health.component", contextualName = "system-health-component")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getComponentHealthStatus() {
         log.debug("获取组件健康状态");
@@ -145,12 +151,13 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         try {
             return healthCheckManager.getAllComponentHealthStatus();
         } catch (Exception e) {
-            log.error("获取组件健康状态失败", e);
+            log.error("[系统健康服务] 获取组件健康状态系统异常", e);
             return new ArrayList<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.metrics", contextualName = "system-health-metrics")
     @Transactional(readOnly = true)
     public Map<String, Object> getSystemMetrics() {
         log.debug("获取系统性能指标");
@@ -158,12 +165,13 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         try {
             return systemMonitorManager.getSystemMetrics();
         } catch (Exception e) {
-            log.error("获取系统性能指标失败", e);
+            log.error("[系统健康服务] 获取系统性能指标系统异常", e);
             return new HashMap<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.resource", contextualName = "system-health-resource")
     @Transactional(readOnly = true)
     public Map<String, Object> getResourceUsage() {
         log.debug("获取资源使用情况");
@@ -196,12 +204,13 @@ public class SystemHealthServiceImpl implements SystemHealthService {
             return usage;
 
         } catch (Exception e) {
-            log.error("获取资源使用情况失败", e);
+            log.error("[系统健康服务] 获取资源使用情况系统异常", e);
             return new HashMap<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.microservices", contextualName = "system-health-microservices")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getMicroservicesStatus() {
         log.debug("获取微服务状态");
@@ -209,12 +218,13 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         try {
             return healthCheckManager.getMicroservicesHealthStatus();
         } catch (Exception e) {
-            log.error("获取微服务状态失败", e);
+            log.error("[系统健康服务] 获取微服务状态系统异常", e);
             return new ArrayList<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.database", contextualName = "system-health-database")
     @Transactional(readOnly = true)
     public Map<String, Object> getDatabaseStatus() {
         log.debug("获取数据库状态");
@@ -222,12 +232,13 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         try {
             return healthCheckManager.checkDatabaseHealth();
         } catch (Exception e) {
-            log.error("获取数据库状态失败", e);
+            log.error("[系统健康服务] 获取数据库状态系统异常", e);
             return new HashMap<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.cache", contextualName = "system-health-cache")
     @Transactional(readOnly = true)
     public Map<String, Object> getCacheStatus() {
         log.debug("获取缓存状态");
@@ -235,25 +246,30 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         try {
             return healthCheckManager.checkCacheHealth();
         } catch (Exception e) {
-            log.error("获取缓存状态失败", e);
+            log.error("[系统健康服务] 获取缓存状态系统异常", e);
             return new HashMap<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.check", contextualName = "system-health-check")
     @Transactional(readOnly = true)
     public Map<String, Object> performHealthCheck(String component) {
         log.debug("执行健康检查，组件：{}", component);
 
         try {
             return healthCheckManager.performHealthCheck(component);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[系统健康服务] 执行健康检查参数异常, component={}, error={}", component, e.getMessage());
+            return Map.of("status", "ERROR", "message", "参数异常: " + e.getMessage());
         } catch (Exception e) {
-            log.error("执行健康检查失败，组件：{}", component, e);
-            return Map.of("status", "ERROR", "message", e.getMessage());
+            log.error("[系统健康服务] 执行健康检查系统异常, component={}", component, e);
+            return Map.of("status", "ERROR", "message", "系统异常: " + e.getMessage());
         }
     }
 
     @Override
+    @Observed(name = "system.health.activeAlerts", contextualName = "system-health-active-alerts")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getActiveAlerts() {
         log.debug("获取活跃告警");
@@ -280,12 +296,13 @@ public class SystemHealthServiceImpl implements SystemHealthService {
                     .collect(java.util.stream.Collectors.toList());
 
         } catch (Exception e) {
-            log.error("获取活跃告警失败", e);
+            log.error("[系统健康服务] 获取活跃告警系统异常", e);
             return new ArrayList<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.uptime", contextualName = "system-health-uptime")
     @Transactional(readOnly = true)
     public Map<String, Object> getSystemUptime() {
         log.debug("获取系统运行时间");
@@ -304,25 +321,30 @@ public class SystemHealthServiceImpl implements SystemHealthService {
             return uptime;
 
         } catch (Exception e) {
-            log.error("获取系统运行时间失败", e);
+            log.error("[系统健康服务] 获取系统运行时间系统异常", e);
             return new HashMap<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.trends", contextualName = "system-health-trends")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getHealthTrends(Integer hours) {
         log.debug("获取健康趋势，小时数：{}", hours);
 
         try {
             return performanceMonitorManager.getHealthTrends(hours != null ? hours : 24);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[系统健康服务] 获取健康趋势参数异常, hours={}, error={}", hours, e.getMessage());
+            return new ArrayList<>();
         } catch (Exception e) {
-            log.error("获取健康趋势失败", e);
+            log.error("[系统健康服务] 获取健康趋势系统异常, hours={}", hours, e);
             return new ArrayList<>();
         }
     }
 
     @Override
+    @Observed(name = "system.health.resolveAlert", contextualName = "system-health-resolve-alert")
     public void resolveAlert(Long alertId, String resolution) {
         log.info("解决告警，ID：{}，说明：{}", alertId, resolution);
 
@@ -337,9 +359,14 @@ public class SystemHealthServiceImpl implements SystemHealthService {
 
             log.info("告警解决成功，ID：{}", alertId);
 
-        } catch (Exception e) {
-            log.error("解决告警失败，ID：{}", alertId, e);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[系统健康服务] 解决告警参数异常, alertId={}, error={}", alertId, e.getMessage());
+            throw new ParamException("ALERT_RESOLVE_PARAM_ERROR", "解决告警参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
             throw e;
+        } catch (Exception e) {
+            log.error("[系统健康服务] 解决告警系统异常, alertId={}", alertId, e);
+            throw new SystemException("ALERT_RESOLVE_SYSTEM_ERROR", "解决告警系统异常", e);
         }
     }
 

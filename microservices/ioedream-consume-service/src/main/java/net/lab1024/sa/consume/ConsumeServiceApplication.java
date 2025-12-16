@@ -4,6 +4,9 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.apache.seata.spring.boot.autoconfigure.SeataAutoConfiguration;
+import org.apache.seata.spring.boot.autoconfigure.SeataCoreAutoConfiguration;
+import org.apache.seata.spring.boot.autoconfigure.SeataDataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
@@ -31,27 +34,44 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @SpringBootApplication(
     scanBasePackages = {
-        "net.lab1024.sa.common",
-        "net.lab1024.sa.consume"
+        // 消费服务自身包
+        "net.lab1024.sa.consume",
+        // 核心配置（必需）
+        "net.lab1024.sa.common.config",
+        // 响应和异常处理
+        "net.lab1024.sa.common.response",
+        "net.lab1024.sa.common.exception",
+        // 工具类
+        "net.lab1024.sa.common.util",
+        // 安全认证
+        "net.lab1024.sa.common.security",
+        // 消费相关公共模块
+        "net.lab1024.sa.common.consume",
+        // 组织机构
+        "net.lab1024.sa.common.organization",
+        // RBAC权限
+        "net.lab1024.sa.common.rbac",
+        // 系统配置
+        "net.lab1024.sa.common.system"
     },
     exclude = {
-        HibernateJpaAutoConfiguration.class
+        HibernateJpaAutoConfiguration.class,
+        SeataAutoConfiguration.class,
+        SeataCoreAutoConfiguration.class,
+        SeataDataSourceAutoConfiguration.class
     }
 )
 @EnableDiscoveryClient
 @MapperScan(basePackages = {
     // Common模块DAO（18个包）
     "net.lab1024.sa.common.auth.dao",
-    "net.lab1024.sa.common.security.dao",
-    "net.lab1024.sa.common.hr.dao",
+    "net.lab1024.sa.common.rbac.dao",
     "net.lab1024.sa.common.system.employee.dao",
     "net.lab1024.sa.common.access.dao",
     "net.lab1024.sa.common.visitor.dao",
     "net.lab1024.sa.common.audit.dao",
     "net.lab1024.sa.common.monitor.dao",
     "net.lab1024.sa.common.config.dao",
-    "net.lab1024.sa.common.document.dao",
-    "net.lab1024.sa.common.file.dao",
     "net.lab1024.sa.common.menu.dao",
     "net.lab1024.sa.common.dict.dao",
     "net.lab1024.sa.common.organization.dao",
@@ -60,7 +80,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
     "net.lab1024.sa.common.notification.dao",
     "net.lab1024.sa.common.scheduler.dao",
     // Consume模块DAO
-    "net.lab1024.sa.consume.dao"
+    "net.lab1024.sa.consume.dao",
+    "net.lab1024.sa.consume.consume.dao",
+    "net.lab1024.sa.consume.report.dao"
 })
 public class ConsumeServiceApplication {
 
@@ -76,3 +98,6 @@ public class ConsumeServiceApplication {
         SpringApplication.run(ConsumeServiceApplication.class, args);
     }
 }
+
+
+

@@ -54,3 +54,6 @@ public class ConsumeSyncDataVO {
         private java.math.BigDecimal balance;
     }
 }
+
+
+

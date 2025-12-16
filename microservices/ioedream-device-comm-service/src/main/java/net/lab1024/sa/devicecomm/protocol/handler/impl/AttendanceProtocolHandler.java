@@ -13,7 +13,11 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.annotation.Counted;
+// import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector; // 已废弃，已移除
 import net.lab1024.sa.devicecomm.protocol.enums.ProtocolTypeEnum;
 import net.lab1024.sa.devicecomm.protocol.handler.ProtocolHandler;
 import net.lab1024.sa.devicecomm.protocol.handler.ProtocolParseException;
@@ -84,10 +88,10 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
     private RabbitTemplate rabbitTemplate;
 
     /**
-     * 协议监控指标收集器
+     * Micrometer指标注册表（用于编程式指标收集）
      */
     @Resource
-    private ProtocolMetricsCollector metricsCollector;
+    private MeterRegistry meterRegistry;
 
     @Override
     public String getProtocolType() {
@@ -119,12 +123,12 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
     @Override
     public ProtocolMessage parseMessage(byte[] rawData) throws ProtocolParseException {
         log.warn("[考勤协议] 二进制解析方法被调用，当前协议使用HTTP文本格式，请使用parseMessage(String)方法");
-        
+
         // 将字节数组转换为字符串，委托给文本解析方法
         if (rawData == null || rawData.length == 0) {
             throw new ProtocolParseException("INVALID_DATA", "消息数据为空", rawData);
         }
-        
+
         try {
             String textData = new String(rawData, StandardCharsets.UTF_8);
             return parseMessage(textData);
@@ -171,12 +175,12 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
 
             // 支持多条记录处理
             java.util.List<Map<String, Object>> recordsList = new java.util.ArrayList<>();
-            
+
             for (String line : lines) {
                 if (line == null || line.trim().isEmpty()) {
                     continue;
                 }
-                
+
                 String trimmedLine = line.trim();
                 String[] fields = trimmedLine.split("\t");
 
@@ -239,8 +243,8 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
             }
             message.setData(data);
 
-            log.info("[考勤协议] HTTP文本消息解析成功，消息类型={}, 记录数={}, 工号={}", 
-                    message.getMessageType(), recordsList.size(), 
+            log.info("[考勤协议] HTTP文本消息解析成功，消息类型={}, 记录数={}, 工号={}",
+                    message.getMessageType(), recordsList.size(),
                     recordsList.isEmpty() ? "N/A" : recordsList.get(0).get("pin"));
             return message;
 
@@ -291,6 +295,10 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
     }
 
     @Override
+    @Timed(value = "protocol.message.process.duration",
+           description = "协议消息处理耗时")
+    @Counted(value = "protocol.message.process",
+             description = "协议消息处理次数")
     public void processMessage(ProtocolMessage message, Long deviceId) throws ProtocolProcessException {
         log.info("[考勤协议] 开始处理消息，设备ID={}, 消息类型={}", deviceId, message.getMessageType());
 
@@ -439,12 +447,12 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
             // 支持多条记录处理
             @SuppressWarnings("unchecked")
             java.util.List<Map<String, Object>> recordsList = (java.util.List<Map<String, Object>>) data.get("records");
-            
+
             if (recordsList != null && !recordsList.isEmpty()) {
                 // 批量处理多条记录（发送到队列）
                 int successCount = 0;
                 int failCount = 0;
-                
+
                 for (Map<String, Object> recordData : recordsList) {
                     try {
                         if (processSingleAttendanceRecord(recordData, message.getDeviceId(), message.getDeviceCode())) {
@@ -457,32 +465,58 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
                         failCount++;
                     }
                 }
-                
+
                 long duration = System.currentTimeMillis() - startTime;
-                log.info("[考勤协议] 批量处理考勤记录完成，成功={}, 失败={}, 总计={}, duration={}ms", 
+                log.info("[考勤协议] 批量处理考勤记录完成，成功={}, 失败={}, 总计={}, duration={}ms",
                         successCount, failCount, recordsList.size(), duration);
-                
-                // 记录监控指标
-                metricsCollector.recordSuccess(PROTOCOL_TYPE, duration);
-                metricsCollector.recordQueueOperation("protocol.attendance.record", "send");
+
+                // 记录监控指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.process")
+                        .tag("protocol_type", PROTOCOL_TYPE)
+                        .tag("status", "success")
+                        .register(meterRegistry)
+                        .increment();
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.attendance.record")
+                        .tag("operation", "send")
+                        .register(meterRegistry)
+                        .increment();
                 return;
             }
 
             // 兼容单条记录处理（直接使用data中的字段）
             boolean success = processSingleAttendanceRecord(data, message.getDeviceId(), message.getDeviceCode());
-            long duration = System.currentTimeMillis() - startTime;
-            
+
             if (success) {
-                metricsCollector.recordSuccess(PROTOCOL_TYPE, duration);
-                metricsCollector.recordQueueOperation("protocol.attendance.record", "send");
+                // 记录成功指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.process")
+                        .tag("protocol_type", PROTOCOL_TYPE)
+                        .tag("status", "success")
+                        .register(meterRegistry)
+                        .increment();
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.attendance.record")
+                        .tag("operation", "send")
+                        .register(meterRegistry)
+                        .increment();
             } else {
-                metricsCollector.recordError(PROTOCOL_TYPE, "PROCESS_ERROR");
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", PROTOCOL_TYPE)
+                        .tag("error_type", "PROCESS_ERROR")
+                        .register(meterRegistry)
+                        .increment();
             }
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
             log.error("[考勤协议] 处理考勤记录异常，错误={}, duration={}ms", e.getMessage(), duration, e);
-            metricsCollector.recordError(PROTOCOL_TYPE, "PROCESS_ERROR");
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", PROTOCOL_TYPE)
+                    .tag("error_type", "PROCESS_ERROR")
+                    .register(meterRegistry)
+                    .increment();
             // 不抛出异常，避免影响其他消息处理
         }
     }
@@ -504,7 +538,7 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
             // 根据协议文档映射字段到AttendanceRecordAddForm
             // 协议字段：Pin, Time, Status, Verify, Workcode, Reserved1, Reserved2, MaskFlag, Temperature, ConvTemperature
             Map<String, Object> attendanceRecordRequest = new HashMap<>();
-            
+
             // 设备信息
             attendanceRecordRequest.put("deviceId", deviceId);
             attendanceRecordRequest.put("deviceCode", deviceCode);
@@ -593,13 +627,13 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
                     Double temperature = Double.parseDouble(temperatureObj.toString());
                     attendanceRecordRequest.put("temperature", temperature);
                 } catch (NumberFormatException e) {
-                    // 忽略
+                    log.debug("[考勤协议] 温度解析失败，忽略: temperatureObj={}", temperatureObj);
                 }
             }
 
             // 发送到RabbitMQ队列，由消费者异步处理（企业级高可用：消息队列缓冲）
             rabbitTemplate.convertAndSend("protocol.attendance.record", attendanceRecordRequest);
-            
+
             log.info("[考勤协议] 考勤记录已发送到队列");
             return true;
 
@@ -633,7 +667,7 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
             Map<String, Object> deviceStatusRequest = new HashMap<>();
             deviceStatusRequest.put("deviceId", message.getDeviceId());
             deviceStatusRequest.put("deviceCode", message.getDeviceCode());
-            
+
             // 根据协议文档解析设备状态
             Integer statusCode = (Integer) data.get("statusCode");
             String deviceStatus = "OFFLINE";
@@ -654,18 +688,27 @@ public class AttendanceProtocolHandler implements ProtocolHandler {
 
             // 发送到RabbitMQ队列，由消费者异步处理
             rabbitTemplate.convertAndSend("protocol.device.status", deviceStatusRequest);
-            
+
             long duration = System.currentTimeMillis() - startTime;
-            log.info("[考勤协议] 设备状态更新已发送到队列，设备ID={}, 状态={}, duration={}ms", 
+            log.info("[考勤协议] 设备状态更新已发送到队列，设备ID={}, 状态={}, duration={}ms",
                     message.getDeviceId(), deviceStatus, duration);
-            
-            // 记录监控指标
-            metricsCollector.recordQueueOperation("protocol.device.status", "send");
+
+            // 记录监控指标（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.device.status")
+                    .tag("operation", "send")
+                    .register(meterRegistry)
+                    .increment();
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
             log.error("[考勤协议] 处理设备状态异常，错误={}, duration={}ms", e.getMessage(), duration, e);
-            metricsCollector.recordError(PROTOCOL_TYPE, "DEVICE_STATUS_ERROR");
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", PROTOCOL_TYPE)
+                    .tag("error_type", "DEVICE_STATUS_ERROR")
+                    .register(meterRegistry)
+                    .increment();
             // 不抛出异常，避免影响其他消息处理
         }
     }

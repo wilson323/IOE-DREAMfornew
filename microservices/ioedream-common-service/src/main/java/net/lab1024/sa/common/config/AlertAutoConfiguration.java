@@ -2,7 +2,6 @@ package net.lab1024.sa.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.monitoring.AlertManager;
-import net.lab1024.sa.common.monitoring.MetricsCollector;
 import net.lab1024.sa.common.monitoring.EnterpriseMonitoringManager;
 import net.lab1024.sa.common.notification.manager.NotificationConfigManager;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -41,21 +40,33 @@ public class AlertAutoConfiguration {
      * 如果NotificationConfigManager已配置，则使用完整构造函数，支持从数据库读取配置
      * 优先使用此配置
      * </p>
+     * <p>
+     * 已迁移：使用 MeterRegistry 替代已废弃的 MetricsCollector
+     * </p>
+     * <p>
+     * 注意：
+     * - MeterRegistry是Spring Boot自动配置的Bean，应该总是存在
+     * - 使用@ConditionalOnBean(NotificationConfigManager.class)确保只在NotificationConfigManager存在时注册
+     * - 通过方法参数注入确保依赖存在
+     * </p>
      */
     @Bean
-    @ConditionalOnBean({MetricsCollector.class, NotificationConfigManager.class})
+    @ConditionalOnMissingBean(AlertManager.class)
+    @ConditionalOnBean(NotificationConfigManager.class)
     public AlertManager alertManager(
-            MetricsCollector metricsCollector,
+            MeterRegistry meterRegistry,
             NotificationConfigManager notificationConfigManager) {
         // 使用完整构造函数，支持从数据库读取配置
         alertManager = new AlertManager(
-                metricsCollector,
+                meterRegistry,
                 null, // GatewayServiceClient（可选）
                 notificationConfigManager, // NotificationConfigManager（支持从数据库读取配置）
                 null, null, null, null, null, null, null // 其他可选参数
         );
 
         log.info("[告警配置] AlertManager 已配置并启用（支持数据库配置）");
+        log.info("[告警配置] MeterRegistry: {}", meterRegistry != null ? "已注入" : "未注入");
+        log.info("[告警配置] NotificationConfigManager: {}", notificationConfigManager != null ? "已注入" : "未注入");
         log.info("[告警配置] 已初始化告警规则: HTTP错误率、响应时间、缓存命中率、CPU/内存使用率等");
         log.info("[告警配置] 通知渠道: 钉钉、企业微信、邮件、短信（根据数据库配置启用）");
         log.info("[告警配置] 支持从数据库读取通知渠道配置，管理员可通过界面配置启用状态");
@@ -69,15 +80,24 @@ public class AlertAutoConfiguration {
      * 如果NotificationConfigManager未配置，则使用简化构造函数，使用默认配置
      * 作为降级方案
      * </p>
+     * <p>
+     * 已迁移：使用 MeterRegistry 替代已废弃的 MetricsCollector
+     * </p>
+     * <p>
+     * 注意：
+     * - MeterRegistry是Spring Boot自动配置的Bean，应该总是存在
+     * - 只在AlertManager不存在时注册（如果NotificationConfigManager存在，完整版本会先注册）
+     * - 作为降级方案，使用默认配置
+     * </p>
      */
     @Bean
-    @ConditionalOnBean(MetricsCollector.class)
-    @ConditionalOnMissingBean(NotificationConfigManager.class)
-    public AlertManager alertManagerFallback(MetricsCollector metricsCollector) {
+    @ConditionalOnMissingBean(AlertManager.class)
+    public AlertManager alertManagerFallback(MeterRegistry meterRegistry) {
         // 使用简化构造函数，使用默认配置
-        alertManager = new AlertManager(metricsCollector);
+        alertManager = new AlertManager(meterRegistry);
 
         log.info("[告警配置] AlertManager 已配置并启用（使用默认配置）");
+        log.info("[告警配置] MeterRegistry: {}", meterRegistry != null ? "已注入" : "未注入");
         log.info("[告警配置] 已初始化告警规则: HTTP错误率、响应时间、缓存命中率、CPU/内存使用率等");
         log.info("[告警配置] 通知渠道: 钉钉、企业微信（默认启用），邮件、短信（默认禁用）");
         log.warn("[告警配置] NotificationConfigManager未配置，无法从数据库读取配置，使用默认配置");
@@ -93,9 +113,14 @@ public class AlertAutoConfiguration {
      * - 在微服务中通过配置类将Manager注册为Spring Bean
      * - 从application.yml读取配置值，通过构造函数传入
      * </p>
+     * <p>
+     * 注意：移除了@ConditionalOnBean条件，因为：
+     * - MeterRegistry是Spring Boot自动配置的Bean，应该总是存在
+     * - 通过方法参数注入的方式已经确保了依赖存在（如果不存在，方法参数注入会失败）
+     * </p>
      */
     @Bean
-    @ConditionalOnBean(MeterRegistry.class)
+    @ConditionalOnMissingBean(EnterpriseMonitoringManager.class)
     public EnterpriseMonitoringManager enterpriseMonitoringManager(
             MeterRegistry meterRegistry,
             RestTemplate restTemplate,
@@ -147,6 +172,8 @@ public class AlertAutoConfiguration {
         manager.init();
 
         log.info("[监控配置] EnterpriseMonitoringManager 已配置并启用");
+        log.info("[监控配置] MeterRegistry: {}", meterRegistry != null ? "已注入" : "未注入");
+        log.info("[监控配置] RestTemplate: {}", restTemplate != null ? "已注入" : "未注入");
         return manager;
     }
 

@@ -1,0 +1,114 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "IOE-DREAM 业务指标监控",
+    "tags": ["ioe-dream", "business", "metrics"],
+    "timezone": "Asia/Shanghai",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "消费交易量",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(consume_transaction_total[5m])) by (application)",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "门禁通行量",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(access_record_total[5m])) by (application)",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "考勤打卡量",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(attendance_record_total[5m])) by (application)",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "访客登记量",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(visitor_record_total[5m])) by (application)",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "decimals": 0
+          }
+        }
+      }
+    ],
+    "schemaVersion": 38,
+    "version": 1
+  }
+}
+

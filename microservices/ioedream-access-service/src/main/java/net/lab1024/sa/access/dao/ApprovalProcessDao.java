@@ -7,10 +7,11 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.common.access.entity.ApprovalProcessEntity;
+import net.lab1024.sa.access.access.entity.ApprovalProcessEntity;
 
 /**
  * 审批流程DAO
@@ -99,6 +100,7 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
      * @param version   版本号
      * @return 影响行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE access_approval_process SET status = #{status}, updated_time = NOW(), version = version + 1 " +
             "WHERE process_id = #{processId} AND version = #{version}")
     Integer updateStatus(@Param("processId") Long processId,
@@ -113,6 +115,7 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
      * @param version     版本号
      * @return 影响行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE access_approval_process SET current_step = #{currentStep}, updated_time = NOW(), version = version + 1 "
             +
             "WHERE process_id = #{processId} AND version = #{version}")
@@ -132,6 +135,7 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
      * @param version           版本号
      * @return 影响行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE access_approval_process SET " +
             "status = #{status}, " +
             "approval_comment = #{approvalComment}, " +
@@ -156,6 +160,7 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
      * @param updatedBy 更新人ID
      * @return 影响行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE access_approval_process SET deleted_flag = 1, updated_by = #{updatedBy}, updated_time = NOW() " +
             "WHERE process_id = #{processId}")
     Integer softDelete(@Param("processId") Long processId,
@@ -199,3 +204,4 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
     List<ApprovalProcessEntity> selectExpiringSoon(@Param("currentTime") LocalDateTime currentTime,
             @Param("hours") Integer hours);
 }
+

@@ -3,8 +3,8 @@ package net.lab1024.sa.oa.workflow.service;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalConfigForm;
-import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalConfigForm;
+import net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity;
 
 /**
  * 审批配置服务接口
@@ -94,4 +94,8 @@ public interface ApprovalConfigService {
      */
     ResponseDTO<Void> disableConfig(Long id);
 }
+
+
+
+
 

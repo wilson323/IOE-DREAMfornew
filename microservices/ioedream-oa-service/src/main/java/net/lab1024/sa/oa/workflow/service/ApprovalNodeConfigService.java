@@ -3,8 +3,8 @@ package net.lab1024.sa.oa.workflow.service;
 import java.util.List;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalNodeConfigForm;
-import net.lab1024.sa.common.workflow.entity.ApprovalNodeConfigEntity;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalNodeConfigForm;
+import net.lab1024.sa.oa.workflow.entity.ApprovalNodeConfigEntity;
 
 /**
  * 审批节点配置服务接口
@@ -96,4 +96,8 @@ public interface ApprovalNodeConfigService {
      */
     ResponseDTO<Void> disableNodeConfig(Long id);
 }
+
+
+
+
 

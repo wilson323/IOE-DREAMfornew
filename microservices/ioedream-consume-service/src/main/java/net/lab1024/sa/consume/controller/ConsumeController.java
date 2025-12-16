@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +21,9 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionForm;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeDeviceStatisticsVO;
@@ -82,6 +86,7 @@ public class ConsumeController {
      * </pre>
      */
     @PostMapping("/execute")
+    @Observed(name = "consume.executeTransaction", contextualName = "consume-execute-transaction")
     @Operation(
         summary = "执行消费交易",
         description = "执行消费交易并返回交易结果。支持多种消费模式（刷卡、刷脸、NFC、手机支付等），自动进行账户余额验证、设备状态检查、权限验证等。",
@@ -104,8 +109,20 @@ public class ConsumeController {
         try {
             ConsumeTransactionResultVO result = consumeService.executeTransaction(form);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费管理] 执行消费交易参数错误，userId={}, accountId={}, error={}",
+                    form.getUserId(), form.getAccountId(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费管理] 执行消费交易业务异常，userId={}, accountId={}, code={}, message={}",
+                    form.getUserId(), form.getAccountId(), e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[消费管理] 执行消费交易系统异常，userId={}, accountId={}, code={}, message={}",
+                    form.getUserId(), form.getAccountId(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("EXECUTE_TRANSACTION_SYSTEM_ERROR", "执行消费交易失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[消费管理] 执行消费交易失败，userId={}, accountId={}", 
+            log.error("[消费管理] 执行消费交易未知异常，userId={}, accountId={}",
                     form.getUserId(), form.getAccountId(), e);
             return ResponseDTO.error("EXECUTE_TRANSACTION_ERROR", "执行消费交易失败: " + e.getMessage());
         }
@@ -121,6 +138,7 @@ public class ConsumeController {
      * @return 交易详情，包含完整的交易信息
      */
     @GetMapping("/detail/{transactionNo}")
+    @Observed(name = "consume.getTransactionDetail", contextualName = "consume-get-transaction-detail")
     @Operation(
         summary = "查询交易详情",
         description = "根据交易流水号查询交易的完整信息，包括交易金额、时间、状态、设备信息、账户信息等详细信息。",
@@ -149,8 +167,17 @@ public class ConsumeController {
                 return ResponseDTO.error("TRANSACTION_NOT_FOUND", "交易记录不存在");
             }
             return ResponseDTO.ok(detail);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费管理] 查询交易详情参数错误，transactionNo={}, error={}", transactionNo, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费管理] 查询交易详情业务异常，transactionNo={}, code={}, message={}", transactionNo, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[消费管理] 查询交易详情系统异常，transactionNo={}, code={}, message={}", transactionNo, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("QUERY_TRANSACTION_SYSTEM_ERROR", "查询交易详情失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[消费管理] 查询交易详情失败，transactionNo={}", transactionNo, e);
+            log.error("[消费管理] 查询交易详情未知异常，transactionNo={}", transactionNo, e);
             return ResponseDTO.error("QUERY_TRANSACTION_ERROR", "查询交易详情失败: " + e.getMessage());
         }
     }
@@ -178,6 +205,7 @@ public class ConsumeController {
      * </pre>
      */
     @GetMapping("/query")
+    @Observed(name = "consume.queryTransactions", contextualName = "consume-query-transactions")
     @Operation(
         summary = "分页查询消费记录",
         description = "分页查询消费记录，支持多条件筛选（用户ID、区域ID、时间范围、消费模式、交易状态等）。支持分页查询，默认每页10条记录。严格遵循RESTful规范：查询操作使用GET方法。",
@@ -191,42 +219,57 @@ public class ConsumeController {
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class)
         )
     )
-    @PreAuthorize("hasRole('CONSUME_MANAGER')")
-    public ResponseDTO<PageResult<ConsumeTransactionDetailVO>> queryTransactions(
-            @Parameter(description = "页码（从1开始）") 
-            @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "每页大小") 
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            @Parameter(description = "用户ID（可选）") 
-            @RequestParam(required = false) Long userId,
-            @Parameter(description = "区域ID（可选）") 
-            @RequestParam(required = false) String areaId,
-            @Parameter(description = "开始日期，格式：yyyy-MM-dd") 
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "结束日期，格式：yyyy-MM-dd") 
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @Parameter(description = "消费模式（可选）") 
-            @RequestParam(required = false) String consumeMode,
-            @Parameter(description = "交易状态（可选）") 
-            @RequestParam(required = false) String status) {
-        log.info("[消费管理] 分页查询消费记录，pageNum={}, pageSize={}, userId={}, areaId={}, startDate={}, endDate={}, consumeMode={}, status={}",
-                pageNum, pageSize, userId, areaId, startDate, endDate, consumeMode, status);
-        try {
-            // 构建查询表单
-            ConsumeTransactionQueryForm queryForm = new ConsumeTransactionQueryForm();
-            queryForm.setPageNum(pageNum);
-            queryForm.setPageSize(pageSize);
-            queryForm.setUserId(userId);
-            queryForm.setAreaId(areaId);
-            queryForm.setStartDate(startDate);
-            queryForm.setEndDate(endDate);
-            queryForm.setConsumeMode(consumeMode);
-            queryForm.setStatus(status);
-            
+	    @PreAuthorize("hasRole('CONSUME_MANAGER')")
+	    public ResponseDTO<PageResult<ConsumeTransactionDetailVO>> queryTransactions(
+	            @Parameter(description = "页码（从1开始）")
+	            @RequestParam(defaultValue = "1") Integer pageNum,
+	            @Parameter(description = "每页大小")
+	            @RequestParam(defaultValue = "10") Integer pageSize,
+	            @Parameter(description = "用户ID（可选）")
+	            @RequestParam(required = false) Long userId,
+	            @Parameter(description = "交易流水号（可选）")
+	            @RequestParam(required = false) String transactionNo,
+	            @Parameter(description = "设备ID（可选）")
+	            @RequestParam(required = false) Long deviceId,
+	            @Parameter(description = "区域ID（可选）")
+	            @RequestParam(required = false) String areaId,
+	            @Parameter(description = "开始日期，格式：yyyy-MM-dd")
+	            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+	            @Parameter(description = "结束日期，格式：yyyy-MM-dd")
+	            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+	            @Parameter(description = "消费模式（可选）")
+	            @RequestParam(required = false) String consumeMode,
+	            @Parameter(description = "交易状态（可选）")
+	            @RequestParam(required = false) String status) {
+	        log.info("[消费管理] 分页查询消费记录，pageNum={}, pageSize={}, userId={}, transactionNo={}, deviceId={}, areaId={}, startDate={}, endDate={}, consumeMode={}, status={}",
+	                pageNum, pageSize, userId, transactionNo, deviceId, areaId, startDate, endDate, consumeMode, status);
+	        try {
+	            // 构建查询表单
+	            ConsumeTransactionQueryForm queryForm = new ConsumeTransactionQueryForm();
+	            queryForm.setPageNum(pageNum);
+	            queryForm.setPageSize(pageSize);
+	            queryForm.setUserId(userId);
+	            queryForm.setTransactionNo(transactionNo);
+	            queryForm.setDeviceId(deviceId);
+	            queryForm.setAreaId(areaId);
+	            queryForm.setStartDate(startDate);
+	            queryForm.setEndDate(endDate);
+	            queryForm.setConsumeMode(consumeMode);
+	            queryForm.setStatus(status);
+
             PageResult<ConsumeTransactionDetailVO> result = consumeService.queryTransactions(queryForm);
             return ResponseDTO.ok(result);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费管理] 分页查询消费记录参数错误，pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费管理] 分页查询消费记录业务异常，pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[消费管理] 分页查询消费记录系统异常，pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("QUERY_TRANSACTIONS_SYSTEM_ERROR", "查询消费记录失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[消费管理] 分页查询消费记录失败", e);
+            log.error("[消费管理] 分页查询消费记录未知异常，pageNum={}, pageSize={}", pageNum, pageSize, e);
             return ResponseDTO.error("QUERY_TRANSACTIONS_ERROR", "查询消费记录失败: " + e.getMessage());
         }
     }
@@ -241,6 +284,7 @@ public class ConsumeController {
      * @return 设备详情，包含设备的所有信息
      */
     @GetMapping("/device/{deviceId}")
+    @Observed(name = "consume.getDeviceDetail", contextualName = "consume-get-device-detail")
     @Operation(
         summary = "获取设备详情",
         description = "获取指定消费设备的详细信息，包括设备状态、位置、配置、统计信息等。",
@@ -269,8 +313,17 @@ public class ConsumeController {
                 return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
             }
             return ResponseDTO.ok(device);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费管理] 获取设备详情参数错误，deviceId={}, error={}", deviceId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费管理] 获取设备详情业务异常，deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[消费管理] 获取设备详情系统异常，deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_DEVICE_SYSTEM_ERROR", "获取设备详情失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[消费管理] 获取设备详情失败，deviceId={}", deviceId, e);
+            log.error("[消费管理] 获取设备详情未知异常，deviceId={}", deviceId, e);
             return ResponseDTO.error("GET_DEVICE_ERROR", "获取设备详情失败: " + e.getMessage());
         }
     }
@@ -286,6 +339,7 @@ public class ConsumeController {
      * @return 设备统计信息，包含设备数量、状态分布等
      */
     @GetMapping("/device/statistics")
+    @Observed(name = "consume.getDeviceStatistics", contextualName = "consume-get-device-statistics")
     @Operation(
         summary = "获取设备状态统计",
         description = "获取指定区域的设备状态统计信息，包括设备总数、在线数、离线数、故障数等。如果不指定区域ID，则统计所有区域的设备。",
@@ -307,8 +361,17 @@ public class ConsumeController {
         try {
             ConsumeDeviceStatisticsVO statistics = consumeService.getDeviceStatistics(areaId);
             return ResponseDTO.ok(statistics);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费管理] 获取设备状态统计参数错误，areaId={}, error={}", areaId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费管理] 获取设备状态统计业务异常，areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[消费管理] 获取设备状态统计系统异常，areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_DEVICE_STATISTICS_SYSTEM_ERROR", "获取设备状态统计失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[消费管理] 获取设备状态统计失败，areaId={}", areaId, e);
+            log.error("[消费管理] 获取设备状态统计未知异常，areaId={}", areaId, e);
             return ResponseDTO.error("GET_DEVICE_STATISTICS_ERROR", "获取设备状态统计失败: " + e.getMessage());
         }
     }
@@ -324,6 +387,7 @@ public class ConsumeController {
      * @return 实时统计数据，包含今日消费金额、笔数、实时交易等
      */
     @GetMapping("/realtime-statistics")
+    @Observed(name = "consume.getRealtimeStatistics", contextualName = "consume-get-realtime-statistics")
     @Operation(
         summary = "获取实时统计",
         description = "获取指定区域的实时消费统计数据，包括今日消费金额、今日消费笔数、实时交易等。如果不指定区域ID，则统计所有区域的实时数据。",
@@ -345,10 +409,22 @@ public class ConsumeController {
         try {
             ConsumeRealtimeStatisticsVO statistics = consumeService.getRealtimeStatistics(areaId);
             return ResponseDTO.ok(statistics);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费管理] 获取实时统计参数错误，areaId={}, error={}", areaId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费管理] 获取实时统计业务异常，areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[消费管理] 获取实时统计系统异常，areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_REALTIME_STATISTICS_SYSTEM_ERROR", "获取实时统计失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[消费管理] 获取实时统计失败，areaId={}", areaId, e);
+            log.error("[消费管理] 获取实时统计未知异常，areaId={}", areaId, e);
             return ResponseDTO.error("GET_REALTIME_STATISTICS_ERROR", "获取实时统计失败: " + e.getMessage());
         }
     }
 }
+
+
+
 

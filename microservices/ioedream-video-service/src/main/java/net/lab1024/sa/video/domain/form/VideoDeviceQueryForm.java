@@ -3,6 +3,7 @@ package net.lab1024.sa.video.domain.form;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 /**
  * 视频设备查询表单
@@ -37,6 +38,7 @@ public class VideoDeviceQueryForm {
     /**
      * 关键词（设备名称、设备编号）
      */
+    @Nullable
     private String keyword;
 
     /**

@@ -49,3 +49,6 @@ public interface ConsumeCacheService {
      */
     void delete(String key);
 }
+
+
+

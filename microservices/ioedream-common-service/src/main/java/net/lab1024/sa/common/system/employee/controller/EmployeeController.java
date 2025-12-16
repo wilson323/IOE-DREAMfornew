@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,6 +53,7 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @GetMapping("/page")
+    @Observed(name = "employee.queryEmployeePage", contextualName = "employee-query-page")
     @Operation(summary = "分页查询员工", description = "根据查询条件分页查询员工列表")
     public ResponseDTO<PageResult<EmployeeVO>> queryEmployeePage(@Valid EmployeeQueryDTO queryDTO) {
         PageResult<EmployeeVO> result = employeeService.queryEmployeePage(queryDTO);
@@ -59,6 +61,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{employeeId}")
+    @Observed(name = "employee.getEmployeeDetail", contextualName = "employee-get-detail")
     @Operation(summary = "获取员工详情", description = "根据员工ID获取员工详细信息")
     public ResponseDTO<EmployeeVO> getEmployeeDetail(
             @Parameter(description = "员工ID", required = true) @PathVariable @NotNull Long employeeId) {
@@ -70,6 +73,7 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @Observed(name = "employee.addEmployee", contextualName = "employee-add")
     @Operation(summary = "新增员工", description = "新增员工信息")
     public ResponseDTO<String> addEmployee(@RequestBody @Valid EmployeeAddDTO addDTO) {
         boolean result = employeeService.addEmployee(addDTO);
@@ -77,6 +81,7 @@ public class EmployeeController {
     }
 
     @PutMapping
+    @Observed(name = "employee.updateEmployee", contextualName = "employee-update")
     @Operation(summary = "更新员工", description = "更新员工信息")
     public ResponseDTO<String> updateEmployee(@RequestBody @Valid EmployeeUpdateDTO updateDTO) {
         boolean result = employeeService.updateEmployee(updateDTO);
@@ -84,6 +89,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{employeeId}")
+    @Observed(name = "employee.deleteEmployee", contextualName = "employee-delete")
     @Operation(summary = "删除员工", description = "根据员工ID删除员工信息")
     public ResponseDTO<String> deleteEmployee(
             @Parameter(description = "员工ID", required = true) @PathVariable @NotNull Long employeeId) {
@@ -92,6 +98,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/batch")
+    @Observed(name = "employee.batchDeleteEmployees", contextualName = "employee-batch-delete")
     @Operation(summary = "批量删除员工", description = "根据员工ID列表批量删除员工信息")
     public ResponseDTO<String> batchDeleteEmployees(@RequestBody List<Long> employeeIds) {
         boolean result = employeeService.batchDeleteEmployees(employeeIds);
@@ -99,6 +106,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/department/{departmentId}")
+    @Observed(name = "employee.getEmployeesByDepartmentId", contextualName = "employee-get-by-department")
     @Operation(summary = "根据部门获取员工", description = "根据部门ID获取该部门下的员工列表")
     public ResponseDTO<List<EmployeeVO>> getEmployeesByDepartmentId(
             @Parameter(description = "部门ID", required = true) @PathVariable @NotNull Long departmentId) {
@@ -107,6 +115,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}/status/{status}")
+    @Observed(name = "employee.updateEmployeeStatus", contextualName = "employee-update-status")
     @Operation(summary = "更新员工状态", description = "更新员工状态（启用/禁用）")
     public ResponseDTO<String> updateEmployeeStatus(
             @Parameter(description = "员工ID", required = true) @PathVariable @NotNull Long employeeId,

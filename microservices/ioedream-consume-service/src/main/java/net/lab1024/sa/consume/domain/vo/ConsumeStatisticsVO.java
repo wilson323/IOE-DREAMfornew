@@ -82,3 +82,6 @@ public class ConsumeStatisticsVO {
      */
     private List<Map<String, Object>> regionData;
 }
+
+
+

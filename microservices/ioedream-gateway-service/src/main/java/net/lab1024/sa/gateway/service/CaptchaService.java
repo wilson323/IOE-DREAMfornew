@@ -2,9 +2,9 @@ package net.lab1024.sa.gateway.service;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.gateway.config.CaptchaConfig;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -29,7 +29,10 @@ import java.util.concurrent.TimeUnit;
  * @since 2025-12-08
  */
 @Slf4j
-@Service
+// 架构问题：网关服务是响应式WebFlux，@Transactional在响应式环境中不工作
+// 验证码服务应移至common-service
+// @Service
+// @Transactional(rollbackFor = Exception.class)
 public class CaptchaService {
 
     @Resource
@@ -72,8 +75,8 @@ public class CaptchaService {
                     .build();
 
         } catch (Exception e) {
-            log.error("生成验证码失败", e);
-            throw new RuntimeException("生成验证码失败", e);
+            log.error("[验证码服务] 生成验证码失败", e);
+            throw new SystemException("CAPTCHA_GENERATE_ERROR", "生成验证码失败", e);
         }
     }
 

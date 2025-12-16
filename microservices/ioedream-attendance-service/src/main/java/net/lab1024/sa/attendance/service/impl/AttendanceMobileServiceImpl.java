@@ -15,14 +15,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.AttendanceShiftDao;
 import net.lab1024.sa.attendance.domain.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.service.AttendanceMobileService;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.organization.dao.EmployeeDao;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
-import net.lab1024.sa.common.organization.entity.EmployeeEntity;
+import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
+import net.lab1024.sa.common.system.employee.domain.entity.EmployeeEntity;
 
 /**
  * 移动端考勤服务实现类
@@ -81,22 +84,22 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
         try {
             // 参数验证
             if (employeeId == null) {
-                return ResponseDTO.error("PARAM_ERROR", "员工ID不能为空");
+                throw new ParamException("PARAM_ERROR", "员工ID不能为空");
             }
 
             if (latitude == null || longitude == null) {
-                return ResponseDTO.error("PARAM_ERROR", "GPS坐标不能为空");
+                throw new ParamException("PARAM_ERROR", "GPS坐标不能为空");
             }
 
             if (address == null || address.trim().isEmpty()) {
-                return ResponseDTO.error("PARAM_ERROR", "打卡地址不能为空");
+                throw new ParamException("PARAM_ERROR", "打卡地址不能为空");
             }
 
             // 验证员工是否存在
             EmployeeEntity employee = employeeDao.selectById(employeeId);
             if (employee == null) {
                 log.warn("[移动端考勤] 员工不存在，employeeId={}", employeeId);
-                return ResponseDTO.error("EMPLOYEE_NOT_FOUND", "员工不存在");
+                throw new BusinessException("EMPLOYEE_NOT_FOUND", "员工不存在");
             }
 
             // 检查员工是否在指定考勤区域范围内
@@ -104,7 +107,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             if (!inRange) {
                 log.warn("[移动端考勤] 不在考勤范围内，employeeId={}, latitude={}, longitude={}",
                         employeeId, latitude, longitude);
-                return ResponseDTO.error("OUT_OF_RANGE", "不在考勤范围内");
+                throw new BusinessException("OUT_OF_RANGE", "不在考勤范围内");
             }
 
             // 检查今日是否已经打卡
@@ -128,12 +131,12 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             if (checkInRecord != null && checkOutRecord != null) {
                 // 已完成上下班打卡
                 log.warn("[移动端考勤] 今日已完成上下班打卡，employeeId={}", employeeId);
-                return ResponseDTO.error("ALREADY_PUNCHED", "今日已完成上下班打卡");
+                throw new BusinessException("ALREADY_PUNCHED", "今日已完成上下班打卡");
             } else if (checkInRecord != null && checkOutRecord == null) {
                 // 已上班打卡，创建下班打卡记录
                 AttendanceRecordEntity newCheckOutRecord = new AttendanceRecordEntity();
                 newCheckOutRecord.setUserId(employeeId);
-                newCheckOutRecord.setUserName(employee.getName() != null ? employee.getName() : "");
+                newCheckOutRecord.setUserName(employee.getEmployeeName() != null ? employee.getEmployeeName() : "");
                 newCheckOutRecord.setDepartmentId(employee.getDepartmentId());
                 newCheckOutRecord.setAttendanceDate(today);
                 newCheckOutRecord.setPunchTime(now);
@@ -152,7 +155,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             // 创建新的上班打卡记录
             AttendanceRecordEntity record = new AttendanceRecordEntity();
             record.setUserId(employeeId);
-            record.setUserName(employee.getName() != null ? employee.getName() : "");
+            record.setUserName(employee.getEmployeeName() != null ? employee.getEmployeeName() : "");
             record.setDepartmentId(employee.getDepartmentId());
             record.setAttendanceDate(today);
             record.setPunchTime(now);
@@ -166,9 +169,15 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             log.info("[移动端考勤] GPS打卡成功，employeeId={}, address={}", employeeId, address);
             return ResponseDTO.ok("上班打卡成功");
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端考勤] GPS打卡参数错误，employeeId={}", employeeId, e);
+            throw new ParamException("GPS_PUNCH_PARAM_ERROR", "打卡参数错误: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[移动端考勤] GPS打卡业务异常，employeeId={}", employeeId, e);
+            throw e;
         } catch (Exception e) {
-            log.error("[移动端考勤] GPS打卡异常，employeeId={}", employeeId, e);
-            return ResponseDTO.error("SYSTEM_ERROR", "打卡失败：" + e.getMessage());
+            log.error("[移动端考勤] GPS打卡系统异常，employeeId={}", employeeId, e);
+            throw new SystemException("GPS_PUNCH_ERROR", "打卡失败: " + e.getMessage(), e);
         }
     }
 
@@ -300,3 +309,5 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
         return earthRadius * c;
     }
 }
+
+

@@ -22,3 +22,4 @@ import net.lab1024.sa.visitor.domain.entity.VisitorAppointmentEntity;
 public interface VisitorAppointmentDao extends BaseMapper<VisitorAppointmentEntity> {
 }
 
+

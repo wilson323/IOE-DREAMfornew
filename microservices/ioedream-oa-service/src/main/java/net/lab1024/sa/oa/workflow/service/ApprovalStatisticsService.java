@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.workflow.entity.ApprovalStatisticsEntity;
+import net.lab1024.sa.oa.workflow.entity.ApprovalStatisticsEntity;
 
 /**
  * 审批统计服务接口
@@ -124,4 +124,8 @@ public interface ApprovalStatisticsService {
             LocalDate endDate,
             String statisticsDimension);
 }
+
+
+
+
 

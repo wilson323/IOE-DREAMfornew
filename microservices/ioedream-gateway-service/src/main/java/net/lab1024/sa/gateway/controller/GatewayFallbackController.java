@@ -1,10 +1,8 @@
 package net.lab1024.sa.gateway.controller;
 
 // 使用Spring Cloud的CircuitBreaker而非Resilience4j
-import jakarta.annotation.Resource;
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
-// Gateway服务使用标准的ResponseEntity而非ResponseDTO
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +27,9 @@ import java.util.Objects;
 @Slf4j
 public class GatewayFallbackController {
 
-    @Resource
-    private CircuitBreakerFactory<?, ?> circuitBreakerFactory;
+    // CircuitBreakerFactory需要额外配置，暂时禁用
+    // @Resource
+    // private CircuitBreakerFactory<?, ?> circuitBreakerFactory;
 
     // ============================================================
     // 服务降级处理方法
@@ -39,6 +38,7 @@ public class GatewayFallbackController {
     /**
      * 公共服务降级处理
      */
+    @Observed(name = "fallback.common", contextualName = "fallback-common")
     @GetMapping("/common")
     public ResponseEntity<Map<String, Object>> commonServiceFallback() {
         log.warn("[网关降级] 公共服务不可用，触发降级处理");
@@ -51,6 +51,7 @@ public class GatewayFallbackController {
     /**
      * 设备通讯服务降级处理
      */
+    @Observed(name = "fallback.device", contextualName = "fallback-device")
     @GetMapping("/device")
     public ResponseEntity<Map<String, Object>> deviceServiceFallback() {
         log.warn("[网关降级] 设备通讯服务不可用，触发降级处理");
@@ -70,6 +71,7 @@ public class GatewayFallbackController {
     /**
      * OA服务降级处理
      */
+    @Observed(name = "fallback.oa", contextualName = "fallback-oa")
     @GetMapping("/oa")
     public ResponseEntity<Map<String, Object>> oaServiceFallback() {
         log.warn("[网关降级] OA服务不可用，触发降级处理");
@@ -87,6 +89,7 @@ public class GatewayFallbackController {
     /**
      * 门禁服务降级处理 - 关键服务，提供基础功能
      */
+    @Observed(name = "fallback.access", contextualName = "fallback-access")
     @GetMapping("/access")
     public ResponseEntity<Map<String, Object>> accessServiceFallback() {
         log.warn("[网关降级] 门禁服务不可用，触发紧急降级处理");
@@ -107,6 +110,7 @@ public class GatewayFallbackController {
     /**
      * 考勤服务降级处理
      */
+    @Observed(name = "fallback.attendance", contextualName = "fallback-attendance")
     @GetMapping("/attendance")
     public ResponseEntity<Map<String, Object>> attendanceServiceFallback() {
         log.warn("[网关降级] 考勤服务不可用，触发降级处理");
@@ -125,6 +129,7 @@ public class GatewayFallbackController {
     /**
      * 消费服务降级处理 - 关键服务，提供基础功能
      */
+    @Observed(name = "fallback.consume", contextualName = "fallback-consume")
     @GetMapping("/consume")
     public ResponseEntity<Map<String, Object>> consumeServiceFallback() {
         log.warn("[网关降级] 消费服务不可用，触发紧急降级处理");
@@ -145,6 +150,7 @@ public class GatewayFallbackController {
     /**
      * 访客服务降级处理
      */
+    @Observed(name = "fallback.visitor", contextualName = "fallback-visitor")
     @GetMapping("/visitor")
     public ResponseEntity<Map<String, Object>> visitorServiceFallback() {
         log.warn("[网关降级] 访客服务不可用，触发降级处理");
@@ -163,6 +169,7 @@ public class GatewayFallbackController {
     /**
      * 视频服务降级处理
      */
+    @Observed(name = "fallback.video", contextualName = "fallback-video")
     @GetMapping("/video")
     public ResponseEntity<Map<String, Object>> videoServiceFallback() {
         log.warn("[网关降级] 视频服务不可用，触发降级处理");
@@ -181,6 +188,7 @@ public class GatewayFallbackController {
     /**
      * 通用服务降级处理
      */
+    @Observed(name = "fallback.general", contextualName = "fallback-general")
     @GetMapping("/general/{serviceName}")
     public ResponseEntity<Map<String, Object>> generalServiceFallback(@PathVariable String serviceName) {
         log.warn("[网关降级] 服务不可用: {}", serviceName);
@@ -197,6 +205,7 @@ public class GatewayFallbackController {
     /**
      * 查询所有熔断器状态
      */
+    @Observed(name = "fallback.getCircuitBreakerStatus", contextualName = "fallback-circuit-breaker-status")
     @GetMapping("/circuitbreakers")
     public ResponseEntity<Map<String, Object>> getCircuitBreakerStatus() {
         Map<String, Object> status = new HashMap<>();
@@ -220,6 +229,7 @@ public class GatewayFallbackController {
     /**
      * 查询指定服务的健康状态
      */
+    @Observed(name = "fallback.getServiceHealth", contextualName = "fallback-service-health")
     @GetMapping("/health/{serviceName}")
     public ResponseEntity<Map<String, Object>> getServiceHealth(@PathVariable String serviceName) {
         Map<String, Object> healthInfo = new HashMap<>();
@@ -251,6 +261,7 @@ public class GatewayFallbackController {
     /**
      * 获取系统降级总览
      */
+    @Observed(name = "fallback.getDegradationOverview", contextualName = "fallback-degradation-overview")
     @GetMapping("/overview")
     public ResponseEntity<Map<String, Object>> getDegradationOverview() {
         Map<String, Object> overview = new HashMap<>();

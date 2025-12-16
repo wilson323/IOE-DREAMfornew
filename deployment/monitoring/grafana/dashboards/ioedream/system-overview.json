@@ -1,0 +1,217 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "IOE-DREAM 系统监控总览",
+    "tags": ["ioe-dream", "system", "overview"],
+    "timezone": "Asia/Shanghai",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "服务状态总览",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "up{application=~\"ioedream-.*\"}",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "text": "离线",
+                    "color": "red"
+                  },
+                  "1": {
+                    "text": "在线",
+                    "color": "green"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "系统总QPS",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_seconds_count[5m]))",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "平均响应时间",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket[5m])) by (le, application))",
+            "legendFormat": "{{application}} - P50",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (le, application))",
+            "legendFormat": "{{application}} - P95",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket[5m])) by (le, application))",
+            "legendFormat": "{{application}} - P99",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "错误率",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[5m])) by (application) / sum(rate(http_server_requests_seconds_count[5m])) by (application) * 100",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 1
+                },
+                {
+                  "color": "red",
+                  "value": 5
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "JVM内存使用",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 17
+        },
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{application=~\"ioedream-.*\", area=\"heap\"}",
+            "legendFormat": "{{application}} - 已用",
+            "refId": "A"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{application=~\"ioedream-.*\", area=\"heap\"}",
+            "legendFormat": "{{application}} - 最大",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "JVM GC时间",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 17
+        },
+        "targets": [
+          {
+            "expr": "rate(jvm_gc_pause_seconds_sum[5m])",
+            "legendFormat": "{{application}} - {{gc}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "decimals": 3
+          }
+        }
+      }
+    ],
+    "schemaVersion": 38,
+    "version": 1
+  }
+}
+

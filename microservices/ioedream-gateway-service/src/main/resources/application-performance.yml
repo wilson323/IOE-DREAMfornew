@@ -28,9 +28,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns:
-              - "http://localhost:*"
-              - "http://127.0.0.1:*"
+            allowedOriginPatterns: ${CORS_ALLOWED_ORIGINS:http://localhost:*,http://127.0.0.1:*}
             allowedMethods:
               - GET
               - POST
@@ -39,7 +37,7 @@ spring:
               - OPTIONS
             allowedHeaders:
               - "*"
-            allowCredentials: true
+            allowCredentials: ${CORS_ALLOW_CREDENTIALS:true}
             maxAge: 3600
 
   # ==================== Redis配置 (Spring Boot 3.x标准) ====================
@@ -57,11 +55,14 @@ spring:
           min-idle: 5
           max-wait: 2000ms
 
-  # ==================== 缓存配置 ====================
+  # ==================== 缓存配置（内存优化） ====================
   cache:
     type: caffeine
     caffeine:
-      spec: maximumSize=30000,expireAfterWrite=5m,recordStats
+      # 优化后：从30000降至15000（节眅50%内存）
+      # 网关服务作为纯路由服务，缓存需求较低
+      # weakKeys: 启用弱键引用，允许GC回收不再使用的缓存键
+      spec: maximumSize=15000,expireAfterWrite=5m,expireAfterAccess=2m,weakKeys,recordStats
 
 # ==================== 服务器配置 ====================
 server:
@@ -92,18 +93,18 @@ management:
       show-details: always
       show-components: always
     metrics:
-      enabled: true
-  metrics:
-    export:
-      prometheus:
+      access: read-only  # Spring Boot 3.4+: 使用access替代enabled
+  prometheus:
+    metrics:
+      export:
         enabled: true
 
 # ==================== 日志配置 (Spring Boot 3.x标准) ====================
 logging:
   level:
     root: INFO
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web: INFO
+    "[org.springframework.cloud.gateway]": DEBUG
+    "[org.springframework.web]": INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

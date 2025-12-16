@@ -28,7 +28,7 @@ import net.lab1024.sa.video.service.impl.VideoDeviceServiceImpl;
 /**
  * VideoDeviceServiceImpl单元测试
  * <p>
- * 目标覆盖率：≥80%
+ * 目标覆盖率：>= 80%
  * 测试范围：视频设备管理核心业务方法
  * </p>
  *
@@ -37,7 +37,7 @@ import net.lab1024.sa.video.service.impl.VideoDeviceServiceImpl;
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("VideoDeviceServiceImpl单元测试")
-@SuppressWarnings({"unchecked", "null"})
+@SuppressWarnings("unchecked")
 class VideoDeviceServiceImplTest {
 
     @Mock

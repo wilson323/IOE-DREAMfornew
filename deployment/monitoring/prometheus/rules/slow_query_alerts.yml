@@ -1,0 +1,24 @@
+groups:
+  - name: slow_query_alerts
+    interval: 30s
+    rules:
+      - alert: SlowQueryDetected
+        expr: mysql_slow_queries_total > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "检测到慢查询"
+          description: "数据库慢查询数量: {{ $value }}"
+
+      - alert: HighSlowQueryRate
+        expr: rate(mysql_slow_queries_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "慢查询率过高"
+          description: "慢查询速率: {{ $value }} 次/秒"
+

@@ -980,7 +980,7 @@ generate_env_file() {
 # ============================================================
 
 # Grafana配置
-GRAFANA_PASSWORD=admin123
+GRAFANA_PASSWORD=
 GRAFANA_DOMAIN=monitoring.ioe-dream.com
 
 # SMTP邮件配置
@@ -1026,7 +1026,8 @@ deploy_monitoring_system() {
 
     # 检查环境变量文件
     if [[ ! -f "$PROJECT_ROOT/.env.monitoring" ]]; then
-        log_warn "环境变量文件不存在，使用默认配置"
+        log_error "环境变量文件不存在：$PROJECT_ROOT/.env.monitoring（禁止使用默认口令，请先生成并填写 GRAFANA_PASSWORD）"
+        exit 1
     fi
 
     # 设置环境变量
@@ -1035,6 +1036,11 @@ deploy_monitoring_system() {
         source "$PROJECT_ROOT/.env.monitoring"
         set +a
         log_info "已加载环境变量配置"
+    fi
+
+    if [[ -z "${GRAFANA_PASSWORD}" ]]; then
+        log_error "缺少环境变量：GRAFANA_PASSWORD（禁止使用默认口令，请在 .env.monitoring 中显式配置）"
+        exit 1
     fi
 
     # 创建Docker网络（如果不存在）
@@ -1325,7 +1331,7 @@ main() {
     log_info ""
     log_info "部署结果:"
     log_info "  - Prometheus: http://localhost:9090"
-    log_info "  - Grafana: http://localhost:3000 (admin/admin123)"
+    log_info "  - Grafana: http://localhost:3000 (admin/(已隐藏，使用 GRAFANA_PASSWORD))"
     log_info "  - AlertManager: http://localhost:9093"
     log_info "  - Node Exporter: http://localhost:9100"
     log_info ""

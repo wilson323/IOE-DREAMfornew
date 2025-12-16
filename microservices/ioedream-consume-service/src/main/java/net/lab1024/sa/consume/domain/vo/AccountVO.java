@@ -244,3 +244,5 @@ public class AccountVO {
     @Schema(description = "扩展属性")
     private String extendAttrs;
 }
+
+

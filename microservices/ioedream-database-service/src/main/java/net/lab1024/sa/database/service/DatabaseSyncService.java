@@ -13,9 +13,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -446,17 +447,28 @@ public class DatabaseSyncService {
 
     /**
      * 从配置文件加载数据库配置
+     * 
+     * 安全规范：禁止硬编码密码，必须从环境变量或加密配置中读取
      */
     private void loadDatabaseConfigs() {
-        // 这里可以从配置文件或环境变量加载配置
-        // 暂时使用硬编码配置作为示例
+        // 从环境变量或配置文件加载数据库配置
+        // 禁止硬编码密码，必须使用环境变量或ENC()加密配置
+        
+        String dbUrl = System.getenv("DATABASE_URL");
+        String dbUsername = System.getenv("DATABASE_USERNAME");
+        String dbPassword = System.getenv("DATABASE_PASSWORD");
+        
+        if (dbUrl == null || dbUsername == null || dbPassword == null) {
+            log.warn("[数据库同步服务] 数据库配置未从环境变量加载，请设置DATABASE_URL、DATABASE_USERNAME、DATABASE_PASSWORD");
+            return;
+        }
 
         // 公共数据库配置
         DatabaseConfig commonConfig = new DatabaseConfig(
             "ioedream_common_db",
-            "jdbc:mysql://127.0.0.1:3306/ioedream_common_db",
-            "root",
-            "123456",
+            dbUrl,
+            dbUsername,
+            dbPassword,
             true
         );
         commonConfig.addRequiredTable("t_area");
@@ -465,6 +477,6 @@ public class DatabaseSyncService {
         commonConfig.addRequiredTable("t_permission");
         databaseConfigs.put("ioedream_common_db", commonConfig);
 
-        // 其他数据库配置...
+        // 其他数据库配置从环境变量或配置文件加载...
     }
 }

@@ -144,5 +144,45 @@ public interface NotificationConfigService {
      * @return 响应结果
      */
     ResponseDTO<Void> refreshAlertConfig();
+
+    /**
+     * 根据配置键获取配置值（带缓存）
+     * <p>
+     * 功能说明：
+     * 1. 从缓存或数据库查询配置
+     * 2. 如果isEncrypted=1，解密配置值
+     * 3. 使用Spring Cache的@Cacheable注解管理缓存
+     * </p>
+     * <p>
+     * 缓存策略：
+     * - 缓存名称：notification:config:value
+     * - 缓存键：configKey
+     * - 缓存过期时间：30分钟（在CacheConfiguration中配置）
+     * </p>
+     *
+     * @param configKey 配置键
+     * @return 配置值（已解密），如果配置不存在或已禁用则返回null
+     */
+    String getConfigValue(String configKey);
+
+    /**
+     * 根据配置类型获取所有配置（带缓存）
+     * <p>
+     * 功能说明：
+     * 1. 从缓存或数据库查询配置
+     * 2. 如果isEncrypted=1，解密配置值
+     * 3. 使用Spring Cache的@Cacheable注解管理缓存
+     * </p>
+     * <p>
+     * 缓存策略：
+     * - 缓存名称：notification:config:type
+     * - 缓存键：configType
+     * - 缓存过期时间：30分钟（在CacheConfiguration中配置）
+     * </p>
+     *
+     * @param configType 配置类型
+     * @return 配置Map（key为configKey，value为configValue）
+     */
+    java.util.Map<String, String> getConfigsByType(String configType);
 }
 

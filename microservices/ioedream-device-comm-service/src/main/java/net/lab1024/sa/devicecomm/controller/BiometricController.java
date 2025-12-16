@@ -1,5 +1,6 @@
 package net.lab1024.sa.devicecomm.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,6 +45,7 @@ public class BiometricController {
     /**
      * 注册生物识别特征
      */
+    @Observed(name = "biometric.register", contextualName = "biometric-register")
     @PostMapping("/register")
     @Operation(summary = "注册生物识别", description = "为用户注册生物识别特征")
     public ResponseDTO<Void> registerBiometric(
@@ -63,6 +65,7 @@ public class BiometricController {
     /**
      * 异步注册生物识别特征
      */
+    @Observed(name = "biometric.registerAsync", contextualName = "biometric-register-async")
     @PostMapping("/register-async")
     @Operation(summary = "异步注册生物识别", description = "异步为用户注册生物识别特征")
     public CompletableFuture<ResponseDTO<Void>> registerBiometricAsync(
@@ -82,6 +85,7 @@ public class BiometricController {
     /**
      * 验证生物识别特征
      */
+    @Observed(name = "biometric.verify", contextualName = "biometric-verify")
     @PostMapping("/verify")
     @Operation(summary = "验证生物识别", description = "验证用户的生物识别特征")
     public ResponseDTO<BiometricDataManager.BiometricMatchResult> verifyBiometric(
@@ -96,6 +100,7 @@ public class BiometricController {
     /**
      * 查找最佳匹配用户
      */
+    @Observed(name = "biometric.findBestMatch", contextualName = "biometric-find-match")
     @PostMapping("/match")
     @Operation(summary = "查找最佳匹配", description = "根据生物特征查找最佳匹配用户")
     public ResponseDTO<BiometricDataManager.BiometricMatchResult> findBestMatch(
@@ -110,6 +115,7 @@ public class BiometricController {
     /**
      * 删除生物识别数据
      */
+    @Observed(name = "biometric.deleteData", contextualName = "biometric-delete-data")
     @DeleteMapping("/data")
     @Operation(summary = "删除生物数据", description = "删除用户的生物识别数据")
     public ResponseDTO<Void> deleteBiometricData(
@@ -123,6 +129,7 @@ public class BiometricController {
     /**
      * 获取用户支持的验证方式
      */
+    @Observed(name = "biometric.getSupportedVerifyTypes", contextualName = "biometric-get-verify-types")
     @GetMapping("/verify-types/{userId}")
     @Operation(summary = "获取验证方式", description = "获取用户支持的生物识别验证方式")
     public ResponseDTO<List<VerifyTypeEnum>> getSupportedVerifyTypes(
@@ -135,6 +142,7 @@ public class BiometricController {
     /**
      * 获取用户生物识别数据
      */
+    @Observed(name = "biometric.getUserBiometricData", contextualName = "biometric-get-user-data")
     @GetMapping("/data/{userId}")
     @Operation(summary = "获取生物数据", description = "获取用户的所有生物识别数据")
     public ResponseDTO<List<BiometricDataManager.BiometricData>> getUserBiometricData(
@@ -147,6 +155,7 @@ public class BiometricController {
     /**
      * 处理设备生物识别消息
      */
+    @Observed(name = "biometric.processDeviceMessage", contextualName = "biometric-process-device-message")
     @PostMapping("/device-message/{deviceId}")
     @Operation(summary = "处理设备消息", description = "处理来自生物识别设备的消息")
     public ResponseDTO<String> processDeviceBiometricMessage(
@@ -161,6 +170,7 @@ public class BiometricController {
     /**
      * 批量注册生物识别特征
      */
+    @Observed(name = "biometric.batchRegister", contextualName = "biometric-batch-register")
     @PostMapping("/batch-register")
     @Operation(summary = "批量注册", description = "批量注册用户的多个生物识别特征")
     public ResponseDTO<Void> batchRegisterBiometric(
@@ -174,6 +184,7 @@ public class BiometricController {
     /**
      * 清理过期数据
      */
+    @Observed(name = "biometric.cleanExpiredData", contextualName = "biometric-clean-expired")
     @PostMapping("/clean-expired")
     @Operation(summary = "清理过期数据", description = "清理过期的生物识别数据")
     public ResponseDTO<String> cleanExpiredData() {
@@ -185,6 +196,7 @@ public class BiometricController {
     /**
      * 获取系统统计信息
      */
+    @Observed(name = "biometric.getStatistics", contextualName = "biometric-get-statistics")
     @GetMapping("/statistics")
     @Operation(summary = "获取统计信息", description = "获取生物识别系统统计信息")
     public ResponseDTO<BiometricDataManager.BiometricDataStatistics> getStatistics() {
@@ -196,6 +208,7 @@ public class BiometricController {
     /**
      * 获取支持的验证类型列表
      */
+    @Observed(name = "biometric.getSupportedTypes", contextualName = "biometric-get-supported-types")
     @GetMapping("/supported-types")
     @Operation(summary = "获取支持的验证类型", description = "获取系统支持的所有生物识别验证类型")
     public ResponseDTO<List<VerifyTypeInfo>> getSupportedTypes() {
@@ -216,6 +229,7 @@ public class BiometricController {
     /**
      * 健康检查
      */
+    @Observed(name = "biometric.health", contextualName = "biometric-health")
     @GetMapping("/health")
     @Operation(summary = "健康检查", description = "生物识别服务健康检查")
     public ResponseDTO<String> health() {

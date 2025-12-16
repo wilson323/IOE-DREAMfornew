@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
@@ -59,7 +61,9 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
     private GatewayServiceClient gatewayServiceClient;
 
     @Override
+    @Observed(name = "visitor.appointment.create", contextualName = "visitor-appointment-create")
     @Transactional(rollbackFor = Exception.class)
+    @Retry(name = "external-service-retry", fallbackMethod = "createAppointmentFallback")
     public ResponseDTO<Long> createAppointment(VisitorMobileForm form) {
         log.info("[访客预约] 创建预约，visitorName={}, visitUserId={}, startTime={}",
                 form.getVisitorName(), form.getVisitUserId(), form.getAppointmentStartTime());
@@ -126,7 +130,19 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
         return ResponseDTO.ok(entity.getAppointmentId());
     }
 
+    /**
+     * 访客预约创建降级方法
+     * <p>
+     * 当工作流服务调用失败时，使用此降级方法
+     * </p>
+     */
+    public ResponseDTO<Long> createAppointmentFallback(VisitorMobileForm form, Exception e) {
+        log.error("[访客预约] 启动审批流程失败，使用降级方案, visitorName={}, error={}", form.getVisitorName(), e.getMessage(), e);
+        throw new BusinessException("启动审批流程失败: " + e.getMessage());
+    }
+
     @Override
+    @Observed(name = "visitor.appointment.getDetail", contextualName = "visitor-appointment-get-detail")
     @Transactional(readOnly = true)
     public ResponseDTO<VisitorAppointmentDetailVO> getAppointmentDetail(Long appointmentId) {
         log.info("[访客预约] 获取预约详情，appointmentId={}", appointmentId);
@@ -276,7 +292,7 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
         try {
             // 1. 通知访客：预约已通过，可以按时到访
             sendVisitorNotification(entity);
-            
+
             // 2. 通知被访人：访客预约已通过，请做好接待准备
             sendHostNotification(entity);
 
@@ -313,7 +329,7 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
 
             log.info("[访客预约] 访客通知内容已准备，appointmentId={}, visitorName={}, phone={}",
                     entity.getAppointmentId(), entity.getVisitorName(), entity.getPhoneNumber());
-            
+
             // 通过网关调用通知服务发送通知
             try {
                 Map<String, Object> notificationRequest = new HashMap<>();
@@ -376,7 +392,7 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
 
             log.info("[访客预约] 被访人通知内容已准备，appointmentId={}, visitUserId={}, visitUserName={}",
                     entity.getAppointmentId(), entity.getVisitUserId(), entity.getVisitUserName());
-            
+
             // 通过网关调用通知服务发送通知
             if (entity.getVisitUserId() != null) {
                 try {
@@ -525,4 +541,5 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
         return vo;
     }
 }
+
 

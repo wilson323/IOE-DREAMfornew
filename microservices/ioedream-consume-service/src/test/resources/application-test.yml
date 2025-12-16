@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ioe_dream_test?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
     username: root
-    password: test_password
+    password: ${DATABASE_PASSWORD:test_password}
     druid:
       initial-size: 5
       min-idle: 5

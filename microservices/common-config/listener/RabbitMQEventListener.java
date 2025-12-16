@@ -10,6 +10,7 @@ import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import net.lab1024.sa.common.exception.SystemException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] 系统事件发送失败: type={}, error={}", event.getType(), e.getMessage(), e);
-            throw new RuntimeException("系统事件发送失败", e);
+            throw new SystemException("SYSTEM_EVENT_SEND_ERROR", "系统事件发送失败", e);
         }
     }
 
@@ -93,7 +94,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] 设备命令发送失败: deviceId={}, error={}", event.getDeviceId(), e.getMessage(), e);
-            throw new RuntimeException("设备命令发送失败", e);
+            throw new SystemException("DEVICE_COMMAND_SEND_ERROR", "设备命令发送失败", e);
         }
     }
 
@@ -128,7 +129,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] 门禁事件发送失败: type={}, error={}", event.getEventType(), e.getMessage(), e);
-            throw new RuntimeException("门禁事件发送失败", e);
+            throw new SystemException("ACCESS_EVENT_SEND_ERROR", "门禁事件发送失败", e);
         }
     }
 
@@ -158,7 +159,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] 考勤事件发送失败: type={}, error={}", event.getEventType(), e.getMessage(), e);
-            throw new RuntimeException("考勤事件发送失败", e);
+            throw new SystemException("ATTENDANCE_EVENT_SEND_ERROR", "考勤事件发送失败", e);
         }
     }
 
@@ -194,7 +195,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] 消费事件发送失败: type={}, error={}", event.getEventType(), e.getMessage(), e);
-            throw new RuntimeException("消费事件发送失败", e);
+            throw new SystemException("CONSUME_EVENT_SEND_ERROR", "消费事件发送失败", e);
         }
     }
 
@@ -223,7 +224,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] 访客事件发送失败: type={}, error={}", event.getEventType(), e.getMessage(), e);
-            throw new RuntimeException("访客事件发送失败", e);
+            throw new SystemException("VISITOR_EVENT_SEND_ERROR", "访客事件发送失败", e);
         }
     }
 
@@ -255,7 +256,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] 视频事件发送失败: type={}, error={}", event.getEventType(), e.getMessage(), e);
-            throw new RuntimeException("视频事件发送失败", e);
+            throw new SystemException("VIDEO_EVENT_SEND_ERROR", "视频事件发送失败", e);
         }
     }
 
@@ -285,7 +286,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] OA事件发送失败: type={}, error={}", event.getEventType(), e.getMessage(), e);
-            throw new RuntimeException("OA事件发送失败", e);
+            throw new SystemException("OA_EVENT_SEND_ERROR", "OA事件发送失败", e);
         }
     }
 
@@ -310,7 +311,7 @@ public class RabbitMQEventListener {
 
         } catch (Exception e) {
             log.error("[RabbitMQ] 延迟消息发送失败: error={}", e.getMessage(), e);
-            throw new RuntimeException("延迟消息发送失败", e);
+            throw new SystemException("RABBITMQ_DELAY_MESSAGE_SEND_ERROR", "延迟消息发送失败", e);
         }
     }
 

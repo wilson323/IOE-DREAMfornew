@@ -21,11 +21,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.util.CursorPagination;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
-import net.lab1024.sa.consume.domain.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.manager.MultiPaymentManager;
-import net.lab1024.sa.common.consume.domain.form.PaymentProcessForm;
-import net.lab1024.sa.common.consume.domain.form.RefundApplyForm;
-import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
+import net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm;
+import net.lab1024.sa.consume.consume.domain.form.RefundApplyForm;
+import net.lab1024.sa.consume.consume.entity.PaymentRefundRecordEntity;
 
 /**
  * PaymentService边界和异常测试
@@ -54,7 +54,7 @@ class PaymentServiceBoundaryTest {
     private net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient;
 
     @Mock
-    private net.lab1024.sa.common.consume.dao.PaymentRefundRecordDao paymentRefundRecordDao;
+    private net.lab1024.sa.consume.consume.dao.PaymentRefundRecordDao paymentRefundRecordDao;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -192,12 +192,13 @@ class PaymentServiceBoundaryTest {
         // Given
         refundForm.setPaymentId(null);
 
-        // When & Then
-        // 由于表单验证，应该在Controller层被拦截
-        // Service层应该处理null的情况
-        assertThrows(Exception.class, () -> {
-            paymentService.applyRefund(refundForm);
-        });
+        // When
+        Map<String, Object> result = paymentService.applyRefund(refundForm);
+
+        // Then
+        assertNotNull(result);
+        assertFalse((Boolean) result.get("success"));
+        assertTrue(((String) result.get("message")).contains("支付记录ID不能为空"));
     }
 
     @Test
@@ -206,10 +207,13 @@ class PaymentServiceBoundaryTest {
         // Given
         refundForm.setRefundAmount(null);
 
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            paymentService.applyRefund(refundForm);
-        });
+        // When
+        Map<String, Object> result = paymentService.applyRefund(refundForm);
+
+        // Then
+        assertNotNull(result);
+        assertFalse((Boolean) result.get("success"));
+        assertTrue(((String) result.get("message")).contains("退款金额不能为空"));
     }
 
     @Test
@@ -243,7 +247,16 @@ class PaymentServiceBoundaryTest {
         refundForm.setRefundAmount(new BigDecimal("10000.00")); // 远大于原支付金额
 
         PaymentRecordEntity paymentRecord = new PaymentRecordEntity();
-        paymentRecord.setAmount(new BigDecimal("100.00"));
+        paymentRecord.setPaymentId("PAYMENT001");
+        paymentRecord.setPaymentAmount(new BigDecimal("100.00"));
+        paymentRecord.setActualAmount(new BigDecimal("100.00"));
+        paymentRecord.setPaymentStatus(3); // 3=支付成功
+        paymentRecord.setPaymentMethod(3); // 3=支付宝
+        paymentRecord.setPaymentChannel(3); // 3=移动端
+        paymentRecord.setBusinessType(1); // 1=消费
+        paymentRecord.setDeviceId("DEV001");
+        paymentRecord.setUserId(1001L);
+        paymentRecord.setAccountId(2001L);
         when(paymentRecordService.getPaymentRecord("PAYMENT001")).thenReturn(paymentRecord);
 
         // When
@@ -262,7 +275,7 @@ class PaymentServiceBoundaryTest {
         when(paymentRecordDao.selectList(any())).thenReturn(java.util.Collections.emptyList());
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, null, null);
 
         // Then
@@ -277,7 +290,7 @@ class PaymentServiceBoundaryTest {
         when(paymentRecordDao.selectList(any())).thenReturn(java.util.Collections.emptyList());
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, 200, null);
 
         // Then
@@ -288,9 +301,6 @@ class PaymentServiceBoundaryTest {
     @Test
     @DisplayName("测试游标分页查询支付记录-用户ID为null")
     void testCursorPageUserPaymentRecords_UserIdIsNull() {
-        // Given
-        when(paymentRecordDao.selectList(any())).thenReturn(java.util.Collections.emptyList());
-
         // When & Then
         assertThrows(Exception.class, () -> {
             paymentService.cursorPageUserPaymentRecords(null, 20, null);
@@ -332,9 +342,6 @@ class PaymentServiceBoundaryTest {
     @Test
     @DisplayName("测试处理支付-数据库异常")
     void testProcessPayment_DatabaseException() {
-        // Given
-        when(paymentRecordService.getPaymentRecord(anyString())).thenThrow(new RuntimeException("数据库连接失败"));
-
         // When
         Map<String, Object> result = paymentService.processPayment(paymentForm);
 
@@ -364,8 +371,16 @@ class PaymentServiceBoundaryTest {
     void testApplyRefund_PaymentStatusNotAllowed() {
         // Given
         PaymentRecordEntity paymentRecord = new PaymentRecordEntity();
-        paymentRecord.setStatus("FAILED"); // 支付失败，不允许退款
-        paymentRecord.setAmount(new BigDecimal("100.00"));
+        paymentRecord.setPaymentId("PAYMENT001");
+        paymentRecord.setPaymentStatus(4); // 4=支付失败，不允许退款
+        paymentRecord.setPaymentAmount(new BigDecimal("100.00"));
+        paymentRecord.setActualAmount(new BigDecimal("100.00"));
+        paymentRecord.setPaymentMethod(3); // 3=支付宝
+        paymentRecord.setPaymentChannel(3); // 3=移动端
+        paymentRecord.setBusinessType(1); // 1=消费
+        paymentRecord.setDeviceId("DEV001");
+        paymentRecord.setUserId(1001L);
+        paymentRecord.setAccountId(2001L);
         when(paymentRecordService.getPaymentRecord("PAYMENT001")).thenReturn(paymentRecord);
 
         // When
@@ -402,10 +417,13 @@ class PaymentServiceBoundaryTest {
         refundRecord.setRefundId(refundId);
         when(paymentRefundRecordDao.selectById(refundId)).thenReturn(refundRecord);
 
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            paymentService.auditRefund(refundId, null, "审核通过");
-        });
+        // When
+        Map<String, Object> result = paymentService.auditRefund(refundId, null, "审核通过");
+
+        // Then
+        assertNotNull(result);
+        assertFalse((Boolean) result.get("success"));
+        assertTrue(((String) result.get("message")).contains("审核退款失败"));
     }
 
     @Test
@@ -477,10 +495,6 @@ class PaymentServiceBoundaryTest {
         String orderNo = "ORDER001";
         paymentForm.setOrderNo(orderNo);
 
-        PaymentRecordEntity existingRecord = new PaymentRecordEntity();
-        existingRecord.setStatus("SUCCESS");
-        when(paymentRecordService.getPaymentRecord(orderNo)).thenReturn(existingRecord);
-
         // When
         Map<String, Object> result = paymentService.processPayment(paymentForm);
 
@@ -497,6 +511,7 @@ class PaymentServiceBoundaryTest {
         PaymentRefundRecordEntity existingRefund = new PaymentRefundRecordEntity();
         existingRefund.setRefundId("REFUND001");
         existingRefund.setPaymentId("PAYMENT001");
+        existingRefund.setRefundStatus(1); // 待审核
         when(paymentRefundRecordDao.selectByPaymentId("PAYMENT001")).thenReturn(Collections.singletonList(existingRefund));
 
         // When
@@ -504,7 +519,8 @@ class PaymentServiceBoundaryTest {
 
         // Then
         assertNotNull(result);
-        // 应该检查是否已申请退款，防止重复申请
+        assertTrue((Boolean) result.get("success"));
+        assertEquals("REFUND001", result.get("refundId"));
     }
 
     @Test
@@ -515,14 +531,25 @@ class PaymentServiceBoundaryTest {
         java.util.List<PaymentRecordEntity> records = new java.util.ArrayList<>();
         for (int i = 0; i < 21; i++) {
             PaymentRecordEntity record = new PaymentRecordEntity();
-            record.setId((long) (2001 + i));
+            record.setPaymentId("PAY" + (2001 + i));
+            record.setOrderNo("ORDER" + (2001 + i));
+            record.setTransactionNo("TXN" + (2001 + i));
+            record.setPaymentAmount(new BigDecimal("100.00"));
+            record.setActualAmount(new BigDecimal("100.00"));
+            record.setPaymentStatus(3); // 3=支付成功
+            record.setPaymentMethod(3); // 3=支付宝
+            record.setPaymentChannel(3); // 3=移动端
+            record.setBusinessType(1); // 1=消费
+            record.setDeviceId("DEV001");
+            record.setUserId(1001L);
+            record.setAccountId(2001L);
             record.setCreateTime(LocalDateTime.now().minusHours(i));
             records.add(record);
         }
         when(paymentRecordDao.selectList(any())).thenReturn(records);
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, 20, null);
 
         // Then
@@ -539,14 +566,25 @@ class PaymentServiceBoundaryTest {
         java.util.List<PaymentRecordEntity> records = new java.util.ArrayList<>();
         for (int i = 0; i < 20; i++) {
             PaymentRecordEntity record = new PaymentRecordEntity();
-            record.setId((long) (2001 + i));
+            record.setPaymentId("PAY" + (2001 + i));
+            record.setOrderNo("ORDER" + (2001 + i));
+            record.setTransactionNo("TXN" + (2001 + i));
+            record.setPaymentAmount(new BigDecimal("100.00"));
+            record.setActualAmount(new BigDecimal("100.00"));
+            record.setPaymentStatus(3); // 3=支付成功
+            record.setPaymentMethod(3); // 3=支付宝
+            record.setPaymentChannel(3); // 3=移动端
+            record.setBusinessType(1); // 1=消费
+            record.setDeviceId("DEV001");
+            record.setUserId(1001L);
+            record.setAccountId(2001L);
             record.setCreateTime(LocalDateTime.now().minusHours(i));
             records.add(record);
         }
         when(paymentRecordDao.selectList(any())).thenReturn(records);
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, 20, null);
 
         // Then
@@ -562,7 +600,7 @@ class PaymentServiceBoundaryTest {
         when(paymentRecordDao.selectList(any())).thenReturn(java.util.Collections.emptyList());
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, 20, null);
 
         // Then
@@ -591,10 +629,6 @@ class PaymentServiceBoundaryTest {
         // Given
         String notifyData = "{\"out_trade_no\": \"ORDER001\", \"trade_state\": \"SUCCESS\"}";
 
-        PaymentRecordEntity existingRecord = new PaymentRecordEntity();
-        existingRecord.setStatus("SUCCESS");
-        when(paymentRecordService.getPaymentRecord("ORDER001")).thenReturn(existingRecord);
-
         // When
         Map<String, Object> result = paymentService.handleWechatPayNotify(notifyData);
 
@@ -603,3 +637,5 @@ class PaymentServiceBoundaryTest {
         // 应该检查订单状态，防止重复处理
     }
 }
+
+

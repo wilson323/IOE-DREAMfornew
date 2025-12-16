@@ -48,6 +48,7 @@ class AccountManagerTest {
         testAccount.setBalance(new BigDecimal("1000.00"));
         testAccount.setFrozenAmount(new BigDecimal("100.00"));
         testAccount.setStatus(1); // 正常状态
+        testAccount.setVersion(0);
     }
 
     // ==================== getAccountByUserId 测试 ====================
@@ -198,14 +199,12 @@ class AccountManagerTest {
         Long accountId = 1L;
         BigDecimal amount = null;
 
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
-
         // When
         boolean result = accountManager.deductBalance(accountId, amount);
 
         // Then
         assertFalse(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountDao, never()).selectById(anyLong());
         verify(accountDao, never()).updateById(any(AccountEntity.class));
     }
 
@@ -216,14 +215,12 @@ class AccountManagerTest {
         Long accountId = 1L;
         BigDecimal amount = new BigDecimal("-100.00");
 
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
-
         // When
         boolean result = accountManager.deductBalance(accountId, amount);
 
         // Then
         assertFalse(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountDao, never()).selectById(anyLong());
         verify(accountDao, never()).updateById(any(AccountEntity.class));
     }
 
@@ -293,14 +290,12 @@ class AccountManagerTest {
         Long accountId = 1L;
         BigDecimal amount = null;
 
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
-
         // When
         boolean result = accountManager.addBalance(accountId, amount);
 
         // Then
         assertFalse(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountDao, never()).selectById(anyLong());
         verify(accountDao, never()).updateById(any(AccountEntity.class));
     }
 
@@ -313,6 +308,7 @@ class AccountManagerTest {
 
         testAccount.setBalance((BigDecimal) null);
         when(accountDao.selectById(accountId)).thenReturn(testAccount);
+        when(accountDao.updateById(any(AccountEntity.class))).thenReturn(1);
 
         // When
         boolean result = accountManager.addBalance(accountId, amount);
@@ -435,3 +431,5 @@ class AccountManagerTest {
         verify(accountDao, times(1)).selectById(accountId);
     }
 }
+
+

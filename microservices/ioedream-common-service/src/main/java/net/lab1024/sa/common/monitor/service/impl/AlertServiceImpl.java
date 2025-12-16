@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.micrometer.observation.annotation.Observed;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -26,6 +27,9 @@ import net.lab1024.sa.common.monitor.domain.entity.AlertRuleEntity;
 import net.lab1024.sa.common.monitor.domain.vo.AlertRuleVO;
 import net.lab1024.sa.common.monitor.manager.NotificationManager;
 import net.lab1024.sa.common.monitor.service.AlertService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 
 /**
  * 告警管理服务实现类
@@ -56,6 +60,7 @@ public class AlertServiceImpl implements AlertService {
     private NotificationManager notificationManager;
 
     @Override
+    @Observed(name = "alert.rule.add", contextualName = "alert-rule-add")
     public Long addAlertRule(AlertRuleAddDTO addDTO) {
         log.info("添加告警规则，规则名称：{}，监控指标：{}", addDTO.getRuleName(), addDTO.getMetricName());
 
@@ -85,13 +90,19 @@ public class AlertServiceImpl implements AlertService {
             log.info("告警规则添加成功，ID：{}", alertRule.getId());
             return alertRule.getId();
 
-        } catch (Exception e) {
-            log.error("添加告警规则失败", e);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 添加告警规则参数异常, error={}", e.getMessage());
+            throw new ParamException("ALERT_RULE_ADD_PARAM_ERROR", "添加告警规则参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
             throw e;
+        } catch (Exception e) {
+            log.error("[告警服务] 添加告警规则系统异常", e);
+            throw new SystemException("ALERT_RULE_ADD_SYSTEM_ERROR", "添加告警规则系统异常", e);
         }
     }
 
     @Override
+    @Observed(name = "alert.rule.queryPage", contextualName = "alert-rule-query-page")
     @Transactional(readOnly = true)
     public PageResult<AlertRuleVO> queryAlertRulePage(AlertRuleQueryDTO queryDTO) {
         log.debug("分页查询告警规则");
@@ -124,13 +135,17 @@ public class AlertServiceImpl implements AlertService {
             return PageResult.of(voList, pageResult.getTotal(), queryDTO.getPageNum(),
                     queryDTO.getPageSize());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 分页查询告警规则参数异常, error={}", e.getMessage());
+            return PageResult.of(new ArrayList<>(), 0L, 1, 10);
         } catch (Exception e) {
-            log.error("分页查询告警规则失败", e);
+            log.error("[告警服务] 分页查询告警规则系统异常", e);
             return PageResult.of(new ArrayList<>(), 0L, 1, 10);
         }
     }
 
     @Override
+    @Observed(name = "alert.rule.getDetail", contextualName = "alert-rule-get-detail")
     @Transactional(readOnly = true)
     public AlertRuleVO getAlertRuleDetail(Long ruleId) {
         log.debug("获取告警规则详情，ID：{}", ruleId);
@@ -143,13 +158,17 @@ public class AlertServiceImpl implements AlertService {
 
             return convertToVO(alertRule);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 获取告警规则详情参数异常, ruleId={}, error={}", ruleId, e.getMessage());
+            return null;
         } catch (Exception e) {
-            log.error("获取告警规则详情失败，ID：{}", ruleId, e);
+            log.error("[告警服务] 获取告警规则详情系统异常, ruleId={}", ruleId, e);
             return null;
         }
     }
 
     @Override
+    @Observed(name = "alert.rule.enable", contextualName = "alert-rule-enable")
     public void enableAlertRule(Long ruleId) {
         log.info("启用告警规则，ID：{}", ruleId);
 
@@ -162,13 +181,19 @@ public class AlertServiceImpl implements AlertService {
 
             log.info("告警规则启用成功，ID：{}", ruleId);
 
-        } catch (Exception e) {
-            log.error("启用告警规则失败，ID：{}", ruleId, e);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 启用告警规则参数异常, ruleId={}, error={}", ruleId, e.getMessage());
+            throw new ParamException("ALERT_RULE_ENABLE_PARAM_ERROR", "启用告警规则参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
             throw e;
+        } catch (Exception e) {
+            log.error("[告警服务] 启用告警规则系统异常, ruleId={}", ruleId, e);
+            throw new SystemException("ALERT_RULE_ENABLE_SYSTEM_ERROR", "启用告警规则系统异常", e);
         }
     }
 
     @Override
+    @Observed(name = "alert.rule.disable", contextualName = "alert-rule-disable")
     public void disableAlertRule(Long ruleId) {
         log.info("禁用告警规则，ID：{}", ruleId);
 
@@ -181,13 +206,19 @@ public class AlertServiceImpl implements AlertService {
 
             log.info("告警规则禁用成功，ID：{}", ruleId);
 
-        } catch (Exception e) {
-            log.error("禁用告警规则失败，ID：{}", ruleId, e);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 禁用告警规则参数异常, ruleId={}, error={}", ruleId, e.getMessage());
+            throw new ParamException("ALERT_RULE_DISABLE_PARAM_ERROR", "禁用告警规则参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
             throw e;
+        } catch (Exception e) {
+            log.error("[告警服务] 禁用告警规则系统异常, ruleId={}", ruleId, e);
+            throw new SystemException("ALERT_RULE_DISABLE_SYSTEM_ERROR", "禁用告警规则系统异常", e);
         }
     }
 
     @Override
+    @Observed(name = "alert.rule.delete", contextualName = "alert-rule-delete")
     public void deleteAlertRule(Long ruleId) {
         log.info("删除告警规则，ID：{}", ruleId);
 
@@ -199,13 +230,19 @@ public class AlertServiceImpl implements AlertService {
             alertRuleDao.updateById(alertRule);
             log.info("告警规则删除成功，ID：{}", ruleId);
 
-        } catch (Exception e) {
-            log.error("删除告警规则失败，ID：{}", ruleId, e);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 删除告警规则参数异常, ruleId={}, error={}", ruleId, e.getMessage());
+            throw new ParamException("ALERT_RULE_DELETE_PARAM_ERROR", "删除告警规则参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
             throw e;
+        } catch (Exception e) {
+            log.error("[告警服务] 删除告警规则系统异常, ruleId={}", ruleId, e);
+            throw new SystemException("ALERT_RULE_DELETE_SYSTEM_ERROR", "删除告警规则系统异常", e);
         }
     }
 
     @Override
+    @Observed(name = "alert.history.get", contextualName = "alert-history-get")
     @Transactional(readOnly = true)
     public PageResult<Map<String, Object>> getAlertHistory(Integer pageNum, Integer pageSize, String severity,
             String status, Long startTime, Long endTime) {
@@ -243,13 +280,17 @@ public class AlertServiceImpl implements AlertService {
 
             return PageResult.of(resultList, pageResult.getTotal(), pageNum, pageSize);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 获取告警历史参数异常, error={}", e.getMessage());
+            return PageResult.of(new ArrayList<>(), 0L, 1, 10);
         } catch (Exception e) {
-            log.error("获取告警历史失败", e);
+            log.error("[告警服务] 获取告警历史系统异常", e);
             return PageResult.of(new ArrayList<>(), 0L, 1, 10);
         }
     }
 
     @Override
+    @Observed(name = "alert.active.count", contextualName = "alert-active-count")
     @Transactional(readOnly = true)
     public Map<String, Object> getActiveAlertCount() {
         log.debug("获取活跃告警统计");
@@ -283,12 +324,13 @@ public class AlertServiceImpl implements AlertService {
             return result;
 
         } catch (Exception e) {
-            log.error("获取活跃告警统计失败", e);
+            log.error("[告警服务] 获取活跃告警统计系统异常", e);
             return new HashMap<>();
         }
     }
 
     @Override
+    @Observed(name = "alert.statistics.get", contextualName = "alert-statistics-get")
     @Transactional(readOnly = true)
     public Map<String, Object> getAlertStatistics(Integer days) {
         log.debug("获取告警统计，天数：{}", days);
@@ -315,12 +357,13 @@ public class AlertServiceImpl implements AlertService {
             return statistics;
 
         } catch (Exception e) {
-            log.error("获取告警统计失败", e);
+            log.error("[告警服务] 获取告警统计系统异常", e);
             return new HashMap<>();
         }
     }
 
     @Override
+    @Observed(name = "alert.notification.test", contextualName = "alert-notification-test")
     public Map<String, Object> testNotification(String notificationType, List<String> recipients) {
         log.info("测试通知，类型：{}，接收人：{}", notificationType, recipients);
 
@@ -338,11 +381,17 @@ public class AlertServiceImpl implements AlertService {
 
             return result;
 
-        } catch (Exception e) {
-            log.error("测试通知失败", e);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 测试通知参数异常, error={}", e.getMessage());
             Map<String, Object> result = new HashMap<>();
             result.put("success", false);
-            result.put("message", "测试通知发送失败：" + e.getMessage());
+            result.put("message", "测试通知参数异常：" + e.getMessage());
+            return result;
+        } catch (Exception e) {
+            log.error("[告警服务] 测试通知系统异常", e);
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+            result.put("message", "测试通知系统异常：" + e.getMessage());
             return result;
         }
     }
@@ -370,6 +419,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
+    @Observed(name = "alert.notification.channels", contextualName = "alert-notification-channels")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getNotificationChannels() {
         log.debug("获取通知渠道");
@@ -385,6 +435,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
+    @Observed(name = "alert.batch.resolve", contextualName = "alert-batch-resolve")
     public Map<String, Integer> batchResolveAlerts(List<Long> alertIds, String resolution) {
         log.info("批量解决告警，数量：{}", alertIds.size());
 
@@ -403,7 +454,7 @@ public class AlertServiceImpl implements AlertService {
                 successCount++;
 
             } catch (Exception e) {
-                log.error("解决告警失败，ID：{}", alertId, e);
+                log.error("[告警服务] 解决告警系统异常, alertId={}", alertId, e);
                 failedCount++;
             }
         }
@@ -419,6 +470,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
+    @Observed(name = "alert.trends.get", contextualName = "alert-trends-get")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getAlertTrends(Integer days) {
         log.debug("获取告警趋势，天数：{}", days);
@@ -437,8 +489,11 @@ public class AlertServiceImpl implements AlertService {
 
             return trends;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 获取告警趋势参数异常, error={}", e.getMessage());
+            return new ArrayList<>();
         } catch (Exception e) {
-            log.error("获取告警趋势失败", e);
+            log.error("[告警服务] 获取告警趋势系统异常", e);
             return new ArrayList<>();
         }
     }
@@ -496,6 +551,7 @@ public class AlertServiceImpl implements AlertService {
      * @return 创建的报警ID
      */
     @Override
+    @Observed(name = "alert.create", contextualName = "alert-create")
     public Long createAlert(AlertEntity alert) {
         log.info("创建报警记录，报警标题：{}，报警级别：{}", alert.getAlertTitle(), alert.getAlertLevel());
 
@@ -527,13 +583,18 @@ public class AlertServiceImpl implements AlertService {
                 log.info("报警记录创建成功，报警ID：{}", alert.getId());
                 return alert.getId();
             } else {
-                log.warn("报警记录创建失败，报警标题：{}", alert.getAlertTitle());
-                throw new RuntimeException("创建报警记录失败");
+                log.warn("[告警服务] 报警记录创建失败，报警标题：{}", alert.getAlertTitle());
+                throw new BusinessException("ALERT_CREATE_FAILED", "创建报警记录失败");
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[告警服务] 创建报警记录参数异常, alertTitle={}, error={}", alert.getAlertTitle(), e.getMessage());
+            throw new ParamException("ALERT_CREATE_PARAM_ERROR", "创建报警记录参数异常: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
-            log.error("创建报警记录异常，报警标题：{}", alert.getAlertTitle(), e);
-            throw new RuntimeException("创建报警记录异常: " + e.getMessage(), e);
+            log.error("[告警服务] 创建报警记录系统异常，报警标题：{}", alert.getAlertTitle(), e);
+            throw new SystemException("ALERT_CREATE_SYSTEM_ERROR", "创建报警记录系统异常", e);
         }
     }
 }

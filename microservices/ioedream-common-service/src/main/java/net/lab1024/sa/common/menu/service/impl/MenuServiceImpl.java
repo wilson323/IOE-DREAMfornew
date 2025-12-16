@@ -1,5 +1,6 @@
 package net.lab1024.sa.common.menu.service.impl;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.menu.dao.MenuDao;
@@ -30,6 +31,7 @@ public class MenuServiceImpl implements MenuService {
     private EmployeeDao employeeDao;
 
     @Override
+    @Observed(name = "menu.getUserMenuTree", contextualName = "menu-get-user-tree")
     public List<MenuEntity> getUserMenuTree(Long userId) {
         log.info("[菜单服务] 获取用户菜单树, userId={}", userId);
 
@@ -44,6 +46,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.getUserMenuList", contextualName = "menu-get-user-list")
     public List<MenuEntity> getUserMenuList(Long userId) {
         log.debug("[菜单服务] 获取用户菜单列表, userId={}", userId);
 
@@ -54,6 +57,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.getFullMenuTree", contextualName = "menu-get-full-tree")
     public List<MenuEntity> getFullMenuTree() {
         log.debug("[菜单服务] 获取完整菜单树");
 
@@ -62,6 +66,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.getChildMenus", contextualName = "menu-get-children")
     public List<MenuEntity> getChildMenus(Long parentId) {
         log.debug("[菜单服务] 获取子菜单, parentId={}", parentId);
 
@@ -69,6 +74,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.hasMenuPermission", contextualName = "menu-has-menu-permission")
     public boolean hasMenuPermission(Long userId, Long menuId) {
         log.debug("[菜单服务] 检查用户菜单权限, userId={}, menuId={}", userId, menuId);
 
@@ -78,6 +84,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.hasPermission", contextualName = "menu-has-permission")
     public boolean hasPermission(Long userId, String permission) {
         log.debug("[菜单服务] 检查用户权限标识, userId={}, permission={}", userId, permission);
 
@@ -86,6 +93,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.getMenuByCode", contextualName = "menu-get-by-code")
     public MenuEntity getMenuByCode(String menuCode) {
         log.debug("[菜单服务] 根据编码获取菜单, menuCode={}", menuCode);
 
@@ -93,6 +101,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.getMenuByPermission", contextualName = "menu-get-by-permission")
     public MenuEntity getMenuByPermission(String permission) {
         log.debug("[菜单服务] 根据权限标识获取菜单, permission={}", permission);
 
@@ -100,6 +109,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.getUserPermissions", contextualName = "menu-get-user-permissions")
     public List<String> getUserPermissions(Long userId) {
         log.debug("[菜单服务] 获取用户权限标识列表, userId={}", userId);
 
@@ -113,6 +123,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.getMenuBreadcrumb", contextualName = "menu-get-breadcrumb")
     public List<MenuEntity> getMenuBreadcrumb(Long menuId) {
         log.debug("[菜单服务] 获取菜单面包屑, menuId={}", menuId);
 
@@ -141,6 +152,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.buildMenuTree", contextualName = "menu-build-tree")
     public List<MenuEntity> buildMenuTree(List<MenuEntity> menuList) {
         log.debug("[菜单服务] 构建菜单树, menuCount={}", menuList.size());
 
@@ -181,6 +193,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Observed(name = "menu.getMenuStatistics", contextualName = "menu-get-statistics")
     public Map<String, Object> getMenuStatistics() {
         log.debug("[菜单服务] 获取菜单统计信息");
 

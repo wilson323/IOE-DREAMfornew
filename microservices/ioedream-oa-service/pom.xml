@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,15 +14,36 @@
 
     <artifactId>ioedream-oa-service</artifactId>
     <packaging>jar</packaging>
-    
+
     <name>IOE-DREAM OA Service</name>
     <description>OA办公服务，提供工作流、审批等业务API</description>
 
     <dependencies>
-        <!-- 依赖 microservices-common -->
+        <!-- 依赖核心模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖公共模块 -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖业务模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-business</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖监控模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-monitor</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -70,11 +91,36 @@
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
+        <!-- MySQL Driver -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+
+        <!-- Druid连接池 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Spring Data Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- Aviator表达式引擎 - 用于工作流规则引擎 -->
+        <dependency>
+            <groupId>com.googlecode.aviator</groupId>
+            <artifactId>aviator</artifactId>
+            <version>5.3.3</version>
+        </dependency>
+
         <!-- 工作流引擎依赖 -->
         <!--
         说明：warm-flow-spring-boot-starter:2.1.0 不存在于Maven Central，已移除。
         当前使用基于数据库的简单工作流实现。
-        
+
         如需集成完整的工作流引擎，可以选择以下方案之一：
         1. Flowable 6.x（推荐）：
            <dependency>
@@ -82,14 +128,14 @@
                <artifactId>flowable-spring-boot-starter</artifactId>
                <version>6.8.0</version>
            </dependency>
-        
+
         2. Camunda 7.x：
            <dependency>
                <groupId>org.camunda.bpm.springboot</groupId>
                <artifactId>camunda-bpm-spring-boot-starter</artifactId>
                <version>7.19.0</version>
            </dependency>
-        
+
         3. Activiti 7.x：
            <dependency>
                <groupId>org.activiti</groupId>
@@ -97,6 +143,41 @@
                <version>7.1.0.M6</version>
            </dependency>
         -->
+
+        <!-- ============================================================= -->
+        <!-- 测试依赖 -->
+        <!-- ============================================================= -->
+
+        <!-- Spring Boot Test (包含JUnit、Mockito、Spring Test) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Jupiter -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito Core -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito JUnit Jupiter -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

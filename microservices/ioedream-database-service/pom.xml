@@ -60,17 +60,8 @@
             <artifactId>flyway-mysql</artifactId>
         </dependency>
 
-        <!-- Spring Cloud OpenFeign -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-
-        <!-- Load Balancer -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-        </dependency>
+        <!-- 架构合规化：已移除Feign依赖，如需服务间调用请使用GatewayServiceClient -->
+        <!-- 注意：此服务主要处理数据库初始化，通常不需要调用其他服务 -->
 
         <!-- Lombok -->
         <dependency>

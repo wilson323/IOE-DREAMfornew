@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 
 /**
@@ -37,6 +38,7 @@ import net.lab1024.sa.common.organization.entity.AreaEntity;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Slf4j
 @TableName("t_consume_area_ext")
 public class ConsumeAreaEntity extends AreaEntity {
 
@@ -132,6 +134,7 @@ public class ConsumeAreaEntity extends AreaEntity {
         try {
             return this.getAreaName();
         } catch (Exception e) {
+            log.debug("[消费区域实体] 获取区域名称失败，返回null: error={}", e.getMessage());
             // 如果父类没有getAreaName方法，返回null或默认值
             return null;
         }
@@ -165,8 +168,12 @@ public class ConsumeAreaEntity extends AreaEntity {
             // 转换为JSON字符串
             return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(attributes);
         } catch (Exception e) {
+            log.debug("[消费区域实体] 属性转换为JSON失败，返回空JSON对象: error={}", e.getMessage());
             // 如果转换失败，返回空的JSON对象
             return "{}";
         }
     }
 }
+
+
+

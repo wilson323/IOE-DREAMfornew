@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -57,6 +58,7 @@ public class VideoPlayController {
      * @param streamType 流类型（可选）
      * @return 视频流地址
      */
+    @Observed(name = "video.play.getVideoStream", contextualName = "video-play-get-stream")
     @PostMapping("/stream")
     @Operation(summary = "获取视频流地址", description = "获取视频设备的实时流播放地址")
     @PreAuthorize("hasRole('VIDEO_MANAGER') or hasRole('VIDEO_USER')")
@@ -81,6 +83,7 @@ public class VideoPlayController {
      * @param channelId 通道ID（可选）
      * @return 截图数据
      */
+    @Observed(name = "video.play.getSnapshot", contextualName = "video-play-get-snapshot")
     @GetMapping("/snapshot/{deviceId}")
     @Operation(summary = "获取视频截图", description = "获取视频设备的实时截图")
     @PreAuthorize("hasRole('VIDEO_MANAGER') or hasRole('VIDEO_USER')")

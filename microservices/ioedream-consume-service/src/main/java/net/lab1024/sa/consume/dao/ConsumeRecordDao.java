@@ -6,10 +6,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.common.consume.entity.ConsumeRecordEntity;
+import net.lab1024.sa.consume.consume.entity.ConsumeRecordEntity;
 
 /**
  * 消费记录DAO接口
@@ -110,6 +111,7 @@ public interface ConsumeRecordDao extends BaseMapper<ConsumeRecordEntity> {
      * @param orderNo 订单号
      * @return 删除的记录数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Delete("DELETE FROM t_consume_record WHERE order_no = #{orderNo} AND deleted_flag = 0")
     int deleteByOrderNo(@Param("orderNo") String orderNo);
 
@@ -176,3 +178,6 @@ public interface ConsumeRecordDao extends BaseMapper<ConsumeRecordEntity> {
                                            @Param("startTime") LocalDateTime startTime,
                                            @Param("endTime") LocalDateTime endTime);
 }
+
+
+

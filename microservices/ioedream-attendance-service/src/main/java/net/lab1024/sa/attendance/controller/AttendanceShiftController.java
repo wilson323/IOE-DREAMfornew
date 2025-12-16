@@ -1,5 +1,6 @@
 package net.lab1024.sa.attendance.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class AttendanceShiftController {
     @Resource
     private AttendanceShiftService attendanceShiftService;
 
+    @Observed(name = "attendanceShift.submitShiftApplication", contextualName = "attendance-shift-submit")
     @PostMapping("/submit")
     @Operation(summary = "提交调班申请", description = "提交调班申请并启动审批流程")
     public ResponseDTO<AttendanceShiftEntity> submitShiftApplication(
@@ -37,6 +39,7 @@ public class AttendanceShiftController {
         return ResponseDTO.ok(entity);
     }
 
+    @Observed(name = "attendanceShift.updateShiftStatus", contextualName = "attendance-shift-update-status")
     @PutMapping("/{shiftNo}/status")
     @Operation(summary = "更新调班申请状态", description = "由审批结果监听器调用，更新调班申请状态")
     public ResponseDTO<Void> updateShiftStatus(
@@ -49,4 +52,6 @@ public class AttendanceShiftController {
         return ResponseDTO.ok();
     }
 }
+
+
 

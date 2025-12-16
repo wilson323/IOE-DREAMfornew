@@ -55,3 +55,6 @@ public interface ConsumeExecutionManager {
      */
     java.math.BigDecimal calculateConsumeAmount(Long accountId, String areaId, String consumeMode, java.math.BigDecimal consumeAmount, Object request);
 }
+
+
+

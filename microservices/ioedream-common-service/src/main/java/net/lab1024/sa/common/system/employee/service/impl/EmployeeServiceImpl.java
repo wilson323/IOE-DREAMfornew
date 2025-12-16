@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
@@ -21,6 +22,9 @@ import net.lab1024.sa.common.system.employee.domain.vo.EmployeeVO;
 import net.lab1024.sa.common.system.employee.manager.EmployeeManager;
 import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
 import net.lab1024.sa.common.system.employee.service.EmployeeService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 
 /**
  * 员工管理Service实现
@@ -50,6 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeDao employeeDao;
 
     @Override
+    @Observed(name = "employee.queryEmployeePage", contextualName = "employee-query-page")
     @Transactional(readOnly = true)
     public PageResult<EmployeeVO> queryEmployeePage(EmployeeQueryDTO queryDTO) {
         log.info("分页查询员工，页码：{}，页大小：{}", queryDTO.getPageNum(), queryDTO.getPageSize());
@@ -103,13 +108,17 @@ public class EmployeeServiceImpl implements EmployeeService {
             return PageResult.of(voList, resultPage.getTotal(),
                     queryDTO.getPageNum(), queryDTO.getPageSize());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[分页查询员工] 参数异常，error={}", e.getMessage());
+            throw new ParamException("EMPLOYEE_QUERY_PARAM_ERROR", "分页查询员工参数错误: " + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("分页查询员工失败", e);
-            throw e;
+            log.error("[分页查询员工] 系统异常", e);
+            throw new SystemException("EMPLOYEE_QUERY_ERROR", "分页查询员工失败，请稍后重试", e);
         }
     }
 
     @Override
+    @Observed(name = "employee.getEmployeeDetail", contextualName = "employee-get-detail")
     @Transactional(readOnly = true)
     public EmployeeVO getEmployeeDetail(Long employeeId) {
         log.info("获取员工详情，员工ID：{}", employeeId);
@@ -126,39 +135,43 @@ public class EmployeeServiceImpl implements EmployeeService {
             log.info("获取员工详情成功，员工姓名：{}", vo.getEmployeeName());
 
             return vo;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[获取员工详情] 参数异常，employeeId: {}, error={}", employeeId, e.getMessage());
+            throw new ParamException("EMPLOYEE_ID_INVALID", "员工ID无效: " + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("获取员工详情失败，员工ID：{}", employeeId, e);
-            throw e;
+            log.error("[获取员工详情] 系统异常，employeeId: {}", employeeId, e);
+            throw new SystemException("EMPLOYEE_GET_DETAIL_ERROR", "获取员工详情失败，请稍后重试", e);
         }
     }
 
     @Override
+    @Observed(name = "employee.addEmployee", contextualName = "employee-add")
     public boolean addEmployee(EmployeeAddDTO addDTO) {
         log.info("新增员工，姓名：{}，工号：{}", addDTO.getEmployeeName(), addDTO.getEmployeeNo());
 
         try {
             // 验证工号唯一性
             if (!employeeManager.isEmployeeNoUnique(addDTO.getEmployeeNo(), null)) {
-                log.error("员工工号已存在：{}", addDTO.getEmployeeNo());
-                throw new RuntimeException("员工工号已存在");
+                log.warn("[新增员工] 员工工号已存在：{}", addDTO.getEmployeeNo());
+                throw new BusinessException("EMPLOYEE_NO_EXISTS", "员工工号已存在");
             }
 
             // 验证手机号唯一性
             if (!employeeManager.isPhoneUnique(addDTO.getPhone(), null)) {
-                log.error("手机号已存在：{}", addDTO.getPhone());
-                throw new RuntimeException("手机号已存在");
+                log.warn("[新增员工] 手机号已存在：{}", addDTO.getPhone());
+                throw new BusinessException("EMPLOYEE_PHONE_EXISTS", "手机号已存在");
             }
 
             // 验证邮箱唯一性
             if (!employeeManager.isEmailUnique(addDTO.getEmail(), null)) {
-                log.error("邮箱已存在：{}", addDTO.getEmail());
-                throw new RuntimeException("邮箱已存在");
+                log.warn("[新增员工] 邮箱已存在：{}", addDTO.getEmail());
+                throw new BusinessException("EMPLOYEE_EMAIL_EXISTS", "邮箱已存在");
             }
 
             // 验证身份证号唯一性
             if (!employeeManager.isIdCardNoUnique(addDTO.getIdCardNo(), null)) {
-                log.error("身份证号已存在：{}", addDTO.getIdCardNo());
-                throw new RuntimeException("身份证号已存在");
+                log.warn("[新增员工] 身份证号已存在：{}", addDTO.getIdCardNo());
+                throw new BusinessException("EMPLOYEE_ID_CARD_EXISTS", "身份证号已存在");
             }
 
             EmployeeEntity entity = new EmployeeEntity();
@@ -177,13 +190,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             return result > 0;
 
-        } catch (Exception e) {
-            log.error("新增员工失败", e);
+        } catch (BusinessException e) {
+            log.warn("[新增员工] 业务异常，error={}", e.getMessage());
             throw e;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[新增员工] 参数异常，error={}", e.getMessage());
+            throw new ParamException("EMPLOYEE_ADD_PARAM_ERROR", "新增员工参数错误: " + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[新增员工] 系统异常", e);
+            throw new SystemException("EMPLOYEE_ADD_ERROR", "新增员工失败，请稍后重试", e);
         }
     }
 
     @Override
+    @Observed(name = "employee.updateEmployee", contextualName = "employee-update")
     public boolean updateEmployee(EmployeeUpdateDTO updateDTO) {
         log.info("更新员工，员工ID：{}，姓名：{}", updateDTO.getEmployeeId(), updateDTO.getEmployeeName());
 
@@ -191,29 +211,29 @@ public class EmployeeServiceImpl implements EmployeeService {
             // 验证员工是否存在
             EmployeeEntity existingEmployee = employeeDao.selectById(updateDTO.getEmployeeId());
             if (existingEmployee == null || existingEmployee.getDeletedFlag() == 1) {
-                log.error("员工不存在或已删除：{}", updateDTO.getEmployeeId());
-                throw new RuntimeException("员工不存在或已删除");
+                log.warn("[更新员工] 员工不存在或已删除：{}", updateDTO.getEmployeeId());
+                throw new BusinessException("EMPLOYEE_NOT_FOUND", "员工不存在或已删除");
             }
 
             // 验证工号唯一性（排除自己）
             if (updateDTO.getEmployeeNo() != null &&
                     !employeeManager.isEmployeeNoUnique(updateDTO.getEmployeeNo(), updateDTO.getEmployeeId())) {
-                log.error("员工工号已存在：{}", updateDTO.getEmployeeNo());
-                throw new RuntimeException("员工工号已存在");
+                log.warn("[更新员工] 员工工号已存在：{}", updateDTO.getEmployeeNo());
+                throw new BusinessException("EMPLOYEE_NO_EXISTS", "员工工号已存在");
             }
 
             // 验证手机号唯一性（排除自己）
             if (updateDTO.getPhone() != null &&
                     !employeeManager.isPhoneUnique(updateDTO.getPhone(), updateDTO.getEmployeeId())) {
-                log.error("手机号已存在：{}", updateDTO.getPhone());
-                throw new RuntimeException("手机号已存在");
+                log.warn("[更新员工] 手机号已存在：{}", updateDTO.getPhone());
+                throw new BusinessException("EMPLOYEE_PHONE_EXISTS", "手机号已存在");
             }
 
             // 验证邮箱唯一性（排除自己）
             if (updateDTO.getEmail() != null &&
                     !employeeManager.isEmailUnique(updateDTO.getEmail(), updateDTO.getEmployeeId())) {
-                log.error("邮箱已存在：{}", updateDTO.getEmail());
-                throw new RuntimeException("邮箱已存在");
+                log.warn("[更新员工] 邮箱已存在：{}", updateDTO.getEmail());
+                throw new BusinessException("EMPLOYEE_EMAIL_EXISTS", "邮箱已存在");
             }
 
             EmployeeEntity entity = new EmployeeEntity();
@@ -227,13 +247,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             return result > 0;
 
-        } catch (Exception e) {
-            log.error("更新员工失败", e);
+        } catch (BusinessException e) {
+            log.warn("[更新员工] 业务异常，error={}", e.getMessage());
             throw e;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[更新员工] 参数异常，error={}", e.getMessage());
+            throw new ParamException("EMPLOYEE_UPDATE_PARAM_ERROR", "更新员工参数错误: " + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[更新员工] 系统异常", e);
+            throw new SystemException("EMPLOYEE_UPDATE_ERROR", "更新员工失败，请稍后重试", e);
         }
     }
 
     @Override
+    @Observed(name = "employee.deleteEmployee", contextualName = "employee-delete")
     public boolean deleteEmployee(Long employeeId) {
         log.info("删除员工，员工ID：{}", employeeId);
 
@@ -241,8 +268,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             // 验证员工是否存在
             EmployeeEntity employee = employeeDao.selectById(employeeId);
             if (employee == null || employee.getDeletedFlag() == 1) {
-                log.error("员工不存在或已删除：{}", employeeId);
-                throw new RuntimeException("员工不存在或已删除");
+                log.warn("[员工管理] 员工不存在或已删除, employeeId={}", employeeId);
+                throw new BusinessException("EMPLOYEE_NOT_FOUND", "员工不存在或已删除");
             }
 
             // 逻辑删除
@@ -258,13 +285,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             return result > 0;
 
-        } catch (Exception e) {
-            log.error("删除员工失败，员工ID：{}", employeeId, e);
+        } catch (BusinessException e) {
+            log.warn("[删除员工] 业务异常，employeeId: {}, error={}", employeeId, e.getMessage());
             throw e;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[删除员工] 参数异常，employeeId: {}, error={}", employeeId, e.getMessage());
+            throw new ParamException("EMPLOYEE_DELETE_PARAM_ERROR", "删除员工参数错误: " + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[删除员工] 系统异常，employeeId: {}", employeeId, e);
+            throw new SystemException("EMPLOYEE_DELETE_ERROR", "删除员工失败，请稍后重试", e);
         }
     }
 
     @Override
+    @Observed(name = "employee.batchDeleteEmployees", contextualName = "employee-batch-delete")
     public boolean batchDeleteEmployees(List<Long> employeeIds) {
         log.info("批量删除员工，数量：{}", employeeIds.size());
 
@@ -277,8 +311,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                     if (result) {
                         successCount++;
                     }
+                } catch (BusinessException | ParamException e) {
+                    log.warn("[批量删除员工] 业务/参数异常，员工ID: {}, error={}", employeeId, e.getMessage());
                 } catch (Exception e) {
-                    log.error("删除员工失败，员工ID：{}", employeeId, e);
+                    log.error("[批量删除员工] 系统异常，员工ID: {}", employeeId, e);
                 }
             }
 
@@ -286,13 +322,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             return successCount == employeeIds.size();
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[批量删除员工] 参数异常，error={}", e.getMessage());
+            throw new ParamException("EMPLOYEE_BATCH_DELETE_PARAM_ERROR", "批量删除员工参数错误: " + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("批量删除员工失败", e);
-            throw e;
+            log.error("[批量删除员工] 系统异常", e);
+            throw new SystemException("EMPLOYEE_BATCH_DELETE_ERROR", "批量删除员工失败，请稍后重试", e);
         }
     }
 
     @Override
+    @Observed(name = "employee.getEmployeesByDepartmentId", contextualName = "employee-get-by-department")
     @Transactional(readOnly = true)
     public List<EmployeeVO> getEmployeesByDepartmentId(Long departmentId) {
         log.info("根据部门ID查询员工，部门ID：{}", departmentId);
@@ -308,13 +348,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             return voList;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[根据部门ID查询员工] 参数异常，departmentId: {}, error={}", departmentId, e.getMessage());
+            throw new ParamException("EMPLOYEE_DEPARTMENT_ID_INVALID", "部门ID无效: " + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("根据部门ID查询员工失败，部门ID：{}", departmentId, e);
-            throw e;
+            log.error("[根据部门ID查询员工] 系统异常，departmentId: {}", departmentId, e);
+            throw new SystemException("EMPLOYEE_GET_BY_DEPARTMENT_ERROR", "根据部门ID查询员工失败，请稍后重试", e);
         }
     }
 
     @Override
+    @Observed(name = "employee.updateEmployeeStatus", contextualName = "employee-update-status")
     public boolean updateEmployeeStatus(Long employeeId, Integer status) {
         log.info("更新员工状态，员工ID：{}，状态：{}", employeeId, status);
 
@@ -322,14 +366,14 @@ public class EmployeeServiceImpl implements EmployeeService {
             // 验证员工是否存在
             EmployeeEntity employee = employeeDao.selectById(employeeId);
             if (employee == null || employee.getDeletedFlag() == 1) {
-                log.error("员工不存在或已删除：{}", employeeId);
-                throw new RuntimeException("员工不存在或已删除");
+                log.warn("[更新员工状态] 员工不存在或已删除：{}", employeeId);
+                throw new BusinessException("EMPLOYEE_NOT_FOUND", "员工不存在或已删除");
             }
 
             // 验证状态值
             if (status == null || status < 1 || status > 4) {
-                log.error("员工状态值无效：{}", status);
-                throw new RuntimeException("员工状态值无效");
+                log.warn("[更新员工状态] 员工状态值无效：{}", status);
+                throw new ParamException("EMPLOYEE_STATUS_INVALID", "员工状态值无效，有效范围：1-4");
             }
 
             EmployeeEntity entity = new EmployeeEntity();
@@ -344,9 +388,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             return result > 0;
 
-        } catch (Exception e) {
-            log.error("更新员工状态失败，员工ID：{}", employeeId, e);
+        } catch (BusinessException e) {
+            log.warn("[更新员工状态] 业务异常，employeeId: {}, error={}", employeeId, e.getMessage());
             throw e;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[更新员工状态] 参数异常，employeeId: {}, error={}", employeeId, e.getMessage());
+            throw new ParamException("EMPLOYEE_STATUS_UPDATE_PARAM_ERROR", "更新员工状态参数错误: " + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[更新员工状态] 系统异常，employeeId: {}", employeeId, e);
+            throw new SystemException("EMPLOYEE_STATUS_UPDATE_ERROR", "更新员工状态失败，请稍后重试", e);
         }
     }
 

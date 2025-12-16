@@ -2,20 +2,24 @@ package net.lab1024.sa.visitor.domain.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.organization.service.AreaUnifiedService;
 import net.lab1024.sa.visitor.domain.dao.VisitorAreaDao;
 import net.lab1024.sa.visitor.domain.entity.VisitorAreaEntity;
 import net.lab1024.sa.visitor.domain.service.VisitorAreaService;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -36,16 +40,10 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
     @Resource
     private AreaUnifiedService areaUnifiedService;
 
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Redis缓存前缀
-    private static final String CACHE_PREFIX = "visitor:area:";
-    private static final long CACHE_EXPIRE_MINUTES = 30;
-
     @Override
+    @Observed(name = "visitor.area.create", contextualName = "visitor-area-create")
     public boolean createVisitorArea(VisitorAreaEntity visitorArea) {
         log.info("[访客区域管理] 创建访客区域配置, areaId={}", visitorArea.getId());
 
@@ -77,18 +75,29 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
             int result = visitorAreaDao.insert(visitorArea);
 
             if (result > 0) {
-                clearAreaCache(visitorArea.getId());
+                evictVisitorAreaCache(visitorArea.getId());
                 log.info("[访客区域管理] 访客区域配置创建成功, visitorAreaId={}", visitorArea.getVisitorAreaId());
                 return true;
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 访客区域配置创建参数错误: areaId={}, error={}", visitorArea.getId(), e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 访客区域配置创建业务异常: areaId={}, code={}, message={}", visitorArea.getId(), e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 访客区域配置创建系统异常: areaId={}, code={}, message={}", visitorArea.getId(), e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[访客区域管理] 访客区域配置创建失败, areaId={}", visitorArea.getId(), e);
+            log.error("[访客区域管理] 访客区域配置创建未知异常: areaId={}", visitorArea.getId(), e);
+            return false; // For boolean return methods, return false on unknown error
         }
 
         return false;
     }
 
     @Override
+    @Observed(name = "visitor.area.update", contextualName = "visitor-area-update")
     public boolean updateVisitorArea(VisitorAreaEntity visitorArea) {
         log.info("[访客区域管理] 更新访客区域配置, visitorAreaId={}", visitorArea.getVisitorAreaId());
 
@@ -103,18 +112,29 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
             int result = visitorAreaDao.updateById(visitorArea);
 
             if (result > 0) {
-                clearAreaCache(visitorArea.getId());
+                evictVisitorAreaCache(visitorArea.getId());
                 log.info("[访客区域管理] 访客区域配置更新成功, visitorAreaId={}", visitorArea.getVisitorAreaId());
                 return true;
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 访客区域配置更新参数错误: visitorAreaId={}, error={}", visitorArea.getVisitorAreaId(), e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 访客区域配置更新业务异常: visitorAreaId={}, code={}, message={}", visitorArea.getVisitorAreaId(), e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 访客区域配置更新系统异常: visitorAreaId={}, code={}, message={}", visitorArea.getVisitorAreaId(), e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[访客区域管理] 访客区域配置更新失败, visitorAreaId={}", visitorArea.getVisitorAreaId(), e);
+            log.error("[访客区域管理] 访客区域配置更新未知异常: visitorAreaId={}", visitorArea.getVisitorAreaId(), e);
+            return false; // For boolean return methods, return false on unknown error
         }
 
         return false;
     }
 
     @Override
+    @Observed(name = "visitor.area.delete", contextualName = "visitor-area-delete")
     public boolean deleteVisitorArea(Long visitorAreaId) {
         log.info("[访客区域管理] 删除访客区域配置, visitorAreaId={}", visitorAreaId);
 
@@ -127,143 +147,75 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
             int result = visitorAreaDao.deleteById(visitorAreaId);
 
             if (result > 0) {
-                clearAreaCache(visitorArea.getId());
+                evictVisitorAreaCache(visitorArea.getId());
                 log.info("[访客区域管理] 访客区域配置删除成功, visitorAreaId={}", visitorAreaId);
                 return true;
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 访客区域配置删除参数错误: visitorAreaId={}, error={}", visitorAreaId, e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 访客区域配置删除业务异常: visitorAreaId={}, code={}, message={}", visitorAreaId, e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 访客区域配置删除系统异常: visitorAreaId={}, code={}, message={}", visitorAreaId, e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[访客区域管理] 访客区域配置删除失败, visitorAreaId={}", visitorAreaId, e);
+            log.error("[访客区域管理] 访客区域配置删除未知异常: visitorAreaId={}", visitorAreaId, e);
+            return false; // For boolean return methods, return false on unknown error
         }
 
         return false;
     }
 
     @Override
+    @Cacheable(value = "visitor:area:config", key = "#areaId", unless = "#result == null")
     public VisitorAreaEntity getVisitorAreaByAreaId(Long areaId) {
         log.debug("[访客区域管理] 获取访客区域配置, areaId={}", areaId);
-
-        String cacheKey = CACHE_PREFIX + "config:" + areaId;
-        VisitorAreaEntity cachedArea = getCachedVisitorArea(cacheKey);
-
-        if (cachedArea != null) {
-            return cachedArea;
-        }
-
-        VisitorAreaEntity visitorArea = visitorAreaDao.selectByAreaId(areaId);
-
-        if (visitorArea != null) {
-            cacheVisitorArea(cacheKey, visitorArea);
-        }
-
-        return visitorArea;
+        return visitorAreaDao.selectByAreaId(areaId);
     }
 
     @Override
+    @Observed(name = "visitor.area.getByVisitType", contextualName = "visitor-area-get-by-visit-type")
+    @Cacheable(value = "visitor:area:visit_type", key = "#visitType", unless = "#result == null || #result.isEmpty()")
     public List<VisitorAreaEntity> getVisitorAreasByVisitType(Integer visitType) {
         log.debug("[访客区域管理] 根据访问类型获取访客区域, visitType={}", visitType);
-
-        String cacheKey = CACHE_PREFIX + "visit_type:" + visitType;
-        List<VisitorAreaEntity> cachedAreas = getCachedVisitorAreaList(cacheKey);
-
-        if (cachedAreas != null) {
-            return cachedAreas;
-        }
-
-        List<VisitorAreaEntity> visitorAreas = visitorAreaDao.selectByVisitType(visitType);
-
-        cacheVisitorAreaList(cacheKey, visitorAreas);
-
-        return visitorAreas;
+        return visitorAreaDao.selectByVisitType(visitType);
     }
 
     @Override
+    @Cacheable(value = "visitor:area:access_level", key = "#accessLevel", unless = "#result == null || #result.isEmpty()")
     public List<VisitorAreaEntity> getVisitorAreasByAccessLevel(Integer accessLevel) {
         log.debug("[访客区域管理] 根据访问权限级别获取访客区域, accessLevel={}", accessLevel);
-
-        String cacheKey = CACHE_PREFIX + "access_level:" + accessLevel;
-        List<VisitorAreaEntity> cachedAreas = getCachedVisitorAreaList(cacheKey);
-
-        if (cachedAreas != null) {
-            return cachedAreas;
-        }
-
-        List<VisitorAreaEntity> visitorAreas = visitorAreaDao.selectByAccessLevel(accessLevel);
-
-        cacheVisitorAreaList(cacheKey, visitorAreas);
-
-        return visitorAreas;
+        return visitorAreaDao.selectByAccessLevel(accessLevel);
     }
 
     @Override
+    @Cacheable(value = "visitor:area:reception_required", unless = "#result == null || #result.isEmpty()")
     public List<VisitorAreaEntity> getReceptionRequiredAreas() {
         log.debug("[访客区域管理] 获取需要接待人员的访客区域");
-
-        String cacheKey = CACHE_PREFIX + "reception_required";
-        List<VisitorAreaEntity> cachedAreas = getCachedVisitorAreaList(cacheKey);
-
-        if (cachedAreas != null) {
-            return cachedAreas;
-        }
-
-        List<VisitorAreaEntity> visitorAreas = visitorAreaDao.selectReceptionRequiredAreas();
-
-        cacheVisitorAreaList(cacheKey, visitorAreas);
-
-        return visitorAreas;
+        return visitorAreaDao.selectReceptionRequiredAreas();
     }
 
     @Override
+    @Cacheable(value = "visitor:area:receptionist", key = "#receptionistId", unless = "#result == null || #result.isEmpty()")
     public List<VisitorAreaEntity> getVisitorAreasByReceptionistId(Long receptionistId) {
         log.debug("[访客区域管理] 根据接待人员获取访客区域, receptionistId={}", receptionistId);
-
-        String cacheKey = CACHE_PREFIX + "receptionist:" + receptionistId;
-        List<VisitorAreaEntity> cachedAreas = getCachedVisitorAreaList(cacheKey);
-
-        if (cachedAreas != null) {
-            return cachedAreas;
-        }
-
-        List<VisitorAreaEntity> visitorAreas = visitorAreaDao.selectByReceptionistId(receptionistId);
-
-        cacheVisitorAreaList(cacheKey, visitorAreas);
-
-        return visitorAreas;
+        return visitorAreaDao.selectByReceptionistId(receptionistId);
     }
 
     @Override
+    @Cacheable(value = "visitor:area:over_capacity", unless = "#result == null || #result.isEmpty()")
     public List<VisitorAreaEntity> getOverCapacityAreas() {
         log.debug("[访客区域管理] 获取访客数量超限的区域");
-
-        String cacheKey = CACHE_PREFIX + "over_capacity";
-        List<VisitorAreaEntity> cachedAreas = getCachedVisitorAreaList(cacheKey);
-
-        if (cachedAreas != null) {
-            return cachedAreas;
-        }
-
-        List<VisitorAreaEntity> visitorAreas = visitorAreaDao.selectOverCapacityAreas();
-
-        cacheVisitorAreaList(cacheKey, visitorAreas);
-
-        return visitorAreas;
+        return visitorAreaDao.selectOverCapacityAreas();
     }
 
     @Override
+    @Cacheable(value = "visitor:area:open_areas", unless = "#result == null || #result.isEmpty()")
     public List<VisitorAreaEntity> getOpenVisitorAreas() {
         log.debug("[访客区域管理] 获取当前时段开放的访客区域");
-
-        String cacheKey = CACHE_PREFIX + "open_areas";
-        List<VisitorAreaEntity> cachedAreas = getCachedVisitorAreaList(cacheKey);
-
-        if (cachedAreas != null) {
-            return cachedAreas;
-        }
-
-        List<VisitorAreaEntity> visitorAreas = visitorAreaDao.selectOpenAreas(LocalDateTime.now());
-
-        cacheVisitorAreaList(cacheKey, visitorAreas, 5); // 短期缓存5分钟
-
-        return visitorAreas;
+        return visitorAreaDao.selectOpenAreas(LocalDateTime.now());
     }
 
     @Override
@@ -288,12 +240,22 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
             int result = visitorAreaDao.updateCurrentVisitors(areaId, visitorCount);
 
             if (result > 0) {
-                clearAreaCache(areaId);
+                evictVisitorAreaCache(areaId);
                 log.info("[访客区域管理] 区域访客数量更新成功, areaId={}, visitorCount={}", areaId, visitorCount);
                 return true;
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 区域访客数量更新参数错误: areaId={}, visitorCount={}, error={}", areaId, visitorCount, e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 区域访客数量更新业务异常: areaId={}, visitorCount={}, code={}, message={}", areaId, visitorCount, e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 区域访客数量更新系统异常: areaId={}, visitorCount={}, code={}, message={}", areaId, visitorCount, e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[访客区域管理] 区域访客数量更新失败, areaId={}, visitorCount={}", areaId, visitorCount, e);
+            log.error("[访客区域管理] 区域访客数量更新未知异常: areaId={}, visitorCount={}", areaId, visitorCount, e);
+            return false; // For boolean return methods, return false on unknown error
         }
 
         return false;
@@ -307,14 +269,24 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
             int result = visitorAreaDao.incrementVisitors(areaId, increment);
 
             if (result > 0) {
-                clearAreaCache(areaId);
+                evictVisitorAreaCache(areaId);
                 log.info("[访客区域管理] 区域访客数量增加成功, areaId={}, increment={}", areaId, increment);
                 return true;
             } else {
                 log.warn("[访客区域管理] 区域访客数量增加失败，可能超出容量限制, areaId={}, increment={}", areaId, increment);
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 区域访客数量增加参数错误: areaId={}, increment={}, error={}", areaId, increment, e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 区域访客数量增加业务异常: areaId={}, increment={}, code={}, message={}", areaId, increment, e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 区域访客数量增加系统异常: areaId={}, increment={}, code={}, message={}", areaId, increment, e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[访客区域管理] 区域访客数量增加异常, areaId={}, increment={}", areaId, increment, e);
+            log.error("[访客区域管理] 区域访客数量增加未知异常: areaId={}, increment={}", areaId, increment, e);
+            return false; // For boolean return methods, return false on unknown error
         }
 
         return false;
@@ -328,18 +300,29 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
             int result = visitorAreaDao.decrementVisitors(areaId, decrement);
 
             if (result > 0) {
-                clearAreaCache(areaId);
+                evictVisitorAreaCache(areaId);
                 log.info("[访客区域管理] 区域访客数量减少成功, areaId={}, decrement={}", areaId, decrement);
                 return true;
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 区域访客数量减少参数错误: areaId={}, decrement={}, error={}", areaId, decrement, e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 区域访客数量减少业务异常: areaId={}, decrement={}, code={}, message={}", areaId, decrement, e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 区域访客数量减少系统异常: areaId={}, decrement={}, code={}, message={}", areaId, decrement, e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[访客区域管理] 区域访客数量减少失败, areaId={}, decrement={}", areaId, decrement, e);
+            log.error("[访客区域管理] 区域访客数量减少未知异常: areaId={}, decrement={}", areaId, decrement, e);
+            return false; // For boolean return methods, return false on unknown error
         }
 
         return false;
     }
 
     @Override
+    @Observed(name = "visitor.area.getStatistics", contextualName = "visitor-area-get-statistics")
     public Map<String, Object> getVisitorAreaStatistics() {
         log.debug("[访客区域管理] 获取访客区域统计信息");
 
@@ -515,9 +498,18 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
 
         try {
             return objectMapper.readValue(visitorArea.getVisitorDevices(), new TypeReference<Map<String, String>>() {});
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 解析访客设备配置参数错误: areaId={}, error={}", areaId, e.getMessage());
+            return new HashMap<>(); // For read-only operations, return empty map on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 解析访客设备配置业务异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return new HashMap<>(); // For read-only operations, return empty map on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 解析访客设备配置系统异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return new HashMap<>(); // For read-only operations, return empty map on system error
         } catch (Exception e) {
-            log.warn("[访客区域管理] 解析访客设备配置失败, areaId={}", areaId, e);
-            return new HashMap<>();
+            log.warn("[访客区域管理] 解析访客设备配置未知异常: areaId={}", areaId, e);
+            return new HashMap<>(); // For read-only operations, return empty map on unknown error
         }
     }
 
@@ -535,9 +527,18 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
             visitorArea.setVisitorDevices(devicesJson);
 
             return updateVisitorArea(visitorArea);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 更新区域访客设备配置参数错误: areaId={}, error={}", areaId, e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 更新区域访客设备配置业务异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 更新区域访客设备配置系统异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[访客区域管理] 更新区域访客设备配置失败, areaId={}", areaId, e);
-            return false;
+            log.error("[访客区域管理] 更新区域访客设备配置未知异常: areaId={}", areaId, e);
+            return false; // For boolean return methods, return false on unknown error
         }
     }
 
@@ -552,9 +553,18 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
 
         try {
             return objectMapper.readValue(visitorArea.getHealthCheckStandard(), new TypeReference<Map<String, Boolean>>() {});
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 解析健康检查标准参数错误: areaId={}, error={}", areaId, e.getMessage());
+            return new HashMap<>(); // For read-only operations, return empty map on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 解析健康检查标准业务异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return new HashMap<>(); // For read-only operations, return empty map on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 解析健康检查标准系统异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return new HashMap<>(); // For read-only operations, return empty map on system error
         } catch (Exception e) {
-            log.warn("[访客区域管理] 解析健康检查标准失败, areaId={}", areaId, e);
-            return new HashMap<>();
+            log.warn("[访客区域管理] 解析健康检查标准未知异常: areaId={}", areaId, e);
+            return new HashMap<>(); // For read-only operations, return empty map on unknown error
         }
     }
 
@@ -569,9 +579,18 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
 
         try {
             return objectMapper.readValue(visitorArea.getOpenHours(), new TypeReference<Map<String, String>>() {});
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 解析开放时间配置参数错误: areaId={}, error={}", areaId, e.getMessage());
+            return new HashMap<>(); // For read-only operations, return empty map on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 解析开放时间配置业务异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return new HashMap<>(); // For read-only operations, return empty map on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 解析开放时间配置系统异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return new HashMap<>(); // For read-only operations, return empty map on system error
         } catch (Exception e) {
-            log.warn("[访客区域管理] 解析开放时间配置失败, areaId={}", areaId, e);
-            return new HashMap<>();
+            log.warn("[访客区域管理] 解析开放时间配置未知异常: areaId={}", areaId, e);
+            return new HashMap<>(); // For read-only operations, return empty map on unknown error
         }
     }
 
@@ -600,8 +619,18 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
                 LocalTime endTime = LocalTime.parse(timeRange[1]);
                 return !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime);
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 解析开放时间参数错误: areaId={}, hoursKey={}, error={}", areaId, hoursKey, e.getMessage());
+            return true; // Default to open on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 解析开放时间业务异常: areaId={}, hoursKey={}, code={}, message={}", areaId, hoursKey, e.getCode(), e.getMessage());
+            return true; // Default to open on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 解析开放时间系统异常: areaId={}, hoursKey={}, code={}, message={}", areaId, hoursKey, e.getCode(), e.getMessage(), e);
+            return true; // Default to open on system error
         } catch (Exception e) {
-            log.warn("[访客区域管理] 解析开放时间失败, areaId={}, hoursKey={}", areaId, hoursKey, e);
+            log.warn("[访客区域管理] 解析开放时间未知异常: areaId={}, hoursKey={}", areaId, hoursKey, e);
+            return true; // Default to open on unknown error
         }
 
         return true; // 默认开放
@@ -634,9 +663,18 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
 
         try {
             return objectMapper.readValue(visitorArea.getEmergencyContact(), new TypeReference<Map<String, String>>() {});
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[访客区域管理] 解析紧急联系人信息参数错误: areaId={}, error={}", areaId, e.getMessage());
+            return new HashMap<>(); // For read-only operations, return empty map on parameter error
+        } catch (BusinessException e) {
+            log.warn("[访客区域管理] 解析紧急联系人信息业务异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return new HashMap<>(); // For read-only operations, return empty map on business error
+        } catch (SystemException e) {
+            log.error("[访客区域管理] 解析紧急联系人信息系统异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return new HashMap<>(); // For read-only operations, return empty map on system error
         } catch (Exception e) {
-            log.warn("[访客区域管理] 解析紧急联系人信息失败, areaId={}", areaId, e);
-            return new HashMap<>();
+            log.warn("[访客区域管理] 解析紧急联系人信息未知异常: areaId={}", areaId, e);
+            return new HashMap<>(); // For read-only operations, return empty map on unknown error
         }
     }
 
@@ -660,62 +698,17 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
     }
 
     /**
-     * 缓存相关方法
+     * 清除访客区域相关缓存
+     * <p>
+     * 使用@CacheEvict注解清除指定区域的所有相关缓存
+     * </p>
      */
-    @SuppressWarnings("null")
-    private VisitorAreaEntity getCachedVisitorArea(String cacheKey) {
-        try {
-            String cached = stringRedisTemplate.opsForValue().get(cacheKey);
-            return cached != null ? objectMapper.readValue(cached, VisitorAreaEntity.class) : null;
-        } catch (Exception e) {
-            log.warn("[访客区域管理] 缓存读取失败", e);
-            return null;
-        }
-    }
-
-    @SuppressWarnings("null")
-    private void cacheVisitorArea(String cacheKey, VisitorAreaEntity visitorArea) {
-        try {
-            String json = objectMapper.writeValueAsString(visitorArea);
-            stringRedisTemplate.opsForValue().set(cacheKey, json, CACHE_EXPIRE_MINUTES, TimeUnit.MINUTES);
-        } catch (Exception e) {
-            log.warn("[访客区域管理] 缓存写入失败", e);
-        }
-    }
-
-    @SuppressWarnings("null")
-    private List<VisitorAreaEntity> getCachedVisitorAreaList(String cacheKey) {
-        try {
-            String cached = stringRedisTemplate.opsForValue().get(cacheKey);
-            return cached != null ? objectMapper.readValue(cached, new TypeReference<List<VisitorAreaEntity>>() {}) : null;
-        } catch (Exception e) {
-            log.warn("[访客区域管理] 缓存读取失败", e);
-            return null;
-        }
-    }
-
-    private void cacheVisitorAreaList(String cacheKey, List<VisitorAreaEntity> visitorAreas) {
-        cacheVisitorAreaList(cacheKey, visitorAreas, CACHE_EXPIRE_MINUTES);
-    }
-
-    @SuppressWarnings("null")
-    private void cacheVisitorAreaList(String cacheKey, List<VisitorAreaEntity> visitorAreas, long expireMinutes) {
-        try {
-            String json = objectMapper.writeValueAsString(visitorAreas);
-            stringRedisTemplate.opsForValue().set(cacheKey, json, expireMinutes, TimeUnit.MINUTES);
-        } catch (Exception e) {
-            log.warn("[访客区域管理] 缓存写入失败", e);
-        }
-    }
-
-    private void clearAreaCache(Long areaId) {
-        try {
-            Set<String> keys = stringRedisTemplate.keys(CACHE_PREFIX + "*:" + areaId + "*");
-            if (!keys.isEmpty()) {
-                stringRedisTemplate.delete(keys);
-            }
-        } catch (Exception e) {
-            log.warn("[访客区域管理] 清除区域缓存失败", e);
-        }
+    @CacheEvict(value = {"visitor:area:config", "visitor:area:visit_type", "visitor:area:access_level",
+            "visitor:area:reception_required", "visitor:area:receptionist", "visitor:area:over_capacity",
+            "visitor:area:open_areas"}, allEntries = true)
+    public void evictVisitorAreaCache(Long areaId) {
+        log.debug("[访客区域管理] 清除访客区域缓存, areaId={}", areaId);
+        // 缓存清除由@CacheEvict注解自动处理
     }
 }
+

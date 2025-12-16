@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.common.access.entity.AreaAccessExtEntity;
+import net.lab1024.sa.access.access.entity.AreaAccessExtEntity;
 
 /**
  * 区域门禁扩展Repository
@@ -130,6 +130,7 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
      * @param updateUserId 更新用户ID
      * @return 更新行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_access_area_ext SET " +
             "access_level = #{accessLevel}, " +
             "update_time = NOW(), " +
@@ -146,6 +147,7 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
      * @param updateUserId 更新用户ID
      * @return 更新行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_access_area_ext SET " +
             "access_mode = #{accessMode}, " +
             "update_time = NOW(), " +
@@ -162,6 +164,7 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
      * @param updateUserId 更新用户ID
      * @return 更新行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_access_area_ext SET " +
             "device_count = #{deviceCount}, " +
             "update_time = NOW(), " +
@@ -177,6 +180,7 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
      * @param updateUserId 更新用户ID
      * @return 删除行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_access_area_ext SET " +
             "deleted_flag = 1, " +
             "update_time = NOW(), " +
@@ -191,6 +195,7 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
      * @param updateUserId 更新用户ID
      * @return 删除行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("<script>" +
             "UPDATE t_access_area_ext SET " +
             "deleted_flag = 1, " +
@@ -344,3 +349,4 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
             "WHERE deleted_flag = 0")
     java.util.Map<String, Object> getAreaExtensionStatistics();
 }
+

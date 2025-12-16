@@ -86,3 +86,4 @@ public class VisitorAppointmentDetailVO {
      */
     private String remark;
 }
+

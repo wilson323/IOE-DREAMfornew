@@ -306,3 +306,5 @@ class ConsumeMobileControllerTest {
                 .andExpect(jsonPath("$.code").exists());
     }
 }
+
+

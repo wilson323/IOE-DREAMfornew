@@ -72,3 +72,6 @@ public interface ConsumeDeviceManager {
     java.util.List<net.lab1024.sa.common.organization.entity.DeviceEntity> getConsumeDevices(String areaId, Integer status);
 }
 
+
+
+

@@ -42,3 +42,6 @@ public class ConsumeDeviceConfigVO {
      */
     private String configParams;
 }
+
+
+

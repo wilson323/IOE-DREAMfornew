@@ -1,16 +1,23 @@
 package net.lab1024.sa.common.auth.util;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.SystemException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**
- * 密码加密工具类
+ * 密码加密工具类（适配器模式）
  * <p>
  * 企业级密码加密工具，使用BCrypt算法
  * 严格遵循CLAUDE.md规范：
  * - 纯Java工具类，不使用Spring注解
  * - 提供静态方法供Manager类调用
  * - 不依赖Spring容器
+ * </p>
+ * <p>
+ * **Spring Boot标准方案适配器**:
+ * - 优先使用Spring Security的BCryptPasswordEncoder Bean（通过SecurityConfig配置）
+ * - 保留静态方法作为fallback，确保向后兼容
+ * - 推荐在需要密码编码的地方直接注入BCryptPasswordEncoder Bean
  * </p>
  * <p>
  * 功能：
@@ -20,15 +27,16 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
  * </p>
  * <p>
  * 企业级特性：
- * - 使用BCrypt算法（强度10）
+ * - 使用BCrypt算法（强度10，与SecurityConfig配置一致）
  * - 自动生成盐值
  * - 防止彩虹表攻击
  * - 支持密码升级（旧密码格式兼容）
  * </p>
  *
  * @author IOE-DREAM架构团队
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2025-01-30
+ * @updated 2025-01-30 标记为适配器模式，推荐使用Spring Security BCryptPasswordEncoder Bean
  */
 @Slf4j
 public class PasswordUtil {
@@ -36,6 +44,7 @@ public class PasswordUtil {
     /**
      * BCrypt加密强度（轮数）
      * 10表示2^10=1024轮，平衡安全性和性能
+     * 与SecurityConfig中的BCryptPasswordEncoder配置一致（SystemConstants.BCRYPT_STRENGTH = 10）
      */
     private static final int BCRYPT_ROUNDS = 10;
 
@@ -87,7 +96,7 @@ public class PasswordUtil {
             return hashedPassword;
         } catch (Exception e) {
             log.error("[密码加密] 密码加密失败: {}", e.getMessage(), e);
-            throw new RuntimeException("密码加密失败", e);
+            throw new SystemException("PASSWORD_ENCRYPT_ERROR", "密码加密失败", e);
         }
     }
 

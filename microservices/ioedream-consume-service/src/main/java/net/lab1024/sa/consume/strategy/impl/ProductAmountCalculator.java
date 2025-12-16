@@ -16,6 +16,7 @@ import net.lab1024.sa.consume.domain.request.ConsumeRequest;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
+import net.lab1024.sa.consume.client.AccountKindConfigClient;
 
 /**
  * 商品模式计算器策略实现
@@ -54,7 +55,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
     private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
     @Resource
-    private net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient;
+    private AccountKindConfigClient accountKindConfigClient;
 
     /**
      * 计算商品模式消费金额
@@ -242,14 +243,9 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
                 return BigDecimal.ZERO;
             }
 
-            // 2. 通过网关获取账户类别信息
+            // 2. 获取账户类别信息（热路径：默认经网关，直连启用时走直连）
             net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
-                    gatewayServiceClient.callCommonService(
-                            "/api/v1/account-kind/" + account.getAccountKindId(),
-                            org.springframework.http.HttpMethod.GET,
-                            null,
-                            new com.fasterxml.jackson.core.type.TypeReference<net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>>>() {}
-                    );
+                    accountKindConfigClient.getAccountKind(account.getAccountKindId());
 
             if (accountKindResponse == null || !accountKindResponse.isSuccess() 
                     || accountKindResponse.getData() == null) {
@@ -375,4 +371,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
         }
     }
 }
+
+
+
 

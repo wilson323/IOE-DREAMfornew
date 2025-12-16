@@ -265,3 +265,5 @@ public interface ConsumeAccountService {
      */
     boolean deleteAccount(Long accountId);
 }
+
+

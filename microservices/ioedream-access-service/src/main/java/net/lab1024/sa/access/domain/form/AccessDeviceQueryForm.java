@@ -3,6 +3,7 @@ package net.lab1024.sa.access.domain.form;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 /**
  * 门禁设备查询表单
@@ -37,6 +38,7 @@ public class AccessDeviceQueryForm {
     /**
      * 关键词（设备名称、设备编号）
      */
+    @Nullable
     private String keyword;
 
     /**
@@ -53,6 +55,7 @@ public class AccessDeviceQueryForm {
      * - MAINTAIN - 维护中
      * </p>
      */
+    @Nullable
     private String deviceStatus;
 
     /**
@@ -64,4 +67,5 @@ public class AccessDeviceQueryForm {
      */
     private Integer enabledFlag;
 }
+
 

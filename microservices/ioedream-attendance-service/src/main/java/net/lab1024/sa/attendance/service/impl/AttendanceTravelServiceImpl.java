@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
@@ -31,10 +35,12 @@ public class AttendanceTravelServiceImpl implements AttendanceTravelService {
     private WorkflowApprovalManager workflowApprovalManager;
 
     @Resource
-    private net.lab1024.sa.common.attendance.manager.AttendanceManager attendanceManager;
+    private net.lab1024.sa.attendance.attendance.manager.AttendanceManager attendanceManager;
 
     @Override
+    @Observed(name = "attendance.travel.submit", contextualName = "attendance-travel-submit")
     @Transactional(rollbackFor = Exception.class)
+    @Retry(name = "external-service-retry", fallbackMethod = "submitTravelApplicationFallback")
     public AttendanceTravelEntity submitTravelApplication(AttendanceTravelForm form) {
         log.info("[出差申请] 提交出差申请，employeeId={}, destination={}", form.getEmployeeId(), form.getDestination());
 
@@ -92,6 +98,18 @@ public class AttendanceTravelServiceImpl implements AttendanceTravelService {
         return entity;
     }
 
+    /**
+     * 出差申请提交降级方法
+     * <p>
+     * 当工作流服务调用失败时，使用此降级方法
+     * </p>
+     */
+    public AttendanceTravelEntity submitTravelApplicationFallback(
+            AttendanceTravelForm form, Exception e) {
+        log.error("[出差申请] 启动审批流程失败，使用降级方案, employeeId={}, error={}", form.getEmployeeId(), e.getMessage(), e);
+        throw new BusinessException("启动审批流程失败: " + e.getMessage());
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateTravelStatus(String travelNo, String status, String approvalComment) {
@@ -146,9 +164,18 @@ public class AttendanceTravelServiceImpl implements AttendanceTravelService {
                 log.warn("[出差申请] 出差审批通过处理失败，travelNo={}, employeeId={}", entity.getTravelNo(), entity.getEmployeeId());
                 // 不抛出异常，避免影响审批流程
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[出差申请] 出差审批通过处理参数错误: travelNo={}, employeeId={}, error={}", entity.getTravelNo(), entity.getEmployeeId(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[出差申请] 出差审批通过处理业务异常: travelNo={}, employeeId={}, code={}, message={}", entity.getTravelNo(), entity.getEmployeeId(), e.getCode(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[出差申请] 出差审批通过处理系统异常: travelNo={}, employeeId={}, code={}, message={}", entity.getTravelNo(), entity.getEmployeeId(), e.getCode(), e.getMessage(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         } catch (Exception e) {
-            log.error("[出差申请] 出差审批通过处理异常，travelNo={}, employeeId={}", entity.getTravelNo(), entity.getEmployeeId(), e);
-            // 不抛出异常，避免影响审批流程
+            log.error("[出差申请] 出差审批通过处理未知异常: travelNo={}, employeeId={}", entity.getTravelNo(), entity.getEmployeeId(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         }
     }
 
@@ -156,4 +183,6 @@ public class AttendanceTravelServiceImpl implements AttendanceTravelService {
         return "TR" + System.currentTimeMillis();
     }
 }
+
+
 

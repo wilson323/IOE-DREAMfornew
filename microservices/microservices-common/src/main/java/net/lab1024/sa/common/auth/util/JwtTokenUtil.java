@@ -199,6 +199,7 @@ public class JwtTokenUtil {
             Date expiration = getExpirationDateFromToken(token);
             return expiration.before(new Date());
         } catch (Exception e) {
+            log.debug("[JWT工具] 检查令牌过期状态失败，默认返回已过期: error={}", e.getMessage());
             return true;
         }
     }
@@ -291,6 +292,7 @@ public class JwtTokenUtil {
             long remaining = (expiration.getTime() - System.currentTimeMillis()) / 1000;
             return Math.max(remaining, 0L);
         } catch (Exception e) {
+            log.debug("[JWT工具] 获取令牌剩余过期时间失败，返回0: token={}, error={}", token, e.getMessage());
             return 0L;
         }
     }

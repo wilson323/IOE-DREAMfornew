@@ -43,16 +43,16 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
      * 构造函数注入依赖
      * <p>
      * 符合CLAUDE.md规范：通过构造函数接收依赖
-     * 性能优化：优先使用注入的ObjectMapper，如果没有则使用JsonUtil统一实例
-     * 避免重复创建ObjectMapper实例，提升性能
+     * 使用Spring Boot标准方案：优先使用注入的ObjectMapper Bean（通过JacksonConfiguration配置）
+     * 如果没有注入ObjectMapper，则使用JsonUtil作为fallback（向后兼容）
      * </p>
      *
      * @param gatewayServiceClient 网关服务客户端
-     * @param objectMapper JSON解析器（可选，如果为null则使用JsonUtil统一实例）
+     * @param objectMapper JSON解析器（Spring Boot ObjectMapper Bean，推荐使用）
      */
     public ConsumeDeviceManagerImpl(GatewayServiceClient gatewayServiceClient, ObjectMapper objectMapper) {
         this.gatewayServiceClient = gatewayServiceClient;
-        // 性能优化：使用JsonUtil统一实例，避免重复创建ObjectMapper
+        // 优先使用Spring Boot的ObjectMapper Bean，如果没有则使用JsonUtil作为fallback（向后兼容）
         this.objectMapper = objectMapper != null ? objectMapper : JsonUtil.getObjectMapper();
     }
 
@@ -133,9 +133,9 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
             // 解析扩展属性，检查支持的消费模式
             try {
                 // 解析JSON格式的扩展属性
-                Map<String, Object> attributes = objectMapper.readValue(extendedAttributes, 
+                Map<String, Object> attributes = objectMapper.readValue(extendedAttributes,
                         objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
-                
+
                 // 检查是否包含支持的消费模式配置
                 Object supportedModesObj = attributes.get("supportedConsumeModes");
                 if (supportedModesObj == null) {
@@ -165,7 +165,7 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
                 // 其他类型，默认支持
                 return true;
             } catch (Exception e) {
-                log.warn("[设备管理] 解析扩展属性失败，使用默认配置，deviceId={}, extendedAttributes={}", 
+                log.warn("[设备管理] 解析扩展属性失败，使用默认配置，deviceId={}, extendedAttributes={}",
                         deviceId, extendedAttributes, e);
                 return true; // 解析失败时默认支持所有模式
             }
@@ -242,9 +242,9 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
                             @SuppressWarnings("unchecked")
                             java.util.Map<String, Object> itemMap = (java.util.Map<String, Object>) item;
                             try {
-                                // 使用JsonUtil进行类型安全的转换
-                                String json = JsonUtil.toJson(itemMap);
-                                DeviceEntity device = JsonUtil.fromJson(json, DeviceEntity.class);
+                                // 使用ObjectMapper进行类型安全的转换（优先使用注入的ObjectMapper Bean）
+                                String json = objectMapper.writeValueAsString(itemMap);
+                                DeviceEntity device = objectMapper.readValue(json, DeviceEntity.class);
                                 if (device != null) {
                                     devices.add(device);
                                 }
@@ -263,3 +263,6 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
         }
     }
 }
+
+
+

@@ -14,7 +14,11 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.annotation.Counted;
+// import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector; // 已废弃，已移除
 import net.lab1024.sa.devicecomm.protocol.enums.AccessEventTypeEnum;
 import net.lab1024.sa.devicecomm.protocol.enums.ProtocolTypeEnum;
 import net.lab1024.sa.devicecomm.protocol.enums.VerifyTypeEnum;
@@ -82,10 +86,10 @@ public class AccessProtocolHandler implements ProtocolHandler {
     private RabbitTemplate rabbitTemplate;
 
     /**
-     * 协议监控指标收集器
+     * Micrometer指标注册表（用于编程式指标收集）
      */
     @Resource
-    private ProtocolMetricsCollector metricsCollector;
+    private MeterRegistry meterRegistry;
 
     @Override
     public String getProtocolType() {
@@ -117,12 +121,12 @@ public class AccessProtocolHandler implements ProtocolHandler {
     @Override
     public ProtocolMessage parseMessage(byte[] rawData) throws ProtocolParseException {
         log.warn("[门禁协议] 二进制解析方法被调用，当前协议使用HTTP文本格式，请使用parseMessage(String)方法");
-        
+
         // 将字节数组转换为字符串，委托给文本解析方法
         if (rawData == null || rawData.length == 0) {
             throw new ProtocolParseException("INVALID_DATA", "消息数据为空", rawData);
         }
-        
+
         try {
             String textData = new String(rawData, StandardCharsets.UTF_8);
             return parseMessage(textData);
@@ -221,7 +225,7 @@ public class AccessProtocolHandler implements ProtocolHandler {
                         return "ALARM_EVENT";
                     }
                 } catch (NumberFormatException e) {
-                    // 忽略
+                    log.debug("[门禁协议] 事件类型解析失败，忽略: eventObj={}", eventObj);
                 }
             }
             return "ACCESS_RECORD";
@@ -288,6 +292,10 @@ public class AccessProtocolHandler implements ProtocolHandler {
     }
 
     @Override
+    @Timed(value = "protocol.message.process.duration",
+           description = "协议消息处理耗时")
+    @Counted(value = "protocol.message.process",
+             description = "协议消息处理次数")
     public void processMessage(ProtocolMessage message, Long deviceId) throws ProtocolProcessException {
         log.info("[门禁协议] 开始处理消息，设备ID={}, 消息类型={}", deviceId, message.getMessageType());
 
@@ -304,6 +312,7 @@ public class AccessProtocolHandler implements ProtocolHandler {
             String messageType = message.getMessageType();
             switch (messageType) {
                 case "ACCESS_EVENT":
+                case "ACCESS_RECORD":
                     processAccessEvent(message);
                     break;
                 case "DEVICE_STATUS":
@@ -443,7 +452,7 @@ public class AccessProtocolHandler implements ProtocolHandler {
             // 根据协议文档映射字段到AccessRecordAddForm
             // 协议字段：time, pin, cardno, eventaddr, event, inoutstatus, verifytype, index, maskflag, temperature
             Map<String, Object> accessRecordRequest = new HashMap<>();
-            
+
             // 设备信息
             accessRecordRequest.put("deviceId", message.getDeviceId());
             accessRecordRequest.put("deviceCode", message.getDeviceCode() != null ? message.getDeviceCode() : data.get("eventaddr"));
@@ -510,7 +519,7 @@ public class AccessProtocolHandler implements ProtocolHandler {
             if (verifyTypeObj != null) {
                 int passMethod = parseVerifyType(verifyTypeObj.toString());
                 accessRecordRequest.put("passMethod", passMethod);
-                
+
                 // 记录完整验证方式信息（用于后续分析）
                 VerifyTypeEnum verifyType = VerifyTypeEnum.getByCode(passMethod);
                 if (verifyType != VerifyTypeEnum.UNKNOWN) {
@@ -520,7 +529,7 @@ public class AccessProtocolHandler implements ProtocolHandler {
             } else {
                 accessRecordRequest.put("passMethod", 0); // 默认卡片
             }
-            
+
             // 温度字段（temperature字段）
             Object temperatureObj = data.get("temperature");
             if (temperatureObj != null) {
@@ -537,18 +546,18 @@ public class AccessProtocolHandler implements ProtocolHandler {
             int accessResult = 1; // 默认成功
             String eventTypeName = "正常通行";
             String eventCategory = "正常";
-            
+
             if (eventObj != null) {
                 try {
                     int event = Integer.parseInt(eventObj.toString());
-                    
+
                     // 使用完整的事件类型枚举判断
                     AccessEventTypeEnum eventType = AccessEventTypeEnum.getByCode(event);
                     eventTypeName = AccessEventTypeEnum.getNameByCode(event);
                     eventCategory = eventType.getCategory().getName();
-                    
+
                     // 根据事件类别判断通行结果
-                    if (AccessEventTypeEnum.isAbnormalEvent(event) || 
+                    if (AccessEventTypeEnum.isAbnormalEvent(event) ||
                         AccessEventTypeEnum.isAlarmEvent(event)) {
                         accessResult = 0; // 失败
                     } else if (AccessEventTypeEnum.isNormalEvent(event)) {
@@ -557,12 +566,12 @@ public class AccessProtocolHandler implements ProtocolHandler {
                         // 梯控事件等其他事件，根据业务需求判断
                         accessResult = 1; // 默认成功
                     }
-                    
+
                     // 记录事件详细信息
                     accessRecordRequest.put("eventCode", event);
                     accessRecordRequest.put("eventTypeName", eventTypeName);
                     accessRecordRequest.put("eventCategory", eventCategory);
-                    
+
                 } catch (NumberFormatException e) {
                     log.warn("[门禁协议] event字段格式错误，event={}", eventObj);
                 }
@@ -582,21 +591,33 @@ public class AccessProtocolHandler implements ProtocolHandler {
 
             // 发送到RabbitMQ队列，由消费者异步处理（企业级高可用：消息队列缓冲）
             rabbitTemplate.convertAndSend("protocol.access.record", accessRecordRequest);
-            
+
             long duration = System.currentTimeMillis() - startTime;
             log.info("[门禁协议] 门禁事件已发送到队列，duration={}ms", duration);
-            
-            // 记录监控指标
-            metricsCollector.recordSuccess(PROTOCOL_TYPE, duration);
-            metricsCollector.recordQueueOperation("protocol.access.record", "send");
+
+            // 记录监控指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.process")
+                    .tag("protocol_type", PROTOCOL_TYPE)
+                    .tag("status", "success")
+                    .register(meterRegistry)
+                    .increment();
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.access.record")
+                    .tag("operation", "send")
+                    .register(meterRegistry)
+                    .increment();
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
             log.error("[门禁协议] 处理门禁事件异常，错误={}, duration={}ms", e.getMessage(), duration, e);
-            
-            // 记录错误指标
-            metricsCollector.recordError(PROTOCOL_TYPE, "PROCESS_ERROR");
-            
+
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", PROTOCOL_TYPE)
+                    .tag("error_type", "PROCESS_ERROR")
+                    .register(meterRegistry)
+                    .increment();
+
             // 不抛出异常，避免影响其他消息处理
         }
     }
@@ -625,7 +646,7 @@ public class AccessProtocolHandler implements ProtocolHandler {
             Map<String, Object> deviceStatusRequest = new HashMap<>();
             deviceStatusRequest.put("deviceId", message.getDeviceId());
             deviceStatusRequest.put("deviceCode", message.getDeviceCode());
-            
+
             // 根据协议文档解析设备状态（假设：0-离线，1-在线，2-维护中）
             Integer statusCode = (Integer) data.get("statusCode");
             String deviceStatus = "OFFLINE";
@@ -646,18 +667,27 @@ public class AccessProtocolHandler implements ProtocolHandler {
 
             // 发送到RabbitMQ队列，由消费者异步处理
             rabbitTemplate.convertAndSend("protocol.device.status", deviceStatusRequest);
-            
+
             long duration = System.currentTimeMillis() - startTime;
-            log.info("[门禁协议] 设备状态更新已发送到队列，设备ID={}, 状态={}, duration={}ms", 
+            log.info("[门禁协议] 设备状态更新已发送到队列，设备ID={}, 状态={}, duration={}ms",
                     message.getDeviceId(), deviceStatus, duration);
-            
-            // 记录监控指标
-            metricsCollector.recordQueueOperation("protocol.device.status", "send");
+
+            // 记录监控指标（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.device.status")
+                    .tag("operation", "send")
+                    .register(meterRegistry)
+                    .increment();
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
             log.error("[门禁协议] 处理设备状态异常，错误={}, duration={}ms", e.getMessage(), duration, e);
-            metricsCollector.recordError(PROTOCOL_TYPE, "DEVICE_STATUS_ERROR");
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", PROTOCOL_TYPE)
+                    .tag("error_type", "DEVICE_STATUS_ERROR")
+                    .register(meterRegistry)
+                    .increment();
             // 不抛出异常，避免影响其他消息处理
         }
     }
@@ -693,18 +723,27 @@ public class AccessProtocolHandler implements ProtocolHandler {
 
             // 发送到RabbitMQ队列，由消费者异步处理
             rabbitTemplate.convertAndSend("protocol.alarm.event", alarmRequest);
-            
+
             long duration = System.currentTimeMillis() - startTime;
-            log.info("[门禁协议] 报警事件已发送到队列，设备ID={}, duration={}ms", 
+            log.info("[门禁协议] 报警事件已发送到队列，设备ID={}, duration={}ms",
                     message.getDeviceId(), duration);
-            
-            // 记录监控指标
-            metricsCollector.recordQueueOperation("protocol.alarm.event", "send");
+
+            // 记录监控指标（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.alarm.event")
+                    .tag("operation", "send")
+                    .register(meterRegistry)
+                    .increment();
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
             log.error("[门禁协议] 处理报警事件异常，错误={}, duration={}ms", e.getMessage(), duration, e);
-            metricsCollector.recordError(PROTOCOL_TYPE, "ALARM_EVENT_ERROR");
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", PROTOCOL_TYPE)
+                    .tag("error_type", "ALARM_EVENT_ERROR")
+                    .register(meterRegistry)
+                    .increment();
             // 不抛出异常，避免影响其他消息处理
         }
     }
@@ -764,7 +803,7 @@ public class AccessProtocolHandler implements ProtocolHandler {
         try {
             // 尝试解析为数字格式
             int verifyType = Integer.parseInt(verifyTypeStr.trim());
-            
+
             // 根据协议文档映射验证方式
             // 注意：这里需要根据实际业务需求调整映射关系
             switch (verifyType) {
@@ -791,13 +830,13 @@ public class AccessProtocolHandler implements ProtocolHandler {
         } catch (NumberFormatException e) {
             // 字符串格式，需要解析（例如："1,3" 表示指纹+人脸）
             log.debug("[门禁协议] verifytype为字符串格式，verifyType={}", verifyTypeStr);
-            
+
             // 解析字符串格式（例如："1,3" 或 "fingerprint,face"）
             String[] parts = verifyTypeStr.split(",");
             if (parts.length > 0) {
                 // 取第一个验证方式作为主要验证方式
                 String firstPart = parts[0].trim().toLowerCase();
-                
+
                 // 尝试匹配常见的关键词
                 if (firstPart.contains("finger") || firstPart.contains("指纹")) {
                     return 2; // 指纹
@@ -820,7 +859,7 @@ public class AccessProtocolHandler implements ProtocolHandler {
                     }
                 }
             }
-            
+
             return 0; // 默认卡片
         }
     }

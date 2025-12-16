@@ -1,5 +1,6 @@
 package net.lab1024.sa.attendance.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,6 +78,7 @@ public class AttendanceRecordController {
      * GET /api/v1/attendance/record/query?pageNum=1&pageSize=20&employeeId=1001&startDate=2025-01-01&endDate=2025-01-31
      * </pre>
      */
+    @Observed(name = "attendanceRecord.queryAttendanceRecords", contextualName = "attendance-record-query")
     @GetMapping("/query")
     @Operation(
         summary = "分页查询考勤记录",
@@ -99,16 +101,16 @@ public class AttendanceRecordController {
             @RequestParam(defaultValue = "20") Integer pageSize,
             @Parameter(description = "员工ID（可选）", example = "1001")
             @RequestParam(required = false) Long employeeId,
-            @Parameter(description = "开始日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "开始日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "结束日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "结束日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String attendanceType,
             @RequestParam(required = false) Long departmentId) {
         log.info("[考勤记录] 分页查询考勤记录，pageNum={}, pageSize={}, employeeId={}, startDate={}, endDate={}, status={}, attendanceType={}, departmentId={}",
                 pageNum, pageSize, employeeId, startDate, endDate, status, attendanceType, departmentId);
-        
+
         // 构建查询表单
         AttendanceRecordQueryForm form = new AttendanceRecordQueryForm();
         form.setPageNum(pageNum);
@@ -119,7 +121,7 @@ public class AttendanceRecordController {
         form.setStatus(status);
         form.setAttendanceType(attendanceType);
         form.setDepartmentId(departmentId);
-        
+
         return attendanceRecordService.queryAttendanceRecords(form);
     }
 
@@ -161,6 +163,7 @@ public class AttendanceRecordController {
      * }
      * </pre>
      */
+    @Observed(name = "attendanceRecord.createAttendanceRecord", contextualName = "attendance-record-create")
     @PostMapping("/create")
     @Operation(
         summary = "创建考勤记录",
@@ -177,11 +180,12 @@ public class AttendanceRecordController {
     )
     public ResponseDTO<Long> createAttendanceRecord(
             @Valid @RequestBody AttendanceRecordAddForm form) {
-        log.info("[考勤记录] 创建考勤记录，userId={}, deviceId={}, punchType={}", 
+        log.info("[考勤记录] 创建考勤记录，userId={}, deviceId={}, punchType={}",
                 form.getUserId(), form.getDeviceId(), form.getPunchType());
         return attendanceRecordService.createAttendanceRecord(form);
     }
 
+    @Observed(name = "attendanceRecord.getAttendanceRecordStatistics", contextualName = "attendance-record-statistics")
     @GetMapping("/statistics")
     @Operation(
         summary = "获取考勤记录统计",
@@ -198,9 +202,9 @@ public class AttendanceRecordController {
     )
     @PreAuthorize("hasRole('ATTENDANCE_MANAGER')")
     public ResponseDTO<AttendanceRecordStatisticsVO> getAttendanceRecordStatistics(
-            @Parameter(description = "开始日期，格式：yyyy-MM-dd", required = true, example = "2025-01-01") 
+            @Parameter(description = "开始日期，格式：yyyy-MM-dd", required = true, example = "2025-01-01")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "结束日期，格式：yyyy-MM-dd", required = true, example = "2025-01-31") 
+            @Parameter(description = "结束日期，格式：yyyy-MM-dd", required = true, example = "2025-01-31")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @Parameter(description = "员工ID（可选）", example = "1001")
             @RequestParam(required = false) Long employeeId) {
@@ -208,4 +212,6 @@ public class AttendanceRecordController {
         return attendanceRecordService.getAttendanceRecordStatistics(startDate, endDate, employeeId);
     }
 }
+
+
 

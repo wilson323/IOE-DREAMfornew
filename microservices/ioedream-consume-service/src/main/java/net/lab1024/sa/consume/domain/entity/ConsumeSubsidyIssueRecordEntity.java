@@ -86,3 +86,6 @@ public class ConsumeSubsidyIssueRecordEntity extends BaseEntity {
      */
     private String remark;
 }
+
+
+

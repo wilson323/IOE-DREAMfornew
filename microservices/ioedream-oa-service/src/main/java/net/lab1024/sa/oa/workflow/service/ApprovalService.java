@@ -1,11 +1,11 @@
 package net.lab1024.sa.oa.workflow.service;
 
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalTaskQueryForm;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalActionForm;
-import net.lab1024.sa.common.workflow.domain.vo.ApprovalTaskVO;
-import net.lab1024.sa.common.workflow.domain.vo.ApprovalInstanceVO;
-import net.lab1024.sa.common.workflow.domain.vo.ApprovalStatisticsVO;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalTaskQueryForm;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalActionForm;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalTaskVO;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalInstanceVO;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalStatisticsVO;
 
 import java.util.List;
 import java.util.Map;
@@ -144,3 +144,6 @@ public interface ApprovalService {
      */
     String withdrawApplication(Long instanceId, Long applicantId, String reason);
 }
+
+
+

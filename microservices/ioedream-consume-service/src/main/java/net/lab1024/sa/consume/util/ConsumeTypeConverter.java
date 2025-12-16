@@ -1,5 +1,6 @@
 package net.lab1024.sa.consume.util;
 
+import lombok.extern.slf4j.Slf4j;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +25,7 @@ import java.util.Objects;
  * @version 1.0.0
  * @since 2025-12-09
  */
+@Slf4j
 public final class ConsumeTypeConverter {
 
     // ==================== 常量定义 ====================
@@ -136,6 +138,7 @@ public final class ConsumeTypeConverter {
             try {
                 return new BigDecimal(((String) amount).trim());
             } catch (NumberFormatException e) {
+                log.debug("[消费类型转换] 金额字符串解析失败，返回0: amount={}, error={}", amount, e.getMessage());
                 return BigDecimal.ZERO;
             }
         }
@@ -272,6 +275,7 @@ public final class ConsumeTypeConverter {
             try {
                 return Long.parseLong(((String) id).trim());
             } catch (NumberFormatException e) {
+                log.debug("[消费类型转换] ID字符串解析失败，返回null: id={}, error={}", id, e.getMessage());
                 return null;
             }
         }
@@ -332,6 +336,7 @@ public final class ConsumeTypeConverter {
         try {
             return LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern(DEFAULT_DATETIME_FORMAT));
         } catch (Exception e) {
+            log.debug("[消费类型转换] 日期时间字符串解析失败: dateTimeStr={}, error={}", dateTimeStr, e.getMessage());
             return null;
         }
     }
@@ -466,3 +471,6 @@ public final class ConsumeTypeConverter {
         return value != null ? value.toString() : "";
     }
 }
+
+
+

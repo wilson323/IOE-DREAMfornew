@@ -79,3 +79,4 @@ public interface AccessAreaDao extends BaseMapper<AreaEntity> {
     @Select("SELECT area_id FROM t_common_area WHERE parent_id = #{parentId} AND deleted_flag = 0 ORDER BY sort_index")
     List<Long> selectChildrenIds(@Param("parentId") Long parentId);
 }
+

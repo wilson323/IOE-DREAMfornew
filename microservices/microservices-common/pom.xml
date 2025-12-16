@@ -18,12 +18,82 @@
     <name>IOE-DREAM Common Module</name>
     <description>公共模块，包含Entity、DAO、Manager等公共组件</description>
 
-
     <dependencies>
-        <!-- Spring Boot Starter -->
+        <!-- ==================== 核心基础模块 ==================== -->
+        <!-- Common Core (最小稳定内核) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- ==================== 细粒度模块（按需引入） ==================== -->
+        <!-- 安全模块：JWT、Spring Security、加密 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-security</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 数据层模块：MyBatis-Plus、Druid、Flyway -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-data</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 缓存模块：Caffeine、Redis、Redisson -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-cache</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 导出模块：EasyExcel、iText PDF、ZXing -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-export</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 工作流模块：Aviator、Quartz -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-workflow</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Common Monitor (监控告警模块) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-monitor</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Common Business (业务公共模块) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-business</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ==================== 基础框架依赖 ==================== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Actuator (监控端点 - 所有微服务必须) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!-- MyBatis-Plus (Spring Boot 3.x专用) -->
@@ -37,7 +107,6 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.0.33</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -62,17 +131,24 @@
             <version>${swagger.version}</version>
         </dependency>
 
-        <!-- Jakarta Validation API -->
+        <!-- Bean Validation（提供Hibernate Validator实现，支持@Valid/@Validated在运行时生效） -->
         <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>${jakarta-validation.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- Jakarta Transaction API (用于@Transactional注解) -->
         <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
+        </dependency>
+
+        <!-- Eclipse JDT 注解（null 分析支持） -->
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.annotation</artifactId>
+            <version>2.3.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Jackson (JSON处理) -->
@@ -83,27 +159,33 @@
         </dependency>
 
         <!-- EasyExcel (Excel导出) -->
+        <!-- 改为optional，仅在需要Excel导出的服务引入 -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
             <version>${easyexcel.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- iText PDF (PDF导出) -->
+        <!-- 改为optional，仅在需要PDF导出的服务引入 -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
             <version>${itextpdf.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>layout</artifactId>
             <version>${itextpdf.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>io</artifactId>
             <version>${itextpdf.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- Spring Data Redis (Redis支持) -->
@@ -164,6 +246,36 @@
             <artifactId>zipkin-reporter-brave</artifactId>
         </dependency>
 
+        <!-- Micrometer Observation (用于@Observed注解) -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-observation</artifactId>
+            <version>${micrometer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>context-propagation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+        <!-- Resilience4j（直连/网关调用韧性治理） -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-retry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-circuitbreaker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-timelimiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-micrometer</artifactId>
+        </dependency>
+
         <!-- Spring Cloud Commons (服务发现) -->
         <!-- 版本由父POM的Spring Cloud BOM统一管理，无需指定版本号 -->
         <dependency>
@@ -171,11 +283,8 @@
             <artifactId>spring-cloud-commons</artifactId>
         </dependency>
 
-        <!-- Spring Web (RestTemplate支持) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+        <!-- Spring Web (RestTemplate支持) - 已移除，Controller和ServiceImpl已迁移到ioedream-common-service -->
+        <!-- 如果需要RestTemplate，请使用spring-boot-starter-webflux或单独引入spring-web -->
 
         <!-- Caffeine (本地缓存) -->
         <dependency>
@@ -192,9 +301,11 @@
         </dependency>
 
         <!-- Quartz (任务调度) -->
+        <!-- 改为optional，仅在需要定时任务的服务引入 -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Jakarta Servlet API -->
@@ -265,23 +376,35 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- H2 Database (测试环境使用内存数据库) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Aviator表达式引擎 - 企业级表达式计算引擎 -->
+        <!-- 改为optional，仅在需要表达式计算的服务引入 -->
         <dependency>
             <groupId>com.googlecode.aviator</groupId>
             <artifactId>aviator</artifactId>
             <version>5.3.3</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- ZXing (二维码生成和解析) -->
+        <!-- 改为optional，仅在需要二维码功能的服务引入 -->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
             <version>3.5.3</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>3.5.3</version>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>

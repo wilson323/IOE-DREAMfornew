@@ -11,10 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.domain.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordAddForm;
@@ -47,24 +56,27 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
     private AttendanceRecordDao attendanceRecordDao;
 
     @Override
+    @Observed(name = "attendance.record.query", contextualName = "attendance-record-query")
     @Transactional(readOnly = true)
+    @Timed(value = "attendance.records.query", description = "考勤记录查询耗时")
+    @Counted(value = "attendance.records.query.count", description = "考勤记录查询次数")
     public ResponseDTO<PageResult<AttendanceRecordVO>> queryAttendanceRecords(AttendanceRecordQueryForm form) {
         log.info("[考勤记录] 分页查询考勤记录，form={}", form);
 
         try {
             // 构建查询条件
             LambdaQueryWrapper<AttendanceRecordEntity> wrapper = new LambdaQueryWrapper<>();
-            
+
             // 员工ID条件
             if (form.getEmployeeId() != null) {
                 wrapper.eq(AttendanceRecordEntity::getUserId, form.getEmployeeId());
             }
-            
+
             // 部门ID条件
             if (form.getDepartmentId() != null) {
                 wrapper.eq(AttendanceRecordEntity::getDepartmentId, form.getDepartmentId());
             }
-            
+
             // 日期范围条件
             if (form.getStartDate() != null) {
                 wrapper.ge(AttendanceRecordEntity::getAttendanceDate, form.getStartDate());
@@ -72,20 +84,20 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
             if (form.getEndDate() != null) {
                 wrapper.le(AttendanceRecordEntity::getAttendanceDate, form.getEndDate());
             }
-            
+
             // 考勤状态条件
             if (form.getStatus() != null && !form.getStatus().trim().isEmpty()) {
                 wrapper.eq(AttendanceRecordEntity::getAttendanceStatus, form.getStatus());
             }
-            
+
             // 考勤类型条件
             if (form.getAttendanceType() != null && !form.getAttendanceType().trim().isEmpty()) {
                 wrapper.eq(AttendanceRecordEntity::getAttendanceType, form.getAttendanceType());
             }
-            
+
             // 未删除条件
             wrapper.eq(AttendanceRecordEntity::getDeletedFlag, false);
-            
+
             // 按打卡时间倒序排列
             wrapper.orderByDesc(AttendanceRecordEntity::getPunchTime);
 
@@ -106,33 +118,40 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
             result.setPageSize(form.getPageSize());
             result.setPages((int) pageResult.getPages());
 
-            log.info("[考勤记录] 分页查询考勤记录成功，total={}, pageNum={}, pageSize={}", 
+            log.info("[考勤记录] 分页查询考勤记录成功，total={}, pageNum={}, pageSize={}",
                     result.getTotal(), form.getPageNum(), form.getPageSize());
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[考勤记录] 分页查询考勤记录参数错误", e);
+            throw new ParamException("QUERY_ATTENDANCE_RECORDS_PARAM_ERROR", "查询参数错误: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[考勤记录] 分页查询考勤记录业务异常", e);
+            throw e;
         } catch (Exception e) {
-            log.error("[考勤记录] 分页查询考勤记录失败", e);
-            return ResponseDTO.error("QUERY_ATTENDANCE_RECORDS_ERROR", "查询考勤记录失败: " + e.getMessage());
+            log.error("[考勤记录] 分页查询考勤记录系统异常", e);
+            throw new SystemException("QUERY_ATTENDANCE_RECORDS_ERROR", "查询考勤记录失败: " + e.getMessage(), e);
         }
     }
 
     @Override
+    @Observed(name = "attendance.record.getStatistics", contextualName = "attendance-record-get-statistics")
     @Transactional(readOnly = true)
     public ResponseDTO<AttendanceRecordStatisticsVO> getAttendanceRecordStatistics(
             LocalDate startDate, LocalDate endDate, Long employeeId) {
-        log.info("[考勤记录] 获取考勤记录统计，startDate={}, endDate={}, employeeId={}", 
+        log.info("[考勤记录] 获取考勤记录统计，startDate={}, endDate={}, employeeId={}",
                 startDate, endDate, employeeId);
 
         try {
             // 构建查询条件
             LambdaQueryWrapper<AttendanceRecordEntity> wrapper = new LambdaQueryWrapper<>();
-            
+
             // 员工ID条件
             if (employeeId != null) {
                 wrapper.eq(AttendanceRecordEntity::getUserId, employeeId);
             }
-            
+
             // 日期范围条件
             if (startDate != null) {
                 wrapper.ge(AttendanceRecordEntity::getAttendanceDate, startDate);
@@ -140,7 +159,7 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
             if (endDate != null) {
                 wrapper.le(AttendanceRecordEntity::getAttendanceDate, endDate);
             }
-            
+
             // 未删除条件
             wrapper.eq(AttendanceRecordEntity::getDeletedFlag, false);
 
@@ -184,14 +203,20 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
             statistics.setEarlyRate(earlyRate);
             statistics.setAbsentRate(absentRate);
 
-            log.info("[考勤记录] 获取考勤记录统计成功，totalCount={}, normalCount={}, lateCount={}", 
+            log.info("[考勤记录] 获取考勤记录统计成功，totalCount={}, normalCount={}, lateCount={}",
                     totalCount, normalCount, lateCount);
 
             return ResponseDTO.ok(statistics);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[考勤记录] 获取考勤记录统计参数错误", e);
+            throw new ParamException("GET_STATISTICS_PARAM_ERROR", "统计参数错误: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[考勤记录] 获取考勤记录统计业务异常", e);
+            throw e;
         } catch (Exception e) {
-            log.error("[考勤记录] 获取考勤记录统计失败", e);
-            return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计数据失败: " + e.getMessage());
+            log.error("[考勤记录] 获取考勤记录统计系统异常", e);
+            throw new SystemException("GET_STATISTICS_ERROR", "获取统计数据失败: " + e.getMessage(), e);
         }
     }
 
@@ -206,8 +231,14 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
      * @return 创建的考勤记录ID
      */
     @Override
+    @Observed(name = "attendance.record.create", contextualName = "attendance-record-create")
+    @CircuitBreaker(name = "attendance-record-create-circuitbreaker", fallbackMethod = "createAttendanceRecordFallback")
+    @Retry(name = "attendance-record-create-retry")
+    @RateLimiter(name = "write-operation-ratelimiter")
+    @Timed(value = "attendance.record.create", description = "考勤记录创建耗时")
+    @Counted(value = "attendance.record.create.count", description = "考勤记录创建次数")
     public ResponseDTO<Long> createAttendanceRecord(AttendanceRecordAddForm form) {
-        log.info("[考勤记录] 创建考勤记录，userId={}, deviceId={}, punchType={}", 
+        log.info("[考勤记录] 创建考勤记录，userId={}, deviceId={}, punchType={}",
                 form.getUserId(), form.getDeviceId(), form.getPunchType());
 
         try {
@@ -215,13 +246,13 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
             AttendanceRecordEntity entity = new AttendanceRecordEntity();
             entity.setUserId(form.getUserId());
             entity.setDeviceId(form.getDeviceId());
-            
+
             // 处理打卡时间（支持时间戳和LocalDateTime）
             if (form.getPunchTime() != null) {
                 if (form.getPunchTime() instanceof Number) {
                     // 时间戳（秒）
                     long timestamp = ((Number) form.getPunchTime()).longValue();
-                    entity.setPunchTime(LocalDateTime.ofEpochSecond(timestamp, 0, 
+                    entity.setPunchTime(LocalDateTime.ofEpochSecond(timestamp, 0,
                             java.time.ZoneOffset.of("+8")));
                 } else if (form.getPunchTime() instanceof LocalDateTime) {
                     entity.setPunchTime((LocalDateTime) form.getPunchTime());
@@ -274,18 +305,24 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
             int result = attendanceRecordDao.insert(entity);
 
             if (result > 0) {
-                log.info("[考勤记录] 考勤记录创建成功，recordId={}, userId={}", 
+                log.info("[考勤记录] 考勤记录创建成功，recordId={}, userId={}",
                         entity.getRecordId(), form.getUserId());
                 return ResponseDTO.ok(entity.getRecordId());
             } else {
                 log.warn("[考勤记录] 考勤记录创建失败，userId={}", form.getUserId());
-                return ResponseDTO.error("CREATE_ATTENDANCE_RECORD_ERROR", "创建考勤记录失败");
+                throw new BusinessException("CREATE_ATTENDANCE_RECORD_ERROR", "创建考勤记录失败");
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[考勤记录] 创建考勤记录参数错误，userId={}", form.getUserId(), e);
+            throw new ParamException("CREATE_ATTENDANCE_RECORD_PARAM_ERROR", "创建参数错误: " + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[考勤记录] 创建考勤记录业务异常，userId={}", form.getUserId(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("[考勤记录] 创建考勤记录异常，userId={}", form.getUserId(), e);
-            return ResponseDTO.error("CREATE_ATTENDANCE_RECORD_ERROR", 
-                    "创建考勤记录失败: " + e.getMessage());
+            log.error("[考勤记录] 创建考勤记录系统异常，userId={}", form.getUserId(), e);
+            throw new SystemException("CREATE_ATTENDANCE_RECORD_ERROR",
+                    "创建考勤记录失败: " + e.getMessage(), e);
         }
     }
 
@@ -312,5 +349,16 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
         vo.setDeviceName(entity.getDeviceName());
         return vo;
     }
+
+    /**
+     * 创建考勤记录降级方法
+     */
+    public ResponseDTO<Long> createAttendanceRecordFallback(AttendanceRecordAddForm form, Exception ex) {
+        log.error("[考勤记录] 创建考勤记录降级，userId={}, deviceId={}, error={}",
+                form.getUserId(), form.getDeviceId(), ex.getMessage());
+        return ResponseDTO.error("CREATE_ATTENDANCE_RECORD_DEGRADED", "系统繁忙，请稍后重试");
+    }
 }
+
+
 

@@ -7,7 +7,11 @@
  * @Date:      2025-01-30
  * @Copyright  IOE-DREAM智慧园区一卡通管理平台
  */
-import { getRequest, postRequest, putRequest, deleteRequest } from '/@/lib/axios';
+import { getRequest, postRequest, putRequest, deleteRequest, request } from '/@/lib/axios';
+
+const postWithParams = (url, params, data) => {
+  return request({ url, method: 'post', params, data });
+};
 
 export const consumeApi = {
   // ==================== 账户管理 ====================
@@ -51,13 +55,20 @@ export const consumeApi = {
    * 分页查询账户列表
    */
   pageAccounts: (params) => {
-    return getRequest('/api/consume/account/page', params);
+    return getRequest('/api/consume/account/list', params);
   },
 
   /**
    * 查询账户列表（不分页）
    */
   listAccounts: (params) => {
+    return getRequest('/api/consume/account/list', params);
+  },
+
+  /**
+   * 分页查询账户列表（别名，Smart-Admin 页面调用习惯）
+   */
+  getAccountList: (params) => {
     return getRequest('/api/consume/account/list', params);
   },
 
@@ -72,28 +83,28 @@ export const consumeApi = {
    * 增加账户余额
    */
   addBalance: (params) => {
-    return postRequest('/api/consume/account/balance/add', null, params);
+    return postWithParams('/api/consume/account/balance/add', params);
   },
 
   /**
    * 扣减账户余额
    */
   deductBalance: (params) => {
-    return postRequest('/api/consume/account/balance/deduct', null, params);
+    return postWithParams('/api/consume/account/balance/deduct', params);
   },
 
   /**
    * 冻结账户金额
    */
   freezeAmount: (params) => {
-    return postRequest('/api/consume/account/balance/freezeAmount', null, params);
+    return postWithParams('/api/consume/account/balance/freezeAmount', params);
   },
 
   /**
    * 解冻账户金额
    */
   unfreezeAmount: (params) => {
-    return postRequest('/api/consume/account/balance/unfreezeAmount', null, params);
+    return postWithParams('/api/consume/account/balance/unfreezeAmount', params);
   },
 
   /**
@@ -121,7 +132,7 @@ export const consumeApi = {
    * 冻结账户状态
    */
   freezeAccountStatus: (accountId, reason) => {
-    return postRequest(`/api/consume/account/status/freeze/${accountId}`, null, { reason });
+    return postWithParams(`/api/consume/account/status/freeze/${accountId}`, { reason });
   },
 
   /**
@@ -135,7 +146,18 @@ export const consumeApi = {
    * 关闭账户
    */
   closeAccount: (accountId, reason) => {
-    return postRequest(`/api/consume/account/status/close/${accountId}`, null, { reason });
+    return postWithParams(`/api/consume/account/status/close/${accountId}`, { reason });
+  },
+
+  /**
+   * 账户充值（运营端）
+   */
+  rechargeAccount: (data) => {
+    return postWithParams(`/api/consume/account/${data.accountId}/recharge`, {
+      amount: data.rechargeAmount,
+      rechargeType: data.rechargeType,
+      remark: data.remark || '',
+    });
   },
 
   /**
@@ -193,7 +215,14 @@ export const consumeApi = {
    * 获取实时统计
    */
   getRealtimeStatistics: (areaId) => {
-    return getRequest('/api/v1/consume/transaction/realtime/statistics', { areaId });
+    return getRequest('/api/v1/consume/transaction/realtime-statistics', { areaId });
+  },
+
+  /**
+   * 分页查询交易记录
+   */
+  queryTransactions: (params) => {
+    return getRequest('/api/v1/consume/transaction/query', params);
   },
 
   /**
@@ -203,13 +232,29 @@ export const consumeApi = {
     return getRequest(`/api/v1/consume/transaction/detail/${transactionNo}`);
   },
 
+  // ==================== 设备管理（通用设备服务） ====================
+
+  /**
+   * 分页查询设备列表
+   */
+  pageDevices: (params) => {
+    return getRequest('/api/v1/device/list', params);
+  },
+
+  /**
+   * 删除设备
+   */
+  deleteDevice: (deviceId) => {
+    return deleteRequest(`/api/v1/device/${deviceId}`);
+  },
+
   // ==================== 报表管理 ====================
 
   /**
    * 生成消费报表
    */
   generateReport: (templateId, params) => {
-    return postRequest(`/api/v1/consume/report/generate/${templateId}`, params);
+    return postWithParams('/api/v1/consume/report/generate', { templateId }, params);
   },
 
   /**
@@ -230,7 +275,30 @@ export const consumeApi = {
    * 导出报表
    */
   exportReport: (templateId, params, exportFormat) => {
-    return postRequest(`/api/v1/consume/report/export/${templateId}`, params, { exportFormat });
+    return postWithParams('/api/v1/consume/report/export', { templateId, exportFormat }, params);
+  },
+
+  // ==================== 商品管理 ====================
+
+  /**
+   * 分页查询商品列表
+   */
+  pageProducts: (params) => {
+    return getRequest('/api/v1/consume/product/query', params);
+  },
+
+  /**
+   * 上下架商品
+   */
+  setProductAvailable: (productId, available) => {
+    return postWithParams(`/api/v1/consume/product/${productId}/available`, { available });
+  },
+
+  /**
+   * 删除商品
+   */
+  deleteProduct: (productId) => {
+    return deleteRequest(`/api/v1/consume/product/${productId}`);
   },
 
   // ==================== 支付管理 ====================
@@ -239,7 +307,7 @@ export const consumeApi = {
    * 创建微信支付订单
    */
   createWechatPayOrder: (params) => {
-    return postRequest('/api/v1/consume/payment/wechat/createOrder', null, params);
+    return postWithParams('/api/v1/consume/payment/wechat/createOrder', params);
   },
 
   /**
@@ -253,28 +321,28 @@ export const consumeApi = {
    * 创建支付宝支付订单
    */
   createAlipayOrder: (params) => {
-    return postRequest('/api/v1/consume/payment/alipay/createOrder', null, params);
+    return postWithParams('/api/v1/consume/payment/alipay/createOrder', params);
   },
 
   /**
    * 处理支付宝支付回调
    */
   handleAlipayNotify: (params) => {
-    return postRequest('/api/v1/consume/payment/alipay/notify', null, params);
+    return postWithParams('/api/v1/consume/payment/alipay/notify', params);
   },
 
   /**
    * 微信支付退款
    */
   wechatRefund: (params) => {
-    return postRequest('/api/v1/consume/payment/wechat/refund', null, params);
+    return postWithParams('/api/v1/consume/payment/wechat/refund', params);
   },
 
   /**
    * 支付宝退款
    */
   alipayRefund: (params) => {
-    return postRequest('/api/v1/consume/payment/alipay/refund', null, params);
+    return postWithParams('/api/v1/consume/payment/alipay/refund', params);
   },
 };
 

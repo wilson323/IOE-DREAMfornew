@@ -39,3 +39,6 @@ public class ConsumePermissionValidateForm {
      */
     private Long deviceId;
 }
+
+
+

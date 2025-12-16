@@ -1,0 +1,15 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": "\\Qapplication.yml\\E"},
+      {"pattern": "\\Qapplication-dev.yml\\E"},
+      {"pattern": "\\Qapplication-prod.yml\\E"},
+      {"pattern": "\\Qapplication-performance.yml\\E"},
+      {"pattern": "\\Qbootstrap.yml\\E"},
+      {"pattern": "META-INF/.*"},
+      {"pattern": "static/.*"},
+      {"pattern": "templates/.*"}
+    ]
+  },
+  "bundles": []
+}

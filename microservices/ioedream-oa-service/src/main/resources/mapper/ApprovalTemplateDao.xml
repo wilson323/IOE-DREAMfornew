@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.lab1024.sa.common.workflow.dao.ApprovalTemplateDao">
+<mapper namespace="net.lab1024.sa.oa.workflow.dao.ApprovalTemplateDao">
 
     <!-- 根据模板编码查询模板 -->
-    <select id="selectByTemplateCode" resultType="net.lab1024.sa.common.workflow.entity.ApprovalTemplateEntity">
+    <select id="selectByTemplateCode" resultType="net.lab1024.sa.oa.workflow.entity.ApprovalTemplateEntity">
         SELECT *
         FROM t_common_approval_template
         WHERE template_code = #{templateCode}

@@ -12,16 +12,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
+import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.domain.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.entity.ConsumeAreaEntity;
+import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.domain.request.ConsumeRequest;
 import net.lab1024.sa.consume.manager.impl.ConsumeExecutionManagerImpl;
+import net.lab1024.sa.consume.service.ConsumeAreaCacheService;
 import net.lab1024.sa.consume.service.impl.DefaultFixedAmountCalculator;
+import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculatorFactory;
 
 /**
@@ -42,10 +47,16 @@ class ConsumeExecutionManagerTest {
     private ConsumeAreaManager consumeAreaManager;
 
     @Mock
+    private ConsumeAreaCacheService consumeAreaCacheService;
+
+    @Mock
     private ConsumeDeviceManager consumeDeviceManager;
 
     @Mock
     private net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient;
+
+    @Mock
+    private AccountKindConfigClient accountKindConfigClient;
 
     @Mock
     private AccountManager accountManager;
@@ -65,6 +76,10 @@ class ConsumeExecutionManagerTest {
     @Mock
     private ConsumeAmountCalculatorFactory calculatorFactory;
 
+    @Mock
+    private ConsumeAmountCalculator calculator;
+
+    @Spy
     @InjectMocks
     private ConsumeExecutionManagerImpl consumeExecutionManager;
 
@@ -76,7 +91,7 @@ class ConsumeExecutionManagerTest {
     void setUp() {
         consumeRequest = new ConsumeRequest();
         consumeRequest.setAccountId(1L);
-        consumeRequest.setAreaId("AREA001");
+        consumeRequest.setAreaId("1");
         consumeRequest.setConsumeMode("FIXED");
         consumeRequest.setUserId(1001L);
 
@@ -85,11 +100,13 @@ class ConsumeExecutionManagerTest {
         accountEntity.setUserId(1001L);
         accountEntity.setBalance(new BigDecimal("1000.00"));
         accountEntity.setStatus(1);
+        accountEntity.setAccountKindId(1L);
 
         areaEntity = new ConsumeAreaEntity();
         areaEntity.setAreaCode("AREA001");
         areaEntity.setAreaName("测试区域");
         areaEntity.setStatus(1);
+        areaEntity.setManageMode(1);
     }
 
     // ==================== validateConsumePermission 测试 ====================
@@ -102,17 +119,18 @@ class ConsumeExecutionManagerTest {
         String areaId = "AREA001";
         String consumeMode = "FIXED";
 
-        when(accountManager.getAccountById(accountId)).thenReturn(accountEntity);
+        when(consumeAreaCacheService.validateAreaPermission(accountId, areaId)).thenReturn(true);
         when(consumeAreaManager.getAreaById(areaId)).thenReturn(areaEntity);
+        when(accountManager.getAccountById(accountId)).thenReturn(accountEntity);
 
         // When
         boolean result = consumeExecutionManager.validateConsumePermission(accountId, areaId, consumeMode);
 
         // Then
-        // 根据实际实现验证结果
-        assertNotNull(result);
-        verify(accountManager, times(1)).getAccountById(accountId);
-        verify(consumeAreaManager, times(1)).getAreaById(areaId);
+        assertTrue(result);
+        verify(consumeAreaCacheService).validateAreaPermission(accountId, areaId);
+        verify(consumeAreaManager).getAreaById(areaId);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -123,6 +141,8 @@ class ConsumeExecutionManagerTest {
         String areaId = "AREA001";
         String consumeMode = "FIXED";
 
+        when(consumeAreaCacheService.validateAreaPermission(accountId, areaId)).thenReturn(true);
+        when(consumeAreaManager.getAreaById(areaId)).thenReturn(areaEntity);
         when(accountManager.getAccountById(accountId)).thenReturn(null);
 
         // When
@@ -130,8 +150,9 @@ class ConsumeExecutionManagerTest {
 
         // Then
         assertFalse(result);
-        verify(accountManager, times(1)).getAccountById(accountId);
-        verify(consumeAreaManager, never()).getAreaById(anyString());
+        verify(consumeAreaCacheService).validateAreaPermission(accountId, areaId);
+        verify(consumeAreaManager).getAreaById(areaId);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -142,7 +163,7 @@ class ConsumeExecutionManagerTest {
         String areaId = "NON_EXISTENT";
         String consumeMode = "FIXED";
 
-        when(accountManager.getAccountById(accountId)).thenReturn(accountEntity);
+        when(consumeAreaCacheService.validateAreaPermission(accountId, areaId)).thenReturn(true);
         when(consumeAreaManager.getAreaById(areaId)).thenReturn(null);
 
         // When
@@ -150,8 +171,9 @@ class ConsumeExecutionManagerTest {
 
         // Then
         assertFalse(result);
-        verify(accountManager, times(1)).getAccountById(accountId);
-        verify(consumeAreaManager, times(1)).getAreaById(areaId);
+        verify(consumeAreaCacheService).validateAreaPermission(accountId, areaId);
+        verify(consumeAreaManager).getAreaById(areaId);
+        verify(accountManager, never()).getAccountById(anyLong());
     }
 
     // ==================== calculateConsumeAmount 测试 ====================
@@ -165,9 +187,10 @@ class ConsumeExecutionManagerTest {
         String consumeMode = "FIXED";
         BigDecimal consumeAmount = new BigDecimal("10.00");
 
+        when(calculatorFactory.getCalculator(consumeMode)).thenReturn(calculator);
         when(accountManager.getAccountById(accountId)).thenReturn(accountEntity);
-        when(consumeAreaManager.getAreaById(areaId)).thenReturn(areaEntity);
-        when(fixedAmountCalculator.calculate(any(), any())).thenReturn(1000); // 返回分
+        when(calculator.isSupported(eq(accountId), eq(areaId), any(AccountEntity.class))).thenReturn(true);
+        when(calculator.calculate(eq(accountId), eq(areaId), any(AccountEntity.class), any())).thenReturn(new BigDecimal("10.00"));
 
         // When
         BigDecimal result = consumeExecutionManager.calculateConsumeAmount(
@@ -175,7 +198,9 @@ class ConsumeExecutionManagerTest {
 
         // Then
         assertNotNull(result);
-        verify(accountManager, times(1)).getAccountById(accountId);
+        assertEquals(new BigDecimal("10.00"), result);
+        verify(calculatorFactory).getCalculator(consumeMode);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -187,6 +212,7 @@ class ConsumeExecutionManagerTest {
         String consumeMode = "FIXED";
         BigDecimal consumeAmount = new BigDecimal("10.00");
 
+        when(calculatorFactory.getCalculator(consumeMode)).thenReturn(calculator);
         when(accountManager.getAccountById(accountId)).thenReturn(null);
 
         // When
@@ -194,8 +220,9 @@ class ConsumeExecutionManagerTest {
             accountId, areaId, consumeMode, consumeAmount, null);
 
         // Then
-        assertNull(result);
-        verify(accountManager, times(1)).getAccountById(accountId);
+        assertEquals(BigDecimal.ZERO, result);
+        verify(calculatorFactory).getCalculator(consumeMode);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -207,16 +234,18 @@ class ConsumeExecutionManagerTest {
         String consumeMode = "FIXED";
         BigDecimal consumeAmount = null;
 
+        when(calculatorFactory.getCalculator(consumeMode)).thenReturn(calculator);
         when(accountManager.getAccountById(accountId)).thenReturn(accountEntity);
-        when(consumeAreaManager.getAreaById(areaId)).thenReturn(areaEntity);
+        when(calculator.isSupported(eq(accountId), eq(areaId), any(AccountEntity.class))).thenReturn(true);
+        when(calculator.calculate(eq(accountId), eq(areaId), any(AccountEntity.class), any())).thenReturn(BigDecimal.ZERO);
 
         // When
         BigDecimal result = consumeExecutionManager.calculateConsumeAmount(
             accountId, areaId, consumeMode, consumeAmount, null);
 
         // Then
-        // 根据实际实现，可能是null或默认值
         assertNotNull(result);
+        assertEquals(BigDecimal.ZERO, result);
     }
 
     // ==================== executeConsumption 测试 ====================
@@ -227,9 +256,12 @@ class ConsumeExecutionManagerTest {
         // Given
         when(accountManager.getAccountById(anyLong())).thenReturn(accountEntity);
         when(consumeAreaManager.getAreaById(anyString())).thenReturn(areaEntity);
-        when(consumeExecutionManager.validateConsumePermission(anyLong(), anyString(), anyString())).thenReturn(true);
-        when(consumeExecutionManager.calculateConsumeAmount(anyLong(), anyString(), anyString(), any(), any())).thenReturn(new BigDecimal("10.00"));
+        doReturn(true).when(consumeExecutionManager).validateConsumePermission(anyLong(), anyString(), anyString());
+        doReturn(new BigDecimal("10.00")).when(consumeExecutionManager)
+                .calculateConsumeAmount(anyLong(), anyString(), anyString(), any(), any());
         when(accountManager.checkBalanceSufficient(anyLong(), any(BigDecimal.class))).thenReturn(true);
+        when(accountManager.deductBalance(anyLong(), any(BigDecimal.class))).thenReturn(true);
+        when(consumeTransactionDao.insert(any(ConsumeTransactionEntity.class))).thenReturn(1);
 
         // When
         ResponseDTO<?> result = consumeExecutionManager.executeConsumption(consumeRequest);
@@ -254,8 +286,7 @@ class ConsumeExecutionManagerTest {
     void testExecuteConsumption_PermissionDenied() {
         // Given
         when(accountManager.getAccountById(anyLong())).thenReturn(accountEntity);
-        when(consumeAreaManager.getAreaById(anyString())).thenReturn(areaEntity);
-        when(consumeExecutionManager.validateConsumePermission(anyLong(), anyString(), anyString())).thenReturn(false);
+        doReturn(false).when(consumeExecutionManager).validateConsumePermission(anyLong(), anyString(), anyString());
 
         // When
         ResponseDTO<?> result = consumeExecutionManager.executeConsumption(consumeRequest);
@@ -271,8 +302,9 @@ class ConsumeExecutionManagerTest {
         // Given
         when(accountManager.getAccountById(anyLong())).thenReturn(accountEntity);
         when(consumeAreaManager.getAreaById(anyString())).thenReturn(areaEntity);
-        when(consumeExecutionManager.validateConsumePermission(anyLong(), anyString(), anyString())).thenReturn(true);
-        when(consumeExecutionManager.calculateConsumeAmount(anyLong(), anyString(), anyString(), any(), any())).thenReturn(new BigDecimal("10000.00"));
+        doReturn(true).when(consumeExecutionManager).validateConsumePermission(anyLong(), anyString(), anyString());
+        doReturn(new BigDecimal("10000.00")).when(consumeExecutionManager)
+                .calculateConsumeAmount(anyLong(), anyString(), anyString(), any(), any());
         when(accountManager.checkBalanceSufficient(anyLong(), any(BigDecimal.class))).thenReturn(false);
 
         // When
@@ -283,3 +315,5 @@ class ConsumeExecutionManagerTest {
         assertFalse(result.getOk());
     }
 }
+
+

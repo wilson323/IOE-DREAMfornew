@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -24,9 +23,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * - Druid 连接池监控
  * - 多数据库支持
  * </p>
+ * <p>
+ * 架构合规性：
+ * - 已移除@EnableFeignClients（架构合规化）
+ * - 如需调用其他服务，使用GatewayServiceClient
+ * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
+ * @version 1.0.1
  * @since 2025-12-08
  */
 @Slf4j
@@ -35,7 +39,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     "net.lab1024.sa.common"
 })
 @EnableDiscoveryClient
-@EnableFeignClients
 @EnableScheduling
 public class DatabaseServiceApplication {
 

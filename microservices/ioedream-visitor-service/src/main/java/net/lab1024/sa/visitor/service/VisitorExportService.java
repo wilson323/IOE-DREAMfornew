@@ -25,4 +25,14 @@ public interface VisitorExportService {
      * @return 导出文件路径
      */
     ResponseDTO<String> exportVisitorData(Object query);
+
+    /**
+     * 导出访问记录
+     *
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @return 导出文件路径
+     */
+    String exportRecords(String startDate, String endDate);
 }
+

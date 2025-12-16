@@ -1,16 +1,37 @@
 package net.lab1024.sa.common.auth.config;
 
+import net.lab1024.sa.common.constant.SystemConstants;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.auth.util.JwtTokenUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.web.filter.OncePerRequestFilter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 安全配置类 (Servlet应用专用)
@@ -43,13 +64,73 @@ import org.springframework.security.web.SecurityFilterChain;
 @ConditionalOnWebApplication(type = Type.SERVLET)
 public class SecurityConfig {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
+
     /**
      * 密码编码器
      * 使用BCrypt算法，企业级密码加密标准
+     * 使用@ConditionalOnMissingBean避免Bean冲突
      */
     @Bean
+    @ConditionalOnMissingBean(PasswordEncoder.class)
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
+        return new BCryptPasswordEncoder(SystemConstants.BCRYPT_STRENGTH);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JwtTokenUtil.class)
+    public JwtTokenUtil jwtTokenUtil(
+            @Value("${security.jwt.secret}") String jwtSecret,
+            @Value("${security.jwt.expiration:86400}") Long accessTokenExpirationSeconds,
+            @Value("${security.jwt.refresh-expiration:604800}") Long refreshTokenExpirationSeconds) {
+        return new JwtTokenUtil(jwtSecret, accessTokenExpirationSeconds, refreshTokenExpirationSeconds);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "jwtAuthenticationFilter")
+    public OncePerRequestFilter jwtAuthenticationFilter(JwtTokenUtil jwtTokenUtil) {
+        return new OncePerRequestFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                    throws ServletException, IOException {
+                String authorization = request.getHeader(AUTHORIZATION_HEADER);
+                if (authorization != null && authorization.startsWith(BEARER_PREFIX)
+                        && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    String token = authorization.substring(BEARER_PREFIX.length()).trim();
+                    if (!token.isEmpty() && jwtTokenUtil.validateToken(token) && jwtTokenUtil.isAccessToken(token)) {
+                        String username = jwtTokenUtil.getUsernameFromToken(token);
+                        List<String> roles = jwtTokenUtil.getRolesFromToken(token);
+                        List<String> permissions = jwtTokenUtil.getPermissionsFromToken(token);
+
+                        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                        if (roles != null) {
+                            for (String role : roles) {
+                                if (role == null || role.isBlank()) {
+                                    continue;
+                                }
+                                String normalized = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+                                authorities.add(new SimpleGrantedAuthority(normalized));
+                            }
+                        }
+                        if (permissions != null) {
+                            for (String permission : permissions) {
+                                if (permission == null || permission.isBlank()) {
+                                    continue;
+                                }
+                                authorities.add(new SimpleGrantedAuthority(permission));
+                            }
+                        }
+
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                username != null ? username : "anonymous", null, authorities);
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
+                filterChain.doFilter(request, response);
+            }
+        };
     }
 
     /**
@@ -62,7 +143,8 @@ public class SecurityConfig {
      * - 公开接口白名单
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, OncePerRequestFilter jwtAuthenticationFilter, ObjectMapper objectMapper)
+            throws Exception {
         http
                 // 禁用CSRF（使用JWT令牌，不需要CSRF保护）
                 .csrf(csrf -> csrf.disable())
@@ -71,26 +153,49 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                // 禁用默认表单/Basic认证，统一使用JWT Bearer
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+
+                // 认证失败/鉴权失败统一返回ResponseDTO
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            objectMapper.writeValue(response.getOutputStream(), ResponseDTO.error(401, "未登录或令牌无效"));
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            objectMapper.writeValue(response.getOutputStream(), ResponseDTO.error(403, "无权限访问"));
+                        }))
+
                 // 配置授权规则
                 .authorizeHttpRequests(auth -> auth
                         // 公开接口（无需认证）
                         .requestMatchers(
-                                "/api/v1/auth/login",
-                                "/api/v1/auth/refresh",
-                                "/api/v1/auth/register",
                                 "/actuator/**",
                                 "/doc.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/webjars/**",
-                                "/favicon.ico")
+                                "/favicon.ico",
+                                // 认证相关接口（登录、验证码、刷新令牌等）
+                                "/api/v1/auth/**",
+                                "/auth/**",
+                                // 菜单接口（需要登录后访问，但验证码和登录不需要）
+                                "/api/v1/menu/**",
+                                "/menu/**")
                         .permitAll()
 
                         // 其他接口需要认证
                         .anyRequest().authenticated())
 
                 // 配置CORS
-                .cors(cors -> cors.configure(http));
+                .cors(Customizer.withDefaults())
+
+                // JWT认证过滤器
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

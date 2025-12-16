@@ -33,3 +33,6 @@ public class ConsumeMobileSummaryVO {
      */
     private Integer userCount;
 }
+
+
+

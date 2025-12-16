@@ -38,3 +38,6 @@ public class ConsumeMobileMealVO {
      */
     private Boolean enabled;
 }
+
+
+

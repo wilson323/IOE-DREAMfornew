@@ -1,5 +1,6 @@
 package net.lab1024.sa.attendance.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class AttendanceOvertimeController {
     @Resource
     private AttendanceOvertimeService attendanceOvertimeService;
 
+    @Observed(name = "attendanceOvertime.submitOvertimeApplication", contextualName = "attendance-overtime-submit")
     @PostMapping("/submit")
     @Operation(summary = "提交加班申请", description = "提交加班申请并启动审批流程")
     public ResponseDTO<AttendanceOvertimeEntity> submitOvertimeApplication(
@@ -37,6 +39,7 @@ public class AttendanceOvertimeController {
         return ResponseDTO.ok(entity);
     }
 
+    @Observed(name = "attendanceOvertime.updateOvertimeStatus", contextualName = "attendance-overtime-update-status")
     @PutMapping("/{overtimeNo}/status")
     @Operation(summary = "更新加班申请状态", description = "由审批结果监听器调用，更新加班申请状态")
     public ResponseDTO<Void> updateOvertimeStatus(
@@ -49,4 +52,6 @@ public class AttendanceOvertimeController {
         return ResponseDTO.ok();
     }
 }
+
+
 

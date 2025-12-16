@@ -14,7 +14,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         enabled: true
         register-enabled: true
         ip: ${SPRING_CLOUD_NACOS_DISCOVERY_IP:}
@@ -34,7 +34,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DATABASE_URL:jdbc:mysql://127.0.0.1:3306/ioedream_database?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true}
     username: ${DATABASE_USERNAME:root}
-    password: ${DATABASE_PASSWORD}
+    password: ${DATABASE_PASSWORD:123456}
 
     druid:
       initial-size: 5
@@ -53,8 +53,8 @@ spring:
         enabled: true
         url-pattern: /druid/*
         reset-enable: true
-        login-username: admin
-        login-password: admin
+        login-username: ${DRUID_STAT_USERNAME:admin}
+        login-password: ${DRUID_STAT_PASSWORD:}
 
       # WebStatFilter配置
       web-stat-filter:

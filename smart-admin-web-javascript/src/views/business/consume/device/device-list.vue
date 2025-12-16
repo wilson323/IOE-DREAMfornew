@@ -67,6 +67,8 @@
     PlusOutlined,
     ReloadOutlined,
   } from '@ant-design/icons-vue';
+  import { consumeApi } from '/@/api/business/consume/consume-api';
+  import { smartSentry } from '/@/lib/smart-sentry';
 
   // 表格数据
   const tableData = ref([]);
@@ -119,11 +121,16 @@
   const loadDeviceList = async () => {
     loading.value = true;
     try {
-      // TODO: 调用API获取设备列表
-      // const result = await deviceApi.getDeviceList();
-      tableData.value = [];
-      pagination.total = 0;
+      const result = await consumeApi.pageDevices({
+        pageNum: pagination.current,
+        pageSize: pagination.pageSize,
+      });
+      if (result.code === 200 && result.data) {
+        tableData.value = result.data.list || [];
+        pagination.total = result.data.total || 0;
+      }
     } catch (error) {
+      smartSentry.captureError(error);
       message.error('加载设备列表失败');
     } finally {
       loading.value = false;
@@ -162,10 +169,11 @@
       content: `确定要删除设备 ${record.deviceName} 吗？`,
       onOk: async () => {
         try {
-          // TODO: 调用删除API
+          await consumeApi.deleteDevice(record.deviceId);
           message.success('删除成功');
           loadDeviceList();
         } catch (error) {
+          smartSentry.captureError(error);
           message.error('删除失败');
         }
       },

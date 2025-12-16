@@ -72,6 +72,7 @@
   import { ref, reactive, watch } from 'vue';
   import { message, Modal } from 'ant-design-vue';
   import { PlusOutlined, ReloadOutlined } from '@ant-design/icons-vue';
+  import { accessApi } from '/@/api/business/access/access-api';
 
   const props = defineProps({
     visible: {
@@ -133,37 +134,46 @@
     },
   ];
 
-  // 模拟数据
-  const mockDevices = [
-    {
-      deviceId: '1',
-      deviceName: 'Main Entrance Gate',
-      deviceCode: 'GATE-001',
-      deviceType: 'GATE',
-      status: 'ONLINE',
-      location: 'Building A - Main Entrance',
-      lastOnlineTime: '2025-01-30 10:30:00',
-    },
-    {
-      deviceId: '2',
-      deviceName: 'Floor 1 Door Lock',
-      deviceCode: 'DOOR-001',
-      deviceType: 'DOOR',
-      status: 'OFFLINE',
-      location: 'Building A - Floor 1',
-      lastOnlineTime: '2025-01-29 15:20:00',
-    },
-  ];
-
   const loadDeviceList = async () => {
     loading.value = true;
     try {
-      // TODO: 调用API获取设备列表
-      // const result = await deviceApi.getAreaDevices(props.areaId);
+      const areaId = Number(props.areaId);
+      const result = await accessApi.getAreaDevices(areaId);
+      if (result.code !== 200 || !Array.isArray(result.data)) {
+        deviceList.value = [];
+        return;
+      }
 
-      // 使用模拟数据
-      await new Promise(resolve => setTimeout(resolve, 500));
-      deviceList.value = mockDevices;
+      const keyword = searchKeyword.value?.trim()?.toLowerCase();
+      const list = result.data
+        .map((item) => {
+          const relationStatus = item.relationStatus;
+          const enabled = item.enabled !== false;
+          const status = enabled && relationStatus === 1 ? 'ONLINE' : 'OFFLINE';
+
+          const location = item.locationDesc || item.installLocation || '-';
+          const lastOnlineTime = item.updateTime || item.createTime || '-';
+
+          return {
+            deviceId: item.deviceId,
+            deviceName: item.deviceName,
+            deviceCode: item.deviceCode,
+            deviceType: item.deviceType,
+            status,
+            location,
+            lastOnlineTime,
+          };
+        })
+        .filter((item) => {
+          if (!keyword) return true;
+          return (
+            String(item.deviceName || '').toLowerCase().includes(keyword) ||
+            String(item.deviceCode || '').toLowerCase().includes(keyword) ||
+            String(item.deviceId || '').toLowerCase().includes(keyword)
+          );
+        });
+
+      deviceList.value = list;
     } catch (error) {
       message.error('Failed to load device list');
     } finally {
@@ -173,22 +183,28 @@
 
   const getDeviceTypeColor = (type) => {
     const colorMap = {
-      GATE: 'blue',
-      DOOR: 'green',
-      CAMERA: 'purple',
-      READER: 'orange',
-      SENSOR: 'cyan',
+      1: 'blue',
+      2: 'green',
+      3: 'orange',
+      4: 'purple',
+      5: 'cyan',
+      6: 'red',
+      7: 'geekblue',
+      8: 'gold',
     };
     return colorMap[type] || 'default';
   };
 
   const getDeviceTypeText = (type) => {
     const textMap = {
-      GATE: 'Gate',
-      DOOR: 'Door',
-      CAMERA: 'Camera',
-      READER: 'Reader',
-      SENSOR: 'Sensor',
+      1: 'Access',
+      2: 'Attendance',
+      3: 'Consume',
+      4: 'Video',
+      5: 'Visitor',
+      6: 'Alarm',
+      7: 'Display',
+      8: 'Network',
     };
     return textMap[type] || type;
   };
@@ -210,7 +226,8 @@
       content: `Are you sure to remove device ${record.deviceName} from this area?`,
       onOk: async () => {
         try {
-          // TODO: 调用API移除设备
+          const areaId = Number(props.areaId);
+          await accessApi.removeAreaDevice(areaId, record.deviceId);
           message.success('Device removed successfully');
           loadDeviceList();
         } catch (error) {
@@ -225,8 +242,7 @@
   };
 
   const handleSearch = () => {
-    // TODO: 实现搜索逻辑
-    console.log('Search:', searchKeyword.value);
+    loadDeviceList();
   };
 
   watch(() => props.visible, (visible) => {

@@ -14,10 +14,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.util.CursorPagination;
 import net.lab1024.sa.common.util.PageHelper;
 import net.lab1024.sa.consume.dao.AccountDao;
@@ -53,6 +56,7 @@ import java.time.LocalDateTime;
  */
 @Slf4j
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class AccountServiceImpl implements AccountService {
 
     @Resource
@@ -73,6 +77,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 账户ID
      */
     @Override
+    @Observed(name = "account.createAccount", contextualName = "account-create")
     @Transactional(rollbackFor = Exception.class)
     public Long createAccount(AccountAddForm form) {
         log.info("[账户服务] 创建账户，userId={}, accountKindId={}",
@@ -112,13 +117,19 @@ public class AccountServiceImpl implements AccountService {
 
             return account.getId();
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 创建账户参数错误，userId={}, error={}", form.getUserId(), e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.error("[账户服务] 创建账户业务异常，userId={}, error={}",
-                    form.getUserId(), e.getMessage());
+            log.warn("[账户服务] 创建账户业务异常，userId={}, code={}, message={}",
+                    form.getUserId(), e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 创建账户系统异常，userId={}, code={}, message={}", form.getUserId(), e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_CREATE_SYSTEM_ERROR", "账户创建失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 创建账户系统异常，userId={}", form.getUserId(), e);
-            throw new BusinessException("账户创建失败：" + e.getMessage());
+            log.error("[账户服务] 创建账户未知异常，userId={}", form.getUserId(), e);
+            throw new SystemException("ACCOUNT_CREATE_SYSTEM_ERROR", "账户创建失败：" + e.getMessage(), e);
         }
     }
 
@@ -129,6 +140,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.updateAccount", contextualName = "account-update")
     @Transactional(rollbackFor = Exception.class)
     public boolean updateAccount(AccountUpdateForm form) {
         log.info("[账户服务] 更新账户，accountId={}", form.getAccountId());
@@ -160,13 +172,19 @@ public class AccountServiceImpl implements AccountService {
 
             return result > 0;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 更新账户参数错误，accountId={}, error={}", form.getAccountId(), e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 更新账户业务异常，accountId={}, error={}",
-                    form.getAccountId(), e.getMessage());
+            log.warn("[账户服务] 更新账户业务异常，accountId={}, code={}, message={}",
+                    form.getAccountId(), e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 更新账户系统异常，accountId={}, code={}, message={}", form.getAccountId(), e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_UPDATE_SYSTEM_ERROR", "账户更新失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 更新账户系统异常，accountId={}", form.getAccountId(), e);
-            throw new BusinessException("账户更新失败：" + e.getMessage());
+            log.error("[账户服务] 更新账户未知异常，accountId={}", form.getAccountId(), e);
+            throw new SystemException("ACCOUNT_UPDATE_SYSTEM_ERROR", "账户更新失败：" + e.getMessage(), e);
         }
     }
 
@@ -177,6 +195,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.deleteAccount", contextualName = "account-delete")
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteAccount(Long accountId) {
         log.info("[账户服务] 删除账户，accountId={}", accountId);
@@ -202,12 +221,18 @@ public class AccountServiceImpl implements AccountService {
 
             return result > 0;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 删除账户参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 删除账户业务异常，accountId={}, error={}", accountId, e.getMessage());
+            log.warn("[账户服务] 删除账户业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 删除账户系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_DELETE_SYSTEM_ERROR", "账户删除失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 删除账户系统异常，accountId={}", accountId, e);
-            throw new BusinessException("账户删除失败：" + e.getMessage());
+            log.error("[账户服务] 删除账户未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_DELETE_SYSTEM_ERROR", "账户删除失败：" + e.getMessage(), e);
         }
     }
 
@@ -235,12 +260,18 @@ public class AccountServiceImpl implements AccountService {
 
             return account;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 查询账户参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 查询账户业务异常，accountId={}, error={}", accountId, e.getMessage());
+            log.warn("[账户服务] 查询账户业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 查询账户系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_QUERY_SYSTEM_ERROR", "查询账户失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 查询账户系统异常，accountId={}", accountId, e);
-            throw new BusinessException("查询账户失败：" + e.getMessage());
+            log.error("[账户服务] 查询账户未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_QUERY_SYSTEM_ERROR", "查询账户失败：" + e.getMessage(), e);
         }
     }
 
@@ -268,12 +299,18 @@ public class AccountServiceImpl implements AccountService {
 
             return account;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 查询账户参数错误，userId={}, error={}", userId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 查询账户业务异常，userId={}, error={}", userId, e.getMessage());
+            log.warn("[账户服务] 查询账户业务异常，userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 查询账户系统异常，userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_QUERY_SYSTEM_ERROR", "查询账户失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 查询账户系统异常，userId={}", userId, e);
-            throw new BusinessException("查询账户失败：" + e.getMessage());
+            log.error("[账户服务] 查询账户未知异常，userId={}", userId, e);
+            throw new SystemException("ACCOUNT_QUERY_SYSTEM_ERROR", "查询账户失败：" + e.getMessage(), e);
         }
     }
 
@@ -313,6 +350,7 @@ public class AccountServiceImpl implements AccountService {
                             .or()
                             .eq(AccountEntity::getUserId, accountId);
                 } catch (NumberFormatException e) {
+                    log.debug("[账户查询] 关键词不是数字格式，按用户ID搜索: keyword={}", keyword);
                     // 如果不是数字，只按用户ID搜索
                     queryWrapper.eq(AccountEntity::getUserId, keyword);
                 }
@@ -348,9 +386,18 @@ public class AccountServiceImpl implements AccountService {
 
             return result;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 分页查询账户列表参数错误: {}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 分页查询账户列表业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 分页查询账户列表系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_PAGE_QUERY_SYSTEM_ERROR", "查询账户列表失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 分页查询账户列表失败", e);
-            throw new BusinessException("查询账户列表失败：" + e.getMessage());
+            log.error("[账户服务] 分页查询账户列表未知异常", e);
+            throw new SystemException("ACCOUNT_PAGE_QUERY_SYSTEM_ERROR", "查询账户列表失败：" + e.getMessage(), e);
         }
     }
 
@@ -383,6 +430,7 @@ public class AccountServiceImpl implements AccountService {
                             .or()
                             .eq(AccountEntity::getUserId, accountId);
                 } catch (NumberFormatException e) {
+                    log.debug("[账户查询] 关键词不是数字格式，按用户ID搜索: keyword={}", keyword);
                     // 如果不是数字，只按用户ID搜索
                     queryWrapper.eq(AccountEntity::getUserId, keyword);
                 }
@@ -408,9 +456,18 @@ public class AccountServiceImpl implements AccountService {
                     AccountEntity::getId
             );
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 游标分页查询账户列表参数错误: {}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 游标分页查询账户列表业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 游标分页查询账户列表系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_CURSOR_PAGE_QUERY_SYSTEM_ERROR", "查询账户列表失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 游标分页查询账户列表失败", e);
-            throw new BusinessException("查询账户列表失败：" + e.getMessage());
+            log.error("[账户服务] 游标分页查询账户列表未知异常", e);
+            throw new SystemException("ACCOUNT_CURSOR_PAGE_QUERY_SYSTEM_ERROR", "查询账户列表失败：" + e.getMessage(), e);
         }
     }
 
@@ -442,9 +499,18 @@ public class AccountServiceImpl implements AccountService {
 
             return accountDao.selectList(queryWrapper);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 查询账户列表参数错误: {}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 查询账户列表业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 查询账户列表系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_LIST_QUERY_SYSTEM_ERROR", "查询账户列表失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 查询账户列表失败", e);
-            throw new BusinessException("查询账户列表失败：" + e.getMessage());
+            log.error("[账户服务] 查询账户列表未知异常", e);
+            throw new SystemException("ACCOUNT_LIST_QUERY_SYSTEM_ERROR", "查询账户列表失败：" + e.getMessage(), e);
         }
     }
 
@@ -463,9 +529,18 @@ public class AccountServiceImpl implements AccountService {
             // 如果需要统计信息，可以在这里添加查询逻辑
             return getById(accountId);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 获取账户详情参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 获取账户详情业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 获取账户详情系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_DETAIL_QUERY_SYSTEM_ERROR", "获取账户详情失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 获取账户详情失败，accountId={}", accountId, e);
-            throw new BusinessException("获取账户详情失败：" + e.getMessage());
+            log.error("[账户服务] 获取账户详情未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_DETAIL_QUERY_SYSTEM_ERROR", "获取账户详情失败：" + e.getMessage(), e);
         }
     }
 
@@ -478,6 +553,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.addBalance", contextualName = "account-add-balance")
     @Transactional(rollbackFor = Exception.class)
     public boolean addBalance(Long accountId, BigDecimal amount, String reason) {
         log.info("[账户服务] 增加账户余额，accountId={}, amount={}, reason={}",
@@ -502,13 +578,19 @@ public class AccountServiceImpl implements AccountService {
             log.info("[账户服务] 增加账户余额成功，accountId={}, amount={}", accountId, amount);
             return true;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 增加账户余额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 增加账户余额业务异常，accountId={}, amount={}, error={}",
-                    accountId, amount, e.getMessage());
+            log.warn("[账户服务] 增加账户余额业务异常，accountId={}, amount={}, code={}, message={}",
+                    accountId, amount, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 增加账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_ADD_BALANCE_SYSTEM_ERROR", "增加账户余额失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 增加账户余额系统异常，accountId={}, amount={}", accountId, amount, e);
-            throw new BusinessException("增加账户余额失败：" + e.getMessage());
+            log.error("[账户服务] 增加账户余额未知异常，accountId={}, amount={}", accountId, amount, e);
+            throw new SystemException("ACCOUNT_ADD_BALANCE_SYSTEM_ERROR", "增加账户余额失败：" + e.getMessage(), e);
         }
     }
 
@@ -521,6 +603,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.deductBalance", contextualName = "account-deduct-balance")
     @Transactional(rollbackFor = Exception.class)
     public boolean deductBalance(Long accountId, BigDecimal amount, String reason) {
         log.info("[账户服务] 扣减账户余额，accountId={}, amount={}, reason={}",
@@ -552,13 +635,19 @@ public class AccountServiceImpl implements AccountService {
             log.info("[账户服务] 扣减账户余额成功，accountId={}, amount={}", accountId, amount);
             return true;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 扣减账户余额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 扣减账户余额业务异常，accountId={}, amount={}, error={}",
-                    accountId, amount, e.getMessage());
+            log.warn("[账户服务] 扣减账户余额业务异常，accountId={}, amount={}, code={}, message={}",
+                    accountId, amount, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 扣减账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_DEDUCT_BALANCE_SYSTEM_ERROR", "扣减账户余额失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 扣减账户余额系统异常，accountId={}, amount={}", accountId, amount, e);
-            throw new BusinessException("扣减账户余额失败：" + e.getMessage());
+            log.error("[账户服务] 扣减账户余额未知异常，accountId={}, amount={}", accountId, amount, e);
+            throw new SystemException("ACCOUNT_DEDUCT_BALANCE_SYSTEM_ERROR", "扣减账户余额失败：" + e.getMessage(), e);
         }
     }
 
@@ -571,6 +660,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.freezeAmount", contextualName = "account-freeze-amount")
     @Transactional(rollbackFor = Exception.class)
     public boolean freezeAmount(Long accountId, BigDecimal amount, String reason) {
         log.info("[账户服务] 冻结账户金额，accountId={}, amount={}, reason={}",
@@ -615,13 +705,19 @@ public class AccountServiceImpl implements AccountService {
 
             return result > 0;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 冻结账户金额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 冻结账户金额业务异常，accountId={}, amount={}, error={}",
-                    accountId, amount, e.getMessage());
+            log.warn("[账户服务] 冻结账户金额业务异常，accountId={}, amount={}, code={}, message={}",
+                    accountId, amount, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 冻结账户金额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_FREEZE_AMOUNT_SYSTEM_ERROR", "冻结账户金额失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 冻结账户金额系统异常，accountId={}, amount={}", accountId, amount, e);
-            throw new BusinessException("冻结账户金额失败：" + e.getMessage());
+            log.error("[账户服务] 冻结账户金额未知异常，accountId={}, amount={}", accountId, amount, e);
+            throw new SystemException("ACCOUNT_FREEZE_AMOUNT_SYSTEM_ERROR", "冻结账户金额失败：" + e.getMessage(), e);
         }
     }
 
@@ -634,6 +730,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.unfreezeAmount", contextualName = "account-unfreeze-amount")
     @Transactional(rollbackFor = Exception.class)
     public boolean unfreezeAmount(Long accountId, BigDecimal amount, String reason) {
         log.info("[账户服务] 解冻账户金额，accountId={}, amount={}, reason={}",
@@ -675,13 +772,19 @@ public class AccountServiceImpl implements AccountService {
 
             return result > 0;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 解冻账户金额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 解冻账户金额业务异常，accountId={}, amount={}, error={}",
-                    accountId, amount, e.getMessage());
+            log.warn("[账户服务] 解冻账户金额业务异常，accountId={}, amount={}, code={}, message={}",
+                    accountId, amount, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 解冻账户金额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_UNFREEZE_AMOUNT_SYSTEM_ERROR", "解冻账户金额失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 解冻账户金额系统异常，accountId={}, amount={}", accountId, amount, e);
-            throw new BusinessException("解冻账户金额失败：" + e.getMessage());
+            log.error("[账户服务] 解冻账户金额未知异常，accountId={}, amount={}", accountId, amount, e);
+            throw new SystemException("ACCOUNT_UNFREEZE_AMOUNT_SYSTEM_ERROR", "解冻账户金额失败：" + e.getMessage(), e);
         }
     }
 
@@ -707,13 +810,19 @@ public class AccountServiceImpl implements AccountService {
             // 使用AccountManager验证余额
             return accountManager.checkBalanceSufficient(accountId, amount);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 验证账户余额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 验证账户余额业务异常，accountId={}, amount={}, error={}",
-                    accountId, amount, e.getMessage());
+            log.warn("[账户服务] 验证账户余额业务异常，accountId={}, amount={}, code={}, message={}",
+                    accountId, amount, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 验证账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_VALIDATE_BALANCE_SYSTEM_ERROR", "验证账户余额失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 验证账户余额系统异常，accountId={}, amount={}", accountId, amount, e);
-            throw new BusinessException("验证账户余额失败：" + e.getMessage());
+            log.error("[账户服务] 验证账户余额未知异常，accountId={}, amount={}", accountId, amount, e);
+            throw new SystemException("ACCOUNT_VALIDATE_BALANCE_SYSTEM_ERROR", "验证账户余额失败：" + e.getMessage(), e);
         }
     }
 
@@ -724,6 +833,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.enableAccount", contextualName = "account-enable")
     @Transactional(rollbackFor = Exception.class)
     public boolean enableAccount(Long accountId) {
         log.info("[账户服务] 启用账户，accountId={}", accountId);
@@ -731,9 +841,18 @@ public class AccountServiceImpl implements AccountService {
         try {
             return updateAccountStatus(accountId, STATUS_NORMAL, "账户启用");
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 启用账户参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 启用账户业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 启用账户系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_ENABLE_SYSTEM_ERROR", "启用账户失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 启用账户失败，accountId={}", accountId, e);
-            throw new BusinessException("启用账户失败：" + e.getMessage());
+            log.error("[账户服务] 启用账户未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_ENABLE_SYSTEM_ERROR", "启用账户失败：" + e.getMessage(), e);
         }
     }
 
@@ -744,6 +863,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.disableAccount", contextualName = "account-disable")
     @Transactional(rollbackFor = Exception.class)
     public boolean disableAccount(Long accountId) {
         log.info("[账户服务] 禁用账户，accountId={}", accountId);
@@ -751,9 +871,18 @@ public class AccountServiceImpl implements AccountService {
         try {
             return updateAccountStatus(accountId, STATUS_FROZEN, "账户禁用");
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 禁用账户参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 禁用账户业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 禁用账户系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_DISABLE_SYSTEM_ERROR", "禁用账户失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 禁用账户失败，accountId={}", accountId, e);
-            throw new BusinessException("禁用账户失败：" + e.getMessage());
+            log.error("[账户服务] 禁用账户未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_DISABLE_SYSTEM_ERROR", "禁用账户失败：" + e.getMessage(), e);
         }
     }
 
@@ -765,6 +894,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.freezeAccount", contextualName = "account-freeze")
     @Transactional(rollbackFor = Exception.class)
     public boolean freezeAccount(Long accountId, String reason) {
         log.info("[账户服务] 冻结账户，accountId={}, reason={}", accountId, reason);
@@ -772,9 +902,18 @@ public class AccountServiceImpl implements AccountService {
         try {
             return updateAccountStatus(accountId, STATUS_FROZEN, reason != null ? reason : "账户冻结");
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 冻结账户参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 冻结账户业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 冻结账户系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_FREEZE_SYSTEM_ERROR", "冻结账户失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 冻结账户失败，accountId={}", accountId, e);
-            throw new BusinessException("冻结账户失败：" + e.getMessage());
+            log.error("[账户服务] 冻结账户未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_FREEZE_SYSTEM_ERROR", "冻结账户失败：" + e.getMessage(), e);
         }
     }
 
@@ -785,6 +924,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.unfreezeAccount", contextualName = "account-unfreeze")
     @Transactional(rollbackFor = Exception.class)
     public boolean unfreezeAccount(Long accountId) {
         log.info("[账户服务] 解冻账户，accountId={}", accountId);
@@ -792,9 +932,18 @@ public class AccountServiceImpl implements AccountService {
         try {
             return updateAccountStatus(accountId, STATUS_NORMAL, "账户解冻");
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 解冻账户参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 解冻账户业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 解冻账户系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_UNFREEZE_SYSTEM_ERROR", "解冻账户失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 解冻账户失败，accountId={}", accountId, e);
-            throw new BusinessException("解冻账户失败：" + e.getMessage());
+            log.error("[账户服务] 解冻账户未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_UNFREEZE_SYSTEM_ERROR", "解冻账户失败：" + e.getMessage(), e);
         }
     }
 
@@ -806,6 +955,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 是否成功
      */
     @Override
+    @Observed(name = "account.closeAccount", contextualName = "account-close")
     @Transactional(rollbackFor = Exception.class)
     public boolean closeAccount(Long accountId, String reason) {
         log.info("[账户服务] 关闭账户，accountId={}, reason={}", accountId, reason);
@@ -813,9 +963,18 @@ public class AccountServiceImpl implements AccountService {
         try {
             return updateAccountStatus(accountId, STATUS_CLOSED, reason != null ? reason : "账户关闭");
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 关闭账户参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 关闭账户业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 关闭账户系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_CLOSE_SYSTEM_ERROR", "关闭账户失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 关闭账户失败，accountId={}", accountId, e);
-            throw new BusinessException("关闭账户失败：" + e.getMessage());
+            log.error("[账户服务] 关闭账户未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_CLOSE_SYSTEM_ERROR", "关闭账户失败：" + e.getMessage(), e);
         }
     }
 
@@ -827,6 +986,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 成功更新的数量
      */
     @Override
+    @Observed(name = "account.batchUpdateStatus", contextualName = "account-batch-update-status")
     @Transactional(rollbackFor = Exception.class)
     public int batchUpdateStatus(List<Long> accountIds, Integer status) {
         log.info("[账户服务] 批量更新账户状态，accountIds={}, status={}", accountIds, status);
@@ -859,12 +1019,18 @@ public class AccountServiceImpl implements AccountService {
 
             return successCount;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 批量更新账户状态参数错误: {}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 批量更新账户状态业务异常，error={}", e.getMessage());
+            log.warn("[账户服务] 批量更新账户状态业务异常: code={}, message={}", e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 批量更新账户状态系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_BATCH_UPDATE_STATUS_SYSTEM_ERROR", "批量更新账户状态失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 批量更新账户状态系统异常", e);
-            throw new BusinessException("批量更新账户状态失败：" + e.getMessage());
+            log.error("[账户服务] 批量更新账户状态未知异常", e);
+            throw new SystemException("ACCOUNT_BATCH_UPDATE_STATUS_SYSTEM_ERROR", "批量更新账户状态失败：" + e.getMessage(), e);
         }
     }
 
@@ -875,6 +1041,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 成功创建的账户ID列表
      */
     @Override
+    @Observed(name = "account.batchCreateAccounts", contextualName = "account-batch-create")
     @Transactional(rollbackFor = Exception.class)
     public List<Long> batchCreateAccounts(List<AccountAddForm> forms) {
         log.info("[账户服务] 批量创建账户，count={}", forms != null ? forms.size() : 0);
@@ -903,12 +1070,18 @@ public class AccountServiceImpl implements AccountService {
 
             return accountIds;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 批量创建账户参数错误: {}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 批量创建账户业务异常，error={}", e.getMessage());
+            log.warn("[账户服务] 批量创建账户业务异常: code={}, message={}", e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 批量创建账户系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_BATCH_CREATE_SYSTEM_ERROR", "批量创建账户失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 批量创建账户系统异常", e);
-            throw new BusinessException("批量创建账户失败：" + e.getMessage());
+            log.error("[账户服务] 批量创建账户未知异常", e);
+            throw new SystemException("ACCOUNT_BATCH_CREATE_SYSTEM_ERROR", "批量创建账户失败：" + e.getMessage(), e);
         }
     }
 
@@ -926,9 +1099,18 @@ public class AccountServiceImpl implements AccountService {
             AccountEntity account = getById(accountId);
             return account.getBalanceAmount();
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 获取账户余额参数错误，accountId={}, error={}", accountId, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 获取账户余额业务异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 获取账户余额系统异常，accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_GET_BALANCE_SYSTEM_ERROR", "获取账户余额失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 获取账户余额失败，accountId={}", accountId, e);
-            throw new BusinessException("获取账户余额失败：" + e.getMessage());
+            log.error("[账户服务] 获取账户余额未知异常，accountId={}", accountId, e);
+            throw new SystemException("ACCOUNT_GET_BALANCE_SYSTEM_ERROR", "获取账户余额失败：" + e.getMessage(), e);
         }
     }
 
@@ -939,6 +1121,7 @@ public class AccountServiceImpl implements AccountService {
      * @return 统计信息
      */
     @Override
+    @Observed(name = "account.getAccountStatistics", contextualName = "account-get-statistics")
     public Map<String, Object> getAccountStatistics(Long accountKindId) {
         log.debug("[账户服务] 获取账户统计信息，accountKindId={}", accountKindId);
 
@@ -981,9 +1164,15 @@ public class AccountServiceImpl implements AccountService {
 
             return statistics;
 
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 获取账户统计信息业务异常，accountKindId={}, code={}, message={}", accountKindId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 获取账户统计信息系统异常，accountKindId={}, code={}, message={}", accountKindId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_STATISTICS_SYSTEM_ERROR", "获取账户统计信息失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 获取账户统计信息失败，accountKindId={}", accountKindId, e);
-            throw new BusinessException("获取账户统计信息失败：" + e.getMessage());
+            log.error("[账户服务] 获取账户统计信息未知异常，accountKindId={}", accountKindId, e);
+            throw new SystemException("ACCOUNT_STATISTICS_SYSTEM_ERROR", "获取账户统计信息失败：" + e.getMessage(), e);
         }
     }
 
@@ -1051,13 +1240,19 @@ public class AccountServiceImpl implements AccountService {
 
             return result > 0;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[账户服务] 更新账户状态参数错误，accountId={}, status={}, error={}", accountId, status, e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[账户服务] 更新账户状态业务异常，accountId={}, status={}, error={}",
-                    accountId, status, e.getMessage());
+            log.warn("[账户服务] 更新账户状态业务异常，accountId={}, status={}, code={}, message={}",
+                    accountId, status, e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[账户服务] 更新账户状态系统异常，accountId={}, status={}, code={}, message={}", accountId, status, e.getCode(), e.getMessage(), e);
+            throw new SystemException("ACCOUNT_UPDATE_STATUS_SYSTEM_ERROR", "更新账户状态失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[账户服务] 更新账户状态系统异常，accountId={}, status={}", accountId, status, e);
-            throw new BusinessException("更新账户状态失败：" + e.getMessage());
+            log.error("[账户服务] 更新账户状态未知异常，accountId={}, status={}", accountId, status, e);
+            throw new SystemException("ACCOUNT_UPDATE_STATUS_SYSTEM_ERROR", "更新账户状态失败：" + e.getMessage(), e);
         }
     }
 
@@ -1092,8 +1287,16 @@ public class AccountServiceImpl implements AccountService {
 
             return accounts != null ? accounts : new ArrayList<>();
 
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 批量查询账户信息业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            // 降级：返回空列表
+            return new ArrayList<>();
+        } catch (SystemException e) {
+            log.error("[账户服务] 批量查询账户信息系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            // 降级：返回空列表
+            return new ArrayList<>();
         } catch (Exception e) {
-            log.error("[账户服务] 批量查询账户信息失败，accountIds={}", accountIds, e);
+            log.error("[账户服务] 批量查询账户信息未知异常", e);
             // 降级：返回空列表
             return new ArrayList<>();
         }
@@ -1154,8 +1357,8 @@ public class AccountServiceImpl implements AccountService {
             log.debug("[账户服务] 获取用户账户余额信息成功，userId={}, balance={}", userId, account.getBalance());
             return balanceInfo;
 
-        } catch (Exception e) {
-            log.error("[账户服务] 获取用户账户余额信息失败，userId={}", userId, e);
+        } catch (BusinessException e) {
+            log.warn("[账户服务] 获取用户账户余额信息业务异常，userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
             // 降级：返回默认值
             Map<String, Object> defaultResult = new HashMap<>();
             defaultResult.put("userId", userId);
@@ -1165,7 +1368,32 @@ public class AccountServiceImpl implements AccountService {
             defaultResult.put("accountExists", false);
             defaultResult.put("error", "查询失败: " + e.getMessage());
             return defaultResult;
+        } catch (SystemException e) {
+            log.error("[账户服务] 获取用户账户余额信息系统异常，userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            // 降级：返回默认值
+            Map<String, Object> defaultResult = new HashMap<>();
+            defaultResult.put("userId", userId);
+            defaultResult.put("balance", BigDecimal.ZERO);
+            defaultResult.put("frozenBalance", BigDecimal.ZERO);
+            defaultResult.put("availableBalance", BigDecimal.ZERO);
+            defaultResult.put("accountExists", false);
+            defaultResult.put("error", "系统异常，请稍后重试");
+            return defaultResult;
+        } catch (Exception e) {
+            log.error("[账户服务] 获取用户账户余额信息未知异常，userId={}", userId, e);
+            // 降级：返回默认值
+            Map<String, Object> defaultResult = new HashMap<>();
+            defaultResult.put("userId", userId);
+            defaultResult.put("balance", BigDecimal.ZERO);
+            defaultResult.put("frozenBalance", BigDecimal.ZERO);
+            defaultResult.put("availableBalance", BigDecimal.ZERO);
+            defaultResult.put("accountExists", false);
+            defaultResult.put("error", "系统异常，请稍后重试");
+            return defaultResult;
         }
     }
 }
+
+
+
 

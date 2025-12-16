@@ -39,6 +39,14 @@ log_error() {
 PROJECT_NAME="ioedream"
 DEPLOYMENT_DIR="$(pwd)/deployments/monitoring"
 
+require_env() {
+    local name="$1"
+    if [ -z "${!name}" ]; then
+        log_error "缺少环境变量：$name（禁止使用默认口令，请显式配置）"
+        exit 1
+    fi
+}
+
 # 服务端口配置
 PROMETHEUS_PORT=9090
 GRAFANA_PORT=3000
@@ -1001,7 +1009,7 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
       - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel,redis-datasource
       - GF_SERVER_DOMAIN=localhost
       - GF_SERVER_ROOT_URL=http://localhost:3000
@@ -1304,7 +1312,7 @@ show_access_info() {
     echo "🔐 登录信息："
     echo "============================================================"
     echo "📊 Grafana用户名:     admin"
-    echo "📊 Grafana密码:       admin123"
+    echo "📊 Grafana密码:       (已隐藏，使用环境变量 GRAFANA_PASSWORD)"
     echo ""
     echo "============================================================"
     echo "📈 预配置仪表盘："
@@ -1521,6 +1529,7 @@ clean_services() {
 main() {
     case "${1:-deploy}" in
         "deploy")
+            require_env "GRAFANA_PASSWORD"
             check_docker
             check_ports
             create_directories

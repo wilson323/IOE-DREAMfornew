@@ -232,3 +232,5 @@ public class ConsumeResultDTO {
         return !isSuccess();
     }
 }
+
+

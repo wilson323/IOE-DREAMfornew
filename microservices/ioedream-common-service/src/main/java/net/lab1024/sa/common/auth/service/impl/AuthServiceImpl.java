@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.auth.dao.UserDao;
@@ -23,6 +24,9 @@ import net.lab1024.sa.common.auth.manager.AuthManager;
 import net.lab1024.sa.common.auth.service.AuthService;
 import net.lab1024.sa.common.auth.util.JwtTokenUtil;
 import net.lab1024.sa.common.security.entity.UserEntity;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 
 /**
  * 认证服务实现
@@ -79,30 +83,31 @@ public class AuthServiceImpl implements AuthService {
      * @return 登录响应
      */
     @Override
+    @Observed(name = "auth.login", contextualName = "auth-login")
     public LoginResponseVO login(LoginRequestDTO request) {
         try {
             log.info("用户登录请求，用户名: {}, IP: {}", request.getUsername(), request.getLoginIp());
 
             // 1. 检查用户是否被锁定（防暴力破解）
             if (authManager.isUserLocked(request.getUsername())) {
-                throw new RuntimeException("账户已被锁定，请稍后再试");
+                throw new BusinessException("AUTH_USER_LOCKED", "账户已被锁定，请稍后再试");
             }
 
             // 2. 验证用户名和密码
             UserEntity user = userDao.selectByUsername(request.getUsername());
             if (user == null) {
                 authManager.recordLoginFailure(request.getUsername());
-                throw new RuntimeException("用户不存在或密码错误");
+                throw new BusinessException("AUTH_INVALID_CREDENTIALS", "用户不存在或密码错误");
             }
 
             if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 authManager.recordLoginFailure(request.getUsername());
-                throw new RuntimeException("用户不存在或密码错误");
+                throw new BusinessException("AUTH_INVALID_CREDENTIALS", "用户不存在或密码错误");
             }
 
             // 3. 检查用户状态
             if (user.getStatus() != 1) {
-                throw new RuntimeException("用户已被禁用");
+                throw new BusinessException("AUTH_USER_DISABLED", "用户已被禁用");
             }
 
             // 4. 检查并发登录限制
@@ -156,9 +161,15 @@ public class AuthServiceImpl implements AuthService {
             log.info("用户登录成功，用户名: {}, 用户ID: {}", request.getUsername(), user.getId());
             return response;
 
+        } catch (BusinessException e) {
+            log.warn("[用户登录] 业务异常，用户名: {}, error={}", request.getUsername(), e.getMessage());
+            throw e;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[用户登录] 参数异常，用户名: {}, error={}", request.getUsername(), e.getMessage());
+            throw new ParamException("AUTH_INVALID_PARAM", "登录参数错误: " + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("用户登录失败，用户名: {}", request.getUsername(), e);
-            throw new RuntimeException("登录失败: " + e.getMessage());
+            log.error("[用户登录] 系统异常，用户名: {}", request.getUsername(), e);
+            throw new SystemException("AUTH_LOGIN_ERROR", "登录失败，请稍后重试", e);
         }
     }
 
@@ -174,18 +185,19 @@ public class AuthServiceImpl implements AuthService {
      * @return 登录响应
      */
     @Override
+    @Observed(name = "auth.refreshToken", contextualName = "auth-refresh-token")
     public LoginResponseVO refreshToken(RefreshTokenRequestDTO request) {
         try {
             String refreshToken = request.getRefreshToken();
 
             // 1. 验证刷新令牌
             if (!jwtTokenUtil.validateToken(refreshToken) || !jwtTokenUtil.isRefreshToken(refreshToken)) {
-                throw new RuntimeException("无效的刷新令牌");
+                throw new BusinessException("AUTH_INVALID_REFRESH_TOKEN", "无效的刷新令牌");
             }
 
             // 2. 检查令牌是否在黑名单中
             if (authManager.isTokenBlacklisted(refreshToken)) {
-                throw new RuntimeException("令牌已失效");
+                throw new BusinessException("AUTH_TOKEN_BLACKLISTED", "令牌已失效");
             }
 
             // 3. 从刷新令牌中获取用户信息
@@ -195,7 +207,7 @@ public class AuthServiceImpl implements AuthService {
             // 4. 查询用户信息
             UserEntity user = userDao.selectById(userId);
             if (user == null || user.getStatus() != 1) {
-                throw new RuntimeException("用户不存在或已被禁用");
+                throw new BusinessException("AUTH_USER_NOT_FOUND", "用户不存在或已被禁用");
             }
 
             // 5. 查询用户权限和角色
@@ -231,9 +243,15 @@ public class AuthServiceImpl implements AuthService {
             log.info("刷新令牌成功，用户名: {}", username);
             return response;
 
+        } catch (BusinessException e) {
+            log.warn("[刷新令牌] 业务异常，error={}", e.getMessage());
+            throw e;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[刷新令牌] 参数异常，error={}", e.getMessage());
+            throw new ParamException("AUTH_INVALID_PARAM", "刷新令牌参数错误: " + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("刷新令牌失败", e);
-            throw new RuntimeException("刷新令牌失败: " + e.getMessage());
+            log.error("[刷新令牌] 系统异常", e);
+            throw new SystemException("AUTH_REFRESH_TOKEN_ERROR", "刷新令牌失败，请稍后重试", e);
         }
     }
 
@@ -248,6 +266,7 @@ public class AuthServiceImpl implements AuthService {
      * @param token 访问令牌
      */
     @Override
+    @Observed(name = "auth.logout", contextualName = "auth-logout")
     public void logout(String token) {
         try {
             if (StringUtils.hasText(token)) {
@@ -262,9 +281,12 @@ public class AuthServiceImpl implements AuthService {
 
                 log.info("用户登出成功");
             }
+        } catch (BusinessException e) {
+            log.warn("[用户登出] 业务异常，error={}", e.getMessage());
+            throw e;
         } catch (Exception e) {
-            log.error("用户登出失败", e);
-            throw new RuntimeException("登出失败: " + e.getMessage());
+            log.error("[用户登出] 系统异常", e);
+            throw new SystemException("AUTH_LOGOUT_ERROR", "登出失败，请稍后重试", e);
         }
     }
 
@@ -279,6 +301,7 @@ public class AuthServiceImpl implements AuthService {
      * @return 是否有效
      */
     @Override
+    @Observed(name = "auth.validateToken", contextualName = "auth-validate-token")
     @Transactional(readOnly = true)
     public boolean validateToken(String token) {
         try {
@@ -304,8 +327,11 @@ public class AuthServiceImpl implements AuthService {
             }
 
             return true;
+        } catch (BusinessException | ParamException e) {
+            log.debug("[令牌验证] 业务/参数异常，error={}", e.getMessage());
+            return false;
         } catch (Exception e) {
-            log.error("令牌验证失败", e);
+            log.error("[令牌验证] 系统异常", e);
             return false;
         }
     }
@@ -317,18 +343,19 @@ public class AuthServiceImpl implements AuthService {
      * @return 用户信息响应
      */
     @Override
+    @Observed(name = "auth.getUserInfo", contextualName = "auth-get-user-info")
     @Transactional(readOnly = true)
     public UserInfoVO getUserInfo(String token) {
         try {
             if (!validateToken(token)) {
-                throw new RuntimeException("无效的令牌");
+                throw new BusinessException("AUTH_INVALID_TOKEN", "无效的令牌");
             }
 
             Long userId = jwtTokenUtil.getUserIdFromToken(token);
             UserEntity user = userDao.selectById(userId);
 
             if (user == null) {
-                throw new RuntimeException("获取用户信息失败");
+                throw new BusinessException("AUTH_USER_NOT_FOUND", "获取用户信息失败");
             }
 
             return UserInfoVO.builder()
@@ -342,9 +369,15 @@ public class AuthServiceImpl implements AuthService {
                     .status(user.getStatus())
                     .lastLoginTime(user.getLastLoginTime())
                     .build();
+        } catch (BusinessException e) {
+            log.warn("[获取用户信息] 业务异常，error={}", e.getMessage());
+            throw e;
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[获取用户信息] 参数异常，error={}", e.getMessage());
+            throw new ParamException("AUTH_INVALID_PARAM", "获取用户信息参数错误: " + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("获取用户信息失败", e);
-            throw new RuntimeException("获取用户信息失败: " + e.getMessage());
+            log.error("[获取用户信息] 系统异常", e);
+            throw new SystemException("AUTH_GET_USER_INFO_ERROR", "获取用户信息失败，请稍后重试", e);
         }
     }
 
@@ -356,6 +389,7 @@ public class AuthServiceImpl implements AuthService {
      * @return 是否具有权限
      */
     @Override
+    @Observed(name = "auth.hasPermission", contextualName = "auth-has-permission")
     @Transactional(readOnly = true)
     public boolean hasPermission(String token, String permission) {
         try {
@@ -365,8 +399,11 @@ public class AuthServiceImpl implements AuthService {
 
             List<String> permissions = jwtTokenUtil.getPermissionsFromToken(token);
             return permissions != null && permissions.contains(permission);
+        } catch (BusinessException | ParamException e) {
+            log.debug("[权限检查] 业务/参数异常，权限: {}, error={}", permission, e.getMessage());
+            return false;
         } catch (Exception e) {
-            log.error("权限检查失败，权限: {}", permission, e);
+            log.error("[权限检查] 系统异常，权限: {}", permission, e);
             return false;
         }
     }
@@ -379,6 +416,7 @@ public class AuthServiceImpl implements AuthService {
      * @return 是否具有角色
      */
     @Override
+    @Observed(name = "auth.hasRole", contextualName = "auth-has-role")
     @Transactional(readOnly = true)
     public boolean hasRole(String token, String role) {
         try {
@@ -388,8 +426,11 @@ public class AuthServiceImpl implements AuthService {
 
             List<String> roles = jwtTokenUtil.getRolesFromToken(token);
             return roles != null && roles.contains(role);
+        } catch (BusinessException | ParamException e) {
+            log.debug("[角色检查] 业务/参数异常，角色: {}, error={}", role, e.getMessage());
+            return false;
         } catch (Exception e) {
-            log.error("角色检查失败，角色: {}", role, e);
+            log.error("[角色检查] 系统异常，角色: {}", role, e);
             return false;
         }
     }

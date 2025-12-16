@@ -74,3 +74,4 @@ public class VisitorAppointmentQueryForm {
     private String status;
 }
 
+

@@ -223,3 +223,5 @@ public class MobileBillDetailVO {
         private String downloadUrl;
     }
 }
+
+

@@ -108,3 +108,6 @@ public interface ConsumeSubsidyIssueRecordDao extends BaseMapper<ConsumeSubsidyI
             "AND issue_status = 2")
     java.math.BigDecimal sumTodayIssueAmount(@Param("subsidyAccountId") String subsidyAccountId);
 }
+
+
+

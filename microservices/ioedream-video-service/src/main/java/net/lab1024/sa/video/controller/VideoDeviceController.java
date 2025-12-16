@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +19,9 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
 import net.lab1024.sa.video.service.VideoDeviceService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 
 /**
  * 视频设备管理PC端控制器
@@ -71,6 +75,7 @@ public class VideoDeviceController {
      * GET /api/v1/video/device/query?pageNum=1&pageSize=20&keyword=摄像头&areaId=4001&status=1
      * </pre>
      */
+    @Observed(name = "video.device.queryDevices", contextualName = "video-device-query")
     @GetMapping("/query")
     @Operation(
             summary = "分页查询设备",
@@ -96,15 +101,15 @@ public class VideoDeviceController {
     )
     @PreAuthorize("hasRole('VIDEO_MANAGER')")
     public ResponseDTO<PageResult<VideoDeviceVO>> queryDevices(
-            @Parameter(description = "页码（从1开始）") 
+            @Parameter(description = "页码（从1开始）")
             @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "每页大小") 
+            @Parameter(description = "每页大小")
             @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "关键词（设备名称、设备编号）") 
+            @Parameter(description = "关键词（设备名称、设备编号）")
             @RequestParam(required = false) String keyword,
-            @Parameter(description = "区域ID（可选）") 
+            @Parameter(description = "区域ID（可选）")
             @RequestParam(required = false) String areaId,
-            @Parameter(description = "设备状态（可选，1-在线，2-离线，3-故障）") 
+            @Parameter(description = "设备状态（可选，1-在线，2-离线，3-故障）")
             @RequestParam(required = false) Integer status) {
         log.info("[视频设备] 分页查询设备，pageNum={}, pageSize={}, keyword={}, areaId={}, status={}",
                 pageNum, pageSize, keyword, areaId, status);
@@ -116,12 +121,21 @@ public class VideoDeviceController {
             queryForm.setKeyword(keyword);
             queryForm.setAreaId(areaId);
             queryForm.setStatus(status);
-            
+
             PageResult<VideoDeviceVO> result = videoDeviceService.queryDevices(queryForm);
             return ResponseDTO.ok(result);
+        } catch (ParamException e) {
+            log.warn("[视频设备] 分页查询设备参数错误: {}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[视频设备] 分页查询设备业务异常: {}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[视频设备] 分页查询设备系统异常: {}", e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[视频设备] 分页查询设备失败", e);
-            return ResponseDTO.error("QUERY_DEVICES_ERROR", "查询设备失败: " + e.getMessage());
+            log.error("[视频设备] 分页查询设备执行异常: {}", e.getMessage(), e);
+            return ResponseDTO.error("QUERY_DEVICES_ERROR", "查询设备失败");
         }
     }
 
@@ -137,6 +151,7 @@ public class VideoDeviceController {
      * @param deviceId 设备ID
      * @return 设备详情
      */
+    @Observed(name = "video.device.getDeviceDetail", contextualName = "video-device-get-detail")
     @GetMapping("/{deviceId}")
     @Operation(
             summary = "查询设备详情",
@@ -173,9 +188,18 @@ public class VideoDeviceController {
                 return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
             }
             return ResponseDTO.ok(device);
+        } catch (ParamException e) {
+            log.warn("[视频设备] 查询设备详情参数错误，deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[视频设备] 查询设备详情业务异常，deviceId={}: {}", deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[视频设备] 查询设备详情系统异常，deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[视频设备] 查询设备详情失败，deviceId={}", deviceId, e);
-            return ResponseDTO.error("GET_DEVICE_ERROR", "查询设备详情失败: " + e.getMessage());
+            log.error("[视频设备] 查询设备详情执行异常，deviceId={}: {}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error("GET_DEVICE_ERROR", "查询设备详情失败");
         }
     }
 }

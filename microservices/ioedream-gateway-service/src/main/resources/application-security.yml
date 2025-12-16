@@ -12,7 +12,7 @@ spring:
     # 用户配置
     user:
       name: ${SECURITY_ADMIN_USERNAME:admin}
-      password: ${SECURITY_ADMIN_PASSWORD:admin123}
+      password: ${SECURITY_ADMIN_PASSWORD}
       roles: ADMIN
 
     # OAuth2资源配置
@@ -40,7 +40,7 @@ spring:
 security:
   # JWT配置
   jwt:
-    secret: ${JWT_SECRET:IOE-DREAM-JWT-SECRET-2025-VERY-STRONG-KEY-MUST-BE-CHANGED-IN-PRODUCTION}
+    secret: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION:7200} # 2小时
     refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800} # 7天
     issuer: ${JWT_ISSUER:IOE-DREAM}
@@ -228,7 +228,7 @@ api-security:
     production-only: true
     basic-auth:
       username: ${SWAGGER_USERNAME:swagger}
-      password: ${SWAGGER_PASSWORD:swagger123}
+      password: ${SWAGGER_PASSWORD:}
 
 # ===========================================
 # 监控和告警配置

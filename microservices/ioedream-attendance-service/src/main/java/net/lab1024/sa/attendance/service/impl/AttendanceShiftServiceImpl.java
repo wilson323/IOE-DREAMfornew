@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
@@ -31,10 +35,12 @@ public class AttendanceShiftServiceImpl implements AttendanceShiftService {
     private WorkflowApprovalManager workflowApprovalManager;
 
     @Resource
-    private net.lab1024.sa.common.attendance.manager.AttendanceManager attendanceManager;
+    private net.lab1024.sa.attendance.attendance.manager.AttendanceManager attendanceManager;
 
     @Override
+    @Observed(name = "attendance.shift.submit", contextualName = "attendance-shift-submit")
     @Transactional(rollbackFor = Exception.class)
+    @Retry(name = "external-service-retry", fallbackMethod = "submitShiftApplicationFallback")
     public AttendanceShiftEntity submitShiftApplication(AttendanceShiftForm form) {
         log.info("[调班申请] 提交调班申请，employeeId={}, shiftDate={}", form.getEmployeeId(), form.getShiftDate());
 
@@ -85,6 +91,18 @@ public class AttendanceShiftServiceImpl implements AttendanceShiftService {
 
         log.info("[调班申请] 调班申请提交成功，shiftNo={}, workflowInstanceId={}", entity.getShiftNo(), workflowInstanceId);
         return entity;
+    }
+
+    /**
+     * 调班申请提交降级方法
+     * <p>
+     * 当工作流服务调用失败时，使用此降级方法
+     * </p>
+     */
+    public AttendanceShiftEntity submitShiftApplicationFallback(
+            AttendanceShiftForm form, Exception e) {
+        log.error("[调班申请] 启动审批流程失败，使用降级方案, employeeId={}, error={}", form.getEmployeeId(), e.getMessage(), e);
+        throw new BusinessException("启动审批流程失败: " + e.getMessage());
     }
 
     @Override
@@ -142,9 +160,18 @@ public class AttendanceShiftServiceImpl implements AttendanceShiftService {
                 log.warn("[调班申请] 调班审批通过处理失败，shiftNo={}, employeeId={}", entity.getShiftNo(), entity.getEmployeeId());
                 // 不抛出异常，避免影响审批流程
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[调班申请] 调班审批通过处理参数错误: shiftNo={}, employeeId={}, error={}", entity.getShiftNo(), entity.getEmployeeId(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[调班申请] 调班审批通过处理业务异常: shiftNo={}, employeeId={}, code={}, message={}", entity.getShiftNo(), entity.getEmployeeId(), e.getCode(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[调班申请] 调班审批通过处理系统异常: shiftNo={}, employeeId={}, code={}, message={}", entity.getShiftNo(), entity.getEmployeeId(), e.getCode(), e.getMessage(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         } catch (Exception e) {
-            log.error("[调班申请] 调班审批通过处理异常，shiftNo={}, employeeId={}", entity.getShiftNo(), entity.getEmployeeId(), e);
-            // 不抛出异常，避免影响审批流程
+            log.error("[调班申请] 调班审批通过处理未知异常: shiftNo={}, employeeId={}", entity.getShiftNo(), entity.getEmployeeId(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         }
     }
 
@@ -152,4 +179,6 @@ public class AttendanceShiftServiceImpl implements AttendanceShiftService {
         return "SH" + System.currentTimeMillis();
     }
 }
+
+
 

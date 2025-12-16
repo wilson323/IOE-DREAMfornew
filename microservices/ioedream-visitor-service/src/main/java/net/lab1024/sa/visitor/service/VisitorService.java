@@ -26,3 +26,4 @@ public interface VisitorService {
      */
     ResponseDTO<?> getVisitorInfo(Long visitorId);
 }
+

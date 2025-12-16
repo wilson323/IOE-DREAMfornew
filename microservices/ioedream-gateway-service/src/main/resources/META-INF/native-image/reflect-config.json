@@ -1,0 +1,47 @@
+[
+  {
+    "name": "net.lab1024.sa.gateway.GatewayServiceApplication",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.springframework.cloud.gateway.route.RouteDefinition",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.springframework.cloud.gateway.filter.FilterDefinition",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.springframework.cloud.gateway.handler.predicate.PredicateDefinition",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.springframework.cloud.gateway.route.RouteLocator",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.springframework.cloud.gateway.filter.GatewayFilter",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.alibaba.nacos.api.naming.pojo.Instance",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.alibaba.nacos.api.naming.pojo.ServiceInfo",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  }
+]

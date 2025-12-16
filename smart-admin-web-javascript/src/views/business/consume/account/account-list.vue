@@ -189,7 +189,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+	import { ref, reactive, onMounted, computed, h } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import {
   SearchOutlined,
@@ -395,44 +395,36 @@ const onSelectChange = (keys) => {
 }
 
 // 获取数据
-const fetchData = async () => {
-  loading.value = true
-  try {
-    const params = {
-      pageNum: pagination.current,
-      pageSize: pagination.pageSize,
-      ...searchForm
-    }
+	const fetchData = async () => {
+	  loading.value = true
+	  try {
+	    const params = {
+	      pageNum: pagination.current,
+	      pageSize: pagination.pageSize,
+	      ...searchForm
+	    }
+	    const res = await consumeApi.getAccountList(params)
+	    if (res.code !== 200 || !res.data) {
+	      tableData.value = []
+	      pagination.total = 0
+	      return
+	    }
 
-    // TODO: 对接后端接口
-    // const res = await consumeApi.getAccountList(params)
+	    const records = res.data.records || res.data.list || []
+	    tableData.value = records.map((item) => ({
+	      ...item,
+	      userPhone: item.mobile,
+	      userEmail: item.email
+	    }))
 
-    // 模拟数据
-    const mockData = {
-      list: Array.from({ length: pagination.pageSize }, (_, index) => ({
-        accountId: (pagination.current - 1) * pagination.pageSize + index + 1,
-        accountNo: `ACC${String((pagination.current - 1) * pagination.pageSize + index + 1).padStart(6, '0')}`,
-        userName: `用户${index + 1}`,
-        accountType: ['STAFF', 'STUDENT', 'TEMPORARY', 'GUEST'][index % 4],
-        userPhone: `138${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
-        userEmail: `user${index + 1}@example.com`,
-        departmentName: `部门${(index % 5) + 1}`,
-        balance: Math.random() * 1000 - 100,
-        totalConsume: Math.random() * 5000,
-        status: [1, 0, 2][index % 3],
-        createTime: '2024-01-15 10:30:00',
-        lastActiveTime: '2024-01-20 14:25:00'
-      })),
-      total: 200
-    }
+	    pagination.total = res.data.total || 0
+	    pagination.current = res.data.current || pagination.current
+	    pagination.pageSize = res.data.size || pagination.pageSize
 
-    tableData.value = mockData.list
-    pagination.total = mockData.total
-
-  } catch (error) {
-    message.error('获取账户列表失败')
-  } finally {
-    loading.value = false
+	  } catch (error) {
+	    message.error('获取账户列表失败')
+	  } finally {
+	    loading.value = false
   }
 }
 
@@ -451,9 +443,19 @@ const handleEdit = (record) => {
 }
 
 // 查看详情
-const handleView = (record) => {
-  // TODO: 实现详情页面跳转
-  console.log('查看详情:', record)
+const handleView = async (record) => {
+  try {
+    const res = await consumeApi.getAccountDetail(record.accountId)
+    if (res.code === 0) {
+      Modal.info({
+        title: `账户详情 - ${record.accountNo}`,
+        content: `用户名: ${res.data.userName || '-'}\n余额: ${res.data.balance || 0}\n状态: ${res.data.status || '-'}`,
+        width: 500
+      })
+    }
+  } catch (error) {
+    message.error('获取账户详情失败')
+  }
 }
 
 // 充值
@@ -469,8 +471,7 @@ const handleFreeze = (record) => {
     content: `确定要冻结账户 ${record.accountNo} 吗？`,
     onOk: async () => {
       try {
-        // TODO: 调用冻结接口
-        // await consumeApi.freezeAccount(record.accountId)
+        await consumeApi.freezeAccountStatus(record.accountId, '管理员冻结')
         message.success('账户冻结成功')
         fetchData()
       } catch (error) {
@@ -487,8 +488,7 @@ const handleUnfreeze = (record) => {
     content: `确定要解冻账户 ${record.accountNo} 吗？`,
     onOk: async () => {
       try {
-        // TODO: 调用解冻接口
-        // await consumeApi.unfreezeAccount(record.accountId)
+        await consumeApi.unfreezeAccountStatus(record.accountId)
         message.success('账户解冻成功')
         fetchData()
       } catch (error) {
@@ -502,12 +502,11 @@ const handleUnfreeze = (record) => {
 const handleResetPassword = (record) => {
   Modal.confirm({
     title: '确认重置密码',
-    content: `确定要重置账户 ${record.accountNo} 的密码吗？`,
+    content: `确定要重置账户 ${record.accountNo} 的密码吗？重置后密码为默认密码`,
     onOk: async () => {
       try {
-        // TODO: 调用重置密码接口
-        // await consumeApi.resetPassword(record.accountId)
-        message.success('密码重置成功')
+        // 重置密码功能待后端 API 实现
+        message.warning('重置密码功能待实现')
       } catch (error) {
         message.error('密码重置失败')
       }
@@ -517,8 +516,8 @@ const handleResetPassword = (record) => {
 
 // 查看消费记录
 const handleViewHistory = (record) => {
-  // TODO: 跳转到消费记录页面
-  console.log('查看消费记录:', record)
+  // 跳转到消费记录页面，带上账户ID参数
+  window.open(`/business/consume/record?accountId=${record.accountId}`, '_blank')
 }
 
 // 删除账户
@@ -528,8 +527,7 @@ const handleDelete = (record) => {
     content: `确定要删除账户 ${record.accountNo} 吗？此操作不可恢复！`,
     onOk: async () => {
       try {
-        // TODO: 调用删除接口
-        // await consumeApi.deleteAccount(record.accountId)
+        await consumeApi.deleteAccount(record.accountId)
         message.success('账户删除成功')
         fetchData()
       } catch (error) {
@@ -546,8 +544,10 @@ const handleBatchDelete = () => {
     content: `确定要删除选中的 ${selectedRowKeys.value.length} 个账户吗？此操作不可恢复！`,
     onOk: async () => {
       try {
-        // TODO: 调用批量删除接口
-        // await consumeApi.batchDeleteAccounts(selectedRowKeys.value)
+        // 逐个删除
+        for (const accountId of selectedRowKeys.value) {
+          await consumeApi.deleteAccount(accountId)
+        }
         message.success('批量删除成功')
         selectedRowKeys.value = []
         fetchData()
@@ -567,9 +567,8 @@ const handleBatchImport = () => {
 const handleBatchExport = async () => {
   exportLoading.value = true
   try {
-    // TODO: 调用导出接口
-    // const res = await consumeApi.exportAccounts(searchForm)
-    message.success('导出成功')
+    // 导出功能待后端 API 实现
+    message.warning('导出功能待实现')
   } catch (error) {
     message.error('导出失败')
   } finally {

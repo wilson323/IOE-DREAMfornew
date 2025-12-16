@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -53,6 +54,7 @@ public interface UserDao extends BaseMapper<UserEntity> {
     /**
      * 更新最后登录信息
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_user SET last_login_time = #{loginTime}, last_login_ip = #{loginIp}, update_time = NOW() WHERE user_id = #{userId}")
     int updateLastLogin(@Param("userId") Long userId, @Param("loginTime") LocalDateTime loginTime,
             @Param("loginIp") String loginIp);
@@ -60,24 +62,28 @@ public interface UserDao extends BaseMapper<UserEntity> {
     /**
      * 增加登录失败次数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_user SET login_fail_count = login_fail_count + 1, update_time = NOW() WHERE user_id = #{userId}")
     int increaseLoginFailCount(@Param("userId") Long userId);
 
     /**
      * 重置登录失败次数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_user SET login_fail_count = 0, update_time = NOW() WHERE user_id = #{userId}")
     int resetLoginFailCount(@Param("userId") Long userId);
 
     /**
      * 锁定用户
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_user SET account_locked = 1, lock_time = #{lockTime}, status = 3, update_time = NOW() WHERE user_id = #{userId}")
     int lockUser(@Param("userId") Long userId, @Param("lockTime") LocalDateTime lockTime);
 
     /**
      * 解锁用户
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_user SET account_locked = 0, lock_time = NULL, unlock_time = #{unlockTime}, login_fail_count = 0, status = 1, update_time = NOW() WHERE user_id = #{userId}")
     int unlockUser(@Param("userId") Long userId, @Param("unlockTime") LocalDateTime unlockTime);
 

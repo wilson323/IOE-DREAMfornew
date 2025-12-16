@@ -1,5 +1,6 @@
 package net.lab1024.sa.consume.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,18 +10,18 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.consume.domain.vo.MobileConsumeStatisticsVO;
-import net.lab1024.sa.common.consume.domain.vo.MobileAccountInfoVO;
-import net.lab1024.sa.common.consume.entity.ConsumeRecordEntity;
-import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.common.consume.dao.PaymentRecordDao;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.consume.consume.domain.vo.MobileConsumeStatisticsVO;
+import net.lab1024.sa.consume.consume.domain.vo.MobileAccountInfoVO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.util.SmartRequestUtil;
-import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.domain.dto.*;
 import net.lab1024.sa.consume.domain.vo.*;
 import net.lab1024.sa.consume.service.ConsumeService;
+import net.lab1024.sa.consume.service.ConsumeMobileService;
 import net.lab1024.sa.consume.service.MobileConsumeStatisticsService;
 import net.lab1024.sa.consume.service.MobileAccountInfoService;
 import net.lab1024.sa.consume.util.PageResultConverter;
@@ -66,10 +67,7 @@ public class MobileConsumeController {
     private GatewayServiceClient gatewayServiceClient;
 
     @Resource
-    private ConsumeRecordDao consumeRecordDao;
-
-    @Resource
-    private PaymentRecordDao paymentRecordDao;
+    private ConsumeMobileService consumeMobileService;
 
     @Resource
     private ObjectMapper objectMapper;
@@ -79,6 +77,7 @@ public class MobileConsumeController {
      * 简化版消费接口，适合移动端快捷操作
      */
     @PostMapping("/quick-consume")
+    @Observed(name = "mobileConsume.quickConsume", contextualName = "mobile-consume-quick-consume")
     @Operation(summary = "快捷消费", description = "移动端快捷消费接口")
     public ResponseDTO<MobileConsumeResultVO> quickConsume(
             @RequestBody @Valid MobileQuickConsumeRequestDTO request) {
@@ -98,8 +97,17 @@ public class MobileConsumeController {
             MobileConsumeResultVO mobileResult = convertTransactionResultToMobile(response.getData());
 
             return ResponseDTO.ok(mobileResult);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端快捷消费] 参数错误: orderId={}, error={}", request.getOrderId(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端快捷消费] 业务异常: orderId={}, code={}, message={}", request.getOrderId(), e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端快捷消费] 系统异常: orderId={}, code={}, message={}", request.getOrderId(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_CONSUME_SYSTEM_ERROR", "消费处理异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端快捷消费] 执行异常: {}", e.getMessage(), e);
+            log.error("[移动端快捷消费] 未知异常: orderId={}", request.getOrderId(), e);
             return ResponseDTO.error("MOBILE_CONSUME_ERROR", "消费处理异常");
         }
     }
@@ -109,6 +117,7 @@ public class MobileConsumeController {
      * 移动端优化的消费记录查询
      */
     @GetMapping("/records")
+    @Observed(name = "mobileConsume.getConsumeRecords", contextualName = "mobile-consume-get-consume-records")
     @Operation(summary = "获取消费记录", description = "获取用户消费记录列表")
     public ResponseDTO<PageResult<MobileConsumeRecordVO>> getConsumeRecords(
             @Parameter(description = "页码", required = false) @RequestParam(defaultValue = "1") Integer pageNum,
@@ -134,8 +143,17 @@ public class MobileConsumeController {
             PageResult<MobileConsumeRecordVO> mobileResult = convertToMobilePageResult(result);
 
             return ResponseDTO.ok(mobileResult);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端消费记录] 参数错误: pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端消费记录] 业务异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端消费记录] 系统异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_QUERY_SYSTEM_ERROR", "查询消费记录异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端消费记录] 查询异常: {}", e.getMessage(), e);
+            log.error("[移动端消费记录] 未知异常: pageNum={}, pageSize={}", pageNum, pageSize, e);
             return ResponseDTO.error("MOBILE_QUERY_ERROR", "查询消费记录异常");
         }
     }
@@ -145,6 +163,7 @@ public class MobileConsumeController {
      * 移动端展示的消费统计信息
      */
     @GetMapping("/statistics")
+    @Observed(name = "mobileConsume.getConsumeStatistics", contextualName = "mobile-consume-get-consume-statistics")
     @Operation(summary = "获取消费统计", description = "获取用户消费统计信息")
     public ResponseDTO<MobileConsumeStatisticsVO> getConsumeStatistics(
             @Parameter(description = "统计类型", required = false) @RequestParam(defaultValue = "daily") String statisticsType,
@@ -165,8 +184,17 @@ public class MobileConsumeController {
             // 调用Service层获取真实的消费统计数据
             return mobileConsumeStatisticsService.getConsumeStatistics(userId, statisticsType, startDate, endDate);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端消费统计] 参数错误: statisticsType={}, error={}", statisticsType, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端消费统计] 业务异常: statisticsType={}, code={}, message={}", statisticsType, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端消费统计] 系统异常: statisticsType={}, code={}, message={}", statisticsType, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_STATISTICS_SYSTEM_ERROR", "获取消费统计异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端消费统计] 统计异常: {}", e.getMessage(), e);
+            log.error("[移动端消费统计] 未知异常: statisticsType={}", statisticsType, e);
             return ResponseDTO.error("MOBILE_STATISTICS_ERROR", "获取消费统计异常");
         }
     }
@@ -176,6 +204,7 @@ public class MobileConsumeController {
      * 移动端显示的账户信息
      */
     @GetMapping("/account-info")
+    @Observed(name = "mobileConsume.getAccountInfo", contextualName = "mobile-consume-get-account-info")
     @Operation(summary = "获取账户信息", description = "获取用户账户信息")
     public ResponseDTO<MobileAccountInfoVO> getAccountInfo(
             @Parameter(description = "账户ID", required = true) @RequestParam @NotNull Long accountId) {
@@ -186,8 +215,17 @@ public class MobileConsumeController {
             // 调用Service层获取真实的账户信息
             return mobileAccountInfoService.getAccountInfo(accountId, null);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端账户信息] 参数错误: accountId={}, error={}", accountId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端账户信息] 业务异常: accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端账户信息] 系统异常: accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_ACCOUNT_SYSTEM_ERROR", "获取账户信息异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端账户信息] 查询异常: {}", e.getMessage(), e);
+            log.error("[移动端账户信息] 未知异常: accountId={}", accountId, e);
             return ResponseDTO.error("MOBILE_ACCOUNT_ERROR", "获取账户信息异常");
         }
     }
@@ -197,6 +235,7 @@ public class MobileConsumeController {
      * 移动端优化的充值接口
      */
     @PostMapping("/recharge")
+    @Observed(name = "mobileConsume.recharge", contextualName = "mobile-consume-recharge")
     @Operation(summary = "账户充值", description = "移动端账户充值")
     public ResponseDTO<MobileRechargeResultVO> recharge(
             @RequestBody @Valid MobileRechargeRequestDTO request) {
@@ -220,8 +259,17 @@ public class MobileConsumeController {
             } else {
                 return ResponseDTO.error(result.getCode(), result.getMessage());
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端账户充值] 参数错误: accountId={}, amount={}, error={}", request.getAccountId(), request.getAmount(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端账户充值] 业务异常: accountId={}, amount={}, code={}, message={}", request.getAccountId(), request.getAmount(), e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端账户充值] 系统异常: accountId={}, amount={}, code={}, message={}", request.getAccountId(), request.getAmount(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_RECHARGE_SYSTEM_ERROR", "充值处理异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端账户充值] 充值异常: {}", e.getMessage(), e);
+            log.error("[移动端账户充值] 未知异常: accountId={}, amount={}", request.getAccountId(), request.getAmount(), e);
             return ResponseDTO.error("MOBILE_RECHARGE_ERROR", "充值处理异常");
         }
     }
@@ -231,6 +279,7 @@ public class MobileConsumeController {
      * 移动端消费类型选择列表
      */
     @GetMapping("/consume-types")
+    @Observed(name = "mobileConsume.getConsumeTypes", contextualName = "mobile-consume-get-consume-types")
     @Operation(summary = "获取消费类型", description = "获取可用消费类型列表")
     public ResponseDTO<List<MobileConsumeTypeVO>> getConsumeTypes() {
         log.info("[移动端消费类型] 获取消费类型列表");
@@ -238,8 +287,17 @@ public class MobileConsumeController {
         try {
             List<MobileConsumeTypeVO> consumeTypes = getMobileConsumeTypes();
             return ResponseDTO.ok(consumeTypes);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端消费类型] 参数错误: error={}", e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端消费类型] 业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端消费类型] 系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_CONSUME_TYPES_SYSTEM_ERROR", "获取消费类型异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端消费类型] 获取异常: {}", e.getMessage(), e);
+            log.error("[移动端消费类型] 未知异常", e);
             return ResponseDTO.error("MOBILE_CONSUME_TYPES_ERROR", "获取消费类型异常");
         }
     }
@@ -249,6 +307,7 @@ public class MobileConsumeController {
      * 移动端设备识别信息
      */
     @GetMapping("/device-info")
+    @Observed(name = "mobileConsume.getDeviceInfo", contextualName = "mobile-consume-get-device-info")
     @Operation(summary = "获取设备信息", description = "获取设备识别信息")
     public ResponseDTO<MobileDeviceInfoVO> getDeviceInfo(
             @Parameter(description = "设备ID", required = false) @RequestParam(required = false) String deviceId) {
@@ -280,6 +339,7 @@ public class MobileConsumeController {
                 apiPath = "/api/v1/device/" + deviceIdLong;
             } catch (NumberFormatException e) {
                 // 如果不是数字，则作为设备编码查询
+                log.debug("[移动端设备信息] deviceId不是数字格式，作为设备编码查询: deviceId={}", deviceId);
                 apiPath = "/api/v1/device/code/" + deviceId;
             }
 
@@ -307,7 +367,7 @@ public class MobileConsumeController {
                 // 从扩展属性中获取额外信息
                 if (device.getExtendedAttributes() != null && !device.getExtendedAttributes().trim().isEmpty()) {
                     try {
-                        ObjectMapper objectMapper = new ObjectMapper();
+                        // ✅ 使用注入的Spring配置的ObjectMapper bean，而非创建新实例
                         Map<String, Object> extendedAttrs = objectMapper.readValue(
                                 device.getExtendedAttributes(),
                                 new TypeReference<Map<String, Object>>() {}
@@ -335,8 +395,17 @@ public class MobileConsumeController {
                 deviceInfo.setLastActiveTime(LocalDateTime.now());
                 return ResponseDTO.ok(deviceInfo);
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端设备信息] 参数错误: deviceId={}, error={}", deviceId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端设备信息] 业务异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端设备信息] 系统异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_DEVICE_SYSTEM_ERROR", "获取设备信息异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端设备信息] 获取异常: {}", e.getMessage(), e);
+            log.error("[移动端设备信息] 未知异常: deviceId={}", deviceId, e);
             return ResponseDTO.error("MOBILE_DEVICE_ERROR", "获取设备信息异常: " + e.getMessage());
         }
     }
@@ -346,6 +415,7 @@ public class MobileConsumeController {
      * 基于二维码的快捷消费
      */
     @PostMapping("/scan-consume")
+    @Observed(name = "mobileConsume.scanConsume", contextualName = "mobile-consume-scan-consume")
     @Operation(summary = "扫码消费", description = "基于二维码的扫码消费")
     public ResponseDTO<MobileConsumeResultVO> scanConsume(
             @RequestBody @Valid MobileScanConsumeRequestDTO request) {
@@ -366,8 +436,17 @@ public class MobileConsumeController {
             MobileConsumeResultVO mobileResult = convertTransactionResultToMobile(response.getData());
 
             return ResponseDTO.ok(mobileResult);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端扫码消费] 参数错误: qrCode={}, error={}", request.getQrCode(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端扫码消费] 业务异常: qrCode={}, code={}, message={}", request.getQrCode(), e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端扫码消费] 系统异常: qrCode={}, code={}, message={}", request.getQrCode(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_SCAN_CONSUME_SYSTEM_ERROR", "扫码消费异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端扫码消费] 执行异常: {}", e.getMessage(), e);
+            log.error("[移动端扫码消费] 未知异常: qrCode={}", request.getQrCode(), e);
             return ResponseDTO.error("MOBILE_SCAN_CONSUME_ERROR", "扫码消费异常");
         }
     }
@@ -376,36 +455,29 @@ public class MobileConsumeController {
      * 获取移动端账单详情
      */
     @GetMapping("/bill/{orderId}")
+    @Observed(name = "mobileConsume.getBillDetail", contextualName = "mobile-consume-get-bill-detail")
     @Operation(summary = "获取账单详情", description = "获取消费账单详细信息")
     public ResponseDTO<MobileBillDetailVO> getBillDetail(
             @Parameter(description = "订单ID", required = true) @PathVariable @NotNull String orderId) {
         log.info("[移动端账单详情] orderId={}", orderId);
 
         try {
-            // 实现账单详情查询
-            // 1. 先通过订单号查询消费记录
-            ConsumeRecordEntity consumeRecord = consumeRecordDao.selectByOrderNo(orderId);
-            if (consumeRecord == null) {
-                log.warn("[移动端账单详情] 消费记录不存在，orderId={}", orderId);
-                return ResponseDTO.error("BILL_NOT_FOUND", "账单不存在");
-            }
-
-            // 2. 查询支付记录（通过订单号或交易流水号）
-            PaymentRecordEntity paymentRecord = null;
-            if (consumeRecord.getTransactionNo() != null) {
-                paymentRecord = paymentRecordDao.selectByTransactionNo(consumeRecord.getTransactionNo());
-            }
-            if (paymentRecord == null && consumeRecord.getOrderNo() != null) {
-                paymentRecord = paymentRecordDao.selectByOrderNo(consumeRecord.getOrderNo());
-            }
-
-            // 3. 构建账单详情VO
-            MobileBillDetailVO billDetail = buildBillDetailVO(consumeRecord, paymentRecord);
+            // 通过Service层获取账单详情，遵循四层架构规范
+            MobileBillDetailVO billDetail = consumeMobileService.getBillDetail(orderId);
 
             log.info("[移动端账单详情] 查询成功，orderId={}, amount={}", orderId, billDetail.getAmount());
             return ResponseDTO.ok(billDetail);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端账单详情] 参数错误: orderId={}, error={}", orderId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[移动端账单详情] 业务异常，orderId={}, code={}, message={}", orderId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端账单详情] 系统异常: orderId={}, code={}, message={}", orderId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_BILL_DETAIL_SYSTEM_ERROR", "获取账单详情异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端账单详情] 查询异常: {}", e.getMessage(), e);
+            log.error("[移动端账单详情] 未知异常: orderId={}", orderId, e);
             return ResponseDTO.error("MOBILE_BILL_DETAIL_ERROR", "获取账单详情异常: " + e.getMessage());
         }
     }
@@ -792,336 +864,7 @@ public class MobileConsumeController {
         }
     }
 
-    /**
-     * 构建账单详情VO
-     *
-     * @param consumeRecord 消费记录
-     * @param paymentRecord 支付记录
-     * @return 账单详情VO
-     */
-    private MobileBillDetailVO buildBillDetailVO(ConsumeRecordEntity consumeRecord, PaymentRecordEntity paymentRecord) {
-        MobileBillDetailVO billDetail = new MobileBillDetailVO();
-
-        // 基本信息
-        billDetail.setOrderId(consumeRecord.getOrderNo() != null ? consumeRecord.getOrderNo() : consumeRecord.getTransactionNo());
-        billDetail.setBillNumber(consumeRecord.getTransactionNo());
-        billDetail.setTransactionNumber(consumeRecord.getTransactionNo());
-
-        // 金额信息
-        billDetail.setAmount(consumeRecord.getAmount() != null ? consumeRecord.getAmount() : BigDecimal.ZERO);
-        billDetail.setOriginalAmount(consumeRecord.getAmount() != null ? consumeRecord.getAmount() : BigDecimal.ZERO);
-        billDetail.setDiscountAmount(consumeRecord.getDiscountAmount() != null ? consumeRecord.getDiscountAmount() : BigDecimal.ZERO);
-        billDetail.setActualAmount(consumeRecord.getActualAmount() != null ? consumeRecord.getActualAmount() : consumeRecord.getAmount());
-
-        // 如果有支付记录，使用支付记录的金额信息
-        if (paymentRecord != null) {
-            billDetail.setFee(paymentRecord.getPaymentFee() != null ? paymentRecord.getPaymentFee() : BigDecimal.ZERO);
-            billDetail.setActualAmount(paymentRecord.getActualAmount() != null ? paymentRecord.getActualAmount() : billDetail.getActualAmount());
-            billDetail.setDiscountAmount(paymentRecord.getDiscountAmount() != null ? paymentRecord.getDiscountAmount() : billDetail.getDiscountAmount());
-        }
-
-        // 消费类型
-        billDetail.setConsumeType(consumeRecord.getConsumeType() != null ? consumeRecord.getConsumeType() : "OTHER");
-        billDetail.setConsumeTypeName(getConsumeTypeName(consumeRecord.getConsumeType()));
-        billDetail.setConsumeTypeIcon(getConsumeTypeIcon(consumeRecord.getConsumeType()));
-        billDetail.setDescription(consumeRecord.getMerchantName() != null ? consumeRecord.getMerchantName() : "消费");
-
-        // 商户信息
-        billDetail.setMerchantName(consumeRecord.getMerchantName());
-        billDetail.setLocation(consumeRecord.getAreaName() != null ? consumeRecord.getAreaName() : "未知位置");
-
-        // 时间信息
-        billDetail.setConsumeTime(consumeRecord.getConsumeTime() != null ? consumeRecord.getConsumeTime() : consumeRecord.getCreateTime());
-        if (paymentRecord != null) {
-            billDetail.setPaymentTime(paymentRecord.getPaymentTime() != null ? paymentRecord.getPaymentTime() : paymentRecord.getCreateTime());
-            billDetail.setCompleteTime(paymentRecord.getCompleteTime() != null ? paymentRecord.getCompleteTime() : paymentRecord.getUpdateTime());
-        } else {
-            billDetail.setPaymentTime(consumeRecord.getPayTime() != null ? consumeRecord.getPayTime() : consumeRecord.getCreateTime());
-            billDetail.setCompleteTime(consumeRecord.getConsumeTime() != null ? consumeRecord.getConsumeTime() : consumeRecord.getCreateTime());
-        }
-
-        // 账户信息
-        billDetail.setAccountId(consumeRecord.getAccountId());
-        billDetail.setAccountNumber(consumeRecord.getAccountNo());
-        billDetail.setUserId(consumeRecord.getUserId());
-        billDetail.setUserName(consumeRecord.getUserName());
-
-        // 支付方式
-        String paymentMethod = consumeRecord.getPayMethod() != null ? consumeRecord.getPayMethod() : "BALANCE";
-        if (paymentRecord != null) {
-            paymentMethod = convertPaymentMethodToString(paymentRecord.getPaymentMethod());
-        }
-        billDetail.setPaymentMethod(paymentMethod);
-        billDetail.setPaymentMethodDescription(getPaymentMethodDescription(paymentMethod));
-        billDetail.setPaymentMethodIcon(getPaymentMethodIcon(paymentMethod));
-
-        // 状态信息
-        String status = consumeRecord.getStatus() != null ? consumeRecord.getStatus() : "SUCCESS";
-        if (paymentRecord != null) {
-            status = convertPaymentStatusToString(paymentRecord.getPaymentStatus());
-        }
-        billDetail.setStatus(status);
-        billDetail.setStatusDescription(getStatusDescription(status));
-        billDetail.setStatusIcon(getStatusIcon(status));
-
-        // 设备信息
-        if (consumeRecord.getDeviceId() != null) {
-            billDetail.setDeviceId(consumeRecord.getDeviceId().toString());
-            billDetail.setDeviceName(consumeRecord.getDeviceName());
-        }
-
-        // 区域信息
-        billDetail.setAreaId(consumeRecord.getAreaId());
-        billDetail.setAreaName(consumeRecord.getAreaName());
-
-        // 退款信息
-        billDetail.setRefundable(consumeRecord.getRefundStatus() != null && consumeRecord.getRefundStatus() == 0);
-        if (consumeRecord.getRefundAmount() != null && consumeRecord.getRefundAmount().compareTo(BigDecimal.ZERO) > 0) {
-            billDetail.setRefundedAmount(consumeRecord.getRefundAmount());
-        }
-
-        // 其他信息
-        billDetail.setSource("移动端");
-        billDetail.setRemark(consumeRecord.getRemark());
-        billDetail.setCreateTime(consumeRecord.getCreateTime());
-        billDetail.setUpdateTime(consumeRecord.getUpdateTime());
-
-        return billDetail;
-    }
-
-    /**
-     * 获取消费类型名称
-     *
-     * @param consumeType 消费类型
-     * @return 消费类型名称
-     */
-    private String getConsumeTypeName(String consumeType) {
-        if (consumeType == null) {
-            return "其他";
-        }
-        switch (consumeType.toUpperCase()) {
-            case "DINING":
-                return "餐饮";
-            case "SHOPPING":
-                return "购物";
-            case "TRANSPORT":
-                return "交通";
-            case "ENTERTAINMENT":
-                return "娱乐";
-            case "OTHER":
-                return "其他";
-            default:
-                return "其他";
-        }
-    }
-
-    /**
-     * 获取消费类型图标
-     *
-     * @param consumeType 消费类型
-     * @return 消费类型图标
-     */
-    private String getConsumeTypeIcon(String consumeType) {
-        if (consumeType == null) {
-            return "💰";
-        }
-        switch (consumeType.toUpperCase()) {
-            case "DINING":
-                return "🍽️";
-            case "SHOPPING":
-                return "🛒";
-            case "TRANSPORT":
-                return "🚗";
-            case "ENTERTAINMENT":
-                return "🎬";
-            default:
-                return "💰";
-        }
-    }
-
-    /**
-     * 转换支付方式为字符串
-     *
-     * @param paymentMethod 支付方式（Integer）
-     * @return 支付方式字符串
-     */
-    private String convertPaymentMethodToString(Integer paymentMethod) {
-        if (paymentMethod == null) {
-            return "BALANCE";
-        }
-        switch (paymentMethod) {
-            case 1:
-                return "BALANCE";
-            case 2:
-                return "WECHAT";
-            case 3:
-                return "ALIPAY";
-            case 4:
-                return "BANK_CARD";
-            case 5:
-                return "CASH";
-            case 6:
-                return "QR_CODE";
-            case 7:
-                return "NFC";
-            case 8:
-                return "BIOMETRIC";
-            default:
-                return "BALANCE";
-        }
-    }
-
-    /**
-     * 获取支付方式描述
-     *
-     * @param paymentMethod 支付方式
-     * @return 支付方式描述
-     */
-    private String getPaymentMethodDescription(String paymentMethod) {
-        if (paymentMethod == null) {
-            return "余额支付";
-        }
-        switch (paymentMethod.toUpperCase()) {
-            case "BALANCE":
-                return "余额支付";
-            case "WECHAT":
-                return "微信支付";
-            case "ALIPAY":
-                return "支付宝";
-            case "BANK_CARD":
-                return "银行卡";
-            case "CASH":
-                return "现金";
-            case "QR_CODE":
-                return "二维码";
-            case "NFC":
-                return "NFC支付";
-            case "BIOMETRIC":
-                return "生物识别";
-            default:
-                return "余额支付";
-        }
-    }
-
-    /**
-     * 获取支付方式图标
-     *
-     * @param paymentMethod 支付方式
-     * @return 支付方式图标
-     */
-    private String getPaymentMethodIcon(String paymentMethod) {
-        if (paymentMethod == null) {
-            return "💳";
-        }
-        switch (paymentMethod.toUpperCase()) {
-            case "BALANCE":
-                return "💳";
-            case "WECHAT":
-                return "💚";
-            case "ALIPAY":
-                return "💙";
-            case "BANK_CARD":
-                return "🏦";
-            case "CASH":
-                return "💵";
-            case "QR_CODE":
-                return "📱";
-            case "NFC":
-                return "📲";
-            case "BIOMETRIC":
-                return "👤";
-            default:
-                return "💳";
-        }
-    }
-
-    /**
-     * 转换支付状态为字符串
-     *
-     * @param paymentStatus 支付状态（Integer）
-     * @return 支付状态字符串
-     */
-    private String convertPaymentStatusToString(Integer paymentStatus) {
-        if (paymentStatus == null) {
-            return "SUCCESS";
-        }
-        switch (paymentStatus) {
-            case 1:
-                return "PENDING";
-            case 2:
-                return "PROCESSING";
-            case 3:
-                return "SUCCESS";
-            case 4:
-                return "FAILED";
-            case 5:
-                return "REFUNDED";
-            case 6:
-                return "PARTIAL_REFUND";
-            case 7:
-                return "CANCELLED";
-            default:
-                return "SUCCESS";
-        }
-    }
-
-    /**
-     * 获取状态描述
-     *
-     * @param status 状态
-     * @return 状态描述
-     */
-    private String getStatusDescription(String status) {
-        if (status == null) {
-            return "成功";
-        }
-        switch (status.toUpperCase()) {
-            case "SUCCESS":
-                return "支付成功";
-            case "PENDING":
-                return "待支付";
-            case "PROCESSING":
-                return "支付中";
-            case "FAILED":
-                return "支付失败";
-            case "REFUNDED":
-                return "已退款";
-            case "PARTIAL_REFUND":
-                return "部分退款";
-            case "CANCELLED":
-                return "已取消";
-            default:
-                return "成功";
-        }
-    }
-
-    /**
-     * 获取状态图标
-     *
-     * @param status 状态
-     * @return 状态图标
-     */
-    private String getStatusIcon(String status) {
-        if (status == null) {
-            return "✅";
-        }
-        switch (status.toUpperCase()) {
-            case "SUCCESS":
-                return "✅";
-            case "PENDING":
-                return "⏳";
-            case "PROCESSING":
-                return "🔄";
-            case "FAILED":
-                return "❌";
-            case "REFUNDED":
-                return "↩️";
-            case "PARTIAL_REFUND":
-                return "↩️";
-            case "CANCELLED":
-                return "🚫";
-            default:
-                return "✅";
-        }
-    }
 }
+
+
+

@@ -50,3 +50,5 @@ public class MobileConsumeRecordVO {
     @Schema(description = "是否可退款", example = "true")
     private Boolean refundable;
 }
+
+

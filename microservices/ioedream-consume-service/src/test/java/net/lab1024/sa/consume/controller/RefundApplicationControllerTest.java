@@ -83,6 +83,8 @@ class RefundApplicationControllerTest {
         // When & Then
         // 由于使用@Valid，应该在Controller层被拦截
         assertThrows(Exception.class, () -> {
+            when(refundApplicationService.submitRefundApplication(any(RefundApplicationForm.class)))
+                    .thenThrow(new IllegalArgumentException("userId不能为空"));
             refundApplicationController.submitRefundApplication(refundApplicationForm);
         });
     }
@@ -129,6 +131,8 @@ class RefundApplicationControllerTest {
 
         // When & Then
         assertThrows(Exception.class, () -> {
+            doThrow(new IllegalArgumentException("refundNo不能为空"))
+                    .when(refundApplicationService).updateRefundStatus(isNull(), any(), any());
             refundApplicationController.updateRefundStatus(null, requestParams);
         });
     }
@@ -161,3 +165,5 @@ class RefundApplicationControllerTest {
         // 根据实际实现，可能返回错误或成功
     }
 }
+
+

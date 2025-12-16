@@ -36,4 +36,16 @@ public interface VisitorStatisticsService {
      * @return 统计数据
      */
     ResponseDTO<Map<String, Object>> getStatisticsByDateRange(LocalDate startDate, LocalDate endDate);
+
+    /**
+     * 获取个人访问统计
+     * <p>
+     * 统计用户作为被访人的访客数据
+     * </p>
+     *
+     * @param userId 用户ID
+     * @return 个人统计数据（包含todayAppointments、activeVisitors、monthlyVisitors、averageDuration）
+     */
+    ResponseDTO<Map<String, Object>> getPersonalStatistics(Long userId);
 }
+

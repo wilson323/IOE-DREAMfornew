@@ -10,6 +10,12 @@
 
 set -e
 
+# 禁止默认口令：敏感配置必须显式注入
+if [ -z "${GRAFANA_PASSWORD}" ]; then
+  echo "[ERROR] 缺少环境变量：GRAFANA_PASSWORD（禁止使用默认口令，请显式配置）" >&2
+  exit 1
+fi
+
 # 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -651,7 +657,7 @@ services:
     ports:
       - "3001:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
       - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
       - GF_SERVER_DOMAIN=localhost
       - GF_SERVER_ROOT_URL=http://localhost:3001

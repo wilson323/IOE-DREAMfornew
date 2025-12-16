@@ -7,8 +7,11 @@ import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.identity.domain.vo.UserDetailVO;
+import net.lab1024.sa.common.security.identity.domain.vo.UserDetailVO;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
@@ -22,6 +25,8 @@ import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 import net.lab1024.sa.consume.manager.ConsumeDeviceManager;
 import net.lab1024.sa.consume.manager.ConsumeExecutionManager;
+import net.lab1024.sa.consume.client.AccountKindConfigClient;
+import net.lab1024.sa.consume.service.ConsumeAreaCacheService;
 import net.lab1024.sa.consume.service.impl.DefaultFixedAmountCalculator;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculatorFactory;
@@ -51,12 +56,15 @@ import net.lab1024.sa.consume.strategy.ConsumeAmountCalculatorFactory;
 public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
 
     private final ConsumeAreaManager consumeAreaManager;
-    private final ConsumeDeviceManager consumeDeviceManager;
-    private final GatewayServiceClient gatewayServiceClient;
-    private final AccountManager accountManager;
-    private final ConsumeTransactionDao consumeTransactionDao;
-    private final ConsumeProductDao consumeProductDao;
-    private final DefaultFixedAmountCalculator fixedAmountCalculator;
+	    private final ConsumeAreaCacheService consumeAreaCacheService;
+	    private final ConsumeDeviceManager consumeDeviceManager;
+	    private final GatewayServiceClient gatewayServiceClient;
+	    private final AccountKindConfigClient accountKindConfigClient;
+	    private final AccountManager accountManager;
+	    private final ConsumeTransactionDao consumeTransactionDao;
+	    private final ConsumeProductDao consumeProductDao;
+    @SuppressWarnings("unused")
+    private final DefaultFixedAmountCalculator fixedAmountCalculator;  // 预留字段，用于未来定值计算功能
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
     private final ConsumeAmountCalculatorFactory calculatorFactory;
 
@@ -67,6 +75,7 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
      * </p>
      *
      * @param consumeAreaManager 区域管理器
+     * @param consumeAreaCacheService 区域缓存服务（使用Spring Cache注解）
      * @param consumeDeviceManager 设备管理器
      * @param gatewayServiceClient 网关服务客户端
      * @param accountManager 账户管理器
@@ -74,23 +83,28 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
      * @param consumeProductDao 商品DAO
      * @param fixedAmountCalculator 定值计算器
      * @param objectMapper JSON对象映射器
+     * @param calculatorFactory 计算器工厂
      */
     public ConsumeExecutionManagerImpl(
             ConsumeAreaManager consumeAreaManager,
-            ConsumeDeviceManager consumeDeviceManager,
-            GatewayServiceClient gatewayServiceClient,
-            AccountManager accountManager,
-            ConsumeTransactionDao consumeTransactionDao,
-            ConsumeProductDao consumeProductDao,
-            DefaultFixedAmountCalculator fixedAmountCalculator,
+	            ConsumeAreaCacheService consumeAreaCacheService,
+	            ConsumeDeviceManager consumeDeviceManager,
+	            GatewayServiceClient gatewayServiceClient,
+	            AccountKindConfigClient accountKindConfigClient,
+	            AccountManager accountManager,
+	            ConsumeTransactionDao consumeTransactionDao,
+	            ConsumeProductDao consumeProductDao,
+	            DefaultFixedAmountCalculator fixedAmountCalculator,
             com.fasterxml.jackson.databind.ObjectMapper objectMapper,
             ConsumeAmountCalculatorFactory calculatorFactory) {
-        this.consumeAreaManager = consumeAreaManager;
-        this.consumeDeviceManager = consumeDeviceManager;
-        this.gatewayServiceClient = gatewayServiceClient;
-        this.accountManager = accountManager;
-        this.consumeTransactionDao = consumeTransactionDao;
-        this.consumeProductDao = consumeProductDao;
+	        this.consumeAreaManager = consumeAreaManager;
+	        this.consumeAreaCacheService = consumeAreaCacheService;
+	        this.consumeDeviceManager = consumeDeviceManager;
+	        this.gatewayServiceClient = gatewayServiceClient;
+	        this.accountKindConfigClient = accountKindConfigClient;
+	        this.accountManager = accountManager;
+	        this.consumeTransactionDao = consumeTransactionDao;
+	        this.consumeProductDao = consumeProductDao;
         this.fixedAmountCalculator = fixedAmountCalculator;
         this.objectMapper = objectMapper;
         this.calculatorFactory = calculatorFactory;
@@ -202,8 +216,17 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 执行消费流程参数错误: error={}", e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 执行消费流程业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[消费执行] 执行消费流程系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("CONSUME_SYSTEM_ERROR", "消费失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[消费执行] 执行消费流程失败", e);
+            log.error("[消费执行] 执行消费流程未知异常", e);
             return ResponseDTO.error("CONSUME_ERROR", "消费失败：" + e.getMessage());
         }
     }
@@ -275,8 +298,17 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                 } else {
                     log.warn("[消费执行] 获取用户信息失败，userId={}", form.getUserId());
                 }
+            } catch (IllegalArgumentException | ParamException e) {
+                log.warn("[消费执行] 获取用户信息参数错误，userId={}, error={}", form.getUserId(), e.getMessage());
+                // 用户信息获取失败不影响主流程，继续执行
+            } catch (BusinessException e) {
+                log.warn("[消费执行] 获取用户信息业务异常，userId={}, code={}, message={}", form.getUserId(), e.getCode(), e.getMessage());
+                // 用户信息获取失败不影响主流程，继续执行
+            } catch (SystemException e) {
+                log.error("[消费执行] 获取用户信息系统异常，userId={}, code={}, message={}", form.getUserId(), e.getCode(), e.getMessage(), e);
+                // 用户信息获取失败不影响主流程，继续执行
             } catch (Exception e) {
-                log.error("[消费执行] 获取用户信息异常，userId={}", form.getUserId(), e);
+                log.error("[消费执行] 获取用户信息未知异常，userId={}", form.getUserId(), e);
                 // 用户信息获取失败不影响主流程，继续执行
             }
         }
@@ -302,8 +334,17 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                 if (device != null) {
                     transaction.setDeviceName(device.getDeviceName());
                 }
+            } catch (IllegalArgumentException | ParamException e) {
+                log.warn("[消费执行] 获取设备信息参数错误，deviceId={}, error={}", form.getDeviceId(), e.getMessage());
+                // 设备信息获取失败不影响主流程，继续执行
+            } catch (BusinessException e) {
+                log.warn("[消费执行] 获取设备信息业务异常，deviceId={}, code={}, message={}", form.getDeviceId(), e.getCode(), e.getMessage());
+                // 设备信息获取失败不影响主流程，继续执行
+            } catch (SystemException e) {
+                log.error("[消费执行] 获取设备信息系统异常，deviceId={}, code={}, message={}", form.getDeviceId(), e.getCode(), e.getMessage(), e);
+                // 设备信息获取失败不影响主流程，继续执行
             } catch (Exception e) {
-                log.error("[消费执行] 获取设备信息异常，deviceId={}", form.getDeviceId(), e);
+                log.error("[消费执行] 获取设备信息未知异常，deviceId={}", form.getDeviceId(), e);
                 // 设备信息获取失败不影响主流程，继续执行
             }
         }
@@ -359,8 +400,8 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
     public boolean validateConsumePermission(Long accountId, String areaId, String consumeMode) {
         log.debug("[消费执行] 验证消费权限，accountId={}, areaId={}, consumeMode={}", accountId, areaId, consumeMode);
         try {
-            // 1. 验证区域权限
-            boolean hasAreaPermission = consumeAreaManager.validateAreaPermission(accountId, areaId);
+            // 1. 验证区域权限（使用Spring Cache缓存）
+            boolean hasAreaPermission = consumeAreaCacheService.validateAreaPermission(accountId, areaId);
             if (!hasAreaPermission) {
                 log.warn("[消费执行] 区域权限验证失败，accountId={}, areaId={}", accountId, areaId);
                 return false;
@@ -376,9 +417,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
 
             return true;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 验证消费权限参数错误: accountId={}, areaId={}, consumeMode={}, error={}", accountId, areaId, consumeMode, e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 验证消费权限业务异常: accountId={}, areaId={}, consumeMode={}, code={}, message={}", accountId, areaId, consumeMode, e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[消费执行] 验证消费权限系统异常: accountId={}, areaId={}, consumeMode={}, code={}, message={}", accountId, areaId, consumeMode, e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[消费执行] 验证消费权限失败，accountId={}, areaId={}, consumeMode={}", accountId, areaId, consumeMode, e);
-            return false;
+            log.error("[消费执行] 验证消费权限未知异常: accountId={}, areaId={}, consumeMode={}", accountId, areaId, consumeMode, e);
+            return false; // For boolean return methods, return false on unknown error
         }
     }
 
@@ -436,10 +486,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                     accountId, areaId, consumeMode, result);
             return result;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 计算消费金额参数错误: accountId={}, areaId={}, consumeMode={}, error={}", accountId, areaId, consumeMode, e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on parameter error
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 计算消费金额业务异常: accountId={}, areaId={}, consumeMode={}, code={}, message={}", accountId, areaId, consumeMode, e.getCode(), e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on business error
+        } catch (SystemException e) {
+            log.error("[消费执行] 计算消费金额系统异常: accountId={}, areaId={}, consumeMode={}, code={}, message={}", accountId, areaId, consumeMode, e.getCode(), e.getMessage(), e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on system error
         } catch (Exception e) {
-            log.error("[消费执行] 计算消费金额失败，accountId={}, areaId={}, consumeMode={}",
-                    accountId, areaId, consumeMode, e);
-            return BigDecimal.ZERO;
+            log.error("[消费执行] 计算消费金额未知异常: accountId={}, areaId={}, consumeMode={}", accountId, areaId, consumeMode, e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on unknown error
         }
     }
 
@@ -455,123 +513,6 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
      * @param form 消费表单（包含商品信息）
      * @return 商品总价（单位：元）
      */
-    /**
-     * 计算定值金额
-     * <p>
-     * 注意：此方法已被策略模式替代，当前未被使用
-     * 实际使用的是 FixedAmountCalculator 策略类
-     * 保留此方法以备将来参考
-     * </p>
-     *
-     * @param accountId 账户ID
-     * @param areaId 区域ID
-     * @return 定值金额（单位：元）
-     * @deprecated 已由策略模式 FixedAmountCalculator 替代
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    private BigDecimal calculateFixedAmount(Long accountId, String areaId) {
-        log.debug("[消费执行] 计算定值金额，accountId={}, areaId={}", accountId, areaId);
-        try {
-            // 1. 获取账户信息
-            AccountEntity account = accountManager.getAccountById(accountId);
-            if (account == null) {
-                log.warn("[消费执行] 账户不存在，无法计算定值金额，accountId={}", accountId);
-                return BigDecimal.ZERO;
-            }
-
-            // 2. 创建消费请求DTO
-            net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO requestDTO = new net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO();
-            requestDTO.setUserId(account.getUserId());
-            requestDTO.setAccountId(accountId);
-            requestDTO.setAreaId(areaId != null ? Long.parseLong(areaId) : null);
-
-            // 3. 使用定值计算器计算金额
-            Integer fixedAmountInCents = fixedAmountCalculator.calculate(requestDTO, account);
-            if (fixedAmountInCents == null || fixedAmountInCents <= 0) {
-                log.warn("[消费执行] 定值金额计算结果为0或无效，accountId={}, areaId={}", accountId, areaId);
-                return BigDecimal.ZERO;
-            }
-
-            // 4. 转换为元（单位：分 -> 元）
-            BigDecimal fixedAmount = BigDecimal.valueOf(fixedAmountInCents).divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
-            log.debug("[消费执行] 定值金额计算完成，accountId={}, areaId={}, amount={}", accountId, areaId, fixedAmount);
-            return fixedAmount;
-        } catch (Exception e) {
-            log.error("[消费执行] 计算定值金额失败，accountId={}, areaId={}", accountId, areaId, e);
-            return BigDecimal.ZERO;
-        }
-    }
-
-    /**
-     * 计算商品模式金额（带Form对象）
-     * <p>
-     * 注意：此方法已被策略模式替代，当前未被使用
-     * 实际使用的是 ProductAmountCalculator 策略类
-     * 保留此方法以备将来参考
-     * </p>
-     *
-     * @param accountId 账户ID
-     * @param areaId 区域ID
-     * @param form 消费表单（包含商品信息）
-     * @return 商品总价（单位：元）
-     * @deprecated 已由策略模式 ProductAmountCalculator 替代
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    private BigDecimal calculateProductAmountWithForm(Long accountId, String areaId, ConsumeTransactionForm form) {
-        log.debug("[消费执行] 计算商品模式金额（带Form），accountId={}, areaId={}", accountId, areaId);
-        try {
-            // 1. 获取账户和区域信息
-            AccountEntity account = accountManager.getAccountById(accountId);
-            if (account == null) {
-                log.warn("[消费执行] 账户不存在，无法计算商品金额，accountId={}", accountId);
-                return BigDecimal.ZERO;
-            }
-
-            ConsumeAreaEntity area = consumeAreaManager.getAreaById(areaId);
-            if (area == null || area.getManageMode() == null || area.getManageMode() != 2) {
-                log.warn("[消费执行] 区域不支持商品模式，areaId={}, manageMode={}", areaId, area != null ? area.getManageMode() : null);
-                return BigDecimal.ZERO;
-            }
-
-            // 2. 获取商品信息（支持单商品和多商品）
-            BigDecimal totalPrice = BigDecimal.ZERO;
-
-            // 2.1 单商品模式（productId + quantity）
-            if (form.getProductId() != null && !form.getProductId().isEmpty() && form.getQuantity() != null) {
-                BigDecimal productPrice = calculateProductTotalPrice(form.getProductId(), form.getQuantity(), accountId, areaId);
-                if (productPrice.compareTo(BigDecimal.ZERO) > 0) {
-                    totalPrice = totalPrice.add(productPrice);
-                }
-            }
-
-            // 2.2 多商品模式（productIds + productQuantities）
-            if (form.getProductIds() != null && !form.getProductIds().isEmpty() && form.getProductQuantities() != null) {
-                for (String productId : form.getProductIds()) {
-                    Integer quantity = form.getProductQuantities().get(productId);
-                    if (quantity != null && quantity > 0) {
-                        BigDecimal productPrice = calculateProductTotalPrice(productId, quantity, accountId, areaId);
-                        if (productPrice.compareTo(BigDecimal.ZERO) > 0) {
-                            totalPrice = totalPrice.add(productPrice);
-                        }
-                    }
-                }
-            }
-
-            if (totalPrice.compareTo(BigDecimal.ZERO) <= 0) {
-                log.warn("[消费执行] 商品总价计算失败或为0，accountId={}, areaId={}", accountId, areaId);
-                return BigDecimal.ZERO;
-            }
-
-            log.debug("[消费执行] 商品总价计算完成，accountId={}, areaId={}, totalPrice={}", accountId, areaId, totalPrice);
-            return totalPrice;
-
-        } catch (Exception e) {
-            log.error("[消费执行] 计算商品模式金额失败，accountId={}, areaId={}", accountId, areaId, e);
-            return BigDecimal.ZERO;
-        }
-    }
 
     /**
      * 计算商品模式金额（备用方法，当前使用calculateProductAmountWithForm）
@@ -625,9 +566,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             log.warn("[消费执行] 商品模式需要商品ID和数量，当前方法签名不支持，accountId={}, areaId={}", accountId, areaId);
             return BigDecimal.ZERO;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 计算商品模式金额参数错误: accountId={}, areaId={}, error={}", accountId, areaId, e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on parameter error
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 计算商品模式金额业务异常: accountId={}, areaId={}, code={}, message={}", accountId, areaId, e.getCode(), e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on business error
+        } catch (SystemException e) {
+            log.error("[消费执行] 计算商品模式金额系统异常: accountId={}, areaId={}, code={}, message={}", accountId, areaId, e.getCode(), e.getMessage(), e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on system error
         } catch (Exception e) {
-            log.error("[消费执行] 计算商品模式金额失败，accountId={}, areaId={}", accountId, areaId, e);
-            return BigDecimal.ZERO;
+            log.error("[消费执行] 计算商品模式金额未知异常: accountId={}, areaId={}", accountId, areaId, e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on unknown error
         }
     }
 
@@ -643,6 +593,7 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
      * @param areaId 区域ID（用于验证商品可售区域）
      * @return 商品总价（单位：元）
      */
+    @SuppressWarnings("unused")
     private BigDecimal calculateProductTotalPrice(String productId, Integer quantity, Long accountId, String areaId) {
         try {
             // 1. 查询商品信息
@@ -670,8 +621,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                         log.warn("[消费执行] 商品不在该区域销售，productId={}, areaId={}", productId, areaId);
                         return BigDecimal.ZERO;
                     }
+                } catch (IllegalArgumentException | ParamException e) {
+                    log.warn("[消费执行] 解析商品可售区域参数错误，productId={}, error={}", productId, e.getMessage());
+                    // 解析失败不影响主流程，继续执行
+                } catch (BusinessException e) {
+                    log.warn("[消费执行] 解析商品可售区域业务异常，productId={}, code={}, message={}", productId, e.getCode(), e.getMessage());
+                    // 解析失败不影响主流程，继续执行
+                } catch (SystemException e) {
+                    log.error("[消费执行] 解析商品可售区域系统异常，productId={}, code={}, message={}", productId, e.getCode(), e.getMessage(), e);
+                    // 解析失败不影响主流程，继续执行
                 } catch (Exception e) {
-                    log.warn("[消费执行] 解析商品可售区域失败，productId={}", productId, e);
+                    log.warn("[消费执行] 解析商品可售区域未知异常，productId={}", productId, e);
+                    // 解析失败不影响主流程，继续执行
                 }
             }
 
@@ -699,32 +660,33 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                     productId, quantity, unitPrice, totalPrice);
             return totalPrice;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 计算商品总价参数错误: productId={}, quantity={}, error={}", productId, quantity, e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on parameter error
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 计算商品总价业务异常: productId={}, quantity={}, code={}, message={}", productId, quantity, e.getCode(), e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on business error
+        } catch (SystemException e) {
+            log.error("[消费执行] 计算商品总价系统异常: productId={}, quantity={}, code={}, message={}", productId, quantity, e.getCode(), e.getMessage(), e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on system error
         } catch (Exception e) {
-            log.error("[消费执行] 计算商品总价失败，productId={}, quantity={}", productId, quantity, e);
-            return BigDecimal.ZERO;
+            log.error("[消费执行] 计算商品总价未知异常: productId={}, quantity={}", productId, quantity, e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on unknown error
         }
     }
 
     /**
      * 计算计次模式金额
      * <p>
-     * 注意：此方法已被策略模式替代，当前未被使用
-     * 实际使用的是 CountAmountCalculator 策略类
-     * 保留此方法以备将来参考
-     * </p>
-     * <p>
-     * 基于业务文档03-账户类别与消费模式设计.md的计次模式配置
-     * 严格遵循METERED模式的COUNT子类型配置
+     * 预留方法，用于未来计次模式消费功能
      * </p>
      *
      * @param accountId 账户ID
      * @param areaId 区域ID
-     * @return 计次固定金额（单位：元）
-     * @deprecated 已由策略模式 CountAmountCalculator 替代
+     * @return 计次模式金额
      */
-    @Deprecated
     @SuppressWarnings("unused")
-    private BigDecimal calculateCountAmount(Long accountId, String areaId) {
+    private BigDecimal calculateCountModeAmount(Long accountId, String areaId) {
         log.debug("[消费执行] 计算计次模式金额，accountId={}, areaId={}", accountId, areaId);
         try {
             // 1. 获取账户信息
@@ -741,14 +703,9 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                 return BigDecimal.ZERO;
             }
 
-            // 3. 通过网关调用公共服务获取账户类别信息
-            net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
-                    gatewayServiceClient.callCommonService(
-                            "/api/v1/account-kind/" + accountKindId,
-                            org.springframework.http.HttpMethod.GET,
-                            null,
-                            new com.fasterxml.jackson.core.type.TypeReference<net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>>>() {}
-                    );
+	            // 3. 获取账户类别信息（热路径：默认经网关，直连启用时走直连）
+	            net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
+	                    accountKindConfigClient.getAccountKind(accountKindId);
 
             if (accountKindResponse == null || !accountKindResponse.isSuccess() || accountKindResponse.getData() == null) {
                 log.warn("[消费执行] 获取账户类别信息失败，accountKindId={}", accountKindId);
@@ -870,9 +827,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             log.debug("[消费执行] 计次金额计算完成，accountId={}, areaId={}, amount={}", accountId, areaId, amount);
             return amount;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 计算计次模式金额参数错误: accountId={}, areaId={}, error={}", accountId, areaId, e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on parameter error
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 计算计次模式金额业务异常: accountId={}, areaId={}, code={}, message={}", accountId, areaId, e.getCode(), e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on business error
+        } catch (SystemException e) {
+            log.error("[消费执行] 计算计次模式金额系统异常: accountId={}, areaId={}, code={}, message={}", accountId, areaId, e.getCode(), e.getMessage(), e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on system error
         } catch (Exception e) {
-            log.error("[消费执行] 计算计次模式金额失败，accountId={}, areaId={}", accountId, areaId, e);
-            return BigDecimal.ZERO;
+            log.error("[消费执行] 计算计次模式金额未知异常: accountId={}, areaId={}", accountId, areaId, e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on unknown error
         }
     }
 
@@ -938,9 +904,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             log.debug("[消费执行] 消费模式验证通过，accountId={}, areaId={}, consumeMode={}", accountId, areaId, consumeMode);
             return true;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 验证消费模式支持参数错误: accountId={}, areaId={}, consumeMode={}, error={}", accountId, areaId, consumeMode, e.getMessage());
+            return false; // For boolean return methods, return false on parameter error
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 验证消费模式支持业务异常: accountId={}, areaId={}, consumeMode={}, code={}, message={}", accountId, areaId, consumeMode, e.getCode(), e.getMessage());
+            return false; // For boolean return methods, return false on business error
+        } catch (SystemException e) {
+            log.error("[消费执行] 验证消费模式支持系统异常: accountId={}, areaId={}, consumeMode={}, code={}, message={}", accountId, areaId, consumeMode, e.getCode(), e.getMessage(), e);
+            return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[消费执行] 验证消费模式支持失败，accountId={}, areaId={}, consumeMode={}", accountId, areaId, consumeMode, e);
-            return false;
+            log.error("[消费执行] 验证消费模式支持未知异常: accountId={}, areaId={}, consumeMode={}", accountId, areaId, consumeMode, e);
+            return false; // For boolean return methods, return false on unknown error
         }
     }
 
@@ -964,14 +939,9 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                 return BigDecimal.ZERO;
             }
 
-            // 2. 通过网关获取账户类别信息
-            net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
-                    gatewayServiceClient.callCommonService(
-                            "/api/v1/account-kind/" + account.getAccountKindId(),
-                            org.springframework.http.HttpMethod.GET,
-                            null,
-                            new com.fasterxml.jackson.core.type.TypeReference<net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>>>() {}
-                    );
+	            // 2. 获取账户类别信息（热路径：默认经网关，直连启用时走直连）
+	            net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
+	                    accountKindConfigClient.getAccountKind(account.getAccountKindId());
 
             if (accountKindResponse == null || !accountKindResponse.isSuccess() || accountKindResponse.getData() == null) {
                 log.warn("[消费执行] 获取账户类别信息失败，accountKindId={}", account.getAccountKindId());
@@ -1045,9 +1015,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             log.debug("[消费执行] 获取商品模式折扣率成功，accountId={}, discountRate={}", accountId, discountRate);
             return discountRate;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 获取商品模式折扣率参数错误: accountId={}, error={}", accountId, e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on parameter error
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 获取商品模式折扣率业务异常: accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on business error
+        } catch (SystemException e) {
+            log.error("[消费执行] 获取商品模式折扣率系统异常: accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on system error
         } catch (Exception e) {
-            log.error("[消费执行] 获取商品模式折扣率失败，accountId={}", accountId, e);
-            return BigDecimal.ZERO;
+            log.error("[消费执行] 获取商品模式折扣率未知异常: accountId={}", accountId, e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on unknown error
         }
     }
 
@@ -1152,9 +1131,18 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             log.debug("[消费执行] 获取计次模式折扣率成功，discountRate={}", discountRate);
             return discountRate;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 获取计次模式折扣率参数错误: error={}", e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on parameter error
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 获取计次模式折扣率业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on business error
+        } catch (SystemException e) {
+            log.error("[消费执行] 获取计次模式折扣率系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on system error
         } catch (Exception e) {
-            log.error("[消费执行] 获取计次模式折扣率失败", e);
-            return BigDecimal.ZERO;
+            log.error("[消费执行] 获取计次模式折扣率未知异常", e);
+            return BigDecimal.ZERO; // For BigDecimal return methods, return ZERO on unknown error
         }
     }
 
@@ -1208,12 +1196,23 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
                     }
                 }
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费执行] 通过部门名称查询部门ID参数错误: departmentName={}, error={}", departmentName, e.getMessage());
+            // 查询失败不影响主流程，返回null
+        } catch (BusinessException e) {
+            log.warn("[消费执行] 通过部门名称查询部门ID业务异常: departmentName={}, code={}, message={}", departmentName, e.getCode(), e.getMessage());
+            // 查询失败不影响主流程，返回null
+        } catch (SystemException e) {
+            log.error("[消费执行] 通过部门名称查询部门ID系统异常: departmentName={}, code={}, message={}", departmentName, e.getCode(), e.getMessage(), e);
+            // 查询失败不影响主流程，返回null
         } catch (Exception e) {
-            log.warn("[消费执行] 通过部门名称查询部门ID失败，departmentName={}, error={}",
-                    departmentName, e.getMessage());
+            log.warn("[消费执行] 通过部门名称查询部门ID未知异常: departmentName={}, error={}", departmentName, e.getMessage());
             // 查询失败不影响主流程，返回null
         }
 
         return null;
     }
 }
+
+
+

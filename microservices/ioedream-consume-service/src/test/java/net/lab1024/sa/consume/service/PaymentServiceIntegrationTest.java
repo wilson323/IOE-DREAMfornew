@@ -12,7 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PaymentService集成测试
@@ -24,12 +25,13 @@ import lombok.extern.slf4j.Slf4j;
  * @author IOE-DREAM Team
  * @since 2025-01-30
  */
-@Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 @DisplayName("PaymentService集成测试")
 @Transactional
 class PaymentServiceIntegrationTest {
+
+    private static final Logger log = LoggerFactory.getLogger(PaymentServiceIntegrationTest.class);
 
     @Resource
     private PaymentService paymentService;
@@ -126,7 +128,7 @@ class PaymentServiceIntegrationTest {
 
         try {
             // When - 使用processPayment方法测试支付宝支付
-            var paymentForm = new net.lab1024.sa.common.consume.domain.form.PaymentProcessForm();
+            var paymentForm = new net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm();
             paymentForm.setOrderNo(orderId);
             paymentForm.setPaymentAmount(amount);
             paymentForm.setConsumeDescription(description);
@@ -181,4 +183,6 @@ class PaymentServiceIntegrationTest {
         }
     }
 }
+
+
 

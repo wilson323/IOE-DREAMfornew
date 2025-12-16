@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 协议消息基类
@@ -19,6 +20,7 @@ import lombok.Data;
  * @since 2025-01-30
  */
 @Data
+@Slf4j
 public class ProtocolMessage {
 
     /**
@@ -115,6 +117,7 @@ public class ProtocolMessage {
                 try {
                     return Long.parseLong((String) userId);
                 } catch (NumberFormatException e) {
+                    log.debug("[协议消息] 用户ID解析失败，返回null: userId={}", userId);
                     return null;
                 }
             }

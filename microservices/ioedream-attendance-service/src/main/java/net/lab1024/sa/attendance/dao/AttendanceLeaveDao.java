@@ -31,3 +31,5 @@ public interface AttendanceLeaveDao extends BaseMapper<AttendanceLeaveEntity> {
     AttendanceLeaveEntity selectByLeaveNo(@Param("leaveNo") String leaveNo);
 }
 
+
+

@@ -14,8 +14,19 @@ param(
     [string]$DbHost = 'localhost',
     [int]$Port = 3306,
     [string]$Username = 'root',
-    [System.Security.SecureString]$Password = (ConvertTo-SecureString -String '123456' -AsPlainText -Force)
+    [System.Security.SecureString]$Password = $(
+        if (-not [string]::IsNullOrWhiteSpace($env:MYSQL_ROOT_PASSWORD)) {
+            ConvertTo-SecureString -String $env:MYSQL_ROOT_PASSWORD -AsPlainText -Force
+        } else {
+            $null
+        }
+    )
 )
+
+if ($null -eq $Password) {
+    Write-Host "错误: 缺少数据库密码，请设置环境变量 MYSQL_ROOT_PASSWORD（禁止使用默认口令）" -ForegroundColor Red
+    exit 1
+}
 
 # 颜色输出函数
 function Write-ColorOutput {

@@ -290,3 +290,4 @@ public class VisitorAreaEntity extends AreaEntity {
     @Schema(description = "备注", example = "主要接待区域，需要严格安全管理")
     private String remark;
 }
+

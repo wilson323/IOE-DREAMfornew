@@ -16,6 +16,17 @@ param(
 $ErrorActionPreference = "Stop"
 
 # =====================================================
+# 加载环境变量（从.env文件）
+# =====================================================
+
+$loadEnvScript = Join-Path $PSScriptRoot "load-env.ps1"
+if (Test-Path $loadEnvScript) {
+    & $loadEnvScript -Silent
+} else {
+    Write-Host "[WARN] load-env.ps1 not found, using default values" -ForegroundColor Yellow
+}
+
+# =====================================================
 # 配置
 # =====================================================
 
@@ -83,38 +94,76 @@ function Start-Microservice {
     $servicePath = Join-Path $ProjectRoot $Service.Path
 
     if (-not (Test-Path $servicePath)) {
-        $errMsg = "[ERROR] Service not found: $($Service.Name)"
-        Write-ColorOutput Red $errMsg
+        Write-Host "[ERROR] Service not found: $($Service.Name)" -ForegroundColor Red
         return $false
     }
 
     # Check if port is already in use
     if (Test-PortInUse -Port $Service.Port) {
-        $warnMsg = "[WARN] Port $($Service.Port) already in use, skipping $($Service.Name)"
-        Write-ColorOutput Yellow $warnMsg
+        Write-Host "[WARN] Port $($Service.Port) already in use, skipping $($Service.Name)" -ForegroundColor Yellow
         return $true
     }
 
-    $infoMsg = "[START] Starting $($Service.Name) (Port: $($Service.Port))..."
-    Write-ColorOutput Cyan $infoMsg
+    Write-Host "[START] Starting $($Service.Name) (Port: $($Service.Port))..." -ForegroundColor Cyan
 
     try {
-        # Start service in new window
+        # 加载环境变量（如果未加载）
+        $loadEnvScript = Join-Path $PSScriptRoot "load-env.ps1"
+        if (Test-Path $loadEnvScript) {
+            & $loadEnvScript -Silent
+        }
+
+        # 创建临时批处理文件来设置环境变量并启动服务
+        $batFile = Join-Path $env:TEMP "start-$($Service.Name)-$(Get-Date -Format 'yyyyMMddHHmmss').bat"
+
+        # 构建批处理文件内容
+        $batContent = "@echo off`r`n"
+        $batContent += "cd /d `"$servicePath`"`r`n`r`n"
+        $batContent += "REM Setting environment variables`r`n"
+
+        # 添加环境变量
+        $envVars = Get-ChildItem Env: | Where-Object {
+            $_.Name -match '^(MYSQL_|REDIS_|NACOS_|SPRING_|GATEWAY_|JAVA_|MAVEN_|LOG_|MANAGEMENT_|DOCKER_|DRUID_|REDIS_POOL_|RABBITMQ_|JASYPT_|JWT_)'
+        }
+
+        foreach ($envVar in $envVars) {
+            $varName = $envVar.Name
+            $varValue = $envVar.Value
+            # 转义特殊字符
+            $varValue = $varValue -replace '"', '""'
+            $varValue = $varValue -replace '&', '^&'
+            $varValue = $varValue -replace '\|', '^|'
+            $varValue = $varValue -replace '<', '^<'
+            $varValue = $varValue -replace '>', '^>'
+            # 如果值包含空格或特殊字符，用引号包裹
+            if ($varValue -match '[ &|<>^]') {
+                $batContent += "set ${varName}=`"${varValue}`"`r`n"
+            } else {
+                $batContent += "set ${varName}=${varValue}`r`n"
+            }
+        }
+
+        $batContent += "`r`nREM Starting service`r`n"
+        $batContent += "mvn spring-boot:run -DskipTests -Dpmd.skip=true`r`n"
+        $batContent += "pause`r`n"
+
+        # 写入批处理文件
+        [System.IO.File]::WriteAllText($batFile, $batContent, [System.Text.Encoding]::ASCII)
+
+        # Start service in new window using batch file
         $startInfo = New-Object System.Diagnostics.ProcessStartInfo
         $startInfo.FileName = "cmd.exe"
-        $startInfo.Arguments = "/k cd /d `"$servicePath`" && mvn spring-boot:run"
+        $startInfo.Arguments = "/k `"$batFile`""
         $startInfo.UseShellExecute = $true
         $startInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Normal
 
         $process = [System.Diagnostics.Process]::Start($startInfo)
 
-        $okMsg = "[OK] $($Service.Name) started (PID: $($process.Id))"
-        Write-ColorOutput Green $okMsg
+        Write-Host "[OK] $($Service.Name) started (PID: $($process.Id))" -ForegroundColor Green
         return $true
-
-    } catch {
-        $errMsg = "[ERROR] Failed to start $($Service.Name): $($_.Exception.Message)"
-        Write-ColorOutput Red $errMsg
+    }
+    catch {
+        Write-Host "[ERROR] Failed to start $($Service.Name) - $($_.Exception.Message)" -ForegroundColor Red
         return $false
     }
 }

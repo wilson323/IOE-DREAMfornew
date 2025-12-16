@@ -11,7 +11,7 @@ services:
     image: mysql:8.0
     container_name: ioedream-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ioedream
       TZ: Asia/Shanghai
     ports:
@@ -21,7 +21,7 @@ services:
       - ./deployment/mysql/init:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-123456}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -34,14 +34,14 @@ services:
   redis:
     image: redis:7-alpine
     container_name: ioedream-redis
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis123}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
       # 修复：健康检查需要提供Redis密码
-      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD:-redis123} ping || exit 1"]
+      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -56,7 +56,7 @@ services:
     image: mysql:8.0
     container_name: ioedream-db-init
     environment:
-      MYSQL_PWD: ${MYSQL_ROOT_PASSWORD:-123456}
+      MYSQL_PWD: ${MYSQL_ROOT_PASSWORD}
       ENVIRONMENT: ${ENVIRONMENT:-dev}  # 环境变量：dev/test/prod
     entrypoint: ["/bin/bash", "-c"]
     command:
@@ -262,12 +262,12 @@ services:
       - MYSQL_SERVICE_PORT=3306
       - MYSQL_SERVICE_DB_NAME=nacos
       - MYSQL_SERVICE_USER=root
-      - MYSQL_SERVICE_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_SERVICE_PASSWORD=${MYSQL_ROOT_PASSWORD}
       # 内置数据库连接池优化（解决启动缓慢问题）
       - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
       # 认证配置
       - NACOS_AUTH_ENABLE=true
-      - NACOS_AUTH_TOKEN=${NACOS_AUTH_TOKEN:-SecretKey012345678901234567890123456789012345678901234567890123456789}
+      - NACOS_AUTH_TOKEN=${NACOS_AUTH_TOKEN}
       - NACOS_AUTH_IDENTITY_KEY=nacos
       - NACOS_AUTH_IDENTITY_VALUE=nacos
       # JVM配置优化（增加内存以避免OOM）
@@ -302,6 +302,31 @@ services:
     networks:
       - ioedream-network
 
+  # RabbitMQ消息队列
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: ioedream-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-ioedream}
+      - TZ=Asia/Shanghai
+    ports:
+      - "5672:5672"          # AMQP端口
+      - "15672:15672"        # 管理界面端口
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_logs:/var/log/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - ioedream-network
+
   # ==================== 微服务 ====================
 
   # API网关服务
@@ -318,16 +343,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-gateway-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8080:8080"
@@ -337,6 +367,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -362,16 +394,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-common-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8088:8088"
@@ -381,6 +418,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -406,16 +445,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-device-comm-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8087:8087"
@@ -425,6 +469,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       common-service:
         condition: service_started
@@ -452,16 +498,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-oa-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8089:8089"
@@ -471,6 +522,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       common-service:
         condition: service_started
@@ -498,16 +551,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-access-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8090:8090"
@@ -517,6 +575,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       common-service:
         condition: service_started
@@ -544,16 +604,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-attendance-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8091:8091"
@@ -563,6 +628,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       common-service:
         condition: service_started
@@ -590,16 +657,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-video-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8092:8092"
@@ -609,6 +681,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       common-service:
         condition: service_started
@@ -636,16 +710,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-consume-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8094:8094"
@@ -655,6 +734,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       common-service:
         condition: service_started
@@ -682,16 +763,21 @@ services:
       # - 'SPRING_CONFIG_IMPORT=optional:nacos:ioedream-visitor-service-docker.yaml'
       - NACOS_SERVER_ADDR=nacos:8848
       - NACOS_NAMESPACE=public
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
+      - NACOS_USERNAME=${NACOS_USERNAME}
+      - NACOS_PASSWORD=${NACOS_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=ioedream
       - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-admin}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-ioedream}
       - TZ=Asia/Shanghai
     ports:
       - "8095:8095"
@@ -701,6 +787,8 @@ services:
       redis:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       common-service:
         condition: service_started
@@ -723,6 +811,10 @@ volumes:
   nacos_data:
     driver: local
   nacos_logs:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  rabbitmq_logs:
     driver: local
 
 # ==================== 网络 ====================

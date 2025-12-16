@@ -45,3 +45,6 @@ public class ConsumeMobileQuickForm {
      */
     private String remark;
 }
+
+
+

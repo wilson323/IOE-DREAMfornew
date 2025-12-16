@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -54,6 +55,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
      * @param amount   变动金额（正数增加，负数减少）
      * @return 影响的行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_consume_account SET balance = balance + #{amount}, " +
             "update_time = NOW(), " +
             "version = version + 1, " +
@@ -70,6 +72,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
      * @param amount    冻结金额
      * @return 影响的行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_consume_account SET frozen_amount = frozen_amount + #{amount}, " +
             "update_time = NOW(), " +
             "version = version + 1, " +
@@ -86,6 +89,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
      * @param amount    解冻金额
      * @return 影响的行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_consume_account SET frozen_amount = frozen_amount - #{amount}, " +
             "update_time = NOW(), " +
             "version = version + 1, " +
@@ -103,6 +107,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
      * @param updateUserId 更新人ID
      * @return 影响的行数
      */
+    @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_consume_account SET status = #{status}, " +
             "update_time = NOW(), " +
             "version = version + 1, " +
@@ -152,3 +157,6 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
             "WHERE account_id = #{accountId} AND deleted_flag = 0")
     AccountEntity selectAccountDetails(@Param("accountId") Long accountId);
 }
+
+
+

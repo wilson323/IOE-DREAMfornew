@@ -10,9 +10,13 @@ import org.springframework.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
@@ -43,6 +47,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
     private DeviceDao deviceDao;
 
     @Override
+    @Observed(name = "video.device.query", contextualName = "video-device-query")
     @Transactional(readOnly = true)
     public PageResult<VideoDeviceVO> queryDevices(VideoDeviceQueryForm queryForm) {
         log.info("[视频设备] 分页查询设备，pageNum={}, pageSize={}, keyword={}, areaId={}, status={}",
@@ -111,9 +116,18 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             log.info("[视频设备] 分页查询设备成功，总数={}", pageResult.getTotal());
             return result;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[视频设备] 分页查询设备参数错误: error={}", e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.warn("[视频设备] 分页查询设备业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[视频设备] 分页查询设备系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw new SystemException("QUERY_VIDEO_DEVICES_SYSTEM_ERROR", "分页查询设备失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[视频设备] 分页查询设备失败", e);
-            return PageResult.of(new java.util.ArrayList<>(), 0L, queryForm.getPageNum(), queryForm.getPageSize());
+            log.error("[视频设备] 分页查询设备未知异常", e);
+            throw new SystemException("QUERY_VIDEO_DEVICES_SYSTEM_ERROR", "分页查询设备失败：" + e.getMessage(), e);
         }
     }
 
@@ -123,6 +137,12 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         log.info("[视频设备] 查询设备详情，deviceId={}", deviceId);
 
         try {
+            // 参数验证
+            if (deviceId == null) {
+                log.warn("[视频设备] 设备ID不能为空");
+                return null;
+            }
+
             DeviceEntity device = deviceDao.selectById(deviceId);
             if (device == null) {
                 log.warn("[视频设备] 设备不存在，deviceId={}", deviceId);
@@ -139,9 +159,18 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             log.info("[视频设备] 查询设备详情成功，deviceId={}", deviceId);
             return vo;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[视频设备] 查询设备详情参数错误: deviceId={}, error={}", deviceId, e.getMessage());
+            return null; // For read-only operations, return null on parameter error
+        } catch (BusinessException e) {
+            log.warn("[视频设备] 查询设备详情业务异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            return null; // For read-only operations, return null on business error
+        } catch (SystemException e) {
+            log.error("[视频设备] 查询设备详情系统异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return null; // For read-only operations, return null on system error
         } catch (Exception e) {
-            log.error("[视频设备] 查询设备详情失败，deviceId={}", deviceId, e);
-            return null;
+            log.error("[视频设备] 查询设备详情未知异常: deviceId={}", deviceId, e);
+            return null; // For read-only operations, return null on unknown error
         }
     }
 

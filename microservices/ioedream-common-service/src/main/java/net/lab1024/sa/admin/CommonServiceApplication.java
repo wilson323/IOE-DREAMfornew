@@ -46,25 +46,28 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 )
 @EnableDiscoveryClient
 @MapperScan(basePackages = {
-    // Common模块所有DAO包（18个，按字母排序）
-    "net.lab1024.sa.common.attendance.dao",
-    "net.lab1024.sa.common.audit.dao",
+    // microservices-common模块DAO
     "net.lab1024.sa.common.auth.dao",
-    "net.lab1024.sa.common.consume.dao",
-    "net.lab1024.sa.common.device.dao",
-    "net.lab1024.sa.common.dict.dao",          // 新增：字典管理DAO
+
+    // microservices-common-business模块DAO
+    "net.lab1024.sa.common.dict.dao",
     "net.lab1024.sa.common.menu.dao",
-    "net.lab1024.sa.common.monitor.dao",
     "net.lab1024.sa.common.notification.dao",
-    "net.lab1024.sa.common.oa.dao",
     "net.lab1024.sa.common.organization.dao",
-    "net.lab1024.sa.common.rbac.dao",
+    "net.lab1024.sa.common.preference.dao",
     "net.lab1024.sa.common.scheduler.dao",
     "net.lab1024.sa.common.system.dao",
+    "net.lab1024.sa.common.system.area.dao",
     "net.lab1024.sa.common.system.employee.dao",
-    "net.lab1024.sa.common.video.dao",
-    "net.lab1024.sa.common.visitor.dao",
-    "net.lab1024.sa.common.workflow.dao"
+    "net.lab1024.sa.common.theme.dao",
+    "net.lab1024.sa.common.workflow.dao",
+
+    // microservices-common-monitor模块DAO
+    "net.lab1024.sa.common.monitor.dao",
+
+    // microservices-common-security模块DAO
+    "net.lab1024.sa.common.audit.dao",
+    "net.lab1024.sa.common.security.auth.dao"
 })
 public class CommonServiceApplication {
 

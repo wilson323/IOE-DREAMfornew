@@ -21,11 +21,32 @@ spring:
     allow-bean-definition-overriding: true
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  # ==================== Redis配置 ====================
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:redis123}
+      database: ${REDIS_DATABASE:0}
+      timeout: 3000
+  # ==================== Redisson配置 ====================
+  redis:
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://${REDIS_HOST:127.0.0.1}:${REDIS_PORT:6379}"
+          password: ${REDIS_PASSWORD:redis123}
+          database: ${REDIS_DATABASE:0}
+          connectionPoolSize: 10
+          connectionMinimumIdleSize: 5
+          connectTimeout: 3000
+          timeout: 3000
   # Spring Boot 2.4+ 要求显式声明配置导入
-  # 升级到Spring Cloud Alibaba 2025.0.0.0后，使用optional前缀允许配置中心可选
-  # 注意：占位符在config.import阶段无法解析，需要直接指定dataId或使用环境变量
-  config:
-    import: ""  # 本地开发时禁用Nacos配置导入
+  # 本地开发环境不需要从Nacos加载配置，使用本地配置文件即可
+  # Docker环境可以通过环境变量SPRING_CONFIG_IMPORT覆盖
+  # config:
+  #   import:
+  #     - "optional:nacos:ioedream-gateway-service-${spring.profiles.active}.yaml"
 
 # ==================== Nacos服务发现配置 ====================
   cloud:
@@ -35,7 +56,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         enabled: true
         register-enabled: true
       config:
@@ -43,83 +64,177 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD}
+        password: ${NACOS_PASSWORD:nacos}
         file-extension: yaml
-        enabled: true  # 升级到2025.0.0.0后可以启用配置中心（可选）
+        enabled: false  # 本地开发环境禁用配置中心，使用本地配置文件
         import-check:
-          enabled: true  # 2025.0.0.0版本支持optional:nacos:，可以启用检查
+          enabled: false
 
     # ==================== Gateway路由配置 ====================
+    # 统一使用 Spring Cloud Gateway 标准命名空间：spring.cloud.gateway
+    # Canonical API 前缀：/api/v1
     gateway:
+      # 全局跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - "http://localhost:*"
+              - "http://127.0.0.1:*"
+              - "http://192.168.*.*:*"
+              - "http://26.26.26.*:*"
+              - "http://172.*.*.*:*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - HEAD
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
       # 启用服务发现路由
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
-
-      # 路由配置 - 按照CLAUDE.md规范的微服务架构
+      # 路由配置 - 按照微服务边界进行匹配
       routes:
-        # ==================== 公共业务服务路由 ====================
-        - id: ioedream-common-service
-          uri: lb://ioedream-common-service
+        # 设备通讯服务路由
+        - id: ioedream-device-comm-service
+          uri: lb://ioedream-device-comm-service
           predicates:
-            - Path=/support/**,/system/**,/security/**
+            - Path=/api/v1/device/**,/api/v1/biometric/**
           filters:
             - StripPrefix=0
 
-        # ==================== OA办公服务路由 ====================
+        # 门禁管理服务路由
+        - id: ioedream-access-service
+          uri: lb://ioedream-access-service
+          predicates:
+            - Path=/api/v1/access/**,/api/v1/mobile/access/**
+          filters:
+            - StripPrefix=0
+
+        # 考勤管理服务路由
+        - id: ioedream-attendance-service
+          uri: lb://ioedream-attendance-service
+          predicates:
+            - Path=/api/v1/attendance/**,/api/attendance/mobile/**,/api/attendance/mobile
+          filters:
+            - StripPrefix=0
+
+        # 消费管理服务路由
+        # 支持路径：/api/v1/consume/**, /api/v1/payment/**, /api/consume/**, /api/mobile/v1/consume/**
+        - id: ioedream-consume-service
+          uri: lb://ioedream-consume-service
+          predicates:
+            - Path=/api/v1/consume/**,/api/v1/payment/**,/api/consume/**,/api/mobile/v1/consume/**
+          filters:
+            - StripPrefix=0
+
+        # 访客管理服务路由
+        - id: ioedream-visitor-service
+          uri: lb://ioedream-visitor-service
+          predicates:
+            - Path=/api/v1/visitor/**,/api/v1/mobile/visitor/**
+          filters:
+            - StripPrefix=0
+
+        # 视频监控服务路由
+        - id: ioedream-video-service
+          uri: lb://ioedream-video-service
+          predicates:
+            - Path=/api/v1/video/**,/api/v1/mobile/video/**
+          filters:
+            - StripPrefix=0
+
+        # OA办公服务路由
         - id: ioedream-oa-service
           uri: lb://ioedream-oa-service
           predicates:
-            - Path=/oa/**
+            - Path=/api/v1/approval/**,/api/v1/workflow/**
           filters:
             - StripPrefix=0
 
-        # ==================== 门禁管理服务路由 ====================
-        - id: ioedream-access-service
+        # 公共业务服务路由（系统/通知/组织/认证/菜单等）
+        - id: ioedream-common-service
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/api/v1/system/**,/api/v1/notification/**,/api/v1/area-device/**,/api/v1/area-permission/**,/api/v1/auth/**,/api/v1/menu/**
+          filters:
+            - StripPrefix=0
+
+        # 区域权限路由（门禁服务）
+        - id: ioedream-access-area-permission
+          uri: lb://ioedream-access-service
+          predicates:
+            - Path=/api/v1/area-permission/**
+          filters:
+            - StripPrefix=0
+
+        # ==================== 兼容入口（legacy → canonical） ====================
+        - id: legacy-access-to-api-v1
           uri: lb://ioedream-access-service
           predicates:
             - Path=/access/**
           filters:
-            - StripPrefix=0
+            - RewritePath=/access(?<segment>/?.*), /api/v1/access$\{segment}
 
-        # ==================== 考勤管理服务路由 ====================
-        - id: ioedream-attendance-service
+        - id: legacy-attendance-to-api-v1
           uri: lb://ioedream-attendance-service
           predicates:
             - Path=/attendance/**
           filters:
-            - StripPrefix=0
+            - RewritePath=/attendance(?<segment>/?.*), /api/v1/attendance$\{segment}
 
-        # ==================== 消费管理服务路由 ====================
-        - id: ioedream-consume-service
+        - id: legacy-consume-to-api-v1
           uri: lb://ioedream-consume-service
           predicates:
             - Path=/consume/**
           filters:
-            - StripPrefix=0
+            - RewritePath=/consume(?<segment>/?.*), /api/v1/consume$\{segment}
 
-        # ==================== 访客管理服务路由 ====================
-        - id: ioedream-visitor-service
+        - id: legacy-visitor-to-api-v1
           uri: lb://ioedream-visitor-service
           predicates:
             - Path=/visitor/**
           filters:
-            - StripPrefix=0
+            - RewritePath=/visitor(?<segment>/?.*), /api/v1/visitor$\{segment}
 
-        # ==================== 视频监控服务路由 ====================
-        - id: ioedream-video-service
+        - id: legacy-video-to-api-v1
           uri: lb://ioedream-video-service
           predicates:
             - Path=/video/**
           filters:
-            - StripPrefix=0
+            - RewritePath=/video(?<segment>/?.*), /api/v1/video$\{segment}
 
-        # ==================== 设备通讯服务路由 ====================
-        - id: ioedream-device-comm-service
+        - id: legacy-device-to-api-v1
           uri: lb://ioedream-device-comm-service
           predicates:
             - Path=/device/**
+          filters:
+            - RewritePath=/device(?<segment>/?.*), /api/v1/device$\{segment}
+
+        - id: legacy-system-to-api-v1
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/system/**
+          filters:
+            - RewritePath=/system(?<segment>/?.*), /api/v1/system$\{segment}
+
+        - id: legacy-support-pass-through
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/support/**
+          filters:
+            - StripPrefix=0
+
+        - id: legacy-security-pass-through
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/security/**
           filters:
             - StripPrefix=0
 
@@ -143,6 +258,13 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
+# ==================== 安全配置 ====================
+security:
+  jwt:
+    secret: ${JWT_SECRET:ioedream-gateway-service-jwt-secret-key-2025-must-be-at-least-256-bits-long}
+    expiration: ${JWT_EXPIRATION:86400000}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
 # ==================== Actuator监控配置 ====================
 management:
   endpoints:
@@ -160,3 +282,11 @@ management:
     metrics:
       export:
         enabled: true
+  # 分布式追踪配置（Micrometer Tracing）
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${SLEUTH_SAMPLER_PROBABILITY:1.0}
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}

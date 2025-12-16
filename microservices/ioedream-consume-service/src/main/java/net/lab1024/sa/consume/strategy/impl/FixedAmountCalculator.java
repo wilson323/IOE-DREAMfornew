@@ -144,3 +144,6 @@ public class FixedAmountCalculator implements ConsumeAmountCalculator {
     }
 }
 
+
+
+

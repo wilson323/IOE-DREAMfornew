@@ -250,19 +250,24 @@ class AccountControllerTest {
     @Test
     @DisplayName("测试删除账户-账户ID为null")
     void testDeleteAccount_AccountIdIsNull() {
-        // When & Then
-        // 根据Spring MVC的行为，路径参数为null时可能返回400错误
-        assertThrows(Exception.class, () -> {
-            accountController.deleteAccount(null);
-        });
+        // When
+        ResponseDTO<Boolean> result = accountController.deleteAccount(null);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.getOk());
     }
 
     @Test
     @DisplayName("测试查询账户-账户ID为null")
     void testGetAccountById_AccountIdIsNull() {
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            accountController.getAccountById(null);
-        });
+        // When
+        ResponseDTO<AccountEntity> result = accountController.getAccountById(null);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.getOk());
     }
 }
+
+

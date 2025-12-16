@@ -1,4 +1,4 @@
-# -*- coding: utf-8-with-bom -*-
+# -*- coding: utf-8 -*-
 <#
 .SYNOPSIS
     IOE-DREAM Smart Campus Platform - Anti-Flash Exit Startup Script
@@ -18,8 +18,8 @@
     .\start.ps1 -StatusOnly
 
 .NOTES
-    Version: v5.1.0 - Interactive Menu Edition
-    Encoding: UTF-8 with BOM (Required)
+    Version: v5.1.1 - Interactive Menu Edition (Encoding Fixed)
+    Encoding: UTF-8 without BOM (Project Standard)
     Compatibility: PowerShell 5.1+ and PowerShell Core 7.0+
     Author: IOE-DREAM Architecture Committee
 
@@ -31,7 +31,7 @@
 #>
 
 # Parameter definition (must be at the top of script)
-param([switch]$StatusOnly, [switch]$NoMenu)
+param([switch]$StatusOnly, [switch]$NoMenu, [switch]$SelfTest)
 
 # ============================================================================
 # Layer 1: Encoding Standardization and Version Compatibility Check
@@ -107,14 +107,34 @@ function Test-ScriptEncoding {
         $psVersion = $PSVersionTable.PSVersion.Major
         $isPowerShell7 = $psVersion -ge 7
 
-        # PowerShell 5.1 requires BOM, PowerShell 7.x supports BOM-less
-        $versionCompatible = if ($isPowerShell7) { $true } else { $hasBom }
-        $needsFix = ($psVersion -lt 7) -and (-not $hasBom)
+        # NOTE: Project standard is UTF-8 without BOM.
+        # Windows PowerShell 5.1 may mis-parse/mis-display scripts when:
+        #   - the file is UTF-8 without BOM, AND
+        #   - the script contains non-ASCII characters.
+        # Therefore we do NOT enforce BOM here; we only warn on the risky combination.
+        $containsNonAscii = $false
+        try {
+            $content = Get-Content -LiteralPath $ScriptPath -Raw -ErrorAction Stop
+            foreach ($ch in $content.ToCharArray()) {
+                if ([int][char]$ch -gt 127) {
+                    $containsNonAscii = $true
+                    break
+                }
+            }
+        } catch {
+            # If read fails, stay conservative but do not block startup
+            $containsNonAscii = $true
+        }
+
+        # PowerShell 7+ handles BOM/no-BOM better; 5.1 only warns for "no BOM + non-ASCII" risk.
+        $versionCompatible = $true
+        $needsFix = (-not $isPowerShell7) -and (-not $hasBom) -and $containsNonAscii
 
         return @{
             HasBOM = $hasBom
             VersionCompatible = $versionCompatible
             NeedsFix = $needsFix
+            ContainsNonAscii = $containsNonAscii
             PowerShellVersion = $psVersion
             IsPowerShell7 = $isPowerShell7
         }
@@ -181,83 +201,272 @@ function Write-SafeLog {
 }
 
 # ============================================================================
-# Layer 4: ASCII Art and Animation
+# Layer 4: ASCII Art and Animation (Pure ASCII - Encoding Safe)
 # ============================================================================
+function Get-IOELogoLines {
+    <#
+    .SYNOPSIS
+        Get startup ASCII logo lines (pure ASCII to avoid encoding issues)
+
+    .DESCRIPTION
+        Returns a string array; each element is one line of logo/title text.
+        Intentionally uses ASCII-only characters to stay safe in Windows PowerShell 5.1.
+
+    .PARAMETER Variant
+        Logo variant:
+        - Full: includes title/subtitle
+        - Compact: logo only
+
+    .OUTPUTS
+        System.String[]
+
+    .EXAMPLE
+        $lines = Get-IOELogoLines -Variant "Full"
+    #>
+    param(
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Full", "Compact")]
+        [string]$Variant = "Full"
+    )
+
+    $logo = @(
+        "   ___ ____  _____       ____  ____  _____    _    __  __",
+        "  |_ _|  _ \| ____|     |  _ \|  _ \| ____|  / \  |  \/  |",
+        "   | || | | |  _|   ___ | | | | |_) |  _|   / _ \ | |\/| |",
+        "   | || |_| | |___ |___|| |_| |  _ <| |___ / ___ \| |  | |",
+        "  |___|____/|_____|     |____/|_| \_\_____/_/   \_\_|  |_|"
+    )
+
+    if ($Variant -eq "Compact") {
+        return $logo
+    }
+
+    # NOTE: separators and title text are ASCII-only as well
+    return $logo + @(
+        "  =====================================================================",
+        "   Smart Campus Platform - Interactive Startup Script v5.1.0",
+        "  ====================================================================="
+    )
+}
+
+function Get-IOEColorPalette {
+    <#
+    .SYNOPSIS
+        Get color palette for logo rendering
+
+    .DESCRIPTION
+        Provides stable color rotation sequences using built-in PowerShell color names.
+
+    .PARAMETER Mode
+        Palette mode:
+        - Rainbow: rainbow rotation
+        - Calm: calm rotation
+
+    .OUTPUTS
+        System.String[]
+
+    .EXAMPLE
+        $colors = Get-IOEColorPalette -Mode "Rainbow"
+    #>
+    param(
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Rainbow", "Calm")]
+        [string]$Mode = "Rainbow"
+    )
+
+    if ($Mode -eq "Calm") {
+        return @("Cyan", "Green", "Blue", "White")
+    }
+
+    return @("Cyan", "Magenta", "Yellow", "Green", "Blue", "White", "Red")
+}
+
+function Write-IOELogo {
+    <#
+    .SYNOPSIS
+        Render IOE-DREAM startup logo (wave/highlight/static gradient)
+
+    .DESCRIPTION
+        Single logo rendering entry to avoid duplicated ASCII art blocks.
+        All output goes through Write-SafeLog to keep multi-layer output safety guarantees.
+
+    .PARAMETER Lines
+        Logo line array (from Get-IOELogoLines)
+
+    .PARAMETER Frame
+        Animation frame index (color offset / highlight position)
+
+    .PARAMETER Palette
+        Color sequence
+
+    .PARAMETER Style
+        Render style:
+        - Wave: line-level wave gradient (recommended)
+        - Blink: full logo blinking
+        - Static: static gradient
+        - Sweep: sweep highlight (column-based "scan light" effect)
+
+    .PARAMETER Clear
+        Clear screen before rendering
+
+    .EXAMPLE
+        Write-IOELogo -Lines (Get-IOELogoLines) -Frame 3 -Style Wave -Clear
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [AllowEmptyString()]
+        [string[]]$Lines,
+
+        [Parameter(Mandatory = $false)]
+        [int]$Frame = 0,
+
+        [Parameter(Mandatory = $false)]
+        [string[]]$Palette = (Get-IOEColorPalette -Mode "Rainbow"),
+
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Wave", "Blink", "Static", "Sweep")]
+        [string]$Style = "Wave",
+
+        [Parameter(Mandatory = $false)]
+        [switch]$Clear
+    )
+
+    if ($Clear) {
+        Clear-Host
+    }
+
+    $highlightIndex = $Frame % [Math]::Max(1, $Lines.Count)
+    $maxLen = 0
+    foreach ($l in $Lines) {
+        if ($null -ne $l) {
+            $len = $l.Length
+            if ($len -gt $maxLen) { $maxLen = $len }
+        }
+    }
+    for ($i = 0; $i -lt $Lines.Count; $i++) {
+        $line = $Lines[$i]
+        if ($null -eq $line) { $line = "" }
+
+        if ($line.Trim() -eq "") {
+            Write-SafeLog "" "White"
+            continue
+        }
+
+        $color = "White"
+        switch ($Style) {
+            "Blink" {
+                # NOTE: Blink is full-logo blink; avoid per-character rendering for performance
+                $color = if (($Frame % 2) -eq 0) { "Cyan" } else { "Magenta" }
+            }
+            "Static" {
+                # NOTE: Static gradient is line-based to keep output stable
+                $color = $Palette[$i % $Palette.Count]
+            }
+            "Sweep" {
+                <#
+                .SYNOPSIS
+                    Sweep highlight rendering (column-based)
+
+                .DESCRIPTION
+                    Uses three-part output (prefix / highlight / suffix) to simulate a sweep
+                    without per-character writes (performance-friendly).
+                    Still uses Write-SafeLog to keep the output safety strategy unchanged.
+                #>
+
+                # Sweep parameters (ASCII-only output; White/Yellow highlight is most visible)
+                $sweepWidth = 8
+                $baseColor = $Palette[($i + $Frame) % $Palette.Count]
+                $shineColor = "White"
+                $edgeColor = "Yellow"
+
+                # Sweep center position cycles in [0, maxLen + sweepWidth)
+                $span = [Math]::Max(1, ($maxLen + $sweepWidth))
+                $pos = $Frame % $span
+
+                # Handle short lines: compute with length, do not print padding characters
+                $lineLen = $line.Length
+                $start = $pos - $sweepWidth
+                $end = $pos
+
+                # Intersect with current line range
+                $hs = [Math]::Max(0, $start)
+                $he = [Math]::Min($lineLen, $end)
+
+                if ($hs -ge $he) {
+                    # Not sweeping this line in current frame: print base color
+                    Write-SafeLog $line $baseColor
+                } else {
+                    # Three-part output: prefix(base) + mid(highlight) + suffix(base)
+                    $prefix = if ($hs -gt 0) { $line.Substring(0, $hs) } else { "" }
+                    $mid = $line.Substring($hs, ($he - $hs))
+                    $suffix = if ($he -lt $lineLen) { $line.Substring($he) } else { "" }
+
+                    if ($prefix -ne "") { Write-SafeLog $prefix $baseColor -NoNewline }
+
+                    # Highlight segment: Yellow edges + White center for a "light band" feel
+                    if ($mid.Length -le 2) {
+                        Write-SafeLog $mid $shineColor -NoNewline
+                    } else {
+                        $m0 = $mid.Substring(0, 1)
+                        $m1 = $mid.Substring(1, ($mid.Length - 2))
+                        $m2 = $mid.Substring($mid.Length - 1, 1)
+                        Write-SafeLog $m0 $edgeColor -NoNewline
+                        Write-SafeLog $m1 $shineColor -NoNewline
+                        Write-SafeLog $m2 $edgeColor -NoNewline
+                    }
+
+                    # Suffix: base color and end the line
+                    Write-SafeLog $suffix $baseColor
+                }
+            }
+            default {
+                # Wave: frame-based wave effect; emphasize highlight line in White
+                $color = $Palette[($i + $Frame) % $Palette.Count]
+                if ($i -eq $highlightIndex) {
+                    $color = "White"
+                }
+            }
+        }
+
+        if ($Style -ne "Sweep") {
+            Write-SafeLog $line $color
+        }
+    }
+}
+
 function Show-IOEArt {
     <#
     .SYNOPSIS
-        Display IOE ASCII art with animated colors (compact version)
+        Display IOE ASCII art with animated colors (pure ASCII version)
+    .NOTES
+        Uses only standard ASCII characters to avoid encoding issues
     #>
     param([int]$AnimationStep = 0)
 
-    # IOE ASCII Art (compact and beautiful)
-    $ioeArt = @"
-
-    ██╗ ██████╗ ███████╗    ██████╗ ██████╗ ███████╗ █████╗ ███╗   ███╗
-    ██║██╔═══██╗██╔════╝    ██╔══██╗██╔══██╗██╔════╝██╔══██╗████╗ ████║
-    ██║██║   ██║█████╗      ██║  ██║██████╔╝█████╗  ███████║██╔████╔██║
-    ██║██║   ██║██╔══╝      ██║  ██║██╔══██╗██╔══╝  ██╔══██║██║╚██╔╝██║
-    ██║╚██████╔╝███████╗    ██████╔╝██████╔╝███████╗██║  ██║██║ ╚═╝ ██║
-    ╚═╝ ╚═════╝ ╚══════╝    ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
-"@
-
-    # Color animation: cycle through colors
-    $colors = @("Cyan", "Magenta", "Yellow", "Green", "Blue", "White")
-    $colorIndex = $AnimationStep % $colors.Count
-    $currentColor = $colors[$colorIndex]
-
-    # Display ASCII art with color
-    $lines = $ioeArt -split "`n"
-    foreach ($line in $lines) {
-        if ($line.Trim() -ne "") {
-            Write-SafeLog $line $currentColor
-        } else {
-            Write-SafeLog $line "White"
-        }
-    }
-
-    return $colorIndex
+    $lines = Get-IOELogoLines -Variant "Compact"
+    $palette = Get-IOEColorPalette -Mode "Calm"
+    Write-IOELogo -Lines $lines -Frame $AnimationStep -Palette $palette -Style "Wave"
+    return ($AnimationStep % $palette.Count)
 }
 
 function Show-IOEArtAnimated {
     <#
     .SYNOPSIS
         Display IOE ASCII art with smooth color animation (rainbow effect)
+    .NOTES
+        Uses only standard ASCII characters to avoid encoding issues
     #>
     param([int]$Duration = 2)
 
-    # Enhanced IOE ASCII Art
-    $ioeArt = @"
+    $lines = Get-IOELogoLines -Variant "Full"
+    $palette = Get-IOEColorPalette -Mode "Rainbow"
 
-    ██╗ ██████╗ ███████╗    ██████╗ ██████╗ ███████╗ █████╗ ███╗   ███╗
-    ██║██╔═══██╗██╔════╝    ██╔══██╗██╔══██╗██╔════╝██╔══██╗████╗ ████║
-    ██║██║   ██║█████╗      ██║  ██║██████╔╝█████╗  ███████║██╔████╔██║
-    ██║██║   ██║██╔══╝      ██║  ██║██╔══██╗██╔══╝  ██╔══██║██║╚██╔╝██║
-    ██║╚██████╔╝███████╗    ██████╔╝██████╔╝███████╗██║  ██║██║ ╚═╝ ██║
-    ╚═╝ ╚═════╝ ╚══════╝    ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
-"@
-
-    # Rainbow color sequence
-    $rainbowColors = @("Cyan", "Magenta", "Yellow", "Green", "Blue", "White", "Red")
-
-    # Display with rainbow animation
-    $lines = $ioeArt -split "`n"
-    $frameCount = $Duration * 10  # 10 frames per second
-
+    # Sweep looks better at ~20fps while staying CPU-friendly
+    $frameCount = [Math]::Max(1, ($Duration * 20))
     for ($frame = 0; $frame -lt $frameCount; $frame++) {
-        Clear-Host
-        $colorIndex = $frame % $rainbowColors.Count
-        $currentColor = $rainbowColors[$colorIndex]
-
-        foreach ($line in $lines) {
-            if ($line.Trim() -ne "") {
-                Write-SafeLog $line $currentColor
-            } else {
-                Write-SafeLog $line "White"
-            }
-        }
-
-        Start-Sleep -Milliseconds 100
+        Write-IOELogo -Lines $lines -Frame $frame -Palette $palette -Style "Sweep" -Clear
+        Start-Sleep -Milliseconds 50
     }
 }
 
@@ -265,32 +474,18 @@ function Show-IOEArtWithBlink {
     <#
     .SYNOPSIS
         Display IOE ASCII art with blinking effect (quick attention grabber)
+    .NOTES
+        Uses only standard ASCII characters to avoid encoding issues
     #>
     param([int]$Blinks = 2)
 
-    $ioeArt = @"
+    $lines = Get-IOELogoLines -Variant "Compact"
+    $palette = Get-IOEColorPalette -Mode "Calm"
+    $blinkCount = [Math]::Max(1, $Blinks)
 
-    ██╗ ██████╗ ███████╗    ██████╗ ██████╗ ███████╗ █████╗ ███╗   ███╗
-    ██║██╔═══██╗██╔════╝    ██╔══██╗██╔══██╗██╔════╝██╔══██╗████╗ ████║
-    ██║██║   ██║█████╗      ██║  ██║██████╔╝█████╗  ███████║██╔████╔██║
-    ██║██║   ██║██╔══╝      ██║  ██║██╔══██╗██╔══╝  ██╔══██║██║╚██╔╝██║
-    ██║╚██████╔╝███████╗    ██████╔╝██████╔╝███████╗██║  ██║██║ ╚═╝ ██║
-    ╚═╝ ╚═════╝ ╚══════╝    ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
-"@
-
-    for ($i = 0; $i -lt $Blinks; $i++) {
-        Clear-Host
-        # Alternate between Cyan and Magenta for eye-catching effect
-        $color = if ($i % 2 -eq 0) { "Cyan" } else { "Magenta" }
-        $lines = $ioeArt -split "`n"
-        foreach ($line in $lines) {
-            if ($line.Trim() -ne "") {
-                Write-SafeLog $line $color
-            } else {
-                Write-SafeLog $line "White"
-            }
-        }
-        # Quick blink for attention
+    for ($i = 0; $i -lt $blinkCount; $i++) {
+        # Blink: full-logo blink with clear-screen; avoid too many writes
+        Write-IOELogo -Lines $lines -Frame $i -Palette $palette -Style "Blink" -Clear
         Start-Sleep -Milliseconds 200
     }
 }
@@ -299,39 +494,16 @@ function Show-IOEArtStatic {
     <#
     .SYNOPSIS
         Display IOE ASCII art with static beautiful colors
+    .NOTES
+        Uses only standard ASCII characters to avoid encoding issues
     #>
 
-    # Beautiful IOE ASCII Art (optimized for console)
-    $ioeArt = @"
+    $lines = Get-IOELogoLines -Variant "Full"
+    $palette = Get-IOEColorPalette -Mode "Rainbow"
 
-    ██╗ ██████╗ ███████╗    ██████╗ ██████╗ ███████╗ █████╗ ███╗   ███╗
-    ██║██╔═══██╗██╔════╝    ██╔══██╗██╔══██╗██╔════╝██╔══██╗████╗ ████║
-    ██║██║   ██║█████╗      ██║  ██║██████╔╝█████╗  ███████║██╔████╔██║
-    ██║██║   ██║██╔══╝      ██║  ██║██╔══██╗██╔══╝  ██╔══██║██║╚██╔╝██║
-    ██║╚██████╔╝███████╗    ██████╔╝██████╔╝███████╗██║  ██║██║ ╚═╝ ██║
-    ╚═╝ ╚═════╝ ╚══════╝    ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
-
-    ════════════════════════════════════════════════════════════════════
-     Smart Campus Platform - Interactive Startup Script v5.1.0
-    ════════════════════════════════════════════════════════════════════
-"@
-
-    # Display with gradient colors (rainbow effect)
-    $lines = $ioeArt -split "`n"
-    $colors = @("Cyan", "Cyan", "Cyan", "Cyan", "Cyan", "Cyan", "Magenta", "Magenta", "Yellow", "Yellow", "Green", "Green")
-    $lineIndex = 0
-
-    foreach ($line in $lines) {
-        if ($line.Trim() -ne "") {
-            $color = if ($lineIndex -lt $colors.Count) { $colors[$lineIndex] } else { "White" }
-            Write-SafeLog $line $color
-            $lineIndex++
-            # Small delay for smooth animation effect
-            Start-Sleep -Milliseconds 20
-        } else {
-            Write-SafeLog $line "White"
-        }
-    }
+    # Static: no clear-screen; single gradient output with a tiny delay
+    Write-IOELogo -Lines $lines -Frame 0 -Palette $palette -Style "Static"
+    Start-Sleep -Milliseconds 30
 }
 
 # ============================================================================
@@ -608,7 +780,7 @@ function Start-AllServices {
         Write-SafeLog "[INFO] Using development startup script (mvn spring-boot:run)" "Cyan"
         Write-SafeLog "This will start services directly without Docker" "Gray"
         Write-SafeLog "" "White"
-        
+
         try {
             # Execute the start-all-services script
             & powershell -ExecutionPolicy Bypass -File $startAllScript -SkipBuild -WaitForReady
@@ -752,7 +924,7 @@ function Start-AllServices {
     $serviceNames = [regex]::Matches($composeContent, '^\s+([a-z0-9-]+):\s*$', [System.Text.RegularExpressions.RegexOptions]::Multiline) | ForEach-Object { $_.Groups[1].Value }
     $hasFrontendService = $false
     $frontendServiceName = $null
-    
+
     foreach ($name in $serviceNames) {
         if ($name -match 'web-admin|frontend|smart-admin|admin') {
             $hasFrontendService = $true
@@ -1579,6 +1751,182 @@ function Restart-AllServices {
 }
 
 # ============================================================================
+# Layer 7: Startup Self-Test (Visibility + Accuracy)
+# ============================================================================
+function Invoke-StartupSelfCheck {
+    <#
+    .SYNOPSIS
+        Startup self-check to surface errors early (ASCII output only)
+
+    .DESCRIPTION
+        This function is designed to solve "can't see the error" problems.
+        It performs non-destructive checks and prints results in plain ASCII
+        so output is readable even in Windows PowerShell 5.1.
+
+    .PARAMETER ScriptPath
+        Full path of current script.
+
+    .PARAMETER ProjectRoot
+        Project root directory.
+
+    .OUTPUTS
+        Hashtable
+
+    .EXAMPLE
+        Invoke-StartupSelfCheck -ScriptPath $scriptPath -ProjectRoot $projectRoot
+    #>
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$ScriptPath,
+
+        [Parameter(Mandatory = $false)]
+        [string]$ProjectRoot
+    )
+
+    $result = @{
+        Ok = $true
+        ScriptParseOk = $true
+        ScriptPathOk = $false
+        ProjectRootOk = $false
+        Notes = @()
+    }
+
+    # 1) Script path check
+    try {
+        if ($ScriptPath -and (Test-Path -LiteralPath $ScriptPath)) {
+            $result.ScriptPathOk = $true
+        } else {
+            $result.Ok = $false
+            $result.ScriptPathOk = $false
+            $result.Notes += "ScriptPath not found: $ScriptPath"
+        }
+    } catch {
+        $result.Ok = $false
+        $result.ScriptPathOk = $false
+        $result.Notes += "ScriptPath check failed: $($_.Exception.Message)"
+    }
+
+    # 2) Script parse check (hard fail if syntax invalid)
+    try {
+        if ($result.ScriptPathOk) {
+            $tokens = $null
+            $parseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($ScriptPath, [ref]$tokens, [ref]$parseErrors)
+            if ($parseErrors -and $parseErrors.Count -gt 0) {
+                $result.Ok = $false
+                $result.ScriptParseOk = $false
+                foreach ($e in $parseErrors) {
+                    $result.Notes += ("ParseError: line {0}, col {1}: {2}" -f $e.Extent.StartLineNumber, $e.Extent.StartColumnNumber, $e.Message)
+                }
+            }
+        }
+    } catch {
+        $result.Ok = $false
+        $result.ScriptParseOk = $false
+        $result.Notes += "ParseFile failed: $($_.Exception.Message)"
+    }
+
+    # 3) Project root check
+    try {
+        if ($ProjectRoot -and (Test-Path -LiteralPath $ProjectRoot)) {
+            $result.ProjectRootOk = $true
+        } else {
+            $result.ProjectRootOk = $false
+            $result.Notes += "ProjectRoot not found: $ProjectRoot"
+        }
+    } catch {
+        $result.ProjectRootOk = $false
+        $result.Notes += "ProjectRoot check failed: $($_.Exception.Message)"
+    }
+
+    # 4) Key path hints (non-fatal)
+    try {
+        if ($ProjectRoot -and (Test-Path -LiteralPath $ProjectRoot)) {
+            $paths = @(
+                "docker-compose-all.yml",
+                "microservices",
+                "scripts",
+                "smart-admin-web-javascript",
+                "smart-app"
+            )
+            foreach ($p in $paths) {
+                $full = Join-Path $ProjectRoot $p
+                if (-not (Test-Path -LiteralPath $full)) {
+                    $result.Notes += "Missing path: $full"
+                }
+            }
+        }
+    } catch {
+        $result.Notes += "Key path scan failed: $($_.Exception.Message)"
+    }
+
+    # 5) Print summary (ASCII only)
+    Write-SafeLog "" "White"
+    Write-SafeLog "[SelfTest] Startup self-check summary" "Cyan"
+    Write-SafeLog ("  PowerShell: {0}" -f $PSVersionTable.PSVersion) "Gray"
+    Write-SafeLog ("  OutputEncoding: {0}" -f [Console]::OutputEncoding.EncodingName) "Gray"
+    Write-SafeLog ("  ScriptPathOk: {0}" -f $result.ScriptPathOk) "Gray"
+    Write-SafeLog ("  ScriptParseOk: {0}" -f $result.ScriptParseOk) "Gray"
+    Write-SafeLog ("  ProjectRootOk: {0}" -f $result.ProjectRootOk) "Gray"
+
+    if ($result.Notes.Count -gt 0) {
+        Write-SafeLog "  Notes:" "Yellow"
+        foreach ($n in $result.Notes) {
+            Write-SafeLog ("    - {0}" -f $n) "Yellow"
+        }
+    } else {
+        Write-SafeLog "  Notes: (none)" "Green"
+    }
+    Write-SafeLog "" "White"
+
+    return $result
+}
+
+function Invoke-StartupSelfTestMode {
+    <#
+    .SYNOPSIS
+        Run self-test mode to surface errors and demo the banner animation
+
+    .DESCRIPTION
+        This mode does NOT start services and does NOT require user input.
+        It prints diagnostics and plays the "Sweep" banner once.
+
+    .PARAMETER ScriptPath
+        Full path of current script.
+
+    .PARAMETER ProjectRoot
+        Project root directory.
+
+    .EXAMPLE
+        .\start.ps1 -SelfTest
+    #>
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$ScriptPath,
+
+        [Parameter(Mandatory = $false)]
+        [string]$ProjectRoot
+    )
+
+    Clear-Host
+    try {
+        # Short animation demo (sweep)
+        Show-IOEArtAnimated -Duration 2
+    } catch {
+        Write-SafeLog ("[ERROR] Banner demo failed: {0}" -f $_.Exception.Message) "Red"
+    }
+
+    $check = Invoke-StartupSelfCheck -ScriptPath $ScriptPath -ProjectRoot $ProjectRoot
+    if (-not $check.Ok) {
+        Write-SafeLog "[SelfTest] Result: NOT OK" "Red"
+        exit 1
+    }
+
+    Write-SafeLog "[SelfTest] Result: OK" "Green"
+    exit 0
+}
+
+# ============================================================================
 # Layer 7: Main Execution Logic (Multi-Layer Exception Protection)
 # ============================================================================
 
@@ -1593,8 +1941,9 @@ $scriptPath = $MyInvocation.MyCommand.Path
 if ($scriptPath) {
     $encodingCheck = Test-ScriptEncoding -ScriptPath $scriptPath
     if ($encodingCheck.NeedsFix) {
-        Write-SafeLog "WARNING: Script encoding issue - PowerShell $($encodingCheck.PowerShellVersion) requires UTF-8 with BOM" "Yellow"
-        Write-SafeLog "   Please save the file as UTF-8 with BOM format in your editor" "Yellow"
+        Write-SafeLog "WARNING: Potential encoding risk detected (Windows PowerShell 5.1 + UTF-8 without BOM + non-ASCII content)" "Yellow"
+        Write-SafeLog "   Recommendation A (preferred): Keep this script strictly ASCII (no non-ASCII characters)" "Gray"
+        Write-SafeLog "   Recommendation B: Save as UTF-8 with BOM to reduce PowerShell 5.1 parsing/display issues" "Gray"
     }
 }
 
@@ -1608,6 +1957,11 @@ try {
     $projectRoot = $PSScriptRoot
     if (-not $projectRoot) {
         $projectRoot = (Get-Location).Path
+    }
+
+    # SelfTest mode: print diagnostics and exit (no menu, no service start)
+    if ($SelfTest) {
+        Invoke-StartupSelfTestMode -ScriptPath $scriptPath -ProjectRoot $projectRoot
     }
 
     # Interactive menu mode or direct status check
@@ -1631,92 +1985,92 @@ try {
                 "1" {
                     Build-Backend -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "2" {
                     Build-Frontend -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "3" {
                     Build-Mobile -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "4" {
                     Start-BackendServicesOnly -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "5" {
                     Start-FrontendServiceOnly -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "6" {
                     Start-MobileServiceOnly -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "7" {
                     Start-FrontendAndBackend -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "8" {
                     Start-AllServices -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "9" {
                     Deploy-Docker -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "S" {
                     Show-ServiceStatus
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "T" {
                     Stop-AllServices -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "R" {
                     Restart-AllServices -ProjectRoot $projectRoot
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "U" {
                     Show-AccessURLs
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
                 "0" {
                     Write-SafeLog "" "White"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Write-SafeLog "Thank you for using IOE-DREAM!" "Green"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     $continue = $false
                 }
                 default {
                     Write-SafeLog "" "White"
                     Write-SafeLog "[ERROR] Invalid choice. Please select a valid option." "Red"
-                    Write-SafeLog "═══════════════════════════════════════════════════════════" "Gray"
+                    Write-SafeLog "===========================================================" "Gray"
                     Wait-ForUserInput -Message "Press any key to return to menu..."
                 }
             }

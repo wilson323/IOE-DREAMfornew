@@ -283,3 +283,6 @@ public class ConsumeTransactionEntity extends BaseEntity {
         this.productDetails = productDetails;
     }
 }
+
+
+

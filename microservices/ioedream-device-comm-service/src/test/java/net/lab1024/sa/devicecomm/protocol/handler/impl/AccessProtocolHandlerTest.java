@@ -4,8 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,18 +15,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpMethod;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.devicecomm.protocol.handler.ProtocolParseException;
 import net.lab1024.sa.devicecomm.protocol.handler.ProtocolProcessException;
 import net.lab1024.sa.devicecomm.protocol.message.ProtocolMessage;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 /**
  * AccessProtocolHandler单元测试
  * <p>
- * 目标覆盖率：≥80%
+ * 目标覆盖率：>= 80%
  * 测试范围：门禁协议处理器的核心功能
  * - 消息解析（parseMessage）
  * - 消息验证（validateMessage）
@@ -45,61 +46,31 @@ class AccessProtocolHandlerTest {
     @Mock
     private GatewayServiceClient gatewayServiceClient;
 
+    @Mock
+    private RabbitTemplate rabbitTemplate;
+
     @InjectMocks
     private AccessProtocolHandler accessProtocolHandler;
 
     private byte[] validMessageBytes;
     private byte[] invalidHeaderBytes;
     private byte[] shortMessageBytes;
+    private MeterRegistry meterRegistry;
 
     @BeforeEach
     void setUp() {
-        // 准备有效的测试消息（模拟门禁事件消息）
-        // 协议头(2字节) + 消息类型(1字节) + 设备编号(8字节) + 用户ID(4字节) + 通行时间(4字节) + 通行类型(1字节) + 门号(1字节) + 通行方式(1字节) + 校验和(2字节)
-        validMessageBytes = new byte[24];
-        ByteBuffer buffer = ByteBuffer.wrap(validMessageBytes).order(ByteOrder.LITTLE_ENDIAN);
-        
-        // 协议头
-        buffer.put((byte) 0xAA);
-        buffer.put((byte) 0x55);
-        
-        // 消息类型（0x01 = 门禁事件）
-        buffer.put((byte) 0x01);
-        
-        // 设备编号（8字节，填充"DEV001  "）
-        byte[] deviceCode = "DEV001  ".getBytes();
-        buffer.put(deviceCode);
-        
-        // 用户ID（4字节）
-        buffer.putInt(1001);
-        
-        // 通行时间（4字节，Unix时间戳）
-        buffer.putInt((int) (System.currentTimeMillis() / 1000));
-        
-        // 通行类型（1字节：0-进入）
-        buffer.put((byte) 0x00);
-        
-        // 门号（1字节）
-        buffer.put((byte) 0x01);
-        
-        // 通行方式（1字节：1-人脸）
-        buffer.put((byte) 0x01);
-        
-        // 计算并填充校验和（简化：累加和）
-        int checksum = 0;
-        for (int i = 2; i < validMessageBytes.length - 2; i++) {
-            checksum += validMessageBytes[i] & 0xFF;
-        }
-        checksum = checksum & 0xFFFF;
-        buffer.putShort((short) checksum);
+        // 门禁协议当前采用HTTP文本格式（key=value，制表符分隔）
+        String validText = "event=1\tpin=1001\ttime=2025-01-30 10:00:00\teventaddr=1\tinoutstatus=0\tverifytype=3";
+        validMessageBytes = validText.getBytes(StandardCharsets.UTF_8);
 
-        // 准备无效协议头的消息
-        invalidHeaderBytes = new byte[24];
-        invalidHeaderBytes[0] = 0x00;
-        invalidHeaderBytes[1] = 0x00;
+        // 空白文本 -> parseMessage(String) 视为无效
+        invalidHeaderBytes = " ".getBytes(StandardCharsets.UTF_8);
 
-        // 准备长度不足的消息
-        shortMessageBytes = new byte[10];
+        // 空字节 -> parseMessage(byte[]) 直接视为无效
+        shortMessageBytes = new byte[0];
+
+        meterRegistry = new SimpleMeterRegistry();
+        ReflectionTestUtils.setField(accessProtocolHandler, "meterRegistry", meterRegistry);
     }
 
     @Test
@@ -110,7 +81,7 @@ class AccessProtocolHandlerTest {
 
         // Then
         assertNotNull(message);
-        assertEquals("ACCESS_ENTROPY_V4_8", message.getProtocolType());
+        assertEquals("ACCESS_ENTROPY_V4.8", message.getProtocolType());
         assertNotNull(message.getMessageType());
         assertNotNull(message.getDeviceCode());
         assertNotNull(message.getData());
@@ -202,23 +173,6 @@ class AccessProtocolHandlerTest {
         // Given
         ProtocolMessage message = accessProtocolHandler.parseMessage((byte[]) validMessageBytes);
         message.setMessageType("ACCESS_RECORD");
-        
-        Map<String, Object> data = new HashMap<>();
-        data.put("userId", 1001);
-        data.put("passTime", (int) (System.currentTimeMillis() / 1000));
-        data.put("passType", 0);
-        data.put("doorNo", 1);
-        data.put("passMethod", 1);
-        message.setData(data);
-
-        // Mock网关服务调用
-        ResponseDTO<Long> mockResponse = ResponseDTO.ok(2001L);
-        when(gatewayServiceClient.callAccessService(
-                eq("/api/v1/access/record/create"),
-                eq(HttpMethod.POST),
-                any(),
-                eq(Long.class)
-        )).thenReturn(mockResponse);
 
         // When
         assertDoesNotThrow(() -> {
@@ -226,34 +180,21 @@ class AccessProtocolHandlerTest {
         });
 
         // Then
-        verify(gatewayServiceClient, times(1)).callAccessService(
-                eq("/api/v1/access/record/create"),
-                eq(HttpMethod.POST),
-                any(),
-                eq(Long.class)
-        );
+        verify(rabbitTemplate, times(1)).convertAndSend(eq("protocol.access.record"), anyMap());
     }
 
     @Test
     @DisplayName("测试处理设备状态消息-成功场景")
     void testProcessMessage_DeviceStatus_Success() throws ProtocolParseException, ProtocolProcessException {
         // Given
-        ProtocolMessage message = accessProtocolHandler.parseMessage((byte[]) validMessageBytes);
+        ProtocolMessage message = new ProtocolMessage();
+        message.setProtocolType(accessProtocolHandler.getProtocolType());
         message.setMessageType("DEVICE_STATUS");
-        
-        Map<String, Object> data = new HashMap<>();
-        data.put("status", "ONLINE");
-        data.put("lastOnlineTime", (int) (System.currentTimeMillis() / 1000));
-        message.setData(data);
 
-        // Mock网关服务调用
-        ResponseDTO<Boolean> mockResponse = ResponseDTO.ok(true);
-        when(gatewayServiceClient.callCommonService(
-                eq("/api/v1/device/status/update"),
-                eq(HttpMethod.PUT),
-                any(),
-                eq(Boolean.class)
-        )).thenReturn(mockResponse);
+        Map<String, Object> data = new HashMap<>();
+        data.put("statusCode", 1);
+        message.setData(data);
+        message.setDeviceCode("1");
 
         // When
         assertDoesNotThrow(() -> {
@@ -261,12 +202,7 @@ class AccessProtocolHandlerTest {
         });
 
         // Then
-        verify(gatewayServiceClient, times(1)).callCommonService(
-                eq("/api/v1/device/status/update"),
-                eq(HttpMethod.PUT),
-                any(),
-                eq(Boolean.class)
-        );
+        verify(rabbitTemplate, times(1)).convertAndSend(eq("protocol.device.status"), anyMap());
     }
 
     @Test
@@ -281,27 +217,13 @@ class AccessProtocolHandlerTest {
         data.put("alarmTime", (int) (System.currentTimeMillis() / 1000));
         message.setData(data);
 
-        // Mock网关服务调用
-        ResponseDTO<Long> mockResponse = ResponseDTO.ok(3001L);
-        when(gatewayServiceClient.callCommonService(
-                eq("/api/v1/alarm/record/create"),
-                eq(HttpMethod.POST),
-                any(),
-                eq(Long.class)
-        )).thenReturn(mockResponse);
-
         // When
         assertDoesNotThrow(() -> {
             accessProtocolHandler.processMessage(message, 1L);
         });
 
         // Then
-        verify(gatewayServiceClient, times(1)).callCommonService(
-                eq("/api/v1/alarm/record/create"),
-                eq(HttpMethod.POST),
-                any(),
-                eq(Long.class)
-        );
+        verify(rabbitTemplate, times(1)).convertAndSend(eq("protocol.alarm.event"), anyMap());
     }
 
     @Test
@@ -324,7 +246,7 @@ class AccessProtocolHandlerTest {
         String protocolType = accessProtocolHandler.getProtocolType();
 
         // Then
-        assertEquals("ACCESS_ENTROPY_V4_8", protocolType);
+        assertEquals("ACCESS_ENTROPY_V4.8", protocolType);
     }
 
     @Test
@@ -349,4 +271,3 @@ class AccessProtocolHandlerTest {
         assertEquals("V4.8", version);
     }
 }
-

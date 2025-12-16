@@ -82,3 +82,6 @@ public interface ConsumeReportManager {
      */
     ResponseDTO<String> exportReport(Long templateId, ReportParams params, String exportFormat);
 }
+
+
+

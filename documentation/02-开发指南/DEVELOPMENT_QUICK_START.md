@@ -12,6 +12,13 @@
 # 进入项目目录
 cd D:\IOE-DREAM
 
+# 从模板创建 .env（注意：.env 不应提交到仓库）
+Copy-Item ".env.template" ".env" -Force
+
+# 编辑 .env，至少配置：
+# MYSQL_ROOT_PASSWORD、REDIS_PASSWORD、NACOS_USERNAME、NACOS_PASSWORD、NACOS_AUTH_TOKEN、JWT_SECRET
+notepad .env
+
 # 一键启动所有服务（自动检测并启动MySQL/Redis/Nacos）
 .\scripts\start-all-complete.ps1
 ```
@@ -132,11 +139,11 @@ Start-Sleep -Seconds 30
 
 ### 基础设施服务
 
-| 服务 | 端口 | 访问地址 | 默认账号 |
+| 服务 | 端口 | 访问地址 | 账号/密码 |
 |------|------|---------|---------|
-| MySQL | 3306 | - | root/root |
-| Redis | 6379 | - | (无密码) |
-| Nacos控制台 | 8848 | http://localhost:8848/nacos | nacos/nacos |
+| MySQL | 3306 | - | `root/${MYSQL_ROOT_PASSWORD}` |
+| Redis | 6379 | - | `${REDIS_PASSWORD}` |
+| Nacos控制台 | 8848 | http://localhost:8848/nacos | `${NACOS_USERNAME}/${NACOS_PASSWORD}` |
 
 ---
 
@@ -202,7 +209,17 @@ Test-NetConnection -ComputerName localhost -Port 8848
 - **前端管理后台**: http://localhost:3000
 - **移动端应用**: http://localhost:8081
 - **API网关**: http://localhost:8080
-- **Nacos控制台**: http://localhost:8848/nacos (nacos/nacos)
+- **Nacos控制台**: http://localhost:8848/nacos（账号密码以 `.env` 中的 `NACOS_USERNAME/NACOS_PASSWORD` 为准）
+
+---
+
+## 🔐 API 基线与兼容窗口（30 天）
+
+- **Canonical API 前缀**：统一使用 `/api/v1`
+- **鉴权方式**：Spring Security（JWT Bearer），请求头 `Authorization: Bearer <token>`
+- **兼容窗口**：legacy 路由与 legacy 登录路径保留 30 天后下线（建议尽快迁移）
+  - legacy 登录前缀（兼容）：`/login/**`
+  - legacy 业务前缀（兼容）：`/access/**`、`/attendance/**`、`/consume/**`、`/visitor/**`、`/video/**`、`/device/**`
 
 ---
 

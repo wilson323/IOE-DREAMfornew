@@ -40,6 +40,14 @@ DEPLOYMENT_DIR="$(pwd)/deployments/rabbitmq"
 DOCKER_COMPOSE_FILE="$DEPLOYMENT_DIR/docker-compose.yml"
 RABBITMQ_CONFIG="$DEPLOYMENT_DIR/rabbitmq.conf"
 
+require_env() {
+    local name="$1"
+    if [ -z "${!name}" ]; then
+        log_error "缺少环境变量：$name（禁止使用默认口令，请显式配置）"
+        exit 1
+    fi
+}
+
 # 服务端口配置
 RABBITMQ_PORT=5672
 RABBITMQ_MANAGEMENT_PORT=15672
@@ -160,12 +168,6 @@ heartbeat = 60
 
 # 队列配置
 default_vhost = ioedream
-default_user_tags = administrator
-default_permissions.configure = .*
-default_permissions.read = .*
-default_permissions.write = .*
-default_user = admin
-default_pass = admin123
 
 # 管理插件配置
 management.tcp.port = 15672
@@ -241,7 +243,7 @@ RABBITMQ_VERSION=3.12.10-management
 
 # 默认用户配置
 RABBITMQ_DEFAULT_USER=admin
-RABBITMQ_DEFAULT_PASS=admin123
+RABBITMQ_DEFAULT_PASS=${RABBITMQ_ADMIN_PASSWORD}
 RABBITMQ_DEFAULT_VHOST=ioedream
 
 # 集群配置
@@ -294,7 +296,7 @@ spring:
     activate:
       profile: dev
 
-RABBITMQ_DEFAULT_PASS=dev_admin123
+RABBITMQ_DEFAULT_PASS=${RABBITMQ_ADMIN_PASSWORD}
 RABBITMQ_ERLANG_COOKIE=dev_rabbitmq_cookie
 
 # 生产环境配置
@@ -334,7 +336,7 @@ services:
       - "25672:25672"        # 集群通信端口
     environment:
       - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin123
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
       - RABBITMQ_DEFAULT_VHOST=ioedream
       - RABBITMQ_ERLANG_COOKIE=ioedream_rabbitmq_cookie_2023
       - RABBITMQ_USE_LONGNAME=true
@@ -369,7 +371,7 @@ services:
       - "15673:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin123
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
       - RABBITMQ_DEFAULT_VHOST=ioedream
       - RABBITMQ_ERLANG_COOKIE=ioedream_rabbitmq_cookie_2023
       - RABBITMQ_USE_LONGNAME=true
@@ -406,7 +408,7 @@ services:
       - "15674:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin123
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
       - RABBITMQ_DEFAULT_VHOST=ioedream
       - RABBITMQ_ERLANG_COOKIE=ioedream_rabbitmq_cookie_2023
       - RABBITMQ_USE_LONGNAME=true
@@ -644,7 +646,7 @@ show_access_info() {
     echo "============================================================"
     echo "📊 服务访问地址："
     echo "============================================================"
-    echo "🔗 AMQP地址:          amqp://admin:admin123@localhost:5672/ioedream"
+    echo "🔗 AMQP地址:          amqp://admin:(已隐藏)@localhost:5672/ioedream"
     echo "📊 管理界面:           http://localhost:15672"
     echo "📊 管理界面(负载均衡): http://localhost:15675"
     echo "📊 Prometheus指标:    http://localhost:15692/metrics"
@@ -653,7 +655,7 @@ show_access_info() {
     echo "🔐 登录信息："
     echo "============================================================"
     echo "👤 用户名:             admin"
-    echo "🔒 密码:               admin123"
+    echo "🔒 密码:               (已隐藏，使用环境变量 RABBITMQ_ADMIN_PASSWORD)"
     echo "🏠 虚拟主机:           ioedream"
     echo ""
     echo "============================================================"
@@ -687,7 +689,7 @@ show_access_info() {
     echo "spring.rabbitmq.host=localhost"
     echo "spring.rabbitmq.port=5672"
     echo "spring.rabbitmq.username=admin"
-    echo "spring.rabbitmq.password=admin123"
+    echo "spring.rabbitmq.password=${RABBITMQ_ADMIN_PASSWORD}"
     echo "spring.rabbitmq.virtual-host=ioedream"
     echo ""
     echo "============================================================"
@@ -871,6 +873,7 @@ clean_services() {
 main() {
     case "${1:-deploy}" in
         "deploy")
+            require_env "RABBITMQ_ADMIN_PASSWORD"
             check_docker
             check_ports
             create_directories

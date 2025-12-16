@@ -9,15 +9,19 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.service.payment.PaymentRecordService;
 import net.lab1024.sa.consume.service.AccountService;
-import net.lab1024.sa.consume.domain.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
 
 /**
@@ -63,6 +67,7 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
      */
     @Override
     @Transactional(readOnly = true)
+    @Observed(name = "consume.payment.getRecord", contextualName = "consume-payment-get-record")
     public PaymentRecordEntity getPaymentRecord(String paymentId) {
         log.info("[支付记录] 查询支付记录，paymentId={}", paymentId);
 
@@ -76,11 +81,20 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
             // 实现具体的查询逻辑
             PaymentRecordEntity record = paymentRecordDao.selectByPaymentId(paymentId);
 
-            log.info("[支付记录] 查询支付记录成功，paymentId={}, status={}", paymentId, record != null ? record.getStatus() : null);
+            log.info("[支付记录] 查询支付记录成功，paymentId={}, status={}", paymentId, record != null ? record.getPaymentStatus() : null);
             return record;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付记录] 查询支付记录参数错误: paymentId={}, error={}", paymentId, e.getMessage());
+            return null;
+        } catch (BusinessException e) {
+            log.warn("[支付记录] 查询支付记录业务异常: paymentId={}, code={}, message={}", paymentId, e.getCode(), e.getMessage());
+            return null;
+        } catch (SystemException e) {
+            log.error("[支付记录] 查询支付记录系统异常: paymentId={}, code={}, message={}", paymentId, e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.error("[支付记录] 查询支付记录失败，paymentId={}", paymentId, e);
+            log.error("[支付记录] 查询支付记录未知异常: paymentId={}", paymentId, e);
             return null;
         }
     }
@@ -92,28 +106,29 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
      * @return 保存的支付记录
      */
     @Override
+    @Observed(name = "consume.payment.saveRecord", contextualName = "consume-payment-save-record")
     public PaymentRecordEntity savePaymentRecord(PaymentRecordEntity paymentRecord) {
         // 参数验证（必须在方法开始处进行，确保健壮性）
         if (paymentRecord == null) {
-            throw new IllegalArgumentException("支付记录不能为空");
+            throw new ParamException("PAYMENT_RECORD_NULL", "支付记录不能为空");
         }
 
         log.info("[支付记录] 保存支付记录，paymentId={}, amount={}",
-                paymentRecord.getPaymentId(), paymentRecord.getAmount());
+                paymentRecord.getPaymentId(), paymentRecord.getPaymentAmount());
 
         try {
 
             if (paymentRecord.getPaymentId() == null || paymentRecord.getPaymentId().trim().isEmpty()) {
-                throw new IllegalArgumentException("支付订单号不能为空");
+                throw new ParamException("PAYMENT_ID_NULL", "支付订单号不能为空");
             }
 
-            if (paymentRecord.getAmount() == null || paymentRecord.getAmount().compareTo(java.math.BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("支付金额必须大于0");
+            if (paymentRecord.getPaymentAmount() == null || paymentRecord.getPaymentAmount().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+                throw new ParamException("PAYMENT_AMOUNT_INVALID", "支付金额必须大于0");
             }
 
             // 设置默认状态
-            if (paymentRecord.getStatus() == null || paymentRecord.getStatus().trim().isEmpty()) {
-                paymentRecord.setStatus("PENDING");
+            if (paymentRecord.getPaymentStatus() == null) {
+                paymentRecord.setPaymentStatus(1); // 1-待支付
             }
 
             // 设置创建时间
@@ -125,14 +140,26 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
             int result = paymentRecordDao.insert(paymentRecord);
 
             log.info("[支付记录] 保存支付记录成功，paymentId={}, status={}, result={}",
-                    paymentRecord.getPaymentId(), paymentRecord.getStatus(), result);
+                    paymentRecord.getPaymentId(), paymentRecord.getPaymentStatus(), result);
 
             return paymentRecord;
 
-        } catch (Exception e) {
-            log.error("[支付记录] 保存支付记录失败，paymentId={}",
-                    paymentRecord != null ? paymentRecord.getPaymentId() : "null", e);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付记录] 保存支付记录参数错误: paymentId={}, error={}",
+                    paymentRecord != null ? paymentRecord.getPaymentId() : "null", e.getMessage());
+            throw new ParamException("SAVE_PAYMENT_RECORD_PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付记录] 保存支付记录业务异常: paymentId={}, code={}, message={}",
+                    paymentRecord != null ? paymentRecord.getPaymentId() : "null", e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[支付记录] 保存支付记录系统异常: paymentId={}, code={}, message={}",
+                    paymentRecord != null ? paymentRecord.getPaymentId() : "null", e.getCode(), e.getMessage(), e);
+            throw new SystemException("SAVE_PAYMENT_RECORD_SYSTEM_ERROR", "保存支付记录失败：" + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("[支付记录] 保存支付记录未知异常: paymentId={}",
+                    paymentRecord != null ? paymentRecord.getPaymentId() : "null", e);
+            throw new SystemException("SAVE_PAYMENT_RECORD_SYSTEM_ERROR", "保存支付记录失败：" + e.getMessage(), e);
         }
     }
 
@@ -145,6 +172,7 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
      * @return 是否更新成功
      */
     @Override
+    @Observed(name = "consume.payment.updateStatus", contextualName = "consume-payment-update-status")
     public boolean updatePaymentStatus(String paymentId, String status, String thirdPartyTransactionId) {
         log.info("[支付记录] 更新支付状态，paymentId={}, status={}, thirdPartyTransactionId={}",
                 paymentId, status, thirdPartyTransactionId);
@@ -162,17 +190,20 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
             }
 
             // 实现具体的更新逻辑
-            LambdaUpdateWrapper<PaymentRecordEntity> updateWrapper = new LambdaUpdateWrapper<>();
-            updateWrapper.eq(PaymentRecordEntity::getPaymentId, paymentId)
-                      .set(PaymentRecordEntity::getStatus, status)
-                      .set(PaymentRecordEntity::getUpdateTime, LocalDateTime.now());
+            //
+            // 注意：这里使用 UpdateWrapper（字符串列名）避免 LambdaUpdateWrapper 在纯单元测试场景下触发
+            // MyBatis-Plus 的 lambda cache 初始化异常（未加载 TableInfo 时可能抛出异常）。
+            UpdateWrapper<PaymentRecordEntity> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("payment_id", paymentId)
+                    .set("status", status)
+                    .set("update_time", LocalDateTime.now());
 
-            if (thirdPartyTransactionId != null) {
-                updateWrapper.set(PaymentRecordEntity::getThirdPartyTransactionId, thirdPartyTransactionId);
+            if (thirdPartyTransactionId != null && !thirdPartyTransactionId.trim().isEmpty()) {
+                updateWrapper.set("third_party_transaction_id", thirdPartyTransactionId);
             }
 
-            if (status.equals("SUCCESS")) {
-                updateWrapper.set(PaymentRecordEntity::getPaymentTime, LocalDateTime.now());
+            if ("SUCCESS".equals(status)) {
+                updateWrapper.set("payment_time", LocalDateTime.now());
             }
 
             int updated = paymentRecordDao.update(null, updateWrapper);
@@ -182,8 +213,17 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
 
             return updated > 0;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付记录] 更新支付状态参数错误: paymentId={}, status={}, error={}", paymentId, status, e.getMessage());
+            return false;
+        } catch (BusinessException e) {
+            log.warn("[支付记录] 更新支付状态业务异常: paymentId={}, status={}, code={}, message={}", paymentId, status, e.getCode(), e.getMessage());
+            return false;
+        } catch (SystemException e) {
+            log.error("[支付记录] 更新支付状态系统异常: paymentId={}, status={}, code={}, message={}", paymentId, status, e.getCode(), e.getMessage(), e);
+            return false;
         } catch (Exception e) {
-            log.error("[支付记录] 更新支付状态异常，paymentId={}, status={}", paymentId, status, e);
+            log.error("[支付记录] 更新支付状态未知异常: paymentId={}, status={}", paymentId, status, e);
             return false;
         }
     }
@@ -195,29 +235,30 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
      * @param transactionId 交易号
      */
     @Override
+    @Observed(name = "consume.payment.handleSuccess", contextualName = "consume-payment-handle-success")
     public void handlePaymentSuccess(String paymentId, String transactionId) {
         log.info("[支付记录] 处理支付成功回调，paymentId={}, transactionId={}", paymentId, transactionId);
 
         try {
             // 参数验证
             if (paymentId == null || paymentId.trim().isEmpty()) {
-                throw new IllegalArgumentException("支付订单号不能为空");
+                throw new ParamException("PAYMENT_ID_NULL", "支付订单号不能为空");
             }
 
             // 查询支付记录
             PaymentRecordEntity paymentRecord = getPaymentRecord(paymentId);
             if (paymentRecord == null) {
                 log.error("[支付记录] 支付记录不存在，paymentId={}", paymentId);
-                throw new RuntimeException("支付记录不存在");
+                throw new BusinessException("PAYMENT_RECORD_NOT_FOUND", "支付记录不存在");
             }
 
             // 检查当前状态
-            if ("SUCCESS".equals(paymentRecord.getStatus())) {
+            if (paymentRecord.getPaymentStatus() != null && paymentRecord.getPaymentStatus() == 3) { // 3-支付成功
                 log.warn("[支付记录] 支付记录已经是成功状态，paymentId={}", paymentId);
                 return;
             }
 
-            if ("REFUNDED".equals(paymentRecord.getStatus())) {
+            if (paymentRecord.getPaymentStatus() != null && paymentRecord.getPaymentStatus() == 5) { // 5-已退款
                 log.warn("[支付记录] 支付记录已退款，不能更新为成功状态，paymentId={}", paymentId);
                 return;
             }
@@ -225,7 +266,7 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
             // 更新状态为成功
             boolean updated = updatePaymentStatus(paymentId, "SUCCESS", transactionId);
             if (!updated) {
-                throw new RuntimeException("更新支付状态失败");
+                throw new BusinessException("UPDATE_PAYMENT_STATUS_FAILED", "更新支付状态失败");
             }
 
             // 支付成功后的业务处理
@@ -233,10 +274,22 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
 
             log.info("[支付记录] 支付成功回调处理完成，paymentId={}, transactionId={}", paymentId, transactionId);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付记录] 支付成功回调处理参数错误: paymentId={}, transactionId={}, error={}",
+                    paymentId, transactionId, e.getMessage());
+            throw new ParamException("HANDLE_PAYMENT_SUCCESS_PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付记录] 支付成功回调处理业务异常: paymentId={}, transactionId={}, code={}, message={}",
+                    paymentId, transactionId, e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[支付记录] 支付成功回调处理系统异常: paymentId={}, transactionId={}, code={}, message={}",
+                    paymentId, transactionId, e.getCode(), e.getMessage(), e);
+            throw new SystemException("HANDLE_PAYMENT_SUCCESS_SYSTEM_ERROR", "支付成功回调处理失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[支付记录] 支付成功回调处理异常，paymentId={}, transactionId={}",
+            log.error("[支付记录] 支付成功回调处理未知异常: paymentId={}, transactionId={}",
                     paymentId, transactionId, e);
-            throw new RuntimeException("支付成功回调处理失败", e);
+            throw new SystemException("HANDLE_PAYMENT_SUCCESS_SYSTEM_ERROR", "支付成功回调处理失败：" + e.getMessage(), e);
         }
     }
 
@@ -254,7 +307,7 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
     private void processPaymentSuccessBusiness(PaymentRecordEntity paymentRecord) {
         try {
             // 1. 更新账户余额（如果支付记录关联了账户ID）
-            if (paymentRecord.getUserId() != null && paymentRecord.getAmount() != null) {
+            if (paymentRecord.getUserId() != null && paymentRecord.getPaymentAmount() != null) {
                 // 通过交易ID查找关联的账户ID
                 // 注意：这里假设支付记录中的userId就是账户所属用户
                 // 实际业务中可能需要通过transactionId查找对应的账户
@@ -262,15 +315,15 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
                 if (accountId != null) {
                     boolean balanceUpdated = accountService.addBalance(
                             accountId,
-                            paymentRecord.getAmount(),
+                            paymentRecord.getPaymentAmount(),
                             "支付成功：" + paymentRecord.getPaymentId()
                     );
                     if (balanceUpdated) {
                         log.info("[支付记录] 账户余额更新成功，accountId={}, amount={}",
-                                accountId, paymentRecord.getAmount());
+                                accountId, paymentRecord.getPaymentAmount());
                     } else {
                         log.warn("[支付记录] 账户余额更新失败，accountId={}, amount={}",
-                                accountId, paymentRecord.getAmount());
+                                accountId, paymentRecord.getPaymentAmount());
                     }
                 }
             }
@@ -280,14 +333,26 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
                 sendPaymentSuccessNotification(
                         paymentRecord.getUserId(),
                         paymentRecord.getPaymentId(),
-                        paymentRecord.getAmount()
+                        paymentRecord.getPaymentAmount()
                 );
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            // 业务处理失败不影响支付状态更新，记录日志即可
+            log.warn("[支付记录] 支付成功业务处理参数错误: paymentId={}, error={}",
+                    paymentRecord.getPaymentId(), e.getMessage());
+        } catch (BusinessException e) {
+            // 业务处理失败不影响支付状态更新，记录日志即可
+            log.warn("[支付记录] 支付成功业务处理业务异常: paymentId={}, code={}, message={}",
+                    paymentRecord.getPaymentId(), e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            // 业务处理失败不影响支付状态更新，记录日志即可
+            log.error("[支付记录] 支付成功业务处理系统异常: paymentId={}, code={}, message={}",
+                    paymentRecord.getPaymentId(), e.getCode(), e.getMessage(), e);
         } catch (Exception e) {
             // 业务处理失败不影响支付状态更新，记录日志即可
-            log.error("[支付记录] 支付成功业务处理异常，paymentId={}, error={}",
-                    paymentRecord.getPaymentId(), e.getMessage(), e);
+            log.error("[支付记录] 支付成功业务处理未知异常: paymentId={}",
+                    paymentRecord.getPaymentId(), e);
         }
     }
 
@@ -320,8 +385,14 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
                     }
                 }
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付记录] 查询账户ID参数错误: userId={}, error={}", userId, e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[支付记录] 查询账户ID业务异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[支付记录] 查询账户ID系统异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
         } catch (Exception e) {
-            log.warn("[支付记录] 查询账户ID失败，userId={}, error={}", userId, e.getMessage());
+            log.warn("[支付记录] 查询账户ID失败: userId={}, error={}", userId, e.getMessage());
         }
         return null;
     }
@@ -354,9 +425,21 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
             );
 
             log.debug("[支付记录] 支付成功通知发送成功，userId={}, paymentId={}", userId, paymentId);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[支付记录] 支付成功通知发送参数错误: userId={}, paymentId={}, error={}", userId, paymentId, e.getMessage());
+            // 通知发送失败不影响主业务流程
+        } catch (BusinessException e) {
+            log.warn("[支付记录] 支付成功通知发送业务异常: userId={}, paymentId={}, code={}, message={}", userId, paymentId, e.getCode(), e.getMessage());
+            // 通知发送失败不影响主业务流程
+        } catch (SystemException e) {
+            log.error("[支付记录] 支付成功通知发送系统异常: userId={}, paymentId={}, code={}, message={}", userId, paymentId, e.getCode(), e.getMessage(), e);
+            // 通知发送失败不影响主业务流程
         } catch (Exception e) {
-            log.error("[支付记录] 支付成功通知发送失败，userId={}, paymentId={}", userId, paymentId, e);
+            log.error("[支付记录] 支付成功通知发送未知异常: userId={}, paymentId={}", userId, paymentId, e);
             // 通知发送失败不影响主业务流程
         }
     }
 }
+
+
+

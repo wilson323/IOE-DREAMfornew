@@ -1,6 +1,8 @@
 package net.lab1024.sa.common.lock;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
@@ -31,8 +33,8 @@ public class DistributedLockManager {
     }
 
     // ============================================================
-    # 基础分布式锁
-    # ============================================================
+    // 基础分布式锁
+    // ============================================================
 
     /**
      * 执行带锁的操作 - 可重入锁
@@ -59,7 +61,8 @@ public class DistributedLockManager {
             // 尝试获取锁
             boolean acquired = lock.tryLock(waitTime, timeout, timeUnit);
             if (!acquired) {
-                throw new RuntimeException("获取分布式锁失败: " + lockKey);
+                log.warn("[分布式锁] 获取锁失败: lockKey={}, timeout={}", lockKey, timeout);
+                throw new BusinessException("DISTRIBUTED_LOCK_ACQUIRE_FAILED", "获取分布式锁失败: " + lockKey);
             }
 
             log.debug("[分布式锁] 获取锁成功: {}", lockKey);
@@ -81,7 +84,7 @@ public class DistributedLockManager {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("[分布式锁] 获取锁被中断: {}", lockKey, e);
-            throw new RuntimeException("获取分布式锁被中断", e);
+            throw new SystemException("DISTRIBUTED_LOCK_INTERRUPTED", "获取分布式锁被中断", e);
         }
     }
 
@@ -121,7 +124,8 @@ public class DistributedLockManager {
         try {
             boolean acquired = lock.tryLock(5, timeout, timeUnit);
             if (!acquired) {
-                throw new RuntimeException("获取公平分布式锁失败: " + lockKey);
+                log.warn("[公平分布式锁] 获取锁失败, lockKey={}, timeout={}", lockKey, timeout);
+                throw new BusinessException("FAIR_LOCK_ACQUIRE_FAILED", "获取公平分布式锁失败: " + lockKey);
             }
 
             log.debug("[公平分布式锁] 获取锁成功: {}", lockKey);
@@ -140,7 +144,7 @@ public class DistributedLockManager {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("[公平分布式锁] 获取锁被中断: {}", lockKey, e);
-            throw new RuntimeException("获取公平分布式锁被中断", e);
+            throw new SystemException("FAIR_DISTRIBUTED_LOCK_INTERRUPTED", "获取公平分布式锁被中断", e);
         }
     }
 
@@ -164,7 +168,8 @@ public class DistributedLockManager {
         try {
             boolean acquired = readLock.tryLock(5, timeout, timeUnit);
             if (!acquired) {
-                throw new RuntimeException("获取读锁失败: " + lockKey);
+                log.warn("[读锁] 获取锁失败, lockKey={}, timeout={}", lockKey, timeout);
+                throw new BusinessException("READ_LOCK_ACQUIRE_FAILED", "获取读锁失败: " + lockKey);
             }
 
             log.debug("[读锁] 获取成功: {}", lockKey);
@@ -183,7 +188,7 @@ public class DistributedLockManager {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("[读锁] 获取被中断: {}", lockKey, e);
-            throw new RuntimeException("获取读锁被中断", e);
+            throw new SystemException("READ_LOCK_INTERRUPTED", "获取读锁被中断", e);
         }
     }
 
@@ -203,7 +208,8 @@ public class DistributedLockManager {
         try {
             boolean acquired = writeLock.tryLock(5, timeout, timeUnit);
             if (!acquired) {
-                throw new RuntimeException("获取写锁失败: " + lockKey);
+                log.warn("[写锁] 获取锁失败, lockKey={}, timeout={}", lockKey, timeout);
+                throw new BusinessException("WRITE_LOCK_ACQUIRE_FAILED", "获取写锁失败: " + lockKey);
             }
 
             log.debug("[写锁] 获取成功: {}", lockKey);
@@ -222,7 +228,7 @@ public class DistributedLockManager {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("[写锁] 获取被中断: {}", lockKey, e);
-            throw new RuntimeException("获取写锁被中断", e);
+            throw new SystemException("WRITE_LOCK_INTERRUPTED", "获取写锁被中断", e);
         }
     }
 
@@ -247,7 +253,8 @@ public class DistributedLockManager {
             boolean acquired = redissonClient.getSemaphore(semaphoreKey)
                     .trySetPermits(permits);
             if (!acquired) {
-                throw new RuntimeException("设置信号量许可失败: " + semaphoreKey);
+                log.warn("[信号量] 设置许可失败, semaphoreKey={}, permits={}", semaphoreKey, permits);
+                throw new BusinessException("SEMAPHORE_SET_PERMITS_FAILED", "设置信号量许可失败: " + semaphoreKey);
             }
 
             // 获取许可
@@ -267,13 +274,13 @@ public class DistributedLockManager {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("[信号量] 获取许可被中断: {}", semaphoreKey, e);
-            throw new RuntimeException("获取信号量许可被中断", e);
+            throw new SystemException("SEMAPHORE_ACQUIRE_INTERRUPTED", "获取信号量许可被中断", e);
         }
     }
 
+        // ============================================================
+    // 业务专用锁方法
     // ============================================================
-    # 业务专用锁方法
-    # ============================================================
 
     /**
      * 用户操作锁 - 针对20000人规模优化

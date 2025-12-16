@@ -2,12 +2,17 @@ package net.lab1024.sa.devicecomm.service;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.devicecomm.biometric.BiometricDataManager;
 import net.lab1024.sa.devicecomm.protocol.enums.VerifyTypeEnum;
 import net.lab1024.sa.devicecomm.protocol.message.ProtocolMessage;
 import net.lab1024.sa.devicecomm.protocol.handler.impl.BiometricProtocolHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -30,12 +35,14 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class BiometricService {
 
     @Resource
     private BiometricDataManager biometricDataManager;
 
     @Resource
+    @Lazy
     private BiometricProtocolHandler biometricProtocolHandler;
 
     // 异步处理线程池
@@ -81,10 +88,18 @@ public class BiometricService {
                 return ResponseDTO.error("REGISTER_FAILED", "注册失败");
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[生物识别注册] 参数错误: 用户={}, 验证方式={}, error={}", userId, verifyType != null ? verifyType.getName() : "null", e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[生物识别注册] 业务异常: 用户={}, 验证方式={}, code={}, message={}", userId, verifyType != null ? verifyType.getName() : "null", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[生物识别注册] 系统异常: 用户={}, 验证方式={}, code={}, message={}", userId, verifyType != null ? verifyType.getName() : "null", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("REGISTER_SYSTEM_ERROR", "注册异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[生物识别注册] 异常: 用户={}, 验证方式={}, 错误={}",
-                    userId, verifyType != null ? verifyType.getName() : "null", e.getMessage(), e);
-            return ResponseDTO.error("REGISTER_ERROR", "注册异常: " + e.getMessage());
+            log.error("[生物识别注册] 未知异常: 用户={}, 验证方式={}", userId, verifyType != null ? verifyType.getName() : "null", e);
+            return ResponseDTO.error("REGISTER_SYSTEM_ERROR", "注册异常：" + e.getMessage());
         }
     }
 
@@ -140,10 +155,18 @@ public class BiometricService {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[生物识别验证] 参数错误: 用户={}, 验证方式={}, error={}", userId, verifyType != null ? verifyType.getName() : "null", e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[生物识别验证] 业务异常: 用户={}, 验证方式={}, code={}, message={}", userId, verifyType != null ? verifyType.getName() : "null", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[生物识别验证] 系统异常: 用户={}, 验证方式={}, code={}, message={}", userId, verifyType != null ? verifyType.getName() : "null", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("VERIFY_SYSTEM_ERROR", "验证异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[生物识别验证] 异常: 用户={}, 验证方式={}, 错误={}",
-                    userId, verifyType != null ? verifyType.getName() : "null", e.getMessage(), e);
-            return ResponseDTO.error("VERIFY_ERROR", "验证异常: " + e.getMessage());
+            log.error("[生物识别验证] 未知异常: 用户={}, 验证方式={}", userId, verifyType != null ? verifyType.getName() : "null", e);
+            return ResponseDTO.error("VERIFY_SYSTEM_ERROR", "验证异常：" + e.getMessage());
         }
     }
 
@@ -184,10 +207,18 @@ public class BiometricService {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[生物识别匹配] 参数错误: 验证方式={}, error={}", verifyType != null ? verifyType.getName() : "null", e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[生物识别匹配] 业务异常: 验证方式={}, code={}, message={}", verifyType != null ? verifyType.getName() : "null", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[生物识别匹配] 系统异常: 验证方式={}, code={}, message={}", verifyType != null ? verifyType.getName() : "null", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MATCH_SYSTEM_ERROR", "匹配异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[生物识别匹配] 异常: 验证方式={}, 错误={}",
-                    verifyType != null ? verifyType.getName() : "null", e.getMessage(), e);
-            return ResponseDTO.error("MATCH_ERROR", "匹配异常: " + e.getMessage());
+            log.error("[生物识别匹配] 未知异常: 验证方式={}", verifyType != null ? verifyType.getName() : "null", e);
+            return ResponseDTO.error("MATCH_SYSTEM_ERROR", "匹配异常：" + e.getMessage());
         }
     }
 
@@ -222,10 +253,18 @@ public class BiometricService {
                 return ResponseDTO.error("DATA_NOT_FOUND", "生物识别数据不存在");
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[生物识别删除] 参数错误: 用户={}, 验证方式={}, error={}", userId, verifyType != null ? verifyType.getName() : "null", e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[生物识别删除] 业务异常: 用户={}, 验证方式={}, code={}, message={}", userId, verifyType != null ? verifyType.getName() : "null", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[生物识别删除] 系统异常: 用户={}, 验证方式={}, code={}, message={}", userId, verifyType != null ? verifyType.getName() : "null", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("DELETE_SYSTEM_ERROR", "删除异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[生物识别删除] 异常: 用户={}, 验证方式={}, 错误={}",
-                    userId, verifyType != null ? verifyType.getName() : "null", e.getMessage(), e);
-            return ResponseDTO.error("DELETE_ERROR", "删除异常: " + e.getMessage());
+            log.error("[生物识别删除] 未知异常: 用户={}, 验证方式={}", userId, verifyType != null ? verifyType.getName() : "null", e);
+            return ResponseDTO.error("DELETE_SYSTEM_ERROR", "删除异常：" + e.getMessage());
         }
     }
 
@@ -251,9 +290,18 @@ public class BiometricService {
 
             return ResponseDTO.ok(verifyTypes);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[获取验证方式] 参数错误: 用户={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[获取验证方式] 业务异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[获取验证方式] 系统异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_VERIFY_TYPES_SYSTEM_ERROR", "获取验证方式异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[获取验证方式] 异常: 用户={}, 错误={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("GET_VERIFY_TYPES_ERROR", "获取验证方式异常: " + e.getMessage());
+            log.error("[获取验证方式] 未知异常: 用户={}", userId, e);
+            return ResponseDTO.error("GET_VERIFY_TYPES_SYSTEM_ERROR", "获取验证方式异常：" + e.getMessage());
         }
     }
 
@@ -279,9 +327,18 @@ public class BiometricService {
 
             return ResponseDTO.ok(dataList);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[获取生物数据] 参数错误: 用户={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[获取生物数据] 业务异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[获取生物数据] 系统异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_BIOMETRIC_DATA_SYSTEM_ERROR", "获取生物数据异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[获取生物数据] 异常: 用户={}, 错误={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("GET_BIOMETRIC_DATA_ERROR", "获取生物数据异常: " + e.getMessage());
+            log.error("[获取生物数据] 未知异常: 用户={}", userId, e);
+            return ResponseDTO.error("GET_BIOMETRIC_DATA_SYSTEM_ERROR", "获取生物数据异常：" + e.getMessage());
         }
     }
 
@@ -315,18 +372,57 @@ public class BiometricService {
 
             return ResponseDTO.ok(response);
 
-        } catch (Exception e) {
-            log.error("[设备消息处理] 异常: 设备={}, 错误={}", deviceId, e.getMessage(), e);
-
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[设备消息处理] 参数错误: 设备={}, error={}", deviceId, e.getMessage());
             try {
                 // 构建错误响应
                 ProtocolMessage errorMessage = new ProtocolMessage();
                 errorMessage.setDeviceId(deviceId);
-                byte[] errorResponse = biometricProtocolHandler.buildResponse(errorMessage, false, "PROCESS_ERROR", e.getMessage());
+                byte[] errorResponse = biometricProtocolHandler.buildResponse(errorMessage, false, "PARAM_ERROR", e.getMessage());
                 String response = new String(errorResponse);
-                return ResponseDTO.error("PROCESS_ERROR", response);
+                return ResponseDTO.error("PARAM_ERROR", response);
             } catch (Exception ex) {
-                return ResponseDTO.error("PROCESS_ERROR", "处理异常: " + e.getMessage());
+                log.debug("[生物识别服务] 构建错误响应失败: error={}", ex.getMessage());
+                return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+            }
+        } catch (BusinessException e) {
+            log.warn("[设备消息处理] 业务异常: 设备={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            try {
+                // 构建错误响应
+                ProtocolMessage errorMessage = new ProtocolMessage();
+                errorMessage.setDeviceId(deviceId);
+                byte[] errorResponse = biometricProtocolHandler.buildResponse(errorMessage, false, e.getCode(), e.getMessage());
+                String response = new String(errorResponse);
+                return ResponseDTO.error(e.getCode(), response);
+            } catch (Exception ex) {
+                log.debug("[生物识别服务] 构建错误响应失败: code={}, error={}", e.getCode(), ex.getMessage());
+                return ResponseDTO.error(e.getCode(), e.getMessage());
+            }
+        } catch (SystemException e) {
+            log.error("[设备消息处理] 系统异常: 设备={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            try {
+                // 构建错误响应
+                ProtocolMessage errorMessage = new ProtocolMessage();
+                errorMessage.setDeviceId(deviceId);
+                byte[] errorResponse = biometricProtocolHandler.buildResponse(errorMessage, false, "PROCESS_SYSTEM_ERROR", e.getMessage());
+                String response = new String(errorResponse);
+                return ResponseDTO.error("PROCESS_SYSTEM_ERROR", response);
+            } catch (Exception ex) {
+                log.debug("[生物识别服务] 构建错误响应失败: error={}", ex.getMessage());
+                return ResponseDTO.error("PROCESS_SYSTEM_ERROR", "处理异常：" + e.getMessage());
+            }
+        } catch (Exception e) {
+            log.error("[设备消息处理] 未知异常: 设备={}", deviceId, e);
+            try {
+                // 构建错误响应
+                ProtocolMessage errorMessage = new ProtocolMessage();
+                errorMessage.setDeviceId(deviceId);
+                byte[] errorResponse = biometricProtocolHandler.buildResponse(errorMessage, false, "PROCESS_SYSTEM_ERROR", e.getMessage());
+                String response = new String(errorResponse);
+                return ResponseDTO.error("PROCESS_SYSTEM_ERROR", response);
+            } catch (Exception ex) {
+                log.debug("[生物识别服务] 构建错误响应失败: error={}", ex.getMessage());
+                return ResponseDTO.error("PROCESS_SYSTEM_ERROR", "处理异常：" + e.getMessage());
             }
         }
     }
@@ -352,9 +448,18 @@ public class BiometricService {
 
             return ResponseDTO.ok(result);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[清理过期数据] 参数错误: error={}", e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[清理过期数据] 业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[清理过期数据] 系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("CLEAN_SYSTEM_ERROR", "清理异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[清理过期数据] 异常: {}", e.getMessage(), e);
-            return ResponseDTO.error("CLEAN_ERROR", "清理异常: " + e.getMessage());
+            log.error("[清理过期数据] 未知异常", e);
+            return ResponseDTO.error("CLEAN_SYSTEM_ERROR", "清理异常：" + e.getMessage());
         }
     }
 
@@ -374,9 +479,18 @@ public class BiometricService {
 
             return ResponseDTO.ok(statistics);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[获取统计信息] 参数错误: error={}", e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[获取统计信息] 业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[获取统计信息] 系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_STATISTICS_SYSTEM_ERROR", "获取统计异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[获取统计信息] 异常: {}", e.getMessage(), e);
-            return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计异常: " + e.getMessage());
+            log.error("[获取统计信息] 未知异常", e);
+            return ResponseDTO.error("GET_STATISTICS_SYSTEM_ERROR", "获取统计异常：" + e.getMessage());
         }
     }
 
@@ -416,10 +530,22 @@ public class BiometricService {
                         log.warn("[批量注册] 注册失败: 用户={}, 验证方式={}, 错误={}",
                                 userId, request.getVerifyType().getName(), result.getMessage());
                     }
+                } catch (IllegalArgumentException | ParamException e) {
+                    failCount++;
+                    log.warn("[批量注册] 注册参数错误: 用户={}, 验证方式={}, error={}",
+                            userId, request.getVerifyType().getName(), e.getMessage());
+                } catch (BusinessException e) {
+                    failCount++;
+                    log.warn("[批量注册] 注册业务异常: 用户={}, 验证方式={}, code={}, message={}",
+                            userId, request.getVerifyType().getName(), e.getCode(), e.getMessage());
+                } catch (SystemException e) {
+                    failCount++;
+                    log.error("[批量注册] 注册系统异常: 用户={}, 验证方式={}, code={}, message={}",
+                            userId, request.getVerifyType().getName(), e.getCode(), e.getMessage(), e);
                 } catch (Exception e) {
                     failCount++;
-                    log.error("[批量注册] 注册异常: 用户={}, 验证方式={}, 错误={}",
-                            userId, request.getVerifyType().getName(), e.getMessage(), e);
+                    log.error("[批量注册] 注册未知异常: 用户={}, 验证方式={}",
+                            userId, request.getVerifyType().getName(), e);
                 }
             }
 
@@ -432,9 +558,18 @@ public class BiometricService {
                         String.format("批量注册部分失败: 成功=%d, 失败=%d", successCount, failCount));
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[批量注册] 参数错误: 用户={}, error={}", userId, e.getMessage());
+            return ResponseDTO.error("PARAM_ERROR", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[批量注册] 业务异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[批量注册] 系统异常: 用户={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("BATCH_REGISTER_SYSTEM_ERROR", "批量注册异常：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[批量注册] 异常: 用户={}, 错误={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("BATCH_REGISTER_ERROR", "批量注册异常: " + e.getMessage());
+            log.error("[批量注册] 未知异常: 用户={}", userId, e);
+            return ResponseDTO.error("BATCH_REGISTER_SYSTEM_ERROR", "批量注册异常：" + e.getMessage());
         }
     }
 
@@ -469,9 +604,18 @@ public class BiometricService {
                 log.warn("[生物识别验证处理] 验证失败: 设备={}, 用户={}, 原因={}", deviceId, userId, verifyResult);
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[生物识别验证处理] 参数错误: 设备={}, 用户={}, error={}", deviceId, userId, e.getMessage());
+            // 验证处理异常不应影响主要流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[生物识别验证处理] 业务异常: 设备={}, 用户={}, code={}, message={}", deviceId, userId, e.getCode(), e.getMessage());
+            // 验证处理异常不应影响主要流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[生物识别验证处理] 系统异常: 设备={}, 用户={}, code={}, message={}", deviceId, userId, e.getCode(), e.getMessage(), e);
+            // 验证处理异常不应影响主要流程（优雅降级）
         } catch (Exception e) {
-            log.error("[生物识别验证处理] 异常: 设备={}, 用户={}, 错误={}", deviceId, userId, e.getMessage(), e);
-            // 验证处理异常不应影响主要流程
+            log.error("[生物识别验证处理] 未知异常: 设备={}, 用户={}", deviceId, userId, e);
+            // 验证处理异常不应影响主要流程（优雅降级）
         }
     }
 
@@ -497,8 +641,18 @@ public class BiometricService {
                 log.error("[生物识别注册处理] 注册失败: 设备={}, 用户={}, 错误={}", deviceId, userId, result.getMessage());
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[生物识别注册处理] 参数错误: 设备={}, 用户={}, error={}", deviceId, userId, e.getMessage());
+            // 注册处理异常不应影响主要流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[生物识别注册处理] 业务异常: 设备={}, 用户={}, code={}, message={}", deviceId, userId, e.getCode(), e.getMessage());
+            // 注册处理异常不应影响主要流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[生物识别注册处理] 系统异常: 设备={}, 用户={}, code={}, message={}", deviceId, userId, e.getCode(), e.getMessage(), e);
+            // 注册处理异常不应影响主要流程（优雅降级）
         } catch (Exception e) {
-            log.error("[生物识别注册处理] 异常: 设备={}, 用户={}, 错误={}", deviceId, userId, e.getMessage(), e);
+            log.error("[生物识别注册处理] 未知异常: 设备={}, 用户={}", deviceId, userId, e);
+            // 注册处理异常不应影响主要流程（优雅降级）
         }
     }
 
@@ -522,8 +676,18 @@ public class BiometricService {
                 log.warn("[生物识别删除处理] 删除失败: 设备={}, 用户={}, 错误={}", deviceId, userId, result.getMessage());
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[生物识别删除处理] 参数错误: 设备={}, 用户={}, error={}", deviceId, userId, e.getMessage());
+            // 删除处理异常不应影响主要流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[生物识别删除处理] 业务异常: 设备={}, 用户={}, code={}, message={}", deviceId, userId, e.getCode(), e.getMessage());
+            // 删除处理异常不应影响主要流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[生物识别删除处理] 系统异常: 设备={}, 用户={}, code={}, message={}", deviceId, userId, e.getCode(), e.getMessage(), e);
+            // 删除处理异常不应影响主要流程（优雅降级）
         } catch (Exception e) {
-            log.error("[生物识别删除处理] 异常: 设备={}, 用户={}, 错误={}", deviceId, userId, e.getMessage(), e);
+            log.error("[生物识别删除处理] 未知异常: 设备={}, 用户={}", deviceId, userId, e);
+            // 删除处理异常不应影响主要流程（优雅降级）
         }
     }
 
@@ -551,8 +715,18 @@ public class BiometricService {
                 log.error("[生物识别更新处理] 更新失败: 设备={}, 用户={}, 错误={}", deviceId, userId, result.getMessage());
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[生物识别更新处理] 参数错误: 设备={}, 用户={}, error={}", deviceId, userId, e.getMessage());
+            // 更新处理异常不应影响主要流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[生物识别更新处理] 业务异常: 设备={}, 用户={}, code={}, message={}", deviceId, userId, e.getCode(), e.getMessage());
+            // 更新处理异常不应影响主要流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[生物识别更新处理] 系统异常: 设备={}, 用户={}, code={}, message={}", deviceId, userId, e.getCode(), e.getMessage(), e);
+            // 更新处理异常不应影响主要流程（优雅降级）
         } catch (Exception e) {
-            log.error("[生物识别更新处理] 异常: 设备={}, 用户={}, 错误={}", deviceId, userId, e.getMessage(), e);
+            log.error("[生物识别更新处理] 未知异常: 设备={}, 用户={}", deviceId, userId, e);
+            // 更新处理异常不应影响主要流程（优雅降级）
         }
     }
 
@@ -569,11 +743,11 @@ public class BiometricService {
         public VerifyTypeEnum getVerifyType() { return verifyType; }
         public void setVerifyType(VerifyTypeEnum verifyType) { this.verifyType = verifyType; }
 
-        public byte[] getFeatureData() { return featureData; }
-        public void setFeatureData(byte[] featureData) { this.featureData = featureData; }
+        public byte[] getFeatureData() { return featureData != null ? featureData.clone() : null; }
+        public void setFeatureData(byte[] featureData) { this.featureData = featureData != null ? featureData.clone() : null; }
 
-        public byte[] getTemplateData() { return templateData; }
-        public void setTemplateData(byte[] templateData) { this.templateData = templateData; }
+        public byte[] getTemplateData() { return templateData != null ? templateData.clone() : null; }
+        public void setTemplateData(byte[] templateData) { this.templateData = templateData != null ? templateData.clone() : null; }
 
         public Long getDeviceId() { return deviceId; }
         public void setDeviceId(Long deviceId) { this.deviceId = deviceId; }

@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
 import net.lab1024.sa.visitor.domain.entity.VisitorAppointmentEntity;
@@ -24,7 +25,7 @@ import net.lab1024.sa.visitor.service.impl.VisitorAppointmentServiceImpl;
 /**
  * VisitorAppointmentServiceImpl单元测试
  * <p>
- * 目标覆盖率：≥80%
+ * 目标覆盖率：>= 80%
  * 测试范围：访客预约服务核心业务方法
  * </p>
  *
@@ -116,13 +117,8 @@ class VisitorAppointmentServiceImplTest {
         doReturn(errorResponse).when(workflowApprovalManager).startApprovalProcess(
                 anyLong(), anyString(), anyString(), anyLong(), anyString(), any(), any());
 
-        // When
-        ResponseDTO<Long> result = visitorAppointmentService.createAppointment(form);
-
-        // Then
-        assertNotNull(result);
-        // 即使审批流程失败，预约记录已创建，但状态可能不同
+        // When & Then
+        assertThrows(BusinessException.class, () -> visitorAppointmentService.createAppointment(form));
         verify(visitorAppointmentDao, times(1)).insert(any(VisitorAppointmentEntity.class));
     }
 }
-

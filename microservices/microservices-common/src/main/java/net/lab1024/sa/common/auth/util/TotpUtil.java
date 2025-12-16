@@ -1,6 +1,7 @@
 package net.lab1024.sa.common.auth.util;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.SystemException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -124,7 +125,7 @@ public class TotpUtil {
 
         } catch (Exception e) {
             log.error("[TOTP工具] 生成TOTP代码失败: {}", e.getMessage(), e);
-            throw new RuntimeException("生成TOTP代码失败", e);
+            throw new SystemException("TOTP_GENERATE_ERROR", "生成TOTP代码失败", e);
         }
     }
 
@@ -240,10 +241,10 @@ public class TotpUtil {
 
         } catch (NoSuchAlgorithmException e) {
             log.error("[TOTP工具] HMAC-SHA1算法不可用", e);
-            throw new RuntimeException("HMAC-SHA1算法不可用", e);
+            throw new SystemException("TOTP_HMAC_ALGORITHM_ERROR", "HMAC-SHA1算法不可用", e);
         } catch (InvalidKeyException e) {
             log.error("[TOTP工具] 无效的密钥", e);
-            throw new RuntimeException("无效的密钥", e);
+            throw new SystemException("TOTP_INVALID_KEY_ERROR", "无效的密钥", e);
         }
     }
 
@@ -395,7 +396,7 @@ public class TotpUtil {
                     encodedIssuer, encodedAccount, secretKey, encodedIssuer);
         } catch (java.io.UnsupportedEncodingException e) {
             log.error("[TOTP工具] URI编码失败", e);
-            throw new RuntimeException("URI编码失败", e);
+            throw new SystemException("TOTP_URI_ENCODE_ERROR", "URI编码失败", e);
         }
     }
 }

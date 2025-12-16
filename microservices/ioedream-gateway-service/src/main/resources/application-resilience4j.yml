@@ -25,7 +25,7 @@ spring:
         - id: ioedream-common-service
           uri: lb://ioedream-common-service
           predicates:
-            - Path=/api/v1/common/**
+            - Path=/api/v1/system/**,/api/v1/notification/**,/api/v1/area-device/**
           filters:
             - name: CircuitBreaker
               args:
@@ -46,7 +46,7 @@ spring:
         - id: ioedream-device-comm-service
           uri: lb://ioedream-device-comm-service
           predicates:
-            - Path=/api/v1/device/**
+            - Path=/api/v1/device/**,/api/v1/biometric/**
           filters:
             - name: CircuitBreaker
               args:
@@ -62,7 +62,7 @@ spring:
         - id: ioedream-oa-service
           uri: lb://ioedream-oa-service
           predicates:
-            - Path=/api/v1/oa/**
+            - Path=/api/v1/approval/**,/api/v1/workflow/**
           filters:
             - name: CircuitBreaker
               args:
@@ -73,7 +73,7 @@ spring:
         - id: ioedream-access-service
           uri: lb://ioedream-access-service
           predicates:
-            - Path=/api/v1/access/**
+            - Path=/api/v1/access/**,/api/v1/mobile/access/**
           filters:
             - name: CircuitBreaker
               args:
@@ -88,7 +88,7 @@ spring:
         - id: ioedream-attendance-service
           uri: lb://ioedream-attendance-service
           predicates:
-            - Path=/api/v1/attendance/**
+            - Path=/api/v1/attendance/**,/api/attendance/mobile/**,/api/attendance/mobile
           filters:
             - name: CircuitBreaker
               args:
@@ -103,7 +103,7 @@ spring:
         - id: ioedream-consume-service
           uri: lb://ioedream-consume-service
           predicates:
-            - Path=/api/v1/consume/**
+            - Path=/api/v1/consume/**,/api/v1/payment/**,/api/consume/**,/api/mobile/v1/consume/**
           filters:
             - name: CircuitBreaker
               args:
@@ -118,7 +118,7 @@ spring:
         - id: ioedream-visitor-service
           uri: lb://ioedream-visitor-service
           predicates:
-            - Path=/api/v1/visitor/**
+            - Path=/api/v1/visitor/**,/api/v1/mobile/visitor/**
           filters:
             - name: CircuitBreaker
               args:
@@ -129,7 +129,7 @@ spring:
         - id: ioedream-video-service
           uri: lb://ioedream-video-service
           predicates:
-            - Path=/api/v1/video/**
+            - Path=/api/v1/video/**,/api/v1/mobile/video/**
           filters:
             - name: CircuitBreaker
               args:
@@ -139,6 +139,70 @@ spring:
               args:
                 redis-rate-limiter.replenishRate: 30
                 redis-rate-limiter.burstCapacity: 60
+
+        # ==================== 兼容入口（legacy → canonical / pass-through） ====================
+        - id: legacy-resilience-access-to-api-v1
+          uri: lb://ioedream-access-service
+          predicates:
+            - Path=/access/**
+          filters:
+            - RewritePath=/access(?<segment>/?.*), /api/v1/access$\{segment}
+
+        - id: legacy-resilience-attendance-to-api-v1
+          uri: lb://ioedream-attendance-service
+          predicates:
+            - Path=/attendance/**
+          filters:
+            - RewritePath=/attendance(?<segment>/?.*), /api/v1/attendance$\{segment}
+
+        - id: legacy-resilience-consume-to-api-v1
+          uri: lb://ioedream-consume-service
+          predicates:
+            - Path=/consume/**
+          filters:
+            - RewritePath=/consume(?<segment>/?.*), /api/v1/consume$\{segment}
+
+        - id: legacy-resilience-visitor-to-api-v1
+          uri: lb://ioedream-visitor-service
+          predicates:
+            - Path=/visitor/**
+          filters:
+            - RewritePath=/visitor(?<segment>/?.*), /api/v1/visitor$\{segment}
+
+        - id: legacy-resilience-video-to-api-v1
+          uri: lb://ioedream-video-service
+          predicates:
+            - Path=/video/**
+          filters:
+            - RewritePath=/video(?<segment>/?.*), /api/v1/video$\{segment}
+
+        - id: legacy-resilience-device-to-api-v1
+          uri: lb://ioedream-device-comm-service
+          predicates:
+            - Path=/device/**
+          filters:
+            - RewritePath=/device(?<segment>/?.*), /api/v1/device$\{segment}
+
+        - id: legacy-resilience-system-to-api-v1
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/system/**
+          filters:
+            - RewritePath=/system(?<segment>/?.*), /api/v1/system$\{segment}
+
+        - id: legacy-resilience-support-pass-through
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/support/**
+          filters:
+            - StripPrefix=0
+
+        - id: legacy-resilience-security-pass-through
+          uri: lb://ioedream-common-service
+          predicates:
+            - Path=/security/**
+          filters:
+            - StripPrefix=0
 
 # ============================================================
 # Resilience4j 网关专用配置

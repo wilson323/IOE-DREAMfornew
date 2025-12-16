@@ -64,3 +64,4 @@ public interface AccessEventService {
      */
     ResponseDTO<Long> createAccessRecord(net.lab1024.sa.access.domain.form.AccessRecordAddForm form);
 }
+

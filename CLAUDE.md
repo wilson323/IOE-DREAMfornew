@@ -653,10 +653,12 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 
 ### 6. 微服务间调用规范（强制执行）
 
-**统一通过网关调用**：
-- ✅ **所有服务间调用必须通过API网关**
-- ✅ **使用 `GatewayServiceClient` 统一调用**
-- ❌ **禁止使用 FeignClient 直接调用**
+**混合调用（强制执行）**：
+- ✅ **南北向（外部/前端→服务）请求必须通过API网关**
+- ✅ **东西向低频或跨域同步调用通过 `GatewayServiceClient` 经网关**
+- ✅ **同域高频/低延迟/强一致热路径允许直连，但必须满足：统一直连 Client、白名单声明、服务到服务鉴权、Resilience4j、Tracing/Metrics**
+- 📌 详细策略与试点白名单：`documentation/architecture/INTERNAL_CALL_STRATEGY.md`
+- ❌ **禁止未经白名单的 FeignClient/@FeignClient 直连**
 - ❌ **禁止直接访问其他服务数据库**
 
 ```java
@@ -678,8 +680,8 @@ public class ConsumeServiceImpl implements ConsumeService {
     }
 }
 
-// ❌ 错误示例
-// @FeignClient(name = "ioedream-identity-service")  // 禁止使用
+// ❌ 错误示例 - 非白名单直连（直接使用FeignClient）
+// @FeignClient(name = "ioedream-identity-service")
 // public interface AreaServiceClient {
 //     @GetMapping("/api/v1/area/{id}")
 //     AreaEntity getArea(@PathVariable Long id);
@@ -1414,6 +1416,478 @@ public class DataSecurityManager {
 
 ---
 
+## 🔧 技术栈规范（强制执行）
+
+> **更新日期**: 2025-12-10  
+> **规范版本**: v2.0.0  
+> **适用范围**: IOE-DREAM全部微服务  
+> **重要更新**: 统一使用成熟技术栈，禁止自定义实现
+
+### 核心原则
+
+**技术栈选择原则**:
+- ✅ **优先使用成熟开源技术栈**（经过大规模生产验证）
+- ✅ **统一技术栈标准**（避免多套实现并存）
+- ❌ **禁止自定义实现核心组件**（事务、缓存、容错、监控）
+- ❌ **禁止重复造轮子**（已有成熟方案必须使用）
+
+---
+
+### 1. 分布式事务规范 - Seata（强制执行）
+
+**强制要求**:
+- ✅ **统一使用 Seata 实现分布式事务**
+- ❌ **禁止使用自定义SagaManager**
+- ❌ **禁止使用其他分布式事务框架**（如Atomikos、Bitronix）
+
+**Seata集成规范**:
+
+```java
+// ❌ 错误示例 - 自定义SagaManager
+SagaTransaction saga = sagaManager.createSaga("consume", request.getOrderId())
+    .step("balanceDeduct", this::deductBalance, this::refundBalance)
+    .step("recordConsume", this::createConsumeRecord, this::deleteConsumeRecord)
+    .build();
+return saga.execute();
+
+// ✅ 正确示例 - 使用Seata
+@GlobalTransactional(name = "consume-saga", rollbackFor = Exception.class)
+public ResponseDTO<ConsumeResultDTO> executeConsumeSaga(ConsumeRequestDTO request) {
+    // Seata自动管理事务状态、补偿、恢复
+    deductBalance(request);
+    createConsumeRecord(request);
+    sendNotification(request);
+    return ResponseDTO.ok(result);
+}
+```
+
+**Seata配置规范**:
+
+```yaml
+# application.yml
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: default_tx_group
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.config.server-addr}
+      namespace: ${spring.cloud.nacos.config.namespace}
+      group: SEATA_GROUP
+  registry:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.discovery.server-addr}
+      namespace: ${spring.cloud.nacos.discovery.namespace}
+      group: SEATA_GROUP
+```
+
+**Seata优势**:
+- ✅ **事务状态持久化**: 支持MySQL/Redis存储，服务重启不丢失
+- ✅ **分布式协调**: 支持TC(Transaction Coordinator)集群模式
+- ✅ **自动恢复**: 失败事务自动重试和补偿
+- ✅ **可视化监控**: Seata Console提供完整的事务监控
+- ✅ **多种模式**: 支持AT、TCC、SAGA、XA四种模式
+- ✅ **生产级稳定性**: 阿里开源，大规模生产验证
+
+**实施要求**:
+1. 所有微服务必须添加Seata依赖
+2. 创建undo_log表（每个业务数据库）
+3. 配置Seata Server连接
+4. 使用@GlobalTransactional替代自定义事务管理
+
+---
+
+### 2. 缓存管理规范 - Spring Cache（强制执行）
+
+**强制要求**:
+- ✅ **统一使用 Spring Cache + Caffeine + Redis**
+- ❌ **禁止使用自定义CacheManager**
+- ❌ **禁止使用自定义UnifiedCacheManager**
+- ❌ **禁止使用自定义MultiLevelCacheManager**
+
+**Spring Cache集成规范**:
+
+```java
+// ❌ 错误示例 - 自定义缓存管理器
+AccountEntity account = cacheManager.getWithRefresh(
+    "account", 
+    "account:" + accountId,
+    () -> accountDao.selectById(accountId),
+    Duration.ofMinutes(30)
+);
+
+// ✅ 正确示例 - 使用Spring Cache注解
+@Cacheable(value = "account", key = "#accountId", unless = "#result == null")
+public AccountEntity getAccountById(Long accountId) {
+    return accountDao.selectById(accountId);
+}
+
+@CacheEvict(value = "account", key = "#accountId")
+public void updateAccount(AccountEntity account) {
+    accountDao.updateById(account);
+}
+
+@CachePut(value = "account", key = "#account.id")
+public AccountEntity saveAccount(AccountEntity account) {
+    accountDao.insert(account);
+    return account;
+}
+```
+
+**缓存配置规范**:
+
+```java
+@Configuration
+@EnableCaching
+public class CacheConfiguration {
+
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        // L1: Caffeine本地缓存
+        CaffeineCacheManager localCacheManager = new CaffeineCacheManager();
+        localCacheManager.setCaffeine(Caffeine.newBuilder()
+            .maximumSize(10000)
+            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .recordStats());
+
+        // L2: Redis分布式缓存
+        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
+            .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(30))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                    .fromSerializer(new GenericJackson2JsonRedisSerializer())));
+
+        // 组合缓存管理器（L1 + L2）
+        return new CompositeCacheManager(localCacheManager, redisCacheManager);
+    }
+}
+```
+
+**Spring Cache优势**:
+- ✅ **声明式缓存**: 使用注解即可，代码简洁
+- ✅ **AOP支持**: 自动处理缓存逻辑，无侵入
+- ✅ **多缓存支持**: 支持Caffeine、Redis、EhCache等
+- ✅ **缓存抽象**: 统一的CacheManager接口
+- ✅ **条件缓存**: 支持unless、condition等条件
+- ✅ **缓存同步**: 支持@CachePut自动更新
+
+**实施要求**:
+1. 移除所有自定义缓存管理器类
+2. 统一使用@Cacheable/@CacheEvict/@CachePut注解
+3. 配置CompositeCacheManager（L1本地+L2Redis）
+4. 缓存配置统一到application.yml
+
+---
+
+### 3. 容错机制规范 - Resilience4j（强制执行）
+
+**强制要求**:
+- ✅ **统一使用 Resilience4j 实现容错机制**
+- ❌ **禁止使用自定义重试逻辑**
+- ❌ **禁止使用自定义熔断器实现**
+- ❌ **禁止使用LightResilienceConfiguration自定义实现**
+
+**Resilience4j集成规范**:
+
+```java
+// ❌ 错误示例 - 自定义重试逻辑
+LightRetryManager retryManager = new LightRetryManager();
+retryManager.executeWithRetry(() -> {
+    return externalService.call();
+}, 3);
+
+// ✅ 正确示例 - 使用Resilience4j注解
+@Retry(name = "external-service", fallbackMethod = "fallback")
+@CircuitBreaker(name = "external-service")
+@RateLimiter(name = "external-service")
+@Bulkhead(name = "external-service")
+public ResponseDTO<String> callExternalService(RequestDTO request) {
+    return externalService.call(request);
+}
+
+public ResponseDTO<String> fallback(RequestDTO request, Exception e) {
+    log.warn("[降级] 外部服务调用失败，使用降级方案", e);
+    return ResponseDTO.ok("降级响应");
+}
+```
+
+**Resilience4j配置规范**:
+
+```yaml
+resilience4j:
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 1000ms
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.net.SocketTimeoutException
+          - java.io.IOException
+    instances:
+      external-service:
+        baseConfig: default
+        maxAttempts: 5
+        waitDuration: 2000ms
+
+  circuitbreaker:
+    configs:
+      default:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 60s
+        slidingWindowSize: 100
+    instances:
+      external-service:
+        baseConfig: default
+        failureRateThreshold: 30
+
+  ratelimiter:
+    configs:
+      default:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0
+    instances:
+      external-service:
+        baseConfig: default
+```
+
+**Resilience4j优势**:
+- ✅ **完整容错**: 重试、熔断、限流、隔离一体化
+- ✅ **指标监控**: 自动集成Micrometer
+- ✅ **配置灵活**: 支持YAML配置和代码配置
+- ✅ **事件发布**: 支持状态变更事件监听
+- ✅ **生产验证**: Netflix Hystrix的现代替代方案
+
+**实施要求**:
+1. 移除自定义重试和熔断实现
+2. 统一使用Resilience4j注解
+3. 配置统一管理（YAML）
+4. 添加降级方法（fallbackMethod）
+
+---
+
+### 4. 监控指标规范 - Micrometer（强制执行）
+
+**强制要求**:
+- ✅ **统一使用 Micrometer + Prometheus**
+- ❌ **禁止使用自定义MetricsCollector**
+- ❌ **禁止使用自定义MetricsCollectorManager**
+- ❌ **禁止使用自定义BusinessMetricsCollector**
+
+**Micrometer集成规范**:
+
+```java
+// ❌ 错误示例 - 自定义指标收集
+metricsCollector.recordCounter("user.login.count", "type", "success");
+metricsCollector.recordGauge("device.online.count", 1250);
+
+// ✅ 正确示例 - 使用Micrometer注解
+@Timed(value = "user.login", description = "用户登录耗时")
+@Counted(value = "user.login.count", description = "用户登录次数")
+public ResponseDTO<UserVO> login(LoginForm form) {
+    // 业务逻辑
+    return ResponseDTO.ok(userVO);
+}
+
+// 自动指标收集（无需手动调用）
+@Timed(value = "http.request", extraTags = {"method", "GET"})
+@GetMapping("/api/v1/users/{id}")
+public ResponseDTO<UserVO> getUser(@PathVariable Long id) {
+    return ResponseDTO.ok(userService.getById(id));
+}
+```
+
+**Micrometer配置规范**:
+
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+```
+
+**Micrometer优势**:
+- ✅ **自动指标**: Spring Boot Actuator自动收集
+- ✅ **多后端支持**: Prometheus、InfluxDB、CloudWatch等
+- ✅ **标准化**: 符合Micrometer规范
+- ✅ **丰富指标**: JVM、HTTP、数据库、缓存等
+- ✅ **可视化**: 集成Grafana Dashboard
+
+**实施要求**:
+1. 移除所有自定义指标收集器
+2. 使用@Timed/@Counted注解
+3. 配置Prometheus导出
+4. 配置Grafana Dashboard
+
+---
+
+### 5. 工具类规范 - Apache Commons + Guava（强制执行）
+
+**强制要求**:
+- ✅ **优先使用 Apache Commons Lang3 / Guava**
+- ❌ **禁止重复实现已有工具类功能**
+- ❌ **禁止自定义StringUtil、JsonUtil等通用工具**
+
+**工具类替换清单**:
+
+| 自定义工具类 | 行数 | 替换方案 | 优先级 | 状态 |
+|------------|------|---------|--------|------|
+| `SmartStringUtil` | 150+ | Apache Commons Lang3 | P2 | ✅ 已确认不存在（可能已删除） |
+| `JsonUtil` | 100+ | Jackson ObjectMapper (Spring Boot默认) | P1 | ✅ 已更新为适配器模式 |
+| `PasswordUtil` | 120+ | Spring Security BCryptPasswordEncoder | P1 | ✅ 已更新为适配器模式 |
+| `SmartRedisUtil` | 200+ | Spring Data Redis (已使用) | P2 | ✅ 已标记为@Deprecated |
+| `PageHelper` | 80+ | 保留（游标分页功能，MyBatis-Plus不支持） | - | ✅ 已确认保留 |
+| `AESUtil` | 120+ | 保留（使用javax.crypto标准库，符合规范） | P2 | ✅ 已优化注释，说明与Spring Security Crypto关系 |
+| `DataMaskUtil` | 90+ | 保留（业务特定） | - | ✅ 已确认保留 |
+| 其他工具类 | 300+ | Apache Commons/Guava | P2 | ⏳ 待替换 |
+
+**工具类使用规范**:
+
+```java
+// ❌ 错误示例 - 自定义工具类
+String result = SmartStringUtil.trim(str);
+boolean isEmpty = SmartStringUtil.isEmpty(str);
+
+// ✅ 正确示例 - Apache Commons Lang3
+import org.apache.commons.lang3.StringUtils;
+String result = StringUtils.trim(str);
+boolean isEmpty = StringUtils.isEmpty(str);
+
+// ✅ 推荐示例 - 使用Spring Boot ObjectMapper Bean（标准方案）
+@Resource
+private ObjectMapper objectMapper;
+
+String json = objectMapper.writeValueAsString(obj);
+User user = objectMapper.readValue(json, User.class);
+
+// ✅ 允许示例 - 使用JsonUtil适配器（向后兼容）
+// JsonUtil已更新为适配器模式，内部使用ObjectMapper Bean
+// 推荐新代码使用ObjectMapper Bean，旧代码可继续使用JsonUtil
+String json = JsonUtil.toJson(obj);
+User user = JsonUtil.fromJson(json, User.class);
+
+// ✅ 推荐示例 - 使用Spring Security BCryptPasswordEncoder Bean（标准方案）
+@Resource
+private PasswordEncoder passwordEncoder;
+
+String encrypted = passwordEncoder.encode(rawPassword);
+boolean isValid = passwordEncoder.matches(rawPassword, hashedPassword);
+
+// ✅ 允许示例 - 使用PasswordUtil适配器（向后兼容）
+// PasswordUtil已更新为适配器模式，推荐使用BCryptPasswordEncoder Bean
+// 推荐新代码使用BCryptPasswordEncoder Bean，旧代码可继续使用PasswordUtil
+String encrypted = PasswordUtil.encryptPassword(rawPassword);
+boolean isValid = PasswordUtil.verifyPassword(rawPassword, hashedPassword);
+```
+
+**实施要求**:
+1. 逐步替换自定义工具类
+2. 使用成熟开源库
+3. 保留业务特定工具类（如DataMaskUtil、PageHelper游标分页）
+4. JsonUtil和PasswordUtil已更新为适配器模式，推荐使用Spring Boot标准方案
+
+---
+
+### 6. 异常处理规范 - 统一优化（强制执行）
+
+**强制要求**:
+- ✅ **统一使用 GlobalExceptionHandler**
+- ❌ **禁止多个异常处理器并存**
+- ❌ **禁止LightExceptionHandler和GlobalExceptionHandler同时存在**
+
+**异常处理规范**:
+
+```java
+// ✅ 统一异常处理器
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseDTO<Void> handleBusinessException(BusinessException e) {
+        log.warn("[业务异常] code={}, message={}", e.getCode(), e.getMessage());
+        return ResponseDTO.error(e.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<Map<String, String>> handleValidationException(
+            MethodArgumentNotValidException e) {
+        Map<String, String> errors = e.getBindingResult().getFieldErrors().stream()
+            .collect(Collectors.toMap(
+                FieldError::getField,
+                FieldError::getDefaultMessage,
+                (existing, replacement) -> existing
+            ));
+        return ResponseDTO.error("VALIDATION_ERROR", "参数验证失败", errors);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDTO<Void> handleException(Exception e) {
+        // 记录完整异常栈（包含TraceId）
+        String traceId = MDC.get("traceId");
+        log.error("[系统异常] traceId={}, error={}", traceId, e.getMessage(), e);
+        return ResponseDTO.error("SYSTEM_ERROR", "系统内部错误，请稍后重试");
+    }
+}
+```
+
+**实施要求**:
+1. 合并GlobalExceptionHandler和LightExceptionHandler
+2. 添加TraceId追踪
+3. 优化异常处理逻辑
+
+---
+
+### 技术栈替换时间表
+
+| 技术栈 | 自定义实现 | 替换方案 | 优先级 | 预计工作量 |
+|--------|-----------|---------|--------|-----------|
+| **分布式事务** | SagaManager | Seata | 🔴 P0 | 3-5天 |
+| **缓存管理** | 3个CacheManager | Spring Cache | 🔴 P0 | 2-3天 |
+| **容错机制** | LightResilienceConfiguration | Resilience4j | 🟠 P1 | 2天 |
+| **监控指标** | 5个MetricsCollector | Micrometer | 🟠 P1 | 2-3天 |
+| **工具类** | 20+个Util | Apache Commons/Guava | 🟡 P2 | 3-5天 |
+| **异常处理** | 2个Handler | 统一优化 | 🟡 P2 | 1天 |
+
+---
+
+### 技术栈检查清单
+
+**代码提交前检查**:
+- [ ] 未使用自定义SagaManager（应使用Seata）
+- [ ] 未使用自定义CacheManager（应使用Spring Cache）
+- [ ] 未使用自定义重试逻辑（应使用Resilience4j）
+- [ ] 未使用自定义指标收集器（应使用Micrometer）
+- [ ] 工具类优先使用Apache Commons/Guava
+
+**持续集成检查**:
+- [ ] 扫描自定义事务管理器
+- [ ] 扫描自定义缓存管理器
+- [ ] 扫描自定义容错实现
+- [ ] 扫描自定义监控实现
+
+---
+
 ## 🚨 P0级关键问题清单（基于深度分析结果）
 
 ### 🔴 配置安全问题（64个明文密码 - P0级）
@@ -1540,11 +2014,18 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 - ❌ 禁止状态服务设计（必须无状态）
 
 ### 技术选型违规
-- ❌ 禁止使用 FeignClient 直接调用（统一通过GatewayServiceClient）
+- ❌ 禁止未经白名单/统一直连 Client 的 FeignClient 直连（默认通过GatewayServiceClient）
 - ❌ 禁止使用 HikariCP 连接池（统一使用 Druid）
 - ❌ 禁止使用除 Nacos 外的注册中心
 - ❌ 禁止使用除 Redis 外的缓存技术
 - ❌ 禁止绕过多级缓存策略
+
+### 技术栈违规（新增 - 2025-12-10）
+- ❌ 禁止使用自定义SagaManager（必须使用Seata）
+- ❌ 禁止使用自定义CacheManager（必须使用Spring Cache）
+- ❌ 禁止使用自定义重试逻辑（必须使用Resilience4j）
+- ❌ 禁止使用自定义指标收集器（必须使用Micrometer）
+- ❌ 禁止重复实现已有工具类功能（优先使用Apache Commons/Guava）
 
 ### 性能优化违规
 - ❌ 禁止数据库全表扫描
@@ -1561,9 +2042,9 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 - ❌ 禁止缺少审计日志的操作
 
 ### 企业级特性违规
-- ❌ 禁止缺少降级熔断机制
-- ❌ 禁止缺少分布式事务设计
-- ❌ 禁止缺少监控告警机制
+- ❌ 禁止缺少降级熔断机制（必须使用Resilience4j）
+- ❌ 禁止缺少分布式事务设计（必须使用Seata）
+- ❌ 禁止缺少监控告警机制（必须使用Micrometer）
 - ❌ 禁止缺少幂等性设计
 - ❌ 禁止缺少异步处理机制
 
@@ -1621,7 +2102,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 - [ ] 操作审计日志（数据访问记录）
 
 ### 微服务集成检查（服务治理阶段）
-- [ ] 服务间调用通过GatewayServiceClient
+- [ ] 服务间调用符合混合策略（默认GatewayServiceClient；白名单热路径统一直连 Client）
 - [ ] 无跨服务直接数据库访问
 - [ ] 使用 Nacos 注册发现中心
 - [ ] 端口配置符合标准分配表
@@ -1873,11 +2354,23 @@ smart-app/
 
 ## 📦 模块职责边界规范 (2025-12-02新增)
 
-### 1. microservices-common (公共JAR库)
+### 1. microservices-common-core / microservices-common（公共库）
 
-**定位**: 纯Java库，被所有微服务依赖
+**定位**：
+- `microservices-common-core`：最小稳定内核（尽量纯 Java），被所有微服务依赖
+- `microservices-common`：公共库聚合（允许包含少量框架横切与治理能力，如统一客户端/Tracing/配置），被所有微服务依赖
 
-**✅ 允许包含**:
+📌 详细拆分与依赖方向：`documentation/architecture/COMMON_LIBRARY_SPLIT.md`
+
+**演进方向（强制遵循）**：公共库将按稳定性与领域逐步拆分为少量公共产物（目标 5–8 个以内）：
+- `common-core`：最稳定、纯 Java 的共享基元（响应/异常/DTO/工具/约定），尽量不依赖 Spring（已以 `microservices-common-core` 形态落地）
+- `common-spring`/`common-web`：框架横切一致性（拦截器、序列化、统一配置）
+- `common-starter-*`：能力型自动装配（cache/mq/seata/security/mybatis/...）
+- `*-domain-api`：跨服务契约与模型（只放接口/DTO/事件，不放实现）
+
+**禁止**：领域实现回流到 `common-core`；跨域协作优先 RPC/事件，不优先共享实现。
+
+**✅ 允许包含（主要指 `microservices-common`）**:
 | 类型 | 说明 | 示例 |
 |------|------|------|
 | Entity | 数据实体 | `UserEntity`, `DepartmentEntity` |
@@ -1907,15 +2400,17 @@ public class ManagerConfiguration {
 }
 ```
 
-**❌ 禁止包含**:
+**❌ 禁止包含（公共库通用约束）**:
 | 类型 | 原因 |
 |------|------|
 | @Service实现类 | Service实现应在具体微服务中 |
 | @RestController | Controller应在具体微服务中 |
 | @Component注解 | Manager类不使用Spring注解，保持为纯Java类 |
 | @Resource/@Autowired | Manager类通过构造函数注入依赖，不使用Spring依赖注入 |
-| spring-boot-starter-web | 公共库不应依赖Web框架 |
-| spring-boot-starter | 公共库不应依赖Spring Boot框架（可依赖spring-core等基础框架） |
+| 领域实现代码 | 领域逻辑应归属到具体业务服务或 *-domain-api（仅契约） |
+
+**补充约束（`microservices-common-core`）**：
+- ❌ 禁止依赖 `spring-boot-starter` / `spring-boot-starter-web` 等 Spring Boot/Web 框架（保持最小稳定内核）
 
 ### 2. ioedream-common-service (公共业务微服务)
 
@@ -1947,6 +2442,10 @@ public class ManagerConfiguration {
 - Manager类在 `microservices-common` 中是纯Java类，不使用Spring注解
 - 在 `ioedream-common-service` 中，通过 `@Configuration` 类将Manager注册为Spring Bean
 - Service层通过 `@Resource` 注入Manager实例（由Spring容器管理）
+- **Bean注册规范**（2025-12-11新增）：
+  - **公共Manager**：在`common-service`中统一注册，使用`@ConditionalOnMissingBean`避免重复
+  - **业务Manager**：在对应业务服务中注册
+  - **共享Manager**：使用`@ConditionalOnMissingBean`确保单例注册
 - 示例：
 ```java
 // microservices-common中的Manager（纯Java类）
@@ -1958,12 +2457,22 @@ public class UserManager {
     }
 }
 
-// ioedream-common-service中的配置类
+// ioedream-common-service中的配置类（公共Manager统一注册）
 @Configuration
-public class ManagerConfig {
+public class ManagerConfiguration {
     @Bean
+    @ConditionalOnMissingBean(UserManager.class)  // 避免重复注册
     public UserManager userManager(UserDao userDao) {
         return new UserManager(userDao);
+    }
+}
+
+// 业务服务中的配置类（业务特定Manager）
+@Configuration
+public class BusinessManagerConfiguration {
+    @Bean
+    public WorkflowApprovalManager workflowApprovalManager(GatewayServiceClient gatewayServiceClient) {
+        return new WorkflowApprovalManager(gatewayServiceClient);
     }
 }
 
@@ -1974,6 +2483,14 @@ public class UserServiceImpl implements UserService {
     private UserManager userManager;  // 由Spring容器注入
 }
 ```
+
+**Manager Bean注册检查清单**（2025-12-11新增）：
+1. ✅ 新增Manager时，检查是否有Service使用该Manager
+2. ✅ 确定应该在哪个服务中注册（公共Manager在common-service，业务Manager在业务服务）
+3. ✅ 使用`@ConditionalOnMissingBean`避免重复注册
+4. ✅ 验证所有Service需要的Manager都已正确注册
+5. ✅ 运行检查脚本验证无缺失Bean：`scripts/check-manager-bean-registration.ps1`
+6. ✅ 参考文档：`documentation/technical/MANAGER_BEAN_REGISTRATION_CHECKLIST.md`
 
 ### 3. 业务微服务职责
 

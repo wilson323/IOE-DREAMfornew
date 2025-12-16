@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
 
@@ -39,8 +39,8 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
     @Resource
     private AccountManager accountManager;
 
-    @Resource
-    private GatewayServiceClient gatewayServiceClient;
+	    @Resource
+	    private AccountKindConfigClient accountKindConfigClient;
 
     @Resource
     private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
@@ -66,14 +66,9 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
                 return BigDecimal.ZERO;
             }
 
-            // 2. 通过网关调用公共服务获取账户类别信息
-            ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
-                    gatewayServiceClient.callCommonService(
-                            "/api/v1/account-kind/" + accountKindId,
-                            org.springframework.http.HttpMethod.GET,
-                            null,
-                            new com.fasterxml.jackson.core.type.TypeReference<ResponseDTO<java.util.Map<String, Object>>>() {}
-                    );
+	            // 2. 获取账户类别信息（热路径：默认经网关，直连启用时走直连）
+	            ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
+	                    accountKindConfigClient.getAccountKind(accountKindId);
 
             if (accountKindResponse == null || !accountKindResponse.isSuccess() 
                     || accountKindResponse.getData() == null) {
@@ -354,4 +349,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
         return account != null && account.getAccountKindId() != null;
     }
 }
+
+
+
 

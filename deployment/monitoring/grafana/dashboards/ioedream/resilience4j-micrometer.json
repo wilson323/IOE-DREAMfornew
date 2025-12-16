@@ -1,0 +1,309 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "IOE-DREAM Resilience4j & Micrometer 监控",
+    "tags": ["ioe-dream", "resilience4j", "micrometer", "monitoring"],
+    "timezone": "Asia/Shanghai",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "熔断器状态",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "resilience4j_circuitbreaker_state{state=\"OPEN\"}",
+            "legendFormat": "{{name}} - OPEN",
+            "refId": "A"
+          },
+          {
+            "expr": "resilience4j_circuitbreaker_state{state=\"CLOSED\"}",
+            "legendFormat": "{{name}} - CLOSED",
+            "refId": "B"
+          },
+          {
+            "expr": "resilience4j_circuitbreaker_state{state=\"HALF_OPEN\"}",
+            "legendFormat": "{{name}} - HALF_OPEN",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "text": "CLOSED",
+                    "color": "green"
+                  },
+                  "1": {
+                    "text": "OPEN",
+                    "color": "red"
+                  },
+                  "2": {
+                    "text": "HALF_OPEN",
+                    "color": "yellow"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 1
+                },
+                {
+                  "color": "red",
+                  "value": 2
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "熔断器失败率",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 9,
+          "x": 6,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "rate(resilience4j_circuitbreaker_calls_total{kind=\"failed\"}[5m]) / rate(resilience4j_circuitbreaker_calls_total[5m]) * 100",
+            "legendFormat": "{{name}} - 失败率",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "重试执行次数",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 9,
+          "x": 15,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "rate(resilience4j_retry_calls_total[5m])",
+            "legendFormat": "{{name}} - {{kind}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "限流触发次数",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(resilience4j_ratelimiter_calls_total{kind=\"not_permitted\"}[5m])",
+            "legendFormat": "{{name}} - 限流触发",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "业务方法执行时间 (P95)",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(method_timed_seconds_bucket{application=~\"ioedream-.*\"}[5m])) by (le, application, method))",
+            "legendFormat": "{{application}} - {{method}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "decimals": 3
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "业务方法调用次数",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "rate(method_counted_total{application=~\"ioedream-.*\"}[5m])",
+            "legendFormat": "{{application}} - {{method}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "HTTP请求响应时间分布",
+        "type": "heatmap",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_seconds_bucket{application=~\"ioedream-.*\"}[5m])) by (le, application)",
+            "format": "heatmap",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "JVM内存使用率",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "(jvm_memory_used_bytes{area=\"heap\",application=~\"ioedream-.*\"} / jvm_memory_max_bytes{area=\"heap\",application=~\"ioedream-.*\"}) * 100",
+            "legendFormat": "{{application}} - 堆内存使用率",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 9,
+        "title": "GC暂停时间",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "rate(jvm_gc_pause_seconds_sum{application=~\"ioedream-.*\"}[5m])",
+            "legendFormat": "{{application}} - {{gc}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "decimals": 3
+          }
+        }
+      },
+      {
+        "id": 10,
+        "title": "线程数",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "jvm_threads_live_threads{application=~\"ioedream-.*\"}",
+            "legendFormat": "{{application}} - 活动线程数",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0
+          }
+        }
+      }
+    ]
+  }
+}
+

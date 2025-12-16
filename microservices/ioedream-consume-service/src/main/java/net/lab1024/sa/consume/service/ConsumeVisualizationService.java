@@ -69,3 +69,6 @@ public interface ConsumeVisualizationService {
      */
     ResponseDTO<ConsumeForecastAnalysisVO> getForecastAnalysis(ConsumeStatisticsForm form);
 }
+
+
+

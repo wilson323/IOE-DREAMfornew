@@ -267,3 +267,6 @@ public class IndexAnalysisResult {
         private Long avgRowsScanned;
     }
 }
+
+
+

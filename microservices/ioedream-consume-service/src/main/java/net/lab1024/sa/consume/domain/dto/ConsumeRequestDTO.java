@@ -3,6 +3,7 @@ package net.lab1024.sa.consume.domain.dto;
 import java.math.BigDecimal;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 消费请求DTO
@@ -19,6 +20,7 @@ import lombok.Data;
  * @since 2025-01-30
  */
 @Data
+@Slf4j
 public class ConsumeRequestDTO {
 
     /**
@@ -84,6 +86,7 @@ public class ConsumeRequestDTO {
         try {
             return Long.parseLong(this.deviceId);
         } catch (NumberFormatException e) {
+            log.debug("[消费请求DTO] deviceId不是数字格式，返回null: deviceId={}, error={}", this.deviceId, e.getMessage());
             return null;
         }
     }
@@ -112,3 +115,6 @@ public class ConsumeRequestDTO {
         return getDeviceIdAsLong() != null;
     }
 }
+
+
+

@@ -1,0 +1,52 @@
+# Frontend API Base URL / Prefix Inventory
+# Generated: 2025-12-13T13:06:47+08:00
+
+## smart-admin-web-javascript
+smart-admin-web-javascript/src/lib/axios.js:24:  baseURL: import.meta.env.VITE_APP_API_URL,
+
+## smart-admin-web-javascript env
+--- smart-admin-web-javascript/.env.development
+NODE_ENV=development
+VITE_APP_TITLE='SmartAdmin 开发环境(Dev)'
+VITE_APP_API_URL='http://127.0.0.1:8080'--- smart-admin-web-javascript/.env.localhost
+NODE_ENV=development
+VITE_APP_TITLE='SmartAdmin 本地环境(Local)'
+VITE_APP_API_URL='http://127.0.0.1:1024'
+--- smart-admin-web-javascript/.env.pre
+NODE_ENV=production
+VITE_APP_TITLE='SmartAdmin 预发布环境(Pre)'
+VITE_APP_API_URL='https://preview.smartadmin.vip/smart-admin-api'--- smart-admin-web-javascript/.env.production
+NODE_ENV=production
+VITE_APP_TITLE='SmartAdmin V3.X'
+VITE_APP_API_URL='https://preview.smartadmin.vip/smart-admin-api'--- smart-admin-web-javascript/.env.test
+NODE_ENV=production
+VITE_APP_TITLE='SmartAdmin 测试环境(Test)'
+VITE_APP_API_URL='http://127.0.0.1:1024'
+
+## smart-app
+smart-app/src/lib/smart-request.js:15:const baseUrl = import.meta.env.VITE_APP_API_URL;
+smart-app/src/api/business/visitor/visitor-api.js:233:        url: `${import.meta.env.VITE_APP_API_URL || ''}/api/v1/mobile/visitor/ocr/idcard?cardSide=${cardSide}`,
+smart-app/src/utils/offline-manager.js:192:        url: (import.meta.env.VITE_APP_API_URL || '') + item.api,
+smart-app/src/utils/api-manager.js:15:  baseURL: normalizeBaseUrl(import.meta.env.VITE_APP_API_URL),
+smart-app/src/store/modules/system/app.js:35:    apiBaseUrl: normalizeBaseUrl(import.meta.env.VITE_APP_API_URL),
+smart-app/src/store/modules/system/app.js:399:        apiBaseUrl: normalizeBaseUrl(import.meta.env.VITE_APP_API_URL),
+
+## smart-app env
+--- smart-app/.env.development
+NODE_ENV=development
+VITE_APP_TITLE='SmartAdmin 开发环境(Dev)'
+VITE_APP_API_URL='http://127.0.0.1:1024'
+--- smart-app/.env.localhost
+NODE_ENV=development
+VITE_APP_TITLE='SmartH5 本地环境(Local)'
+VITE_APP_API_URL='http://127.0.0.1:1024'
+--- smart-app/.env.pre
+NODE_ENV=production
+VITE_APP_TITLE='SmartH5 预发布环境(Pre)'
+VITE_APP_API_URL='https://app.smartadmin.vip/smart-app-api'--- smart-app/.env.production
+NODE_ENV=production
+VITE_APP_TITLE='Smart App V3.X'
+VITE_APP_API_URL='https://app.smartadmin.vip/smart-app-api'--- smart-app/.env.test
+NODE_ENV=production
+VITE_APP_TITLE='SmartH5 测试环境(Test)'
+VITE_APP_API_URL='http://127.0.0.1:1024'

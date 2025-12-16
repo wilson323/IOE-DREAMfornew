@@ -10,7 +10,10 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector;
+import net.lab1024.sa.common.exception.SystemException;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+// import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector; // 已废弃，已移除
 import net.lab1024.sa.devicecomm.protocol.adapter.ProtocolAdapterFactory;
 import net.lab1024.sa.devicecomm.protocol.enums.ProtocolTypeEnum;
 import net.lab1024.sa.devicecomm.protocol.handler.ProtocolHandler;
@@ -58,10 +61,10 @@ public class MessageRouter {
     private AsyncTaskExecutor executorService;
 
     /**
-     * 协议监控指标收集器
+     * Micrometer指标注册表（用于编程式指标收集）
      */
     @Resource
-    private ProtocolMetricsCollector metricsCollector;
+    private MeterRegistry meterRegistry;
 
     /**
      * 销毁线程池
@@ -74,7 +77,7 @@ public class MessageRouter {
         if (executorService instanceof ThreadPoolTaskExecutor) {
             ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) executorService;
             ThreadPoolExecutor threadPoolExecutor = taskExecutor.getThreadPoolExecutor();
-            
+
             if (threadPoolExecutor != null && !threadPoolExecutor.isShutdown()) {
                 log.info("[消息路由] 开始关闭消息路由器线程池，当前活跃线程数={}, 队列大小={}",
                         threadPoolExecutor.getActiveCount(), threadPoolExecutor.getQueue().size());
@@ -100,7 +103,7 @@ public class MessageRouter {
                 protocolType, deviceId, rawData != null ? rawData.length : 0);
 
         long startTime = System.currentTimeMillis();
-        
+
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 获取协议处理器
@@ -118,30 +121,49 @@ public class MessageRouter {
                 long duration = System.currentTimeMillis() - startTime;
                 log.info("[消息路由] 消息路由成功，协议类型={}, 设备ID={}, 消息类型={}, duration={}ms",
                         protocolType, deviceId, message.getMessageType(), duration);
-                
-                // 记录监控指标
-                metricsCollector.recordSuccess(protocolType, duration);
-                
+
+                // 记录监控指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.process")
+                        .tag("protocol_type", protocolType != null ? protocolType : "unknown")
+                        .tag("status", "success")
+                        .register(meterRegistry)
+                        .increment();
+
                 return message;
 
             } catch (ProtocolParseException e) {
                 long duration = System.currentTimeMillis() - startTime;
                 log.error("[消息路由] 消息解析失败，协议类型={}, 设备ID={}, 错误={}, duration={}ms",
                         protocolType, deviceId, e.getMessage(), duration, e);
-                metricsCollector.recordError(protocolType, "PARSE_ERROR");
-                throw new RuntimeException("消息解析失败：" + e.getMessage(), e);
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType != null ? protocolType : "unknown")
+                        .tag("error_type", "PARSE_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                throw new SystemException("MESSAGE_PARSE_ERROR", "消息解析失败：" + e.getMessage(), e);
             } catch (ProtocolProcessException e) {
                 long duration = System.currentTimeMillis() - startTime;
                 log.error("[消息路由] 消息处理失败，协议类型={}, 设备ID={}, 错误={}, duration={}ms",
                         protocolType, deviceId, e.getMessage(), duration, e);
-                metricsCollector.recordError(protocolType, "PROCESS_ERROR");
-                throw new RuntimeException("消息处理失败：" + e.getMessage(), e);
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType != null ? protocolType : "unknown")
+                        .tag("error_type", "PROCESS_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                throw new SystemException("MESSAGE_PROCESS_ERROR", "消息处理失败：" + e.getMessage(), e);
             } catch (Exception e) {
                 long duration = System.currentTimeMillis() - startTime;
                 log.error("[消息路由] 消息路由异常，协议类型={}, 设备ID={}, 错误={}, duration={}ms",
                         protocolType, deviceId, e.getMessage(), duration, e);
-                metricsCollector.recordError(protocolType, "ROUTE_ERROR");
-                throw new RuntimeException("消息路由异常：" + e.getMessage(), e);
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType != null ? protocolType : "unknown")
+                        .tag("error_type", "ROUTE_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                throw new SystemException("MESSAGE_ROUTE_ERROR", "消息路由异常：" + e.getMessage(), e);
             }
         }, executorService);
     }
@@ -199,7 +221,7 @@ public class MessageRouter {
                 protocolType, deviceId, rawData != null ? rawData.length() : 0);
 
         long startTime = System.currentTimeMillis();
-        
+
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 获取协议处理器
@@ -217,30 +239,49 @@ public class MessageRouter {
                 long duration = System.currentTimeMillis() - startTime;
                 log.info("[消息路由] 文本消息路由成功，协议类型={}, 设备ID={}, 消息类型={}, duration={}ms",
                         protocolType, deviceId, message.getMessageType(), duration);
-                
-                // 记录监控指标
-                metricsCollector.recordSuccess(protocolType, duration);
-                
+
+                // 记录监控指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.process")
+                        .tag("protocol_type", protocolType != null ? protocolType : "unknown")
+                        .tag("status", "success")
+                        .register(meterRegistry)
+                        .increment();
+
                 return message;
 
             } catch (ProtocolParseException e) {
                 long duration = System.currentTimeMillis() - startTime;
                 log.error("[消息路由] 文本消息解析失败，协议类型={}, 设备ID={}, 错误={}, duration={}ms",
                         protocolType, deviceId, e.getMessage(), duration, e);
-                metricsCollector.recordError(protocolType, "PARSE_ERROR");
-                throw new RuntimeException("消息解析失败：" + e.getMessage(), e);
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType != null ? protocolType : "unknown")
+                        .tag("error_type", "PARSE_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                throw new SystemException("MESSAGE_PARSE_ERROR", "消息解析失败：" + e.getMessage(), e);
             } catch (ProtocolProcessException e) {
                 long duration = System.currentTimeMillis() - startTime;
                 log.error("[消息路由] 文本消息处理失败，协议类型={}, 设备ID={}, 错误={}, duration={}ms",
                         protocolType, deviceId, e.getMessage(), duration, e);
-                metricsCollector.recordError(protocolType, "PROCESS_ERROR");
-                throw new RuntimeException("消息处理失败：" + e.getMessage(), e);
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType != null ? protocolType : "unknown")
+                        .tag("error_type", "PROCESS_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                throw new SystemException("MESSAGE_PROCESS_ERROR", "消息处理失败：" + e.getMessage(), e);
             } catch (Exception e) {
                 long duration = System.currentTimeMillis() - startTime;
                 log.error("[消息路由] 文本消息路由异常，协议类型={}, 设备ID={}, 错误={}, duration={}ms",
                         protocolType, deviceId, e.getMessage(), duration, e);
-                metricsCollector.recordError(protocolType, "ROUTE_ERROR");
-                throw new RuntimeException("消息路由异常：" + e.getMessage(), e);
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType != null ? protocolType : "unknown")
+                        .tag("error_type", "ROUTE_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                throw new SystemException("MESSAGE_ROUTE_ERROR", "消息路由异常：" + e.getMessage(), e);
             }
         }, executorService);
     }

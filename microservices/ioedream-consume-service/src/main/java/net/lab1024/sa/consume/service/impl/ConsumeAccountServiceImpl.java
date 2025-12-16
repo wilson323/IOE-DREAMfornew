@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -39,12 +40,14 @@ import net.lab1024.sa.consume.service.ConsumeAccountService;
  */
 @Slf4j
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Resource
     private AccountDao accountDao;
 
     @Override
+    @Observed(name = "consume.account.queryAccountPage", contextualName = "consume-account-query-page")
     public ResponseDTO<IPage<AccountVO>> queryAccountPage(AccountQueryForm queryForm) {
         log.info("[消费账户服务] 分页查询账户，queryForm={}", queryForm);
 
@@ -57,6 +60,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.getAccountById", contextualName = "consume-account-get-by-id")
     public ResponseDTO<AccountVO> getAccountById(Long accountId) {
         log.info("[消费账户服务] 根据ID查询账户，accountId={}", accountId);
 
@@ -70,6 +74,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.getAccountByNo", contextualName = "consume-account-get-by-no")
     public ResponseDTO<AccountVO> getAccountByNo(String accountNo) {
         log.info("[消费账户服务] 根据账户编号查询账户，accountNo={}", accountNo);
 
@@ -86,6 +91,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.getAccountByUserId", contextualName = "consume-account-get-by-user-id")
     public AccountVO getAccountByUserId(Long userId) {
         log.info("[消费账户服务] 根据用户ID查询账户，userId={}", userId);
 
@@ -101,6 +107,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.recharge", contextualName = "consume-account-recharge")
     public ResponseDTO<Void> recharge(RechargeRequestDTO rechargeRequest) {
         log.info("[消费账户服务] 账户充值，rechargeRequest={}", rechargeRequest);
 
@@ -109,6 +116,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.deduct", contextualName = "consume-account-deduct")
     public ResponseDTO<Void> deduct(Long accountId, BigDecimal amount) {
         log.info("[消费账户服务] 账户扣费，accountId={}, amount={}", accountId, amount);
 
@@ -117,6 +125,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.refund", contextualName = "consume-account-refund")
     public ResponseDTO<Void> refund(Long accountId, BigDecimal amount, String reason) {
         log.info("[消费账户服务] 账户退款，accountId={}, amount={}, reason={}", accountId, amount, reason);
 
@@ -125,6 +134,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.freeze", contextualName = "consume-account-freeze")
     public ResponseDTO<Void> freeze(Long accountId, BigDecimal amount) {
         log.info("[消费账户服务] 账户冻结，accountId={}, amount={}", accountId, amount);
 
@@ -133,6 +143,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.unfreeze", contextualName = "consume-account-unfreeze")
     public ResponseDTO<Void> unfreeze(Long accountId, BigDecimal amount) {
         log.info("[消费账户服务] 账户解冻，accountId={}, amount={}", accountId, amount);
 
@@ -141,6 +152,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.updateAccountStatus", contextualName = "consume-account-update-status")
     public ResponseDTO<Void> updateAccountStatus(Long accountId, Boolean enabled) {
         log.info("[消费账户服务] 更新账户状态，accountId={}, enabled={}", accountId, enabled);
 
@@ -149,6 +161,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.exportAccountData", contextualName = "consume-account-export")
     public void exportAccountData(AccountQueryForm queryForm, HttpServletResponse response) {
         log.info("[消费账户服务] 导出账户数据，queryForm={}", queryForm);
 
@@ -156,6 +169,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.getAccountBalance", contextualName = "consume-account-get-balance")
     public ResponseDTO<BigDecimal> getAccountBalance(Long accountId) {
         log.info("[消费账户服务] 获取账户余额，accountId={}", accountId);
 
@@ -168,6 +182,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.updateAccount", contextualName = "consume-account-update")
     public ResponseDTO<Void> updateAccount(AccountVO accountVO) {
         log.info("[消费账户服务] 更新账户信息，accountVO={}", accountVO);
 
@@ -176,6 +191,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.existsAccount", contextualName = "consume-account-exists")
     public Boolean existsAccount(Long accountId) {
         log.debug("[消费账户服务] 检查账户是否存在，accountId={}", accountId);
 
@@ -184,6 +200,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.checkBalance", contextualName = "consume-account-check-balance")
     public Boolean checkBalance(Long accountId, BigDecimal amount) {
         log.debug("[消费账户服务] 检查账户余额是否充足，accountId={}, amount={}", accountId, amount);
 
@@ -196,6 +213,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.balanceChangeNotification", contextualName = "consume-account-balance-notification")
     public void balanceChangeNotification(Long accountId, BigDecimal oldBalance, BigDecimal newBalance, String changeType, String remark) {
         log.info("[消费账户服务] 账户余额变动通知，accountId={}, oldBalance={}, newBalance={}, changeType={}, remark={}",
                 accountId, oldBalance, newBalance, changeType, remark);
@@ -204,6 +222,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.getUserBalanceInfo", contextualName = "consume-account-get-user-balance")
     public Map<String, Object> getUserBalanceInfo(Long userId) {
         log.info("[消费账户服务] 获取用户账户余额信息，userId={}", userId);
 
@@ -230,6 +249,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
 
     @Override
+    @Observed(name = "consume.account.freezeAccount", contextualName = "consume-account-freeze-account")
     @Transactional(rollbackFor = Exception.class)
     public boolean freezeAccount(Long accountId, String reason, Integer freezeDays) {
         log.info("[消费账户服务] 冻结账户，accountId={}, reason={}, freezeDays={}", accountId, reason, freezeDays);
@@ -239,6 +259,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.unfreezeAccount", contextualName = "consume-account-unfreeze-account")
     @Transactional(rollbackFor = Exception.class)
     public boolean unfreezeAccount(Long accountId, String reason) {
         log.info("[消费账户服务] 解冻账户，accountId={}, reason={}", accountId, reason);
@@ -248,6 +269,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.rechargeAccount", contextualName = "consume-account-recharge-account")
     @Transactional(rollbackFor = Exception.class)
     public boolean rechargeAccount(Long accountId, BigDecimal amount, String rechargeType, String remark) {
         log.info("[消费账户服务] 账户充值，accountId={}, amount={}, rechargeType={}, remark={}",
@@ -258,6 +280,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.setAccountLimit", contextualName = "consume-account-set-limit")
     @Transactional(rollbackFor = Exception.class)
     public boolean setAccountLimit(Long accountId, BigDecimal dailyLimit, BigDecimal monthlyLimit) {
         log.info("[消费账户服务] 设置账户限额，accountId={}, dailyLimit={}, monthlyLimit={}",
@@ -268,6 +291,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.batchUpdateAccountStatus", contextualName = "consume-account-batch-update-status")
     @Transactional(rollbackFor = Exception.class)
     public int batchUpdateAccountStatus(List<Long> accountIds, String operationType, String reason) {
         log.info("[消费账户服务] 批量更新账户状态，accountIds={}, operationType={}, reason={}",
@@ -278,6 +302,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.getAccountStatistics", contextualName = "consume-account-get-statistics")
     public Map<String, Object> getAccountStatistics() {
         log.info("[消费账户服务] 获取账户统计信息");
 
@@ -291,6 +316,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.getAccountConsumeRecords", contextualName = "consume-account-get-consume-records")
     public PageResult<Map<String, Object>> getAccountConsumeRecords(Long accountId, Integer pageNum, Integer pageSize) {
         log.info("[消费账户服务] 获取账户消费记录，accountId={}, pageNum={}, pageSize={}",
                 accountId, pageNum, pageSize);
@@ -301,6 +327,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.checkAccountStatus", contextualName = "consume-account-check-status")
     public Map<String, Object> checkAccountStatus(Long accountId) {
         log.info("[消费账户服务] 检查账户状态，accountId={}", accountId);
 
@@ -321,6 +348,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.createAccount", contextualName = "consume-account-create")
     @Transactional(rollbackFor = Exception.class)
     public Long createAccount(AccountEntity accountEntity) {
         log.info("[消费账户服务] 创建账户，accountEntity={}", accountEntity);
@@ -330,6 +358,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.updateAccountEntity", contextualName = "consume-account-update-entity")
     @Transactional(rollbackFor = Exception.class)
     public boolean updateAccount(AccountEntity accountEntity) {
         log.info("[消费账户服务] 更新账户，accountEntity={}", accountEntity);
@@ -339,6 +368,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Observed(name = "consume.account.deleteAccount", contextualName = "consume-account-delete")
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteAccount(Long accountId) {
         log.info("[消费账户服务] 删除账户，accountId={}", accountId);
@@ -441,3 +471,6 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
         return vo;
     }
 }
+
+
+

@@ -36,3 +36,5 @@ public interface AttendanceLeaveService {
     void updateLeaveStatus(String leaveNo, String status, String approvalComment);
 }
 
+
+

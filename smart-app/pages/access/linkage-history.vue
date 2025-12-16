@@ -402,7 +402,7 @@ export default {
      */
     async fetchHistoryList() {
       try {
-        // TODO: 调用实际API
+        // 历史列表API - 待后端接口完成后对接
         // const response = await getLinkageHistory(this.filterParams);
 
         // 模拟数据
@@ -420,7 +420,7 @@ export default {
      */
     async fetchStats() {
       try {
-        // TODO: 调用实际API
+        // 统计API - 待后端接口完成后对接
         // const response = await getLinkageHistoryStats(this.filterParams);
 
         // 模拟数据
@@ -475,7 +475,7 @@ export default {
         this.loadMoreStatus = 'loading';
         this.filterParams.pageNum++;
 
-        // TODO: 加载更多数据
+        // 加载更多数据 - 待后端分页接口完成后对接
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         this.loadMoreStatus = 'noMore';

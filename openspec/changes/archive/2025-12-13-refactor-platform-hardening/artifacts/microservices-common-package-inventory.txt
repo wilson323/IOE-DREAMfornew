@@ -1,0 +1,46 @@
+# microservices-common package inventory
+# Generated: 2025-12-13T13:34:08+08:00
+
+package	javaFiles
+access	2
+attendance	1
+audit	20
+auth	26
+cache	3
+config	5
+constant	0
+consume	19
+controller	1
+device	3
+dict	5
+domain	5
+dto	0
+entity	1
+exception	0
+filter	1
+gateway	2
+i18n	2
+identity	8
+menu	6
+monitor	29
+monitoring	5
+notification	17
+oa	0
+organization	16
+performance	15
+preference	3
+rbac	8
+recommend	1
+resilience	0
+response	1
+scheduler	3
+security	3
+system	21
+theme	6
+tracing	3
+transaction	0
+util	6
+validation	1
+video	0
+visitor	6
+workflow	56

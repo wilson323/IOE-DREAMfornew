@@ -1,5 +1,6 @@
 package net.lab1024.sa.attendance.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +49,7 @@ public class AttendanceLeaveController {
      * @param form 请假申请表单
      * @return 请假实体
      */
+    @Observed(name = "attendanceLeave.submitLeaveApplication", contextualName = "attendance-leave-submit")
     @PostMapping("/submit")
     @Operation(summary = "提交请假申请", description = "提交请假申请并启动审批流程")
     public ResponseDTO<AttendanceLeaveEntity> submitLeaveApplication(
@@ -65,6 +67,7 @@ public class AttendanceLeaveController {
      * @param requestParams 请求参数（包含status和approvalComment）
      * @return 操作结果
      */
+    @Observed(name = "attendanceLeave.updateLeaveStatus", contextualName = "attendance-leave-update-status")
     @PutMapping("/{leaveNo}/status")
     @Operation(summary = "更新请假申请状态", description = "由审批结果监听器调用，更新请假申请状态")
     public ResponseDTO<Void> updateLeaveStatus(
@@ -77,4 +80,6 @@ public class AttendanceLeaveController {
         return ResponseDTO.ok();
     }
 }
+
+
 

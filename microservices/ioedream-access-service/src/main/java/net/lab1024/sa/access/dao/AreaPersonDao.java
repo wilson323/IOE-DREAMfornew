@@ -69,6 +69,7 @@ public interface AreaPersonDao extends BaseMapper<AreaPersonEntity> {
      * @param expireTime 过期时间
      * @return 清理数量
      */
+    @Transactional(rollbackFor = Exception.class)
     int cleanExpiredPermissions(@Param("expireTime") LocalDateTime expireTime);
 
     /**
@@ -151,6 +152,7 @@ public interface AreaPersonDao extends BaseMapper<AreaPersonEntity> {
      * @param areaPersonList 区域权限列表
      * @return 插入数量
      */
+    @Transactional(rollbackFor = Exception.class)
     int batchInsert(@Param("areaPersonList") List<AreaPersonEntity> areaPersonList);
 
     /**
@@ -160,6 +162,7 @@ public interface AreaPersonDao extends BaseMapper<AreaPersonEntity> {
      * @param operatorId 操作人ID
      * @return 删除数量
      */
+    @Transactional(rollbackFor = Exception.class)
     int batchDeleteByAreaIds(@Param("areaIds") List<Long> areaIds, @Param("operatorId") Long operatorId);
 
     /**
@@ -170,6 +173,7 @@ public interface AreaPersonDao extends BaseMapper<AreaPersonEntity> {
      * @param status     状态
      * @return 更新数量
      */
+    @Transactional(rollbackFor = Exception.class)
     int batchUpdateStatusByAreaIds(@Param("areaIds") List<Long> areaIds, @Param("operatorId") Long operatorId,
             @Param("status") Integer status);
 
@@ -210,3 +214,4 @@ public interface AreaPersonDao extends BaseMapper<AreaPersonEntity> {
     @Transactional(readOnly = true)
     List<String> getAreaPathsByPersonId(@Param("personId") Long personId);
 }
+

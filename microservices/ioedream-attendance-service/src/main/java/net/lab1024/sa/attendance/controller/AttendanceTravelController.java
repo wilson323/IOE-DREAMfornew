@@ -1,5 +1,6 @@
 package net.lab1024.sa.attendance.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class AttendanceTravelController {
     @Resource
     private AttendanceTravelService attendanceTravelService;
 
+    @Observed(name = "attendanceTravel.submitTravelApplication", contextualName = "attendance-travel-submit")
     @PostMapping("/submit")
     @Operation(summary = "提交出差申请", description = "提交出差申请并启动审批流程")
     public ResponseDTO<AttendanceTravelEntity> submitTravelApplication(
@@ -37,6 +39,7 @@ public class AttendanceTravelController {
         return ResponseDTO.ok(entity);
     }
 
+    @Observed(name = "attendanceTravel.updateTravelStatus", contextualName = "attendance-travel-update-status")
     @PutMapping("/{travelNo}/status")
     @Operation(summary = "更新出差申请状态", description = "由审批结果监听器调用，更新出差申请状态")
     public ResponseDTO<Void> updateTravelStatus(
@@ -49,4 +52,6 @@ public class AttendanceTravelController {
         return ResponseDTO.ok();
     }
 }
+
+
 

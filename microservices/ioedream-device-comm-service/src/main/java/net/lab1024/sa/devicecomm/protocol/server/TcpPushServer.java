@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.devicecomm.protocol.enums.ProtocolTypeEnum;
 import net.lab1024.sa.devicecomm.protocol.router.MessageRouter;
 
@@ -122,7 +123,7 @@ public class TcpPushServer {
 
         } catch (IOException e) {
             log.error("[TCP服务器] TCP推送服务器启动失败，端口={}, 错误={}", tcpPort, e.getMessage(), e);
-            throw new RuntimeException("TCP推送服务器启动失败", e);
+            throw new SystemException("TCP_PUSH_SERVER_START_ERROR", "TCP推送服务器启动失败", e);
         }
     }
 
@@ -268,7 +269,7 @@ public class TcpPushServer {
                         // 根据协议头识别协议类型
                         ProtocolIdentifier identifier = identifyProtocol(data);
                         if (identifier == null) {
-                            log.warn("[TCP服务器] 无法识别协议类型，数据长度={}, 前4字节={}", 
+                            log.warn("[TCP服务器] 无法识别协议类型，数据长度={}, 前4字节={}",
                                     data.length, bytesToHex(data, Math.min(4, data.length)));
                             return null;
                         }

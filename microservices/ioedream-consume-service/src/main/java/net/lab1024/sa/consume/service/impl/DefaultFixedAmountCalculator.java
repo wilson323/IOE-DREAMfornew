@@ -8,7 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.cache.CacheService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO;
 import net.lab1024.sa.consume.domain.entity.AccountEntity;
 import net.lab1024.sa.consume.manager.AccountManager;
@@ -42,11 +46,12 @@ public class DefaultFixedAmountCalculator {
     private final CacheService cacheService;
     @SuppressWarnings("unused")
     private final AccountManager accountManager;
-    private final ConsumeAreaManager consumeAreaManager;
-    @SuppressWarnings("unused")
-    private final GatewayServiceClient gatewayServiceClient;
-    @SuppressWarnings("unused")
-    private final ObjectMapper objectMapper;
+	    private final ConsumeAreaManager consumeAreaManager;
+	    @SuppressWarnings("unused")
+	    private final GatewayServiceClient gatewayServiceClient;
+	    @SuppressWarnings("unused")
+	    private final ObjectMapper objectMapper;
+	    private final AccountKindConfigClient accountKindConfigClient;
 
     /**
      * 构造函数注入依赖
@@ -63,15 +68,17 @@ public class DefaultFixedAmountCalculator {
     public DefaultFixedAmountCalculator(
             CacheService cacheService,
             AccountManager accountManager,
-            ConsumeAreaManager consumeAreaManager,
-            GatewayServiceClient gatewayServiceClient,
-            ObjectMapper objectMapper) {
-        this.cacheService = cacheService;
-        this.accountManager = accountManager;
-        this.consumeAreaManager = consumeAreaManager;
-        this.gatewayServiceClient = gatewayServiceClient;
-        this.objectMapper = objectMapper;
-    }
+	            ConsumeAreaManager consumeAreaManager,
+	            GatewayServiceClient gatewayServiceClient,
+	            ObjectMapper objectMapper,
+	            AccountKindConfigClient accountKindConfigClient) {
+	        this.cacheService = cacheService;
+	        this.accountManager = accountManager;
+	        this.consumeAreaManager = consumeAreaManager;
+	        this.gatewayServiceClient = gatewayServiceClient;
+	        this.objectMapper = objectMapper;
+	        this.accountKindConfigClient = accountKindConfigClient;
+	    }
 
     /**
      * 计算定值金额
@@ -131,8 +138,17 @@ public class DefaultFixedAmountCalculator {
                     request.getUserId(), areaId, mealType, amountInCents);
             return amountInCents;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[定值计算] 计算定值金额参数错误，userId={}, areaId={}, error={}", request.getUserId(), request.getAreaId(), e.getMessage());
+            return 0;
+        } catch (BusinessException e) {
+            log.warn("[定值计算] 计算定值金额业务异常，userId={}, areaId={}, code={}, message={}", request.getUserId(), request.getAreaId(), e.getCode(), e.getMessage());
+            return 0;
+        } catch (SystemException e) {
+            log.error("[定值计算] 计算定值金额系统异常，userId={}, areaId={}, code={}, message={}", request.getUserId(), request.getAreaId(), e.getCode(), e.getMessage(), e);
+            return 0;
         } catch (Exception e) {
-            log.error("[定值计算] 计算定值金额失败，userId={}, areaId={}", request.getUserId(), request.getAreaId(), e);
+            log.error("[定值计算] 计算定值金额未知异常，userId={}, areaId={}", request.getUserId(), request.getAreaId(), e);
             return 0;
         }
     }
@@ -225,8 +241,20 @@ public class DefaultFixedAmountCalculator {
 
             return null;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[定值计算] 获取餐别定值金额参数错误，mealType={}, error={}", mealType, e.getMessage());
+            // 降级：使用区域配置
+            return getMealAmount(areaConfig, mealType);
+        } catch (BusinessException e) {
+            log.warn("[定值计算] 获取餐别定值金额业务异常，mealType={}, code={}, message={}", mealType, e.getCode(), e.getMessage());
+            // 降级：使用区域配置
+            return getMealAmount(areaConfig, mealType);
+        } catch (SystemException e) {
+            log.error("[定值计算] 获取餐别定值金额系统异常，mealType={}, code={}, message={}", mealType, e.getCode(), e.getMessage(), e);
+            // 降级：使用区域配置
+            return getMealAmount(areaConfig, mealType);
         } catch (Exception e) {
-            log.error("[定值计算] 获取餐别定值金额失败，mealType={}", mealType, e);
+            log.error("[定值计算] 获取餐别定值金额未知异常，mealType={}", mealType, e);
             // 降级：使用区域配置
             return getMealAmount(areaConfig, mealType);
         }
@@ -243,14 +271,8 @@ public class DefaultFixedAmountCalculator {
      */
     private Map<String, Object> getAccountKindFixedValueConfig(Long accountKindId) {
         try {
-            net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>> response =
-                    gatewayServiceClient.callCommonService(
-                            "/api/v1/account-kind/" + accountKindId,
-                            org.springframework.http.HttpMethod.GET,
-                            null,
-                            new com.fasterxml.jackson.core.type.TypeReference<
-                                    net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>>>() {}
-                    );
+	            net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>> response =
+	                    accountKindConfigClient.getAccountKind(accountKindId);
 
             if (response == null || !response.isSuccess() || response.getData() == null) {
                 log.debug("[定值计算] 获取账户类别信息失败，accountKindId={}", accountKindId);
@@ -277,8 +299,17 @@ public class DefaultFixedAmountCalculator {
 
             return null;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[定值计算] 获取账户类别定值配置参数错误，accountKindId={}, error={}", accountKindId, e.getMessage());
+            return null;
+        } catch (BusinessException e) {
+            log.warn("[定值计算] 获取账户类别定值配置业务异常，accountKindId={}, code={}, message={}", accountKindId, e.getCode(), e.getMessage());
+            return null;
+        } catch (SystemException e) {
+            log.warn("[定值计算] 获取账户类别定值配置系统异常，accountKindId={}, code={}, message={}", accountKindId, e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.warn("[定值计算] 获取账户类别定值配置失败，accountKindId={}", accountKindId, e);
+            log.warn("[定值计算] 获取账户类别定值配置未知异常，accountKindId={}", accountKindId, e);
             return null;
         }
     }
@@ -340,8 +371,17 @@ public class DefaultFixedAmountCalculator {
 
             return baseAmount;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[定值计算] 应用特殊日期定价规则参数错误，error={}", e.getMessage());
+            return baseAmount; // 失败时返回原金额
+        } catch (BusinessException e) {
+            log.warn("[定值计算] 应用特殊日期定价规则业务异常，code={}, message={}", e.getCode(), e.getMessage());
+            return baseAmount; // 失败时返回原金额
+        } catch (SystemException e) {
+            log.warn("[定值计算] 应用特殊日期定价规则系统异常，code={}, message={}", e.getCode(), e.getMessage(), e);
+            return baseAmount; // 失败时返回原金额
         } catch (Exception e) {
-            log.warn("[定值计算] 应用特殊日期定价规则失败", e);
+            log.warn("[定值计算] 应用特殊日期定价规则未知异常", e);
             return baseAmount; // 失败时返回原金额
         }
     }
@@ -372,8 +412,17 @@ public class DefaultFixedAmountCalculator {
 
             return false; // 默认不是节假日
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.debug("[定值计算] 查询节假日信息参数错误，date={}, error={}", date, e.getMessage());
+            return false; // 失败时默认不是节假日
+        } catch (BusinessException e) {
+            log.debug("[定值计算] 查询节假日信息业务异常，date={}, code={}, message={}", date, e.getCode(), e.getMessage());
+            return false; // 失败时默认不是节假日
+        } catch (SystemException e) {
+            log.debug("[定值计算] 查询节假日信息系统异常，date={}, code={}, message={}", date, e.getCode(), e.getMessage(), e);
+            return false; // 失败时默认不是节假日
         } catch (Exception e) {
-            log.debug("[定值计算] 查询节假日信息失败，date={}", date, e);
+            log.debug("[定值计算] 查询节假日信息未知异常，date={}", date, e);
             return false; // 失败时默认不是节假日
         }
     }
@@ -419,8 +468,17 @@ public class DefaultFixedAmountCalculator {
 
             return discountedAmount;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[定值计算] 应用会员折扣参数错误，error={}", e.getMessage());
+            return baseAmount; // 失败时返回原金额
+        } catch (BusinessException e) {
+            log.warn("[定值计算] 应用会员折扣业务异常，code={}, message={}", e.getCode(), e.getMessage());
+            return baseAmount; // 失败时返回原金额
+        } catch (SystemException e) {
+            log.warn("[定值计算] 应用会员折扣系统异常，code={}, message={}", e.getCode(), e.getMessage(), e);
+            return baseAmount; // 失败时返回原金额
         } catch (Exception e) {
-            log.warn("[定值计算] 应用会员折扣失败", e);
+            log.warn("[定值计算] 应用会员折扣未知异常", e);
             return baseAmount; // 失败时返回原金额
         }
     }
@@ -482,8 +540,17 @@ public class DefaultFixedAmountCalculator {
             // 默认折扣率（如果公共服务未配置）
             return getDefaultMemberDiscountRate(memberLevel);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.debug("[定值计算] 获取会员折扣率参数错误，memberLevel={}, error={}", memberLevel, e.getMessage());
+            return getDefaultMemberDiscountRate(memberLevel);
+        } catch (BusinessException e) {
+            log.debug("[定值计算] 获取会员折扣率业务异常，memberLevel={}, code={}, message={}", memberLevel, e.getCode(), e.getMessage());
+            return getDefaultMemberDiscountRate(memberLevel);
+        } catch (SystemException e) {
+            log.debug("[定值计算] 获取会员折扣率系统异常，memberLevel={}, code={}, message={}", memberLevel, e.getCode(), e.getMessage(), e);
+            return getDefaultMemberDiscountRate(memberLevel);
         } catch (Exception e) {
-            log.debug("[定值计算] 获取会员折扣率失败，memberLevel={}", memberLevel, e);
+            log.debug("[定值计算] 获取会员折扣率未知异常，memberLevel={}", memberLevel, e);
             return getDefaultMemberDiscountRate(memberLevel);
         }
     }
@@ -534,3 +601,6 @@ public class DefaultFixedAmountCalculator {
         return null;
     }
 }
+
+
+

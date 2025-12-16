@@ -1,5 +1,6 @@
 package net.lab1024.sa.common.notification.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,6 +59,7 @@ public class NotificationConfigController {
      * @return 响应结果（包含配置ID）
      */
     @PostMapping
+    @Observed(name = "notificationConfig.add", contextualName = "notification-config-add")
     @Operation(summary = "新增通知配置", description = "新增通知配置，支持加密存储敏感信息")
     public ResponseDTO<Long> add(@RequestBody @Valid NotificationConfigAddForm form) {
         log.info("[通知配置管理] 新增通知配置，configKey={}", form.getConfigKey());
@@ -79,6 +81,7 @@ public class NotificationConfigController {
      * @return 响应结果
      */
     @PutMapping
+    @Observed(name = "notificationConfig.update", contextualName = "notification-config-update")
     @Operation(summary = "更新通知配置", description = "更新通知配置，支持部分字段更新")
     public ResponseDTO<Void> update(@RequestBody @Valid NotificationConfigUpdateForm form) {
         log.info("[通知配置管理] 更新通知配置，configId={}", form.getConfigId());
@@ -99,6 +102,7 @@ public class NotificationConfigController {
      * @return 响应结果
      */
     @DeleteMapping("/{configId}")
+    @Observed(name = "notificationConfig.delete", contextualName = "notification-config-delete")
     @Operation(summary = "删除通知配置", description = "删除通知配置（软删除）")
     public ResponseDTO<Void> delete(
             @Parameter(description = "配置ID", required = true)
@@ -121,6 +125,7 @@ public class NotificationConfigController {
      * @return 响应结果
      */
     @GetMapping("/{configId}")
+    @Observed(name = "notificationConfig.getById", contextualName = "notification-config-get-by-id")
     @Operation(summary = "根据ID查询通知配置", description = "根据配置ID查询通知配置详情")
     public ResponseDTO<NotificationConfigVO> getById(
             @Parameter(description = "配置ID", required = true)
@@ -143,6 +148,7 @@ public class NotificationConfigController {
      * @return 响应结果
      */
     @GetMapping("/key/{configKey}")
+    @Observed(name = "notificationConfig.getByConfigKey", contextualName = "notification-config-get-by-key")
     @Operation(summary = "根据配置键查询通知配置", description = "根据配置键查询通知配置详情")
     public ResponseDTO<NotificationConfigVO> getByConfigKey(
             @Parameter(description = "配置键", required = true)
@@ -166,6 +172,7 @@ public class NotificationConfigController {
      * @return 响应结果
      */
     @GetMapping("/page")
+    @Observed(name = "notificationConfig.queryPage", contextualName = "notification-config-query-page")
     @Operation(summary = "分页查询通知配置", description = "分页查询通知配置列表，支持按配置键、配置类型、状态筛选")
     public ResponseDTO<PageResult<NotificationConfigVO>> queryPage(@Valid NotificationConfigQueryForm form) {
         log.info("[通知配置管理] 分页查询通知配置，pageNum={}, pageSize={}", form.getPageNum(), form.getPageSize());
@@ -187,6 +194,7 @@ public class NotificationConfigController {
      * @return 响应结果
      */
     @PutMapping("/{configId}/status")
+    @Observed(name = "notificationConfig.updateStatus", contextualName = "notification-config-update-status")
     @Operation(summary = "更新配置状态", description = "启用或禁用通知配置，管理员可通过此接口控制通知渠道的启用状态")
     public ResponseDTO<Void> updateStatus(
             @Parameter(description = "配置ID", required = true)
@@ -208,6 +216,7 @@ public class NotificationConfigController {
      * @return 响应结果
      */
     @PostMapping("/refresh-alert")
+    @Observed(name = "notificationConfig.refreshAlertConfig", contextualName = "notification-config-refresh-alert")
     @Operation(summary = "刷新AlertManager配置", description = "刷新AlertManager配置，使配置修改立即生效，无需重启服务")
     public ResponseDTO<Void> refreshAlertConfig() {
         log.info("[通知配置管理] 刷新AlertManager配置");

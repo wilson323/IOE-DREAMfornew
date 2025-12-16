@@ -183,19 +183,23 @@ class ReconciliationControllerTest {
             new ReconciliationService.ReconciliationHistoryResult();
         mockHistoryResult.setRecords(java.util.Collections.emptyList());
         mockHistoryResult.setTotal(0L);
+        mockHistoryResult.setPageNum(1);
+        mockHistoryResult.setPageSize(20);
 
         when(reconciliationService.queryReconciliationHistory(
-            any(), any(), anyInt(), anyInt()))
+            isNull(), isNull(), eq(1), eq(20)))
             .thenReturn(mockHistoryResult);
 
         // When
         ResponseDTO<PageResult<ReconciliationService.ReconciliationResult>> result =
-            reconciliationController.queryReconciliationHistory(null, null, null, null);
+            reconciliationController.queryReconciliationHistory(null, null, 1, 20);
 
         // Then
         assertNotNull(result);
         assertTrue(result.getOk());
         verify(reconciliationService, times(1)).queryReconciliationHistory(
-            any(), any(), anyInt(), anyInt());
+            isNull(), isNull(), eq(1), eq(20));
     }
 }
+
+

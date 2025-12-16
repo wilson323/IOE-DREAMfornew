@@ -110,3 +110,5 @@ public class MobileScanConsumeRequestDTO {
     public static final String QR_TYPE_DEVICE = "DEVICE";          // 设备二维码
     public static final String QR_TYPE_PROMOTION = "PROMOTION";    // 促销二维码
 }
+
+

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="IOE-DREAM PMD Ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        IOE-DREAM PMD Gate：
+        - 只对 service/manager 目录启用（由 maven-pmd-plugin includes 控制）
+        - 排除高噪声/高误报规则（如 DataflowAnomalyAnalysis / AvoidDuplicateLiterals 等）
+        - 目标：作为“回归门禁”，先确保可落地、可持续收敛
+    </description>
+
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="DataflowAnomalyAnalysis"/>
+        <exclude name="AvoidDuplicateLiterals"/>
+        <exclude name="UseLocaleWithCaseConversions"/>
+        <exclude name="AvoidInstanceofChecksInCatchClause"/>
+        <exclude name="AvoidLiteralsInIfCondition"/>
+        <exclude name="ConstructorCallsOverridableMethod"/>
+    </rule>
+
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="GuardLogStatement"/>
+        <exclude name="LiteralsFirstInComparisons"/>
+        <exclude name="PositionLiteralsFirstInCaseInsensitiveComparisons"/>
+        <exclude name="UnusedFormalParameter"/>
+    </rule>
+
+</ruleset>

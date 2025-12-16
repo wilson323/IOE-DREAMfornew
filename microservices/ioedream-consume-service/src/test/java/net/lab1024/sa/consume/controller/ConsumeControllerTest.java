@@ -165,9 +165,13 @@ class ConsumeControllerTest {
     @Test
     @DisplayName("测试查询交易详情-交易流水号为null")
     void testGetTransactionDetail_TransactionNoIsNull() {
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            consumeController.getTransactionDetail(null);
-        });
+        // When
+        ResponseDTO<ConsumeTransactionDetailVO> result = consumeController.getTransactionDetail(null);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.getOk());
     }
 }
+
+

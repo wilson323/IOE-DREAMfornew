@@ -67,3 +67,6 @@ public class ConsumeRequest {
      */
     private Integer quantity;
 }
+
+
+

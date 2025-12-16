@@ -1,6 +1,6 @@
 package net.lab1024.sa.consume.service.payment;
 
-import net.lab1024.sa.consume.domain.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
 
 /**
  * 支付记录服务接口
@@ -51,3 +51,6 @@ public interface PaymentRecordService {
      */
     void handlePaymentSuccess(String paymentId, String transactionId);
 }
+
+
+

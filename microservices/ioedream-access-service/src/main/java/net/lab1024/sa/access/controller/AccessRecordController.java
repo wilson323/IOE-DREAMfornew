@@ -1,5 +1,6 @@
 package net.lab1024.sa.access.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,9 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.access.domain.form.AccessRecordAddForm;
 import net.lab1024.sa.access.service.AccessEventService;
 
@@ -77,6 +81,7 @@ public class AccessRecordController {
      * }
      * </pre>
      */
+    @Observed(name = "accessRecord.createAccessRecord", contextualName = "access-record-create")
     @PostMapping("/create")
     @Operation(
         summary = "创建门禁记录",
@@ -93,7 +98,7 @@ public class AccessRecordController {
     )
     public ResponseDTO<Long> createAccessRecord(
             @Valid @RequestBody AccessRecordAddForm form) {
-        log.info("[门禁记录] 创建门禁记录，userId={}, deviceId={}, passType={}", 
+        log.info("[门禁记录] 创建门禁记录，userId={}, deviceId={}, passType={}",
                 form.getUserId(), form.getDeviceId(), form.getPassType());
         return accessEventService.createAccessRecord(form);
     }
@@ -114,25 +119,26 @@ public class AccessRecordController {
      * @param accessResult 通行结果（可选）
      * @return 门禁记录列表
      */
+    @Observed(name = "accessRecord.queryAccessRecords", contextualName = "access-record-query")
     @GetMapping("/query")
     @Operation(summary = "分页查询门禁记录", description = "根据条件分页查询门禁记录")
     @PreAuthorize("hasRole('ACCESS_MANAGER')")
     public ResponseDTO<PageResult<net.lab1024.sa.access.domain.vo.AccessRecordVO>> queryAccessRecords(
-            @Parameter(description = "页码，从1开始") 
+            @Parameter(description = "页码，从1开始")
             @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "每页大小") 
+            @Parameter(description = "每页大小")
             @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "用户ID（可选）") 
+            @Parameter(description = "用户ID（可选）")
             @RequestParam(required = false) Long userId,
-            @Parameter(description = "设备ID（可选）") 
+            @Parameter(description = "设备ID（可选）")
             @RequestParam(required = false) Long deviceId,
-            @Parameter(description = "区域ID（可选）") 
+            @Parameter(description = "区域ID（可选）")
             @RequestParam(required = false) String areaId,
-            @Parameter(description = "开始日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "开始日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "结束日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "结束日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @Parameter(description = "通行结果（可选），1-成功，2-失败，3-异常") 
+            @Parameter(description = "通行结果（可选），1-成功，2-失败，3-异常")
             @RequestParam(required = false) Integer accessResult) {
         log.info("[门禁记录] 分页查询门禁记录，pageNum={}, pageSize={}, userId={}, deviceId={}, areaId={}, startDate={}, endDate={}, accessResult={}",
                 pageNum, pageSize, userId, deviceId, areaId, startDate, endDate, accessResult);
@@ -150,8 +156,17 @@ public class AccessRecordController {
 
             // 调用Service层查询
             return accessEventService.queryAccessRecords(queryForm);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁记录] 分页查询门禁记录参数错误: pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁记录] 分页查询门禁记录业务异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁记录] 分页查询门禁记录系统异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("QUERY_ACCESS_RECORDS_SYSTEM_ERROR", "查询门禁记录失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁记录] 分页查询门禁记录失败", e);
+            log.error("[门禁记录] 分页查询门禁记录未知异常: pageNum={}, pageSize={}", pageNum, pageSize, e);
             return ResponseDTO.error("QUERY_ACCESS_RECORDS_ERROR", "查询门禁记录失败: " + e.getMessage());
         }
     }
@@ -164,23 +179,34 @@ public class AccessRecordController {
      * @param areaId 区域ID（可选）
      * @return 统计数据
      */
+    @Observed(name = "accessRecord.getAccessRecordStatistics", contextualName = "access-record-statistics")
     @GetMapping("/statistics")
     @Operation(summary = "获取门禁记录统计", description = "根据时间范围和区域获取门禁记录统计数据")
     @PreAuthorize("hasRole('ACCESS_MANAGER')")
     public ResponseDTO<net.lab1024.sa.access.domain.vo.AccessRecordStatisticsVO> getAccessRecordStatistics(
-            @Parameter(description = "开始日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "开始日期，格式：yyyy-MM-dd")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "结束日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "结束日期，格式：yyyy-MM-dd")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) String areaId) {
         log.info("[门禁记录] 获取门禁记录统计，startDate={}, endDate={}, areaId={}", startDate, endDate, areaId);
         try {
             // 调用Service层统计
             return accessEventService.getAccessRecordStatistics(startDate, endDate, areaId);
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[门禁记录] 获取门禁记录统计参数错误: startDate={}, endDate={}, areaId={}, error={}", startDate, endDate, areaId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[门禁记录] 获取门禁记录统计业务异常: startDate={}, endDate={}, areaId={}, code={}, message={}", startDate, endDate, areaId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[门禁记录] 获取门禁记录统计系统异常: startDate={}, endDate={}, areaId={}, code={}, message={}", startDate, endDate, areaId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_STATISTICS_SYSTEM_ERROR", "获取统计数据失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[门禁记录] 获取门禁记录统计失败", e);
+            log.error("[门禁记录] 获取门禁记录统计未知异常: startDate={}, endDate={}, areaId={}", startDate, endDate, areaId, e);
             return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计数据失败: " + e.getMessage());
         }
     }
 }
+
 

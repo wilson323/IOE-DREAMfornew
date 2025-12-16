@@ -183,6 +183,7 @@ import { reactive, ref, watch, computed } from 'vue'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { consumeApi } from '/@/api/business/consume/consume-api'
+import { areaApi } from '/@/api/system/area-api'
 import { smartSentry } from '/@/lib/smart-sentry'
 
 const props = defineProps({
@@ -263,22 +264,23 @@ const formRules = {
 // 获取区域选项
 const fetchAreaOptions = async () => {
   try {
-    // TODO: 对接后端接口获取区域列表
-    // const res = await consumeApi.getAreaList()
-    // areaOptions.value = res.data.map(item => ({
-    //   label: item.areaName,
-    //   value: item.areaId
-    // }))
+    const res = await areaApi.getAreaTree()
+    const tree = res?.data || []
 
-    // 模拟数据
-    areaOptions.value = [
-      { label: '食堂一楼', value: 1 },
-      { label: '食堂二楼', value: 2 },
-      { label: '咖啡厅', value: 3 },
-      { label: '便利店', value: 4 },
-      { label: '餐厅A区', value: 5 },
-      { label: '餐厅B区', value: 6 }
-    ]
+    const flat = []
+    const walk = (nodes) => {
+      (nodes || []).forEach(node => {
+        flat.push({
+          label: node.areaName,
+          value: node.areaId
+        })
+        if (node.children && node.children.length > 0) {
+          walk(node.children)
+        }
+      })
+    }
+    walk(tree)
+    areaOptions.value = flat
   } catch (error) {
     smartSentry.captureError(error)
     message.error('获取区域列表失败')

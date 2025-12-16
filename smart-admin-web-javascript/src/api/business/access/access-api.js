@@ -7,7 +7,11 @@
  * @Date:      2025-01-30
  * @Copyright  IOE-DREAM智慧园区一卡通管理平台
  */
-import { getRequest, postRequest, putRequest, deleteRequest } from '/@/lib/axios';
+import { getRequest, postRequest, putRequest, deleteRequest, request } from '/@/lib/axios';
+
+const postWithParams = (url, params, data) => {
+  return request({ url, method: 'post', params, data });
+};
 
 export const accessApi = {
   // ==================== 门禁记录管理 ====================
@@ -67,7 +71,46 @@ export const accessApi = {
    * 更新设备状态
    */
   updateDeviceStatus: (params) => {
-    return postRequest('/api/v1/access/device/status/update', null, params);
+    return postWithParams('/api/v1/access/device/status/update', params);
+  },
+
+  // ==================== 区域设备关联（统一能力） ====================
+
+  /**
+   * 获取区域设备列表
+   */
+  getAreaDevices: (areaId) => {
+    return getRequest(`/api/v1/area-device/area/${areaId}/devices`);
+  },
+
+  /**
+   * 从区域移除设备
+   */
+  removeAreaDevice: (areaId, deviceId) => {
+    return deleteRequest('/api/v1/area-device/remove', { areaId, deviceId });
+  },
+
+  // ==================== 区域权限（通用能力） ====================
+
+  /**
+   * 获取区域权限列表（当前支持：user）
+   */
+  getAreaPermissions: (areaId, type) => {
+    return getRequest(`/api/v1/area-permission/area/${areaId}`, { type });
+  },
+
+  /**
+   * 删除单条区域权限
+   */
+  deleteAreaPermission: (permissionId) => {
+    return deleteRequest(`/api/v1/area-permission/${permissionId}`);
+  },
+
+  /**
+   * 批量删除区域权限
+   */
+  batchDeleteAreaPermissions: (permissionIds) => {
+    return postRequest('/api/v1/area-permission/batch-delete', permissionIds);
   },
 
   // ==================== 移动端验证功能 ====================

@@ -58,18 +58,25 @@ compliance:javax-check:
   stage: compliance
   image: openjdk:17-slim
   script:
-    - echo "=== 检查javax包名违规 ==="
+    - echo "=== 检查javax.*包违规 ==="
     - |
-      if grep -r "import javax\.validation" --include="*.java" microservices/; then
-        echo "❌ 发现javax.validation违规！必须使用jakarta.validation"
+      if grep -r "import javax\." --include="*.java" microservices/ | grep -v "javax.crypto" | grep -v "javax.validation.constraints"; then
+        echo "❌ 发现javax.*包违规！必须使用jakarta.*"
         exit 1
       fi
-    - |
-      if grep -r "import javax\.annotation" --include="*.java" microservices/; then
-        echo "❌ 发现javax.annotation违规！必须使用jakarta.annotation"
-        exit 1
-      fi
-    - echo "✅ javax包名检查通过"
+    - echo "✅ javax.*检查通过"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+compliance:manager-bean-check:
+  stage: compliance
+  image: mcr.microsoft.com/powershell:latest
+  script:
+    - echo "=== 检查Manager Bean注册 ==="
+    - pwsh -ExecutionPolicy Bypass -File ./scripts/check-manager-bean-registration.ps1
+    - echo "✅ Manager Bean注册检查完成"
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "develop"'

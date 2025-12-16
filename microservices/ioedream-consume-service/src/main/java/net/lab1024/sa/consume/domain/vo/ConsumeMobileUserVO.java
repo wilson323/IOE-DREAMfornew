@@ -32,3 +32,6 @@ public class ConsumeMobileUserVO {
      */
     private String avatarUrl;
 }
+
+
+

@@ -17,11 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.identity.domain.vo.UserDetailVO;
+import net.lab1024.sa.common.security.identity.domain.vo.UserDetailVO;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
@@ -65,6 +69,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
      * @return 统计数据
      */
     @Override
+    @Observed(name = "consume.visualization.getStatistics", contextualName = "consume-visualization-get-statistics")
     @Transactional(readOnly = true)
     public ResponseDTO<ConsumeStatisticsVO> getStatistics(ConsumeStatisticsForm form) {
         log.info("获取消费统计数据，统计类型：{}", form.getStatisticsType());
@@ -89,9 +94,18 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
                     statistics.getTotalCount(), statistics.getTotalAmount());
             return ResponseDTO.ok(statistics);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费可视化] 参数错误，获取消费统计数据失败，error={}", e.getMessage());
+            throw new ParamException("GET_STATISTICS_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费可视化] 业务异常，获取消费统计数据失败，code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[消费可视化] 系统异常，获取消费统计数据失败，code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("获取消费统计数据失败", e);
-            return ResponseDTO.error("获取统计数据失败：" + e.getMessage());
+            log.error("[消费可视化] 未知异常，获取消费统计数据失败", e);
+            throw new SystemException("GET_STATISTICS_SYSTEM_ERROR", "获取统计数据失败: " + e.getMessage(), e);
         }
     }
 
@@ -102,6 +116,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
      * @return 趋势数据
      */
     @Override
+    @Observed(name = "consume.visualization.getTrend", contextualName = "consume-visualization-get-trend")
     @Transactional(readOnly = true)
     public ResponseDTO<ConsumeTrendVO> getTrend(ConsumeStatisticsForm form) {
         log.info("获取消费趋势数据，时间类型：{}", form.getTimeRangeType());
@@ -126,9 +141,18 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
                     trend.getDataPoints() != null ? trend.getDataPoints().size() : 0);
             return ResponseDTO.ok(trend);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费可视化] 参数错误，获取消费趋势数据失败，error={}", e.getMessage());
+            throw new ParamException("GET_TREND_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费可视化] 业务异常，获取消费趋势数据失败，code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[消费可视化] 系统异常，获取消费趋势数据失败，code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("获取消费趋势数据失败", e);
-            return ResponseDTO.error("获取趋势数据失败：" + e.getMessage());
+            log.error("[消费可视化] 未知异常，获取消费趋势数据失败", e);
+            throw new SystemException("GET_TREND_SYSTEM_ERROR", "获取趋势数据失败: " + e.getMessage(), e);
         }
     }
 
@@ -139,6 +163,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
      * @return 排名数据
      */
     @Override
+    @Observed(name = "consume.visualization.getRanking", contextualName = "consume-visualization-get-ranking")
     @Transactional(readOnly = true)
     public ResponseDTO<ConsumeRankingVO> getRanking(ConsumeStatisticsForm form) {
         log.info("获取消费排名数据，排名类型：{}", form.getRankingType());
@@ -165,9 +190,18 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
             log.info("获取消费排名数据成功，排名数量：{}", totalRankingCount);
             return ResponseDTO.ok(ranking);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费可视化] 参数错误，获取消费排名数据失败，error={}", e.getMessage());
+            throw new ParamException("GET_RANKING_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费可视化] 业务异常，获取消费排名数据失败，code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[消费可视化] 系统异常，获取消费排名数据失败，code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("获取消费排名数据失败", e);
-            return ResponseDTO.error("获取排名数据失败：" + e.getMessage());
+            log.error("[消费可视化] 未知异常，获取消费排名数据失败", e);
+            throw new SystemException("GET_RANKING_SYSTEM_ERROR", "获取排名数据失败: " + e.getMessage(), e);
         }
     }
 
@@ -178,6 +212,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
      * @return 对比分析数据
      */
     @Override
+    @Observed(name = "consume.visualization.getComparison", contextualName = "consume-visualization-get-comparison")
     @Transactional(readOnly = true)
     public ResponseDTO<ConsumeComparisonVO> getComparison(ConsumeStatisticsForm form) {
         log.info("获取消费对比分析数据");
@@ -201,9 +236,18 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
             log.info("获取消费对比分析数据成功");
             return ResponseDTO.ok(comparison);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费可视化] 参数错误，获取消费对比分析数据失败，error={}", e.getMessage());
+            throw new ParamException("GET_COMPARISON_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费可视化] 业务异常，获取消费对比分析数据失败，code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[消费可视化] 系统异常，获取消费对比分析数据失败，code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("获取消费对比分析数据失败", e);
-            return ResponseDTO.error("获取对比分析数据失败：" + e.getMessage());
+            log.error("[消费可视化] 未知异常，获取消费对比分析数据失败", e);
+            throw new SystemException("GET_COMPARISON_SYSTEM_ERROR", "获取对比分析数据失败: " + e.getMessage(), e);
         }
     }
 
@@ -214,6 +258,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
      * @return 用户行为分析数据
      */
     @Override
+    @Observed(name = "consume.visualization.getUserBehaviorAnalysis", contextualName = "consume-visualization-get-user-behavior")
     @Transactional(readOnly = true)
     public ResponseDTO<ConsumeUserBehaviorAnalysisVO> getUserBehaviorAnalysis(ConsumeStatisticsForm form) {
         log.info("获取用户行为分析数据");
@@ -237,9 +282,18 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
             log.info("获取用户行为分析数据成功");
             return ResponseDTO.ok(analysis);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费可视化] 参数错误，获取用户行为分析数据失败，error={}", e.getMessage());
+            throw new ParamException("GET_USER_BEHAVIOR_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费可视化] 业务异常，获取用户行为分析数据失败，code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[消费可视化] 系统异常，获取用户行为分析数据失败，code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("获取用户行为分析数据失败", e);
-            return ResponseDTO.error("获取用户行为分析数据失败：" + e.getMessage());
+            log.error("[消费可视化] 未知异常，获取用户行为分析数据失败", e);
+            throw new SystemException("GET_USER_BEHAVIOR_SYSTEM_ERROR", "获取用户行为分析数据失败: " + e.getMessage(), e);
         }
     }
 
@@ -250,6 +304,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
      * @return 预测分析数据
      */
     @Override
+    @Observed(name = "consume.visualization.getForecastAnalysis", contextualName = "consume-visualization-get-forecast")
     @Transactional(readOnly = true)
     public ResponseDTO<ConsumeForecastAnalysisVO> getForecastAnalysis(ConsumeStatisticsForm form) {
         log.info("获取消费预测分析数据");
@@ -273,9 +328,18 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
             log.info("获取消费预测分析数据成功");
             return ResponseDTO.ok(forecast);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[消费可视化] 参数错误，获取消费预测分析数据失败，error={}", e.getMessage());
+            throw new ParamException("GET_FORECAST_PARAM_ERROR", "参数错误: " + e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[消费可视化] 业务异常，获取消费预测分析数据失败，code={}, message={}", e.getCode(), e.getMessage());
+            throw e;
+        } catch (SystemException e) {
+            log.error("[消费可视化] 系统异常，获取消费预测分析数据失败，code={}, message={}", e.getCode(), e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("获取消费预测分析数据失败", e);
-            return ResponseDTO.error("获取预测分析数据失败：" + e.getMessage());
+            log.error("[消费可视化] 未知异常，获取消费预测分析数据失败", e);
+            throw new SystemException("GET_FORECAST_SYSTEM_ERROR", "获取预测分析数据失败: " + e.getMessage(), e);
         }
     }
 
@@ -527,6 +591,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
                     try {
                         item.setUserId(Long.parseLong(userId));
                     } catch (NumberFormatException e) {
+                        log.debug("[消费可视化] 用户ID不是数字格式，设置为0: userId={}", userId);
                         item.setUserId(0L);
                     }
 
@@ -580,6 +645,7 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
                     try {
                         item.setRegionId(Long.parseLong(entry.getKey()));
                     } catch (NumberFormatException e) {
+                        log.debug("[消费可视化] 区域ID不是数字格式，设置为0: regionId={}", entry.getKey());
                         item.setRegionId(0L);
                     }
                     item.setRegionName(data.name);
@@ -854,15 +920,33 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
                     }
                 } catch (NumberFormatException e) {
                     log.warn("[用户详情] 用户ID格式不正确，无法获取用户详情: userId={}", userId);
+                } catch (IllegalArgumentException | ParamException e) {
+                    log.warn("[用户详情] 获取用户详情参数错误: userId={}, error={}", userId, e.getMessage());
+                    // 单个用户获取失败不影响其他用户，继续处理
+                } catch (BusinessException e) {
+                    log.warn("[用户详情] 获取用户详情业务异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+                    // 单个用户获取失败不影响其他用户，继续处理
+                } catch (SystemException e) {
+                    log.warn("[用户详情] 获取用户详情系统异常: userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+                    // 单个用户获取失败不影响其他用户，继续处理
                 } catch (Exception e) {
-                    log.warn("[用户详情] 获取用户详情异常: userId={}, error={}", userId, e.getMessage());
+                    log.warn("[用户详情] 获取用户详情未知异常: userId={}, error={}", userId, e.getMessage());
                     // 单个用户获取失败不影响其他用户，继续处理
                 }
             }
 
             log.debug("[用户详情] 批量获取用户详情完成: 总数={}, 成功={}", userIds.size(), userDetailMap.size());
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[用户详情] 批量获取用户详情参数错误: error={}", e.getMessage());
+            // 返回空Map，不影响主流程
+        } catch (BusinessException e) {
+            log.warn("[用户详情] 批量获取用户详情业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            // 返回空Map，不影响主流程
+        } catch (SystemException e) {
+            log.error("[用户详情] 批量获取用户详情系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            // 返回空Map，不影响主流程
         } catch (Exception e) {
-            log.error("[用户详情] 批量获取用户详情失败", e);
+            log.error("[用户详情] 批量获取用户详情未知异常", e);
             // 返回空Map，不影响主流程
         }
 
@@ -911,3 +995,6 @@ public class ConsumeVisualizationServiceImpl implements ConsumeVisualizationServ
         }
     }
 }
+
+
+

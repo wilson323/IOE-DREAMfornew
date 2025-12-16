@@ -31,7 +31,7 @@ import net.lab1024.sa.attendance.service.impl.AttendanceRecordServiceImpl;
 /**
  * AttendanceRecordServiceImpl单元测试
  * <p>
- * 目标覆盖率：≥80%
+ * 目标覆盖率：>= 80%
  * 测试范围：考勤记录服务核心业务方法
  * </p>
  *
@@ -162,4 +162,5 @@ class AttendanceRecordServiceImplTest {
         verify(attendanceRecordDao, times(1)).selectList(any());
     }
 }
+
 

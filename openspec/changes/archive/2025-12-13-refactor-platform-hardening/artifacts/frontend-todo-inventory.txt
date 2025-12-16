@@ -1,0 +1,17 @@
+# Frontend TODO inventory (backend API not wired)
+# Generated: 2025-12-13T13:34:26+08:00
+
+smart-admin-web-javascript/src/views/business/access/area/components/AreaDeviceModal.vue:161	// TODO: 调用API获取设备列表
+smart-admin-web-javascript/src/views/business/access/area/components/AreaDeviceModal.vue:213	// TODO: 调用API移除设备
+smart-admin-web-javascript/src/views/business/access/area/components/AreaFormModal.vue:117	// TODO: 调用API保存区域信息
+smart-admin-web-javascript/src/views/business/access/area/components/AreaPermissionModal.vue:224	// TODO: 调用API获取权限列表
+smart-admin-web-javascript/src/views/business/access/area/components/AreaPermissionModal.vue:279	// TODO: 调用API删除权限
+smart-admin-web-javascript/src/views/business/access/area/components/AreaPermissionModal.vue:295	// TODO: 调用API批量删除
+smart-admin-web-javascript/src/views/business/consume/account/account-list.vue:407	// TODO: 对接后端接口
+smart-admin-web-javascript/src/views/business/consume/account/components/AccountFormModal.vue:266	// TODO: 对接后端接口获取区域列表
+smart-admin-web-javascript/src/views/business/consume/account/components/RechargeModal.vue:360	// TODO: 对接后端接口
+smart-admin-web-javascript/src/views/business/consume/device/device-list.vue:122	// TODO: 调用API获取设备列表
+smart-admin-web-javascript/src/views/business/consume/product/product-list.vue:148	// TODO: 调用API获取商品列表
+smart-admin-web-javascript/src/views/business/consume/report/index.vue:231	// TODO: 对接后端接口
+smart-admin-web-javascript/src/views/business/consume/transaction/index.vue:288	// TODO: 对接后端接口
+smart-admin-web-javascript/src/views/business/consume/transaction/index.vue:321	// TODO: 对接后端接口

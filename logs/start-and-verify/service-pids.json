@@ -1,0 +1,26 @@
+﻿[
+    {
+        "port":  8092,
+        "name":  "ioedream-video-service",
+        "stderr":  "D:\\IOE-DREAM\\logs\\start-and-verify\\ioedream-video-service-20251214-213321.err.log",
+        "pid":  19336,
+        "startedAt":  "2025-12-14T21:33:21",
+        "stdout":  "D:\\IOE-DREAM\\logs\\start-and-verify\\ioedream-video-service-20251214-213321.out.log"
+    },
+    {
+        "port":  8094,
+        "name":  "ioedream-consume-service",
+        "stderr":  "D:\\IOE-DREAM\\logs\\start-and-verify\\ioedream-consume-service-20251214-213325.err.log",
+        "pid":  5620,
+        "startedAt":  "2025-12-14T21:33:25",
+        "stdout":  "D:\\IOE-DREAM\\logs\\start-and-verify\\ioedream-consume-service-20251214-213325.out.log"
+    },
+    {
+        "port":  8095,
+        "name":  "ioedream-visitor-service",
+        "stderr":  "D:\\IOE-DREAM\\logs\\start-and-verify\\ioedream-visitor-service-20251214-213329.err.log",
+        "pid":  38644,
+        "startedAt":  "2025-12-14T21:33:29",
+        "stdout":  "D:\\IOE-DREAM\\logs\\start-and-verify\\ioedream-visitor-service-20251214-213329.out.log"
+    }
+]

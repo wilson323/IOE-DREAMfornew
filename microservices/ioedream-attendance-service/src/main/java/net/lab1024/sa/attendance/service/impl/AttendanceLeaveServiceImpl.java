@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
@@ -46,10 +50,12 @@ public class AttendanceLeaveServiceImpl implements AttendanceLeaveService {
     private WorkflowApprovalManager workflowApprovalManager;
 
     @Resource
-    private net.lab1024.sa.common.attendance.manager.AttendanceManager attendanceManager;
+    private net.lab1024.sa.attendance.attendance.manager.AttendanceManager attendanceManager;
 
     @Override
+    @Observed(name = "attendance.leave.submit", contextualName = "attendance-leave-submit")
     @Transactional(rollbackFor = Exception.class)
+    @Retry(name = "external-service-retry", fallbackMethod = "submitLeaveApplicationFallback")
     public AttendanceLeaveEntity submitLeaveApplication(AttendanceLeaveForm form) {
         log.info("[请假申请] 提交请假申请，employeeId={}, leaveType={}, startDate={}, endDate={}",
                 form.getEmployeeId(), form.getLeaveType(), form.getStartDate(), form.getEndDate());
@@ -114,6 +120,18 @@ public class AttendanceLeaveServiceImpl implements AttendanceLeaveService {
         return entity;
     }
 
+    /**
+     * 请假申请提交降级方法
+     * <p>
+     * 当工作流服务调用失败时，使用此降级方法
+     * </p>
+     */
+    public AttendanceLeaveEntity submitLeaveApplicationFallback(
+            AttendanceLeaveForm form, Exception e) {
+        log.error("[请假申请] 启动审批流程失败，使用降级方案, employeeId={}, error={}", form.getEmployeeId(), e.getMessage(), e);
+        throw new BusinessException("启动审批流程失败: " + e.getMessage());
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateLeaveStatus(String leaveNo, String status, String approvalComment) {
@@ -173,9 +191,18 @@ public class AttendanceLeaveServiceImpl implements AttendanceLeaveService {
                         entity.getLeaveNo(), entity.getEmployeeId(), entity.getLeaveDays());
                 // 不抛出异常，避免影响审批流程
             }
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[请假申请] 请假审批通过处理参数错误: leaveNo={}, employeeId={}, error={}", entity.getLeaveNo(), entity.getEmployeeId(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (BusinessException e) {
+            log.warn("[请假申请] 请假审批通过处理业务异常: leaveNo={}, employeeId={}, code={}, message={}", entity.getLeaveNo(), entity.getEmployeeId(), e.getCode(), e.getMessage());
+            // 不抛出异常，避免影响审批流程（优雅降级）
+        } catch (SystemException e) {
+            log.error("[请假申请] 请假审批通过处理系统异常: leaveNo={}, employeeId={}, code={}, message={}", entity.getLeaveNo(), entity.getEmployeeId(), e.getCode(), e.getMessage(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         } catch (Exception e) {
-            log.error("[请假申请] 请假审批通过处理异常，leaveNo={}, employeeId={}", entity.getLeaveNo(), entity.getEmployeeId(), e);
-            // 不抛出异常，避免影响审批流程
+            log.error("[请假申请] 请假审批通过处理未知异常: leaveNo={}, employeeId={}", entity.getLeaveNo(), entity.getEmployeeId(), e);
+            // 不抛出异常，避免影响审批流程（优雅降级）
         }
     }
 
@@ -188,4 +215,6 @@ public class AttendanceLeaveServiceImpl implements AttendanceLeaveService {
         return "LV" + System.currentTimeMillis();
     }
 }
+
+
 

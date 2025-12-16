@@ -44,6 +44,16 @@ public class ConsumeTransactionQueryForm {
     private Long userId;
 
     /**
+     * 交易流水号
+     */
+    private String transactionNo;
+
+    /**
+     * 设备ID
+     */
+    private Long deviceId;
+
+    /**
      * 区域ID
      */
     private String areaId;
@@ -83,4 +93,7 @@ public class ConsumeTransactionQueryForm {
      */
     private String status;
 }
+
+
+
 

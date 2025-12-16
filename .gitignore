@@ -4,6 +4,10 @@ target/
 !**/src/main/**
 !**/src/test/**
 
+# Environment files (may contain secrets)
+.env
+.env.local
+
 ### STS ###
 .classpath
 .factorypath

@@ -140,3 +140,5 @@ public class RefundRecordVO {
     @Schema(description = "扩展属性")
     private Map<String, Object> extendedAttributes;
 }
+
+

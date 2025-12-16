@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.consume.domain.vo.MobileConsumeStatisticsVO;
-import net.lab1024.sa.common.consume.manager.MobileConsumeStatisticsManager;
+import net.lab1024.sa.consume.consume.domain.vo.MobileConsumeStatisticsVO;
+import net.lab1024.sa.consume.consume.manager.MobileConsumeStatisticsManager;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,13 +66,21 @@ public class MobileConsumeStatisticsService {
 
             return ResponseDTO.ok(statistics);
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | net.lab1024.sa.common.exception.ParamException e) {
             log.warn("[移动端消费统计Service] 参数验证失败, userId={}, error={}", userId, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", e.getMessage());
-
+        } catch (net.lab1024.sa.common.exception.BusinessException e) {
+            log.warn("[移动端消费统计Service] 统计业务异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (net.lab1024.sa.common.exception.SystemException e) {
+            log.error("[移动端消费统计Service] 统计系统异常, userId={}, code={}, message={}", userId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("MOBILE_STATISTICS_SYSTEM_ERROR", "获取消费统计系统异常，请稍后重试");
         } catch (Exception e) {
-            log.error("[移动端消费统计Service] 统计异常, userId={}, error={}", userId, e.getMessage(), e);
+            log.error("[移动端消费统计Service] 统计未知异常, userId={}, error={}", userId, e.getMessage(), e);
             return ResponseDTO.error("MOBILE_STATISTICS_ERROR", "获取消费统计异常：" + e.getMessage());
         }
     }
 }
+
+
+

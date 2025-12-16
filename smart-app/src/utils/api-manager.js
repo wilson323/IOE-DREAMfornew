@@ -6,9 +6,13 @@
 import { performanceMonitor } from './performance.js'
 import { errorHandler } from './ux-enhancement.js'
 
+const normalizeBaseUrl = (url) => {
+  return url ? url.replace(/\/+$/, '') : ''
+}
+
 // API配置
 const API_CONFIG = {
-  baseURL: 'https://api.example.com',
+  baseURL: normalizeBaseUrl(import.meta.env.VITE_APP_API_URL),
   timeout: 10000,
   retryCount: 3,
   retryDelay: 1000,

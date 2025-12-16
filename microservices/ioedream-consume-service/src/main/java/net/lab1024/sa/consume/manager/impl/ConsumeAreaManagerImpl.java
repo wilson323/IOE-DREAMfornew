@@ -3,15 +3,13 @@ package net.lab1024.sa.consume.manager.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.cache.CacheService;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.dao.ConsumeAreaDao;
 import net.lab1024.sa.consume.domain.entity.ConsumeAreaEntity;
 import net.lab1024.sa.consume.manager.AccountManager;
@@ -41,36 +39,33 @@ import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 @Slf4j
 public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
 
-    private final ConsumeAreaDao consumeAreaDao;
-    private final ObjectMapper objectMapper;
-    private final AccountManager accountManager;
-    private final GatewayServiceClient gatewayServiceClient;
-    private final CacheService cacheService;
+	    private final ConsumeAreaDao consumeAreaDao;
+	    private final ObjectMapper objectMapper;
+	    private final AccountManager accountManager;
+	    private final AccountKindConfigClient accountKindConfigClient;
 
     /**
      * 构造函数注入依赖
      * <p>
      * 符合CLAUDE.md规范：通过构造函数接收依赖
+     * 注意：已移除CacheService依赖，缓存逻辑已迁移到Service层使用Spring Cache注解
      * </p>
      *
      * @param consumeAreaDao 区域DAO
      * @param objectMapper JSON对象映射器
      * @param accountManager 账户管理器
      * @param gatewayServiceClient 网关服务客户端
-     * @param cacheService 缓存服务
      */
-    public ConsumeAreaManagerImpl(
-            ConsumeAreaDao consumeAreaDao,
-            ObjectMapper objectMapper,
-            AccountManager accountManager,
-            GatewayServiceClient gatewayServiceClient,
-            CacheService cacheService) {
-        this.consumeAreaDao = consumeAreaDao;
-        this.objectMapper = objectMapper;
-        this.accountManager = accountManager;
-        this.gatewayServiceClient = gatewayServiceClient;
-        this.cacheService = cacheService;
-    }
+	    public ConsumeAreaManagerImpl(
+	            ConsumeAreaDao consumeAreaDao,
+	            ObjectMapper objectMapper,
+	            AccountManager accountManager,
+	            AccountKindConfigClient accountKindConfigClient) {
+	        this.consumeAreaDao = consumeAreaDao;
+	        this.objectMapper = objectMapper;
+	        this.accountManager = accountManager;
+	        this.accountKindConfigClient = accountKindConfigClient;
+	    }
 
     /**
      * 根据区域ID获取区域信息
@@ -118,7 +113,10 @@ public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
      * 2. 通过网关调用公共服务获取账户类别信息（包含area_config）
      * 3. 解析area_config JSON数组
      * 4. 遍历配置项，检查区域ID是否匹配（直接匹配或子区域匹配）
-     * 5. 使用缓存优化性能（30分钟过期）
+     * </p>
+     * <p>
+     * 注意：缓存逻辑已迁移到Service层（ConsumeAreaCacheService），使用Spring Cache注解
+     * 此方法只包含纯业务逻辑，不使用缓存
      * </p>
      *
      * @param accountId 账户ID
@@ -129,62 +127,44 @@ public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
     public boolean validateAreaPermission(Long accountId, String areaId) {
         log.debug("[区域管理] 验证区域权限，accountId={}, areaId={}", accountId, areaId);
         try {
-            // 1. 检查缓存
-            String cacheKey = String.format("perm:area:%d:%s", accountId, areaId);
-            Boolean cachedResult = cacheService.get(cacheKey, Boolean.class);
-            if (cachedResult != null) {
-                log.debug("[区域管理] 缓存命中，accountId={}, areaId={}, result={}", accountId, areaId, cachedResult);
-                return cachedResult;
-            }
-
-            // 2. 获取账户信息
+            // 1. 获取账户信息
             net.lab1024.sa.consume.domain.entity.AccountEntity account = accountManager.getAccountById(accountId);
             if (account == null) {
                 log.warn("[区域管理] 账户不存在，accountId={}", accountId);
-                cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
                 return false;
             }
 
-            // 3. 检查账户状态
+            // 2. 检查账户状态
             if (account.getStatus() == null || account.getStatus() != 1) {
                 log.warn("[区域管理] 账户状态异常，accountId={}, status={}", accountId, account.getStatus());
-                cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
                 return false;
             }
 
-            // 4. 获取账户类别ID
+            // 3. 获取账户类别ID
             Long accountKindId = account.getAccountKindId();
             if (accountKindId == null) {
                 log.warn("[区域管理] 账户类别ID为空，accountId={}", accountId);
-                cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
                 return false;
             }
 
-            // 5. 通过网关调用公共服务获取账户类别信息
-            ResponseDTO<Map<String, Object>> accountKindResponse = gatewayServiceClient.callCommonService(
-                    "/api/v1/account-kind/" + accountKindId,
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    new TypeReference<ResponseDTO<Map<String, Object>>>() {}
-            );
+	            // 4. 获取账户类别信息（AccountKindConfigClient 内部已带短 TTL 缓存）
+	            ResponseDTO<Map<String, Object>> accountKindResponse = accountKindConfigClient.getAccountKind(accountKindId);
 
             if (accountKindResponse == null || !accountKindResponse.isSuccess() || accountKindResponse.getData() == null) {
                 log.warn("[区域管理] 获取账户类别信息失败，accountKindId={}", accountKindId);
-                cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
                 return false;
             }
 
             Map<String, Object> accountKind = accountKindResponse.getData();
 
-            // 6. 获取area_config JSON字段
+            // 5. 获取area_config JSON字段
             Object areaConfigObj = accountKind.get("area_config");
             if (areaConfigObj == null) {
                 log.warn("[区域管理] 账户类别未配置区域权限，accountKindId={}", accountKindId);
-                cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
                 return false;
             }
 
-            // 7. 解析area_config JSON数组
+            // 6. 解析area_config JSON数组
             List<Map<String, Object>> areaConfigList;
             if (areaConfigObj instanceof String) {
                 // JSON字符串，需要解析
@@ -196,39 +176,35 @@ public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
                 areaConfigList = list;
             } else {
                 log.warn("[区域管理] area_config格式不正确，accountKindId={}", accountKindId);
-                cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
                 return false;
             }
 
             if (areaConfigList == null || areaConfigList.isEmpty()) {
                 log.warn("[区域管理] area_config为空数组，accountKindId={}", accountKindId);
-                cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
                 return false;
             }
 
-            // 8. 获取目标区域信息
+            // 7. 获取目标区域信息
             ConsumeAreaEntity targetArea = consumeAreaDao.selectById(areaId);
             if (targetArea == null) {
                 log.warn("[区域管理] 目标区域不存在，areaId={}", areaId);
-                cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
                 return false;
             }
 
-            // 9. 遍历area_config，检查区域权限
+            // 8. 遍历area_config，检查区域权限
             for (Map<String, Object> areaConfig : areaConfigList) {
                 String configAreaId = (String) areaConfig.get("areaId");
                 if (configAreaId == null) {
                     continue;
                 }
 
-                // 9.1 直接匹配
+                // 8.1 直接匹配
                 if (configAreaId.equals(areaId)) {
                     log.debug("[区域管理] 区域权限验证通过（直接匹配），accountId={}, areaId={}", accountId, areaId);
-                    cacheService.set(cacheKey, true, 30, TimeUnit.MINUTES);
                     return true;
                 }
 
-                // 9.2 检查是否包含子区域
+                // 8.2 检查是否包含子区域
                 Object includeSubAreasObj = areaConfig.get("includeSubAreas");
                 boolean includeSubAreas = includeSubAreasObj != null && Boolean.parseBoolean(includeSubAreasObj.toString());
 
@@ -239,7 +215,6 @@ public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
                     if (targetFullPath != null && targetFullPath.contains(configAreaId)) {
                         log.debug("[区域管理] 区域权限验证通过（子区域匹配），accountId={}, areaId={}, parentAreaId={}",
                                 accountId, areaId, configAreaId);
-                        cacheService.set(cacheKey, true, 30, TimeUnit.MINUTES);
                         return true;
                     }
 
@@ -247,15 +222,13 @@ public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
                     if (isSubArea(areaId, configAreaId)) {
                         log.debug("[区域管理] 区域权限验证通过（子区域递归匹配），accountId={}, areaId={}, parentAreaId={}",
                                 accountId, areaId, configAreaId);
-                        cacheService.set(cacheKey, true, 30, TimeUnit.MINUTES);
                         return true;
                     }
                 }
             }
 
-            // 10. 所有配置项都不匹配，权限验证失败
+            // 9. 所有配置项都不匹配，权限验证失败
             log.warn("[区域管理] 区域权限验证失败，账户无权在该区域消费，accountId={}, areaId={}", accountId, areaId);
-            cacheService.set(cacheKey, false, 30, TimeUnit.MINUTES);
             return false;
 
         } catch (Exception e) {
@@ -349,3 +322,6 @@ public class ConsumeAreaManagerImpl implements ConsumeAreaManager {
         }
     }
 }
+
+
+

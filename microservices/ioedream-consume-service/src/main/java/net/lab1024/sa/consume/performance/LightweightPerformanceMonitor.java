@@ -1,6 +1,7 @@
 package net.lab1024.sa.consume.performance;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.SystemException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
 
@@ -58,6 +59,7 @@ public class LightweightPerformanceMonitor {
             recordTime(name, duration);
             return result;
         } catch (RuntimeException e) {
+            log.debug("[性能监控] 执行异常: name={}, error={}", name, e.getMessage());
             incrementCounter(name + "_error");
             throw e;
         } catch (Error e) {
@@ -217,10 +219,13 @@ public class LightweightPerformanceMonitor {
                     } else if (e instanceof Error) {
                         throw (Error) e;
                     } else {
-                        throw new RuntimeException(e);
+                        throw new SystemException("PERFORMANCE_MONITOR_EXECUTION_ERROR", "性能监控执行异常: " + e.getMessage(), e);
                     }
                 }
             });
         }
     }
 }
+
+
+

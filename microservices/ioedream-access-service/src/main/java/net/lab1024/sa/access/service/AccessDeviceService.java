@@ -115,3 +115,4 @@ public interface AccessDeviceService {
      */
     ResponseDTO<List<MobileAreaItem>> getMobileAreas(Long userId);
 }
+

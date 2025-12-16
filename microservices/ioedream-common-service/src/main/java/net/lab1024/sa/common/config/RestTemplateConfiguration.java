@@ -1,8 +1,10 @@
 package net.lab1024.sa.common.config;
 
+import net.lab1024.sa.common.constant.SystemConstants;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -37,6 +39,7 @@ public class RestTemplateConfiguration {
      * @return RestTemplate实例
      */
     @Bean
+    @Primary
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         log.info("配置RestTemplate Bean");
 
@@ -53,8 +56,8 @@ public class RestTemplateConfiguration {
      */
     private ClientHttpRequestFactory httpRequestFactory() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(10000); // 10秒
-        factory.setReadTimeout(30000); // 30秒
+        factory.setConnectTimeout(SystemConstants.HTTP_CONNECT_TIMEOUT_MS);
+        factory.setReadTimeout(SystemConstants.HTTP_READ_TIMEOUT_MS);
         return factory;
     }
 }

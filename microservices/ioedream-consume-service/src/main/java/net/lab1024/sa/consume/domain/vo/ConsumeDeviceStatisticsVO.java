@@ -49,3 +49,6 @@ public class ConsumeDeviceStatisticsVO {
      */
     private java.math.BigDecimal todayTransactionAmount;
 }
+
+
+

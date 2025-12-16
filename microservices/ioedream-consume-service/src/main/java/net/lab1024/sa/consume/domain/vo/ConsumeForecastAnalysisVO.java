@@ -147,3 +147,6 @@ public class ConsumeForecastAnalysisVO {
         private String accuracyRating;
     }
 }
+
+
+

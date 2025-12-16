@@ -6,7 +6,23 @@
 
 ## ⚡ 最快启动方式（3步）
 
-### 1️⃣ 确保Docker运行
+### 1️⃣ 配置环境变量（必须）
+
+`docker-compose-all.yml` 已移除默认口令占位，必须通过 `.env` 注入敏感配置。
+
+```powershell
+# 进入项目目录
+cd D:\IOE-DREAM
+
+# 从模板创建 .env（注意：.env 不应提交到仓库）
+Copy-Item ".env.template" ".env" -Force
+
+# 编辑 .env，至少配置：
+# MYSQL_ROOT_PASSWORD、REDIS_PASSWORD、NACOS_USERNAME、NACOS_PASSWORD、NACOS_AUTH_TOKEN、JWT_SECRET
+notepad .env
+```
+
+### 2️⃣ 确保Docker运行
 
 ```powershell
 # 检查Docker
@@ -16,7 +32,7 @@ docker --version
 # 下载地址: https://www.docker.com/products/docker-desktop
 ```
 
-### 2️⃣ 一键启动所有服务
+### 3️⃣ 一键启动所有服务
 
 ```powershell
 # 进入项目目录
@@ -26,12 +42,22 @@ cd D:\IOE-DREAM
 .\scripts\start-all-complete.ps1
 ```
 
-### 3️⃣ 访问应用
+### 4️⃣ 访问应用
 
 - **前端管理后台**: http://localhost:3000
 - **移动端应用**: http://localhost:8081
 - **API网关**: http://localhost:8080
-- **Nacos控制台**: http://localhost:8848/nacos (nacos/nacos)
+- **Nacos控制台**: http://localhost:8848/nacos（账号密码以 `.env` 中的 `NACOS_USERNAME/NACOS_PASSWORD` 为准）
+
+---
+
+## 🔐 API 基线与兼容窗口（30 天）
+
+- **Canonical API 前缀**：统一使用 `/api/v1`
+- **鉴权方式**：Spring Security（JWT Bearer），请求头 `Authorization: Bearer <token>`
+- **兼容窗口**：legacy 路由与 legacy 登录路径保留 30 天后下线（建议尽快迁移）
+  - legacy 登录前缀（兼容）：`/login/**`
+  - legacy 业务前缀（兼容）：`/access/**`、`/attendance/**`、`/consume/**`、`/visitor/**`、`/video/**`、`/device/**`
 
 ---
 

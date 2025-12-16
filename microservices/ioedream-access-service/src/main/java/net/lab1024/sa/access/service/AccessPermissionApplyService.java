@@ -36,3 +36,4 @@ public interface AccessPermissionApplyService {
     void updatePermissionApplyStatus(String applyNo, String status, String approvalComment);
 }
 
+

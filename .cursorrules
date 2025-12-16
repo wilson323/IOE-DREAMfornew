@@ -18,8 +18,9 @@
 - ioedream-visitor-service (8095) - 访客服务
 - ioedream-video-service (8092) - 视频服务
 
-公共JAR库:
-- microservices-common - 被所有微服务依赖
+公共库(聚合):
+- microservices-common - 公共库聚合父模块，被所有微服务依赖  
+  目标拆分: common-core / common-spring(common-web) / common-starter-* / *-domain-api
 ```
 
 ### 2. 四层架构 (强制)
@@ -40,7 +41,7 @@ Controller → Service → Manager → DAO
 ❌ 禁止使用 Repository 后缀 (统一使用 Dao)
 ❌ 禁止使用 javax.* 包 (统一使用 jakarta.*)
 ❌ 禁止使用 HikariCP (统一使用 Druid)
-❌ 禁止使用 FeignClient 直连 (统一通过 GatewayServiceClient)
+❌ 禁止未经白名单的服务直连（默认通过 GatewayServiceClient；同域高频热路径仅可通过统一直连 Client 直连）
 ❌ 禁止直接访问其他服务数据库
 ❌ 禁止在Controller中处理事务
 ❌ 禁止在DAO中包含业务逻辑
@@ -290,9 +291,13 @@ DEBUG: 调试信息
 [ ] 编译0错误0警告
 ```
 
-## 🚀 微服务调用规范
+## 🚀 微服务调用规范（混合模式）
 
-### 通过网关调用
+- 南北向（外部/前端→服务）：必须经网关统一治理  
+- 东西向低频或跨域同步调用：经网关（`GatewayServiceClient`）  
+- 东西向同域高频热路径：白名单直连（统一直连 Client + S2S 鉴权 + Resilience4j + Tracing/Metrics）
+
+### 默认经网关调用
 ```java
 // ✅ 正确 - 使用GatewayServiceClient
 @Resource
@@ -307,17 +312,18 @@ public UserVO getUser(Long userId) {
     );
 }
 
-// ❌ 错误 - 直接使用FeignClient
+// ❌ 错误 - 非白名单直连（直接使用FeignClient）
 @FeignClient(name = "ioedream-common-service")
 public interface UserClient { }
 ```
 
 ## 📁 文件组织规范
 
-### microservices-common (公共JAR)
+### microservices-common (公共库聚合)
 ```
+目标拆分: common-core / common-spring(common-web) / common-starter-* / *-domain-api
 允许: Entity, DAO, Manager, Form, VO, Config, Constant, Enum, Exception, Util
-禁止: @Service实现, @RestController, spring-boot-starter-web
+禁止: @Service实现, @RestController, spring-boot-starter-web（common-starter-*除外）
 ```
 
 ### ioedream-common-service (微服务)
@@ -330,7 +336,7 @@ public interface UserClient { }
 ```
 允许: 业务特定的Controller, Service, Manager, Entity
 依赖: microservices-common
-调用: 通过GatewayServiceClient调用其他服务
+调用: 默认通过GatewayServiceClient；热路径白名单可直连（统一直连 Client）
 ```
 
 ## 🔧 IDE配置建议

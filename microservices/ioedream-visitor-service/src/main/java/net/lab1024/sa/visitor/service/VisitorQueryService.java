@@ -54,3 +54,4 @@ public interface VisitorQueryService {
      */
     ResponseDTO<?> getVisitorsByVisiteeId(Long visiteeId, Integer limit);
 }
+

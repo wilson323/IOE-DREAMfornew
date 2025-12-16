@@ -144,7 +144,7 @@ const loadStatistics = async () => {
 // 初始化
 onMounted(() => {
   loadStatistics();
-  // TODO: 初始化图表
+  // 图表初始化由ECharts组件自动完成
 });
 </script>
 

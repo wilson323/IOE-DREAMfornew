@@ -25,7 +25,7 @@ import net.lab1024.sa.consume.service.impl.AccountServiceImpl;
 /**
  * AccountServiceImpl单元测试
  * <p>
- * 目标覆盖率：≥80%
+ * 目标覆盖率：>= 80%
  * 测试范围：账户服务核心业务方法
  * </p>
  *
@@ -62,6 +62,7 @@ class AccountServiceImplTest {
         accountEntity.setAccountKindId(1L);
         accountEntity.setBalance(new BigDecimal("100.00")); // 使用BigDecimal类型
         accountEntity.setStatus(1); // 正常状态
+        accountEntity.setVersion(0); // 乐观锁版本号，避免 NPE
     }
 
     @Test
@@ -142,16 +143,16 @@ class AccountServiceImplTest {
     void testGetAccountDetail_Success() {
         // Given
         Long accountId = 2001L;
-        when(accountDao.selectById(accountId)).thenReturn(accountEntity);
+        when(accountManager.getAccountById(accountId)).thenReturn(accountEntity);
 
         // When
         AccountEntity result = accountService.getAccountDetail(accountId);
 
         // Then
         assertNotNull(result);
-        assertEquals(accountId, result.getId());
+        assertEquals(accountId, result.getAccountId());
         assertEquals(1001L, result.getUserId());
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountManager, times(1)).getAccountById(accountId);
     }
 
     @Test
@@ -159,14 +160,11 @@ class AccountServiceImplTest {
     void testGetAccountDetail_NotFound() {
         // Given
         Long accountId = 9999L;
-        when(accountDao.selectById(accountId)).thenReturn(null);
+        when(accountManager.getAccountById(accountId)).thenReturn(null);
 
-        // When
-        AccountEntity result = accountService.getAccountDetail(accountId);
-
-        // Then
-        assertNull(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        // When & Then
+        assertThrows(BusinessException.class, () -> accountService.getAccountDetail(accountId));
+        verify(accountManager, times(1)).getAccountById(accountId);
     }
 
     @Test
@@ -176,7 +174,6 @@ class AccountServiceImplTest {
         Long accountId = 2001L;
         BigDecimal amount = new BigDecimal("50.00");
         String reason = "账户充值";
-        when(accountDao.selectById(accountId)).thenReturn(accountEntity);
         when(accountManager.addBalance(accountId, amount)).thenReturn(true);
 
         // When
@@ -184,7 +181,6 @@ class AccountServiceImplTest {
 
         // Then
         assertTrue(result);
-        verify(accountDao, times(1)).selectById(accountId);
         verify(accountManager, times(1)).addBalance(accountId, amount);
     }
 
@@ -206,4 +202,5 @@ class AccountServiceImplTest {
         verify(accountDao, times(1)).updateById(any(AccountEntity.class));
     }
 }
+
 

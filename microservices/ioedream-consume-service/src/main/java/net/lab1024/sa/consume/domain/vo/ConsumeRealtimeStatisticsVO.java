@@ -43,3 +43,6 @@ public class ConsumeRealtimeStatisticsVO {
      */
     private Integer lastHourCount;
 }
+
+
+

@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.auth.dao.UserSessionDao;
 import net.lab1024.sa.common.auth.domain.entity.UserSessionEntity;
 import net.lab1024.sa.common.auth.util.JwtTokenUtil;
@@ -142,7 +143,7 @@ public class AuthManager {
 
         } catch (Exception e) {
             log.error("管理用户会话失败，用户ID: {}", userId, e);
-            throw new RuntimeException("会话管理失败", e);
+            throw new SystemException("SESSION_MANAGE_ERROR", "会话管理失败", e);
         }
     }
 

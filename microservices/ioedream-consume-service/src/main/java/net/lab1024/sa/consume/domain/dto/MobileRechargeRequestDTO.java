@@ -92,3 +92,5 @@ public class MobileRechargeRequestDTO {
     public static final String PAYMENT_BALANCE = "BALANCE";            // 余额转账
     public static final String PAYMENT_CASH = "CASH";                  // 现金
 }
+
+

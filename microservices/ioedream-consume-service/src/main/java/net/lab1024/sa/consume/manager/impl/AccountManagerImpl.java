@@ -90,6 +90,11 @@ public class AccountManagerImpl implements AccountManager {
     public boolean deductBalance(Long accountId, BigDecimal amount) {
         log.info("[账户管理] 扣减账户余额，accountId={}, amount={}", accountId, amount);
         try {
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                log.warn("[账户管理] 扣减金额非法，accountId={}, amount={}", accountId, amount);
+                return false;
+            }
+
             AccountEntity account = accountDao.selectById(accountId);
             if (account == null) {
                 log.warn("[账户管理] 账户不存在，accountId={}", accountId);
@@ -109,7 +114,8 @@ public class AccountManagerImpl implements AccountManager {
 
             // 更新余额（使用BigDecimal类型，单位为元）
             account.setBalance(newBalance);
-            account.setVersion(account.getVersion() + 1); // 乐观锁版本号+1
+            Integer version = account.getVersion();
+            account.setVersion((version == null ? 0 : version) + 1); // 乐观锁版本号+1
             int result = accountDao.updateById(account);
 
             log.info("[账户管理] 扣减账户余额成功，accountId={}, amount={}, newBalance={}", accountId, amount, newBalance);
@@ -132,6 +138,11 @@ public class AccountManagerImpl implements AccountManager {
     public boolean addBalance(Long accountId, BigDecimal amount) {
         log.info("[账户管理] 增加账户余额，accountId={}, amount={}", accountId, amount);
         try {
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                log.warn("[账户管理] 增加金额非法，accountId={}, amount={}", accountId, amount);
+                return false;
+            }
+
             AccountEntity account = accountDao.selectById(accountId);
             if (account == null) {
                 log.warn("[账户管理] 账户不存在，accountId={}", accountId);
@@ -146,7 +157,8 @@ public class AccountManagerImpl implements AccountManager {
 
             // 更新余额（使用BigDecimal类型，单位为元）
             account.setBalance(newBalance);
-            account.setVersion(account.getVersion() + 1); // 乐观锁版本号+1
+            Integer version = account.getVersion();
+            account.setVersion((version == null ? 0 : version) + 1); // 乐观锁版本号+1
             int result = accountDao.updateById(account);
 
             log.info("[账户管理] 增加账户余额成功，accountId={}, amount={}, newBalance={}", accountId, amount, newBalance);
@@ -195,3 +207,6 @@ public class AccountManagerImpl implements AccountManager {
         }
     }
 }
+
+
+

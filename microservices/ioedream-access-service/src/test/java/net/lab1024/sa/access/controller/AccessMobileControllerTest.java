@@ -158,12 +158,6 @@ class AccessMobileControllerTest {
         request.setBiometricData("biometric_data_base64");
         request.setDeviceId(2001L);
 
-        // Mock生物识别验证服务调用
-        // GatewayServiceClient.callCommonService返回ResponseDTO<T>
-        ResponseDTO<Boolean> mockResponse = ResponseDTO.ok(true);
-        when(gatewayServiceClient.callCommonService(any(), any(), any(), eq(Boolean.class)))
-                .thenReturn(mockResponse);
-
         AdvancedAccessControlService.AccessControlResult controlResult = new AdvancedAccessControlService.AccessControlResult();
         controlResult.setAllowed(true);
 

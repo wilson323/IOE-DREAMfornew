@@ -163,3 +163,6 @@ public class ConsumeRankingVO {
         private Integer activeUserCount;
     }
 }
+
+
+

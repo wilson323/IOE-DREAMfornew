@@ -99,6 +99,7 @@
   import { ref, reactive, computed, watch } from 'vue';
   import { message, Modal } from 'ant-design-vue';
   import { PlusOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons-vue';
+  import { accessApi } from '/@/api/business/access/access-api';
 
   const props = defineProps({
     visible: {
@@ -168,65 +169,15 @@
     return baseColumns;
   });
 
-  // 模拟权限数据
-  const mockPermissions = {
-    user: [
-      {
-        permissionId: '1',
-        userName: 'John Doe',
-        userCode: 'EMP001',
-        permissionLevel: 'FULL_ACCESS',
-        status: 1,
-        startTime: '2025-01-01',
-        endTime: '2025-12-31',
-        createTime: '2025-01-01 09:00:00',
-      },
-      {
-        permissionId: '2',
-        userName: 'Jane Smith',
-        userCode: 'EMP002',
-        permissionLevel: 'READ_ONLY',
-        status: 1,
-        startTime: null,
-        endTime: null,
-        createTime: '2025-01-02 10:00:00',
-      },
-    ],
-    role: [
-      {
-        permissionId: '3',
-        roleName: 'Security Team',
-        roleCode: 'SECURITY',
-        permissionLevel: 'FULL_ACCESS',
-        status: 1,
-        startTime: null,
-        endTime: null,
-        createTime: '2025-01-01 09:00:00',
-      },
-    ],
-    time: [
-      {
-        permissionId: '4',
-        userName: 'All Users',
-        userCode: 'ALL',
-        permissionLevel: 'TIME_BASED',
-        status: 1,
-        startTime: '09:00',
-        endTime: '18:00',
-        createTime: '2025-01-01 09:00:00',
-      },
-    ],
-  };
-
   const loadPermissionList = async () => {
     loading.value = true;
     try {
-      // TODO: 调用API获取权限列表
-      // const result = await permissionApi.getAreaPermissions(props.areaId, permissionType.value);
-
-      // 使用模拟数据
-      await new Promise(resolve => setTimeout(resolve, 500));
-      permissionList.value = mockPermissions[permissionType.value] || [];
+      const result = await accessApi.getAreaPermissions(props.areaId, permissionType.value);
+      if (result.code === 200 && Array.isArray(result.data)) {
+        permissionList.value = result.data;
+      } else {
+        permissionList.value = [];
+      }
     } catch (error) {
       message.error('Failed to load permission list');
     } finally {
@@ -276,7 +227,7 @@
       content: `Are you sure to delete this ${permissionType.value} permission?`,
       onOk: async () => {
         try {
-          // TODO: 调用API删除权限
+          await accessApi.deleteAreaPermission(record.permissionId);
           message.success('Permission deleted successfully');
           loadPermissionList();
         } catch (error) {
@@ -292,7 +243,7 @@
       content: `Are you sure to delete ${selectedRowKeys.value.length} selected permissions?`,
       onOk: async () => {
         try {
-          // TODO: 调用API批量删除
+          await accessApi.batchDeleteAreaPermissions(selectedRowKeys.value);
           message.success('Permissions deleted successfully');
           selectedRowKeys.value = [];
           loadPermissionList();

@@ -1,0 +1,314 @@
+# ============================================================
+# IOE-DREAM 开发环境 Docker Compose 配置
+# 
+# 目的：优化开发环境内存占用，预计节省40-50%内存
+# 
+# 使用方法：
+#   docker-compose -f docker-compose-dev.yml up -d
+#
+# 内存配置对比：
+#   生产环境：15-20GB
+#   开发环境：8-10GB（本文件配置）
+# ============================================================
+
+version: '3.8'
+
+services:
+  # ==================== 基础设施服务 ====================
+  
+  mysql:
+    image: mysql:8.0
+    container_name: ioedream-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-ioedream123}
+      MYSQL_DATABASE: ioedream
+      MYSQL_USER: ioedream
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-ioedream123}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ioedream-redis-dev
+    ports:
+      - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nacos:
+    image: nacos/nacos-server:v2.3.0
+    container_name: ioedream-nacos-dev
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_DB_NAME: nacos_config
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_USER: nacos
+      MYSQL_SERVICE_PASSWORD: ${NACOS_MYSQL_PASSWORD:-nacos}
+      JVM_XMS: 256m
+      JVM_XMX: 512m
+      JVM_XMN: 128m
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+        reservations:
+          memory: 256M
+
+  # ==================== 微服务（开发环境小内存配置）====================
+
+  gateway-service:
+    image: ioedream/gateway-service:${VERSION:-latest}
+    container_name: ioedream-gateway-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 256m
+      JVM_XMX: 512m
+      JVM_METASPACE: 128m
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8080:8080"
+    depends_on:
+      - nacos
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+        reservations:
+          memory: 256M
+
+  common-service:
+    image: ioedream/common-service:${VERSION:-latest}
+    container_name: ioedream-common-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 256m
+      JVM_XMX: 512m
+      JVM_METASPACE: 128m
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8088:8088"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+        reservations:
+          memory: 256M
+
+  device-comm-service:
+    image: ioedream/device-comm-service:${VERSION:-latest}
+    container_name: ioedream-device-comm-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 512m
+      JVM_XMX: 1g
+      JVM_METASPACE: 192m
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8087:8087"
+    depends_on:
+      - nacos
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
+
+  access-service:
+    image: ioedream/access-service:${VERSION:-latest}
+    container_name: ioedream-access-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 512m
+      JVM_XMX: 1g
+      JVM_METASPACE: 192m
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8090:8090"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
+
+  attendance-service:
+    image: ioedream/attendance-service:${VERSION:-latest}
+    container_name: ioedream-attendance-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 512m
+      JVM_XMX: 1g
+      JVM_METASPACE: 192m
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8091:8091"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
+
+  consume-service:
+    image: ioedream/consume-service:${VERSION:-latest}
+    container_name: ioedream-consume-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 512m
+      JVM_XMX: 1g
+      JVM_METASPACE: 192m
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8094:8094"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
+
+  visitor-service:
+    image: ioedream/visitor-service:${VERSION:-latest}
+    container_name: ioedream-visitor-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 512m
+      JVM_XMX: 1g
+      JVM_METASPACE: 192m
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8095:8095"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
+
+  video-service:
+    image: ioedream/video-service:${VERSION:-latest}
+    container_name: ioedream-video-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 1g
+      JVM_XMX: 2g
+      JVM_METASPACE: 256m
+      JAVACPP_MAXBYTES: 512m
+      JAVACPP_MAXPHYSICALBYTES: 1g
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8092:8092"
+    depends_on:
+      - nacos
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+        reservations:
+          memory: 1G
+
+  oa-service:
+    image: ioedream/oa-service:${VERSION:-latest}
+    container_name: ioedream-oa-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JVM_XMS: 512m
+      JVM_XMX: 1g
+      JVM_METASPACE: 192m
+      NACOS_SERVER_ADDR: nacos:8848
+    ports:
+      - "8089:8089"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
+
+volumes:
+  mysql-data:
+
+networks:
+  default:
+    name: ioedream-dev-network
+
+# ============================================================
+# 内存配置汇总：
+# 
+# 基础设施：
+#   - MySQL:    1GB (限制)
+#   - Redis:    256MB (限制)
+#   - Nacos:    768MB (限制)
+#   小计:       ~2GB
+#
+# 微服务：
+#   - gateway:        768MB (限制)
+#   - common:         768MB (限制)
+#   - device-comm:    1.5GB (限制)
+#   - access:         1.5GB (限制)
+#   - attendance:     1.5GB (限制)
+#   - consume:        1.5GB (限制)
+#   - visitor:        1.5GB (限制)
+#   - video:          3GB (限制)
+#   - oa:             1.5GB (限制)
+#   小计:             ~14GB (限制总量)
+#
+# 实际使用预估：~8-10GB（因为使用reservation预留，实际按需分配）
+# ============================================================

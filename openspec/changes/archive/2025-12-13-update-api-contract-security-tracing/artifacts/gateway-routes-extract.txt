@@ -1,0 +1,310 @@
+# Gateway Routes (extract)
+# Generated: 2025-12-13T13:06:36+08:00
+
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:64:        - id: common-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:65:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:66:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:67:            - Path=/api/v1/system/**,/api/v1/notification/**,/api/v1/area-device/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:69:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:70:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:78:        - id: device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:79:          uri: lb://ioedream-device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:80:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:81:            - Path=/api/v1/device/**,/api/v1/biometric/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:83:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:84:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:92:        - id: oa-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:93:          uri: lb://ioedream-oa-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:94:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:95:            - Path=/api/v1/approval/**,/api/v1/workflow/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:97:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:98:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:101:        - id: access-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:102:          uri: lb://ioedream-access-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:103:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:104:            - Path=/api/v1/access/**,/api/v1/mobile/access/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:106:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:107:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:110:        - id: attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:111:          uri: lb://ioedream-attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:112:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:113:            - Path=/api/v1/attendance/**,/api/attendance/mobile/**,/api/attendance/mobile
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:115:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:116:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:119:        - id: video-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:120:          uri: lb://ioedream-video-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:121:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:122:            - Path=/api/v1/video/**,/api/v1/mobile/video/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:124:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:125:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:128:        - id: consume-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:129:          uri: lb://ioedream-consume-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:130:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:131:            - Path=/api/v1/consume/**,/api/v1/payment/**,/api/consume/**,/api/mobile/v1/consume/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:133:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:134:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:137:        - id: visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:138:          uri: lb://ioedream-visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:139:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:140:            - Path=/api/v1/visitor/**,/api/v1/mobile/visitor/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:142:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:143:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:146:        - id: legacy-prod-access-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:147:          uri: lb://ioedream-access-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:148:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:149:            - Path=/access/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:150:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:151:            - RewritePath=/access(?<segment>/?.*), /api/v1/access$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:152:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:154:        - id: legacy-prod-attendance-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:155:          uri: lb://ioedream-attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:156:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:157:            - Path=/attendance/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:158:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:159:            - RewritePath=/attendance(?<segment>/?.*), /api/v1/attendance$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:160:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:162:        - id: legacy-prod-consume-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:163:          uri: lb://ioedream-consume-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:164:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:165:            - Path=/consume/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:166:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:167:            - RewritePath=/consume(?<segment>/?.*), /api/v1/consume$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:168:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:170:        - id: legacy-prod-visitor-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:171:          uri: lb://ioedream-visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:172:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:173:            - Path=/visitor/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:174:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:175:            - RewritePath=/visitor(?<segment>/?.*), /api/v1/visitor$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:176:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:178:        - id: legacy-prod-video-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:179:          uri: lb://ioedream-video-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:180:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:181:            - Path=/video/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:182:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:183:            - RewritePath=/video(?<segment>/?.*), /api/v1/video$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:184:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:186:        - id: legacy-prod-device-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:187:          uri: lb://ioedream-device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:188:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:189:            - Path=/device/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:190:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:191:            - RewritePath=/device(?<segment>/?.*), /api/v1/device$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:192:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:194:        - id: legacy-prod-system-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:195:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:196:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:197:            - Path=/system/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:198:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:199:            - RewritePath=/system(?<segment>/?.*), /api/v1/system$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:200:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:202:        - id: legacy-prod-support-pass-through
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:203:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:204:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:205:            - Path=/support/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:206:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:207:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:209:        - id: legacy-prod-security-pass-through
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:210:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:211:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:212:            - Path=/security/**
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:213:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:214:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-prod.yml:217:      default-filters:
+microservices/ioedream-gateway-service/src/main/resources/application-security.yml:22:          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8080}
+microservices/ioedream-gateway-service/src/main/resources/application.yml:65:        - id: ioedream-device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:66:          uri: lb://ioedream-device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:67:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:68:            - Path=/api/v1/device/**,/api/v1/biometric/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:69:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:70:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:73:        - id: ioedream-access-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:74:          uri: lb://ioedream-access-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:75:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:76:            - Path=/api/v1/access/**,/api/v1/mobile/access/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:77:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:78:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:81:        - id: ioedream-attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:82:          uri: lb://ioedream-attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:83:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:84:            - Path=/api/v1/attendance/**,/api/attendance/mobile/**,/api/attendance/mobile
+microservices/ioedream-gateway-service/src/main/resources/application.yml:85:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:86:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:89:        - id: ioedream-consume-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:90:          uri: lb://ioedream-consume-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:91:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:92:            - Path=/api/v1/consume/**,/api/v1/payment/**,/api/consume/**,/api/mobile/v1/consume/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:93:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:94:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:97:        - id: ioedream-visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:98:          uri: lb://ioedream-visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:99:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:100:            - Path=/api/v1/visitor/**,/api/v1/mobile/visitor/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:101:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:102:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:105:        - id: ioedream-video-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:106:          uri: lb://ioedream-video-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:107:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:108:            - Path=/api/v1/video/**,/api/v1/mobile/video/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:109:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:110:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:113:        - id: ioedream-oa-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:114:          uri: lb://ioedream-oa-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:115:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:116:            - Path=/api/v1/approval/**,/api/v1/workflow/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:117:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:118:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:121:        - id: ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:122:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:123:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:124:            - Path=/api/v1/system/**,/api/v1/notification/**,/api/v1/area-device/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:125:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:126:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:129:        - id: legacy-access-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application.yml:130:          uri: lb://ioedream-access-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:131:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:132:            - Path=/access/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:133:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:134:            - RewritePath=/access(?<segment>/?.*), /api/v1/access$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application.yml:136:        - id: legacy-attendance-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application.yml:137:          uri: lb://ioedream-attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:138:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:139:            - Path=/attendance/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:140:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:141:            - RewritePath=/attendance(?<segment>/?.*), /api/v1/attendance$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application.yml:143:        - id: legacy-consume-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application.yml:144:          uri: lb://ioedream-consume-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:145:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:146:            - Path=/consume/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:147:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:148:            - RewritePath=/consume(?<segment>/?.*), /api/v1/consume$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application.yml:150:        - id: legacy-visitor-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application.yml:151:          uri: lb://ioedream-visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:152:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:153:            - Path=/visitor/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:154:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:155:            - RewritePath=/visitor(?<segment>/?.*), /api/v1/visitor$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application.yml:157:        - id: legacy-video-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application.yml:158:          uri: lb://ioedream-video-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:159:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:160:            - Path=/video/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:161:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:162:            - RewritePath=/video(?<segment>/?.*), /api/v1/video$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application.yml:164:        - id: legacy-device-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application.yml:165:          uri: lb://ioedream-device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:166:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:167:            - Path=/device/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:168:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:169:            - RewritePath=/device(?<segment>/?.*), /api/v1/device$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application.yml:171:        - id: legacy-system-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application.yml:172:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:173:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:174:            - Path=/system/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:175:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:176:            - RewritePath=/system(?<segment>/?.*), /api/v1/system$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application.yml:178:        - id: legacy-support-pass-through
+microservices/ioedream-gateway-service/src/main/resources/application.yml:179:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:180:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:181:            - Path=/support/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:182:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:183:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application.yml:185:        - id: legacy-security-pass-through
+microservices/ioedream-gateway-service/src/main/resources/application.yml:186:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application.yml:187:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:188:            - Path=/security/**
+microservices/ioedream-gateway-service/src/main/resources/application.yml:189:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application.yml:190:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:25:        - id: ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:26:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:27:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:28:            - Path=/api/v1/system/**,/api/v1/notification/**,/api/v1/area-device/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:29:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:46:        - id: ioedream-device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:47:          uri: lb://ioedream-device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:48:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:49:            - Path=/api/v1/device/**,/api/v1/biometric/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:50:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:62:        - id: ioedream-oa-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:63:          uri: lb://ioedream-oa-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:64:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:65:            - Path=/api/v1/approval/**,/api/v1/workflow/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:66:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:73:        - id: ioedream-access-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:74:          uri: lb://ioedream-access-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:75:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:76:            - Path=/api/v1/access/**,/api/v1/mobile/access/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:77:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:88:        - id: ioedream-attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:89:          uri: lb://ioedream-attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:90:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:91:            - Path=/api/v1/attendance/**,/api/attendance/mobile/**,/api/attendance/mobile
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:92:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:103:        - id: ioedream-consume-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:104:          uri: lb://ioedream-consume-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:105:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:106:            - Path=/api/v1/consume/**,/api/v1/payment/**,/api/consume/**,/api/mobile/v1/consume/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:107:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:118:        - id: ioedream-visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:119:          uri: lb://ioedream-visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:120:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:121:            - Path=/api/v1/visitor/**,/api/v1/mobile/visitor/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:122:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:129:        - id: ioedream-video-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:130:          uri: lb://ioedream-video-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:131:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:132:            - Path=/api/v1/video/**,/api/v1/mobile/video/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:133:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:144:        - id: legacy-resilience-access-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:145:          uri: lb://ioedream-access-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:146:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:147:            - Path=/access/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:148:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:149:            - RewritePath=/access(?<segment>/?.*), /api/v1/access$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:151:        - id: legacy-resilience-attendance-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:152:          uri: lb://ioedream-attendance-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:153:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:154:            - Path=/attendance/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:155:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:156:            - RewritePath=/attendance(?<segment>/?.*), /api/v1/attendance$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:158:        - id: legacy-resilience-consume-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:159:          uri: lb://ioedream-consume-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:160:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:161:            - Path=/consume/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:162:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:163:            - RewritePath=/consume(?<segment>/?.*), /api/v1/consume$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:165:        - id: legacy-resilience-visitor-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:166:          uri: lb://ioedream-visitor-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:167:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:168:            - Path=/visitor/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:169:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:170:            - RewritePath=/visitor(?<segment>/?.*), /api/v1/visitor$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:172:        - id: legacy-resilience-video-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:173:          uri: lb://ioedream-video-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:174:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:175:            - Path=/video/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:176:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:177:            - RewritePath=/video(?<segment>/?.*), /api/v1/video$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:179:        - id: legacy-resilience-device-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:180:          uri: lb://ioedream-device-comm-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:181:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:182:            - Path=/device/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:183:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:184:            - RewritePath=/device(?<segment>/?.*), /api/v1/device$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:186:        - id: legacy-resilience-system-to-api-v1
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:187:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:188:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:189:            - Path=/system/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:190:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:191:            - RewritePath=/system(?<segment>/?.*), /api/v1/system$\{segment}
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:193:        - id: legacy-resilience-support-pass-through
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:194:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:195:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:196:            - Path=/support/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:197:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:198:            - StripPrefix=0
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:200:        - id: legacy-resilience-security-pass-through
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:201:          uri: lb://ioedream-common-service
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:202:          predicates:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:203:            - Path=/security/**
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:204:          filters:
+microservices/ioedream-gateway-service/src/main/resources/application-resilience4j.yml:205:            - StripPrefix=0

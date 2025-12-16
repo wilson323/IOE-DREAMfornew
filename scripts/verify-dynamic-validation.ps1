@@ -14,19 +14,19 @@ param(
 
     [Parameter(Mandatory=$false)]
     [switch]$SkipDatabase,
-
+    
     [Parameter(Mandatory=$false)]
     [switch]$SkipHealth,
-
+    
     [Parameter(Mandatory=$false)]
     [string]$NacosServer = "127.0.0.1:8848",
-
+    
     [Parameter(Mandatory=$false)]
     [string]$NacosUsername = "nacos",
-
+    
     [Parameter(Mandatory=$false)]
     [string]$NacosPassword = "nacos",
-
+    
     [Parameter(Mandatory=$false)]
     [switch]$GenerateReport
 )
@@ -70,12 +70,12 @@ function Write-ColorOutput($ForegroundColor) {
 
 function Test-PortInUse {
     param([int]$Port)
-
+    
     try {
         $tcpClient = New-Object System.Net.Sockets.TcpClient
         $asyncResult = $tcpClient.BeginConnect("127.0.0.1", $Port, $null, $null)
         $wait = $asyncResult.AsyncWaitHandle.WaitOne(1000, $false)
-
+        
         if ($wait) {
             try {
                 $tcpClient.EndConnect($asyncResult)
@@ -101,7 +101,7 @@ function Invoke-HttpRequest {
         [hashtable]$Headers = @{},
         [int]$TimeoutSeconds = 5
     )
-
+    
     try {
         $request = [System.Net.WebRequest]::Create($Url)
         $request.Method = $Method
@@ -110,7 +110,7 @@ function Invoke-HttpRequest {
         foreach ($key in $Headers.Keys) {
             $request.Headers.Add($key, $Headers[$key])
         }
-
+        
         $response = $request.GetResponse()
         $statusCode = [int]$response.StatusCode
         $stream = $response.GetResponseStream()
@@ -118,7 +118,7 @@ function Invoke-HttpRequest {
         $content = $reader.ReadToEnd()
         $reader.Close()
         $response.Close()
-
+        
         return @{
             Success = $true
             StatusCode = $statusCode
@@ -152,15 +152,15 @@ function Test-Infrastructure {
         if ($isRunning) {
             $msg = "  [OK] $($infra.Name) (Port $($infra.Port)) - Running"
             Write-ColorOutput Green $msg
-        } else {
+    } else {
             $msg = "  [XX] $($infra.Name) (Port $($infra.Port)) - Not running"
             Write-ColorOutput Red $msg
             $allGood = $false
         }
     }
-
+    
     Write-Output ""
-
+    
     if (-not $allGood) {
         $warnMsg = "  [WARN] Some infrastructure services are not running, may affect subsequent verification"
         Write-ColorOutput Yellow $warnMsg
@@ -168,7 +168,7 @@ function Test-Infrastructure {
         Write-Output "    docker-compose -f docker-compose-all.yml up -d mysql redis nacos"
         Write-Output ""
     }
-
+    
     return @{
         AllGood = $allGood
         Results = $results
@@ -185,10 +185,10 @@ function Test-ServiceStartup {
     Write-ColorOutput Cyan "`n========================================"
     Write-ColorOutput Cyan "  2. Service Startup Verification (Port Listening)"
     Write-ColorOutput Cyan "========================================`n"
-
+    
     $results = @{}
     $allGood = $true
-
+    
     foreach ($service in $Services) {
         $isRunning = Test-PortInUse -Port $service.Port
         $results[$service.Name] = @{
@@ -216,7 +216,7 @@ function Test-ServiceStartup {
         Write-Output "    mvn spring-boot:run"
         Write-Output ""
     }
-
+    
     return @{
         AllGood = $allGood
         Results = $results
@@ -301,7 +301,7 @@ function Test-NacosRegistration {
     # Query service list
     $results = @{}
     $allGood = $true
-
+    
     foreach ($service in $Services) {
         $serviceName = $service.Name
         $nacosUrl = 'http://' + $NacosServer + '/nacos/v1/ns/instance/list?serviceName=' + $serviceName + $ampersand + 'namespaceId=dev'
@@ -354,7 +354,7 @@ function Test-NacosRegistration {
         Write-Output "    3. Is network connection normal?"
         Write-Output ""
     }
-
+    
     return @{
         AllGood = $allGood
         Results = $results
@@ -384,12 +384,12 @@ function Test-DatabaseConnection {
             Error = "MySQL not running"
         }
     }
-
+    
     # Verify database connection through health check endpoint
     $results = @{}
     $allGood = $true
     $quote = [char]34
-
+    
     foreach ($service in $Services) {
         if ($service.Name -eq "ioedream-gateway-service") {
             # Gateway service does not connect to database
@@ -398,10 +398,10 @@ function Test-DatabaseConnection {
             $results[$service.Name] = @{ Connected = $true; Reason = "Gateway service has no database" }
             continue
         }
-
+        
         $healthUrl = "http://127.0.0.1:$($service.Port)$($service.HealthPath)"
         $response = Invoke-HttpRequest -Url $healthUrl -TimeoutSeconds 5
-
+            
         if ($response.Success -and $response.StatusCode -eq 200) {
             # Check if health check response contains database status
             $dbPatternStr = $quote + 'db' + $quote + '.*' + $quote + 'status' + $quote + '.*' + $quote + 'UP' + $quote
@@ -443,7 +443,7 @@ function Test-DatabaseConnection {
         Write-Output "    3. Is database initialized?"
         Write-Output ""
     }
-
+    
     return @{
         AllGood = $allGood
         Results = $results
@@ -460,15 +460,15 @@ function Test-HealthCheck {
     Write-ColorOutput Cyan "`n========================================"
     Write-ColorOutput Cyan "  5. Health Check Verification"
     Write-ColorOutput Cyan "========================================`n"
-
+    
     $results = @{}
     $allGood = $true
     $quote = [char]34
-
+    
     foreach ($service in $Services) {
         $healthUrl = "http://127.0.0.1:$($service.Port)$($service.HealthPath)"
         $response = Invoke-HttpRequest -Url $healthUrl -TimeoutSeconds 5
-
+        
         if ($response.Success -and $response.StatusCode -eq 200) {
             # Check health status
             $upPatternStr = $quote + 'status' + $quote + '.*' + $quote + 'UP' + $quote
@@ -485,7 +485,7 @@ function Test-HealthCheck {
                 Write-ColorOutput Red $errMsg
                 $results[$service.Name] = @{ Status = "DOWN"; StatusCode = $response.StatusCode }
                 $allGood = $false
-            } else {
+                } else {
                 $warnMsg = "  [WARN] $($service.Name) - Health status unknown"
                 Write-ColorOutput Yellow $warnMsg
                 $results[$service.Name] = @{ Status = "UNKNOWN"; StatusCode = $response.StatusCode }
@@ -510,7 +510,7 @@ function Test-HealthCheck {
         Write-Output "    3. Are there any errors in service logs?"
         Write-Output ""
     }
-
+    
     return @{
         AllGood = $allGood
         Results = $results

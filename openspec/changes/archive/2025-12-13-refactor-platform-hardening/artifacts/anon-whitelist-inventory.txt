@@ -1,0 +1,27 @@
+# Anonymous/Whitelist Inventory (single source at gateway)
+# Generated: 2025-12-13T13:35:50+08:00
+
+## Nacos common-security.yaml (security.whitelist.paths)
+46:security:
+55:  whitelist:
+56:    paths:
+57:      - /actuator/**
+58:      - /doc.html
+59:      - /swagger-ui/**
+60:      - /v3/api-docs/**
+61:      - /swagger-resources/**
+62:      - /webjars/**
+63:      - /favicon.ico
+64:      - /api/v1/auth/**
+65:      - /login/**
+66:      - /public/**
+67:      - /static/**
+68:      - /gateway/health
+203:security:
+219:security:
+239:security:
+
+## Gateway effective whitelist (STATIC_WHITE_LIST + config)
+73:    private static final String[] STATIC_WHITE_LIST = {
+89:    @ConfigurationProperties(prefix = "security.whitelist")
+119:        LinkedHashSet<String> effectiveWhitelist = new LinkedHashSet<>(Arrays.asList(STATIC_WHITE_LIST));

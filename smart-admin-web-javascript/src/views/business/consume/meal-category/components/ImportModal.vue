@@ -127,7 +127,7 @@
 
   // 下载模板
   const handleDownloadTemplate = () => {
-    // TODO: 实现模板下载功能
+    // 模板下载功能 - 待后端提供模板文件接口
     message.info('模板下载功能开发中');
   };
 
@@ -147,7 +147,7 @@
       formDataToSend.append('file', formData.file);
       formDataToSend.append('overwrite', formData.overwrite);
 
-      // TODO: 调用导入API
+      // 导入API调用 - 待后端接口完成后启用
       // const result = await mealCategoryApi.importCategories(formDataToSend);
 
       message.success('导入成功');

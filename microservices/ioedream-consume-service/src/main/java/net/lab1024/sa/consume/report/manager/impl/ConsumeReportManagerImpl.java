@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.report.dao.ConsumeReportTemplateDao;
@@ -194,36 +195,6 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         return result;
     }
 
-    /**
-     * 解析报表参数（兼容旧版本，支持Map类型）
-     * <p>
-     * 保留此方法用于向后兼容，新代码应使用convertReportParamsToMap
-     * </p>
-     *
-     * @param params 报表参数对象（Map或ReportParams）
-     * @return 参数Map
-     * @deprecated 使用convertReportParamsToMap替代，此方法保留用于向后兼容
-     */
-    @Deprecated
-    @SuppressWarnings({"unchecked", "unused"})
-    private Map<String, Object> parseReportParams(Object params) {
-        if (params == null) {
-            return new HashMap<>();
-        }
-        if (params instanceof ReportParams) {
-            return convertReportParamsToMap((ReportParams) params);
-        }
-        if (params instanceof Map) {
-            return (Map<String, Object>) params;
-        }
-        try {
-            String json = objectMapper.writeValueAsString(params);
-            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
-        } catch (Exception e) {
-            log.warn("[报表管理] 解析报表参数失败，使用默认参数", e);
-            return new HashMap<>();
-        }
-    }
 
     /**
      * 提取开始时间
@@ -471,33 +442,6 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         }
     }
 
-    /**
-     * 解析统计维度配置（兼容旧版本，支持Object类型）
-     * <p>
-     * 保留此方法用于向后兼容，新代码应直接使用Map<String, Object>
-     * </p>
-     *
-     * @param dimensions 维度对象（Map或Object）
-     * @return 维度配置Map
-     * @deprecated 新代码应直接使用Map<String, Object>，此方法保留用于向后兼容
-     */
-    @Deprecated
-    @SuppressWarnings({"unchecked", "unused"})
-    private Map<String, Object> parseDimensions(Object dimensions) {
-        if (dimensions == null) {
-            return new HashMap<>();
-        }
-        if (dimensions instanceof Map) {
-            return (Map<String, Object>) dimensions;
-        }
-        try {
-            String json = objectMapper.writeValueAsString(dimensions);
-            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
-        } catch (Exception e) {
-            log.warn("[报表管理] 解析统计维度失败，使用默认维度", e);
-            return new HashMap<>();
-        }
-    }
 
     /**
      * 根据时间范围查询交易数据
@@ -1187,7 +1131,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
 
         } catch (Exception e) {
             log.error("[报表管理] Excel文件导出失败，路径：{}", filePath, e);
-            throw new RuntimeException("Excel文件导出失败: " + e.getMessage(), e);
+            throw new SystemException("EXCEL_EXPORT_ERROR", "Excel文件导出失败: " + e.getMessage(), e);
         }
     }
 
@@ -1449,7 +1393,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
 
         } catch (Exception e) {
             log.error("[报表管理] PDF文件导出失败，路径：{}", filePath, e);
-            throw new RuntimeException("PDF文件导出失败: " + e.getMessage(), e);
+            throw new SystemException("PDF_EXPORT_ERROR", "PDF文件导出失败: " + e.getMessage(), e);
         }
     }
 
@@ -1517,7 +1461,7 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
 
         } catch (Exception e) {
             log.error("[报表管理] CSV文件导出失败，路径：{}", filePath, e);
-            throw new RuntimeException("CSV文件导出失败: " + e.getMessage(), e);
+            throw new SystemException("CSV_EXPORT_ERROR", "CSV文件导出失败: " + e.getMessage(), e);
         }
     }
 
@@ -1556,3 +1500,6 @@ public class ConsumeReportManagerImpl implements ConsumeReportManager {
         return value;
     }
 }
+
+
+

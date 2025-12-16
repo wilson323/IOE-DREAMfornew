@@ -300,8 +300,8 @@ public class Resilience4jConfiguration {
     }
 
     // ============================================================
-    # 时间限制器配置
-    # ============================================================
+    // 时间限制器配置
+    // ============================================================
 
     @Bean("databaseTimeLimiter")
     public TimeLimiter databaseTimeLimiter(TimeLimiterRegistry registry) {
@@ -332,8 +332,8 @@ public class Resilience4jConfiguration {
     }
 
     // ============================================================
-    # 健康检查指示器
-    # ============================================================
+    // 健康检查指示器
+    // ============================================================
 
     @Bean
     public HealthIndicator resilience4jHealthIndicator(CircuitBreakerRegistry circuitBreakerRegistry,
@@ -374,8 +374,8 @@ public class Resilience4jConfiguration {
     }
 
     // ============================================================
-    # 自定义异常 Predicate
-    # ============================================================
+    // 自定义异常 Predicate
+    // ============================================================
 
     @Bean
     public Predicate<Throwable> retryableExceptionPredicate() {

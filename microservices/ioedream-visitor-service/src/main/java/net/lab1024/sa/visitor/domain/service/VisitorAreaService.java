@@ -269,3 +269,4 @@ public interface VisitorAreaService {
      */
     Map<String, String> getAreaEmergencyContact(Long areaId);
 }
+

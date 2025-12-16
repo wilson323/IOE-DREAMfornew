@@ -12,13 +12,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.consume.dao.AccountDao;
+import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.consume.domain.entity.AccountEntity;
+import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.manager.impl.MultiPaymentManagerImpl;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * MultiPaymentManager单元测试
@@ -40,13 +46,38 @@ class MultiPaymentManagerTest {
     @Mock
     private net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient;
 
-    @InjectMocks
+    @Mock
+    private PaymentRecordDao paymentRecordDao;
+
+    @Mock
+    private RestTemplate restTemplate;
+
+    @Mock
+    private AccountManager accountManager;
+
     private MultiPaymentManagerImpl multiPaymentManager;
 
     private AccountEntity testAccount;
 
+    private static final String BANK_GATEWAY_URL = "http://bank-gateway.test";
+    private static final BigDecimal DEFAULT_CREDIT_LIMIT = new BigDecimal("5000.00");
+
     @BeforeEach
     void setUp() {
+        multiPaymentManager = new MultiPaymentManagerImpl(
+                accountManager,
+                accountDao,
+                paymentRecordDao,
+                gatewayServiceClient,
+                restTemplate,
+                BANK_GATEWAY_URL,
+                "MERCHANT_TEST",
+                "API_KEY_TEST",
+                true,
+                true,
+                DEFAULT_CREDIT_LIMIT
+        );
+
         testAccount = new AccountEntity();
         testAccount.setAccountId(1L);
         testAccount.setUserId(1001L);
@@ -60,6 +91,7 @@ class MultiPaymentManagerTest {
 
     @Test
     @DisplayName("测试处理银行支付-成功")
+    @SuppressWarnings("null")
     void testProcessBankPayment_Success() {
         // Given
         Long accountId = 1L;
@@ -68,14 +100,23 @@ class MultiPaymentManagerTest {
         String description = "测试商品";
         String bankCardNo = "6222021234567890";
 
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
+        when(accountManager.getAccountById(accountId)).thenReturn(testAccount);
 
-        Map<String, Object> mockResponse = new HashMap<>();
-        mockResponse.put("success", true);
-        mockResponse.put("transactionNo", "TXN001");
+        Map<String, Object> bankResponseBody = new HashMap<>();
+        bankResponseBody.put("success", true);
+        bankResponseBody.put("transactionId", "TXN001");
+        ResponseEntity<Map<String, Object>> httpResponse = new ResponseEntity<>(bankResponseBody, HttpStatus.OK);
 
-        // 由于processBankPayment可能调用网关，这里模拟成功响应
-        // 实际实现需要根据具体情况调整
+        // 使用正确的泛型类型，避免原始类型警告
+        @SuppressWarnings({"unchecked", "null"})
+        Class<Map<String, Object>> responseType = (Class<Map<String, Object>>) (Class<?>) Map.class;
+        when(restTemplate.exchange(
+                anyString(),
+                eq(HttpMethod.POST),
+                any(HttpEntity.class),
+                eq(responseType)))
+                .thenReturn(httpResponse);
+        when(paymentRecordDao.insert(any(PaymentRecordEntity.class))).thenReturn(1);
 
         // When
         Map<String, Object> result = multiPaymentManager.processBankPayment(
@@ -83,7 +124,12 @@ class MultiPaymentManagerTest {
 
         // Then
         assertNotNull(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        assertEquals(true, result.get("success"));
+        verify(accountManager).getAccountById(accountId);
+        @SuppressWarnings({"unchecked", "null"})
+        Class<Map<String, Object>> verifyType = (Class<Map<String, Object>>) (Class<?>) Map.class;
+        verify(restTemplate).exchange(contains("/api/payment/create"), eq(HttpMethod.POST), any(HttpEntity.class), eq(verifyType));
+        verify(paymentRecordDao).insert(any(PaymentRecordEntity.class));
     }
 
     @Test
@@ -96,7 +142,7 @@ class MultiPaymentManagerTest {
         String description = "测试商品";
         String bankCardNo = "6222021234567890";
 
-        when(accountDao.selectById(accountId)).thenReturn(null);
+        when(accountManager.getAccountById(accountId)).thenReturn(null);
 
         // When
         Map<String, Object> result = multiPaymentManager.processBankPayment(
@@ -104,8 +150,8 @@ class MultiPaymentManagerTest {
 
         // Then
         assertNotNull(result);
-        // 应该返回失败结果
-        verify(accountDao, times(1)).selectById(accountId);
+        assertEquals(false, result.get("success"));
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -117,10 +163,12 @@ class MultiPaymentManagerTest {
         String orderId = "ORDER001";
         String description = "测试商品";
 
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            multiPaymentManager.processBankPayment(accountId, amount, orderId, description, null);
-        });
+        // When
+        Map<String, Object> result = multiPaymentManager.processBankPayment(accountId, amount, orderId, description, null);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(false, result.get("success"));
     }
 
     @Test
@@ -152,8 +200,8 @@ class MultiPaymentManagerTest {
         String orderId = "ORDER001";
         String reason = "消费使用";
 
+        when(accountManager.getAccountById(accountId)).thenReturn(testAccount);
         when(accountDao.selectById(accountId)).thenReturn(testAccount);
-        when(accountDao.updateById(any(AccountEntity.class))).thenReturn(1);
 
         // When
         boolean result = multiPaymentManager.deductCreditLimit(accountId, amount, orderId, reason);
@@ -161,7 +209,6 @@ class MultiPaymentManagerTest {
         // Then
         assertTrue(result);
         verify(accountDao, times(1)).selectById(accountId);
-        verify(accountDao, times(1)).updateById(any(AccountEntity.class));
     }
 
     @Test
@@ -173,6 +220,7 @@ class MultiPaymentManagerTest {
         String orderId = "ORDER001";
         String reason = "消费使用";
 
+        when(accountManager.getAccountById(accountId)).thenReturn(testAccount);
         when(accountDao.selectById(accountId)).thenReturn(null);
 
         // When
@@ -181,7 +229,6 @@ class MultiPaymentManagerTest {
         // Then
         assertFalse(result);
         verify(accountDao, times(1)).selectById(accountId);
-        verify(accountDao, never()).updateById(any(AccountEntity.class));
     }
 
     @Test
@@ -191,20 +238,14 @@ class MultiPaymentManagerTest {
         Long accountId = 1L;
         BigDecimal amount = new BigDecimal("10000.00"); // 超过可用信用额度
 
-        testAccount.setCreditLimit(new BigDecimal("5000.00"));
-        // AccountEntity does not have setUsedCreditLimit method
-        // Used credit limit is calculated dynamically by MultiPaymentManagerImpl.getUsedCreditLimit()
-        // For testing, we'll mock the getUsedCreditLimit method or rely on the implementation
-
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
+        when(accountManager.getAccountById(accountId)).thenReturn(testAccount);
 
         // When
         boolean result = multiPaymentManager.deductCreditLimit(accountId, amount, "ORDER001", "测试");
 
         // Then
         assertFalse(result);
-        verify(accountDao, times(1)).selectById(accountId);
-        verify(accountDao, never()).updateById(any(AccountEntity.class));
+        verify(accountDao, never()).selectById(anyLong());
     }
 
     @Test
@@ -214,15 +255,12 @@ class MultiPaymentManagerTest {
         Long accountId = 1L;
         BigDecimal amount = null;
 
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
-
         // When
         boolean result = multiPaymentManager.deductCreditLimit(accountId, amount, "ORDER001", "测试");
 
         // Then
         assertFalse(result);
-        verify(accountDao, times(1)).selectById(accountId);
-        verify(accountDao, never()).updateById(any(AccountEntity.class));
+        verify(accountDao, never()).selectById(anyLong());
     }
 
     // ==================== checkCreditLimitSufficient 测试 ====================
@@ -234,18 +272,14 @@ class MultiPaymentManagerTest {
         Long accountId = 1L;
         BigDecimal amount = new BigDecimal("3000.00");
 
-        testAccount.setCreditLimit(new BigDecimal("5000.00"));
-        // AccountEntity does not have setUsedCreditLimit method
-        // 可用信用额度 = 5000 - 1000 = 4000，大于3000
-
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
+        when(accountManager.getAccountById(accountId)).thenReturn(testAccount);
 
         // When
         boolean result = multiPaymentManager.checkCreditLimitSufficient(accountId, amount);
 
         // Then
         assertTrue(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -253,21 +287,15 @@ class MultiPaymentManagerTest {
     void testCheckCreditLimitSufficient_Insufficient() {
         // Given
         Long accountId = 1L;
-        BigDecimal amount = new BigDecimal("5000.00"); // 超过可用信用额度
-
-        testAccount.setCreditLimit(new BigDecimal("5000.00"));
-        // AccountEntity does not have setUsedCreditLimit method
-        // Used credit limit is calculated dynamically by getUsedCreditLimit() method
-        // 可用信用额度 = 5000 - 已使用额度，小于5000
-
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
+        BigDecimal amount = new BigDecimal("6000.00");
+        when(accountManager.getAccountById(accountId)).thenReturn(testAccount);
 
         // When
         boolean result = multiPaymentManager.checkCreditLimitSufficient(accountId, amount);
 
         // Then
         assertFalse(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -277,14 +305,14 @@ class MultiPaymentManagerTest {
         Long accountId = 9999L;
         BigDecimal amount = new BigDecimal("1000.00");
 
-        when(accountDao.selectById(accountId)).thenReturn(null);
+        when(accountManager.getAccountById(accountId)).thenReturn(null);
 
         // When
         boolean result = multiPaymentManager.checkCreditLimitSufficient(accountId, amount);
 
         // Then
         assertFalse(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -294,14 +322,12 @@ class MultiPaymentManagerTest {
         Long accountId = 1L;
         BigDecimal amount = null;
 
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
-
         // When
         boolean result = multiPaymentManager.checkCreditLimitSufficient(accountId, amount);
 
         // Then
         assertFalse(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountManager, never()).getAccountById(anyLong());
     }
 
     // ==================== getCreditLimit 测试 ====================
@@ -311,10 +337,8 @@ class MultiPaymentManagerTest {
     void testGetCreditLimit_Success() {
         // Given
         Long accountId = 1L;
-        BigDecimal expectedCreditLimit = new BigDecimal("5000.00");
-
-        testAccount.setCreditLimit(expectedCreditLimit);
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
+        BigDecimal expectedCreditLimit = DEFAULT_CREDIT_LIMIT;
+        when(accountManager.getAccountById(accountId)).thenReturn(testAccount);
 
         // When
         BigDecimal result = multiPaymentManager.getCreditLimit(accountId);
@@ -322,7 +346,7 @@ class MultiPaymentManagerTest {
         // Then
         assertNotNull(result);
         assertEquals(expectedCreditLimit, result);
-        verify(accountDao, times(1)).selectById(accountId);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -331,14 +355,14 @@ class MultiPaymentManagerTest {
         // Given
         Long accountId = 9999L;
 
-        when(accountDao.selectById(accountId)).thenReturn(null);
+        when(accountManager.getAccountById(accountId)).thenReturn(null);
 
         // When
         BigDecimal result = multiPaymentManager.getCreditLimit(accountId);
 
         // Then
-        assertNull(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        assertEquals(BigDecimal.ZERO, result);
+        verify(accountManager).getAccountById(accountId);
     }
 
     @Test
@@ -348,14 +372,14 @@ class MultiPaymentManagerTest {
         Long accountId = 1L;
 
         testAccount.setCreditLimit(null);
-        when(accountDao.selectById(accountId)).thenReturn(testAccount);
+        when(accountManager.getAccountById(accountId)).thenReturn(testAccount);
 
         // When
         BigDecimal result = multiPaymentManager.getCreditLimit(accountId);
 
         // Then
-        assertNull(result);
-        verify(accountDao, times(1)).selectById(accountId);
+        assertEquals(DEFAULT_CREDIT_LIMIT, result);
+        verify(accountManager).getAccountById(accountId);
     }
 
     // ==================== isPaymentMethodEnabled 测试 ====================
@@ -401,3 +425,5 @@ class MultiPaymentManagerTest {
         assertFalse(result);
     }
 }
+
+

@@ -8,16 +8,20 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.consume.dao.RefundApplicationDao;
-import net.lab1024.sa.consume.domain.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.domain.entity.RefundApplicationEntity;
 import net.lab1024.sa.consume.domain.form.RefundApplicationForm;
 import net.lab1024.sa.consume.manager.AccountManager;
@@ -59,7 +63,9 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
     private net.lab1024.sa.consume.service.PaymentService paymentService;
 
     @Override
+    @Observed(name = "consume.refundApplication.submitRefundApplication", contextualName = "consume-refund-application-submit")
     @Transactional(rollbackFor = Exception.class)
+    @Retry(name = "external-service-retry", fallbackMethod = "submitRefundApplicationFallback")
     public RefundApplicationEntity submitRefundApplication(RefundApplicationForm form) {
         log.info("[退款申请] 提交退款申请，userId={}, paymentRecordId={}, amount={}",
                 form.getUserId(), form.getPaymentRecordId(), form.getRefundAmount());
@@ -116,6 +122,7 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
     }
 
     @Override
+    @Observed(name = "consume.refundApplication.updateRefundStatus", contextualName = "consume-refund-application-update-status")
     @Transactional(rollbackFor = Exception.class)
     public void updateRefundStatus(String refundNo, String status, String approvalComment) {
         log.info("[退款申请] 更新退款状态，refundNo={}, status={}", refundNo, status);
@@ -168,27 +175,29 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
             }
 
             // 2. 验证支付状态（只有支付成功的才能退款）
-            if (!"SUCCESS".equals(paymentRecord.getStatus())) {
+            if (paymentRecord.getPaymentStatus() == null || paymentRecord.getPaymentStatus() != 3) {
+                Integer status = paymentRecord.getPaymentStatus();
+                String statusStr = status != null ? String.valueOf(status) : "未知";
                 log.warn("[退款申请] 支付记录状态不允许退款，paymentRecordId={}, status={}, refundNo={}",
-                        entity.getPaymentRecordId(), paymentRecord.getStatus(), entity.getRefundNo());
-                throw new BusinessException("支付记录状态不允许退款，当前状态：" + paymentRecord.getStatus());
+                        entity.getPaymentRecordId(), statusStr, entity.getRefundNo());
+                throw new BusinessException("支付记录状态不允许退款，当前状态：" + statusStr);
             }
 
             // 3. 验证退款金额（退款金额不能超过支付金额）
-            if (entity.getRefundAmount().compareTo(paymentRecord.getAmount()) > 0) {
+            if (entity.getRefundAmount().compareTo(paymentRecord.getPaymentAmount()) > 0) {
                 log.warn("[退款申请] 退款金额超过支付金额，refundAmount={}, paymentAmount={}, refundNo={}",
-                        entity.getRefundAmount(), paymentRecord.getAmount(), entity.getRefundNo());
+                        entity.getRefundAmount(), paymentRecord.getPaymentAmount(), entity.getRefundNo());
                 throw new BusinessException("退款金额不能超过支付金额");
             }
 
             // 4. 根据支付方式处理退款
-            String paymentMethod = paymentRecord.getPaymentMethod();
+            Integer paymentMethod = paymentRecord.getPaymentMethod();
             boolean refundSuccess = false;
 
-            if ("ALIPAY".equals(paymentMethod) || "WECHAT".equals(paymentMethod)) {
+            if (paymentMethod != null && (paymentMethod == 2 || paymentMethod == 3)) { // 2-微信支付 3-支付宝
                 // 第三方支付退款
                 refundSuccess = processThirdPartyRefund(paymentRecord, entity);
-            } else if ("ACCOUNT".equals(paymentMethod) || "BALANCE".equals(paymentMethod)) {
+            } else if (paymentMethod != null && paymentMethod == 1) { // 1-余额支付
                 // 账户余额支付，直接退回账户
                 refundSuccess = processAccountRefund(paymentRecord, entity);
             } else {
@@ -204,20 +213,26 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
                 throw new BusinessException("退款处理失败");
             }
 
-            // 5. 更新支付记录状态为REFUNDED
-            paymentRecord.setStatus("REFUNDED");
+            // 5. 更新支付记录状态为已退款
+            paymentRecord.setPaymentStatus(5); // 5-已退款
             paymentRecord.setRemark("退款申请号：" + entity.getRefundNo() + "，退款原因：" + entity.getRefundReason());
             paymentRecordDao.updateById(paymentRecord);
 
             log.info("[退款申请] 退款处理成功，refundNo={}, paymentRecordId={}, amount={}, paymentMethod={}",
                     entity.getRefundNo(), entity.getPaymentRecordId(), entity.getRefundAmount(), paymentMethod);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[退款申请] 退款处理参数错误，refundNo={}, error={}", entity.getRefundNo(), e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[退款申请] 退款业务异常，refundNo={}", entity.getRefundNo(), e);
+            log.warn("[退款申请] 退款业务异常，refundNo={}, code={}, message={}", entity.getRefundNo(), e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[退款申请] 退款处理系统异常，refundNo={}, code={}, message={}", entity.getRefundNo(), e.getCode(), e.getMessage(), e);
+            throw new SystemException("REFUND_PROCESS_SYSTEM_ERROR", "退款处理异常：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[退款申请] 退款处理异常，refundNo={}", entity.getRefundNo(), e);
-            throw new BusinessException("退款处理异常：" + e.getMessage());
+            log.error("[退款申请] 退款处理未知异常，refundNo={}", entity.getRefundNo(), e);
+            throw new SystemException("REFUND_PROCESS_SYSTEM_ERROR", "退款处理异常：" + e.getMessage(), e);
         }
     }
 
@@ -235,23 +250,31 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
         try {
             // 调用第三方支付退款接口
             // 根据支付方式调用不同的退款接口
-            
-            String paymentMethod = paymentRecord.getPaymentMethod();
-            
-            if ("WECHAT".equals(paymentMethod)) {
+
+            Integer paymentMethod = paymentRecord.getPaymentMethod();
+
+            if (paymentMethod != null && paymentMethod == 2) { // 2-微信支付
                 // 微信支付退款
                 return processWechatRefund(paymentRecord, refundEntity);
-            } else if ("ALIPAY".equals(paymentMethod)) {
+            } else if (paymentMethod != null && paymentMethod == 3) { // 3-支付宝
                 // 支付宝退款
                 return processAlipayRefund(paymentRecord, refundEntity);
             } else {
-                log.warn("[退款申请] 不支持的支付方式，paymentMethod={}, paymentId={}", 
+                log.warn("[退款申请] 不支持的支付方式，paymentMethod={}, paymentId={}",
                         paymentMethod, paymentRecord.getPaymentId());
                 return false;
             }
 
+        } catch (BusinessException e) {
+            log.warn("[退款申请] 第三方支付退款处理业务异常，paymentMethod={}, paymentId={}, code={}, message={}",
+                    paymentRecord.getPaymentMethod(), paymentRecord.getPaymentId(), e.getCode(), e.getMessage());
+            return false;
+        } catch (SystemException e) {
+            log.error("[退款申请] 第三方支付退款处理系统异常，paymentMethod={}, paymentId={}, code={}, message={}",
+                    paymentRecord.getPaymentMethod(), paymentRecord.getPaymentId(), e.getCode(), e.getMessage(), e);
+            return false;
         } catch (Exception e) {
-            log.error("[退款申请] 第三方支付退款处理异常，paymentMethod={}, paymentId={}",
+            log.error("[退款申请] 第三方支付退款处理未知异常，paymentMethod={}, paymentId={}",
                     paymentRecord.getPaymentMethod(), paymentRecord.getPaymentId(), e);
             return false;
         }
@@ -270,13 +293,13 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
 
         try {
             // 1. 参数验证
-            if (paymentRecord.getAmount() == null || paymentRecord.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            if (paymentRecord.getPaymentAmount() == null || paymentRecord.getPaymentAmount().compareTo(BigDecimal.ZERO) <= 0) {
                 log.error("[退款申请] 支付记录金额无效，paymentId={}", paymentRecord.getPaymentId());
                 return false;
             }
 
             // 2. 金额转换：元转分（微信支付金额单位为分）
-            Integer totalAmount = paymentRecord.getAmount()
+            Integer totalAmount = paymentRecord.getPaymentAmount()
                     .multiply(new BigDecimal("100"))
                     .intValue();
             Integer refundAmount = refundEntity.getRefundAmount()
@@ -302,8 +325,16 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
                 return false;
             }
 
+        } catch (BusinessException e) {
+            log.warn("[退款申请] 微信支付退款处理业务异常，paymentId={}, refundNo={}, code={}, message={}",
+                    paymentRecord.getPaymentId(), refundEntity.getRefundNo(), e.getCode(), e.getMessage());
+            return false;
+        } catch (SystemException e) {
+            log.error("[退款申请] 微信支付退款处理系统异常，paymentId={}, refundNo={}, code={}, message={}",
+                    paymentRecord.getPaymentId(), refundEntity.getRefundNo(), e.getCode(), e.getMessage(), e);
+            return false;
         } catch (Exception e) {
-            log.error("[退款申请] 微信支付退款处理异常，paymentId={}, refundNo={}",
+            log.error("[退款申请] 微信支付退款处理未知异常，paymentId={}, refundNo={}",
                     paymentRecord.getPaymentId(), refundEntity.getRefundNo(), e);
             return false;
         }
@@ -322,7 +353,7 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
 
         try {
             // 1. 参数验证
-            if (paymentRecord.getAmount() == null || paymentRecord.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            if (paymentRecord.getPaymentAmount() == null || paymentRecord.getPaymentAmount().compareTo(BigDecimal.ZERO) <= 0) {
                 log.error("[退款申请] 支付记录金额无效，paymentId={}", paymentRecord.getPaymentId());
                 return false;
             }
@@ -345,8 +376,16 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
                 return false;
             }
 
+        } catch (BusinessException e) {
+            log.warn("[退款申请] 支付宝退款处理业务异常，paymentId={}, refundNo={}, code={}, message={}",
+                    paymentRecord.getPaymentId(), refundEntity.getRefundNo(), e.getCode(), e.getMessage());
+            return false;
+        } catch (SystemException e) {
+            log.error("[退款申请] 支付宝退款处理系统异常，paymentId={}, refundNo={}, code={}, message={}",
+                    paymentRecord.getPaymentId(), refundEntity.getRefundNo(), e.getCode(), e.getMessage(), e);
+            return false;
         } catch (Exception e) {
-            log.error("[退款申请] 支付宝退款处理异常，paymentId={}, refundNo={}",
+            log.error("[退款申请] 支付宝退款处理未知异常，paymentId={}, refundNo={}",
                     paymentRecord.getPaymentId(), refundEntity.getRefundNo(), e);
             return false;
         }
@@ -383,8 +422,14 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
                     account.getId(), refundEntity.getRefundAmount());
             return true;
 
+        } catch (BusinessException e) {
+            log.warn("[退款申请] 账户余额退款处理业务异常，userId={}, code={}, message={}", paymentRecord.getUserId(), e.getCode(), e.getMessage());
+            return false;
+        } catch (SystemException e) {
+            log.error("[退款申请] 账户余额退款处理系统异常，userId={}, code={}, message={}", paymentRecord.getUserId(), e.getCode(), e.getMessage(), e);
+            return false;
         } catch (Exception e) {
-            log.error("[退款申请] 账户余额退款处理异常，userId={}", paymentRecord.getUserId(), e);
+            log.error("[退款申请] 账户余额退款处理未知异常，userId={}", paymentRecord.getUserId(), e);
             return false;
         }
     }
@@ -398,4 +443,7 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
         return "RF" + System.currentTimeMillis();
     }
 }
+
+
+
 

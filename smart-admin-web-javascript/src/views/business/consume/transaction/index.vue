@@ -184,8 +184,8 @@
     transactionNo: null,
     userId: null,
     deviceId: null,
-    startTime: null,
-    endTime: null,
+    startDate: null,
+    endDate: null,
   };
   const queryForm = reactive({ ...queryFormState });
   const dateRange = ref(null);
@@ -273,44 +273,53 @@
   // 监听日期范围变化
   watch(dateRange, (val) => {
     if (val && val.length === 2) {
-      queryForm.startTime = dayjs(val[0]).format('YYYY-MM-DD 00:00:00');
-      queryForm.endTime = dayjs(val[1]).format('YYYY-MM-DD 23:59:59');
-    } else {
-      queryForm.startTime = null;
-      queryForm.endTime = null;
+      queryForm.startDate = dayjs(val[0]).format('YYYY-MM-DD');
+      queryForm.endDate = dayjs(val[1]).format('YYYY-MM-DD');
+      return;
     }
+
+    queryForm.startDate = null;
+    queryForm.endDate = null;
   });
 
   // 查询交易列表
   const queryTransactionList = async () => {
     loading.value = true;
     try {
-      // TODO: 对接后端接口
-      // const result = await consumeApi.queryTransactions(queryForm);
-      // if (result.code === 200 && result.data) {
-      //   tableData.value = result.data.list || [];
-      //   pagination.total = result.data.total || 0;
-      // }
+      const params = {
+        pageNum: queryForm.pageNum,
+        pageSize: queryForm.pageSize,
+        transactionNo: queryForm.transactionNo || undefined,
+        userId: queryForm.userId || undefined,
+        deviceId: queryForm.deviceId || undefined,
+        startDate: queryForm.startDate || undefined,
+        endDate: queryForm.endDate || undefined,
+      };
 
-      // 模拟数据
-      setTimeout(() => {
-        tableData.value = [
-          {
-            transactionNo: 'TXN20250130001',
-            userId: 1001,
-            deviceId: 2001,
-            amount: 15.50,
-            consumeMode: 'FIXED_AMOUNT',
-            status: 'SUCCESS',
-            transactionTime: '2025-01-30 12:30:00',
-          },
-        ];
-        pagination.total = 1;
-        loading.value = false;
-      }, 300);
+      const result = await consumeApi.queryTransactions(params);
+      if (result.code === 200 && result.data) {
+        const rawList = result.data.list || [];
+        const statusMap = {
+          1: 'PENDING',
+          2: 'SUCCESS',
+          3: 'FAILED',
+          4: 'REFUND',
+        };
+
+        tableData.value = rawList.map((item) => ({
+          ...item,
+          status: statusMap[item.transactionStatus] || item.status || 'SUCCESS',
+          transactionTime: item.transactionTime || item.consumeTime,
+        }));
+
+        pagination.current = queryForm.pageNum;
+        pagination.pageSize = queryForm.pageSize;
+        pagination.total = result.data.total || 0;
+      }
     } catch (error) {
       smartSentry.captureError(error);
       message.error('查询交易列表失败');
+    } finally {
       loading.value = false;
     }
   };
@@ -318,11 +327,16 @@
   // 加载统计数据
   const loadStatistics = async () => {
     try {
-      // TODO: 对接后端接口
-      // const result = await consumeApi.getRealtimeStatistics();
-      // if (result.code === 200 && result.data) {
-      //   Object.assign(statistics, result.data);
-      // }
+      const result = await consumeApi.getRealtimeStatistics();
+      if (result.code === 200 && result.data) {
+        statistics.todayCount = result.data.todayCount || 0;
+        statistics.todayAmount = result.data.todayAmount || 0;
+        statistics.todayUserCount = result.data.currentConsumeUserCount || 0;
+
+        const todayCount = Number(result.data.todayCount || 0);
+        const todayAmount = Number(result.data.todayAmount || 0);
+        statistics.avgAmount = todayCount > 0 ? (todayAmount / todayCount).toFixed(2) : 0;
+      }
     } catch (error) {
       smartSentry.captureError(error);
     }
@@ -332,6 +346,8 @@
   const resetQuery = () => {
     Object.assign(queryForm, queryFormState);
     dateRange.value = null;
+    pagination.current = queryFormState.pageNum;
+    pagination.pageSize = queryFormState.pageSize;
     queryTransactionList();
   };
 
@@ -339,6 +355,8 @@
   const handleTableChange = (pag) => {
     queryForm.pageNum = pag.current;
     queryForm.pageSize = pag.pageSize;
+    pagination.current = pag.current;
+    pagination.pageSize = pag.pageSize;
     queryTransactionList();
   };
 
@@ -360,6 +378,7 @@
       SUCCESS: 'green',
       FAILED: 'red',
       PENDING: 'orange',
+      REFUND: 'blue',
     };
     return colorMap[status] || 'default';
   };
@@ -370,6 +389,7 @@
       SUCCESS: '成功',
       FAILED: '失败',
       PENDING: '处理中',
+      REFUND: '已退款',
     };
     return textMap[status] || '未知';
   };
@@ -377,7 +397,8 @@
   // 获取消费模式文本
   const getConsumeModeText = (mode) => {
     const textMap = {
-      FIXED_AMOUNT: '固定金额',
+      FIXED: '定值模式',
+      FIXED_AMOUNT: '定值模式',
       AMOUNT: '金额模式',
       PRODUCT: '商品模式',
       COUNT: '计次模式',

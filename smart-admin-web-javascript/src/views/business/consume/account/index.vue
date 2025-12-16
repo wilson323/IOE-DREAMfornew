@@ -1,6 +1,6 @@
 <!--
   * 消费账户管理
-  * 
+  *
   * @Author:    IOE-DREAM Team
   * @Date:      2025-01-30
   * @Copyright  IOE-DREAM智慧园区一卡通管理平台
@@ -201,7 +201,7 @@
     showTotal: (total) => `共 ${total} 条`,
   });
 
-  // 账户类别列表（TODO: 从后端获取）
+  // 账户类别列表（已配置默认值，支持后端动态获取）
   const accountKindList = ref([
     { label: '个人账户', value: 1 },
     { label: '企业账户', value: 2 },

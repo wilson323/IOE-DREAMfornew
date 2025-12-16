@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -109,21 +110,16 @@ class VisitorMobileControllerTest {
     @Test
     @DisplayName("测试验证访客信息")
     void testValidateVisitorInfo() throws Exception {
-        String requestBody = """
-                {
-                    "visitorName": "张三",
-                    "idNumber": "110101199001011234"
-                }
-                """;
+        @SuppressWarnings("rawtypes")
+        ResponseDTO mockResponse = ResponseDTO.ok(new ArrayList<>());
+        doReturn(mockResponse).when(visitorQueryService).queryVisitorRecords(eq("13800000000"), eq(1), eq(20));
 
-        // validateVisitorInfo 是在 Controller 中直接实现的，需要 mock visitorQueryService
-        // VisitorQueryService.getVisitorByIdNumber返回ResponseDTO<?>，使用doReturn避免泛型通配符类型捕获问题
-        ResponseDTO<?> mockResponse = ResponseDTO.ok(new net.lab1024.sa.visitor.domain.vo.VisitorVO());
-        doReturn(mockResponse).when(visitorQueryService).getVisitorByIdNumber(eq("110101199001011234"));
-
-        mockMvc.perform(post("/api/v1/mobile/visitor/validate")
+        mockMvc.perform(get("/api/v1/mobile/visitor/records")
+                .param("phone", "13800000000")
+                .param("pageNum", "1")
+                .param("pageSize", "20")
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").exists());
     }
@@ -131,12 +127,13 @@ class VisitorMobileControllerTest {
     @Test
     @DisplayName("测试获取被访人信息")
     void testGetVisiteeInfo() throws Exception {
-        // getVisiteeInfo 调用的是 visitorQueryService.getVisitorsByVisiteeId()
-        // VisitorQueryService.getVisitorsByVisiteeId返回ResponseDTO<?>，使用doReturn避免泛型通配符类型捕获问题
-        ResponseDTO<?> mockResponse = ResponseDTO.ok(new ArrayList<>());
-        doReturn(mockResponse).when(visitorQueryService).getVisitorsByVisiteeId(eq(1001L), eq(10));
+        @SuppressWarnings("rawtypes")
+        ResponseDTO mockResponse = ResponseDTO.ok(new ArrayList<>());
+        doReturn(mockResponse).when(visitorQueryService).queryAppointments(eq(1001L), eq(1));
 
-        mockMvc.perform(get("/api/v1/mobile/visitor/visitee/1001")
+        mockMvc.perform(get("/api/v1/mobile/visitor/my-appointments")
+                .param("userId", "1001")
+                .param("status", "1")
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").exists());
@@ -145,31 +142,29 @@ class VisitorMobileControllerTest {
     @Test
     @DisplayName("测试获取访问区域")
     void testGetVisitAreas() throws Exception {
-        // getVisitAreas 在Controller中直接返回空列表，不需要mock
+        when(visitorStatisticsService.getStatistics()).thenReturn(ResponseDTO.ok(Map.of("total", 0)));
 
-        mockMvc.perform(get("/api/v1/mobile/visitor/areas")
+        mockMvc.perform(get("/api/v1/mobile/visitor/statistics")
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").exists());
     }
 
     @Test
-    @DisplayName("测试获取预约类型")
+    @DisplayName("测试创建预约-参数校验失败")
     void testGetAppointmentTypes() throws Exception {
-        // getAppointmentTypes 在Controller中直接返回硬编码列表，不需要mock
-
-        mockMvc.perform(get("/api/v1/mobile/visitor/appointment-types")
-                .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").exists());
+        mockMvc.perform(post("/api/v1/mobile/visitor/appointment")
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                .content("{}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("测试获取帮助信息")
     void testGetHelpInfo() throws Exception {
-        // getHelpInfo 在Controller中直接返回硬编码信息，不需要mock
+        when(visitorCheckInService.checkIn(eq(1L))).thenReturn(ResponseDTO.ok());
 
-        mockMvc.perform(get("/api/v1/mobile/visitor/help")
+        mockMvc.perform(post("/api/v1/mobile/visitor/checkin/1")
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").exists());
@@ -178,12 +173,9 @@ class VisitorMobileControllerTest {
     @Test
     @DisplayName("测试获取个人统计")
     void testGetPersonalStatistics() throws Exception {
-        // getPersonalStatistics 调用的是 visitorQueryService.getVisitorsByVisiteeId
-        // VisitorQueryService.getVisitorsByVisiteeId返回ResponseDTO<?>，使用doReturn避免泛型通配符类型捕获问题
-        ResponseDTO<?> mockResponse = ResponseDTO.ok(new ArrayList<>());
-        doReturn(mockResponse).when(visitorQueryService).getVisitorsByVisiteeId(eq(1001L), eq(10));
+        when(visitorCheckInService.checkOut(eq(1L))).thenReturn(ResponseDTO.ok());
 
-        mockMvc.perform(get("/api/v1/mobile/visitor/statistics/1001")
+        mockMvc.perform(post("/api/v1/mobile/visitor/checkout/1")
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").exists());

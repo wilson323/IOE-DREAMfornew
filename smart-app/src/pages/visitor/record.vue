@@ -82,7 +82,7 @@ onPullDownRefresh(() => {
 const loadRecords = async () => {
   loading.value = true
   try {
-    const userId = 1 // TODO: 从本地存储获取
+    const userId = uni.getStorageSync('userId') || 1
     const result = await visitorApi.getMyAppointments(userId)
     if (result.success && result.data) {
       recordList.value = result.data

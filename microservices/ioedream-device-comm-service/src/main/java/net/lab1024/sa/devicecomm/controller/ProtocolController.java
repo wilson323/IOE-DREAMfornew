@@ -1,5 +1,6 @@
 package net.lab1024.sa.devicecomm.controller;
 
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,17 +9,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.http.HttpMethod;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.micrometer.observation.annotation.Observed;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.devicecomm.cache.ProtocolCacheManager;
-import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector;
+import net.lab1024.sa.devicecomm.cache.ProtocolCacheService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+// import io.micrometer.core.annotation.Timed; // 未使用
+// import io.micrometer.core.annotation.Counted; // 未使用
+// import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector; // 已废弃，已移除
 import net.lab1024.sa.devicecomm.protocol.router.MessageRouter;
 
 /**
@@ -53,16 +61,16 @@ public class ProtocolController {
     private GatewayServiceClient gatewayServiceClient;
 
     /**
-     * 协议监控指标收集器
+     * Micrometer指标注册表（用于编程式指标收集）
      */
     @Resource
-    private ProtocolMetricsCollector metricsCollector;
+    private MeterRegistry meterRegistry;
 
     /**
-     * 协议缓存管理器（多级缓存）
+     * 协议缓存服务（使用Spring Cache）
      */
     @Resource
-    private ProtocolCacheManager cacheManager;
+    private ProtocolCacheService cacheService;
 
     /**
      * 接收设备推送数据（字节数组）
@@ -76,6 +84,7 @@ public class ProtocolController {
      * @return 响应结果
      */
     @PostMapping("/push")
+    @Observed(name = "protocol.receivePush", contextualName = "protocol-receive-push")
     public ResponseDTO<String> receivePush(
             @RequestParam("protocolType") String protocolType,
             @RequestParam("deviceId") Long deviceId,
@@ -90,15 +99,23 @@ public class ProtocolController {
                     messageRouter.route(protocolType, rawData, deviceId);
 
             // 等待处理完成（实际应该异步返回，这里简化处理）
-            future.join();
+            joinOrThrow(future);
 
             log.info("[协议控制器] 设备推送处理成功，协议类型={}, 设备ID={}", protocolType, deviceId);
             return ResponseDTO.ok("消息处理成功");
 
+        } catch (ParamException e) {
+            log.warn("[协议控制器] 设备推送处理参数错误，协议类型={}, 设备ID={}: {}", protocolType, deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[协议控制器] 设备推送处理业务异常，协议类型={}, 设备ID={}: {}", protocolType, deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[协议控制器] 设备推送处理系统异常，协议类型={}, 设备ID={}: {}", protocolType, deviceId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[协议控制器] 设备推送处理失败，协议类型={}, 设备ID={}, 错误={}",
-                    protocolType, deviceId, e.getMessage(), e);
-            return ResponseDTO.error("PROCESS_ERROR", "消息处理失败：" + e.getMessage());
+            log.error("[协议控制器] 设备推送处理执行异常，协议类型={}, 设备ID={}: {}", protocolType, deviceId, e.getMessage(), e);
+            return ResponseDTO.error("PROCESS_ERROR", "消息处理失败");
         }
     }
 
@@ -115,6 +132,7 @@ public class ProtocolController {
      * @return 响应结果
      */
     @PostMapping("/push/auto")
+    @Observed(name = "protocol.receivePushAuto", contextualName = "protocol-receive-push-auto")
     public ResponseDTO<String> receivePushAuto(
             @RequestParam("deviceType") String deviceType,
             @RequestParam("manufacturer") String manufacturer,
@@ -130,15 +148,23 @@ public class ProtocolController {
                     messageRouter.route(deviceType, manufacturer, rawData, deviceId);
 
             // 等待处理完成
-            future.join();
+            joinOrThrow(future);
 
             log.info("[协议控制器] 设备推送处理成功，设备类型={}, 厂商={}, 设备ID={}", deviceType, manufacturer, deviceId);
             return ResponseDTO.ok("消息处理成功");
 
+        } catch (ParamException e) {
+            log.warn("[协议控制器] 设备推送处理参数错误，设备类型={}, 厂商={}, 设备ID={}: {}", deviceType, manufacturer, deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[协议控制器] 设备推送处理业务异常，设备类型={}, 厂商={}, 设备ID={}: {}", deviceType, manufacturer, deviceId, e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[协议控制器] 设备推送处理系统异常，设备类型={}, 厂商={}, 设备ID={}: {}", deviceType, manufacturer, deviceId, e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[协议控制器] 设备推送处理失败，设备类型={}, 厂商={}, 设备ID={}, 错误={}",
-                    deviceType, manufacturer, deviceId, e.getMessage(), e);
-            return ResponseDTO.error("PROCESS_ERROR", "消息处理失败：" + e.getMessage());
+            log.error("[协议控制器] 设备推送处理执行异常，设备类型={}, 厂商={}, 设备ID={}: {}", deviceType, manufacturer, deviceId, e.getMessage(), e);
+            return ResponseDTO.error("PROCESS_ERROR", "消息处理失败");
         }
     }
 
@@ -168,6 +194,7 @@ public class ProtocolController {
      * @return 响应结果（HTTP协议返回"OK"）
      */
     @PostMapping(value = "/push/text", consumes = {"text/plain", "text/html;charset=utf-8", "application/x-www-form-urlencoded;charset=UTF-8", "application/x-www-form-urlencoded;charset=GB18030"})
+    @Observed(name = "protocol.receivePushText", contextualName = "protocol-receive-push-text")
     @RateLimiter(name = "protocol-push", fallbackMethod = "receivePushTextFallback")
     public ResponseDTO<String> receivePushText(
             @RequestParam(value = "SN", required = false) String serialNumber,
@@ -221,35 +248,19 @@ public class ProtocolController {
             Long finalDeviceId = deviceId;
             if (finalDeviceId == null && serialNumber != null && !serialNumber.isEmpty()) {
                 try {
-                    // 1. 先查询缓存（L1本地缓存 -> L2 Redis缓存）
-                    DeviceEntity cachedDevice = cacheManager.getDeviceByCode(serialNumber);
-                    if (cachedDevice != null) {
-                        finalDeviceId = cachedDevice.getId();
-                        log.info("[协议控制器] 从缓存获取设备ID，SN={}, deviceId={}", serialNumber, finalDeviceId);
+                    // 使用Spring Cache查询缓存（L1本地缓存 -> L2 Redis缓存 -> 数据库）
+                    // @Cacheable注解会自动处理缓存逻辑
+                    DeviceEntity device = cacheService.getDeviceByCode(serialNumber);
+                    if (device != null) {
+                        finalDeviceId = device.getId();
+                        log.info("[协议控制器] 获取设备ID成功，SN={}, deviceId={}", serialNumber, finalDeviceId);
                     } else {
-                        // 2. 缓存未命中，通过网关调用公共服务查询
-                        ResponseDTO<DeviceEntity> deviceResponse = gatewayServiceClient.callCommonService(
-                                "/api/v1/device/code/" + serialNumber,
-                                HttpMethod.GET,
-                                null,
-                                DeviceEntity.class
-                        );
-
-                        if (deviceResponse != null && deviceResponse.isSuccess() && deviceResponse.getData() != null) {
-                            DeviceEntity device = deviceResponse.getData();
-                            finalDeviceId = device.getId();
-
-                            // 3. 缓存设备信息（多级缓存）
-                            cacheManager.cacheDevice(device);
-
-                            log.info("[协议控制器] 根据SN查询到设备ID，SN={}, deviceId={}", serialNumber, finalDeviceId);
-                        } else {
-                            log.warn("[协议控制器] 根据SN未查询到设备，SN={}, message={}",
-                                    serialNumber, deviceResponse != null ? deviceResponse.getMessage() : "响应为空");
-                        }
+                        log.warn("[协议控制器] 根据SN未查询到设备，SN={}", serialNumber);
                     }
-                } catch (Exception e) {
+                } catch (ParamException | BusinessException | SystemException e) {
                     log.warn("[协议控制器] 根据SN查询设备ID异常，SN={}, error={}", serialNumber, e.getMessage());
+                } catch (Exception e) {
+                    log.warn("[协议控制器] 根据SN查询设备ID未知异常，SN={}, error={}", serialNumber, e.getMessage());
                 }
             }
 
@@ -264,28 +275,62 @@ public class ProtocolController {
                     messageRouter.route(finalProtocolType, rawData, finalDeviceId);
 
             // 等待处理完成
-            future.join();
+            joinOrThrow(future);
 
             long duration = System.currentTimeMillis() - startTime;
             log.info("[协议控制器] HTTP文本推送处理成功，协议类型={}, 设备ID={}, duration={}ms",
                     finalProtocolType, finalDeviceId, duration);
 
-            // 记录监控指标
-            metricsCollector.recordSuccess(finalProtocolType, duration);
+            // 记录监控指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.process")
+                    .tag("protocol_type", finalProtocolType != null ? finalProtocolType : "unknown")
+                    .tag("status", "success")
+                    .register(meterRegistry)
+                    .increment();
 
             // HTTP协议返回"OK"
             return ResponseDTO.ok("OK");
 
+        } catch (ParamException e) {
+            long duration = System.currentTimeMillis() - startTime;
+            log.warn("[协议控制器] HTTP文本推送处理参数错误，SN={}, table={}, duration={}ms: {}", serialNumber, table, duration, e.getMessage());
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", finalProtocolType != null ? finalProtocolType : "UNKNOWN")
+                    .tag("error_type", "PARAM_ERROR")
+                    .register(meterRegistry)
+                    .increment();
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            long duration = System.currentTimeMillis() - startTime;
+            log.warn("[协议控制器] HTTP文本推送处理业务异常，SN={}, table={}, duration={}ms: {}", serialNumber, table, duration, e.getMessage());
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", finalProtocolType != null ? finalProtocolType : "UNKNOWN")
+                    .tag("error_type", "BUSINESS_ERROR")
+                    .register(meterRegistry)
+                    .increment();
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            long duration = System.currentTimeMillis() - startTime;
+            log.error("[协议控制器] HTTP文本推送处理系统异常，SN={}, table={}, duration={}ms: {}", serialNumber, table, duration, e.getMessage(), e);
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", finalProtocolType != null ? finalProtocolType : "UNKNOWN")
+                    .tag("error_type", "SYSTEM_ERROR")
+                    .register(meterRegistry)
+                    .increment();
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("[协议控制器] HTTP文本推送处理失败，SN={}, table={}, 错误={}, duration={}ms",
-                    serialNumber, table, e.getMessage(), duration, e);
+            log.error("[协议控制器] HTTP文本推送处理执行异常，SN={}, table={}, duration={}ms: {}", serialNumber, table, duration, e.getMessage(), e);
 
-            // 记录错误指标
-            metricsCollector.recordError(finalProtocolType != null ? finalProtocolType : "UNKNOWN", "PROCESS_ERROR");
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", finalProtocolType != null ? finalProtocolType : "UNKNOWN")
+                    .tag("error_type", "PROCESS_ERROR")
+                    .register(meterRegistry)
+                    .increment();
 
             // HTTP协议返回错误描述
-            return ResponseDTO.error("PROCESS_ERROR", "消息处理失败：" + e.getMessage());
+            return ResponseDTO.error("PROCESS_ERROR", "消息处理失败");
         }
     }
 
@@ -314,11 +359,30 @@ public class ProtocolController {
         log.warn("[协议控制器] 请求被限流，SN={}, table={}, 错误={}",
                 serialNumber, table, exception != null ? exception.getMessage() : "限流触发");
 
-        // 记录限流指标
-        metricsCollector.recordError(protocolType != null ? protocolType : "UNKNOWN", "RATE_LIMIT");
+        // 记录限流指标（使用Micrometer编程式API）
+        Counter.builder("protocol.message.error")
+                .tag("protocol_type", protocolType != null ? protocolType : "UNKNOWN")
+                .tag("error_type", "RATE_LIMIT")
+                .register(meterRegistry)
+                .increment();
 
         // 返回限流错误（HTTP协议返回错误描述）
         return ResponseDTO.error("RATE_LIMIT", "请求过于频繁，请稍后重试");
+    }
+
+    private static <T> T joinOrThrow(CompletableFuture<T> future) {
+        try {
+            return future.join();
+        } catch (CompletionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException runtimeException) {
+                throw runtimeException;
+            }
+            if (cause instanceof Error error) {
+                throw error;
+            }
+            throw e;
+        }
     }
 }
 

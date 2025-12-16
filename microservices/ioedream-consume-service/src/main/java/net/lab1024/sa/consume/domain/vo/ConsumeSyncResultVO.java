@@ -32,3 +32,6 @@ public class ConsumeSyncResultVO {
      */
     private Integer failCount;
 }
+
+
+

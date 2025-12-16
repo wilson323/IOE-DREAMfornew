@@ -1,6 +1,7 @@
 package net.lab1024.sa.consume.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,6 +49,7 @@ public class ConsumeAccountController {
      * 分页查询账户列表
      */
     @GetMapping("/list")
+    @Observed(name = "consumeAccount.getAccountList", contextualName = "consume-account-get-account-list")
     @Operation(summary = "分页查询账户列表", description = "支持多条件查询")
     public ResponseDTO<IPage<AccountVO>> getAccountList(AccountQueryForm queryForm) {
         ResponseDTO<IPage<AccountVO>> pageResult = accountService.queryAccountPage(queryForm);
@@ -58,6 +60,7 @@ public class ConsumeAccountController {
      * 获取账户详情
      */
     @GetMapping("/{accountId}/detail")
+    @Observed(name = "consumeAccount.getAccountDetail", contextualName = "consume-account-get-account-detail")
     @Operation(summary = "获取账户详情", description = "根据账户ID获取详细信息")
     public ResponseDTO<AccountVO> getAccountDetail(
             @Parameter(description = "账户ID", example = "1") @PathVariable Long accountId) {
@@ -70,6 +73,7 @@ public class ConsumeAccountController {
      * 查询用户账户余额
      */
     @GetMapping("/{userId}/balance")
+    @Observed(name = "consumeAccount.getAccountBalance", contextualName = "consume-account-get-account-balance")
     @Operation(summary = "查询用户账户余额", description = "获取指定用户的账户余额信息")
     public ResponseDTO<Map<String, Object>> getAccountBalance(
             @Parameter(description = "用户ID", example = "1") @PathVariable Long userId) {
@@ -81,6 +85,7 @@ public class ConsumeAccountController {
      * 获取账户完整信息
      */
     @GetMapping("/user/{userId}")
+    @Observed(name = "consumeAccount.getAccountByUserId", contextualName = "consume-account-get-account-by-user-id")
     @Operation(summary = "获取用户账户完整信息", description = "获取用户的完整账户信息，包括余额、状态等")
     public ResponseDTO<AccountVO> getAccountByUserId(
             @Parameter(description = "用户ID", example = "1") @PathVariable Long userId) {
@@ -92,6 +97,7 @@ public class ConsumeAccountController {
      * 更新账户状态（冻结/解冻）
      */
     @PutMapping("/{accountId}/status")
+    @Observed(name = "consumeAccount.updateAccountStatus", contextualName = "consume-account-update-account-status")
     @Operation(summary = "更新账户状态", description = "更新指定账户的状态（冻结或解冻）")
     public ResponseDTO<String> updateAccountStatus(
             @Parameter(description = "账户ID", example = "1") @PathVariable Long accountId,
@@ -118,6 +124,7 @@ public class ConsumeAccountController {
      * 账户充值
      */
     @PostMapping("/{accountId}/recharge")
+    @Observed(name = "consumeAccount.rechargeAccount", contextualName = "consume-account-recharge-account")
     @Operation(summary = "账户充值", description = "为指定账户进行充值")
     public ResponseDTO<String> rechargeAccount(
             @Parameter(description = "账户ID", example = "1") @PathVariable Long accountId,
@@ -136,6 +143,7 @@ public class ConsumeAccountController {
      * 设置账户限额
      */
     @PutMapping("/{accountId}/limit")
+    @Observed(name = "consumeAccount.setAccountLimit", contextualName = "consume-account-set-account-limit")
     @Operation(summary = "设置账户限额", description = "设置账户的日消费限额和月消费限额")
     public ResponseDTO<String> setAccountLimit(
             @Parameter(description = "账户ID", example = "1") @PathVariable Long accountId,
@@ -153,6 +161,7 @@ public class ConsumeAccountController {
      * 批量操作账户状态
      */
     @PutMapping("/batch/status")
+    @Observed(name = "consumeAccount.batchUpdateAccountStatus", contextualName = "consume-account-batch-update-account-status")
     @Operation(summary = "批量操作账户状态", description = "批量冻结或解冻多个账户")
     public ResponseDTO<String> batchUpdateAccountStatus(
             @Parameter(description = "账户ID列表") @RequestParam @NotNull List<Long> accountIds,
@@ -166,6 +175,7 @@ public class ConsumeAccountController {
      * 获取账户统计信息
      */
     @GetMapping("/statistics")
+    @Observed(name = "consumeAccount.getAccountStatistics", contextualName = "consume-account-get-account-statistics")
     @Operation(summary = "获取账户统计信息", description = "获取账户总数、余额总额、冻结数量等统计信息")
     public ResponseDTO<Map<String, Object>> getAccountStatistics() {
         Map<String, Object> statistics = accountService.getAccountStatistics();
@@ -176,6 +186,7 @@ public class ConsumeAccountController {
      * 导出账户数据
      */
     @GetMapping("/export")
+    @Observed(name = "consumeAccount.exportAccountData", contextualName = "consume-account-export-account-data")
     @Operation(summary = "导出账户数据", description = "导出账户数据到Excel文件")
     public void exportAccountData(AccountQueryForm queryForm, HttpServletResponse response) {
         accountService.exportAccountData(queryForm, response);
@@ -185,6 +196,7 @@ public class ConsumeAccountController {
      * 获取账户消费记录
      */
     @GetMapping("/{accountId}/records")
+    @Observed(name = "consumeAccount.getAccountConsumeRecords", contextualName = "consume-account-get-account-consume-records")
     @Operation(summary = "获取账户消费记录", description = "分页查询指定账户的消费记录")
     public ResponseDTO<PageResult<Map<String, Object>>> getAccountConsumeRecords(
             @Parameter(description = "账户ID", example = "1") @PathVariable Long accountId,
@@ -198,6 +210,7 @@ public class ConsumeAccountController {
      * 检查账户状态
      */
     @GetMapping("/{accountId}/status")
+    @Observed(name = "consumeAccount.checkAccountStatus", contextualName = "consume-account-check-account-status")
     @Operation(summary = "检查账户状态", description = "检查账户是否可用、是否被冻结等状态")
     public ResponseDTO<Map<String, Object>> checkAccountStatus(
             @Parameter(description = "账户ID", example = "1") @PathVariable Long accountId) {
@@ -209,6 +222,7 @@ public class ConsumeAccountController {
      * 创建新账户
      */
     @PostMapping("/create")
+    @Observed(name = "consumeAccount.createAccount", contextualName = "consume-account-create-account")
     @Operation(summary = "创建新账户", description = "为用户创建新的消费账户")
     public ResponseDTO<Long> createAccount(@Valid @RequestBody AccountEntity accountEntity) {
         Long accountId = accountService.createAccount(accountEntity);
@@ -219,6 +233,7 @@ public class ConsumeAccountController {
      * 更新账户信息
      */
     @PutMapping("/{accountId}")
+    @Observed(name = "consumeAccount.updateAccount", contextualName = "consume-account-update-account")
     @Operation(summary = "更新账户信息", description = "更新指定账户的基本信息")
     public ResponseDTO<String> updateAccount(
             @Parameter(description = "账户ID", example = "1") @PathVariable Long accountId,
@@ -236,6 +251,7 @@ public class ConsumeAccountController {
      * 删除账户
      */
     @DeleteMapping("/{accountId}")
+    @Observed(name = "consumeAccount.deleteAccount", contextualName = "consume-account-delete-account")
     @Operation(summary = "删除账户", description = "逻辑删除指定账户")
     public ResponseDTO<String> deleteAccount(
             @Parameter(description = "账户ID", example = "1") @PathVariable Long accountId) {
@@ -247,3 +263,6 @@ public class ConsumeAccountController {
         }
     }
 }
+
+
+

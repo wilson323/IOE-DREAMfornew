@@ -1,145 +1,81 @@
 package net.lab1024.sa.common.audit.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.lab1024.sa.common.entity.BaseEntity;
 
 /**
- * 审计日志实体
- * <p>
- * 用于记录系统操作审计日志，支持完整的操作追踪和合规性审计
- * 严格遵循CLAUDE.md规范：
- * - 继承BaseEntity获取审计字段
- * - 使用@TableName指定数据库表名
- * - 完整的审计日志字段
- * </p>
- * <p>
- * 业务场景：
- * - 用户操作记录
- * - 系统操作追踪
- * - 合规性审计
- * - 安全事件分析
- * </p>
+ * 审计日志实体类
+ * 对应数据库表 t_audit_log
+ * 继承 BaseEntity 复用审计字段
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-14
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_audit_log")
 public class AuditLogEntity extends BaseEntity {
 
-    /**
-     * 日志ID（主键）
-     * <p>
-     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列log_id
-     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
-     * </p>
-     */
     @TableId(value = "log_id", type = IdType.AUTO)
-    private Long id;
+    private Long logId;
 
-    /**
-     * 用户ID
-     */
+    @TableField("user_id")
     private Long userId;
 
-    /**
-     * 用户名
-     */
-    private String userName;
+    @TableField("username")
+    private String username;
 
-    /**
-     * 模块名称
-     */
+    @TableField("module_name")
     private String moduleName;
 
-    /**
-     * 操作类型
-     * <p>
-     * 1-查询 2-新增 3-修改 4-删除 5-导出 6-导入 7-登录 8-登出
-     * </p>
-     */
+    @TableField("operation_type")
     private Integer operationType;
 
-    /**
-     * 操作描述
-     */
+    @TableField("operation")
+    private String operation;
+
+    @TableField("operation_desc")
     private String operationDesc;
 
-    /**
-     * 资源类型
-     */
+    @TableField("resource_type")
     private String resourceType;
 
-    /**
-     * 资源ID
-     */
+    @TableField("resource_id")
     private String resourceId;
 
-    /**
-     * 请求方法（GET、POST、PUT、DELETE等）
-     */
+    @TableField("request_method")
     private String requestMethod;
 
-    /**
-     * 请求URL
-     */
+    @TableField("request_url")
     private String requestUrl;
 
-    /**
-     * 请求参数（JSON格式）
-     */
+    @TableField("request_params")
     private String requestParams;
 
-    /**
-     * 响应数据（JSON格式）
-     */
+    @TableField("response_data")
     private String responseData;
 
-    /**
-     * 结果状态
-     * <p>
-     * 1-成功 2-失败 3-异常
-     * </p>
-     */
+    @TableField("result_status")
     private Integer resultStatus;
 
-    /**
-     * 错误信息
-     */
+    @TableField("error_message")
     private String errorMessage;
 
-    /**
-     * 风险等级
-     * <p>
-     * 1-低 2-中 3-高
-     * </p>
-     */
+    @TableField("risk_level")
     private Integer riskLevel;
 
-    /**
-     * 客户端IP
-     */
+    @TableField("client_ip")
     private String clientIp;
 
-    /**
-     * 用户代理
-     */
+    @TableField("user_agent")
     private String userAgent;
 
-    /**
-     * 追踪ID（用于分布式追踪）
-     */
+    @TableField("trace_id")
     private String traceId;
 
-    /**
-     * 执行时间（毫秒）
-     */
+    @TableField("execution_time")
     private Long executionTime;
 }

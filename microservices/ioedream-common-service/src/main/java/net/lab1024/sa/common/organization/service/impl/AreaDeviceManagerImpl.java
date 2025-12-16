@@ -584,7 +584,7 @@ public class AreaDeviceManagerImpl implements AreaDeviceManager {
         accessDeviceTemplate.put("accessMode", "card"); // card/password/biometric
         accessDeviceTemplate.put("accessLevel", "normal"); // normal/low/high
         accessDeviceTemplate.put("antiPassback", true);
-        accessDeviceTemplate.put("duressCode", "123456");
+        accessDeviceTemplate.put("duressCode", "");
         DEVICE_ATTRIBUTE_TEMPLATES.put("1", accessDeviceTemplate);
 
         // 门禁子类型模板
@@ -661,6 +661,7 @@ public class AreaDeviceManagerImpl implements AreaDeviceManager {
     /**
      * 缓存相关方法
      */
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     private List<AreaDeviceEntity> getCachedDeviceList(String cacheKey) {
         try {
             String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");

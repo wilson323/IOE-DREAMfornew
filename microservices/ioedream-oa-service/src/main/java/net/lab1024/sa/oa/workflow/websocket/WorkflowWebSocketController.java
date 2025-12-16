@@ -10,8 +10,12 @@ import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 
 /**
  * 工作流WebSocket控制器
@@ -34,10 +38,11 @@ public class WorkflowWebSocketController {
 
     /**
      * 处理心跳消息
-     * 
+     *
      * @param message 心跳消息
      * @return 响应消息
      */
+    @Observed(name = "websocket.handleHeartbeat", contextualName = "websocket-heartbeat")
     @MessageMapping("/heartbeat")
     @SendTo("/topic/heartbeat")
     public Map<String, Object> handleHeartbeat(Map<String, Object> message) {
@@ -50,9 +55,10 @@ public class WorkflowWebSocketController {
 
     /**
      * 订阅时发送欢迎消息
-     * 
+     *
      * @return 欢迎消息
      */
+    @Observed(name = "websocket.handleSubscribe", contextualName = "websocket-subscribe")
     @SubscribeMapping("/topic/workflow/notifications")
     public Map<String, Object> handleSubscribe() {
         log.info("客户端订阅工作流通知");
@@ -65,10 +71,11 @@ public class WorkflowWebSocketController {
 
     /**
      * 发送新任务通知
-     * 
+     *
      * @param userId 用户ID
      * @param taskData 任务数据
      */
+    @Observed(name = "websocket.sendNewTaskNotification", contextualName = "websocket-send-new-task-notification")
     public void sendNewTaskNotification(Long userId, Map<String, Object> taskData) {
         try {
             Map<String, Object> message = Map.of(
@@ -76,26 +83,31 @@ public class WorkflowWebSocketController {
                 "data", taskData,
                 "timestamp", System.currentTimeMillis()
             );
-            
+
             // 发送点对点消息给指定用户
             messagingTemplate.convertAndSendToUser(
                 userId.toString(),
                 "/queue/workflow/tasks",
                 message
             );
-            
+
             log.info("发送新任务通知，用户ID: {}, 任务ID: {}", userId, taskData.get("taskId"));
+        } catch (ParamException | BusinessException e) {
+            log.warn("[WebSocket] 发送新任务通知失败: userId={}, error={}", userId, e.getMessage());
+        } catch (SystemException e) {
+            log.error("[WebSocket] 发送新任务通知系统异常: userId={}, error={}", userId, e.getMessage(), e);
         } catch (Exception e) {
-            log.error("发送新任务通知失败，用户ID: {}", userId, e);
+            log.error("[WebSocket] 发送新任务通知失败: userId={}, error={}", userId, e.getMessage(), e);
         }
     }
 
     /**
      * 发送任务状态变更通知
-     * 
+     *
      * @param userId 用户ID
      * @param taskData 任务数据
      */
+    @Observed(name = "websocket.sendTaskStatusChangedNotification", contextualName = "websocket-send-task-status-changed")
     public void sendTaskStatusChangedNotification(Long userId, Map<String, Object> taskData) {
         try {
             Map<String, Object> message = Map.of(
@@ -103,25 +115,30 @@ public class WorkflowWebSocketController {
                 "data", taskData,
                 "timestamp", System.currentTimeMillis()
             );
-            
+
             messagingTemplate.convertAndSendToUser(
                 userId.toString(),
                 "/queue/workflow/tasks",
                 message
             );
-            
+
             log.info("发送任务状态变更通知，用户ID: {}, 任务ID: {}", userId, taskData.get("taskId"));
+        } catch (ParamException | BusinessException e) {
+            log.warn("[WebSocket] 发送任务状态变更通知失败: userId={}, error={}", userId, e.getMessage());
+        } catch (SystemException e) {
+            log.error("[WebSocket] 发送任务状态变更通知系统异常: userId={}, error={}", userId, e.getMessage(), e);
         } catch (Exception e) {
-            log.error("发送任务状态变更通知失败，用户ID: {}", userId, e);
+            log.error("[WebSocket] 发送任务状态变更通知失败: userId={}, error={}", userId, e.getMessage(), e);
         }
     }
 
     /**
      * 发送流程实例状态变更通知
-     * 
+     *
      * @param userId 用户ID
      * @param instanceData 流程实例数据
      */
+    @Observed(name = "websocket.sendInstanceStatusChangedNotification", contextualName = "websocket-send-instance-status-changed")
     public void sendInstanceStatusChangedNotification(Long userId, Map<String, Object> instanceData) {
         try {
             Map<String, Object> message = Map.of(
@@ -129,31 +146,44 @@ public class WorkflowWebSocketController {
                 "data", instanceData,
                 "timestamp", System.currentTimeMillis()
             );
-            
+
             messagingTemplate.convertAndSendToUser(
                 userId.toString(),
                 "/queue/workflow/instances",
                 message
             );
-            
+
             log.info("发送流程实例状态变更通知，用户ID: {}, 实例ID: {}", userId, instanceData.get("instanceId"));
+        } catch (ParamException | BusinessException e) {
+            log.warn("[WebSocket] 发送流程实例状态变更通知失败: userId={}, error={}", userId, e.getMessage());
+        } catch (SystemException e) {
+            log.error("[WebSocket] 发送流程实例状态变更通知系统异常: userId={}, error={}", userId, e.getMessage(), e);
         } catch (Exception e) {
-            log.error("发送流程实例状态变更通知失败，用户ID: {}", userId, e);
+            log.error("[WebSocket] 发送流程实例状态变更通知失败: userId={}, error={}", userId, e.getMessage(), e);
         }
     }
 
     /**
      * 广播消息（发送给所有订阅的客户端）
-     * 
+     *
      * @param message 消息内容
      */
+    @Observed(name = "websocket.broadcastMessage", contextualName = "websocket-broadcast-message")
     public void broadcastMessage(Map<String, Object> message) {
         try {
             messagingTemplate.convertAndSend("/topic/workflow/broadcast", message);
             log.debug("广播工作流消息: {}", message.get("type"));
+        } catch (ParamException | BusinessException e) {
+            log.warn("[WebSocket] 广播工作流消息失败: error={}", e.getMessage());
+        } catch (SystemException e) {
+            log.error("[WebSocket] 广播工作流消息系统异常: error={}", e.getMessage(), e);
         } catch (Exception e) {
-            log.error("广播工作流消息失败", e);
+            log.error("[WebSocket] 广播工作流消息失败: error={}", e.getMessage(), e);
         }
     }
 }
+
+
+
+
 

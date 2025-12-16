@@ -41,3 +41,6 @@ public class ConsumeMobileNfcForm {
      */
     private Long areaId;
 }
+
+
+

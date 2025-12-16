@@ -1,0 +1,130 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "IOE-DREAM 分布式追踪监控",
+    "tags": ["ioe-dream", "tracing", "zipkin"],
+    "timezone": "Asia/Shanghai",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "追踪覆盖率",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(micrometer_tracing_spans_total) by (application)",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "追踪采样率",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(micrometer_tracing_spans_total[5m])) by (application) / sum(rate(http_server_requests_seconds_count[5m])) by (application) * 100",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Span数量趋势",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(micrometer_tracing_spans_total[5m])) by (application)",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "追踪错误率",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(micrometer_tracing_spans_total{error=\"true\"}[5m])) by (application) / sum(rate(micrometer_tracing_spans_total[5m])) by (application) * 100",
+            "legendFormat": "{{application}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 1
+                },
+                {
+                  "color": "red",
+                  "value": 5
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "schemaVersion": 38,
+    "version": 1
+  }
+}
+

@@ -1,5 +1,6 @@
 package net.lab1024.sa.database.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,7 @@ public class DatabaseSyncController {
     /**
      * 初始化数据库配置
      */
+    @Observed(name = "database.sync.initDatabaseConfigs", contextualName = "database-sync-init-configs")
     @Operation(summary = "初始化数据库配置", description = "初始化所有数据库配置，为同步做准备")
     @PostMapping("/init")
     public ResponseDTO<Void> initDatabaseConfigs() {
@@ -54,6 +56,7 @@ public class DatabaseSyncController {
     /**
      * 同步所有数据库
      */
+    @Observed(name = "database.sync.syncAllDatabases", contextualName = "database-sync-all")
     @Operation(summary = "同步所有数据库", description = "同步所有已配置的数据库表结构和数据")
     @PostMapping("/all")
     public ResponseDTO<Map<String, Boolean>> syncAllDatabases() {
@@ -73,6 +76,7 @@ public class DatabaseSyncController {
     /**
      * 同步指定数据库
      */
+    @Observed(name = "database.sync.syncDatabase", contextualName = "database-sync-specific")
     @Operation(summary = "同步指定数据库", description = "同步指定的数据库表结构和数据")
     @PostMapping("/{dbName}")
     public ResponseDTO<Boolean> syncDatabase(
@@ -96,6 +100,7 @@ public class DatabaseSyncController {
     /**
      * 获取数据库版本信息
      */
+    @Observed(name = "database.sync.getDatabaseVersions", contextualName = "database-sync-get-versions")
     @Operation(summary = "获取数据库版本信息", description = "获取所有数据库的版本和同步状态")
     @GetMapping("/versions")
     public ResponseDTO<Map<String, Object>> getDatabaseVersions() {
@@ -113,6 +118,7 @@ public class DatabaseSyncController {
     /**
      * 健康检查
      */
+    @Observed(name = "database.sync.healthCheck", contextualName = "database-sync-health-check")
     @Operation(summary = "数据库健康检查", description = "检查所有数据库的连接状态和健康度")
     @GetMapping("/health")
     public ResponseDTO<Map<String, Object>> healthCheck() {

@@ -406,10 +406,10 @@ const handleExportResult = () => {
 };
 
 /**
- * 查看日志
+ * 查看日志 - 待日志模块完成后对接
  */
 const handleViewLog = () => {
-  // TODO: 实现查看日志功能
+  // 日志查看功能 - 待日志模块完成后对接
   message.info('查看日志功能开发中');
 };
 

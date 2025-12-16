@@ -78,17 +78,19 @@ spring:
             group: ${NACOS_GROUP:IOE-DREAM}
             refresh: true
   # ==================== 配置文件导入 ====================
+  # 注意：Spring Cloud Alibaba 2025.0.0.0版本在config.import阶段无法解析占位符，需要直接指定dataId
   config:
     import:
-      - "optional:nacos:${spring.application.name}.yaml"
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active:dev}.yaml"
+      - "optional:nacos:ioedream-visitor-service.yaml"
+      - "optional:nacos:ioedream-visitor-service-docker.yaml"
       - "optional:nacos:common-config.yaml"
       - "optional:nacos:visitor-appointment-config.yaml"
 
 # ==================== 加密配置 ====================
+# 注意：jasypt 是第三方加密库配置，Spring Boot 语言服务器可能显示警告，但配置有效
 jasypt:
   encryptor:
-    password: ${JASYPT_PASSWORD:default-password-change-in-production}
+    password: ${JASYPT_PASSWORD}
     algorithm: PBEWITHHMACSHA512ANDAES_256
     key-obtention-iterations: 1000
     pool-size: 1
@@ -101,18 +103,20 @@ jasypt:
       suffix: )
 
 # ==================== JVM配置 ====================
+# ==================== JVM配置 ====================
+# 开发环境使用较小内存配置，生产环境通过环境变量覆盖
 java:
-  # 访客服务JVM优化参数（预约处理）
   opts:
+    # 开发环境默认配置 (1GB堆内存)
     - "-server"
-    - "-Xms1g"
-    - "-Xmx2g"
+    - "-Xms${JVM_XMS:512m}"
+    - "-Xmx${JVM_XMX:1g}"
     - "-XX:+UseG1GC"
     - "-XX:MaxGCPauseMillis=200"
+    - "-XX:+UseStringDeduplication"
+    - "-XX:MaxMetaspaceSize=${JVM_METASPACE:192m}"
     - "-XX:+HeapDumpOnOutOfMemoryError"
     - "-XX:HeapDumpPath=/var/log/ioedream/visitor-service"
-    - "-XX:+PrintGCDetails"
-    - "-XX:+PrintGCTimeStamps"
     - "-Dfile.encoding=UTF-8"
     - "-Duser.timezone=Asia/Shanghai"
 
@@ -121,10 +125,11 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: INFO
-    net.lab1024.sa.visitor: DEBUG
-    org.springframework: INFO
+    "[net.lab1024.sa.visitor]": DEBUG
+    "[org.springframework]": INFO
 
 # ==================== 访客服务特定配置 ====================
+# 注意：visitor 是应用自定义配置，Spring Boot 语言服务器可能显示警告，但配置有效
 visitor:
   registration:
     # 访客登记

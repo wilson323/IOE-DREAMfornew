@@ -184,3 +184,6 @@ public class ConsumeUserBehaviorAnalysisVO {
         private List<String> preferredCategories;
     }
 }
+
+
+

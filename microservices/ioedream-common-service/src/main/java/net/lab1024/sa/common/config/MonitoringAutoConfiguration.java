@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnProperty(name = "monitoring.enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties({MonitoringProperties.class})
 @Import({
-    MetricsAutoConfiguration.class,
     AlertAutoConfiguration.class
 })
 public class MonitoringAutoConfiguration {

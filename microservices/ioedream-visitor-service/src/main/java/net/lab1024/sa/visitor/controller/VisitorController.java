@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +20,9 @@ import net.lab1024.sa.visitor.domain.vo.VisitorAppointmentDetailVO;
 import net.lab1024.sa.visitor.service.VisitorAppointmentService;
 import net.lab1024.sa.visitor.service.VisitorQueryService;
 import net.lab1024.sa.visitor.service.VisitorStatisticsService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -81,6 +85,7 @@ public class VisitorController {
      * GET /api/v1/visitor/appointment/query?pageNum=1&pageSize=20&visitorName=张三&hostUserId=1001&startDate=2025-01-01&endDate=2025-01-31&status=PENDING
      * </pre>
      */
+    @Observed(name = "visitor.queryAppointments", contextualName = "visitor-query-appointments")
     @GetMapping("/appointment/query")
     @Operation(
         summary = "分页查询访客预约",
@@ -97,19 +102,19 @@ public class VisitorController {
     )
     @PreAuthorize("hasRole('VISITOR_MANAGER')")
     public ResponseDTO<PageResult<VisitorAppointmentDetailVO>> queryAppointments(
-            @Parameter(description = "页码（从1开始）") 
+            @Parameter(description = "页码（从1开始）")
             @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "每页大小") 
+            @Parameter(description = "每页大小")
             @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "访客姓名（可选）") 
+            @Parameter(description = "访客姓名（可选）")
             @RequestParam(required = false) String visitorName,
-            @Parameter(description = "被访人ID（可选）") 
+            @Parameter(description = "被访人ID（可选）")
             @RequestParam(required = false) Long hostUserId,
-            @Parameter(description = "开始日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "开始日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "结束日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "结束日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @Parameter(description = "预约状态（可选）") 
+            @Parameter(description = "预约状态（可选）")
             @RequestParam(required = false) String status) {
         log.info("[访客管理] 分页查询访客预约，pageNum={}, pageSize={}, visitorName={}, hostUserId={}, startDate={}, endDate={}, status={}",
                 pageNum, pageSize, visitorName, hostUserId, startDate, endDate, status);
@@ -123,12 +128,21 @@ public class VisitorController {
             queryForm.setStartDate(startDate);
             queryForm.setEndDate(endDate);
             queryForm.setStatus(status);
-            
+
             PageResult<VisitorAppointmentDetailVO> result = visitorAppointmentService.queryAppointments(queryForm);
             return ResponseDTO.ok(result);
+        } catch (ParamException e) {
+            log.warn("[访客管理] 分页查询访客预约参数错误: {}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[访客管理] 分页查询访客预约业务异常: {}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[访客管理] 分页查询访客预约系统异常: {}", e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[访客管理] 分页查询访客预约失败", e);
-            return ResponseDTO.error("QUERY_APPOINTMENTS_ERROR", "查询访客预约失败: " + e.getMessage());
+            log.error("[访客管理] 分页查询访客预约执行异常: {}", e.getMessage(), e);
+            return ResponseDTO.error("QUERY_APPOINTMENTS_ERROR", "查询访客预约失败");
         }
     }
 
@@ -146,6 +160,7 @@ public class VisitorController {
      * GET /api/v1/visitor/statistics?startDate=2025-01-01&endDate=2025-01-31
      * </pre>
      */
+    @Observed(name = "visitor.getStatistics", contextualName = "visitor-get-statistics")
     @GetMapping("/statistics")
     @Operation(
         summary = "获取访客统计",
@@ -162,9 +177,9 @@ public class VisitorController {
     )
     @PreAuthorize("hasRole('VISITOR_MANAGER')")
     public ResponseDTO<Map<String, Object>> getVisitorStatistics(
-            @Parameter(description = "开始日期，格式：yyyy-MM-dd", required = true, example = "2025-01-01") 
+            @Parameter(description = "开始日期，格式：yyyy-MM-dd", required = true, example = "2025-01-01")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "结束日期，格式：yyyy-MM-dd") 
+            @Parameter(description = "结束日期，格式：yyyy-MM-dd")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         log.info("[访客管理] 获取访客统计，startDate={}, endDate={}", startDate, endDate);
         try {
@@ -182,10 +197,20 @@ public class VisitorController {
                 result.put("pendingAppointments", 0);
                 return ResponseDTO.ok(result);
             }
+        } catch (ParamException e) {
+            log.warn("[访客管理] 获取访客统计参数错误: {}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[访客管理] 获取访客统计业务异常: {}", e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[访客管理] 获取访客统计系统异常: {}", e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[访客管理] 获取访客统计失败", e);
-            return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计数据失败: " + e.getMessage());
+            log.error("[访客管理] 获取访客统计执行异常: {}", e.getMessage(), e);
+            return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计数据失败");
         }
     }
 }
+
 

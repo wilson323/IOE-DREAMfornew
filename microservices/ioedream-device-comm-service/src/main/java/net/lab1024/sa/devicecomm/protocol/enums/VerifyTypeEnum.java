@@ -1,5 +1,8 @@
 package net.lab1024.sa.devicecomm.protocol.enums;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import lombok.Getter;
 
 /**
@@ -15,7 +18,6 @@ import lombok.Getter;
  */
 @Getter
 public enum VerifyTypeEnum {
-
     /**
      * 密码验证
      */
@@ -172,6 +174,11 @@ public enum VerifyTypeEnum {
     UNKNOWN(-1, "未知", "UNKNOWN");
 
     /**
+     * 日志记录器（枚举类使用静态Logger）
+     */
+    private static final Logger log = LoggerFactory.getLogger(VerifyTypeEnum.class);
+
+    /**
      * 验证方式代码
      */
     private final int code;
@@ -295,6 +302,7 @@ public enum VerifyTypeEnum {
             try {
                 codeValue = Integer.parseInt((String) code);
             } catch (NumberFormatException e) {
+                log.debug("[验证方式枚举] 验证方式代码解析失败，返回null: code={}", code);
                 return null;
             }
         } else {

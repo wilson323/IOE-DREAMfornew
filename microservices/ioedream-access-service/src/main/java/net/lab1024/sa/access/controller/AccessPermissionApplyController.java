@@ -1,5 +1,6 @@
 package net.lab1024.sa.access.controller;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,7 @@ public class AccessPermissionApplyController {
      * @param form 权限申请表单
      * @return 权限申请实体（包含workflowInstanceId）
      */
+    @Observed(name = "accessPermissionApply.submitPermissionApply", contextualName = "access-permission-apply-submit")
     @PostMapping("/submit")
     @Operation(
             summary = "提交权限申请",
@@ -102,6 +104,7 @@ public class AccessPermissionApplyController {
      * @param requestParams 请求参数（包含status和approvalComment）
      * @return 操作结果
      */
+    @Observed(name = "accessPermissionApply.updatePermissionApplyStatus", contextualName = "access-permission-apply-update-status")
     @PutMapping("/{applyNo}/status")
     @Operation(
             summary = "更新权限申请状态",
@@ -139,4 +142,5 @@ public class AccessPermissionApplyController {
         return ResponseDTO.ok();
     }
 }
+
 

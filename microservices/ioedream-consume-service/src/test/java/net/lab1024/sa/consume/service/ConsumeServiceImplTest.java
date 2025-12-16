@@ -35,7 +35,7 @@ import net.lab1024.sa.consume.service.impl.ConsumeServiceImpl;
 /**
  * ConsumeServiceImpl单元测试
  * <p>
- * 目标覆盖率：≥80%
+ * 目标覆盖率：>= 80%
  * 测试范围：消费服务核心业务方法
  * </p>
  *
@@ -93,8 +93,6 @@ class ConsumeServiceImplTest {
         net.lab1024.sa.common.dto.ResponseDTO successResponse =
                 net.lab1024.sa.common.dto.ResponseDTO.ok(mockEntity);
         doReturn(successResponse).when(consumeExecutionManager).executeConsumption(any());
-        when(consumeTransactionDao.selectByTransactionNo("TXN001"))
-                .thenReturn(mockEntity);
 
         // When
         ConsumeTransactionResultVO result = consumeService.executeTransaction(form);
@@ -112,10 +110,13 @@ class ConsumeServiceImplTest {
         ConsumeTransactionForm invalidForm = new ConsumeTransactionForm();
         invalidForm.setUserId(null); // 缺少必填参数
 
-        // When & Then
-        assertThrows(IllegalArgumentException.class, () -> {
-            consumeService.executeTransaction(invalidForm);
-        });
+        // When
+        ConsumeTransactionResultVO result = consumeService.executeTransaction(invalidForm);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(3, result.getTransactionStatus()); // 失败
+        assertNotNull(result.getErrorMessage());
         verify(consumeExecutionManager, never()).executeConsumption(any());
     }
 
@@ -151,7 +152,8 @@ class ConsumeServiceImplTest {
         ConsumeTransactionDetailVO result = consumeService.getTransactionDetail(transactionNo);
 
         // Then
-        assertNull(result);
+        assertNotNull(result);
+        assertEquals(3, result.getTransactionStatus()); // 失败
         verify(consumeTransactionDao, times(1)).selectByTransactionNo(transactionNo);
     }
 
@@ -168,7 +170,8 @@ class ConsumeServiceImplTest {
         entities.add(createMockTransactionEntity("TXN001"));
         entities.add(createMockTransactionEntity("TXN002"));
 
-        when(consumeTransactionDao.selectPage(any(), any())).thenReturn(createMockPage(entities, 2L));
+        when(consumeTransactionDao.queryTransactions(any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(createMockPage(entities, 2L));
 
         // When
         PageResult<ConsumeTransactionDetailVO> result = consumeService.queryTransactions(queryForm);
@@ -176,7 +179,7 @@ class ConsumeServiceImplTest {
         // Then
         assertNotNull(result);
         assertNotNull(result.getList());
-        verify(consumeTransactionDao, times(1)).selectPage(any(), any());
+        verify(consumeTransactionDao, times(1)).queryTransactions(any(), any(), any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -250,13 +253,14 @@ class ConsumeServiceImplTest {
     }
 
     // 辅助方法：创建模拟分页结果
-    @SuppressWarnings("unchecked")
     private com.baomidou.mybatisplus.core.metadata.IPage<ConsumeTransactionEntity> createMockPage(
             List<ConsumeTransactionEntity> list, Long total) {
-        com.baomidou.mybatisplus.core.metadata.IPage<ConsumeTransactionEntity> page =
-                mock(com.baomidou.mybatisplus.core.metadata.IPage.class);
-        when(page.getRecords()).thenReturn(list);
-        when(page.getTotal()).thenReturn(total);
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<ConsumeTransactionEntity> page =
+                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(1, Math.max(1, list.size()));
+        page.setRecords(list);
+        page.setTotal(total != null ? total : 0L);
         return page;
     }
 }
+
+

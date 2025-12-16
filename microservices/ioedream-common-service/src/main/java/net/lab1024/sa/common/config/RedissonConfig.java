@@ -4,8 +4,13 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,7 +55,7 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         try {
             Config config = new Config();
-            
+
             // 单节点模式配置
             String address = "redis://" + redisHost + ":" + redisPort;
             config.useSingleServer()
@@ -76,6 +81,29 @@ public class RedissonConfig {
             // 返回null，让UnifiedCacheManager处理
             return null;
         }
+    }
+
+    /**
+     * 配置RedisTemplate<String, Object>
+     * <p>
+     * 用于缓存服务的通用Redis操作
+     * </p>
+     *
+     * @param connectionFactory Redis连接工厂
+     * @return RedisTemplate实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "redisTemplate")
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.afterPropertiesSet();
+        log.info("RedisTemplate<String, Object>配置成功");
+        return template;
     }
 }
 

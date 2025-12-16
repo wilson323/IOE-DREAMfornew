@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -49,6 +50,7 @@ public class RefundApplicationController {
      * @return 退款申请实体
      */
     @PostMapping("/submit")
+    @Observed(name = "refundApplication.submitRefundApplication", contextualName = "refund-application-submit")
     @Operation(summary = "提交退款申请", description = "提交退款申请并启动审批流程")
     public ResponseDTO<RefundApplicationEntity> submitRefundApplication(
             @Valid @RequestBody RefundApplicationForm form) {
@@ -66,6 +68,7 @@ public class RefundApplicationController {
      * @return 操作结果
      */
     @PutMapping("/{refundNo}/status")
+    @Observed(name = "refundApplication.updateRefundStatus", contextualName = "refund-application-update-status")
     @Operation(summary = "更新退款申请状态", description = "由审批结果监听器调用，更新退款申请状态")
     public ResponseDTO<Void> updateRefundStatus(
             @PathVariable String refundNo,
@@ -77,4 +80,7 @@ public class RefundApplicationController {
         return ResponseDTO.ok();
     }
 }
+
+
+
 

@@ -79,6 +79,8 @@ class ConsumeRefundControllerTest {
         // When & Then
         // 由于使用@Valid，应该在Controller层被拦截
         assertThrows(Exception.class, () -> {
+            when(refundService.applyRefund(any(RefundRequestForm.class)))
+                    .thenThrow(new IllegalArgumentException("transactionNo不能为空"));
             refundController.applyRefund(refundRequestForm);
         });
     }
@@ -112,6 +114,8 @@ class ConsumeRefundControllerTest {
     void testRefundByTransactionNo_TransactionNoIsNull() {
         // When & Then
         assertThrows(Exception.class, () -> {
+            when(refundService.applyRefund(any(RefundRequestForm.class)))
+                    .thenThrow(new IllegalArgumentException("transactionNo不能为空"));
             refundController.refundByTransactionNo(null, new BigDecimal("50.00"), "原因", "");
         });
     }
@@ -144,6 +148,7 @@ class ConsumeRefundControllerTest {
     void testGetRefundDetail_RefundIdIsNull() {
         // When & Then
         assertThrows(Exception.class, () -> {
+            when(refundService.getRefundDetail(isNull())).thenThrow(new IllegalArgumentException("refundId不能为空"));
             refundController.getRefundDetail(null);
         });
     }
@@ -253,7 +258,10 @@ class ConsumeRefundControllerTest {
     void testProcessRefund_RefundIdIsNull() {
         // When & Then
         assertThrows(Exception.class, () -> {
+            when(refundService.processRefund(isNull())).thenThrow(new IllegalArgumentException("refundId不能为空"));
             refundController.processRefund(null);
         });
     }
 }
+
+

@@ -92,3 +92,6 @@ public class ConsumeTransactionDetailVO {
      */
     private Integer transactionStatus;
 }
+
+
+

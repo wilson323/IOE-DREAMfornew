@@ -64,8 +64,8 @@ data:
             server-addr: nacos-staging:8848
             namespace: staging
             group: IOE-DREAM
-            username: nacos
-            password: nacos
+            username: ${NACOS_USERNAME:}
+            password: ${NACOS_PASSWORD:}
             enabled: true
             register-enabled: true
           config:

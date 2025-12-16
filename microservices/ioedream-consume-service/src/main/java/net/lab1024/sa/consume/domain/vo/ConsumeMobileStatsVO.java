@@ -33,3 +33,6 @@ public class ConsumeMobileStatsVO {
      */
     private Integer todayUserCount;
 }
+
+
+

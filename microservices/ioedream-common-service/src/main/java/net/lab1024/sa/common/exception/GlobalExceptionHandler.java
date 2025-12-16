@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import org.slf4j.MDC;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,11 +21,18 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
  * 全局异常处理器
+ * <p>
  * 统一处理系统中的所有异常，返回标准的响应格式
+ * 严格遵循CLAUDE.md规范：
+ * - 统一异常处理，禁止多个异常处理器并存
+ * - 包含TraceId追踪，便于分布式追踪和问题定位
+ * - 完整的异常分类和处理
+ * </p>
  *
  * @author IOE-DREAM架构团队
  * @version 1.0.0
@@ -34,6 +42,20 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * 获取TraceId（从MDC获取，如果没有则生成新的）
+     *
+     * @return TraceId
+     */
+    private String getTraceId() {
+        String traceId = MDC.get("traceId");
+        if (traceId == null || traceId.trim().isEmpty()) {
+            traceId = UUID.randomUUID().toString().replace("-", "");
+            MDC.put("traceId", traceId);
+        }
+        return traceId;
+    }
+
     // ==================== 业务异常处理 ====================
 
     /**
@@ -42,7 +64,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     @ResponseStatus(HttpStatus.OK)
     public ResponseDTO<Void> handleBusinessException(BusinessException e) {
-        log.warn("[业务异常] code={}, message={}", e.getCode(), e.getMessage());
+        String traceId = getTraceId();
+        log.warn("[业务异常] traceId={}, code={}, message={}", traceId, e.getCode(), e.getMessage());
         return ResponseDTO.error(e.getCode(), e.getMessage());
     }
 
@@ -52,7 +75,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SystemException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseDTO<Void> handleSystemException(SystemException e) {
-        log.error("[系统异常] code={}, message={}", e.getCode(), e.getMessage(), e);
+        String traceId = getTraceId();
+        log.error("[系统异常] traceId={}, code={}, message={}", traceId, e.getCode(), e.getMessage(), e);
         return ResponseDTO.error(e.getCode(), "系统繁忙，请稍后重试");
     }
 
@@ -231,7 +255,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseDTO<Void> handleException(Exception e) {
-        log.error("[未知异常] ", e);
+        String traceId = getTraceId();
+        log.error("[未知异常] traceId={}, error={}", traceId, e.getMessage(), e);
         return ResponseDTO.error("SYSTEM_ERROR", "系统内部错误，请稍后重试");
     }
 
@@ -241,7 +266,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseDTO<Void> handleThrowable(Throwable t) {
-        log.error("[严重错误] ", t);
+        String traceId = getTraceId();
+        log.error("[严重错误] traceId={}, error={}", traceId, t.getMessage(), t);
         return ResponseDTO.error("CRITICAL_ERROR", "系统严重错误");
     }
 }

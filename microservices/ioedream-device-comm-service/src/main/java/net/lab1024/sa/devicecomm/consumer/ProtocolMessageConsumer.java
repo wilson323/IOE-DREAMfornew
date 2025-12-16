@@ -9,8 +9,11 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+// import net.lab1024.sa.devicecomm.monitor.ProtocolMetricsCollector; // 已废弃，已移除
 
 /**
  * 协议消息消费者
@@ -45,10 +48,10 @@ public class ProtocolMessageConsumer {
     private GatewayServiceClient gatewayServiceClient;
 
     /**
-     * 协议监控指标收集器
+     * Micrometer指标注册表（用于编程式指标收集）
      */
     @Resource
-    private ProtocolMetricsCollector metricsCollector;
+    private MeterRegistry meterRegistry;
 
     /**
      * 消费门禁记录消息
@@ -67,7 +70,12 @@ public class ProtocolMessageConsumer {
             log.info("[协议消费者] 消费门禁记录消息，request={}", request);
 
             // 记录队列消费操作
-            metricsCollector.recordQueueOperation("protocol.access.record", "consume");
+            // 记录队列消费操作（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.access.record")
+                    .tag("operation", "consume")
+                    .register(meterRegistry)
+                    .increment();
 
             // 调用门禁服务保存通行记录
             ResponseDTO<Long> response = gatewayServiceClient.callAccessService(
@@ -80,26 +88,54 @@ public class ProtocolMessageConsumer {
             long duration = System.currentTimeMillis() - startTime;
 
             if (response != null && response.isSuccess()) {
-                log.info("[协议消费者] 门禁记录保存成功，recordId={}, duration={}ms", 
+                log.info("[协议消费者] 门禁记录保存成功，recordId={}, duration={}ms",
                         response.getData(), duration);
-                metricsCollector.recordSuccess(protocolType, duration);
-                metricsCollector.recordQueueOperation("protocol.access.record", "ack");
+                // 记录成功指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.process")
+                        .tag("protocol_type", protocolType)
+                        .tag("status", "success")
+                        .register(meterRegistry)
+                        .increment();
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.access.record")
+                        .tag("operation", "ack")
+                        .register(meterRegistry)
+                        .increment();
             } else {
-                log.warn("[协议消费者] 门禁记录保存失败，错误={}, duration={}ms", 
+                log.warn("[协议消费者] 门禁记录保存失败，错误={}, duration={}ms",
                         response != null ? response.getMessage() : "响应为空", duration);
-                metricsCollector.recordError(protocolType, "SAVE_ERROR");
-                metricsCollector.recordQueueOperation("protocol.access.record", "nack");
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType)
+                        .tag("error_type", "SAVE_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.access.record")
+                        .tag("operation", "nack")
+                        .register(meterRegistry)
+                        .increment();
                 // 抛出异常，触发重试机制
-                throw new RuntimeException("门禁记录保存失败：" + 
+                log.error("[协议消费者] 门禁记录保存失败, response={}", response);
+                throw new SystemException("ACCESS_RECORD_SAVE_ERROR", "门禁记录保存失败：" +
                         (response != null ? response.getMessage() : "响应为空"));
             }
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("[协议消费者] 消费门禁记录消息异常，request={}, 错误={}, duration={}ms", 
+            log.error("[协议消费者] 消费门禁记录消息异常，request={}, 错误={}, duration={}ms",
                     request, e.getMessage(), duration, e);
-            metricsCollector.recordError(protocolType, "CONSUME_ERROR");
-            metricsCollector.recordQueueOperation("protocol.access.record", "nack");
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", protocolType)
+                    .tag("error_type", "CONSUME_ERROR")
+                    .register(meterRegistry)
+                    .increment();
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.access.record")
+                    .tag("operation", "nack")
+                    .register(meterRegistry)
+                    .increment();
             // 重新抛出异常，触发重试机制
             throw e;
         }
@@ -122,7 +158,12 @@ public class ProtocolMessageConsumer {
             log.info("[协议消费者] 消费考勤记录消息，request={}", request);
 
             // 记录队列消费操作
-            metricsCollector.recordQueueOperation("protocol.attendance.record", "consume");
+            // 记录队列消费操作（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.attendance.record")
+                    .tag("operation", "consume")
+                    .register(meterRegistry)
+                    .increment();
 
             // 调用考勤服务保存考勤记录
             ResponseDTO<Long> response = gatewayServiceClient.callAttendanceService(
@@ -135,26 +176,54 @@ public class ProtocolMessageConsumer {
             long duration = System.currentTimeMillis() - startTime;
 
             if (response != null && response.isSuccess()) {
-                log.info("[协议消费者] 考勤记录保存成功，recordId={}, duration={}ms", 
+                log.info("[协议消费者] 考勤记录保存成功，recordId={}, duration={}ms",
                         response.getData(), duration);
-                metricsCollector.recordSuccess(protocolType, duration);
-                metricsCollector.recordQueueOperation("protocol.attendance.record", "ack");
+                // 记录成功指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.process")
+                        .tag("protocol_type", protocolType)
+                        .tag("status", "success")
+                        .register(meterRegistry)
+                        .increment();
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.attendance.record")
+                        .tag("operation", "ack")
+                        .register(meterRegistry)
+                        .increment();
             } else {
-                log.warn("[协议消费者] 考勤记录保存失败，错误={}, duration={}ms", 
+                log.warn("[协议消费者] 考勤记录保存失败，错误={}, duration={}ms",
                         response != null ? response.getMessage() : "响应为空", duration);
-                metricsCollector.recordError(protocolType, "SAVE_ERROR");
-                metricsCollector.recordQueueOperation("protocol.attendance.record", "nack");
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType)
+                        .tag("error_type", "SAVE_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.attendance.record")
+                        .tag("operation", "nack")
+                        .register(meterRegistry)
+                        .increment();
                 // 抛出异常，触发重试机制
-                throw new RuntimeException("考勤记录保存失败：" + 
+                log.error("[协议消费者] 考勤记录保存失败, response={}", response);
+                throw new SystemException("ATTENDANCE_RECORD_SAVE_ERROR", "考勤记录保存失败：" +
                         (response != null ? response.getMessage() : "响应为空"));
             }
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("[协议消费者] 消费考勤记录消息异常，request={}, 错误={}, duration={}ms", 
+            log.error("[协议消费者] 消费考勤记录消息异常，request={}, 错误={}, duration={}ms",
                     request, e.getMessage(), duration, e);
-            metricsCollector.recordError(protocolType, "CONSUME_ERROR");
-            metricsCollector.recordQueueOperation("protocol.attendance.record", "nack");
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", protocolType)
+                    .tag("error_type", "CONSUME_ERROR")
+                    .register(meterRegistry)
+                    .increment();
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.attendance.record")
+                    .tag("operation", "nack")
+                    .register(meterRegistry)
+                    .increment();
             // 重新抛出异常，触发重试机制
             throw e;
         }
@@ -177,7 +246,12 @@ public class ProtocolMessageConsumer {
             log.info("[协议消费者] 消费消费记录消息，request={}", request);
 
             // 记录队列消费操作
-            metricsCollector.recordQueueOperation("protocol.consume.record", "consume");
+            // 记录队列消费操作（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.consume.record")
+                    .tag("operation", "consume")
+                    .register(meterRegistry)
+                    .increment();
 
             // 调用消费服务保存消费记录
             ResponseDTO<Long> response = gatewayServiceClient.callConsumeService(
@@ -190,26 +264,54 @@ public class ProtocolMessageConsumer {
             long duration = System.currentTimeMillis() - startTime;
 
             if (response != null && response.isSuccess()) {
-                log.info("[协议消费者] 消费记录保存成功，recordId={}, duration={}ms", 
+                log.info("[协议消费者] 消费记录保存成功，recordId={}, duration={}ms",
                         response.getData(), duration);
-                metricsCollector.recordSuccess(protocolType, duration);
-                metricsCollector.recordQueueOperation("protocol.consume.record", "ack");
+                // 记录成功指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.process")
+                        .tag("protocol_type", protocolType)
+                        .tag("status", "success")
+                        .register(meterRegistry)
+                        .increment();
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.consume.record")
+                        .tag("operation", "ack")
+                        .register(meterRegistry)
+                        .increment();
             } else {
-                log.warn("[协议消费者] 消费记录保存失败，错误={}, duration={}ms", 
+                log.warn("[协议消费者] 消费记录保存失败，错误={}, duration={}ms",
                         response != null ? response.getMessage() : "响应为空", duration);
-                metricsCollector.recordError(protocolType, "SAVE_ERROR");
-                metricsCollector.recordQueueOperation("protocol.consume.record", "nack");
+                // 记录错误指标（使用Micrometer编程式API）
+                Counter.builder("protocol.message.error")
+                        .tag("protocol_type", protocolType)
+                        .tag("error_type", "SAVE_ERROR")
+                        .register(meterRegistry)
+                        .increment();
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.consume.record")
+                        .tag("operation", "nack")
+                        .register(meterRegistry)
+                        .increment();
                 // 抛出异常，触发重试机制
-                throw new RuntimeException("消费记录保存失败：" + 
+                log.error("[协议消费者] 消费记录保存失败, response={}", response);
+                throw new SystemException("CONSUME_RECORD_SAVE_ERROR", "消费记录保存失败：" +
                         (response != null ? response.getMessage() : "响应为空"));
             }
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("[协议消费者] 消费消费记录消息异常，request={}, 错误={}, duration={}ms", 
+            log.error("[协议消费者] 消费消费记录消息异常，request={}, 错误={}, duration={}ms",
                     request, e.getMessage(), duration, e);
-            metricsCollector.recordError(protocolType, "CONSUME_ERROR");
-            metricsCollector.recordQueueOperation("protocol.consume.record", "nack");
+            // 记录错误指标（使用Micrometer编程式API）
+            Counter.builder("protocol.message.error")
+                    .tag("protocol_type", protocolType)
+                    .tag("error_type", "CONSUME_ERROR")
+                    .register(meterRegistry)
+                    .increment();
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.consume.record")
+                    .tag("operation", "nack")
+                    .register(meterRegistry)
+                    .increment();
             // 重新抛出异常，触发重试机制
             throw e;
         }
@@ -231,7 +333,12 @@ public class ProtocolMessageConsumer {
             log.info("[协议消费者] 消费设备状态更新消息，request={}", request);
 
             // 记录队列消费操作
-            metricsCollector.recordQueueOperation("protocol.device.status", "consume");
+            // 记录队列消费操作（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.device.status")
+                    .tag("operation", "consume")
+                    .register(meterRegistry)
+                    .increment();
 
             // 调用公共服务更新设备状态
             ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
@@ -245,21 +352,37 @@ public class ProtocolMessageConsumer {
 
             if (response != null && response.isSuccess()) {
                 log.info("[协议消费者] 设备状态更新成功，duration={}ms", duration);
-                metricsCollector.recordQueueOperation("protocol.device.status", "ack");
+                // 记录队列确认操作（使用Micrometer编程式API）
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.device.status")
+                        .tag("operation", "ack")
+                        .register(meterRegistry)
+                        .increment();
             } else {
-                log.warn("[协议消费者] 设备状态更新失败，错误={}, duration={}ms", 
+                log.warn("[协议消费者] 设备状态更新失败，错误={}, duration={}ms",
                         response != null ? response.getMessage() : "响应为空", duration);
-                metricsCollector.recordQueueOperation("protocol.device.status", "nack");
+                // 记录队列拒绝操作（使用Micrometer编程式API）
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.device.status")
+                        .tag("operation", "nack")
+                        .register(meterRegistry)
+                        .increment();
                 // 抛出异常，触发重试机制
-                throw new RuntimeException("设备状态更新失败：" + 
+                log.error("[协议消费者] 设备状态更新失败, response={}", response);
+                throw new SystemException("DEVICE_STATUS_UPDATE_ERROR", "设备状态更新失败：" +
                         (response != null ? response.getMessage() : "响应为空"));
             }
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("[协议消费者] 消费设备状态更新消息异常，request={}, 错误={}, duration={}ms", 
+            log.error("[协议消费者] 消费设备状态更新消息异常，request={}, 错误={}, duration={}ms",
                     request, e.getMessage(), duration, e);
-            metricsCollector.recordQueueOperation("protocol.device.status", "nack");
+            // 记录队列拒绝操作（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.device.status")
+                    .tag("operation", "nack")
+                    .register(meterRegistry)
+                    .increment();
             // 重新抛出异常，触发重试机制
             throw e;
         }
@@ -281,7 +404,12 @@ public class ProtocolMessageConsumer {
             log.info("[协议消费者] 消费报警事件消息，request={}", request);
 
             // 记录队列消费操作
-            metricsCollector.recordQueueOperation("protocol.alarm.event", "consume");
+            // 记录队列消费操作（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.alarm.event")
+                    .tag("operation", "consume")
+                    .register(meterRegistry)
+                    .increment();
 
             // 调用公共服务保存报警记录
             ResponseDTO<Long> response = gatewayServiceClient.callCommonService(
@@ -294,23 +422,39 @@ public class ProtocolMessageConsumer {
             long duration = System.currentTimeMillis() - startTime;
 
             if (response != null && response.isSuccess()) {
-                log.info("[协议消费者] 报警事件保存成功，recordId={}, duration={}ms", 
+                log.info("[协议消费者] 报警事件保存成功，recordId={}, duration={}ms",
                         response.getData(), duration);
-                metricsCollector.recordQueueOperation("protocol.alarm.event", "ack");
+                // 记录队列确认操作（使用Micrometer编程式API）
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.alarm.event")
+                        .tag("operation", "ack")
+                        .register(meterRegistry)
+                        .increment();
             } else {
-                log.warn("[协议消费者] 报警事件保存失败，错误={}, duration={}ms", 
+                log.warn("[协议消费者] 报警事件保存失败，错误={}, duration={}ms",
                         response != null ? response.getMessage() : "响应为空", duration);
-                metricsCollector.recordQueueOperation("protocol.alarm.event", "nack");
+                // 记录队列拒绝操作（使用Micrometer编程式API）
+                Counter.builder("protocol.queue.operation")
+                        .tag("queue_name", "protocol.alarm.event")
+                        .tag("operation", "nack")
+                        .register(meterRegistry)
+                        .increment();
                 // 抛出异常，触发重试机制
-                throw new RuntimeException("报警事件保存失败：" + 
+                log.error("[协议消费者] 报警事件保存失败, response={}", response);
+                throw new SystemException("ALARM_EVENT_SAVE_ERROR", "报警事件保存失败：" +
                         (response != null ? response.getMessage() : "响应为空"));
             }
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("[协议消费者] 消费报警事件消息异常，request={}, 错误={}, duration={}ms", 
+            log.error("[协议消费者] 消费报警事件消息异常，request={}, 错误={}, duration={}ms",
                     request, e.getMessage(), duration, e);
-            metricsCollector.recordQueueOperation("protocol.alarm.event", "nack");
+            // 记录队列拒绝操作（使用Micrometer编程式API）
+            Counter.builder("protocol.queue.operation")
+                    .tag("queue_name", "protocol.alarm.event")
+                    .tag("operation", "nack")
+                    .register(meterRegistry)
+                    .increment();
             // 重新抛出异常，触发重试机制
             throw e;
         }

@@ -381,7 +381,7 @@ export default {
      */
     async loadRuleDetail() {
       try {
-        // TODO: 实现加载规则详情的逻辑
+        // 规则详情API - 待后端接口完成后对接
         console.log('加载规则详情:', this.ruleId);
       } catch (error) {
         console.error('加载规则详情失败:', error);

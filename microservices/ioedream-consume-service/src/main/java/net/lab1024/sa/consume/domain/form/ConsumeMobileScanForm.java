@@ -41,3 +41,6 @@ public class ConsumeMobileScanForm {
      */
     private Long areaId;
 }
+
+
+

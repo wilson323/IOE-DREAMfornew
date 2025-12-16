@@ -3,19 +3,21 @@ package net.lab1024.sa.common.organization.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.dao.AreaDao;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.service.AreaUnifiedService;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.Objects;
 
 /**
  * 统一区域空间管理服务实现类
@@ -32,45 +34,24 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     @Resource
     private AreaDao areaDao;
 
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Redis缓存前缀
-    private static final String CACHE_PREFIX = "area:unified:";
-    private static final long CACHE_EXPIRE_HOURS = 2;
-
     @Override
+    @Observed(name = "area.getAreaTree", contextualName = "area-get-tree")
+    @Cacheable(value = "area:unified:tree", unless = "#result == null || #result.isEmpty()")
     public List<AreaEntity> getAreaTree() {
         log.debug("[区域统一服务] 获取完整区域树");
-
-        String cacheKey = CACHE_PREFIX + "tree:all";
-        List<AreaEntity> cachedTree = getCachedAreaTree(cacheKey);
-
-        if (cachedTree != null) {
-            return cachedTree;
-        }
-
         List<AreaEntity> allAreas = areaDao.selectList(null);
         List<AreaEntity> areaTree = buildAreaTree(allAreas);
-
-        cacheAreaTree(cacheKey, areaTree);
-
         log.debug("[区域统一服务] 区域树构建完成，根节点数量: {}", areaTree.size());
         return areaTree;
     }
 
     @Override
+    @Observed(name = "area.getUserAccessibleAreas", contextualName = "area-get-user-accessible")
+    @Cacheable(value = "area:unified:user_areas", key = "#userId", unless = "#result == null || #result.isEmpty()")
     public List<AreaEntity> getUserAccessibleAreas(Long userId) {
         log.debug("[区域统一服务] 获取用户可访问区域, userId={}", userId);
-
-        String cacheKey = CACHE_PREFIX + "user_areas:" + userId;
-        List<AreaEntity> cachedAreas = getCachedAreaList(cacheKey);
-
-        if (cachedAreas != null) {
-            return cachedAreas;
-        }
 
         // 从用户-区域关联表获取可访问区域
         List<Long> accessibleAreaIds = areaDao.selectAccessibleAreaIds(userId);
@@ -90,14 +71,13 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
                 .filter(area -> area.getStatus() != null && area.getStatus() == 1)
                 .collect(Collectors.toList());
 
-        cacheAreaList(cacheKey, activeAreas);
-
         log.debug("[区域统一服务] 用户可访问区域获取完成, userId={}, areaCount={}",
                 userId, activeAreas.size());
         return activeAreas;
     }
 
     @Override
+    @Observed(name = "area.hasAreaAccess", contextualName = "area-has-access")
     public boolean hasAreaAccess(Long userId, Long areaId) {
         log.debug("[区域统一服务] 检查用户区域权限, userId={}, areaId={}", userId, areaId);
 
@@ -118,26 +98,15 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     }
 
     @Override
+    @Observed(name = "area.getAreaByCode", contextualName = "area-get-by-code")
+    @Cacheable(value = "area:unified:code", key = "#areaCode", unless = "#result == null")
     public AreaEntity getAreaByCode(String areaCode) {
         log.debug("[区域统一服务] 根据编码获取区域, areaCode={}", areaCode);
-
-        String cacheKey = CACHE_PREFIX + "code:" + areaCode;
-        AreaEntity cachedArea = getCachedArea(cacheKey);
-
-        if (cachedArea != null) {
-            return cachedArea;
-        }
-
-        AreaEntity area = areaDao.selectByCode(areaCode);
-
-        if (area != null) {
-            cacheArea(cacheKey, area);
-        }
-
-        return area;
+        return areaDao.selectByCode(areaCode);
     }
 
     @Override
+    @Observed(name = "area.getAreaPath", contextualName = "area-get-path")
     public List<AreaEntity> getAreaPath(Long areaId) {
         log.debug("[区域统一服务] 获取区域路径, areaId={}", areaId);
 
@@ -164,6 +133,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     }
 
     @Override
+    @Observed(name = "area.getChildAreas", contextualName = "area-get-children")
     public List<AreaEntity> getChildAreas(Long parentAreaId) {
         log.debug("[区域统一服务] 获取子区域, parentAreaId={}", parentAreaId);
 
@@ -171,15 +141,10 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     }
 
     @Override
+    @Observed(name = "area.getAreaBusinessAttributes", contextualName = "area-get-business-attributes")
+    @Cacheable(value = "area:unified:business_attrs", key = "#areaId + ':' + #businessModule", unless = "#result == null || #result.isEmpty()")
     public Map<String, Object> getAreaBusinessAttributes(Long areaId, String businessModule) {
         log.debug("[区域统一服务] 获取区域业务属性, areaId={}, businessModule={}", areaId, businessModule);
-
-        String cacheKey = CACHE_PREFIX + "business_attrs:" + areaId + ":" + businessModule;
-        Map<String, Object> cachedAttributes = getCachedBusinessAttributes(cacheKey);
-
-        if (cachedAttributes != null) {
-            return cachedAttributes;
-        }
 
         String attributesStr = areaDao.selectBusinessAttributes(areaId, businessModule);
         Map<String, Object> attributes = null;
@@ -187,19 +152,18 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
         if (attributesStr != null && !attributesStr.trim().isEmpty()) {
             try {
                 attributes = objectMapper.readValue(attributesStr, new TypeReference<Map<String, Object>>() {});
+            } catch (IllegalArgumentException | ParamException e) {
+                log.warn("[区域统一服务] 解析业务属性参数异常: areaId={}, businessModule={}, error={}", areaId, businessModule, e.getMessage());
             } catch (Exception e) {
-                log.warn("[区域统一服务] 解析业务属性失败: areaId={}, businessModule={}", areaId, businessModule, e);
+                log.warn("[区域统一服务] 解析业务属性系统异常: areaId={}, businessModule={}", areaId, businessModule, e);
             }
-        }
-
-        if (attributes != null) {
-            cacheBusinessAttributes(cacheKey, attributes);
         }
 
         return attributes;
     }
 
     @Override
+    @Observed(name = "area.setAreaBusinessAttributes", contextualName = "area-set-business-attributes")
     public boolean setAreaBusinessAttributes(Long areaId, String businessModule, Map<String, Object> attributes) {
         log.info("[区域统一服务] 设置区域业务属性, areaId={}, businessModule={}", areaId, businessModule);
 
@@ -209,19 +173,24 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
 
             if (result > 0) {
                 // 清除相关缓存
-                clearAreaBusinessAttributesCache(areaId, businessModule);
+                evictAreaBusinessAttributesCache(areaId, businessModule);
                 log.info("[区域统一服务] 区域业务属性设置成功, areaId={}, businessModule={}", areaId, businessModule);
                 return true;
             }
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[区域统一服务] 设置区域业务属性参数异常, areaId={}, businessModule={}, error={}", areaId, businessModule, e.getMessage());
+        } catch (BusinessException e) {
+            log.warn("[区域统一服务] 设置区域业务属性业务异常, areaId={}, businessModule={}, error={}", areaId, businessModule, e.getMessage());
         } catch (Exception e) {
-            log.error("[区域统一服务] 设置区域业务属性失败, areaId={}, businessModule={}", areaId, businessModule, e);
+            log.error("[区域统一服务] 设置区域业务属性系统异常, areaId={}, businessModule={}", areaId, businessModule, e);
         }
 
         return false;
     }
 
     @Override
+    @Observed(name = "area.getAreaDevices", contextualName = "area-get-devices")
     public List<Map<String, Object>> getAreaDevices(Long areaId, String deviceType) {
         log.debug("[区域统一服务] 获取区域设备, areaId={}, deviceType={}", areaId, deviceType);
 
@@ -239,6 +208,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     }
 
     @Override
+    @Observed(name = "area.getAreaStatistics", contextualName = "area-get-statistics")
     public Map<String, Object> getAreaStatistics(Long areaId) {
         log.debug("[区域统一服务] 获取区域统计信息, areaId={}", areaId);
 
@@ -259,6 +229,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     }
 
     @Override
+    @Observed(name = "area.getAreasByBusinessType", contextualName = "area-get-by-business-type")
     public List<AreaEntity> getAreasByBusinessType(String businessType) {
         log.debug("[区域统一服务] 根据业务类型获取区域, businessType={}", businessType);
 
@@ -266,6 +237,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     }
 
     @Override
+    @Observed(name = "area.isAreaSupportBusiness", contextualName = "area-is-support-business")
     public boolean isAreaSupportBusiness(Long areaId, String businessModule) {
         log.debug("[区域统一服务] 检查区域业务支持, areaId={}, businessModule={}", areaId, businessModule);
 
@@ -274,6 +246,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     }
 
     @Override
+    @Observed(name = "area.getAreaSupportedBusinessModules", contextualName = "area-get-supported-modules")
     public Set<String> getAreaSupportedBusinessModules(Long areaId) {
         log.debug("[区域统一服务] 获取区域支持的业务模块, areaId={}", areaId);
 
@@ -324,103 +297,15 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     }
 
     /**
-     * 缓存相关方法
+     * 清除区域业务属性缓存
+     * <p>
+     * 使用@CacheEvict注解清除指定区域和业务模块的缓存
+     * </p>
      */
-    private List<AreaEntity> getCachedAreaTree(String cacheKey) {
-        try {
-            String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");
-            String cached = stringRedisTemplate.opsForValue().get(nonNullCacheKey);
-            return cached != null ? objectMapper.readValue(cached, new TypeReference<List<AreaEntity>>() {}) : null;
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 缓存读取失败", e);
-            return null;
-        }
-    }
-
-    private void cacheAreaTree(String cacheKey, List<AreaEntity> areaTree) {
-        try {
-            String json = objectMapper.writeValueAsString(areaTree);
-            String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");
-            String nonNullJson = Objects.requireNonNull(json, "json不能为null");
-            stringRedisTemplate.opsForValue().set(nonNullCacheKey, nonNullJson, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 缓存写入失败", e);
-        }
-    }
-
-    private List<AreaEntity> getCachedAreaList(String cacheKey) {
-        try {
-            String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");
-            String cached = stringRedisTemplate.opsForValue().get(nonNullCacheKey);
-            return cached != null ? objectMapper.readValue(cached, new TypeReference<List<AreaEntity>>() {}) : null;
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 缓存读取失败", e);
-            return null;
-        }
-    }
-
-    private void cacheAreaList(String cacheKey, List<AreaEntity> areaList) {
-        try {
-            String json = objectMapper.writeValueAsString(areaList);
-            String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");
-            String nonNullJson = Objects.requireNonNull(json, "json不能为null");
-            stringRedisTemplate.opsForValue().set(nonNullCacheKey, nonNullJson, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 缓存写入失败", e);
-        }
-    }
-
-    private AreaEntity getCachedArea(String cacheKey) {
-        try {
-            String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");
-            String cached = stringRedisTemplate.opsForValue().get(nonNullCacheKey);
-            return cached != null ? objectMapper.readValue(cached, AreaEntity.class) : null;
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 缓存读取失败", e);
-            return null;
-        }
-    }
-
-    private void cacheArea(String cacheKey, AreaEntity area) {
-        try {
-            String json = objectMapper.writeValueAsString(area);
-            String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");
-            String nonNullJson = Objects.requireNonNull(json, "json不能为null");
-            stringRedisTemplate.opsForValue().set(nonNullCacheKey, nonNullJson, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 缓存写入失败", e);
-        }
-    }
-
-    private Map<String, Object> getCachedBusinessAttributes(String cacheKey) {
-        try {
-            String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");
-            String cached = stringRedisTemplate.opsForValue().get(nonNullCacheKey);
-            return cached != null ? objectMapper.readValue(cached, new TypeReference<Map<String, Object>>() {}) : null;
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 业务属性缓存读取失败", e);
-            return null;
-        }
-    }
-
-    private void cacheBusinessAttributes(String cacheKey, Map<String, Object> attributes) {
-        try {
-            String json = objectMapper.writeValueAsString(attributes);
-            String nonNullCacheKey = Objects.requireNonNull(cacheKey, "cacheKey不能为null");
-            String nonNullJson = Objects.requireNonNull(json, "json不能为null");
-            stringRedisTemplate.opsForValue().set(nonNullCacheKey, nonNullJson, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 业务属性缓存写入失败", e);
-        }
-    }
-
-    private void clearAreaBusinessAttributesCache(Long areaId, String businessModule) {
-        try {
-            String cacheKey = CACHE_PREFIX + "business_attrs:" + areaId + ":" + businessModule;
-            stringRedisTemplate.delete(cacheKey);
-        } catch (Exception e) {
-            log.warn("[区域统一服务] 清除业务属性缓存失败", e);
-        }
+    @CacheEvict(value = "area:unified:business_attrs", key = "#areaId + ':' + #businessModule")
+    public void evictAreaBusinessAttributesCache(Long areaId, String businessModule) {
+        log.debug("[区域统一服务] 清除区域业务属性缓存, areaId={}, businessModule={}", areaId, businessModule);
+        // 缓存清除由@CacheEvict注解自动处理
     }
 
     /**

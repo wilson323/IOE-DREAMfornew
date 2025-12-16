@@ -4,9 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.consume.domain.vo.MobileAccountInfoVO;
-import net.lab1024.sa.common.consume.manager.MobileAccountInfoManager;
+import net.lab1024.sa.consume.consume.domain.vo.MobileAccountInfoVO;
+import net.lab1024.sa.consume.consume.manager.MobileAccountInfoManager;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.util.SmartRequestUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,20 +73,17 @@ public class MobileAccountInfoService {
 
             return ResponseDTO.ok(accountInfo);
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | ParamException e) {
             log.warn("[移动端账户信息服务] 参数验证失败, accountId={}, error={}", accountId, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", e.getMessage());
-
-        } catch (RuntimeException e) {
-            if (e.getMessage().contains("不存在")) {
-                log.warn("[移动端账户信息服务] 账户不存在, accountId={}, error={}", accountId, e.getMessage());
-                return ResponseDTO.error("ACCOUNT_NOT_FOUND", "账户不存在");
-            }
-            log.error("[移动端账户信息服务] 业务异常, accountId={}, error={}", accountId, e.getMessage(), e);
-            return ResponseDTO.error("BUSINESS_ERROR", e.getMessage());
-
+        } catch (BusinessException e) {
+            log.warn("[移动端账户信息服务] 业务异常, accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage());
+            return ResponseDTO.error(e.getCode(), e.getMessage());
+        } catch (SystemException e) {
+            log.error("[移动端账户信息服务] 系统异常, accountId={}, code={}, message={}", accountId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[移动端账户信息服务] 系统异常, accountId={}, error={}", accountId, e.getMessage(), e);
+            log.error("[移动端账户信息服务] 未知异常, accountId={}, error={}", accountId, e.getMessage(), e);
             return ResponseDTO.error("SYSTEM_ERROR", "系统异常，请稍后重试");
         }
     }
@@ -117,9 +117,21 @@ public class MobileAccountInfoService {
             log.warn("[移动端账户信息服务] 无法获取当前用户ID，可能未登录或认证拦截器未设置用户ID");
             return null;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[移动端账户信息服务] 获取当前用户ID参数错误: error={}", e.getMessage());
+            return null;
+        } catch (BusinessException e) {
+            log.warn("[移动端账户信息服务] 获取当前用户ID业务异常: code={}, message={}", e.getCode(), e.getMessage());
+            return null;
+        } catch (SystemException e) {
+            log.error("[移动端账户信息服务] 获取当前用户ID系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.error("[移动端账户信息服务] 获取当前用户ID异常: error={}", e.getMessage(), e);
+            log.error("[移动端账户信息服务] 获取当前用户ID未知异常: error={}", e.getMessage(), e);
             return null;
         }
     }
 }
+
+
+

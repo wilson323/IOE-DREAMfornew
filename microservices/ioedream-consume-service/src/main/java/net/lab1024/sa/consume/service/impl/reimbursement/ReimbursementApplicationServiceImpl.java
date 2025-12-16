@@ -7,10 +7,14 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
@@ -50,7 +54,9 @@ public class ReimbursementApplicationServiceImpl implements ReimbursementApplica
     private AccountManager accountManager;
 
     @Override
+    @Observed(name = "consume.reimbursementApplication.submitReimbursementApplication", contextualName = "consume-reimbursement-application-submit")
     @Transactional(rollbackFor = Exception.class)
+    @Retry(name = "external-service-retry", fallbackMethod = "submitReimbursementApplicationFallback")
     public ReimbursementApplicationEntity submitReimbursementApplication(ReimbursementApplicationForm form) {
         log.info("[报销申请] 提交报销申请，userId={}, amount={}, type={}",
                 form.getUserId(), form.getReimbursementAmount(), form.getReimbursementType());
@@ -106,7 +112,20 @@ public class ReimbursementApplicationServiceImpl implements ReimbursementApplica
         return entity;
     }
 
+    /**
+     * 报销申请提交降级方法
+     * <p>
+     * 当工作流服务调用失败时，使用此降级方法
+     * </p>
+     */
+    public ReimbursementApplicationEntity submitReimbursementApplicationFallback(
+            ReimbursementApplicationForm form, Exception e) {
+        log.error("[报销申请] 启动审批流程失败，使用降级方案, userId={}, error={}", form.getUserId(), e.getMessage(), e);
+        throw new BusinessException("启动审批流程失败: " + e.getMessage());
+    }
+
     @Override
+    @Observed(name = "consume.reimbursementApplication.updateReimbursementStatus", contextualName = "consume-reimbursement-application-update-status")
     @Transactional(rollbackFor = Exception.class)
     public void updateReimbursementStatus(String reimbursementNo, String status, String approvalComment) {
         log.info("[报销申请] 更新报销状态，reimbursementNo={}, status={}", reimbursementNo, status);
@@ -171,12 +190,18 @@ public class ReimbursementApplicationServiceImpl implements ReimbursementApplica
             // 如果需要记录报销流水到交易表，可以在这里添加
             // 目前报销直接增加账户余额，不记录交易流水，符合一般报销业务逻辑
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.warn("[报销申请] 报销处理参数错误，reimbursementNo={}, error={}", entity.getReimbursementNo(), e.getMessage());
+            throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.error("[报销申请] 报销业务异常，reimbursementNo={}", entity.getReimbursementNo(), e);
+            log.warn("[报销申请] 报销业务异常，reimbursementNo={}, code={}, message={}", entity.getReimbursementNo(), e.getCode(), e.getMessage());
             throw e;
+        } catch (SystemException e) {
+            log.error("[报销申请] 报销处理系统异常，reimbursementNo={}, code={}, message={}", entity.getReimbursementNo(), e.getCode(), e.getMessage(), e);
+            throw new SystemException("REIMBURSEMENT_PROCESS_SYSTEM_ERROR", "报销处理异常：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[报销申请] 报销处理异常，reimbursementNo={}", entity.getReimbursementNo(), e);
-            throw new BusinessException("报销处理异常：" + e.getMessage());
+            log.error("[报销申请] 报销处理未知异常，reimbursementNo={}", entity.getReimbursementNo(), e);
+            throw new SystemException("REIMBURSEMENT_PROCESS_SYSTEM_ERROR", "报销处理异常：" + e.getMessage(), e);
         }
     }
 
@@ -189,4 +214,7 @@ public class ReimbursementApplicationServiceImpl implements ReimbursementApplica
         return "RB" + System.currentTimeMillis();
     }
 }
+
+
+
 

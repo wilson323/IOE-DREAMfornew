@@ -3,8 +3,8 @@ package net.lab1024.sa.oa.workflow.service;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.workflow.domain.form.ApprovalTemplateForm;
-import net.lab1024.sa.common.workflow.entity.ApprovalTemplateEntity;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalTemplateForm;
+import net.lab1024.sa.oa.workflow.entity.ApprovalTemplateEntity;
 
 /**
  * 审批模板服务接口
@@ -117,4 +117,8 @@ public interface ApprovalTemplateService {
             String businessType,
             String businessTypeName);
 }
+
+
+
+
 

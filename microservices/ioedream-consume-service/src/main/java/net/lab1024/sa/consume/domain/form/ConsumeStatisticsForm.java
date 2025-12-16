@@ -133,3 +133,6 @@ public class ConsumeStatisticsForm {
      */
     private String groupByDimension;
 }
+
+
+

@@ -1,6 +1,5 @@
 package net.lab1024.sa.gateway;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
@@ -25,14 +24,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * </ul>
  * </p>
  * <p>
- * <b>重要说明</b>:
- * Spring Cloud Gateway必须使用WebFlux(Reactive)模式，
- * 与Servlet(Spring MVC)模式不兼容。已通过以下方式排除Servlet组件:
- * <ul>
- *   <li>pom.xml中排除spring-boot-starter-web</li>
- *   <li>pom.xml中排除spring-security-web</li>
- *   <li>应用类中排除Servlet自动配置</li>
- * </ul>
+ * <b>内存优化说明</b>:
+ * scanBasePackages精确配置，只扫描网关服务需要的公共包，
+ * 减少不必要的类加载，优化内存使用。
  * </p>
  *
  * @author IOE-DREAM Team
@@ -41,8 +35,19 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @SpringBootApplication(
     scanBasePackages = {
-        "net.lab1024.sa.common",
-        "net.lab1024.sa.gateway"
+        // 网关服务自身包
+        "net.lab1024.sa.gateway",
+        // 核心配置（必需）
+        "net.lab1024.sa.common.config",
+        // 网关相关组件
+        "net.lab1024.sa.common.gateway",
+        // 响应和异常处理
+        "net.lab1024.sa.common.response",
+        "net.lab1024.sa.common.exception",
+        // 工具类
+        "net.lab1024.sa.common.util",
+        // 安全认证
+        "net.lab1024.sa.common.security"
     },
     exclude = {
         // 排除JPA自动配置 (使用MyBatis-Plus)
@@ -56,26 +61,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
     }
 )
 @EnableDiscoveryClient
-@MapperScan(basePackages = {
-    // Common模块所有DAO包（17个，按字母排序）
-    "net.lab1024.sa.common.attendance.dao",
-    "net.lab1024.sa.common.audit.dao",
-    "net.lab1024.sa.common.auth.dao",
-    "net.lab1024.sa.common.consume.dao",
-    "net.lab1024.sa.common.device.dao",
-    "net.lab1024.sa.common.menu.dao",
-    "net.lab1024.sa.common.monitor.dao",
-    "net.lab1024.sa.common.notification.dao",
-    "net.lab1024.sa.common.oa.dao",
-    "net.lab1024.sa.common.organization.dao",
-    "net.lab1024.sa.common.rbac.dao",
-    "net.lab1024.sa.common.scheduler.dao",
-    "net.lab1024.sa.common.system.dao",
-    "net.lab1024.sa.common.system.employee.dao",
-    "net.lab1024.sa.common.video.dao",
-    "net.lab1024.sa.common.visitor.dao",
-    "net.lab1024.sa.common.workflow.dao"
-})
 public class GatewayServiceApplication {
 
     /**

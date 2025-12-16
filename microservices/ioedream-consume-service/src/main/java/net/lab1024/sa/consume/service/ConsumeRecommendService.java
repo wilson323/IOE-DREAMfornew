@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,9 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.cache.CacheService;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.recommend.RecommendationEngine;
-import net.lab1024.sa.common.util.RedisUtil;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
+import org.springframework.data.redis.core.RedisTemplate;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.domain.entity.ConsumeAreaEntity;
 import net.lab1024.sa.consume.domain.entity.ConsumeProductEntity;
@@ -37,6 +41,7 @@ import net.lab1024.sa.consume.manager.ConsumeAreaManager;
  */
 @Slf4j
 @Service
+@Transactional(readOnly = true)  // 推荐服务主要是查询操作，使用只读事务
 public class ConsumeRecommendService {
 
     @Resource
@@ -55,7 +60,7 @@ public class ConsumeRecommendService {
     private CacheService cacheService;
 
     @Resource
-    private RedisUtil redisUtil;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Resource
     private ObjectMapper objectMapper;
@@ -99,8 +104,17 @@ public class ConsumeRecommendService {
                     ))
                     .collect(Collectors.toList());
 
+        } catch (IllegalArgumentException | net.lab1024.sa.common.exception.ParamException e) {
+            log.error("[菜品推荐] 推荐参数错误: error={}", e.getMessage(), e);
+            return Collections.emptyList();
+        } catch (net.lab1024.sa.common.exception.BusinessException e) {
+            log.error("[菜品推荐] 推荐业务异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return Collections.emptyList();
+        } catch (net.lab1024.sa.common.exception.SystemException e) {
+            log.error("[菜品推荐] 推荐系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return Collections.emptyList();
         } catch (Exception e) {
-            log.error("[菜品推荐] 推荐失败", e);
+            log.error("[菜品推荐] 推荐未知异常", e);
             return Collections.emptyList();
         }
     }
@@ -160,8 +174,17 @@ public class ConsumeRecommendService {
                     ))
                     .collect(Collectors.toList());
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.error("[餐厅推荐] 推荐参数错误: error={}", e.getMessage(), e);
+            return Collections.emptyList();
+        } catch (BusinessException e) {
+            log.error("[餐厅推荐] 推荐业务异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return Collections.emptyList();
+        } catch (SystemException e) {
+            log.error("[餐厅推荐] 推荐系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return Collections.emptyList();
         } catch (Exception e) {
-            log.error("[餐厅推荐] 推荐失败", e);
+            log.error("[餐厅推荐] 推荐未知异常", e);
             return Collections.emptyList();
         }
     }
@@ -199,8 +222,17 @@ public class ConsumeRecommendService {
             log.info("[金额预测] 预测金额={}", predictedAmount);
             return Math.round(predictedAmount * 100.0) / 100.0;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.error("[金额预测] 预测参数错误: error={}", e.getMessage(), e);
+            return 15.0;
+        } catch (BusinessException e) {
+            log.error("[金额预测] 预测业务异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return 15.0;
+        } catch (SystemException e) {
+            log.error("[金额预测] 预测系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return 15.0;
         } catch (Exception e) {
-            log.error("[金额预测] 预测失败", e);
+            log.error("[金额预测] 预测未知异常", e);
             return 15.0;
         }
     }
@@ -256,6 +288,12 @@ public class ConsumeRecommendService {
                             }
                         }
                     }
+                } catch (IllegalArgumentException | ParamException e) {
+                    log.warn("[推荐服务] 解析交易记录商品明细失败（参数错误）: transactionNo={}", transaction.getTransactionNo(), e);
+                } catch (BusinessException e) {
+                    log.warn("[推荐服务] 解析交易记录商品明细失败（业务异常）: transactionNo={}", transaction.getTransactionNo(), e);
+                } catch (SystemException e) {
+                    log.warn("[推荐服务] 解析交易记录商品明细失败（系统异常）: transactionNo={}", transaction.getTransactionNo(), e);
                 } catch (Exception e) {
                     log.warn("[推荐服务] 解析交易记录商品明细失败: transactionNo={}", transaction.getTransactionNo(), e);
                 }
@@ -264,8 +302,17 @@ public class ConsumeRecommendService {
             log.info("[推荐服务] 用户菜品行为数据加载完成，用户数：{}", userDishBehaviors.size());
             return userDishBehaviors;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.error("[推荐服务] 加载用户菜品行为数据参数错误: error={}", e.getMessage(), e);
+            return new HashMap<>();
+        } catch (BusinessException e) {
+            log.error("[推荐服务] 加载用户菜品行为数据业务异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return new HashMap<>();
+        } catch (SystemException e) {
+            log.error("[推荐服务] 加载用户菜品行为数据系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return new HashMap<>();
         } catch (Exception e) {
-            log.error("[推荐服务] 加载用户菜品行为数据失败", e);
+            log.error("[推荐服务] 加载用户菜品行为数据未知异常", e);
             return new HashMap<>();
         }
     }
@@ -337,6 +384,12 @@ public class ConsumeRecommendService {
 
                     dishFeatures.put(productId, features);
 
+                } catch (IllegalArgumentException | ParamException e) {
+                    log.warn("[推荐服务] 提取菜品特征失败（参数错误）: productId={}", product.getId(), e);
+                } catch (BusinessException e) {
+                    log.warn("[推荐服务] 提取菜品特征失败（业务异常）: productId={}", product.getId(), e);
+                } catch (SystemException e) {
+                    log.warn("[推荐服务] 提取菜品特征失败（系统异常）: productId={}", product.getId(), e);
                 } catch (Exception e) {
                     log.warn("[推荐服务] 提取菜品特征失败: productId={}", product.getId(), e);
                 }
@@ -345,8 +398,17 @@ public class ConsumeRecommendService {
             log.info("[推荐服务] 菜品特征数据加载完成，菜品数：{}", dishFeatures.size());
             return dishFeatures;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.error("[推荐服务] 加载菜品特征数据参数错误: error={}", e.getMessage(), e);
+            return new HashMap<>();
+        } catch (BusinessException e) {
+            log.error("[推荐服务] 加载菜品特征数据业务异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return new HashMap<>();
+        } catch (SystemException e) {
+            log.error("[推荐服务] 加载菜品特征数据系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return new HashMap<>();
         } catch (Exception e) {
-            log.error("[推荐服务] 加载菜品特征数据失败", e);
+            log.error("[推荐服务] 加载菜品特征数据未知异常", e);
             return new HashMap<>();
         }
     }
@@ -372,8 +434,8 @@ public class ConsumeRecommendService {
                     Long productId = Long.parseLong(product.getId().toString());
                     String redisKey = "consume:product:popularity:" + productId;
 
-                    // 从Redis获取热度分数
-                    Object popularityObj = RedisUtil.get(redisKey);
+                    // 从Redis获取热度分数（使用Spring Data Redis标准API）
+                    Object popularityObj = redisTemplate.opsForValue().get(redisKey);
                     if (popularityObj != null) {
                         double popularity = 0.0;
                         if (popularityObj instanceof Number) {
@@ -395,6 +457,12 @@ public class ConsumeRecommendService {
                         }
                     }
 
+                } catch (IllegalArgumentException | ParamException e) {
+                    log.warn("[推荐服务] 获取菜品热度失败（参数错误）: productId={}", product.getId(), e);
+                } catch (BusinessException e) {
+                    log.warn("[推荐服务] 获取菜品热度失败（业务异常）: productId={}", product.getId(), e);
+                } catch (SystemException e) {
+                    log.warn("[推荐服务] 获取菜品热度失败（系统异常）: productId={}", product.getId(), e);
                 } catch (Exception e) {
                     log.warn("[推荐服务] 获取菜品热度失败: productId={}", product.getId(), e);
                 }
@@ -403,8 +471,17 @@ public class ConsumeRecommendService {
             log.info("[推荐服务] 菜品热度数据加载完成，菜品数：{}", dishPopularity.size());
             return dishPopularity;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.error("[推荐服务] 加载菜品热度数据参数错误: error={}", e.getMessage(), e);
+            return new HashMap<>();
+        } catch (BusinessException e) {
+            log.error("[推荐服务] 加载菜品热度数据业务异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return new HashMap<>();
+        } catch (SystemException e) {
+            log.error("[推荐服务] 加载菜品热度数据系统异常: code={}, message={}", e.getCode(), e.getMessage(), e);
+            return new HashMap<>();
         } catch (Exception e) {
-            log.error("[推荐服务] 加载菜品热度数据失败", e);
+            log.error("[推荐服务] 加载菜品热度数据未知异常", e);
             return new HashMap<>();
         }
     }
@@ -483,8 +560,17 @@ public class ConsumeRecommendService {
                     userId, timeOfDay, historicalAmounts.size());
             return historicalAmounts;
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.error("[推荐服务] 加载用户历史消费金额参数错误: userId={}, timeOfDay={}, error={}", userId, timeOfDay, e.getMessage(), e);
+            return new ArrayList<>();
+        } catch (BusinessException e) {
+            log.error("[推荐服务] 加载用户历史消费金额业务异常: userId={}, timeOfDay={}, code={}, message={}", userId, timeOfDay, e.getCode(), e.getMessage(), e);
+            return new ArrayList<>();
+        } catch (SystemException e) {
+            log.error("[推荐服务] 加载用户历史消费金额系统异常: userId={}, timeOfDay={}, code={}, message={}", userId, timeOfDay, e.getCode(), e.getMessage(), e);
+            return new ArrayList<>();
         } catch (Exception e) {
-            log.error("[推荐服务] 加载用户历史消费金额失败: userId={}, timeOfDay={}", userId, timeOfDay, e);
+            log.error("[推荐服务] 加载用户历史消费金额未知异常: userId={}, timeOfDay={}", userId, timeOfDay, e);
             return new ArrayList<>();
         }
     }
@@ -532,6 +618,12 @@ public class ConsumeRecommendService {
                         double longitude = Double.parseDouble(lngObj.toString());
                         return new Location(latitude, longitude);
                     }
+                } catch (IllegalArgumentException | ParamException e) {
+                    log.warn("[推荐服务] 解析GPS位置失败（参数错误）: gpsLocation={}", gpsLocation, e);
+                } catch (BusinessException e) {
+                    log.warn("[推荐服务] 解析GPS位置失败（业务异常）: gpsLocation={}", gpsLocation, e);
+                } catch (SystemException e) {
+                    log.warn("[推荐服务] 解析GPS位置失败（系统异常）: gpsLocation={}", gpsLocation, e);
                 } catch (Exception e) {
                     log.warn("[推荐服务] 解析GPS位置失败: gpsLocation={}", gpsLocation, e);
                 }
@@ -541,8 +633,17 @@ public class ConsumeRecommendService {
             log.warn("[推荐服务] 区域没有GPS位置信息: restaurantId={}", restaurantId);
             return new Location(0.0, 0.0);
 
+        } catch (IllegalArgumentException | ParamException e) {
+            log.error("[推荐服务] 查询餐厅位置参数错误: restaurantId={}, error={}", restaurantId, e.getMessage(), e);
+            return new Location(0.0, 0.0);
+        } catch (BusinessException e) {
+            log.error("[推荐服务] 查询餐厅位置业务异常: restaurantId={}, code={}, message={}", restaurantId, e.getCode(), e.getMessage(), e);
+            return new Location(0.0, 0.0);
+        } catch (SystemException e) {
+            log.error("[推荐服务] 查询餐厅位置系统异常: restaurantId={}, code={}, message={}", restaurantId, e.getCode(), e.getMessage(), e);
+            return new Location(0.0, 0.0);
         } catch (Exception e) {
-            log.error("[推荐服务] 查询餐厅位置失败: restaurantId={}", restaurantId, e);
+            log.error("[推荐服务] 查询餐厅位置未知异常: restaurantId={}", restaurantId, e);
             return new Location(0.0, 0.0);
         }
     }
@@ -648,4 +749,7 @@ public class ConsumeRecommendService {
         public Double getLongitude() { return longitude; }
     }
 }
+
+
+
 

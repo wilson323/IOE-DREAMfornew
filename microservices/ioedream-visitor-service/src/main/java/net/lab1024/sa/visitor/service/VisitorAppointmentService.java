@@ -55,3 +55,4 @@ public interface VisitorAppointmentService {
      */
     PageResult<VisitorAppointmentDetailVO> queryAppointments(VisitorAppointmentQueryForm queryForm);
 }
+

@@ -321,3 +321,5 @@ public class ConsumeRecordVO {
         return this.balanceAfter != null ? this.balanceAfter.toString() : "0.00";
     }
 }
+
+
