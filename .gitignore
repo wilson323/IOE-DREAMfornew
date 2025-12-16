@@ -64,3 +64,31 @@ smart-admin-api-java17-springboot3.zip
 .mcp-class-index.json
 *.mcp-cache
 .mcp-decompile-cache/
+
+### Maven Repository ###
+# Maven本地仓库，包含下载的依赖包，不应提交到版本控制
+.m2/
+
+### Environment and Config Files ###
+# 所有环境配置文件（包含敏感信息）
+.env*
+.env.encrypted
+
+### Backup and Temporary Files ###
+# 备份和临时文件
+bak/
+*.bak
+*.tmp
+*.temp
+
+### Development Tools ###
+# 开发工具和二进制文件
+.tools/
+**/*.exe
+**/*.dll
+**/*.so
+
+### Documentation Tools ###
+# 文档工具相关文件
+.qoder/
+.qoder-repocache/
