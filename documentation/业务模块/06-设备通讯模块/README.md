@@ -1,76 +1,54 @@
-# IOE-DREAM 设备通讯服务模块
+# 设备通讯模块文档
 
 > **版本**: v1.0.0  
-> **微服务**: ioedream-device-comm-service (8087)  
-> **创建日期**: 2025-12-17
+> **微服务**: ioedream-device-comm-service (端口: 8087)  
+> **更新日期**: 2025-12-17
 
 ---
 
 ## 📋 模块概述
 
-设备通讯服务负责与所有硬件设备的通信，包括门禁控制器、考勤终端、消费机、摄像头等设备的数据采集和指令下发。
+设备通讯模块是IOE-DREAM智慧园区系统的核心基础设施，负责与门禁、考勤、消费等终端设备进行通讯，实现设备数据的采集、解析、转发和命令下发。
+
+### 核心能力
+
+- **多协议支持**: 支持门禁、考勤、消费等多种PUSH协议
+- **组件化设计**: 协议处理器采用策略模式，易于扩展
+- **高性能**: 基于Netty实现高并发设备连接
+- **消息队列**: 使用RabbitMQ实现异步消息处理
 
 ---
 
-## 🏗️ 核心功能
+## 📁 文档目录
 
-| 功能 | 说明 |
+| 文档 | 说明 |
 |------|------|
-| 设备注册 | 设备自动发现和注册 |
-| 心跳管理 | 设备在线状态监控 |
-| 数据采集 | 实时采集设备数据 |
-| 指令下发 | 远程控制设备 |
-| 协议适配 | 支持多种设备协议 |
-| 数据转发 | 将数据分发到业务服务 |
+| [00-设备通讯微服务总体设计.md](./00-设备通讯微服务总体设计.md) | 微服务架构设计 |
+| [01-安防PUSH协议规范.md](./01-安防PUSH协议规范.md) | 门禁协议规范（熵基V4.8） |
+| [02-考勤PUSH协议规范.md](./02-考勤PUSH协议规范.md) | 考勤协议规范（熵基V4.0） |
+| [03-消费PUSH协议规范.md](./03-消费PUSH协议规范.md) | 消费协议规范（中控V1.0） |
+| [04-协议处理器组件设计.md](./04-协议处理器组件设计.md) | 组件化设计文档 |
 
 ---
 
-## 📁 代码结构
+## 🔧 支持的协议
 
-```
-ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/
-├── DeviceCommApplication.java
-├── config/
-│   ├── DeviceProtocolConfiguration.java
-│   └── MqttConfiguration.java
-├── controller/
-│   ├── DeviceRegisterController.java
-│   └── DeviceCommandController.java
-├── protocol/
-│   ├── AccessProtocolHandler.java      # 门禁协议
-│   ├── AttendanceProtocolHandler.java  # 考勤协议
-│   ├── ConsumeProtocolHandler.java     # 消费协议
-│   └── VideoProtocolHandler.java       # 视频协议
-├── service/
-│   ├── DeviceHeartbeatService.java
-│   ├── DeviceDataCollectorService.java
-│   └── DeviceCommandService.java
-└── manager/
-    ├── DeviceConnectionManager.java
-    └── DeviceStatusManager.java
-```
-
----
-
-## 🔌 支持的设备协议
-
-| 协议 | 设备类型 | 说明 |
-|------|----------|------|
-| ZK Protocol | 门禁/考勤 | 中控设备协议 |
-| MQTT | IoT设备 | 轻量级消息协议 |
-| ONVIF | 摄像头 | 视频设备协议 |
-| TCP/IP | 消费机 | 自定义TCP协议 |
+| 协议 | 版本 | 厂商 | 设备类型 |
+|------|------|------|----------|
+| 安防PUSH | V4.8 | 熵基科技 | 门禁 |
+| 考勤PUSH | V4.0 | 熵基科技 | 考勤 |
+| 消费PUSH | V1.0 | 中控智慧 | 消费 |
 
 ---
 
 ## 📊 性能指标
 
-| 指标 | 目标值 |
-|------|--------|
-| 设备连接数 | ≥ 5000 |
-| 数据采集延迟 | < 500ms |
-| 指令下发延迟 | < 1s |
-| 心跳检测间隔 | 30s |
+| 指标 | 要求 |
+|------|------|
+| 协议解析延迟 | ≤ 10ms |
+| 消息吞吐量 | ≥ 10000条/秒 |
+| 设备连接数 | ≥ 5000个 |
+| 服务可用性 | ≥ 99.99% |
 
 ---
 
