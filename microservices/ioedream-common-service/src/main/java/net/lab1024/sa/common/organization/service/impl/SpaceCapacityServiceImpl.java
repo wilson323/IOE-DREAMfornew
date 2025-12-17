@@ -2,6 +2,7 @@ package net.lab1024.sa.common.organization.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import net.lab1024.sa.common.organization.manager.SpaceCapacityManager;
 import net.lab1024.sa.common.organization.service.SpaceCapacityService;
 

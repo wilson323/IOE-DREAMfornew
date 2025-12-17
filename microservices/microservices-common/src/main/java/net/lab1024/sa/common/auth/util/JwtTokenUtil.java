@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.crypto.SecretKey;
+import javax.crypto.SecretKey;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -362,5 +362,85 @@ public class JwtTokenUtil {
         }
         String tokenType = (String) claims.get(CLAIM_KEY_TOKEN_TYPE);
         return TOKEN_TYPE_REFRESH.equals(tokenType);
+    }
+
+    // ================= 兼容方法 =================
+
+    /**
+     * 验证访问令牌（兼容方法）
+     */
+    public boolean validateAccessToken(String token) {
+        return validateToken(token) && isAccessToken(token);
+    }
+
+    /**
+     * 验证刷新令牌（兼容方法）
+     */
+    public boolean validateRefreshToken(String token) {
+        return validateToken(token) && isRefreshToken(token);
+    }
+
+    /**
+     * 从访问令牌获取用户ID（兼容方法）
+     */
+    public Long getUserIdFromAccessToken(String token) {
+        return getUserIdFromToken(token);
+    }
+
+    /**
+     * 从刷新令牌获取用户ID（兼容方法）
+     */
+    public Long getUserIdFromRefreshToken(String token) {
+        return getUserIdFromToken(token);
+    }
+
+    /**
+     * 从访问令牌获取用户名（兼容方法）
+     */
+    public String getUsernameFromAccessToken(String token) {
+        return getUsernameFromToken(token);
+    }
+
+    /**
+     * 从访问令牌获取过期时间（兼容方法）
+     */
+    public Date getExpirationFromAccessToken(String token) {
+        return getExpirationDateFromToken(token);
+    }
+
+    /**
+     * 从访问令牌获取签发时间（兼容方法）
+     */
+    public Date getIssuedAtFromAccessToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims != null ? claims.getIssuedAt() : null;
+    }
+
+    /**
+     * 从访问令牌获取剩余时间（兼容方法）
+     */
+    public Long getRemainingTimeFromAccessToken(String token) {
+        return getRemainingExpiration(token);
+    }
+
+    /**
+     * 撤销令牌（兼容方法 - 无状态JWT无法真正撤销）
+     */
+    public void revokeToken(String token) {
+        log.info("[JWT工具] 令牌撤销请求（注：无状态JWT需配合黑名单机制）");
+    }
+
+    /**
+     * 生成访问令牌（简化版 - 兼容方法）
+     */
+    public String generateAccessToken(Long userId, String username) {
+        return generateAccessToken(userId, username, null, null);
+    }
+
+    /**
+     * 生成刷新令牌（简化版 - 兼容方法）
+     */
+    public String generateRefreshToken(Long userId) {
+        return generateRefreshToken(userId, null);
     }
 }

@@ -12,7 +12,7 @@ import net.lab1024.sa.common.video.dao.VideoPTZDao;
 import net.lab1024.sa.common.video.dao.VideoAlarmRuleDao;
 import net.lab1024.sa.common.video.manager.VideoStreamManager;
 import net.lab1024.sa.common.video.manager.VideoMonitorManager;
-import net.lab1024.sa.common.video.manager.VideoPTZManager;
+// import net.lab1024.sa.common.video.manager.VideoPTZManager; // 已移除
 
 /**
  * 视频模块Manager配置类
@@ -55,18 +55,8 @@ public class VideoManagerConfiguration {
         return new VideoMonitorManager(videoMonitorDao);
     }
 
-    /**
-     * 注册云台控制管理器
-     *
-     * @param videoPTZDao 云台控制数据访问层
-     * @return 云台控制管理器实例
-     */
-    @Bean
-    @ConditionalOnMissingBean(VideoPTZManager.class)
-    public VideoPTZManager videoPTZManager(VideoPTZDao videoPTZDao) {
-        log.info("[视频配置] 注册VideoPTZManager Bean");
-        return new VideoPTZManager(videoPTZDao);
-    }
+    // 云台控制管理器已移除
+    // 如需使用，请先创建VideoPTZManager类
 
     /**
      * 注册告警规则管理器（可选）

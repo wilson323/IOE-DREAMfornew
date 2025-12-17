@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.dao.AreaDao;
-import net.lab1024.sa.common.dto.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -258,7 +258,7 @@ public class RegionalHierarchyManager {
         Map<Integer, Long> levelCountMap = allAreas.stream()
             .collect(Collectors.groupingBy(AreaEntity::getAreaLevel, Collectors.counting()));
 
-        statistics.setTotalCount(allAreas.size());
+        statistics.setTotalCount((long) allAreas.size());
         statistics.setCampusCount(levelCountMap.getOrDefault(1, 0L));
         statistics.setBuildingCount(levelCountMap.getOrDefault(2, 0L));
         statistics.setFloorCount(levelCountMap.getOrDefault(3, 0L));
@@ -633,7 +633,6 @@ public class RegionalHierarchyManager {
         SIBLING,        // 同级关系
         UNRELATED       // 无关关系
     }
-}
 
     /**
      * 层级验证结果

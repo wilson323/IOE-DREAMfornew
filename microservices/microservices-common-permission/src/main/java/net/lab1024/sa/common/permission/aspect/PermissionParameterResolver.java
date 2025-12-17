@@ -14,9 +14,12 @@ import net.lab1024.sa.common.permission.service.UnifiedPermissionService;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 权限参数解析器
@@ -121,11 +124,11 @@ public class PermissionParameterResolver {
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
                 if ("userId".equals(entry.getKey()) || "user_id".equals(entry.getKey())
                     || "id".equals(entry.getKey())) {
-                    Long userId = convertToLong(entry.getValue());
-                    if (userId != null) {
+                    Long foundUserId = convertToLong(entry.getValue());
+                    if (foundUserId != null) {
                         log.debug("[用户ID解析] 从参数查找用户ID, param={}, value={}",
-                            entry.getKey(), userId);
-                        return userId;
+                            entry.getKey(), foundUserId);
+                        return foundUserId;
                     }
                 }
             }
@@ -228,7 +231,7 @@ public class PermissionParameterResolver {
                 }
 
                 // 添加请求头信息
-                for (String headerName : request.getHeaderNames()) {
+                for (String headerName : Collections.list(request.getHeaderNames())) {
                     String headerValue = request.getHeader(headerName);
                     parameters.put("_header_" + headerName.toLowerCase(), headerValue);
                 }

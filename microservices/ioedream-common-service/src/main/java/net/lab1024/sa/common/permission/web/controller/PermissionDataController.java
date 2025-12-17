@@ -5,12 +5,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.common.permission.domain.vo.PermissionDataVO;
 import net.lab1024.sa.common.permission.service.PermissionDataService;
 import net.lab1024.sa.common.permission.domain.vo.MenuPermissionVO;
 import net.lab1024.sa.common.permission.domain.vo.UserPermissionVO;
+import net.lab1024.sa.common.permission.domain.vo.PermissionStatsVO;
 
 import java.util.List;
 import java.util.Set;

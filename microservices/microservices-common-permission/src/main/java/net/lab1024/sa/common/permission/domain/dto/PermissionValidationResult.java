@@ -110,6 +110,11 @@ public class PermissionValidationResult {
     private String validatePath;
 
     /**
+     * 权限集合（兼容permissions字段）
+     */
+    private Set<String> permissions;
+
+    /**
      * 用户权限列表
      * <p>
      * 当前用户拥有的权限列表
@@ -135,6 +140,66 @@ public class PermissionValidationResult {
      * </p>
      */
     private Map<String, Object> extendedInfo;
+
+    /**
+     * 验证时间（毫秒）
+     */
+    private Long validationTime;
+
+    /**
+     * 匹配的权限集合
+     */
+    private Set<String> matchedPermissions;
+
+    /**
+     * 置信度（用于预测验证）
+     */
+    private Double confidence;
+
+    /**
+     * 组键
+     */
+    private String groupKey;
+
+    /**
+     * 未匹配的权限集合
+     */
+    private Set<String> unmatchedPermissions;
+
+    /**
+     * 来源
+     */
+    private String source;
+
+    /**
+     * 创建有效的验证结果（带用户ID和权限）
+     */
+    public static PermissionValidationResult valid(Long userId, Set<String> permissions) {
+        return PermissionValidationResult.builder()
+                .valid(true)
+                .statusCode(200)
+                .message("权限验证通过")
+                .userId(userId)
+                .permissions(permissions)
+                .validateTime(LocalDateTime.now())
+                .cacheHit(false)
+                .build();
+    }
+
+    /**
+     * 创建无效的验证结果（带用户ID和权限）
+     */
+    public static PermissionValidationResult invalid(Long userId, Set<String> permissions) {
+        return PermissionValidationResult.builder()
+                .valid(false)
+                .statusCode(403)
+                .message("权限验证失败")
+                .userId(userId)
+                .permissions(permissions)
+                .validateTime(LocalDateTime.now())
+                .cacheHit(false)
+                .build();
+    }
 
     /**
      * 创建成功的验证结果

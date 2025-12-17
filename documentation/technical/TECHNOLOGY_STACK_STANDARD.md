@@ -21,7 +21,7 @@
 | **微服务** | Spring Cloud Alibaba | **2025.0.0.0** | 阿里巴巴微服务套件 | `microservices/pom.xml` |
 | **ORM** | MyBatis-Plus | **3.5.15** | 数据访问 | `microservices/pom.xml` |
 | **数据库** | MySQL | **8.0.35** | 关系型数据库 | `microservices/pom.xml` |
-| **缓存** | Redis | 7.x | 缓存、会话 | 文档约定 |
+| **缓存** | Redis + Caffeine | 7.x / 3.1.8 | 三级缓存架构(L1本地+L2Redis+L3网关) | 文档约定 |
 | **消息队列** | RabbitMQ | 3.12+ | 异步消息 | 文档约定 |
 | **注册中心** | Nacos | 2.3.2+ | 服务注册与配置 | 文档约定 |
 | **连接池** | Druid | **1.2.25** | 数据库连接池 | `microservices/pom.xml` |
@@ -136,13 +136,44 @@ Get-ChildItem -Path "documentation" -Recurse -Filter "*.md" |
 
 ---
 
+## 🗄️ 三级缓存架构标准
+
+### 架构概览
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      三级缓存架构                                │
+├─────────────────────────────────────────────────────────────────┤
+│   L1 本地缓存 │ Caffeine 3.1.8  │ TTL 5分钟  │ 毫秒级响应       │
+├─────────────────────────────────────────────────────────────────┤
+│   L2 Redis缓存 │ Redis 7.x      │ TTL 30分钟 │ 分布式一致性     │
+├─────────────────────────────────────────────────────────────────┤
+│   L3 网关缓存 │ GatewayClient  │ TTL 10分钟 │ 减少RPC调用      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 缓存实现标准
+
+| 缓存层级 | 技术选型 | TTL | 容量 | 用途 |
+|---------|---------|-----|------|------|
+| L1 | Caffeine 3.1.8 | 5分钟 | 10000 | 本地缓存，毫秒级响应 |
+| L2 | Redis 7.x | 30分钟 | 无限 | 分布式缓存，数据一致性 |
+| L3 | GatewayServiceClient | 10分钟 | 5000 | 网关缓存，减少RPC调用 |
+
+### 核心组件
+
+- **UnifiedCacheManager**: 统一缓存管理器，实现三级缓存
+- 位置: `microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/cache/UnifiedCacheManager.java`
+
+---
+
 ## 📚 相关文档
 
-- [CLAUDE.md - 全局架构规范](../CLAUDE.md)
-- [README.md - 项目概述](../README.md)
+- [CLAUDE.md - 全局架构规范](../../CLAUDE.md)
+- [README.md - 项目概述](../../README.md)
 - [架构设计文档](../architecture/)
 
 ---
 
-**最后更新**: 2025-01-30  
+**最后更新**: 2025-12-17  
 **维护团队**: IOE-DREAM 架构委员会

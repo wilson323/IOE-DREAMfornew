@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
 import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
 
@@ -15,8 +16,9 @@ import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 public class ApprovalConfigManager {
+
+    private static final Logger log = LoggerFactory.getLogger(ApprovalConfigManager.class);
 
     private final ApprovalConfigDao approvalConfigDao;
 

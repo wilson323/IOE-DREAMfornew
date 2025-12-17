@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.common.permission.service.UnifiedPermissionService;
 import net.lab1024.sa.common.permission.domain.dto.PermissionValidationResult;
+import net.lab1024.sa.common.permission.domain.enums.PermissionCondition;
+import net.lab1024.sa.common.permission.domain.enums.LogicOperator;
 
 import jakarta.annotation.Resource;
 import java.util.*;

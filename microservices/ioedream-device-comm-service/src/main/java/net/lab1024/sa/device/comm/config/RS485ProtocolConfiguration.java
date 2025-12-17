@@ -17,11 +17,13 @@ import java.util.concurrent.Executor;
 /**
  * RS485协议配置类
  * <p>
- * RS485工业设备协议相关的Spring配置：
- * 1. 注册RS485ProtocolAdapter为Spring Bean
- * 2. 注册RS485ProtocolManager为Spring Bean
- * 3. 配置异步任务执行器
- * 4. 配置定时任务调度器
+ * RS485工业设备协议相关的Spring配置
+ * </p>
+ * <p>
+ * ⚠️ 线程池已废弃：rs485TaskExecutor、rs485MonitorExecutor已废弃，
+ * 请使用 UnifiedThreadPoolConfiguration 中的统一线程池：
+ * - ioExecutor: IO密集型任务（设备通讯）
+ * - scheduledExecutor: 定时监控任务
  * </p>
  *
  * @author IOE-DREAM Team
@@ -69,7 +71,9 @@ public class RS485ProtocolConfiguration {
      * 用于处理RS485设备通讯的异步操作
      *
      * @return Executor实例
+     * @deprecated 请使用 UnifiedThreadPoolConfiguration 中的 ioExecutor
      */
+    @Deprecated
     @Bean(name = "rs485TaskExecutor")
     public Executor rs485TaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -103,7 +107,9 @@ public class RS485ProtocolConfiguration {
      * 用于处理设备状态监控和性能统计的定时任务
      *
      * @return Executor实例
+     * @deprecated 请使用 UnifiedThreadPoolConfiguration 中的 scheduledExecutor
      */
+    @Deprecated
     @Bean(name = "rs485MonitorExecutor")
     public Executor rs485MonitorExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

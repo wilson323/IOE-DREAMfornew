@@ -17,16 +17,21 @@ import java.util.concurrent.Executor;
 /**
  * 高精度设备监控配置类
  * <p>
- * 高精度设备监控相关的Spring配置：
- * 1. 注册HighPrecisionDeviceMonitor为Spring Bean
- * 2. 配置异步任务执行器
- * 3. 配置定时任务调度器
+ * 高精度设备监控相关的Spring配置
+ * </p>
+ * <p>
+ * ⚠️ 线程池已废弃：所有线程池Bean已废弃，请使用 UnifiedThreadPoolConfiguration 中的统一线程池：
+ * - coreExecutor: CPU密集型任务
+ * - ioExecutor: IO密集型任务
+ * - scheduledExecutor: 定时任务
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-16
+ * @deprecated 线程池配置请使用 UnifiedThreadPoolConfiguration
  */
+@Deprecated
 @Slf4j
 @Configuration
 @EnableAsync

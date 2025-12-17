@@ -241,24 +241,6 @@ public interface VideoObjectTrackingDao extends BaseMapper<VideoObjectTrackingEn
     long countTrackingByTimeRange(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
     /**
-     * 获取目标的跟踪记录
-     */
-    @Select("SELECT * FROM t_video_object_tracking WHERE object_id = #{objectId} AND deleted_flag = 0 ORDER BY tracking_start_time DESC")
-    List<VideoObjectTrackingEntity> selectByObjectId(@Param("objectId") String objectId);
-
-    /**
-     * 按目标类型统计数量
-     */
-    @Select("SELECT object_type, COUNT(*) as count FROM t_video_object_tracking WHERE deleted_flag = 0 GROUP BY object_type")
-    List<Map<String, Object>> countByObjectType();
-
-    /**
-     * 按跟踪状态统计数量
-     */
-    @Select("SELECT tracking_status, COUNT(*) as count FROM t_video_object_tracking WHERE deleted_flag = 0 GROUP BY tracking_status")
-    List<Map<String, Object>> countByTrackingStatus();
-
-    /**
      * 获取平均跟踪质量
      */
     @Select("SELECT AVG(tracking_quality_score) as avg_quality, MAX(tracking_quality_score) as max_quality, MIN(tracking_quality_score) as min_quality FROM t_video_object_tracking WHERE deleted_flag = 0")

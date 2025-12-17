@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
+import net.lab1024.sa.common.organization.domain.dto.AreaDeviceHealthStatistics;
 // 已移除Manager层导入，Controller应只与Service层交互
 import net.lab1024.sa.common.organization.service.AreaDeviceService;
 import net.lab1024.sa.common.dto.ResponseDTO;
@@ -77,7 +78,20 @@ public class AreaDeviceController {
     @PostMapping("/batch-add")
     @Operation(summary = "批量添加设备到区域", description = "批量将多个设备添加到指定区域")
     public ResponseDTO<Integer> batchAddDevicesToArea(@RequestBody @Valid AreaDeviceBatchAddRequest request) {
-        return ResponseDTO.ok(areaDeviceService.batchAddDevicesToArea(request.getAreaId(), request.getDeviceRequests()));
+        // 转换Controller DTO到Service DTO
+        List<AreaDeviceService.DeviceRequest> serviceRequests =
+            request.getDeviceRequests().stream().map(r -> {
+                var sr = new AreaDeviceService.DeviceRequest();
+                sr.setDeviceId(r.getDeviceId());
+                sr.setDeviceCode(r.getDeviceCode());
+                sr.setDeviceName(r.getDeviceName());
+                sr.setDeviceType(r.getDeviceType());
+                sr.setDeviceSubType(r.getDeviceSubType());
+                sr.setBusinessModule(r.getBusinessModule());
+                sr.setPriority(r.getPriority());
+                return sr;
+            }).collect(java.util.stream.Collectors.toList());
+        return ResponseDTO.ok(areaDeviceService.batchAddDevicesToArea(request.getAreaId(), serviceRequests));
     }
 
     @PutMapping("/attributes")
@@ -185,7 +199,7 @@ public class AreaDeviceController {
 
     @GetMapping("/statistics/{areaId}")
     @Operation(summary = "获取区域设备统计信息", description = "获取指定区域中设备的详细统计信息")
-    public ResponseDTO<AreaDeviceStatisticsVO> getAreaDeviceStatistics(
+    public ResponseDTO<Object> getAreaDeviceStatistics(
             @Parameter(description = "区域ID", required = true)
             @PathVariable @NotNull Long areaId) {
         return ResponseDTO.ok(areaDeviceService.getAreaDeviceStatistics(areaId));
@@ -193,7 +207,7 @@ public class AreaDeviceController {
 
     @GetMapping("/health/{areaId}")
     @Operation(summary = "获取区域设备健康状态统计", description = "获取指定区域中设备的健康状态分布")
-    public ResponseDTO<AreaDeviceHealthStatistics> getAreaDeviceHealthStatistics(
+    public ResponseDTO<Object> getAreaDeviceHealthStatistics(
             @Parameter(description = "区域ID", required = true)
             @PathVariable @NotNull Long areaId) {
         return ResponseDTO.ok(areaDeviceService.getAreaDeviceHealthStatistics(areaId));
@@ -201,7 +215,7 @@ public class AreaDeviceController {
 
     @GetMapping("/distribution/{businessModule}")
     @Operation(summary = "获取业务模块设备分布", description = "获取指定业务模块在各区域的设备分布统计")
-    public ResponseDTO<List<ModuleDeviceDistributionVO>> getModuleDeviceDistribution(
+    public ResponseDTO<Object> getModuleDeviceDistribution(
             @Parameter(description = "业务模块", required = true)
             @PathVariable @NotBlank String businessModule) {
         return ResponseDTO.ok(areaDeviceService.getModuleDeviceDistribution(businessModule));
@@ -209,7 +223,7 @@ public class AreaDeviceController {
 
     @GetMapping("/distribution/all")
     @Operation(summary = "获取所有模块设备分布统计", description = "获取所有业务模块的设备分布统计")
-    public ResponseDTO<Map<String, List<ModuleDeviceDistributionVO>>> getAllModuleDeviceDistribution() {
+    public ResponseDTO<Object> getAllModuleDeviceDistribution() {
         return ResponseDTO.ok(areaDeviceService.getAllModuleDeviceDistribution());
     }
 
@@ -242,7 +256,15 @@ public class AreaDeviceController {
     @PostMapping("/batch-move")
     @Operation(summary = "批量移动设备到新区域", description = "批量将多个设备移动到新的区域")
     public ResponseDTO<Integer> batchMoveDevices(@RequestBody @Valid List<DeviceMoveRequest> moveRequests) {
-        return ResponseDTO.ok(areaDeviceService.batchMoveDevices(moveRequests));
+        // 转换Controller DTO到Service DTO
+        List<AreaDeviceService.DeviceMoveRequest> serviceRequests = moveRequests.stream().map(r -> {
+            var sr = new AreaDeviceService.DeviceMoveRequest();
+            sr.setDeviceId(r.getDeviceId());
+            sr.setOldAreaId(r.getOldAreaId());
+            sr.setNewAreaId(r.getNewAreaId());
+            return sr;
+        }).collect(java.util.stream.Collectors.toList());
+        return ResponseDTO.ok(areaDeviceService.batchMoveDevices(serviceRequests));
     }
 
     // ================ 请求DTO ================

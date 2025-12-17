@@ -6,7 +6,7 @@ import net.lab1024.sa.common.permission.audit.PermissionAuditLogger;
 import net.lab1024.sa.common.permission.domain.dto.PermissionAuditDTO;
 import net.lab1024.sa.common.permission.domain.dto.PermissionValidationResult;
 import net.lab1024.sa.common.permission.manager.PermissionCacheManager;
-import net.lab1024.sa.common.service.AuthService;
+import net.lab1024.sa.common.permission.service.AuthService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -110,7 +110,7 @@ public class PermissionAuditAspect {
             // 更新审计信息
             long validationTime = System.currentTimeMillis() - startTime;
             auditDTO.setResult(permissionGranted ? "GRANTED" : "DENIED");
-            auditDTO.setValidationTime(validationTime);
+            auditDTO.setDuration(validationTime);
             auditDTO.setSuccess(true);
 
             // 记录成功审计
@@ -127,7 +127,7 @@ public class PermissionAuditAspect {
             // 记录异常审计
             long validationTime = System.currentTimeMillis() - startTime;
             auditDTO.setResult("ERROR");
-            auditDTO.setValidationTime(validationTime);
+            auditDTO.setDuration(validationTime);
             auditDTO.setSuccess(false);
             auditDTO.setFailureReason(e.getMessage());
 
@@ -154,7 +154,7 @@ public class PermissionAuditAspect {
             HttpServletRequest request = attributes != null ? attributes.getRequest() : null;
 
             // 构建审计DTO
-            PermissionAuditDTO.AuditDTOBuilder builder = PermissionAuditDTO.builder()
+            PermissionAuditDTO.PermissionAuditDTOBuilder builder = PermissionAuditDTO.builder()
                 .userId(userId)
                 .className(targetClass.getName())
                 .methodName(method.getName())
@@ -162,8 +162,8 @@ public class PermissionAuditAspect {
 
             // 设置权限相关信息
             if (permissionCheck != null) {
-                builder.operation(Arrays.toString(permissionCheck.value()))
-                       .resource(Arrays.toString(permissionCheck.resource()))
+                builder.operation(String.join(",", permissionCheck.value()))
+                       .resource(String.join(",", permissionCheck.resource()))
                        .description(permissionCheck.description());
             }
 

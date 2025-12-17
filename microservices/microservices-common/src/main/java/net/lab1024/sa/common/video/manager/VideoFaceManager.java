@@ -144,7 +144,7 @@ public class VideoFaceManager {
      */
     public Map<String, Object> getFaceLibraryStatistics() {
         // 总人脸数
-        int totalFaces = videoFaceDao.selectCount(null);
+        Long totalFaces = videoFaceDao.selectCount(null);
 
         // 按人员类型统计
         List<Map<String, Object>> personTypeStats = videoFaceDao.countByPersonType();

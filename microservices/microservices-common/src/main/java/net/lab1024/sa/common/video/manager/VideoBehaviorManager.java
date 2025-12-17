@@ -236,7 +236,7 @@ public class VideoBehaviorManager {
      * 更新行为模式
      */
     public VideoBehaviorPatternEntity updateBehaviorPattern(VideoBehaviorPatternEntity patternEntity) {
-        VideoBehaviorEntity existingPattern = videoBehaviorPatternDao.selectById(patternEntity.getPatternId());
+        VideoBehaviorPatternEntity existingPattern = videoBehaviorPatternDao.selectById(patternEntity.getPatternId());
         if (existingPattern == null) {
             throw new RuntimeException("行为模式不存在");
         }

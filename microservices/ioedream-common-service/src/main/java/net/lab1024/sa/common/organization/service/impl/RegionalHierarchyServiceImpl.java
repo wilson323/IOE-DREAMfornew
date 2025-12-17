@@ -249,7 +249,7 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
             // 软删除
             AreaEntity areaEntity = new AreaEntity();
             areaEntity.setAreaId(areaId);
-            areaEntity.setDeletedFlag(true);
+            areaEntity.setDeletedFlag(1);
             areaDao.updateById(areaEntity);
 
             log.info("删除区域成功, areaId={}", areaId);

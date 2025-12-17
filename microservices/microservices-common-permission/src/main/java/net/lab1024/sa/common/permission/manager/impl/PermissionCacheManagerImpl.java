@@ -1,7 +1,7 @@
 package net.lab1024.sa.common.permission.manager.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.cache.UnifiedCacheManager;
+import net.lab1024.sa.common.permission.cache.UnifiedCacheManager;
 import net.lab1024.sa.common.permission.domain.dto.PermissionValidationResult;
 import net.lab1024.sa.common.permission.manager.PermissionCacheManager;
 
@@ -524,7 +524,7 @@ public class PermissionCacheManagerImpl implements PermissionCacheManager {
         }
 
         public int getRolePermissionCacheTtl() {
-            return rolePermissionTtl;
+            return rolePermissionCacheTtl;
         }
 
         public int getUserRoleMappingCacheTtl() {
@@ -545,6 +545,37 @@ public class PermissionCacheManagerImpl implements PermissionCacheManager {
 
         public boolean isEnableCacheStats() {
             return enableCacheStats;
+        }
+    }
+
+    // ==================== 通用缓存方法实现 ====================
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
+        try {
+            return (T) unifiedCacheManager.get(key);
+        } catch (Exception e) {
+            log.warn("[权限缓存] 通用获取缓存失败: key={}, error={}", key, e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public <T> void put(String key, T value, long ttlSeconds) {
+        try {
+            unifiedCacheManager.put(key, value, (int) ttlSeconds);
+        } catch (Exception e) {
+            log.warn("[权限缓存] 通用设置缓存失败: key={}, error={}", key, e.getMessage());
+        }
+    }
+
+    @Override
+    public void evict(String key) {
+        try {
+            unifiedCacheManager.evict(key);
+        } catch (Exception e) {
+            log.warn("[权限缓存] 通用删除缓存失败: key={}, error={}", key, e.getMessage());
         }
     }
 }

@@ -1,7 +1,7 @@
 package net.lab1024.sa.common.permission.alert;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.permission.audit.PermissionAuditDTO;
+import net.lab1024.sa.common.permission.domain.dto.PermissionAuditDTO;
 import net.lab1024.sa.common.permission.audit.PermissionAuditLogger;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.UUID;
+import java.util.HashMap;
 
 /**
  * 权限异常访问告警管理器
@@ -637,7 +639,7 @@ public class PermissionAlertManager {
             stats.setTotalAlerts(stats.getUserFailureAlerts() + stats.getIpAbnormalAlerts());
 
             // 设置当前活跃告警数
-            stats.setActiveAlerts(alertHistory.size());
+            stats.setActiveAlerts((long) alertHistory.size());
 
         } catch (Exception e) {
             log.error("[权限告警] 获取告警统计信息异常", e);

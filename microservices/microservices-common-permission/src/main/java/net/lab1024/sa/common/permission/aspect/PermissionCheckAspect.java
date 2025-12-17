@@ -285,13 +285,17 @@ public class PermissionCheckAspect {
     /**
      * 创建权限异常
      */
-    private Exception createPermissionException(PermissionCheck permissionCheck, PermissionValidationResult result) {
+    private RuntimeException createPermissionException(PermissionCheck permissionCheck, PermissionValidationResult result) {
         String message = resolveMessage(permissionCheck.message(), result);
 
         try {
-            return permissionCheck.exceptionType()
+            Exception ex = permissionCheck.exceptionType()
                 .getConstructor(String.class)
                 .newInstance(message);
+            if (ex instanceof RuntimeException) {
+                return (RuntimeException) ex;
+            }
+            return new RuntimeException(ex);
         } catch (Exception e) {
             log.error("[权限验证] 创建权限异常失败", e);
             return new PermissionCheck.PermissionDeniedException(message);

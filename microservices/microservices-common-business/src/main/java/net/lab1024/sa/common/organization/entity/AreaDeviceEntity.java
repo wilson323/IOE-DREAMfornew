@@ -249,4 +249,18 @@ public class AreaDeviceEntity extends BaseEntity {
     @TableField("remark")
     @Schema(description = "备注", example = "主要出入口监控设备")
     private String remark;
+
+    /**
+     * 获取关联ID（兼容getRelationId()调用）
+     */
+    public String getRelationId() {
+        return this.id;
+    }
+
+    /**
+     * 设置关联ID（兼容setRelationId()调用）
+     */
+    public void setRelationId(String relationId) {
+        this.id = relationId;
+    }
 }

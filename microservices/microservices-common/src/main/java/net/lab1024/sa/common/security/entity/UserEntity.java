@@ -42,6 +42,9 @@ public class UserEntity extends BaseEntity {
     @TableField("avatar")
     private String avatar;
 
+    @TableField("department_id")
+    private Long departmentId;
+
     @TableField("status")
     private Integer status;
 

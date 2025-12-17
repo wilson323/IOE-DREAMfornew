@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.common.video.entity.VideoBehaviorEntity;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -237,96 +238,6 @@ public interface VideoBehaviorDao extends BaseMapper<VideoBehaviorEntity> {
             "WHERE detection_time >= #{startTime} AND deleted_flag = 0 " +
             "ON DUPLICATE KEY UPDATE device_id = VALUES(device_id), detection_time = VALUES(detection_time), severity_level = VALUES(severity_level), confidence_score = VALUES(confidence_score), alarm_triggered = VALUES(alarm_triggered), process_status = VALUES(process_status), person_id = VALUES(person_id), time_bucket = VALUES(time_bucket), type_severity_bucket = VALUES(type_severity_bucket), alarm_status_bucket = VALUES(alarm_status_bucket)")
     int syncBehaviorIndex(@Param("startTime") LocalDateTime startTime);
-
-    /**
-     * 清理历史行为记录
-     */
-    @Update("UPDATE t_video_behavior SET deleted_flag = 1, update_time = NOW() WHERE detection_time < #{cutoffTime} AND deleted_flag = 0")
-    int cleanOldBehaviors(@Param("cutoffTime") LocalDateTime cutoffTime);
-
-    /**
-     * 获取行为检测记录总数
-     */
-    @Select("SELECT COUNT(*) FROM t_video_behavior WHERE deleted_flag = 0")
-    long countTotalBehaviors();
-
-    /**
-     * 获取指定时间范围内的行为数量
-     */
-    @Select("SELECT COUNT(*) FROM t_video_behavior WHERE detection_time >= #{startTime} AND detection_time <= #{endTime} AND deleted_flag = 0")
-    long countBehaviorsByTimeRange(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
-
-    /**
-     * 获取设备的行为数量
-     */
-    @Select("SELECT device_id, COUNT(*) as behavior_count FROM t_video_behavior WHERE deleted_flag = 0 GROUP BY device_id ORDER BY behavior_count DESC")
-    List<Map<String, Object>> countBehaviorByDevice();
-
-    /**
-     * 获取人员的行为数量
-     */
-    @Select("SELECT person_id, COUNT(*) as behavior_count FROM t_video_behavior WHERE person_id IS NOT NULL AND deleted_flag = 0 GROUP BY person_id ORDER BY behavior_count DESC")
-    List<Map<String, Object>> countBehaviorByPerson();
-
-    /**
-     * 获取指定人员的行为记录
-     */
-    @Select("SELECT * FROM t_video_behavior WHERE person_id = #{personId} AND deleted_flag = 0 ORDER BY detection_time DESC")
-    List<VideoBehaviorEntity> selectByPersonId(@Param("personId") Long personId);
-
-    /**
-     * 批量更新处理状态
-     */
-    @Update("UPDATE t_video_behavior SET process_status = #{processStatus}, process_time = NOW(), process_user_id = #{userId}, process_user_name = #{userName} WHERE FIND_IN_SET(behavior_id, #{behaviorIds}) AND deleted_flag = 0")
-    int batchUpdateProcessStatus(@Param("behaviorIds") String behaviorIds, @Param("processStatus") Integer processStatus, @Param("userId") Long userId, @Param("userName") String userName);
-
-    /**
-     * 获取最近的异常行为
-     */
-    @Select("SELECT * FROM t_video_behavior WHERE behavior_type = 5 AND deleted_flag = 0 ORDER BY detection_time DESC LIMIT #{limit}")
-    List<VideoBehaviorEntity> selectRecentAbnormalBehaviors(@Param("limit") Integer limit);
-
-    /**
-     * 获取高置信度行为
-     */
-    @Select("SELECT * FROM t_video_behavior WHERE confidence_score >= #{minConfidence} AND deleted_flag = 0 ORDER BY detection_time DESC LIMIT #{limit}")
-    List<VideoBehaviorEntity> selectHighConfidenceBehaviors(@Param("minConfidence") BigDecimal minConfidence, @Param("limit") Integer limit);
-
-    /**
-     * 获取需要告警的行为
-     */
-    @Select("SELECT * FROM t_video_behavior WHERE alarm_triggered = 1 AND process_status = 0 AND deleted_flag = 0 ORDER BY detection_time ASC")
-    List<VideoBehaviorEntity> selectAlarmNeedingProcess();
-
-    /**
-     * 更新行为告警状态
-     */
-    @Update("UPDATE t_video_behavior SET alarm_triggered = #{alarmTriggered}, alarm_level = #{alarmLevel}, alarm_types = #{alarmTypes}, update_time = NOW() WHERE behavior_id = #{behaviorId}")
-    int updateAlarmStatus(@Param("behaviorId") Long behaviorId, @Param("alarmTriggered") Integer alarmTriggered, @Param("alarmLevel") Integer alarmLevel, @Param("alarmTypes") String alarmTypes);
-
-    /**
-     * 按行为类型统计数量
-     */
-    @Select("SELECT behavior_type, COUNT(*) as count FROM t_video_behavior WHERE deleted_flag = 0 GROUP BY behavior_type")
-    List<Map<String, Object>> countByBehaviorType();
-
-    /**
-     * 按严重程度统计数量
-     */
-    @Select("SELECT severity_level, COUNT(*) as count FROM t_video_behavior WHERE deleted_flag = 0 GROUP BY severity_level")
-    List<Map<String, Object>> countBySeverityLevel();
-
-    /**
-     * 按告警级别统计数量
-     */
-    @Select("SELECT alarm_level, COUNT(*) as count FROM t_video_behavior WHERE alarm_triggered = 1 AND deleted_flag = 0 GROUP BY alarm_level")
-    List<Map<String, Object>> countByAlarmLevel();
-
-    /**
-     * 按处理状态统计数量
-     */
-    @Select("SELECT process_status, COUNT(*) as count FROM t_video_behavior WHERE deleted_flag = 0 GROUP BY process_status")
-    List<Map<String, Object>> countByProcessStatus();
 
     /**
      * 获取平均置信度

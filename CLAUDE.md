@@ -659,6 +659,15 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 - ❌ `javax.validation.Valid`
 - ❌ `javax.persistence.Entity`
 
+**⚠️ 例外说明 - Java标准库javax包（允许使用）**：
+> 以下`javax.*`包属于**Java SE标准库**，不在Jakarta EE迁移范围内，可正常使用：
+- ✅ `javax.crypto.*` - Java加密扩展（Cipher、Mac、SecretKey等）
+- ✅ `javax.sql.DataSource` - JDBC数据源接口
+- ✅ `javax.imageio.ImageIO` - 图像I/O处理
+- ✅ `javax.net.ssl.*` - SSL/TLS网络安全
+
+**说明**: Jakarta EE 9+仅迁移了原Java EE规范包（如annotation、validation、persistence、servlet等），Java SE标准库中的javax包保持不变。
+
 ### 6. 微服务间调用规范（强制执行）
 
 **混合调用（强制执行）**：
@@ -1507,85 +1516,137 @@ seata:
 
 ---
 
-### 2. 缓存管理规范 - Spring Cache（强制执行）
+### 2. 缓存管理规范 - 三级缓存架构（强制执行）
+
+**三级缓存架构**:
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      三级缓存架构                                │
+├─────────────────────────────────────────────────────────────────┤
+│    ┌─────────────┐                                              │
+│    │   L1 缓存   │  Caffeine 本地缓存                           │
+│    │  (毫秒级)   │  TTL: 5分钟，容量: 10000                     │
+│    └──────┬──────┘                                              │
+│           │ 未命中                                              │
+│           ▼                                                     │
+│    ┌─────────────┐                                              │
+│    │   L2 缓存   │  Redis 分布式缓存                            │
+│    │  (毫秒级)   │  TTL: 30分钟，集群模式                       │
+│    └──────┬──────┘                                              │
+│           │ 未命中                                              │
+│           ▼                                                     │
+│    ┌─────────────┐                                              │
+│    │   L3 缓存   │  网关缓存 (GatewayServiceClient)             │
+│    │  (减少RPC) │  服务间调用结果缓存                          │
+│    └──────┬──────┘                                              │
+│           │ 未命中                                              │
+│           ▼                                                     │
+│    ┌─────────────┐                                              │
+│    │   数据库    │  MySQL 持久化存储                            │
+│    └─────────────┘                                              │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 **强制要求**:
-- ✅ **统一使用 Spring Cache + Caffeine + Redis**
-- ❌ **禁止使用自定义CacheManager**
-- ❌ **禁止使用自定义UnifiedCacheManager**
-- ❌ **禁止使用自定义MultiLevelCacheManager**
+- ✅ **L1本地缓存**: Caffeine 3.1.8，毫秒级响应
+- ✅ **L2分布式缓存**: Redis 7.x，数据一致性
+- ✅ **L3网关缓存**: GatewayServiceClient调用结果缓存
+- ✅ **使用UnifiedCacheManager统一管理多级缓存**
 
-**Spring Cache集成规范**:
+**UnifiedCacheManager使用规范**:
 
 ```java
-// ❌ 错误示例 - 自定义缓存管理器
-AccountEntity account = cacheManager.getWithRefresh(
-    "account", 
-    "account:" + accountId,
-    () -> accountDao.selectById(accountId),
-    Duration.ofMinutes(30)
-);
+// ✅ 正确示例 - 使用UnifiedCacheManager
+@Service
+public class UserServiceImpl implements UserService {
 
-// ✅ 正确示例 - 使用Spring Cache注解
-@Cacheable(value = "account", key = "#accountId", unless = "#result == null")
-public AccountEntity getAccountById(Long accountId) {
-    return accountDao.selectById(accountId);
-}
+    @Resource
+    private UnifiedCacheManager cacheManager;
+    
+    @Resource
+    private UserDao userDao;
 
-@CacheEvict(value = "account", key = "#accountId")
-public void updateAccount(AccountEntity account) {
-    accountDao.updateById(account);
-}
-
-@CachePut(value = "account", key = "#account.id")
-public AccountEntity saveAccount(AccountEntity account) {
-    accountDao.insert(account);
-    return account;
+    public UserEntity getUserById(Long userId) {
+        String cacheKey = "user:" + userId;
+        
+        // 多级缓存查询
+        UserEntity user = cacheManager.get(cacheKey);
+        if (user != null) {
+            return user;
+        }
+        
+        // 从数据库加载
+        user = userDao.selectById(userId);
+        if (user != null) {
+            // 写入缓存（默认TTL 1小时）
+            cacheManager.put(cacheKey, user);
+        }
+        return user;
+    }
+    
+    public void updateUser(UserEntity user) {
+        userDao.updateById(user);
+        // 清除缓存
+        cacheManager.evict("user:" + user.getId());
+    }
 }
 ```
 
 **缓存配置规范**:
 
-```java
-@Configuration
-@EnableCaching
-public class CacheConfiguration {
+```yaml
+# application.yml 缓存配置
+cache:
+  # L1 本地缓存配置
+  l1-local:
+    enabled: true
+    maximum-size: 10000
+    expire-after-write: 5m
+    refresh-after-write: 3m
+    record-stats: true
+  
+  # L2 Redis缓存配置  
+  l2-redis:
+    enabled: true
+    default-ttl: 30m
+    key-prefix: "ioedream:"
+    null-ttl: 5m  # 空值缓存防穿透
+  
+  # L3 网关缓存配置
+  l3-gateway:
+    enabled: true
+    ttl: 10m
+    max-size: 5000
 
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        // L1: Caffeine本地缓存
-        CaffeineCacheManager localCacheManager = new CaffeineCacheManager();
-        localCacheManager.setCaffeine(Caffeine.newBuilder()
-            .maximumSize(10000)
-            .expireAfterWrite(5, TimeUnit.MINUTES)
-            .recordStats());
-
-        // L2: Redis分布式缓存
-        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
-            .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(30))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                    .fromSerializer(new GenericJackson2JsonRedisSerializer())));
-
-        // 组合缓存管理器（L1 + L2）
-        return new CompositeCacheManager(localCacheManager, redisCacheManager);
-    }
-}
+  # 缓存域配置
+  domains:
+    user:
+      l1-size: 1000
+      l2-ttl: 1h
+    permission:
+      l1-size: 2000
+      l2-ttl: 30m
+    device:
+      l1-size: 500
+      l2-ttl: 10m
+    config:
+      l1-size: 500
+      l2-ttl: 2h
 ```
 
-**Spring Cache优势**:
-- ✅ **声明式缓存**: 使用注解即可，代码简洁
-- ✅ **AOP支持**: 自动处理缓存逻辑，无侵入
-- ✅ **多缓存支持**: 支持Caffeine、Redis、EhCache等
-- ✅ **缓存抽象**: 统一的CacheManager接口
-- ✅ **条件缓存**: 支持unless、condition等条件
-- ✅ **缓存同步**: 支持@CachePut自动更新
+**三级缓存优势**:
+- ✅ **L1本地缓存**: 毫秒级响应，无网络开销
+- ✅ **L2 Redis缓存**: 分布式一致性，集群共享
+- ✅ **L3网关缓存**: 减少微服务间RPC调用
+- ✅ **缓存穿透防护**: 空值缓存 + 布隆过滤器
+- ✅ **缓存击穿防护**: 互斥锁 + 逻辑过期
+- ✅ **缓存雪崩防护**: 差异化TTL + 预热机制
 
 **实施要求**:
-1. 移除所有自定义缓存管理器类
-2. 统一使用@Cacheable/@CacheEvict/@CachePut注解
-3. 配置CompositeCacheManager（L1本地+L2Redis）
-4. 缓存配置统一到application.yml
+1. 使用UnifiedCacheManager进行多级缓存管理
+2. 按照缓存域配置不同的TTL和容量
+3. 实现缓存预热机制（启动时加载热点数据）
+4. 配置缓存监控指标（命中率、大小、驱逐率）
 
 ---
 
@@ -2030,7 +2091,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 
 ### 技术栈违规（新增 - 2025-12-10）
 - ❌ 禁止使用自定义SagaManager（必须使用Seata）
-- ❌ 禁止使用自定义CacheManager（必须使用Spring Cache）
+- ✅ 使用UnifiedCacheManager实现三级缓存（L1本地+L2Redis+L3网关）
 - ❌ 禁止使用自定义重试逻辑（必须使用Resilience4j）
 - ❌ 禁止使用自定义指标收集器（必须使用Micrometer）
 - ❌ 禁止重复实现已有工具类功能（优先使用Apache Commons/Guava）

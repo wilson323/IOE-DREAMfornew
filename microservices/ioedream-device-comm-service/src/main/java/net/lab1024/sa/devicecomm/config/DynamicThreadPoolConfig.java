@@ -13,22 +13,20 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 动态线程池配置
  * <p>
- * 配置协议消息处理的动态线程池，支持根据CPU核心数和配置参数动态调整
- * 严格遵循CLAUDE.md规范：
- * - 使用@Configuration注解
- * - 完整的函数级注释
+ * 配置协议消息处理的动态线程池
  * </p>
  * <p>
- * 功能：
- * - 动态线程池配置（核心线程数、最大线程数、队列容量）
- * - 线程池监控和指标收集
- * - 优雅关闭
+ * ⚠️ 线程池已废弃：protocolMessageExecutor已废弃，
+ * 请使用 UnifiedThreadPoolConfiguration 中的统一线程池：
+ * - ioExecutor: IO密集型任务（协议消息处理）
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-30
+ * @deprecated 请使用 UnifiedThreadPoolConfiguration
  */
+@Deprecated
 @Slf4j
 @Configuration
 public class DynamicThreadPoolConfig {
@@ -64,17 +62,19 @@ public class DynamicThreadPoolConfig {
      * </p>
      *
      * @return 线程池执行器
+     * @deprecated 请使用 UnifiedThreadPoolConfiguration 中的 ioExecutor
      */
+    @Deprecated
     @Bean(name = "protocolMessageExecutor")
     public ThreadPoolTaskExecutor protocolMessageExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        
+
         // 如果配置的核心线程数为0或负数，使用CPU核心数
         int finalCorePoolSize = corePoolSize > 0 ? corePoolSize : Runtime.getRuntime().availableProcessors();
-        
+
         // 如果配置的最大线程数为0或负数，使用CPU核心数 * 2
         int finalMaxPoolSize = maxPoolSize > 0 ? maxPoolSize : Runtime.getRuntime().availableProcessors() * 2;
-        
+
         // 确保最大线程数 >= 核心线程数
         if (finalMaxPoolSize < finalCorePoolSize) {
             finalMaxPoolSize = finalCorePoolSize;
@@ -84,23 +84,23 @@ public class DynamicThreadPoolConfig {
         executor.setMaxPoolSize(finalMaxPoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setKeepAliveSeconds(keepAliveSeconds);
-        
+
         // 线程名前缀
         executor.setThreadNamePrefix("ProtocolMessage-");
-        
+
         // 拒绝策略：调用者运行（确保任务不丢失）
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        
+
         // 等待所有任务完成后再关闭线程池
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(60);
-        
+
         // 初始化线程池
         executor.initialize();
-        
+
         log.info("[动态线程池] 协议消息处理线程池初始化完成，核心线程数={}, 最大线程数={}, 队列容量={}, 线程存活时间={}秒",
                 finalCorePoolSize, finalMaxPoolSize, queueCapacity, keepAliveSeconds);
-        
+
         return executor;
     }
 

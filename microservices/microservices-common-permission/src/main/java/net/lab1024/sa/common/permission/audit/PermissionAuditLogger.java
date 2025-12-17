@@ -10,6 +10,8 @@ import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -65,7 +67,6 @@ public class PermissionAuditLogger {
     /**
      * 构造函数
      */
-    @Resource
     public PermissionAuditLogger(RedisTemplate<String, Object> redisTemplate,
                                PermissionAuditConfig config,
                                Executor auditExecutor) {
@@ -459,8 +460,8 @@ public class PermissionAuditLogger {
                 redisTemplate.opsForHash().increment(statsKey, "failureCount", 1);
             }
 
-            if (auditDTO.getValidationTime() != null) {
-                redisTemplate.opsForHash().increment(statsKey, "totalTime", auditDTO.getValidationTime());
+            if (auditDTO.getDuration() != null) {
+                redisTemplate.opsForHash().increment(statsKey, "totalTime", auditDTO.getDuration());
             }
 
             // 设置过期时间

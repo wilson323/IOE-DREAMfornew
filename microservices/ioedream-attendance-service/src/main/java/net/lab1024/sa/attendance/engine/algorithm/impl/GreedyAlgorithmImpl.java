@@ -1707,4 +1707,3 @@ public class GreedyAlgorithmImpl implements ScheduleAlgorithm {
         return statistics;
     }
 }
-}

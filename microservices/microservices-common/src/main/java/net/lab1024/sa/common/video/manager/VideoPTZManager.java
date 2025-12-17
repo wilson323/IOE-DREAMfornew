@@ -240,8 +240,8 @@ public class VideoPTZManager {
         log.info("[云台控制] 删除预置位，deviceId={}, presetNumber={}", deviceId, presetNumber);
 
         try {
-            List<VideoPTZEntity> presets = videoPTZDao.selectPresetByNumber(deviceId, presetNumber);
-            for (VideoPTZEntity preset : presets) {
+            VideoPTZEntity preset = videoPTZDao.selectPresetByNumber(deviceId, presetNumber);
+            if (preset != null) {
                 videoPTZDao.deleteById(preset.getPtzId());
 
                 // 更新缓存
@@ -372,7 +372,7 @@ public class VideoPTZManager {
                 position.setPanAngle(panAngle);
                 position.setTiltAngle(tiltAngle);
                 position.setZoomRatio(zoomRatio);
-                position.setLastActiveTime(LocalDateTime.now());
+                position.setUpdateTime(LocalDateTime.now());
 
                 currentPositionCache.put(deviceKey, position);
 
@@ -404,7 +404,7 @@ public class VideoPTZManager {
             statistics.put("frequencyStatistics", frequencyStats);
 
             // 获取总数统计
-            statistics.put("totalControls", videoPTZDao.countPTZControls(deviceId, null, null));
+            statistics.put("totalControls", videoPTZDao.countPTZControls(deviceId, null, null, null));
 
             // 按控制类型统计
             Map<String, Object> typeStats = new java.util.HashMap<>();
@@ -492,9 +492,8 @@ public class VideoPTZManager {
             long duration = java.time.Duration.between(control.getExecuteStartTime(), endTime).toMillis();
 
             Integer result = success ? 1 : 3; // 1-成功，3-失败
-            String errorMessage = success ? null : "设备响应超时";
 
-            videoPTZDao.completeExecution(controlId, endTime, duration, result, errorMessage);
+            videoPTZDao.completeExecution(controlId, endTime, duration, result);
 
             // 更新缓存位置
             if (success && control.getControlType() == 1) {

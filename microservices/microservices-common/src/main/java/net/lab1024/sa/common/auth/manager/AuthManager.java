@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.auth.dao.UserSessionDao;
 import net.lab1024.sa.common.auth.domain.entity.UserSessionEntity;
@@ -41,9 +42,10 @@ import net.lab1024.sa.common.auth.util.JwtTokenUtil;
  * @version 1.0.0
  * @since 2025-12-02
  */
-@Slf4j
 @SuppressWarnings("null")
 public class AuthManager {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthManager.class);
 
     private final UserSessionDao userSessionDao;
     @SuppressWarnings("unused")

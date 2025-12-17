@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 // 已移除Repository导入，统一使用@Mapper注解
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -185,7 +185,7 @@ public interface VideoObjectDetectionDao extends BaseMapper<VideoObjectDetection
      * @param beforeTime 时间点
      * @return 删除的记录数
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     int deleteBeforeTime(@Param("beforeTime") LocalDateTime beforeTime);
 
     /**
@@ -196,7 +196,7 @@ public interface VideoObjectDetectionDao extends BaseMapper<VideoObjectDetection
      * @param verifiedBy 验证人员ID
      * @return 更新的记录数
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     int updateProcessStatusBatch(
             @Param("detectionIds") List<Long> detectionIds,
             @Param("processStatus") Integer processStatus,

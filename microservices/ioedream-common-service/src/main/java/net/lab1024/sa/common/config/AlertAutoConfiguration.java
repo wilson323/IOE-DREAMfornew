@@ -36,41 +36,23 @@ public class AlertAutoConfiguration {
 
     /**
      * 配置AlertManager（完整版本，支持从数据库读取配置）
-     * <p>
-     * 如果NotificationConfigManager已配置，则使用完整构造函数，支持从数据库读取配置
-     * 优先使用此配置
-     * </p>
-     * <p>
-     * 已迁移：使用 MeterRegistry 替代已废弃的 MetricsCollector
-     * </p>
-     * <p>
-     * 注意：
-     * - MeterRegistry是Spring Boot自动配置的Bean，应该总是存在
-     * - 使用@ConditionalOnBean(NotificationConfigManager.class)确保只在NotificationConfigManager存在时注册
-     * - 通过方法参数注入确保依赖存在
-     * </p>
      */
     @Bean
     @ConditionalOnMissingBean(AlertManager.class)
     @ConditionalOnBean(NotificationConfigManager.class)
     public AlertManager alertManager(
-            MeterRegistry meterRegistry,
             NotificationConfigManager notificationConfigManager) {
+        // 创建MetricsCollector实例
+        net.lab1024.sa.common.monitoring.MetricsCollector metricsCollector = new net.lab1024.sa.common.monitoring.MetricsCollector();
         // 使用完整构造函数，支持从数据库读取配置
         alertManager = new AlertManager(
-                meterRegistry,
+                metricsCollector,
                 null, // GatewayServiceClient（可选）
                 notificationConfigManager, // NotificationConfigManager（支持从数据库读取配置）
                 null, null, null, null, null, null, null // 其他可选参数
         );
 
         log.info("[告警配置] AlertManager 已配置并启用（支持数据库配置）");
-        log.info("[告警配置] MeterRegistry: {}", meterRegistry != null ? "已注入" : "未注入");
-        log.info("[告警配置] NotificationConfigManager: {}", notificationConfigManager != null ? "已注入" : "未注入");
-        log.info("[告警配置] 已初始化告警规则: HTTP错误率、响应时间、缓存命中率、CPU/内存使用率等");
-        log.info("[告警配置] 通知渠道: 钉钉、企业微信、邮件、短信（根据数据库配置启用）");
-        log.info("[告警配置] 支持从数据库读取通知渠道配置，管理员可通过界面配置启用状态");
-
         return alertManager;
     }
 
@@ -92,16 +74,12 @@ public class AlertAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(AlertManager.class)
-    public AlertManager alertManagerFallback(MeterRegistry meterRegistry) {
-        // 使用简化构造函数，使用默认配置
-        alertManager = new AlertManager(meterRegistry);
+    public AlertManager alertManagerFallback() {
+        // 创建MetricsCollector实例并使用简化构造函数
+        net.lab1024.sa.common.monitoring.MetricsCollector metricsCollector = new net.lab1024.sa.common.monitoring.MetricsCollector();
+        alertManager = new AlertManager(metricsCollector);
 
         log.info("[告警配置] AlertManager 已配置并启用（使用默认配置）");
-        log.info("[告警配置] MeterRegistry: {}", meterRegistry != null ? "已注入" : "未注入");
-        log.info("[告警配置] 已初始化告警规则: HTTP错误率、响应时间、缓存命中率、CPU/内存使用率等");
-        log.info("[告警配置] 通知渠道: 钉钉、企业微信（默认启用），邮件、短信（默认禁用）");
-        log.warn("[告警配置] NotificationConfigManager未配置，无法从数据库读取配置，使用默认配置");
-
         return alertManager;
     }
 

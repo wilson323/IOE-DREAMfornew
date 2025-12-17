@@ -236,4 +236,75 @@ public class AreaEntity extends BaseEntity {
      */
     @TableField("extended_attributes")
     private String extendedAttributes;
+
+    /**
+     * 获取状态（兼容getStatus()调用）
+     */
+    public Integer getStatus() {
+        return this.areaStatus;
+    }
+
+    /**
+     * 设置状态（兼容setStatus()调用）
+     */
+    public void setStatus(Integer status) {
+        this.areaStatus = status;
+    }
+
+    /**
+     * 获取ID（兼容getId()调用）
+     */
+    public Long getId() {
+        return this.areaId;
+    }
+
+    /**
+     * 设置ID（兼容setId()调用）
+     */
+    public void setId(Long id) {
+        this.areaId = id;
+    }
+
+    /**
+     * 获取父ID（兼容getParentId()调用）
+     */
+    public Long getParentId() {
+        return this.parentAreaId;
+    }
+
+    /**
+     * 设置父ID（兼容setParentId()调用）
+     */
+    public void setParentId(Long parentId) {
+        this.parentAreaId = parentId;
+    }
+
+    /**
+     * 子区域列表（非数据库字段，用于构建树形结构）
+     */
+    @TableField(exist = false)
+    private java.util.List<AreaEntity> children;
+
+    /**
+     * 获取子区域
+     */
+    public java.util.List<AreaEntity> getChildren() {
+        return this.children;
+    }
+
+    /**
+     * 设置子区域
+     */
+    public void setChildren(java.util.List<?> children) {
+        if (children == null) {
+            this.children = null;
+        } else {
+            this.children = new java.util.ArrayList<>();
+            for (Object child : children) {
+                if (child instanceof AreaEntity) {
+                    this.children.add((AreaEntity) child);
+                }
+            }
+        }
+    }
 }

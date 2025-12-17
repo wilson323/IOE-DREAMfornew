@@ -10,6 +10,7 @@ import net.lab1024.sa.common.organization.entity.AreaUserEntity;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -127,7 +128,7 @@ public class AreaPermissionManager {
         }
 
         // 标记为已删除
-        relation.setDeletedFlag(true);
+        relation.setDeletedFlag(1);
         relation.setUpdateTime(LocalDateTime.now());
 
         int result = areaUserDao.updateById(relation);
@@ -345,7 +346,7 @@ public class AreaPermissionManager {
         for (AreaUserEntity permission : expiredPermissions) {
             try {
                 // 标记为已删除
-                permission.setDeletedFlag(true);
+                permission.setDeletedFlag(1);
                 permission.setUpdateTime(now);
                 areaUserDao.updateById(permission);
 
@@ -456,7 +457,7 @@ public class AreaPermissionManager {
         for (AreaUserEntity permission : userPermissions) {
             if (permission.getInheritChildren() != null && permission.getInheritChildren()) {
                 // 查询子区域
-                List<AreaEntity> childAreas = areaDao.selectByParentAreaId(permission.getAreaId());
+                List<AreaEntity> childAreas = areaDao.selectByParentId(permission.getAreaId());
                 for (AreaEntity childArea : childAreas) {
                     inheritedAreas.add(childArea.getAreaId());
                     // 递归获取子区域的子区域
@@ -473,7 +474,7 @@ public class AreaPermissionManager {
      */
     private List<Long> getChildAreasRecursive(Long parentAreaId) {
         List<Long> childAreas = new ArrayList<>();
-        List<AreaEntity> children = areaDao.selectByParentAreaId(parentAreaId);
+        List<AreaEntity> children = areaDao.selectByParentId(parentAreaId);
 
         for (AreaEntity child : children) {
             childAreas.add(child.getAreaId());

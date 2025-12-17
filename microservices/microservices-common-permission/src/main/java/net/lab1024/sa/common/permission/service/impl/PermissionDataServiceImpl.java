@@ -6,15 +6,17 @@ import net.lab1024.sa.common.permission.service.PermissionDataService;
 import net.lab1024.sa.common.permission.manager.PermissionCacheManager;
 import net.lab1024.sa.common.permission.audit.PermissionAuditLogger;
 import net.lab1024.sa.common.permission.monitor.PermissionPerformanceMonitor;
-import net.lab1024.sa.common.organization.dao.UserDao;
-import net.lab1024.sa.common.organization.dao.MenuDao;
-import net.lab1024.sa.common.organization.dao.RoleDao;
-import net.lab1024.sa.common.organization.dao.PermissionDao;
-import net.lab1024.sa.common.organization.entity.UserEntity;
-import net.lab1024.sa.common.organization.entity.MenuEntity;
-import net.lab1024.sa.common.organization.entity.RoleEntity;
-import net.lab1024.sa.common.organization.entity.PermissionEntity;
-import net.lab1024.sa.common.service.AuthService;
+import net.lab1024.sa.common.permission.dao.UserDao;
+import net.lab1024.sa.common.menu.dao.MenuDao;
+import net.lab1024.sa.common.permission.dao.RoleDao;
+// UserRoleDao moved to rbac package, importing via full path
+import net.lab1024.sa.common.rbac.dao.UserRoleDao;
+import net.lab1024.sa.common.permission.entity.UserEntity;
+import net.lab1024.sa.common.menu.entity.MenuEntity;
+import net.lab1024.sa.common.permission.entity.RoleEntity;
+import net.lab1024.sa.common.permission.domain.entity.PermissionEntity;
+import net.lab1024.sa.common.permission.service.AuthService;
+import net.lab1024.sa.common.permission.dao.PermissionDao;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -277,12 +279,11 @@ public class PermissionDataServiceImpl implements PermissionDataService {
             }
 
             // 从Redis获取变更通知
-            Set<Object> changeKeys = redisTemplate.keys(PERMISSION_CHANGE_KEY_PREFIX + "*");
+            Set<String> changeKeys = redisTemplate.keys(PERMISSION_CHANGE_KEY_PREFIX + "*");
             List<PermissionDataVO> changes = new ArrayList<>();
 
             if (changeKeys != null) {
-                for (Object keyObj : changeKeys) {
-                    String key = (String) keyObj;
+                for (String key : changeKeys) {
                     PermissionDataVO change = (PermissionDataVO) redisTemplate.opsForValue().get(key);
 
                     if (change != null && change.getChangeTimestamp() > lastSyncTime) {
@@ -515,7 +516,7 @@ public class PermissionDataServiceImpl implements PermissionDataService {
     }
 
     @Override
-    public Set<String> getUserPermissions(Long userId) {
+    public Set<String> getUserPermissionSet(Long userId) {
         try {
             UserPermissionVO userPermission = getUserPermissions(userId);
             return userPermission.getPermissions() != null ?
@@ -550,7 +551,7 @@ public class PermissionDataServiceImpl implements PermissionDataService {
                 .changeType(changeType)
                 .operationType("UPDATE")
                 .targetId(targetId)
-                .targetData(affectedData.toString())
+                .targetCode(affectedData.toString())
                 .afterVersion(CURRENT_DATA_VERSION)
                 .changeSource("SYSTEM")
                 .status("PENDING")
@@ -647,32 +648,32 @@ public class PermissionDataServiceImpl implements PermissionDataService {
                 return null;
             }
 
-            return MenuPermissionVO.builder()
-                .menuId(menu.getMenuId())
-                .menuCode(menu.getMenuCode())
-                .menuName(menu.getMenuName())
-                .icon(menu.getIcon())
-                .menuType(menu.getMenuType())
-                .parentId(menu.getParentId())
-                .level(menu.getLevel())
-                .orderNum(menu.getOrderNum())
-                .path(menu.getPath())
-                .component(menu.getComponent())
-                .permission(menu.getPermission())
-                .webPermission(menu.getPermission() != null ?
-                    menu.getPermission().toLowerCase().replace(":", ".") : null)
-                .status(menu.getStatus())
-                .visible(menu.getVisible())
-                .keepAlive(menu.getKeepAlive())
-                .isExternal(menu.getIsExternal())
-                .externalUrl(menu.getExternalUrl())
-                .query(menu.getQuery())
-                .description(menu.getDescription())
-                .remark(menu.getRemark())
-                .build();
+            MenuPermissionVO vo = new MenuPermissionVO();
+            vo.setMenuId(menu.getId());
+            vo.setMenuCode(menu.getMenuCode());
+            vo.setMenuName(menu.getMenuName());
+            vo.setIcon(menu.getMenuIcon());
+            vo.setMenuType(menu.getMenuType());
+            vo.setParentId(menu.getParentId());
+            vo.setLevel(menu.getMenuLevel());
+            vo.setOrderNum(menu.getSortOrder());
+            vo.setPath(menu.getMenuPath());
+            vo.setComponent(menu.getComponentPath());
+            vo.setPermission(menu.getPermission());
+            vo.setWebPermission(menu.getPermission() != null ?
+                menu.getPermission().toLowerCase().replace(":", ".") : null);
+            vo.setStatus(menu.getIsDisabled() != null && menu.getIsDisabled() == 0 ? 1 : 0);
+            vo.setVisible(menu.getIsVisible() != null && menu.getIsVisible() == 1);
+            vo.setKeepAlive(menu.getIsCache() != null && menu.getIsCache() == 1);
+            vo.setIsExternal(menu.getIsExternal() != null && menu.getIsExternal() == 1);
+            vo.setExternalUrl(menu.getIsExternal() != null && menu.getIsExternal() == 1 ? menu.getMenuPath() : null);
+            vo.setQuery(menu.getRouteParams());
+            vo.setDescription(menu.getRemark());
+            vo.setRemark(menu.getRemark());
+            return vo;
 
         } catch (Exception e) {
-            log.error("[权限数据] 转换菜单实体异常: menuId={}", menu.getMenuId(), e);
+            log.error("[权限数据] 转换菜单实体异常: menuId={}", menu.getId(), e);
             return null;
         }
     }
@@ -749,7 +750,7 @@ public class PermissionDataServiceImpl implements PermissionDataService {
         if (roles != null) {
             roles.stream().sorted().forEach(data::append);
         }
-        return DigestUtils.md5DigestAsHex(data.toString());
+        return DigestUtils.md5DigestAsHex(data.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
     /**
@@ -799,7 +800,7 @@ public class PermissionDataServiceImpl implements PermissionDataService {
             .exceptionStats(new PermissionStatsVO.PermissionExceptionStats())
             .userStats(new PermissionStatsVO.UserPermissionDistributionStats())
             .changeStats(new PermissionStatsVO.PermissionChangeStats())
-            .healthScore(BigDecimal.ZERO)
+            .healthScore(java.math.BigDecimal.ZERO)
             .performanceGrade("POOR")
             .trendData(new ArrayList<>())
             .build();

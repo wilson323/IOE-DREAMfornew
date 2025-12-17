@@ -17,6 +17,13 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 配置实时计算引擎相关的Bean和参数
  * 严格遵循CLAUDE.md全局架构规范
  * </p>
+ * <p>
+ * ⚠️ 线程池已废弃：eventProcessingExecutor、calculationExecutor已废弃，
+ * 请使用 UnifiedThreadPoolConfiguration 中的统一线程池：
+ * - coreExecutor: CPU密集型任务
+ * - ioExecutor: IO密集型任务
+ * - scheduledExecutor: 定时任务
+ * </p>
  *
  * @author IOE-DREAM架构团队
  * @version 1.0.0
@@ -49,18 +56,20 @@ public class RealtimeCalculationEngineConfig {
      * 事件处理线程池 - 使用ThreadPoolTaskExecutor
      *
      * @return 事件处理线程池
+     * @deprecated 请使用 UnifiedThreadPoolConfiguration 中的 ioExecutor
      */
+    @Deprecated
     @Bean(name = "eventProcessingExecutor")
     public ThreadPoolTaskExecutor eventProcessingExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        
+
         // 核心线程数：CPU核心数
         int corePoolSize = Runtime.getRuntime().availableProcessors();
         // 最大线程数：CPU核心数 * 2
         int maximumPoolSize = corePoolSize * 2;
         // 队列容量
         int queueCapacity = 1000;
-        
+
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maximumPoolSize);
         executor.setQueueCapacity(queueCapacity);
@@ -69,7 +78,7 @@ public class RealtimeCalculationEngineConfig {
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(60);
         executor.initialize();
-        
+
         return executor;
     }
 
@@ -77,16 +86,18 @@ public class RealtimeCalculationEngineConfig {
      * 计算任务线程池 - 使用ThreadPoolTaskExecutor
      *
      * @return 计算任务线程池
+     * @deprecated 请使用 UnifiedThreadPoolConfiguration 中的 coreExecutor
      */
+    @Deprecated
     @Bean(name = "calculationExecutor")
     public ThreadPoolTaskExecutor calculationExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        
+
         // 核心线程数：CPU核心数 / 2（计算密集型）
         int corePoolSize = Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
         // 最大线程数：CPU核心数
         int maximumPoolSize = Runtime.getRuntime().availableProcessors();
-        
+
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maximumPoolSize);
         executor.setQueueCapacity(500);
@@ -95,7 +106,7 @@ public class RealtimeCalculationEngineConfig {
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(60);
         executor.initialize();
-        
+
         return executor;
     }
 

@@ -253,24 +253,6 @@ public interface VideoObjectDetectionDao extends BaseMapper<VideoObjectDetection
     List<Map<String, Object>> countDetectionByDevice();
 
     /**
-     * 获取指定目标ID的检测记录
-     */
-    @Select("SELECT * FROM t_video_object_detection WHERE object_id = #{objectId} AND deleted_flag = 0 ORDER BY detection_time DESC")
-    List<VideoObjectDetectionEntity> selectByObjectId(@Param("objectId") String objectId);
-
-    /**
-     * 按目标类型统计数量
-     */
-    @Select("SELECT object_type, COUNT(*) as count FROM t_video_object_detection WHERE deleted_flag = 0 GROUP BY object_type")
-    List<Map<String, Object>> countByObjectType();
-
-    /**
-     * 按告警级别统计数量
-     */
-    @Select("SELECT alert_level, COUNT(*) as count FROM t_video_object_detection WHERE alert_triggered = 1 AND deleted_flag = 0 GROUP BY alert_level")
-    List<Map<String, Object>> countByAlertLevel();
-
-    /**
      * 按处理状态统计数量
      */
     @Select("SELECT process_status, COUNT(*) as count FROM t_video_object_detection WHERE deleted_flag = 0 GROUP BY process_status")

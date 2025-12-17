@@ -189,7 +189,7 @@ public class DataAnalysisOpenApiController {
     public ResponseDTO<TrendAnalysisResponse> getTrendAnalysis(
             @Valid @RequestBody TrendAnalysisRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -209,7 +209,7 @@ public class DataAnalysisOpenApiController {
     public ResponseDTO<AnomalyDetectionResponse> detectAnomalies(
             @Valid @RequestBody AnomalyDetectionRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -229,7 +229,7 @@ public class DataAnalysisOpenApiController {
     public ResponseDTO<PredictionAnalysisResponse> getPredictionAnalysis(
             @Valid @RequestBody PredictionAnalysisRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -249,7 +249,7 @@ public class DataAnalysisOpenApiController {
     public ResponseDTO<IntelligentRecommendationResponse> getIntelligentRecommendations(
             @Valid @RequestBody RecommendationRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -269,7 +269,7 @@ public class DataAnalysisOpenApiController {
     public ResponseDTO<DataInsightResponse> generateDataInsights(
             @Valid @RequestBody DataInsightRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -317,7 +317,7 @@ public class DataAnalysisOpenApiController {
     public ResponseDTO<CustomReportResponse> getCustomReport(
             @Valid @RequestBody CustomReportRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -337,7 +337,7 @@ public class DataAnalysisOpenApiController {
     public ResponseDTO<ExportTaskResponse> exportReport(
             @Valid @RequestBody ExportRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);

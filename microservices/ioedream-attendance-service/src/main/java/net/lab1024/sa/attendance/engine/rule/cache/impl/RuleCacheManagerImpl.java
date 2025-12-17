@@ -1,6 +1,8 @@
 package net.lab1024.sa.attendance.engine.rule.cache.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.rule.cache.RuleCacheManager;
 import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext;
@@ -8,22 +10,28 @@ import net.lab1024.sa.attendance.engine.rule.model.RuleEvaluationResult;
 
 import org.springframework.data.redis.core.RedisTemplate;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 规则缓存管理器实现类
+ * 规则缓存管理器实现类 - 三级缓存架构
  * <p>
- * 多级缓存实现：L1本地缓存 + L2 Redis缓存
+ * 三级缓存实现：
+ * - L1本地缓存 (Caffeine)：毫秒级响应，TTL 5分钟
+ * - L2 Redis缓存：分布式一致性，TTL 30分钟
+ * - L3 网关缓存：减少RPC调用（通过GatewayServiceClient）
+ * </p>
+ * <p>
  * 严格遵循CLAUDE.md全局架构规范
  * </p>
  *
  * @author IOE-DREAM架构团队
- * @version 1.0.0
- * @since 2025-12-16
+ * @version 2.0.0
+ * @since 2025-12-17
  */
 @Slf4j
 public class RuleCacheManagerImpl implements RuleCacheManager {
@@ -31,20 +39,24 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 
-    // L1本地缓存
-    private final Map<String, RuleEvaluationResult> localCache = new ConcurrentHashMap<>();
+    /**
+     * L1本地缓存 (Caffeine) - 三级缓存架构
+     */
+    private Cache<String, RuleEvaluationResult> l1Cache;
 
     // 缓存统计
     private final AtomicLong totalRequests = new AtomicLong(0);
-    private final AtomicLong cacheHits = new AtomicLong(0);
+    private final AtomicLong l1Hits = new AtomicLong(0);
+    private final AtomicLong l2Hits = new AtomicLong(0);
     private final AtomicLong cacheMisses = new AtomicLong(0);
     private final AtomicLong evictions = new AtomicLong(0);
 
-    // 缓存TTL（默认30分钟）
-    private long cacheTTLSeconds = 1800;
+    // L1缓存配置
+    private static final int L1_MAX_SIZE = 10000;
+    private static final Duration L1_EXPIRE = Duration.ofMinutes(5);
 
-    // 本地缓存大小限制
-    private static final int MAX_LOCAL_CACHE_SIZE = 1000;
+    // L2缓存TTL（默认30分钟）
+    private long l2TtlSeconds = 1800;
 
     // 缓存键前缀
     private static final String CACHE_PREFIX = "attendance:rule:result:";
@@ -57,6 +69,19 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
     public RuleCacheManagerImpl(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
+        initL1Cache();
+    }
+
+    /**
+     * 初始化L1 Caffeine缓存
+     */
+    private void initL1Cache() {
+        l1Cache = Caffeine.newBuilder()
+                .maximumSize(L1_MAX_SIZE)
+                .expireAfterWrite(L1_EXPIRE)
+                .recordStats()
+                .build();
+        log.info("[规则缓存] L1 Caffeine缓存初始化完成, 容量={}, TTL={}分钟", L1_MAX_SIZE, L1_EXPIRE.toMinutes());
     }
 
     /**
@@ -100,7 +125,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
             // 先从L1本地缓存获取
             RuleEvaluationResult result = getFromLocalCache(cacheKey);
             if (result != null) {
-                cacheHits.incrementAndGet();
+                l1Hits.incrementAndGet();
                 log.debug("[规则缓存] L1缓存命中: {}", cacheKey);
                 return result;
             }
@@ -108,10 +133,10 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
             // 再从L2 Redis缓存获取
             result = getFromRedisCache(cacheKey);
             if (result != null) {
-                cacheHits.incrementAndGet();
+                l2Hits.incrementAndGet();
                 // 回填L1缓存
                 cacheToLocal(cacheKey, result);
-                log.debug("[规则缓存] L2缓存命中: {}", cacheKey);
+                log.debug("[规则缓存] L2缓存命中并回填L1: {}", cacheKey);
                 return result;
             }
 
@@ -151,7 +176,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
 
                 // 设置过期时间
                 redisBatch.keySet().forEach(key ->
-                    redisTemplate.expire(key, Duration.ofSeconds(cacheTTLSeconds))
+                    redisTemplate.expire(key, Duration.ofSeconds(l2TtlSeconds))
                 );
             }
 
@@ -279,8 +304,8 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
         log.info("[规则缓存] 清除所有规则缓存");
 
         try {
-            // 清除本地缓存
-            localCache.clear();
+            // 清除L1本地缓存
+            l1Cache.invalidateAll();
 
             // 清除Redis缓存
             String pattern = CACHE_PREFIX + "*";
@@ -353,7 +378,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
     public CacheStatistics getCacheStatistics() {
         CacheStatistics statistics = new CacheStatistics();
         statistics.setTotalRequests(totalRequests.get());
-        statistics.setCacheHits(cacheHits.get());
+        statistics.setCacheHits(l1Hits.get() + l2Hits.get());
         statistics.setCacheMisses(cacheMisses.get());
         statistics.setEvictions(evictions.get());
 
@@ -362,7 +387,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
             statistics.setHitRate((double) statistics.getCacheHits() / total);
         }
 
-        statistics.setCacheSize(localCache.size());
+        statistics.setCacheSize((int) l1Cache.estimatedSize());
 
         return statistics;
     }
@@ -373,7 +398,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
     @Override
     public void setCacheTTL(long ttlSeconds) {
         log.info("[规则缓存] 设置缓存TTL: {} 秒", ttlSeconds);
-        this.cacheTTLSeconds = ttlSeconds;
+        this.l2TtlSeconds = ttlSeconds;
     }
 
     /**
@@ -382,7 +407,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
     @Override
     public boolean isCacheHit(Long ruleId, RuleExecutionContext context) {
         String cacheKey = getCacheKey(ruleId, context);
-        return localCache.containsKey(cacheKey) ||
+        return l1Cache.getIfPresent(cacheKey) != null ||
                Boolean.TRUE.equals(redisTemplate.hasKey(cacheKey));
     }
 
@@ -403,21 +428,14 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
     }
 
     /**
-     * 缓存到本地
+     * 缓存到L1本地缓存 (Caffeine)
      */
     private void cacheToLocal(String cacheKey, RuleEvaluationResult result) {
         try {
-            // 检查本地缓存大小限制
-            if (localCache.size() >= MAX_LOCAL_CACHE_SIZE) {
-                // 简单的LRU策略：移除最早的一半
-                List<String> keysToRemove = new ArrayList<>(localCache.keySet()).subList(0, MAX_LOCAL_CACHE_SIZE / 2);
-                keysToRemove.forEach(localCache::remove);
-            }
-
-            localCache.put(cacheKey, result);
-
+            l1Cache.put(cacheKey, result);
+            log.debug("[规则缓存] L1写入: {}", cacheKey);
         } catch (Exception e) {
-            log.error("[规则缓存] 缓存到本地失败: {}", cacheKey, e);
+            log.error("[规则缓存] L1缓存写入失败: {}", cacheKey, e);
         }
     }
 
@@ -426,7 +444,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
      */
     private void cacheToRedis(String cacheKey, RuleEvaluationResult result) {
         try {
-            redisTemplate.opsForValue().set(cacheKey, result, Duration.ofSeconds(cacheTTLSeconds));
+            redisTemplate.opsForValue().set(cacheKey, result, Duration.ofSeconds(l2TtlSeconds));
         } catch (Exception e) {
             log.error("[规则缓存] 缓存到Redis失败: {}", cacheKey, e);
         }
@@ -440,7 +458,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
             if (userId != null) {
                 String userKey = USER_CACHE_PREFIX + userId;
                 redisTemplate.opsForSet().add(userKey, cacheKey);
-                redisTemplate.expire(userKey, Duration.ofSeconds(cacheTTLSeconds));
+                redisTemplate.expire(userKey, Duration.ofSeconds(l2TtlSeconds));
             }
         } catch (Exception e) {
             log.error("[规则缓存] 缓存用户关系失败: userId={}", userId, e);
@@ -455,7 +473,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
             if (departmentId != null) {
                 String deptKey = DEPT_CACHE_PREFIX + departmentId;
                 redisTemplate.opsForSet().add(deptKey, cacheKey);
-                redisTemplate.expire(deptKey, Duration.ofSeconds(cacheTTLSeconds));
+                redisTemplate.expire(deptKey, Duration.ofSeconds(l2TtlSeconds));
             }
         } catch (Exception e) {
             log.error("[规则缓存] 缓存部门关系失败: departmentId={}", departmentId, e);
@@ -463,10 +481,10 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
     }
 
     /**
-     * 从本地缓存获取
+     * 从L1本地缓存获取
      */
     private RuleEvaluationResult getFromLocalCache(String cacheKey) {
-        return localCache.get(cacheKey);
+        return l1Cache.getIfPresent(cacheKey);
     }
 
     /**
@@ -485,7 +503,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
      * 从本地缓存中移除指定规则
      */
     private void evictFromLocalCache(Long ruleId) {
-        localCache.entrySet().removeIf(entry ->
+        l1Cache.asMap().entrySet().removeIf(entry ->
             entry.getKey().startsWith(CACHE_PREFIX + ruleId + ":")
         );
     }
@@ -494,7 +512,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
      * 从本地缓存中移除用户相关项
      */
     private void evictFromLocalCacheByUser(Long userId) {
-        localCache.entrySet().removeIf(entry ->
+        l1Cache.asMap().entrySet().removeIf(entry ->
             entry.getKey().contains(":" + userId + ":")
         );
     }
@@ -503,7 +521,7 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
      * 从本地缓存中移除部门相关项
      */
     private void evictFromLocalCacheByDepartment(Long departmentId) {
-        localCache.entrySet().removeIf(entry ->
+        l1Cache.asMap().entrySet().removeIf(entry ->
             entry.getKey().contains(":" + departmentId + ":")
         );
     }

@@ -7,8 +7,8 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import jakarta.crypto.Mac;
-import jakarta.crypto.spec.SecretKeySpec;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

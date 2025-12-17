@@ -498,11 +498,23 @@ public class AreaDeviceManager {
      * 模块设备分布
      */
     public static class ModuleDeviceDistribution {
+        private String businessModule;
+        private String moduleName;
+        private Long areaId;
+        private String areaName;
         private Integer deviceType;
         private Integer deviceCount;
         private Integer areaCount;
 
         // getters and setters
+        public String getBusinessModule() { return businessModule; }
+        public void setBusinessModule(String businessModule) { this.businessModule = businessModule; }
+        public String getModuleName() { return moduleName; }
+        public void setModuleName(String moduleName) { this.moduleName = moduleName; }
+        public Long getAreaId() { return areaId; }
+        public void setAreaId(Long areaId) { this.areaId = areaId; }
+        public String getAreaName() { return areaName; }
+        public void setAreaName(String areaName) { this.areaName = areaName; }
         public Integer getDeviceType() { return deviceType; }
         public void setDeviceType(Integer deviceType) { this.deviceType = deviceType; }
         public Integer getDeviceCount() { return deviceCount; }

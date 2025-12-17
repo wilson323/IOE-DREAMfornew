@@ -27,6 +27,9 @@ public class LoginRequest {
     @Schema(description = "密码", example = "123456", required = true)
     private String password;
 
+    @Schema(description = "手机号（短信登录时使用）", example = "13800138000")
+    private String phone;
+
     @Schema(description = "验证码", example = "1234")
     private String captcha;
 

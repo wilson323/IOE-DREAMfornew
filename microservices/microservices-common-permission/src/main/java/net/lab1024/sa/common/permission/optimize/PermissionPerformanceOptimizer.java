@@ -592,7 +592,7 @@ public class PermissionPerformanceOptimizer {
      */
     private void cacheOptimizationResult(String cacheKey, PermissionValidationResult result) {
         try {
-            unifiedCacheManager.put(cacheKey, result, config.getOptimizationCacheTtl());
+            unifiedCacheManager.put(cacheKey, result, config.getOptimizationCacheTtl().toMillis());
         } catch (Exception e) {
             log.error("[权限优化] 缓存优化结果异常: cacheKey={}", cacheKey, e);
         }
@@ -755,6 +755,10 @@ public class PermissionPerformanceOptimizer {
 
         public PermissionHotData(Long userId) {
             this.userId = userId;
+        }
+
+        public long getAccessCount() {
+            return totalAccessCount;
         }
 
         public void recordAccess(Set<String> permissions, boolean cacheHit) {

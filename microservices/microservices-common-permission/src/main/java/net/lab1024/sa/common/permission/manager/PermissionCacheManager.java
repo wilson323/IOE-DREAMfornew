@@ -195,6 +195,21 @@ public interface PermissionCacheManager {
     void warmUpBatchCache(Set<Long> userIds);
 
     /**
+     * 通用缓存获取
+     */
+    <T> T get(String key);
+
+    /**
+     * 通用缓存设置
+     */
+    <T> void put(String key, T value, long ttlSeconds);
+
+    /**
+     * 通用缓存删除
+     */
+    void evict(String key);
+
+    /**
      * 清除所有权限相关缓存
      */
     void evictAll();

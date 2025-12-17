@@ -54,6 +54,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- 依赖权限模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-permission</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Redisson分布式锁 -->
         <dependency>
             <groupId>org.redisson</groupId>

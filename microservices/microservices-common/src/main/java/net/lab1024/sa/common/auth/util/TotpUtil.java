@@ -3,8 +3,8 @@ package net.lab1024.sa.common.auth.util;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.SystemException;
 
-import jakarta.crypto.Mac;
-import jakarta.crypto.spec.SecretKeySpec;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;

@@ -163,9 +163,9 @@ public class PermissionPerformanceMonitor {
             cacheAccessTimer.record(duration, java.util.concurrent.TimeUnit.MILLISECONDS);
 
             if (hit) {
-                cacheHitCounter.increment(java.util.Collections.singletonList(java.util.Map.entry("cache_type", cacheType)));
+                cacheHitCounter.increment();
             } else {
-                cacheMissCounter.increment(java.util.Collections.singletonList(java.util.Map.entry("cache_type", cacheType)));
+                cacheMissCounter.increment();
             }
 
             // 记录本地指标
@@ -383,7 +383,7 @@ public class PermissionPerformanceMonitor {
      */
     private long getRecentValidationCount(int seconds) {
         // TODO: 实现从Redis或时间窗口获取最近验证次数的逻辑
-        return permissionValidationCounter.count();
+        return (long) permissionValidationCounter.count();
     }
 
     /**
@@ -391,7 +391,7 @@ public class PermissionPerformanceMonitor {
      */
     private long getRecentErrorCount(int seconds) {
         // TODO: 实现从Redis或时间窗口获取最近错误次数的逻辑
-        return permissionErrorCounter.count();
+        return (long) permissionErrorCounter.count();
     }
 
     /**
@@ -407,8 +407,8 @@ public class PermissionPerformanceMonitor {
      */
     private double getRecentCacheHitRate(int seconds) {
         try {
-            long hits = cacheHitCounter.count();
-            long misses = cacheMissCounter.count();
+            long hits = (long) cacheHitCounter.count();
+            long misses = (long) cacheMissCounter.count();
             long total = hits + misses;
 
             return total > 0 ? (double) hits / total : 0.0;

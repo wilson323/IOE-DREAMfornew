@@ -11,17 +11,21 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * 权限审计配置类
  * <p>
- * 配置权限审计相关的Bean，包括：
- * - 异步审计日志执行器配置
- * - 线程池参数优化
- * - 审计功能开关配置
- * - 性能监控配置
+ * 配置权限审计相关的Bean
+ * </p>
+ * <p>
+ * ⚠️ 线程池已废弃：所有线程池Bean已废弃，请使用 UnifiedThreadPoolConfiguration 中的统一线程池：
+ * - coreExecutor: CPU密集型任务
+ * - ioExecutor: IO密集型任务
+ * - scheduledExecutor: 定时任务
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-16
+ * @deprecated 线程池配置请使用 UnifiedThreadPoolConfiguration
  */
+@Deprecated
 @Configuration
 @EnableAsync
 public class PermissionAuditConfig {

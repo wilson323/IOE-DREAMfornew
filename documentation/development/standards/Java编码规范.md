@@ -236,7 +236,18 @@ public class GlobalExceptionHandler {
 ✅ 必须使用 jakarta.persistence.Entity
 ✅ 必须使用 jakarta.servlet.http.HttpServletRequest
 ✅ 必须使用 jakarta.transaction.Transactional
-❌ 禁止使用 jakarta.* 包（会导致编译错误）
+❌ 禁止使用 javax.annotation.* 等Jakarta EE迁移范围的包
+```
+
+### ⚠️ javax包例外说明（Java标准库，允许使用）
+```markdown
+以下javax.*包属于Java SE标准库，不在Jakarta EE迁移范围内，可正常使用：
+✅ javax.crypto.* - Java加密扩展（Cipher、Mac、SecretKey等）
+✅ javax.sql.DataSource - JDBC数据源接口
+✅ javax.imageio.ImageIO - 图像I/O处理
+✅ javax.net.ssl.* - SSL/TLS网络安全
+
+说明：Jakarta EE 9+仅迁移了原Java EE规范包，Java SE标准库中的javax包保持不变。
 ```
 
 ### 依赖注入规范

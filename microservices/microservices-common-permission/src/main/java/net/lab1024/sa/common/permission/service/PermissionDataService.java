@@ -139,6 +139,14 @@ public interface PermissionDataService {
     Set<String> getUserRoles(Long userId);
 
     /**
+     * 获取用户权限集合（简化版）
+     *
+     * @param userId 用户ID
+     * @return 权限标识集合
+     */
+    Set<String> getUserPermissionSet(Long userId);
+
+    /**
      * 通知权限数据变更
      *
      * @param changeType 变更类型

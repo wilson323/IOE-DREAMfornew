@@ -187,9 +187,9 @@ public class AreaUserManager {
         Integer retryCount = areaUser.getRetryCount();
 
         return syncStatus == null
-                || AreaUserEntity.DeviceSyncStatus.NOT_SYNCED.equals(syncStatus)      // 未下发
-                || AreaUserEntity.DeviceSyncStatus.SYNC_FAILED.equals(syncStatus)     // 同步失败
-                || (AreaUserEntity.DeviceSyncStatus.CANCELED.equals(syncStatus)     // 已撤销
+                || syncStatus == AreaUserEntity.DeviceSyncStatus.NOT_SYNCED      // 未下发
+                || syncStatus == AreaUserEntity.DeviceSyncStatus.SYNC_FAILED     // 同步失败
+                || (syncStatus == AreaUserEntity.DeviceSyncStatus.CANCELED     // 已撤销
                     && retryCount != null && retryCount < 3);  // 已撤销但可重试
     }
 
@@ -288,13 +288,13 @@ public class AreaUserManager {
         switch (relationType) {
             case AreaUserEntity.RelationType.PERMANENT:
                 return "常驻人员";
-            case AreaUser.EntityType.TEMPORARY:
+            case AreaUserEntity.RelationType.TEMPORARY:
                 return "临时人员";
-            case AreaUserEntity.EntityType.VISITOR:
+            case AreaUserEntity.RelationType.VISITOR:
                 return "访客";
-            case AreaUserEntity.EntityType.MAINTENANCE:
+            case AreaUserEntity.RelationType.MAINTENANCE:
                 return "维护人员";
-            case AreaUserEntity.EntityType.MANAGER:
+            case AreaUserEntity.RelationType.MANAGER:
                 return "管理人员";
             default:
                 return "未知";
@@ -360,7 +360,8 @@ public class AreaUserManager {
         try {
             // 从系统配置获取节假日信息
             // 这里应该调用系统配置服务或缓存
-            return SystemConfigUtil.isHolidayToday();
+            // 暂时返回false，实际应从配置中心获取
+            return false;
         } catch (Exception e) {
             log.debug("[区域人员关联] 检查节假日失败，默认返回false: error={}", e.getMessage());
             return false;

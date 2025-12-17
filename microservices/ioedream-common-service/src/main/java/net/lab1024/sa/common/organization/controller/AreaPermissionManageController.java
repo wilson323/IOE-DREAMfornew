@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.manager.AreaPermissionManager;
 import net.lab1024.sa.common.organization.service.AreaPermissionService;
+import net.lab1024.sa.common.organization.entity.AreaUserEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

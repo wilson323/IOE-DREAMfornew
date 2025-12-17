@@ -1,9 +1,12 @@
 package net.lab1024.sa.oa.workflow.cache;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
@@ -13,15 +16,17 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * 工作流高级缓存管理器
+ * 工作流高级缓存管理器 - 三级缓存架构
  * <p>
- * 提供多级缓存架构、智能缓存策略、缓存预热和失效管理
- * 支持L1本地缓存 + L2 Redis缓存 + L3 应用缓存
+ * 三级缓存实现：
+ * - L1本地缓存 (Caffeine)：毫秒级响应，TTL 5分钟，容量10000
+ * - L2 Redis缓存：分布式一致性，TTL 30分钟
+ * - L3 应用缓存：进程内持久化，TTL 2小时
  * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-16
+ * @version 2.0.0
+ * @since 2025-12-17
  */
 @Slf4j
 @Component
@@ -30,8 +35,10 @@ public class WorkflowCacheManager {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
-    // L1缓存：本地内存缓存（Caffeine风格实现）
-    private final Map<String, CacheEntry> localCache = new ConcurrentHashMap<>();
+    /**
+     * L1缓存：Caffeine本地缓存（三级缓存架构）
+     */
+    private Cache<String, CacheEntry> l1Cache;
 
     // L3缓存：应用级缓存（进程内持久化）
     private final Map<String, CacheEntry> applicationCache = new ConcurrentHashMap<>();
@@ -41,6 +48,16 @@ public class WorkflowCacheManager {
     private static final Duration DEFAULT_LOCAL_TTL = Duration.ofMinutes(5);
     private static final Duration DEFAULT_REDIS_TTL = Duration.ofMinutes(30);
     private static final Duration DEFAULT_APP_TTL = Duration.ofHours(2);
+
+    @PostConstruct
+    public void init() {
+        l1Cache = Caffeine.newBuilder()
+                .maximumSize(MAX_LOCAL_CACHE_SIZE)
+                .expireAfterWrite(DEFAULT_LOCAL_TTL)
+                .recordStats()
+                .build();
+        log.info("[工作流缓存] L1 Caffeine缓存初始化完成, 容量={}, TTL={}分钟", MAX_LOCAL_CACHE_SIZE, DEFAULT_LOCAL_TTL.toMinutes());
+    }
 
     // 缓存统计
     private final CacheStatistics statistics = new CacheStatistics();
@@ -175,7 +192,7 @@ public class WorkflowCacheManager {
             String cacheKey = buildKey(key, Object.class);
 
             if (level == CacheLevel.ALL || level == CacheLevel.L1) {
-                localCache.remove(cacheKey);
+                l1Cache.invalidate(cacheKey);
             }
 
             if (level == CacheLevel.ALL || level == CacheLevel.L2) {
@@ -208,8 +225,8 @@ public class WorkflowCacheManager {
     public void clear(CacheLevel level) {
         try {
             if (level == CacheLevel.ALL || level == CacheLevel.L1) {
-                localCache.clear();
-                log.info("[缓存] L1缓存已清空");
+                l1Cache.invalidateAll();
+                log.info("[缓存] L1 Caffeine缓存已清空");
             }
 
             if (level == CacheLevel.ALL || level == CacheLevel.L2) {
@@ -313,12 +330,12 @@ public class WorkflowCacheManager {
 
     @SuppressWarnings("unchecked")
     private <T> T getFromLocalCache(String key, Class<T> type) {
-        CacheEntry entry = localCache.get(key);
+        CacheEntry entry = l1Cache.getIfPresent(key);
         if (entry != null && !entry.isExpired()) {
             return (T) entry.getValue();
         }
         if (entry != null && entry.isExpired()) {
-            localCache.remove(key);
+            l1Cache.invalidate(key);
         }
         return null;
     }
@@ -347,13 +364,8 @@ public class WorkflowCacheManager {
     }
 
     private <T> void putToLocalCache(String key, T value, Duration ttl) {
-        // 检查缓存大小限制
-        if (localCache.size() >= MAX_LOCAL_CACHE_SIZE) {
-            evictOldestLocalEntry();
-        }
-
         CacheEntry entry = new CacheEntry(value, ttl);
-        localCache.put(key, entry);
+        l1Cache.put(key, entry);
     }
 
     private <T> void putToApplicationCache(String key, T value, Duration ttl) {
@@ -369,16 +381,13 @@ public class WorkflowCacheManager {
         }
     }
 
+    /**
+     * @deprecated Caffeine自动管理淘汰策略，无需手动实现
+     */
+    @Deprecated
     private void evictOldestLocalEntry() {
-        String oldestKey = localCache.entrySet().stream()
-                .min(Comparator.comparingLong(e -> e.getValue().getCreationTime()))
-                .map(Map.Entry::getKey)
-                .orElse(null);
-
-        if (oldestKey != null) {
-            localCache.remove(oldestKey);
-            log.debug("[缓存] L1缓存空间不足，淘汰最旧条目: key={}", oldestKey);
-        }
+        // Caffeine自动管理LRU淘汰，此方法保留兼容性
+        log.debug("[缓存] Caffeine自动管理淘汰策略");
     }
 
     // ==================== 内部类定义 ====================

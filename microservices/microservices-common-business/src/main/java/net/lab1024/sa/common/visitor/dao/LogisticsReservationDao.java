@@ -8,7 +8,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 // 已移除Repository导入，统一使用@Mapper注解
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -246,7 +247,7 @@ public interface LogisticsReservationDao extends BaseMapper<LogisticsReservation
      * @param beforeTime 时间点
      * @return 删除的记录数
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     int deleteBeforeTime(@Param("beforeTime") LocalDateTime beforeTime);
 
     /**
@@ -257,7 +258,7 @@ public interface LogisticsReservationDao extends BaseMapper<LogisticsReservation
      * @param approveUser 审批人
      * @return 更新的记录数
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     int updateStatusBatch(
             @Param("reservationIds") List<Long> reservationIds,
             @Param("status") String status,

@@ -107,7 +107,8 @@ public class UnifiedPermissionServiceImpl implements UnifiedPermissionService {
             }
 
             // 6. 异步审计
-            asyncAudit(() -> auditManager.recordPermissionValidation(userId, permission, resource, result));
+            final PermissionValidationResult finalResult = result;
+            asyncAudit(() -> auditManager.recordPermissionValidation(userId, permission, resource, finalResult));
 
             log.debug("[权限验证] 验证完成, userId={}, permission={}, valid={}, duration={}ms",
                 userId, permission, result.isValid(), duration);
@@ -126,7 +127,8 @@ public class UnifiedPermissionServiceImpl implements UnifiedPermissionService {
             result = PermissionValidationResult.systemError("权限验证异常: " + e.getMessage());
             stats.recordFailure("PERMISSION", "SYSTEM_ERROR", duration, false);
 
-            asyncAudit(() -> auditManager.recordPermissionValidation(userId, permission, resource, result));
+            final PermissionValidationResult errorResult = result;
+            asyncAudit(() -> auditManager.recordPermissionValidation(userId, permission, resource, errorResult));
             return result.withPerformance(duration, false);
         }
     }
@@ -172,7 +174,8 @@ public class UnifiedPermissionServiceImpl implements UnifiedPermissionService {
             }
 
             // 6. 异步审计
-            asyncAudit(() -> auditManager.recordRoleValidation(userId, role, resource, result));
+            final PermissionValidationResult auditResult = result;
+            asyncAudit(() -> auditManager.recordRoleValidation(userId, role, resource, auditResult));
 
             log.debug("[角色验证] 验证完成, userId={}, role={}, valid={}, duration={}ms",
                 userId, role, result.isValid(), duration);
@@ -191,7 +194,8 @@ public class UnifiedPermissionServiceImpl implements UnifiedPermissionService {
             result = PermissionValidationResult.systemError("角色验证异常: " + e.getMessage());
             stats.recordFailure("ROLE", "SYSTEM_ERROR", duration, false);
 
-            asyncAudit(() -> auditManager.recordRoleValidation(userId, role, resource, result));
+            final PermissionValidationResult errorResult = result;
+            asyncAudit(() -> auditManager.recordRoleValidation(userId, role, resource, errorResult));
             return result.withPerformance(duration, false);
         }
     }
@@ -237,7 +241,8 @@ public class UnifiedPermissionServiceImpl implements UnifiedPermissionService {
             }
 
             // 6. 异步审计
-            asyncAudit(() -> auditManager.recordDataScopeValidation(userId, dataType, resourceId, result));
+            final PermissionValidationResult auditResult = result;
+            asyncAudit(() -> auditManager.recordDataScopeValidation(userId, dataType, resourceId, auditResult));
 
             log.debug("[数据权限验证] 验证完成, userId={}, dataType={}, valid={}, duration={}ms",
                 userId, dataType, result.isValid(), duration);
@@ -255,7 +260,8 @@ public class UnifiedPermissionServiceImpl implements UnifiedPermissionService {
             result = PermissionValidationResult.systemError("数据权限验证异常: " + e.getMessage());
             stats.recordFailure("DATA_SCOPE", "SYSTEM_ERROR", duration, false);
 
-            asyncAudit(() -> auditManager.recordDataScopeValidation(userId, dataType, resourceId, result));
+            final PermissionValidationResult errorResult = result;
+            asyncAudit(() -> auditManager.recordDataScopeValidation(userId, dataType, resourceId, errorResult));
             return result.withPerformance(duration, false);
         }
     }
@@ -293,7 +299,8 @@ public class UnifiedPermissionServiceImpl implements UnifiedPermissionService {
             }
 
             // 5. 异步审计
-            asyncAudit(() -> auditManager.recordCompositeValidation(userId, conditions, logicOperator, result));
+            final PermissionValidationResult auditResult = result;
+            asyncAudit(() -> auditManager.recordCompositeValidation(userId, conditions, logicOperator, auditResult));
 
             log.debug("[复合权限验证] 验证完成, userId={}, operator={}, valid={}, duration={}ms",
                 userId, logicOperator.getCode(), result.isValid(), duration);
@@ -311,7 +318,8 @@ public class UnifiedPermissionServiceImpl implements UnifiedPermissionService {
             result = PermissionValidationResult.systemError("复合权限验证异常: " + e.getMessage());
             stats.recordFailure("COMPOSITE", "SYSTEM_ERROR", duration, false);
 
-            asyncAudit(() -> auditManager.recordCompositeValidation(userId, conditions, logicOperator, result));
+            final PermissionValidationResult errorResult = result;
+            asyncAudit(() -> auditManager.recordCompositeValidation(userId, conditions, logicOperator, errorResult));
             return result.withPerformance(duration, false);
         }
     }

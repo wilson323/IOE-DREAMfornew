@@ -17,6 +17,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 区域层级管理控制器
@@ -178,7 +179,7 @@ public class RegionalHierarchyController {
 
     @GetMapping("/config")
     @Operation(summary = "获取层级配置", description = "获取区域层级管理的配置信息")
-    public ResponseDTO<Object> getHierarchyConfig() {
+    public ResponseDTO<Map<String, Object>> getHierarchyConfig() {
         return regionalHierarchyService.getHierarchyConfig();
     }
 

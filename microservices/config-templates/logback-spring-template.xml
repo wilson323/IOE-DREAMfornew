@@ -157,7 +157,7 @@
 
     <!-- 缓存日志 -->
     <logger name="net.lab1024.sa.common.cache" level="WARN" additivity="false"/>
-    
+
     <!-- 事务日志 -->
     <logger name="org.springframework.transaction" level="WARN" additivity="false"/>
 

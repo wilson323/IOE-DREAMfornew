@@ -122,11 +122,10 @@ public class SpaceCapacityController {
     @GetMapping("/dashboard/summary")
     @Operation(summary = "获取空间容量仪表板摘要", description = "获取整个系统的空间容量概览")
     public ResponseDTO<SpaceCapacityDashboardSummary> getSpaceCapacityDashboardSummary() {
-        // 这里需要生成仪表板摘要数据
-        // 实际实现中需要统计各区域类型的容量情况
-        SpaceCapacityDashboardSummary summary = new SpaceCapacitySummary();
+        // 创建仪表板摘要数据
+        SpaceCapacityDashboardSummary summary = new SpaceCapacityDashboardSummary();
 
-        // 模拟数据（实际应用中应从数据库获取）
+        // 初始化默认值（实际应用中应从数据库获取）
         summary.setTotalAreas(0);
         summary.setTotalDevices(0);
         summary.setAverageUtilizationRate(0.0);

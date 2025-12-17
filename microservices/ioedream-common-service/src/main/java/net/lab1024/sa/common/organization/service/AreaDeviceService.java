@@ -1,7 +1,7 @@
 package net.lab1024.sa.common.organization.service;
 
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
-import net.lab1024.sa.common.organization.manager.AreaDeviceManager;
+import net.lab1024.sa.common.organization.domain.dto.AreaDeviceHealthStatistics;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,7 @@ public interface AreaDeviceService {
      * @param deviceRequests 设备请求列表
      * @return 成功添加的数量
      */
-    int batchAddDevicesToArea(Long areaId, List<AreaDeviceManager.DeviceRequest> deviceRequests);
+    int batchAddDevicesToArea(Long areaId, List<DeviceRequest> deviceRequests);
 
     /**
      * 设置设备业务属性
@@ -154,7 +154,7 @@ public interface AreaDeviceService {
      * @param areaId 区域ID
      * @return 统计信息
      */
-    AreaDeviceManager.AreaDeviceStatistics getAreaDeviceStatistics(Long areaId);
+    AreaDeviceStatistics getAreaDeviceStatistics(Long areaId);
 
     /**
      * 获取业务模块设备分布
@@ -162,7 +162,7 @@ public interface AreaDeviceService {
      * @param businessModule 业务模块
      * @return 分布统计
      */
-    List<AreaDeviceManager.ModuleDeviceDistribution> getModuleDeviceDistribution(String businessModule);
+    List<ModuleDeviceDistribution> getModuleDeviceDistribution(String businessModule);
 
     /**
      * 获取用户有权限访问的设备
@@ -194,7 +194,7 @@ public interface AreaDeviceService {
      *
      * @return 各模块设备分布
      */
-    Map<String, List<AreaDeviceManager.ModuleDeviceDistribution>> getAllModuleDeviceDistribution();
+    Map<String, List<ModuleDeviceDistribution>> getAllModuleDeviceDistribution();
 
     /**
      * 批量移动设备到新区域
@@ -238,31 +238,83 @@ public interface AreaDeviceService {
     }
 
     /**
-     * 区域设备健康状态统计
+     * 设备请求
      */
-    class AreaDeviceHealthStatistics {
-        private int totalDevices;
-        private int normalDevices;
-        private int maintenanceDevices;
-        private int faultDevices;
-        private int offlineDevices;
-        private int disabledDevices;
-        private double healthRate;
+    class DeviceRequest {
+        private String deviceId;
+        private String deviceCode;
+        private String deviceName;
+        private Integer deviceType;
+        private Integer deviceSubType;
+        private String businessModule;
+        private Integer priority;
 
         // getters and setters
-        public int getTotalDevices() { return totalDevices; }
-        public void setTotalDevices(int totalDevices) { this.totalDevices = totalDevices; }
-        public int getNormalDevices() { return normalDevices; }
-        public void setNormalDevices(int normalDevices) { this.normalDevices = normalDevices; }
-        public int getMaintenanceDevices() { return maintenanceDevices; }
-        public void setMaintenanceDevices(int maintenanceDevices) { this.maintenanceDevices = maintenanceDevices; }
-        public int getFaultDevices() { return faultDevices; }
-        public void setFaultDevices(int faultDevices) { this.faultDevices = faultDevices; }
-        public int getOfflineDevices() { return offlineDevices; }
-        public void setOfflineDevices(int offlineDevices) { this.offlineDevices = offlineDevices; }
-        public int getDisabledDevices() { return disabledDevices; }
-        public void setDisabledDevices(int disabledDevices) { this.disabledDevices = disabledDevices; }
-        public double getHealthRate() { return healthRate; }
-        public void setHealthRate(double healthRate) { this.healthRate = healthRate; }
+        public String getDeviceId() { return deviceId; }
+        public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+        public String getDeviceCode() { return deviceCode; }
+        public void setDeviceCode(String deviceCode) { this.deviceCode = deviceCode; }
+        public String getDeviceName() { return deviceName; }
+        public void setDeviceName(String deviceName) { this.deviceName = deviceName; }
+        public Integer getDeviceType() { return deviceType; }
+        public void setDeviceType(Integer deviceType) { this.deviceType = deviceType; }
+        public Integer getDeviceSubType() { return deviceSubType; }
+        public void setDeviceSubType(Integer deviceSubType) { this.deviceSubType = deviceSubType; }
+        public String getBusinessModule() { return businessModule; }
+        public void setBusinessModule(String businessModule) { this.businessModule = businessModule; }
+        public Integer getPriority() { return priority; }
+        public void setPriority(Integer priority) { this.priority = priority; }
+    }
+
+    /**
+     * 区域设备统计
+     */
+    class AreaDeviceStatistics {
+        private Integer totalCount;
+        private Integer onlineCount;
+        private Integer offlineCount;
+        private Integer primaryCount;
+        private Integer secondaryCount;
+        private Map<Integer, Integer> typeStatistics;
+        private Map<Integer, Integer> subtypeStatistics;
+
+        // getters and setters
+        public Integer getTotalCount() { return totalCount; }
+        public void setTotalCount(Integer totalCount) { this.totalCount = totalCount; }
+        public Integer getOnlineCount() { return onlineCount; }
+        public void setOnlineCount(Integer onlineCount) { this.onlineCount = onlineCount; }
+        public Integer getOfflineCount() { return offlineCount; }
+        public void setOfflineCount(Integer offlineCount) { this.offlineCount = offlineCount; }
+        public Integer getPrimaryCount() { return primaryCount; }
+        public void setPrimaryCount(Integer primaryCount) { this.primaryCount = primaryCount; }
+        public Integer getSecondaryCount() { return secondaryCount; }
+        public void setSecondaryCount(Integer secondaryCount) { this.secondaryCount = secondaryCount; }
+        public Map<Integer, Integer> getTypeStatistics() { return typeStatistics; }
+        public void setTypeStatistics(Map<Integer, Integer> typeStatistics) { this.typeStatistics = typeStatistics; }
+        public Map<Integer, Integer> getSubtypeStatistics() { return subtypeStatistics; }
+        public void setSubtypeStatistics(Map<Integer, Integer> subtypeStatistics) { this.subtypeStatistics = subtypeStatistics; }
+    }
+
+    /**
+     * 模块设备分布
+     */
+    class ModuleDeviceDistribution {
+        private String businessModule;
+        private String moduleName;
+        private Long areaId;
+        private String areaName;
+        private Integer deviceCount;
+
+        // getters and setters
+        public String getBusinessModule() { return businessModule; }
+        public void setBusinessModule(String businessModule) { this.businessModule = businessModule; }
+        public String getModuleName() { return moduleName; }
+        public void setModuleName(String moduleName) { this.moduleName = moduleName; }
+        public Long getAreaId() { return areaId; }
+        public void setAreaId(Long areaId) { this.areaId = areaId; }
+        public String getAreaName() { return areaName; }
+        public void setAreaName(String areaName) { this.areaName = areaName; }
+        public Integer getDeviceCount() { return deviceCount; }
+        public void setDeviceCount(Integer deviceCount) { this.deviceCount = deviceCount; }
     }
 }

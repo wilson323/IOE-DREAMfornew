@@ -3,8 +3,7 @@ package net.lab1024.sa.common.organization.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.experimental.Accessors;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +11,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import net.lab1024.sa.common.entity.BaseEntity;
 
 /**
  * 区域人员关联实体
@@ -29,8 +29,7 @@ import java.time.LocalTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-@AllArgsConstructor
+@Accessors(chain = true)
 @TableName("t_area_user_relation")
 @Schema(description = "区域人员关联实体")
 public class AreaUserEntity extends BaseEntity {
@@ -179,6 +178,28 @@ public class AreaUserEntity extends BaseEntity {
     @TableField("last_sync_time")
     @Schema(description = "最后同步时间", example = "2025-12-16 10:30:00")
     private LocalDateTime lastSyncTime;
+
+    /**
+     * 是否继承子区域权限
+     */
+    @TableField("inherit_children")
+    @Schema(description = "是否继承子区域权限", example = "false")
+    private Boolean inheritChildren;
+
+    /**
+     * 是否继承父区域权限
+     */
+    @TableField("inherit_parent")
+    @Schema(description = "是否继承父区域权限", example = "true")
+    private Boolean inheritParent;
+
+    /**
+     * 关联状态
+     * 0-禁用 1-启用
+     */
+    @TableField("relation_status")
+    @Schema(description = "关联状态", example = "1", allowableValues = {"0", "1"})
+    private Integer relationStatus;
 
     /**
      * 扩展属性（JSON格式）
