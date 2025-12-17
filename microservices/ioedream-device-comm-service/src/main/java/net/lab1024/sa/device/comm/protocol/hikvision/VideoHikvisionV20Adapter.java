@@ -3,8 +3,8 @@ package net.lab1024.sa.device.comm.protocol.hikvision;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.DeviceMessage;
-import net.lab1024.sa.device.comm.protocol.DeviceResponse;
+import net.lab1024.sa.device.comm.protocol.domain.DeviceMessage;
+import net.lab1024.sa.device.comm.protocol.domain.DeviceResponse;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

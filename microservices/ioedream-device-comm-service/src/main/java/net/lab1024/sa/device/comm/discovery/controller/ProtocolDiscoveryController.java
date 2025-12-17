@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.core.domain.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager;
 import net.lab1024.sa.device.comm.discovery.service.ProtocolDiscoveryService;

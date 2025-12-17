@@ -2,6 +2,7 @@ package net.lab1024.sa.device.comm.protocol.zkteco;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.protocol.*;
+import net.lab1024.sa.device.comm.protocol.domain.*;
 import net.lab1024.sa.device.comm.protocol.entity.ProtocolMessageEntity;
 import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;

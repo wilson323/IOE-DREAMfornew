@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.sql.DataSource;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -234,7 +234,7 @@ public class DatabaseSyncService {
 
         if (count == 0) {
             String insertSql = """
-                INSERT INTO database_version (db_name, version, status, description, create_time, update_time)
+                INSERT INTO database_version (db_name, db_version, status, description, create_time, update_time)
                 VALUES (?, '1.0.0', 'INIT', '数据库初始化记录', NOW(), NOW())
                 """;
             jdbcTemplate.update(insertSql, dbName);
@@ -269,6 +269,12 @@ public class DatabaseSyncService {
     private boolean validateRequiredTables(String dbName, Set<String> requiredTables) {
         if (requiredTables.isEmpty()) {
             return true; // 没有必需表要求
+        }
+
+        DatabaseConfig config = databaseConfigs.get(dbName);
+        if (config == null) {
+            log.error("[数据库同步服务] 找不到数据库配置: {}", dbName);
+            return false;
         }
 
         try (Connection connection = DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword())) {
@@ -373,12 +379,11 @@ public class DatabaseSyncService {
         AreaEntity rootArea = new AreaEntity();
         rootArea.setAreaName("IOE-DREAM智慧园区");
         rootArea.setAreaCode("ROOT");
-        rootArea.setParentId(0L);
-        rootArea.setAreaType(0);
-        rootArea.setStatus(1);
-        rootArea.setLevel(1);
-        rootArea.setSortOrder(1);
-        rootArea.setEnabled(true);
+        rootArea.setParentId(0L); // 注意: microservices-common中是parentAreaId，business中是parentId
+        rootArea.setAreaType(1); // 园区类型，使用Integer类型
+        rootArea.setAreaStatus(1); // 正常状态，注意：common版本用areaStatus，business版本用status
+        rootArea.setAreaLevel(1);
+        // rootArea.setSortIndex(1); // common版本没有sortIndex字段，删除该行
         areas.add(rootArea);
 
         return areas;
@@ -420,7 +425,7 @@ public class DatabaseSyncService {
     private void updateDatabaseVersion(String dbName, String status, String description) {
         String sql = """
             UPDATE database_version
-            SET version = '1.0.0', status = ?, description = ?, update_time = NOW()
+            SET db_version = '1.0.0', status = ?, description = ?, update_time = NOW()
             WHERE db_name = ?
             """;
         jdbcTemplate.update(sql, status, description, dbName);
@@ -447,17 +452,17 @@ public class DatabaseSyncService {
 
     /**
      * 从配置文件加载数据库配置
-     * 
+     *
      * 安全规范：禁止硬编码密码，必须从环境变量或加密配置中读取
      */
     private void loadDatabaseConfigs() {
         // 从环境变量或配置文件加载数据库配置
         // 禁止硬编码密码，必须使用环境变量或ENC()加密配置
-        
+
         String dbUrl = System.getenv("DATABASE_URL");
         String dbUsername = System.getenv("DATABASE_USERNAME");
         String dbPassword = System.getenv("DATABASE_PASSWORD");
-        
+
         if (dbUrl == null || dbUsername == null || dbPassword == null) {
             log.warn("[数据库同步服务] 数据库配置未从环境变量加载，请设置DATABASE_URL、DATABASE_USERNAME、DATABASE_PASSWORD");
             return;

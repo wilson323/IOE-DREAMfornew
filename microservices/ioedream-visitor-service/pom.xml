@@ -19,35 +19,51 @@
     <description>访客管理微服务，提供访客预约、登记、通行等业务API</description>
 
     <dependencies>
-        <!-- 依赖核心模块 -->
+        <!-- ==================== 核心基础模块 ==================== -->
+        <!-- Common Core (必需) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- 依赖公共模块 -->
+        <!-- ==================== 细粒度公共模块 ==================== -->
+        <!-- Common Data (数据访问层) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common</artifactId>
+            <artifactId>microservices-common-data</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- 依赖业务模块 -->
+        <!-- Common Security (安全认证) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-business</artifactId>
+            <artifactId>microservices-common-security</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- 依赖监控模块 -->
+        <!-- Common Cache (缓存管理) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-cache</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Common Monitor (监控模块) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-monitor</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- 权限验证模块 -->
+        <!-- Common Business (业务公共组件) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-business</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Common Permission (权限验证) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-permission</artifactId>

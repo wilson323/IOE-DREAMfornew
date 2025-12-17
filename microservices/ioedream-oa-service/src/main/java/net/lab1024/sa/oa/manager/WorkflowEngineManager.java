@@ -11,6 +11,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.security.identity.domain.vo.UserDetailVO;
@@ -34,6 +36,7 @@ import org.springframework.http.HttpMethod;
 @Slf4j
 public class WorkflowEngineManager {
 
+    private static final Logger log = LoggerFactory.getLogger(WorkflowEngineManager.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AtomicLong instanceSequence = new AtomicLong(0);
     private final GatewayServiceClient gatewayServiceClient;

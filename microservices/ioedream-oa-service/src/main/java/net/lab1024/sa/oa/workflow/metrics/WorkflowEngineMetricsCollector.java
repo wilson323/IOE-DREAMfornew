@@ -121,13 +121,13 @@ public class WorkflowEngineMetricsCollector {
                 .register(meterRegistry);
 
         // 注册仪表盘指标
-        Gauge.builder("workflow.process.running.instances")
+        Gauge.builder("workflow.process.running.instances", runningProcessInstances, AtomicLong::get)
                 .description("当前运行流程实例数")
-                .register(meterRegistry, runningProcessInstances, AtomicLong::get);
+                .register(meterRegistry);
 
-        Gauge.builder("workflow.task.active.count")
+        Gauge.builder("workflow.task.active.count", activeTasks, AtomicLong::get)
                 .description("当前活跃任务数")
-                .register(meterRegistry, activeTasks, AtomicLong::get);
+                .register(meterRegistry);
 
         log.info("[工作流指标] 工作流引擎指标收集器初始化完成");
     }
@@ -139,10 +139,11 @@ public class WorkflowEngineMetricsCollector {
         try {
             processDeploymentCounter.increment();
 
-            // 添加标签
-            processDeploymentCounter.increment(Timer.builder("workflow.process.deployment.count")
+            // 使用带标签的Counter
+            Counter.builder("workflow.process.deployment.count.tagged")
                     .tag("process_key", processKey)
-                    .register(meterRegistry));
+                    .register(meterRegistry)
+                    .increment();
 
             log.debug("[工作流指标] 记录流程部署指标: processKey={}", processKey);
         } catch (Exception e) {
@@ -170,11 +171,12 @@ public class WorkflowEngineMetricsCollector {
         try {
             processStartCounter.increment();
 
-            // 添加标签
-            processStartCounter.increment(Timer.builder("workflow.process.start.count")
+            // 使用带标签的Counter
+            Counter.builder("workflow.process.start.count.tagged")
                     .tag("process_key", processKey)
-                    .tag("business_key", businessKey)
-                    .register(meterRegistry));
+                    .tag("business_key", businessKey != null ? businessKey : "unknown")
+                    .register(meterRegistry)
+                    .increment();
 
             log.debug("[工作流指标] 记录流程启动指标: processKey={}, businessKey={}", processKey, businessKey);
         } catch (Exception e) {
@@ -202,11 +204,12 @@ public class WorkflowEngineMetricsCollector {
         try {
             processCompleteCounter.increment();
 
-            // 添加标签
-            processCompleteCounter.increment(Timer.builder("workflow.process.complete.count")
+            // 使用带标签的Counter
+            Counter.builder("workflow.process.complete.count.tagged")
                     .tag("process_key", processKey)
-                    .tag("outcome", outcome)
-                    .register(meterRegistry));
+                    .tag("outcome", outcome != null ? outcome : "unknown")
+                    .register(meterRegistry)
+                    .increment();
 
             log.debug("[工作流指标] 记录流程完成指标: processKey={}, outcome={}", processKey, outcome);
         } catch (Exception e) {
@@ -222,11 +225,12 @@ public class WorkflowEngineMetricsCollector {
             taskCreateCounter.increment();
             activeTasks.incrementAndGet();
 
-            // 添加标签
-            taskCreateCounter.increment(Timer.builder("workflow.task.create.count")
-                    .tag("task_name", taskName)
-                    .tag("process_key", processKey)
-                    .register(meterRegistry));
+            // 使用带标签的Counter
+            Counter.builder("workflow.task.create.count.tagged")
+                    .tag("task_name", taskName != null ? taskName : "unknown")
+                    .tag("process_key", processKey != null ? processKey : "unknown")
+                    .register(meterRegistry)
+                    .increment();
 
             log.debug("[工作流指标] 记录任务创建指标: taskName={}, processKey={}", taskName, processKey);
         } catch (Exception e) {
@@ -242,11 +246,12 @@ public class WorkflowEngineMetricsCollector {
             taskCompleteCounter.increment();
             activeTasks.decrementAndGet();
 
-            // 添加标签
-            taskCompleteCounter.increment(Timer.builder("workflow.task.complete.count")
-                    .tag("task_name", taskName)
-                    .tag("outcome", outcome)
-                    .register(meterRegistry));
+            // 使用带标签的Counter
+            Counter.builder("workflow.task.complete.count.tagged")
+                    .tag("task_name", taskName != null ? taskName : "unknown")
+                    .tag("outcome", outcome != null ? outcome : "unknown")
+                    .register(meterRegistry)
+                    .increment();
 
             // 记录耗时
             taskCompleteTimer.record(durationMs, java.util.concurrent.TimeUnit.MILLISECONDS);
@@ -264,11 +269,12 @@ public class WorkflowEngineMetricsCollector {
         try {
             taskAssignCounter.increment();
 
-            // 添加标签
-            taskAssignCounter.increment(Timer.builder("workflow.task.assign.count")
-                    .tag("task_name", taskName)
-                    .tag("assignee_id", String.valueOf(assigneeId))
-                    .register(meterRegistry));
+            // 使用带标签的Counter
+            Counter.builder("workflow.task.assign.count.tagged")
+                    .tag("task_name", taskName != null ? taskName : "unknown")
+                    .tag("assignee_id", String.valueOf(assigneeId != null ? assigneeId : 0))
+                    .register(meterRegistry)
+                    .increment();
 
             log.debug("[工作流指标] 记录任务分配指标: taskName={}, assigneeId={}", taskName, assigneeId);
         } catch (Exception e) {
@@ -283,11 +289,12 @@ public class WorkflowEngineMetricsCollector {
         try {
             errorCounter.increment();
 
-            // 添加标签
-            errorCounter.increment(Timer.builder("workflow.error.count")
-                    .tag("operation", operation)
-                    .tag("error_type", errorType)
-                    .register(meterRegistry));
+            // 使用带标签的Counter
+            Counter.builder("workflow.error.count.tagged")
+                    .tag("operation", operation != null ? operation : "unknown")
+                    .tag("error_type", errorType != null ? errorType : "unknown")
+                    .register(meterRegistry)
+                    .increment();
 
             log.debug("[工作流指标] 记录错误指标: operation={}, errorType={}", operation, errorType);
         } catch (Exception e) {

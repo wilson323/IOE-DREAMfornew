@@ -434,7 +434,7 @@ public class DeviceVendorSupportManager {
         uniview.setWebsite("https://www.uniview.com");
         uniview.setDescription("专业的视频监控产品制造商");
         uniview.setSupportedProtocols(new ArrayList<>(Arrays.asList("UNIVIEW_ONVIF_V2_0")));
-        uniview.setQualityLevel("A"));
+        uniview.setQualityLevel("A");
 
         // 注册宇视设备
         registerVendorDevice(uniview, createDeviceInfo(uniview, "UNIVIEW_ONVIF_V2_0", "IPC3244ER3-DUPFW", "网络摄像机"));
@@ -454,7 +454,7 @@ public class DeviceVendorSupportManager {
         entropy.setWebsite("https://www.entropybiometric.com");
         entropy.setDescription("生物识别门禁系统解决方案提供商");
         entropy.setSupportedProtocols(new ArrayList<>(Arrays.asList("ENTROPY_ACCESS_V4_8")));
-        entropy.setQualityLevel("A"));
+        entropy.setQualityLevel("A");
 
         // 注册熵基设备
         registerVendorDevice(entropy, createDeviceInfo(entropy, "ENTROPY_ACCESS_V4_8", "EB-AC2000", "门禁控制器"));
@@ -469,7 +469,7 @@ public class DeviceVendorSupportManager {
         rockstone.setWebsite("https://www.rockstone.com.cn");
         rockstone.setDescription("智能门禁系统产品制造商");
         rockstone.setSupportedProtocols(new ArrayList<>(Arrays.asList("ROCKSTONE_ACCESS_V1_5")));
-        rockstone.setQualityLevel("B+"));
+        rockstone.setQualityLevel("B+");
 
         // 注册营石设备
         registerVendorDevice(rockstone, createDeviceInfo(rockstone, "ROCKSTONE_ACCESS_V1_5", "RS-AC1000", "门禁控制器"));
@@ -489,7 +489,7 @@ public class DeviceVendorSupportManager {
         zkteco.setWebsite("https://www.zkteco.com");
         zkteco.setDescription("全球领先的考勤管理解决方案提供商");
         zkteco.setSupportedProtocols(new ArrayList<>(Arrays.asList("ZKTeco_TIME_CLOCK_V1_0")));
-        zkteco.setQualityLevel("A+"));
+        zkteco.setQualityLevel("A+");
 
         // 注册中控考勤设备
         registerVendorDevice(zkteco, createDeviceInfo(zkteco, "ZKTeco_TIME_CLOCK_V1_0", "SC405", "考勤机"));
@@ -509,7 +509,7 @@ public class DeviceVendorSupportManager {
         xinbeiyang.setWebsite("https://www.xinbeiyang.com");
         xinbeiyang.setDescription("智能POS机和收银系统提供商");
         xinbeiyang.setSupportedProtocols(new ArrayList<>(Arrays.asList("XINBEIYANG_POS_V1_2")));
-        xinbeiyang.setQualityLevel("A"));
+        xinbeiyang.setQualityLevel("A");
 
         // 注册新北洋设备
         registerVendorDevice(xinbeiyang, createDeviceInfo(xinbeiyang, "XINBEIYANG_POS_V1_2", "NPOS-5890", "智能POS机"));

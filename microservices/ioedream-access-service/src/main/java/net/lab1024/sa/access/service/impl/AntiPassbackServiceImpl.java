@@ -206,7 +206,7 @@ public class AntiPassbackServiceImpl implements AntiPassbackService {
 
     @Override
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "recordAccessEventFallback")
-    @Retry(value = 3)
+    @Retry(name = "antiPassbackService", fallbackMethod = "recordAccessEventFallback")
     public void recordAccessEvent(Long userId, Long deviceId, Long areaId, boolean allowed, String reason) {
         try {
             log.debug("[反潜回事件记录] 记录事件 userId={}, deviceId={}, areaId={}, allowed={}",

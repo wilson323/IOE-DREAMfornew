@@ -1,8 +1,7 @@
-﻿package net.lab1024.sa.devicecomm.cache;
+package net.lab1024.sa.devicecomm.cache;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -23,15 +22,19 @@ import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 
 /**
- * 鍗忚缂撳瓨鏈嶅姟瀹炵幇绫? * <p>
- * 浣跨敤Spring Cache娉ㄨВ锛園Cacheable銆丂CacheEvict銆丂CachePut锛夋浛浠rotocolCacheManager
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 缁熶竴浣跨敤Spring Cache + Caffeine + Redis
- * - 绂佹浣跨敤鑷畾涔塁acheManager
- * - 浣跨敤CompositeCacheManager锛圠1鏈湴缂撳瓨 + L2 Redis缂撳瓨锛? * </p>
+ * 协议缓存服务实现类
  * <p>
- * 缂撳瓨閰嶇疆锛? * - 缂撳瓨鍚嶇О锛歱rotocol:device銆乸rotocol:device:code銆乸rotocol:user:card
- * - L1鏈湴缂撳瓨锛欳affeine锛?鍒嗛挓杩囨湡
- * - L2鍒嗗竷寮忕紦瀛橈細Redis锛?0鍒嗛挓杩囨湡
+ * 使用Spring Cache注解(Cacheable、CacheEvict、CachePut)替代ProtocolCacheManager
+ * 严格遵循CLAUDE.md规范:
+ * - 统一使用Spring Cache + Caffeine + Redis
+ * - 禁止使用自定义CacheManager
+ * - 使用CompositeCacheManager(L1本地缓存 + L2 Redis缓存)
+ * </p>
+ * <p>
+ * 缓存配置:
+ * - 缓存名称: protocol:device、protocol:device:code、protocol:user:card
+ * - L1本地缓存: Caffeine,5分钟过期
+ * - L2分布式缓存: Redis,30分钟过期
  * </p>
  *
  * @author IOE-DREAM Team
@@ -43,24 +46,26 @@ import net.lab1024.sa.common.organization.entity.DeviceEntity;
 @Transactional(readOnly = true)
 public class ProtocolCacheServiceImpl implements ProtocolCacheService {
 
-	    @Resource
-	    private GatewayServiceClient gatewayServiceClient;
+    @Resource
+    private GatewayServiceClient gatewayServiceClient;
 
-	    @Resource(required = false)
-	    private DirectServiceClient directServiceClient;
+    @Resource(required = false)
+    private DirectServiceClient directServiceClient;
 
-	    @Value("${ioedream.direct-call.enabled:false}")
-	    private boolean directEnabled;
+    @Value("${ioedream.direct-call.enabled:false}")
+    private boolean directEnabled;
 
     /**
-     * 鏍规嵁璁惧ID鑾峰彇璁惧淇℃伅锛堜娇鐢⊿pring Cache锛?     * <p>
-     * 缂撳瓨绛栫暐锛?     * - L1鏈湴缂撳瓨锛欳affeine锛?鍒嗛挓杩囨湡
-     * - L2鍒嗗竷寮忕紦瀛橈細Redis锛?0鍒嗛挓杩囨湡
-     * - 缂撳瓨閿細protocol:device:{deviceId}
+     * 根据设备ID获取设备信息(使用Spring Cache)
+     * <p>
+     * 缓存策略:
+     * - L1本地缓存: Caffeine,5分钟过期
+     * - L2分布式缓存: Redis,30分钟过期
+     * - 缓存键: protocol:device:{deviceId}
      * </p>
      *
-     * @param deviceId 璁惧ID
-     * @return 璁惧瀹炰綋锛屽鏋滀笉瀛樺湪杩斿洖null
+     * @param deviceId 设备ID
+     * @return 设备实体,如果不存在返回null
      */
     @Override
     @Observed(name = "protocol.cache.getDeviceById", contextualName = "protocol-cache-get-device-by-id")
@@ -70,63 +75,66 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
             return null;
         }
 
-        log.debug("[鍗忚缂撳瓨] 缂撳瓨鏈懡涓紝浠庢暟鎹簱鏌ヨ璁惧淇℃伅锛宒eviceId={}", deviceId);
+        log.debug("[协议缓存] 缓存未命中,从数据库查询设备信息,deviceId={}", deviceId);
 
-	        String path = "/api/v1/device/" + deviceId;
+        String path = "/api/v1/device/" + deviceId;
 
-	        // 浼樺厛鐩磋繛鍏叡鏈嶅姟鏌ヨ璁惧淇℃伅锛堢儹璺緞锛夛紝澶辫触鍥為€€缃戝叧
-	        try {
-	            ResponseDTO<DeviceEntity> response = null;
-	            if (directEnabled && directServiceClient != null && directServiceClient.isEnabled()) {
-	                response = directServiceClient.callCommonService(
-	                        path,
-	                        HttpMethod.GET,
-	                        null,
-	                        DeviceEntity.class
-	                );
-	            }
-	            if (response == null || !response.isSuccess() || response.getData() == null) {
-	                response = gatewayServiceClient.callCommonService(
-	                        path,
-	                        HttpMethod.GET,
-	                        null,
-	                        DeviceEntity.class
-	                );
-	            }
+        // 优先直连公共服务查询设备信息(热路径),失败回退网关
+        try {
+            ResponseDTO<DeviceEntity> response = null;
+            if (directEnabled && directServiceClient != null && directServiceClient.isEnabled()) {
+                response = directServiceClient.callCommonService(
+                        path,
+                        HttpMethod.GET,
+                        null,
+                        DeviceEntity.class
+                );
+            }
+            if (response == null || !response.isSuccess() || response.getData() == null) {
+                response = gatewayServiceClient.callCommonService(
+                        path,
+                        HttpMethod.GET,
+                        null,
+                        DeviceEntity.class
+                );
+            }
 
-	            if (response != null && response.isSuccess() && response.getData() != null) {
-	                DeviceEntity device = response.getData();
-                log.debug("[鍗忚缂撳瓨] 浠庢暟鎹簱鏌ヨ鍒拌澶囦俊鎭紝deviceId={}, deviceCode={}",
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                DeviceEntity device = response.getData();
+                log.debug("[协议缓存] 从数据库查询到设备信息,deviceId={}, deviceCode={}",
                         deviceId, device.getDeviceCode());
                 return device;
             }
 
-            log.debug("[鍗忚缂撳瓨] 鏁版嵁搴撴湭鏌ヨ鍒拌澶囦俊鎭紝deviceId={}", deviceId);
+            log.debug("[协议缓存] 数据库未查询到设备信息,deviceId={}", deviceId);
             return null;
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ璁惧淇℃伅鍙傛暟閿欒: deviceId={}, error={}", deviceId, e.getMessage());
-            return null; // For cache operations, return null on parameter error
+            log.warn("[协议缓存] 查询设备信息参数错误: deviceId={}, error={}", deviceId, e.getMessage());
+            return null;
         } catch (BusinessException e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ璁惧淇℃伅涓氬姟寮傚父: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
-            return null; // For cache operations, return null on business error
+            log.warn("[协议缓存] 查询设备信息业务异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            return null;
         } catch (SystemException e) {
-            log.error("[鍗忚缂撳瓨] 鏌ヨ璁惧淇℃伅绯荤粺寮傚父: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
-            return null; // For cache operations, return null on system error
+            log.error("[协议缓存] 查询设备信息系统异常: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ璁惧淇℃伅鏈煡寮傚父: deviceId={}", deviceId, e);
-            return null; // For cache operations, return null on unknown error
+            log.warn("[协议缓存] 查询设备信息未知异常: deviceId={}", deviceId, e);
+            return null;
         }
     }
 
     /**
-     * 鏍规嵁璁惧缂栫爜鑾峰彇璁惧淇℃伅锛堜娇鐢⊿pring Cache锛?     * <p>
-     * 缂撳瓨绛栫暐锛?     * - L1鏈湴缂撳瓨锛欳affeine锛?鍒嗛挓杩囨湡
-     * - L2鍒嗗竷寮忕紦瀛橈細Redis锛?0鍒嗛挓杩囨湡
-     * - 缂撳瓨閿細protocol:device:code:{deviceCode}
+     * 根据设备编码获取设备信息(使用Spring Cache)
+     * <p>
+     * 缓存策略:
+     * - L1本地缓存: Caffeine,5分钟过期
+     * - L2分布式缓存: Redis,30分钟过期
+     * - 缓存键: protocol:device:code:{deviceCode}
      * </p>
      *
-     * @param deviceCode 璁惧缂栫爜锛圫N锛?     * @return 璁惧瀹炰綋锛屽鏋滀笉瀛樺湪杩斿洖null
+     * @param deviceCode 设备编码(SN)
+     * @return 设备实体,如果不存在返回null
      */
     @Override
     @Observed(name = "protocol.cache.getDeviceByCode", contextualName = "protocol-cache-get-device-by-code")
@@ -136,63 +144,64 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
             return null;
         }
 
-        log.debug("[鍗忚缂撳瓨] 缂撳瓨鏈懡涓紝浠庢暟鎹簱鏌ヨ璁惧淇℃伅锛宒eviceCode={}", deviceCode);
+        log.debug("[协议缓存] 缓存未命中,从数据库查询设备信息,deviceCode={}", deviceCode);
 
-	        String path = "/api/v1/device/code/" + deviceCode;
+        String path = "/api/v1/device/code/" + deviceCode;
 
-	        // 浼樺厛鐩磋繛鍏叡鏈嶅姟鏌ヨ璁惧淇℃伅锛堢儹璺緞锛夛紝澶辫触鍥為€€缃戝叧
-	        try {
-	            ResponseDTO<DeviceEntity> response = null;
-	            if (directEnabled && directServiceClient != null && directServiceClient.isEnabled()) {
-	                response = directServiceClient.callCommonService(
-	                        path,
-	                        HttpMethod.GET,
-	                        null,
-	                        DeviceEntity.class
-	                );
-	            }
-	            if (response == null || !response.isSuccess() || response.getData() == null) {
-	                response = gatewayServiceClient.callCommonService(
-	                        path,
-	                        HttpMethod.GET,
-	                        null,
-	                        DeviceEntity.class
-	                );
-	            }
+        // 优先直连公共服务查询设备信息(热路径),失败回退网关
+        try {
+            ResponseDTO<DeviceEntity> response = null;
+            if (directEnabled && directServiceClient != null && directServiceClient.isEnabled()) {
+                response = directServiceClient.callCommonService(
+                        path,
+                        HttpMethod.GET,
+                        null,
+                        DeviceEntity.class
+                );
+            }
+            if (response == null || !response.isSuccess() || response.getData() == null) {
+                response = gatewayServiceClient.callCommonService(
+                        path,
+                        HttpMethod.GET,
+                        null,
+                        DeviceEntity.class
+                );
+            }
 
-	            if (response != null && response.isSuccess() && response.getData() != null) {
-	                DeviceEntity device = response.getData();
-                log.debug("[鍗忚缂撳瓨] 浠庢暟鎹簱鏌ヨ鍒拌澶囦俊鎭紝deviceCode={}, deviceId={}",
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                DeviceEntity device = response.getData();
+                log.debug("[协议缓存] 从数据库查询到设备信息,deviceCode={}, deviceId={}",
                         deviceCode, device.getId());
                 return device;
             }
 
-            log.debug("[鍗忚缂撳瓨] 鏁版嵁搴撴湭鏌ヨ鍒拌澶囦俊鎭紝deviceCode={}", deviceCode);
+            log.debug("[协议缓存] 数据库未查询到设备信息,deviceCode={}", deviceCode);
             return null;
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ璁惧淇℃伅鍙傛暟閿欒: deviceCode={}, error={}", deviceCode, e.getMessage());
-            return null; // For cache operations, return null on parameter error
+            log.warn("[协议缓存] 查询设备信息参数错误: deviceCode={}, error={}", deviceCode, e.getMessage());
+            return null;
         } catch (BusinessException e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ璁惧淇℃伅涓氬姟寮傚父: deviceCode={}, code={}, message={}", deviceCode, e.getCode(), e.getMessage());
-            return null; // For cache operations, return null on business error
+            log.warn("[协议缓存] 查询设备信息业务异常: deviceCode={}, code={}, message={}", deviceCode, e.getCode(), e.getMessage());
+            return null;
         } catch (SystemException e) {
-            log.error("[鍗忚缂撳瓨] 鏌ヨ璁惧淇℃伅绯荤粺寮傚父: deviceCode={}, code={}, message={}", deviceCode, e.getCode(), e.getMessage(), e);
-            return null; // For cache operations, return null on system error
+            log.error("[协议缓存] 查询设备信息系统异常: deviceCode={}, code={}, message={}", deviceCode, e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ璁惧淇℃伅鏈煡寮傚父: deviceCode={}", deviceCode, e);
-            return null; // For cache operations, return null on unknown error
+            log.warn("[协议缓存] 查询设备信息未知异常: deviceCode={}", deviceCode, e);
+            return null;
         }
     }
 
     /**
-     * 缂撳瓨璁惧淇℃伅锛堜娇鐢⊿pring Cache锛?     * <p>
-     * 浣跨敤@CachePut纭繚缂撳瓨鏇存柊
-     * 鍚屾椂缂撳瓨璁惧ID鍜岃澶囩紪鐮佷袱涓敭
+     * 缓存设备信息(使用Spring Cache)
+     * <p>
+     * 使用@CachePut确保缓存更新
+     * 同时缓存设备ID和设备编码两个键
      * </p>
      *
-     * @param device 璁惧瀹炰綋
-     * @return 璁惧瀹炰綋
+     * @param device 设备实体
+     * @return 设备实体
      */
     @Override
     @Observed(name = "protocol.cache.cacheDevice", contextualName = "protocol-cache-cache-device")
@@ -202,10 +211,11 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
             return null;
         }
 
-        log.debug("[鍗忚缂撳瓨] 缂撳瓨璁惧淇℃伅锛宒eviceId={}, deviceCode={}",
+        log.debug("[协议缓存] 缓存设备信息,deviceId={}, deviceCode={}",
                 device.getId(), device.getDeviceCode());
 
-        // 濡傛灉璁惧缂栫爜涓嶄负绌猴紝涔熺紦瀛樿澶囩紪鐮佹槧灏?        if (device.getDeviceCode() != null && !device.getDeviceCode().isEmpty()) {
+        // 如果设备编码不为空,也缓存设备编码映射
+        if (device.getDeviceCode() != null && !device.getDeviceCode().isEmpty()) {
             cacheDeviceByCode(device);
         }
 
@@ -213,10 +223,10 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
     }
 
     /**
-     * 缂撳瓨璁惧淇℃伅锛堟牴鎹澶囩紪鐮侊級
+     * 缓存设备信息(根据设备编码)
      *
-     * @param device 璁惧瀹炰綋
-     * @return 璁惧瀹炰綋
+     * @param device 设备实体
+     * @return 设备实体
      */
     @Observed(name = "protocol.cache.cacheDeviceByCode", contextualName = "protocol-cache-cache-device-by-code")
     @CachePut(value = "protocol:device:code", key = "#device.deviceCode")
@@ -225,22 +235,24 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
             return null;
         }
 
-        log.debug("[鍗忚缂撳瓨] 缂撳瓨璁惧缂栫爜鏄犲皠锛宒eviceCode={}, deviceId={}",
+        log.debug("[协议缓存] 缓存设备编码映射,deviceCode={}, deviceId={}",
                 device.getDeviceCode(), device.getId());
 
         return device;
     }
 
     /**
-     * 鏍规嵁鍗″彿鑾峰彇鐢ㄦ埛ID锛堜娇鐢⊿pring Cache锛?     * <p>
-     * 娉ㄦ剰锛氭鏂规硶闇€瑕佽皟鐢ㄦ秷璐规湇鍔℃煡璇㈢敤鎴稩D
-     * 缂撳瓨绛栫暐锛?     * - L1鏈湴缂撳瓨锛欳affeine锛?鍒嗛挓杩囨湡
-     * - L2鍒嗗竷寮忕紦瀛橈細Redis锛?0鍒嗛挓杩囨湡
-     * - 缂撳瓨閿細protocol:user:card:{cardNumber}
+     * 根据卡号获取用户ID(使用Spring Cache)
+     * <p>
+     * 注意:此方法需要调用消费服务查询用户ID
+     * 缓存策略:
+     * - L1本地缓存: Caffeine,5分钟过期
+     * - L2分布式缓存: Redis,30分钟过期
+     * - 缓存键: protocol:user:card:{cardNumber}
      * </p>
      *
-     * @param cardNumber 鍗″彿
-     * @return 鐢ㄦ埛ID锛屽鏋滀笉瀛樺湪杩斿洖null
+     * @param cardNumber 卡号
+     * @return 用户ID,如果不存在返回null
      */
     @Override
     @Cacheable(value = "protocol:user:card", key = "#cardNumber", unless = "#result == null")
@@ -249,9 +261,9 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
             return null;
         }
 
-        log.debug("[鍗忚缂撳瓨] 缂撳瓨鏈懡涓紝浠庢暟鎹簱鏌ヨ鐢ㄦ埛ID锛宑ardNumber={}", cardNumber);
+        log.debug("[协议缓存] 缓存未命中,从数据库查询用户ID,cardNumber={}", cardNumber);
 
-        // 閫氳繃缃戝叧璋冪敤娑堣垂鏈嶅姟鏌ヨ鐢ㄦ埛ID
+        // 通过网关调用消费服务查询用户ID
         try {
             String url = "/api/v1/consume/mobile/user/quick?queryType=cardNumber&queryValue=" +
                          java.net.URLEncoder.encode(cardNumber, java.nio.charset.StandardCharsets.UTF_8);
@@ -270,35 +282,36 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
                 Object userIdObj = data.get("userId");
                 if (userIdObj instanceof Number) {
                     Long userId = ((Number) userIdObj).longValue();
-                    log.debug("[鍗忚缂撳瓨] 浠庢暟鎹簱鏌ヨ鍒扮敤鎴稩D锛宑ardNumber={}, userId={}",
+                    log.debug("[协议缓存] 从数据库查询到用户ID,cardNumber={}, userId={}",
                             cardNumber, userId);
                     return userId;
                 }
             }
 
-            log.debug("[鍗忚缂撳瓨] 鏁版嵁搴撴湭鏌ヨ鍒扮敤鎴稩D锛宑ardNumber={}", cardNumber);
+            log.debug("[协议缓存] 数据库未查询到用户ID,cardNumber={}", cardNumber);
             return null;
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ鐢ㄦ埛ID鍙傛暟閿欒: cardNumber={}, error={}", cardNumber, e.getMessage());
-            return null; // For cache operations, return null on parameter error
+            log.warn("[协议缓存] 查询用户ID参数错误: cardNumber={}, error={}", cardNumber, e.getMessage());
+            return null;
         } catch (BusinessException e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ鐢ㄦ埛ID涓氬姟寮傚父: cardNumber={}, code={}, message={}", cardNumber, e.getCode(), e.getMessage());
-            return null; // For cache operations, return null on business error
+            log.warn("[协议缓存] 查询用户ID业务异常: cardNumber={}, code={}, message={}", cardNumber, e.getCode(), e.getMessage());
+            return null;
         } catch (SystemException e) {
-            log.error("[鍗忚缂撳瓨] 鏌ヨ鐢ㄦ埛ID绯荤粺寮傚父: cardNumber={}, code={}, message={}", cardNumber, e.getCode(), e.getMessage(), e);
-            return null; // For cache operations, return null on system error
+            log.error("[协议缓存] 查询用户ID系统异常: cardNumber={}, code={}, message={}", cardNumber, e.getCode(), e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.warn("[鍗忚缂撳瓨] 鏌ヨ鐢ㄦ埛ID鏈煡寮傚父: cardNumber={}", cardNumber, e);
-            return null; // For cache operations, return null on unknown error
+            log.warn("[协议缓存] 查询用户ID未知异常: cardNumber={}", cardNumber, e);
+            return null;
         }
     }
 
     /**
-     * 缂撳瓨鍗″彿鍒扮敤鎴稩D鐨勬槧灏勶紙浣跨敤Spring Cache锛?     *
-     * @param cardNumber 鍗″彿
-     * @param userId 鐢ㄦ埛ID
-     * @return 鐢ㄦ埛ID
+     * 缓存卡号到用户ID的映射(使用Spring Cache)
+     *
+     * @param cardNumber 卡号
+     * @param userId 用户ID
+     * @return 用户ID
      */
     @Override
     @CachePut(value = "protocol:user:card", key = "#cardNumber")
@@ -307,14 +320,14 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
             return null;
         }
 
-        log.debug("[鍗忚缂撳瓨] 缂撳瓨鍗″彿鏄犲皠锛宑ardNumber={}, userId={}", cardNumber, userId);
+        log.debug("[协议缓存] 缓存卡号映射,cardNumber={}, userId={}", cardNumber, userId);
         return userId;
     }
 
     /**
-     * 娓呴櫎璁惧缂撳瓨
+     * 清除设备缓存
      *
-     * @param deviceId 璁惧ID
+     * @param deviceId 设备ID
      */
     @Override
     @CacheEvict(value = "protocol:device", key = "#deviceId")
@@ -323,13 +336,13 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
             return;
         }
 
-        log.debug("[鍗忚缂撳瓨] 娓呴櫎璁惧缂撳瓨锛宒eviceId={}", deviceId);
+        log.debug("[协议缓存] 清除设备缓存,deviceId={}", deviceId);
     }
 
     /**
-     * 娓呴櫎璁惧缂撳瓨锛堟牴鎹澶囩紪鐮侊級
+     * 清除设备缓存(根据设备编码)
      *
-     * @param deviceCode 璁惧缂栫爜
+     * @param deviceCode 设备编码
      */
     @Override
     @CacheEvict(value = "protocol:device:code", key = "#deviceCode")
@@ -338,8 +351,6 @@ public class ProtocolCacheServiceImpl implements ProtocolCacheService {
             return;
         }
 
-        log.debug("[鍗忚缂撳瓨] 娓呴櫎璁惧缂栫爜缂撳瓨锛宒eviceCode={}", deviceCode);
+        log.debug("[协议缓存] 清除设备编码缓存,deviceCode={}", deviceCode);
     }
 }
-
-

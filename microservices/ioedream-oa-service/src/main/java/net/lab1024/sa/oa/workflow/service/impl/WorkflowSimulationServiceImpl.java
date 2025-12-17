@@ -104,9 +104,10 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                         startParams.put("_simulation_id_", simulationId);
                         startParams.put("_simulation_iteration_", i);
 
+                        String businessKey = "simulation_" + System.currentTimeMillis();
                         runtimeService.startProcessInstanceByKey(
                                 processDefinition.getKey(),
-                                simulationForm.getBusinessData(),
+                                businessKey,
                                 startParams);
 
                         long executionTime = System.currentTimeMillis() - startTime;
@@ -622,8 +623,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                 .confidenceLevel(0.85)
                 .stagePredictions(Map.of(
                         "提交", 100L,
-                        "审批", estimatedTime * 0.7,
-                        "完成", estimatedTime * 0.2
+                        "审批", (long)(estimatedTime * 0.7),
+                        "完成", (long)(estimatedTime * 0.2)
                 ))
                 .influencingFactors(Arrays.asList("业务复杂度", "审批层级", "系统负载"))
                 .build();

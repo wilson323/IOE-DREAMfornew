@@ -99,6 +99,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- 依赖业务模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-business</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Nacos Discovery -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * 工作流高级缓存管理器
@@ -209,7 +210,8 @@ public class WorkflowCacheManager {
             // L1: 检查本地缓存
             T value = getFromLocalCache(cacheName, key, type);
             if (value != null) {
-                cacheHitCounter.increment("local");
+                cacheHitCounter.increment();
+                Counter.builder("workflow.cache.hit.tagged").tag("type", "local").register(meterRegistry).increment();
                 sample.stop(cacheHitTimer);
                 log.debug("[工作流缓存] L1缓存命中: cacheName={}, key={}", cacheName, key);
                 return value;
@@ -220,7 +222,8 @@ public class WorkflowCacheManager {
             if (value != null) {
                 // 回填到本地缓存
                 putToLocalCache(cacheName, key, value);
-                cacheHitCounter.increment("redis");
+                cacheHitCounter.increment();
+                Counter.builder("workflow.cache.hit.tagged").tag("type", "redis").register(meterRegistry).increment();
                 sample.stop(cacheHitTimer);
                 log.debug("[工作流缓存] L2缓存命中: cacheName={}, key={}", cacheName, key);
                 return value;

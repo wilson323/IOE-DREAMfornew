@@ -2,7 +2,7 @@ package net.lab1024.sa.device.comm.discovery.service;
 
 import net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager;
 import net.lab1024.sa.device.comm.discovery.scanner.NetworkScanner;
-import net.lab1024.sa.common.core.domain.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 
 import java.util.List;

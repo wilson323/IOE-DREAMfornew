@@ -327,6 +327,20 @@ public interface WorkflowTaskDao extends BaseMapper<WorkflowTaskEntity> {
     @Transactional(readOnly = true)
     @Select("SELECT * FROM t_common_workflow_task WHERE flowable_task_id = #{flowableTaskId} AND deleted_flag = 0")
     WorkflowTaskEntity selectByFlowableTaskId(@Param("flowableTaskId") String flowableTaskId);
+
+    /**
+     * 按状态统计任务数量
+     * <p>
+     * 状态说明：
+     * 1-待处理 2-处理中 3-已完成 4-已转交 5-已委派 6-已驳回
+     * </p>
+     *
+     * @param status 任务状态
+     * @return 统计数量
+     */
+    @Transactional(readOnly = true)
+    @Select("SELECT COUNT(1) FROM t_common_workflow_task WHERE status = #{status} AND deleted_flag = 0")
+    Long countByStatus(@Param("status") Integer status);
 }
 
 

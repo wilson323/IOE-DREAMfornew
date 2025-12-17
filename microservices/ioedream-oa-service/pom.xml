@@ -19,38 +19,61 @@
     <description>OA办公服务，提供工作流、审批等业务API</description>
 
     <dependencies>
-        <!-- 依赖核心模块 -->
+        <!-- ==================== 核心基础模块 ==================== -->
+        <!-- Common Core (必需) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- 依赖公共模块 -->
+        <!-- ==================== 细粒度公共模块 ==================== -->
+        <!-- Common Data (数据访问层) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common</artifactId>
+            <artifactId>microservices-common-data</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- 依赖业务模块 -->
+        <!-- Common Security (安全认证) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Common Cache (缓存管理) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-cache</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Common Workflow (Aviator表达式引擎 - OA需要) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-workflow</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Common Monitor (监控模块) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-monitor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Common Business (业务公共组件) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-business</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- 依赖统一权限验证模块 -->
+        <!-- Common Permission (权限验证) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-permission</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- 依赖监控模块 -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-monitor</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -123,25 +146,39 @@
             <version>${aviator.version}</version>
         </dependency>
 
-        <!-- Flowable 6.8.0 工作流引擎 -->
+        <!-- ==================== Flowable 7.2.0 工作流引擎 ==================== -->
+        <!-- Flowable BPMN流程引擎 (Spring Boot 3.x兼容版本) -->
         <dependency>
             <groupId>org.flowable</groupId>
-            <artifactId>flowable-spring-boot-starter</artifactId>
-            <version>6.8.0</version>
+            <artifactId>flowable-spring-boot-starter-process</artifactId>
+            <version>7.2.0</version>
         </dependency>
 
-        <!-- Flowable UI模块（可选，用于流程图展示） -->
+        <!-- Flowable CMMN案例管理引擎 -->
         <dependency>
             <groupId>org.flowable</groupId>
-            <artifactId>flowable-ui-modeler-rest</artifactId>
-            <version>6.8.0</version>
+            <artifactId>flowable-spring-boot-starter-cmmn</artifactId>
+            <version>7.2.0</version>
         </dependency>
 
-        <!-- Flowable JSON支持 -->
+        <!-- Flowable DMN决策表引擎 -->
         <dependency>
             <groupId>org.flowable</groupId>
-            <artifactId>flowable-json-converter</artifactId>
-            <version>6.8.0</version>
+            <artifactId>flowable-spring-boot-starter-dmn</artifactId>
+            <version>7.2.0</version>
+        </dependency>
+
+        <!-- Flowable DMN API (确保DmnRuleService可用) -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-dmn-api</artifactId>
+            <version>7.2.0</version>
+        </dependency>
+
+        <!-- Spring Boot Actuator (健康检查、监控) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!-- ============================================================= -->

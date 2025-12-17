@@ -2,9 +2,9 @@ package net.lab1024.sa.device.comm.discovery.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.core.domain.ResponseDTO;
-import net.lab1024.sa.common.core.exception.BusinessException;
-import net.lab1024.sa.common.core.util.SmartBeanUtil;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.util.SmartBeanUtil;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager;
 import net.lab1024.sa.device.comm.discovery.service.ProtocolDiscoveryService;

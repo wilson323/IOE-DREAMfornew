@@ -288,6 +288,20 @@ public interface WorkflowEngineService {
      * @return 工作量统计
      */
     ResponseDTO<Map<String, Object>> getUserWorkloadStatistics(Long userId, String startDate, String endDate);
+
+    /**
+     * 获取工作流引擎统计信息
+     * <p>
+     * 返回引擎运行状态信息，包括：
+     * - runningInstances: 当前运行中的流程实例数
+     * - activeTasks: 当前活跃任务数
+     * - deployedProcesses: 已部署的流程定义数
+     * - completedToday: 今日完成的实例数
+     * </p>
+     *
+     * @return 引擎统计信息
+     */
+    Map<String, Object> getEngineStatistics();
 }
 
 

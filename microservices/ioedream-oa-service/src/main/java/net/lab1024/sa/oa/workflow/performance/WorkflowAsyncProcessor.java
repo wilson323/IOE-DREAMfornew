@@ -8,6 +8,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Tags;
 
 import jakarta.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
@@ -111,12 +112,20 @@ public class WorkflowAsyncProcessor {
             Timer.Sample sample = Timer.start(meterRegistry);
 
             try {
-                asyncProcessCounter.increment(Tags.of("task", taskName));
+                asyncProcessCounter.increment();
+                Counter.builder("workflow.async.task.process")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 T result = task.get();
                 long duration = System.currentTimeMillis() - startTime;
 
-                asyncSuccessCounter.increment(Tags.of("task", taskName));
+                asyncSuccessCounter.increment();
+                Counter.builder("workflow.async.task.success")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 log.debug("[工作流异步] 任务执行成功: taskName={}, traceId={}, duration={}ms",
                         taskName, traceId, duration);
@@ -126,7 +135,11 @@ public class WorkflowAsyncProcessor {
             } catch (Exception e) {
                 long duration = System.currentTimeMillis() - startTime;
 
-                asyncErrorCounter.increment(Tags.of("task", taskName));
+                asyncErrorCounter.increment();
+                Counter.builder("workflow.async.task.error")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 log.error("[工作流异步] 任务执行失败: taskName={}, traceId={}, duration={}ms, error={}",
                         taskName, traceId, duration, e.getMessage(), e);
@@ -160,7 +173,11 @@ public class WorkflowAsyncProcessor {
         log.debug("[工作流异步] 开始批量执行异步任务: taskName={}, count={}, traceId={}",
                 taskName, tasks.size(), traceId);
 
-        asyncProcessCounter.increment(Tags.of("task", taskName, "type", "batch"));
+        asyncProcessCounter.increment();
+        Counter.builder("workflow.async.batch.process")
+                .tag("task", taskName)
+                .register(meterRegistry)
+                .increment();
 
         List<CompletableFuture<AsyncResult<T>>> futures = new ArrayList<>();
 
@@ -250,7 +267,11 @@ public class WorkflowAsyncProcessor {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                asyncProcessCounter.increment(Tags.of("task", taskName, "type", "callback"));
+                asyncProcessCounter.increment();
+                Counter.builder("workflow.async.callback.process")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 T result = task.get();
                 long duration = System.currentTimeMillis() - startTime;
@@ -266,7 +287,11 @@ public class WorkflowAsyncProcessor {
                     }
                 }
 
-                asyncSuccessCounter.increment(Tags.of("task", taskName, "type", "callback"));
+                asyncSuccessCounter.increment();
+                Counter.builder("workflow.async.callback.success")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 log.debug("[工作流异步] 带回调任务执行成功: taskName={}, traceId={}, duration={}ms",
                         taskName, traceId, duration);
@@ -288,7 +313,11 @@ public class WorkflowAsyncProcessor {
                     }
                 }
 
-                asyncErrorCounter.increment(Tags.of("task", taskName, "type", "callback"));
+                asyncErrorCounter.increment();
+                Counter.builder("workflow.async.callback.error")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 log.error("[工作流异步] 带回调任务执行失败: taskName={}, traceId={}, duration={}ms, error={}",
                         taskName, traceId, duration, e.getMessage(), e);
@@ -318,21 +347,36 @@ public class WorkflowAsyncProcessor {
         log.debug("[工作流异步] 开始延迟执行异步任务: taskName={}, delay={}, traceId={}",
                 taskName, delay.toMillis(), traceId);
 
-        return CompletableFuture
-                .delayedExecutor(delay.toMillis(), java.util.concurrent.TimeUnit.MILLISECONDS)
-                .execute(() -> {
+        return CompletableFuture.supplyAsync(() -> {
+                    // 先等待延迟时间
+                    try {
+                        Thread.sleep(delay.toMillis());
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        log.warn("[工作流异步] 延迟任务被中断: taskName={}, traceId={}", taskName, traceId);
+                        return new AsyncResult<T>(false, null, "任务被中断", 0L, traceId);
+                    }
+
                     long actualStartTime = System.currentTimeMillis();
 
                     log.debug("[工作流异步] 延迟时间结束，开始执行任务: taskName={}, traceId={}", taskName, traceId);
 
                     try {
-                        asyncProcessCounter.increment(Tags.of("task", taskName, "type", "delayed"));
+                        asyncProcessCounter.increment();
+                        Counter.builder("workflow.async.delayed.count")
+                                .tag("task", taskName)
+                                .register(meterRegistry)
+                                .increment();
 
                         T result = task.get();
                         long duration = System.currentTimeMillis() - actualStartTime;
                         long totalDuration = System.currentTimeMillis() - startTime;
 
-                        asyncSuccessCounter.increment(Tags.of("task", taskName, "type", "delayed"));
+                        asyncSuccessCounter.increment();
+                        Counter.builder("workflow.async.delayed.success")
+                                .tag("task", taskName)
+                                .register(meterRegistry)
+                                .increment();
 
                         log.debug("[工作流异步] 延迟任务执行成功: taskName={}, delay={}, duration={}, total={}, traceId={}",
                                 taskName, delay.toMillis(), duration, totalDuration, traceId);
@@ -343,7 +387,11 @@ public class WorkflowAsyncProcessor {
                         long duration = System.currentTimeMillis() - actualStartTime;
                         long totalDuration = System.currentTimeMillis() - startTime;
 
-                        asyncErrorCounter.increment(Tags.of("task", taskName, "type", "delayed"));
+                        asyncErrorCounter.increment();
+                        Counter.builder("workflow.async.delayed.error")
+                                .tag("task", taskName)
+                                .register(meterRegistry)
+                                .increment();
 
                         log.error("[工作流异步] 延迟任务执行失败: taskName={}, delay={}, duration={}, total={}, traceId={}, error={}",
                                 taskName, delay.toMillis(), duration, totalDuration, traceId, e.getMessage(), e);
@@ -373,12 +421,20 @@ public class WorkflowAsyncProcessor {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                asyncProcessCounter.increment(Tags.of("task", taskName, "type", "after_commit"));
+                asyncProcessCounter.increment();
+                Counter.builder("workflow.async.aftercommit.process")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 T result = task.get();
                 long duration = System.currentTimeMillis() - startTime;
 
-                asyncSuccessCounter.increment(Tags.of("task", taskName, "type", "after_commit"));
+                asyncSuccessCounter.increment();
+                Counter.builder("workflow.async.aftercommit.success")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 log.debug("[工作流异步] 事务提交后任务执行成功: taskName={}, traceId={}, duration={}ms",
                         taskName, traceId, duration);
@@ -388,7 +444,11 @@ public class WorkflowAsyncProcessor {
             } catch (Exception e) {
                 long duration = System.currentTimeMillis() - startTime;
 
-                asyncErrorCounter.increment(Tags.of("task", taskName, "type", "after_commit"));
+                asyncErrorCounter.increment();
+                Counter.builder("workflow.async.aftercommit.error")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
                 log.error("[工作流异步] 事务提交后任务执行失败: taskName={}, traceId={}, duration={}ms, error={}",
                         taskName, traceId, duration, e.getMessage(), e);
@@ -404,18 +464,22 @@ public class WorkflowAsyncProcessor {
     public Map<String, Object> getStats() {
         Map<String, Object> stats = new HashMap<>();
 
-        // 基础统计
-        stats.put("processCount", asyncProcessCounter.count());
-        stats.put("successCount", asyncSuccessCounter.count());
-        stats.put("errorCount", asyncErrorCounter.count());
+        // 基础统计（Counter.count()返回double类型）
+        double processCount = asyncProcessCounter.count();
+        double successCount = asyncSuccessCounter.count();
+        double errorCount = asyncErrorCounter.count();
+
+        stats.put("processCount", (long) processCount);
+        stats.put("successCount", (long) successCount);
+        stats.put("errorCount", (long) errorCount);
 
         // 成功率
-        long total = asyncSuccessCounter.count() + asyncErrorCounter.count();
-        double successRate = total > 0 ? (double) asyncSuccessCounter.count() / total * 100 : 0;
+        double total = successCount + errorCount;
+        double successRate = total > 0 ? successCount / total * 100 : 0;
         stats.put("successRate", String.format("%.2f%%", successRate));
 
         // 错误率
-        double errorRate = total > 0 ? (double) asyncErrorCounter.count() / total * 100 : 0;
+        double errorRate = total > 0 ? errorCount / total * 100 : 0;
         stats.put("errorRate", String.format("%.2f%%", errorRate));
 
         return stats;

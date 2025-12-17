@@ -168,6 +168,30 @@ public interface WorkflowInstanceDao extends BaseMapper<WorkflowInstanceEntity> 
     @Transactional(readOnly = true)
     @Select("SELECT * FROM t_common_workflow_instance WHERE flowable_process_instance_id = #{flowableProcessInstanceId} AND deleted_flag = 0")
     WorkflowInstanceEntity selectByFlowableInstanceId(@Param("flowableProcessInstanceId") String flowableProcessInstanceId);
+
+    /**
+     * 按状态统计流程实例数量
+     * <p>
+     * 状态说明：
+     * 1-运行中 2-已完成 3-已终止 4-已挂起
+     * </p>
+     *
+     * @param status 实例状态
+     * @return 统计数量
+     */
+    @Transactional(readOnly = true)
+    @Select("SELECT COUNT(1) FROM t_common_workflow_instance WHERE status = #{status} AND deleted_flag = 0")
+    Long countByStatus(@Param("status") Integer status);
+
+    /**
+     * 统计指定时间之后完成的流程实例数量
+     *
+     * @param since 开始时间
+     * @return 统计数量
+     */
+    @Transactional(readOnly = true)
+    @Select("SELECT COUNT(1) FROM t_common_workflow_instance WHERE status = 2 AND end_time >= #{since} AND deleted_flag = 0")
+    Long countCompletedSince(@Param("since") java.time.LocalDateTime since);
 }
 
 

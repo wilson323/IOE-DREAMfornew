@@ -1,6 +1,8 @@
 package net.lab1024.sa.device.comm.protocol.entropy;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -17,7 +19,8 @@ import java.util.Map;
  * @since 2025-12-16
  */
 @Data
-public class AccessEntropyV48Message {
+@EqualsAndHashCode(callSuper = true)
+public class AccessEntropyV48Message extends ProtocolMessage {
 
     // ==================== 协议头信息 ====================
 

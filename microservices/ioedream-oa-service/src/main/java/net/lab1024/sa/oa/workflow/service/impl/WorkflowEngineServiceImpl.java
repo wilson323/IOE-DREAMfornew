@@ -36,9 +36,9 @@ import net.lab1024.sa.oa.workflow.config.wrapper.FlowableManagementService;
 
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
-import org.flowable.task.api.history.HistoricProcessInstance;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
@@ -473,8 +473,9 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             }
 
             // 5. 使用Flowable引擎启动流程实例
-            ProcessInstance flowableInstance = flowableRuntimeService.startProcessInstanceByKey(
-                definition.getProcessKey(), businessKey, flowVariables
+            String starterUserId = initiatorId != null ? String.valueOf(initiatorId) : "system";
+            ProcessInstance flowableInstance = flowableRuntimeService.startProcessInstanceByKeyWithFullResult(
+                definition.getProcessKey(), businessKey, flowVariables, starterUserId
             );
 
             if (flowableInstance == null) {
@@ -1201,27 +1202,15 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             }
 
             return ResponseDTO.ok("任务完成成功，流程已自动推进");
-        } catch (FlowableException e) {
-            log.error("[工作流引擎] Flowable引擎异常: taskId={}, errorCode={}, message={}", taskId, e.getErrorCode(), e.getMessage(), e);
+        } catch (org.flowable.common.engine.api.FlowableException e) {
+            log.error("[工作流引擎] Flowable引擎异常: taskId={}, message={}", taskId, e.getMessage(), e);
             throw new SystemException("FLOWABLE_ENGINE_ERROR", "工作流引擎错误: " + e.getMessage(), e);
-        } catch (DataAccessException e) {
+        } catch (org.springframework.dao.DataAccessException e) {
             log.error("[工作流引擎] 数据访问异常: taskId={}, error={}", taskId, e.getMessage(), e);
             throw new SystemException("WORKFLOW_DATA_ACCESS_ERROR", "数据访问失败: " + e.getMessage(), e);
-        } catch (WorkflowBusinessException e) {
+        } catch (BusinessException e) {
             log.warn("[工作流引擎] 工作流业务异常: taskId={}, code={}, message={}", taskId, e.getCode(), e.getMessage());
             throw e;
-        } catch (ProcessDeploymentException e) {
-            log.error("[工作流引擎] 流程部署异常: taskId={}, stage={}, error={}", taskId, e.getDeploymentStage(), e.getMessage(), e);
-            throw new SystemException("PROCESS_DEPLOYMENT_ERROR", "流程部署失败: " + e.getDeploymentStage(), e);
-        } catch (ProcessStartException e) {
-            log.error("[工作流引擎] 流程启动异常: taskId={}, stage={}, error={}", taskId, e.getFailedStep(), e.getMessage(), e);
-            throw new SystemException("PROCESS_START_ERROR", "流程启动失败: " + e.getFailedStep(), e);
-        } catch (TaskCompletionException e) {
-            log.error("[工作流引擎] 任务完成异常: taskId={}, stage={}, error={}", taskId, e.getFailedStep(), e.getMessage(), e);
-            throw new SystemException("TASK_COMPLETION_ERROR", "任务完成失败: " + e.getFailedStep(), e);
-        } catch (ProcessInstanceQueryException e) {
-            log.error("[工作流引擎] 流程实例查询异常: taskId={}, queryType={}, error={}", taskId, e.getQueryType(), e.getMessage(), e);
-            throw new SystemException("PROCESS_QUERY_ERROR", "流程实例查询失败: " + e.getQueryType(), e);
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[工作流引擎] 完成任务参数错误: taskId={}, error={}", taskId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
@@ -1288,11 +1277,11 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                         workflowInstanceDao.updateById(instance);
                     } catch (IllegalArgumentException | ParamException e) {
                         log.warn("[工作流引擎] 更新流程变量参数错误: {}", e.getMessage());
-                    } catch (FlowableException e) {
-                        log.error("[工作流引擎] 更新流程变量Flowable异常: errorCode={}, message={}", e.getErrorCode(), e.getMessage());
-                    } catch (DataAccessException e) {
+                    } catch (org.flowable.common.engine.api.FlowableException e) {
+                        log.error("[工作流引擎] 更新流程变量Flowable异常: message={}", e.getMessage());
+                    } catch (org.springframework.dao.DataAccessException e) {
                         log.error("[工作流引擎] 更新流程变量数据访问异常: {}", e.getMessage());
-                    } catch (WorkflowBusinessException e) {
+                    } catch (BusinessException e) {
                         log.warn("[工作流引擎] 更新流程变量业务异常: code={}, message={}", e.getCode(), e.getMessage());
                     } catch (SystemException e) {
                         log.error("[工作流引擎] 更新流程变量系统异常: code={}, message={}", e.getCode(), e.getMessage());
@@ -1527,6 +1516,44 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
         } catch (Exception e) {
             log.error("[工作流引擎] 获取用户工作量统计未知异常: userId={}", userId, e);
             throw new SystemException("GET_USER_WORKLOAD_STATISTICS_SYSTEM_ERROR", "获取用户工作量统计失败：" + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Map<String, Object> getEngineStatistics() {
+        log.debug("[工作流引擎] 获取引擎统计信息");
+        Map<String, Object> stats = new HashMap<>();
+
+        try {
+            // 统计运行中的流程实例数
+            Long runningInstances = workflowInstanceDao.countByStatus(1); // 1-运行中
+            stats.put("runningInstances", runningInstances != null ? runningInstances : 0L);
+
+            // 统计活跃任务数
+            Long activeTasks = workflowTaskDao.countByStatus(1); // 1-待处理
+            Long processingTasks = workflowTaskDao.countByStatus(2); // 2-处理中
+            stats.put("activeTasks", (activeTasks != null ? activeTasks : 0L) + (processingTasks != null ? processingTasks : 0L));
+
+            // 统计已部署流程数
+            Long deployedProcesses = workflowDefinitionDao.countByStatus("ACTIVE");
+            stats.put("deployedProcesses", deployedProcesses != null ? deployedProcesses : 0L);
+
+            // 统计今日完成数
+            LocalDateTime startOfToday = LocalDateTime.now().toLocalDate().atStartOfDay();
+            Long completedToday = workflowInstanceDao.countCompletedSince(startOfToday);
+            stats.put("completedToday", completedToday != null ? completedToday : 0L);
+
+            log.debug("[工作流引擎] 引擎统计信息: {}", stats);
+            return stats;
+
+        } catch (Exception e) {
+            log.error("[工作流引擎] 获取引擎统计信息失败", e);
+            // 返回默认值而非抛出异常，确保监控不会中断
+            stats.put("runningInstances", 0L);
+            stats.put("activeTasks", 0L);
+            stats.put("deployedProcesses", 0L);
+            stats.put("completedToday", 0L);
+            return stats;
         }
     }
 }

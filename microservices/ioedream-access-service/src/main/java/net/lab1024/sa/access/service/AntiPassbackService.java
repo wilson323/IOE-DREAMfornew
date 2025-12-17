@@ -376,7 +376,7 @@ public interface AntiPassbackService {
      * 反潜回检查降级处理
      */
     default CompletableFuture<ResponseDTO<AntiPassbackResult>> antiPassbackCheckFallback(
-            Long userId, Object... params, Exception exception) {
+            Long userId, Exception exception, Object... params) {
         return CompletableFuture.completedFuture(
                 ResponseDTO.error("ANTIPASSBACK_SERVICE_UNAVAILABLE", "反潜回服务暂时不可用，已降级为常规检查")
         );
@@ -386,7 +386,7 @@ public interface AntiPassbackService {
      * 反潜回操作降级处理
      */
     default CompletableFuture<ResponseDTO<Void>> antiPassbackOperationFallback(
-            Object... params, Exception exception) {
+            Exception exception, Object... params) {
         return CompletableFuture.completedFuture(
                 ResponseDTO.error("ANTIPASSBACK_SERVICE_UNAVAILABLE", "反潜回服务暂时不可用，请稍后重试")
         );

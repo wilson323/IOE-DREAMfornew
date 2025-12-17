@@ -3,8 +3,8 @@ package net.lab1024.sa.device.comm.protocol.ezviz;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.DeviceMessage;
-import net.lab1024.sa.device.comm.protocol.DeviceResponse;
+import net.lab1024.sa.device.comm.protocol.domain.DeviceMessage;
+import net.lab1024.sa.device.comm.protocol.domain.DeviceResponse;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class VideoEzvizV20Adapter implements ProtocolAdapter {
             // 商用系列
             "CS-C3N-A", "CS-C3W-A", "CS-C6N-A", "CS-C8C-A",      // 商用摄像机
             "CS-DB2-A", "CS-DB2C-A", "CS-BC1-A",                   // 商用电池机
-            "CS-X5S-A", "CS-X7C-A", "CS-X9C-A"                     // 商用录像机
+            "CS-X5S-A", "CS-X7C-A", "CS-X9C-A",                     // 商用录像机
 
             // 云台机系列
             "CS-C6N-3EP", "CS-C6W-3EP", "CS-C6N-AF",              // 高性能云台

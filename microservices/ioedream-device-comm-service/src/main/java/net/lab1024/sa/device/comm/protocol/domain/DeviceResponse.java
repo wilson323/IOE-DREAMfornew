@@ -1,0 +1,69 @@
+package net.lab1024.sa.device.comm.protocol.domain;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Map;
+
+/**
+ * 设备响应对象
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-12-17
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class DeviceResponse {
+
+    /**
+     * 响应是否成功
+     */
+    private boolean success;
+
+    /**
+     * 响应代码
+     */
+    private String responseCode;
+
+    /**
+     * 响应消息
+     */
+    private String responseMessage;
+
+    /**
+     * 响应数据
+     */
+    private Map<String, Object> data;
+
+    /**
+     * 错误代码
+     */
+    private String errorCode;
+
+    /**
+     * 错误消息
+     */
+    private String errorMessage;
+
+    public static DeviceResponse success(Map<String, Object> data) {
+        return DeviceResponse.builder()
+                .success(true)
+                .responseCode("200")
+                .responseMessage("成功")
+                .data(data)
+                .build();
+    }
+
+    public static DeviceResponse failure(String errorCode, String errorMessage) {
+        return DeviceResponse.builder()
+                .success(false)
+                .errorCode(errorCode)
+                .errorMessage(errorMessage)
+                .build();
+    }
+}

@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.lab1024.sa.common.entity.BaseEntity;
 
 /**
@@ -19,14 +17,13 @@ import net.lab1024.sa.common.entity.BaseEntity;
  * - 使用@TableName指定表名
  * - 使用@TableId指定主键
  * - 字段命名遵循数据库规范
+ * 手动实现getter/setter以解决Lombok编译问题
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("t_common_workflow_instance")
 public class WorkflowInstanceEntity extends BaseEntity {
 
@@ -135,6 +132,83 @@ public class WorkflowInstanceEntity extends BaseEntity {
      */
     @TableField("variables")
     private String variables;
+
+    /**
+     * Flowable流程实例ID
+     */
+    @TableField("flowable_instance_id")
+    private String flowableInstanceId;
+
+    /**
+     * Flowable流程定义ID
+     */
+    @TableField("flowable_process_def_id")
+    private String flowableProcessDefId;
+
+    /**
+     * 当前审批人ID
+     */
+    @TableField("current_approver_id")
+    private Long currentApproverId;
+
+    /**
+     * 当前审批人姓名
+     */
+    @TableField("current_approver_name")
+    private String currentApproverName;
+
+    /**
+     * 优先级（1-低 2-中 3-高 4-紧急）
+     */
+    @TableField("priority")
+    private Integer priority;
+
+    // ==================== Getter/Setter Methods ====================
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Long getProcessDefinitionId() { return processDefinitionId; }
+    public void setProcessDefinitionId(Long processDefinitionId) { this.processDefinitionId = processDefinitionId; }
+    public String getProcessKey() { return processKey; }
+    public void setProcessKey(String processKey) { this.processKey = processKey; }
+    public String getProcessName() { return processName; }
+    public void setProcessName(String processName) { this.processName = processName; }
+    public String getBusinessType() { return businessType; }
+    public void setBusinessType(String businessType) { this.businessType = businessType; }
+    public Long getBusinessId() { return businessId; }
+    public void setBusinessId(Long businessId) { this.businessId = businessId; }
+    public Long getInitiatorId() { return initiatorId; }
+    public void setInitiatorId(Long initiatorId) { this.initiatorId = initiatorId; }
+    public String getInitiatorName() { return initiatorName; }
+    public void setInitiatorName(String initiatorName) { this.initiatorName = initiatorName; }
+    public String getCurrentNodeId() { return currentNodeId; }
+    public void setCurrentNodeId(String currentNodeId) { this.currentNodeId = currentNodeId; }
+    public String getCurrentNodeName() { return currentNodeName; }
+    public void setCurrentNodeName(String currentNodeName) { this.currentNodeName = currentNodeName; }
+    public Integer getStatus() { return status; }
+    public void setStatus(Integer status) { this.status = status; }
+    public LocalDateTime getStartTime() { return startTime; }
+    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
+    public LocalDateTime getEndTime() { return endTime; }
+    public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
+    public LocalDateTime getSuspendTime() { return suspendTime; }
+    public void setSuspendTime(LocalDateTime suspendTime) { this.suspendTime = suspendTime; }
+    public Long getDuration() { return duration; }
+    public void setDuration(Long duration) { this.duration = duration; }
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
+    public String getVariables() { return variables; }
+    public void setVariables(String variables) { this.variables = variables; }
+    public String getFlowableInstanceId() { return flowableInstanceId; }
+    public void setFlowableInstanceId(String flowableInstanceId) { this.flowableInstanceId = flowableInstanceId; }
+    public String getFlowableProcessDefId() { return flowableProcessDefId; }
+    public void setFlowableProcessDefId(String flowableProcessDefId) { this.flowableProcessDefId = flowableProcessDefId; }
+    public Long getCurrentApproverId() { return currentApproverId; }
+    public void setCurrentApproverId(Long currentApproverId) { this.currentApproverId = currentApproverId; }
+    public String getCurrentApproverName() { return currentApproverName; }
+    public void setCurrentApproverName(String currentApproverName) { this.currentApproverName = currentApproverName; }
+    public Integer getPriority() { return priority; }
+    public void setPriority(Integer priority) { this.priority = priority; }
 }
 
 

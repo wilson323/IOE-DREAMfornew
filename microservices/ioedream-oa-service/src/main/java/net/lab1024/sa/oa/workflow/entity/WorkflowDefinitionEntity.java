@@ -113,6 +113,18 @@ public class WorkflowDefinitionEntity extends BaseEntity {
      */
     @TableField("sort_order")
     private Integer sortOrder;
+
+    /**
+     * Flowable部署ID
+     */
+    @TableField("flowable_deployment_id")
+    private String flowableDeploymentId;
+
+    /**
+     * Flowable流程定义ID
+     */
+    @TableField("flowable_process_def_id")
+    private String flowableProcessDefId;
 }
 
 

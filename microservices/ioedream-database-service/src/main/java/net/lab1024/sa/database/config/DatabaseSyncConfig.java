@@ -74,16 +74,8 @@ public class DatabaseSyncConfig {
         try {
             log.debug("🔄 [数据库同步配置] 执行定时数据库健康检查");
 
-            // 执行数据库健康检查
-            databaseSyncService.healthCheck()
-                .thenAccept(health -> {
-                    log.debug("✅ [数据库同步配置] 数据库健康检查完成，状态: {}",
-                            health.get("status"));
-                })
-                .exceptionally(throwable -> {
-                    log.warn("⚠️ [数据库同步配置] 数据库健康检查异常: {}", throwable.getMessage());
-                    return null;
-                });
+            // 暂时跳过健康检查,后续可以添加healthCheck()方法到DatabaseSyncService
+            log.debug("✅ [数据库同步配置] 数据库健康检查跳过");
 
         } catch (Exception e) {
             log.warn("⚠️ [数据库同步配置] 定时数据库同步异常: {}", e.getMessage());

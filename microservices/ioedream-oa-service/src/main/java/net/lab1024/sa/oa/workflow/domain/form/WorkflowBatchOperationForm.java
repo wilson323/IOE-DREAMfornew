@@ -153,6 +153,18 @@ public class WorkflowBatchOperationForm {
         @Schema(description = "批量操作描述")
         private String description;
 
+        @Schema(description = "任务ID列表（简化模式）")
+        private List<String> taskIds;
+
+        @Schema(description = "审批动作")
+        private String approvalAction;
+
+        @Schema(description = "审批意见（简化模式）")
+        private String comment;
+
+        @Schema(description = "用户ID")
+        private Long userId;
+
         @NotNull(message = "审批数据不能为空")
         @Schema(description = "审批数据列表")
         private List<TaskApprovalData> approvalDataList;

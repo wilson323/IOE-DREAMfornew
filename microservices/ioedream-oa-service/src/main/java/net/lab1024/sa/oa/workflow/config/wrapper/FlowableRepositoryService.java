@@ -1,6 +1,8 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -26,6 +28,7 @@ import java.util.Map;
 @Service
 public class FlowableRepositoryService {
 
+    private static final Logger log = LoggerFactory.getLogger(FlowableRepositoryService.class);
     private final RepositoryService repositoryService;
 
     public FlowableRepositoryService(RepositoryService repositoryService) {
@@ -83,6 +86,50 @@ public class FlowableRepositoryService {
                     resourceName, e.getMessage(), e);
             throw new RuntimeException("流程部署失败: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * 完整部署流程定义（企业级方法）
+     *
+     * @param processKey 流程Key
+     * @param processName 流程名称
+     * @param category 分类
+     * @param bpmnXml BPMN XML内容
+     * @param description 描述
+     * @return Deployment对象
+     */
+    public Deployment deployProcessDefinition(String processKey, String processName, String category,
+                                               String bpmnXml, String description) {
+        log.info("[Flowable] 完整部署流程定义: processKey={}, processName={}", processKey, processName);
+
+        try {
+            String resourceName = processKey + ".bpmn20.xml";
+            Deployment deployment = repositoryService.createDeployment()
+                    .name(processName)
+                    .category(category)
+                    .addString(resourceName, bpmnXml)
+                    .deploy();
+
+            log.info("[Flowable] 流程部署成功: deploymentId={}, name={}",
+                    deployment.getId(), deployment.getName());
+            return deployment;
+
+        } catch (Exception e) {
+            log.error("[Flowable] 流程部署失败: processKey={}, error={}",
+                    processKey, e.getMessage(), e);
+            throw new RuntimeException("流程部署失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 获取最新流程定义
+     *
+     * @param processKey 流程Key
+     * @return 流程定义
+     */
+    public ProcessDefinition getLatestProcessDefinition(String processKey) {
+        log.debug("[Flowable] 获取最新流程定义: processKey={}", processKey);
+        return getProcessDefinition(processKey, true);
     }
 
     /**

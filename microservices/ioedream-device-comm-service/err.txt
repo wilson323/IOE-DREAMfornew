@@ -1,0 +1,417 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------< net.lab1024.sa:ioedream-device-comm-service >-------------
+[INFO] Building IOE-DREAM Device Communication Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-device-comm-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-device-comm-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-device-comm-service ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=d:\\IOE-DREAM\\microservices\\ioedream-device-comm-service\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-device-comm-service ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-device-comm-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 96 source files with javac [debug release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[111,12] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[203,12] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[291,53] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[291,12] 找不到符号
+  符号:   类 ProtocolValidationResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[368,12] 找不到符号
+  符号:   类 ProtocolPermissionResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[397,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[433,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[444,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[687,13] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[719,13] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[741,13] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[763,13] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[954,19] 找不到符号
+  符号:   类 ProtocolInitResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[960,12] 找不到符号
+  符号:   类 ProtocolRegistrationResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[966,12] 找不到符号
+  符号:   类 ProtocolHeartbeatResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[972,12] 找不到符号
+  符号:   类 ProtocolDeviceStatus
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[990,12] 找不到符号
+  符号:   类 ProtocolErrorResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[996,24] 找不到符号
+  符号:   类 ProtocolErrorInfo
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[52,24] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[142,24] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[185,24] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[228,24] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/RS485ProtocolController.java:[11,42] 找不到符号
+  符号:   类 RS485ProtocolService
+  位置: 程序包 net.lab1024.sa.device.comm.service
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/RS485ProtocolController.java:[46,13] 找不到符号
+  符号:   类 RS485ProtocolService
+  位置: 类 net.lab1024.sa.device.comm.controller.RS485ProtocolController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[10,42] 找不到符号
+  符号:   类 RS485ProtocolService
+  位置: 程序包 net.lab1024.sa.device.comm.service
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[34,50] 找不到符号
+  符号: 类 RS485ProtocolService
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[307,53] 找不到符号
+  符号:   类 RS485InitResult
+  位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[318,59] 找不到符号
+  符号:   类 RS485ProcessResult
+  位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[335,63] 找不到符号
+  符号:   类 RS485HeartbeatResult
+  位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[355,57] 找不到符号
+  符号:   类 RS485DeviceStatus
+  位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/VendorSupportController.java:[10,34] 找不到符号
+  符号:   类 RequestUtils
+  位置: 程序包 net.lab1024.sa.common.util
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/ProtocolAutoDiscoveryManager.java:[48,24] 找不到符号
+  符号:   类 NetworkScanner
+  位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/ProtocolAutoDiscoveryManager.java:[49,24] 找不到符号
+  符号:   类 ProtocolDetector
+  位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/service/impl/ProtocolDiscoveryServiceImpl.java:[6,44] 程序包net.lab1024.sa.common.core.exception不存在
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/service/impl/ProtocolDiscoveryServiceImpl.java:[7,39] 程序包net.lab1024.sa.common.core.util不存在
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/service/impl/ProtocolDiscoveryServiceImpl.java:[415,41] 找不到符号
+  符号:   类 NetworkScanner
+  位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/monitor/HighPrecisionMonitorValidator.java:[615,42] 找不到符号
+  符号:   类 DeviceStatusSnapshot
+  位置: 类 net.lab1024.sa.device.comm.monitor.HighPrecisionMonitorValidator
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/monitor/HighPrecisionMonitorValidator.java:[615,74] 找不到符号
+  符号:   类 DeviceStatusSnapshot
+  位置: 类 net.lab1024.sa.device.comm.monitor.HighPrecisionMonitorValidator
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hotupdate/ProtocolAdapterHotUpdater.java:[7,43] 找不到符号
+  符号:   类 ProtocolAdapterFactory
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hotupdate/ProtocolAdapterHotUpdater.java:[8,38] 找不到符号
+  符号:   类 ProtocolConfigDao
+  位置: 程序包 net.lab1024.sa.device.comm.dao
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hotupdate/ProtocolAdapterHotUpdater.java:[44,13] 找不到符号
+  符号:   类 ProtocolAdapterFactory
+  位置: 类 net.lab1024.sa.device.comm.protocol.hotupdate.ProtocolAdapterHotUpdater
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hotupdate/ProtocolAdapterHotUpdater.java:[47,13] 找不到符号
+  符号:   类 ProtocolConfigDao
+  位置: 类 net.lab1024.sa.device.comm.protocol.hotupdate.ProtocolAdapterHotUpdater
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[105,12] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[105,85] 找不到符号
+  符号:   类 ProtocolParseException
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[173,12] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[173,85] 找不到符号
+  符号:   类 ProtocolParseException
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[183,115] 找不到符号
+  符号:   类 ProtocolBuildException
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[209,118] 找不到符号
+  符号:   类 ProtocolBuildException
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[215,53] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[215,12] 找不到符号
+  符号:   类 ProtocolValidationResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[246,12] 找不到符号
+  符号:   类 ProtocolPermissionResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[278,19] 找不到符号
+  符号:   类 ProtocolInitResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[320,12] 找不到符号
+  符号:   类 ProtocolRegistrationResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[351,12] 找不到符号
+  符号:   类 ProtocolHeartbeatResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[377,12] 找不到符号
+  符号:   类 ProtocolDeviceStatus
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[396,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[408,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[420,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[493,12] 找不到符号
+  符号:   类 ProtocolErrorResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[502,24] 找不到符号
+  符号:   类 ProtocolErrorInfo
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[1044,46] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[33,16] 找不到符号
+  符号:   方法 rollbackFor()
+  位置: @interface jakarta.transaction.Transactional
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/HighPrecisionDeviceMonitorServiceImpl.java:[32,16] 找不到符号
+  符号:   方法 rollbackFor()
+  位置: @interface jakarta.transaction.Transactional
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImpl.java:[52,15] 找不到符号
+  符号:   方法 required()
+  位置: @interface jakarta.annotation.Resource
+[INFO] 64 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.161 s
+[INFO] Finished at: 2025-12-17T23:03:19+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-device-comm-service: Compilation failure: Compilation failure: 
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[111,12] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[203,12] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[291,53] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[291,12] 找不到符号
+[ERROR]   符号:   类 ProtocolValidationResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[368,12] 找不到符号
+[ERROR]   符号:   类 ProtocolPermissionResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[397,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[433,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[444,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[687,13] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[719,13] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[741,13] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[763,13] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[954,19] 找不到符号
+[ERROR]   符号:   类 ProtocolInitResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[960,12] 找不到符号
+[ERROR]   符号:   类 ProtocolRegistrationResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[966,12] 找不到符号
+[ERROR]   符号:   类 ProtocolHeartbeatResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[972,12] 找不到符号
+[ERROR]   符号:   类 ProtocolDeviceStatus
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[990,12] 找不到符号
+[ERROR]   符号:   类 ProtocolErrorResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[996,24] 找不到符号
+[ERROR]   符号:   类 ProtocolErrorInfo
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[52,24] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[142,24] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[185,24] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[228,24] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/RS485ProtocolController.java:[11,42] 找不到符号
+[ERROR]   符号:   类 RS485ProtocolService
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.service
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/RS485ProtocolController.java:[46,13] 找不到符号
+[ERROR]   符号:   类 RS485ProtocolService
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.RS485ProtocolController
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[10,42] 找不到符号
+[ERROR]   符号:   类 RS485ProtocolService
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.service
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[34,50] 找不到符号
+[ERROR]   符号: 类 RS485ProtocolService
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[307,53] 找不到符号
+[ERROR]   符号:   类 RS485InitResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[318,59] 找不到符号
+[ERROR]   符号:   类 RS485ProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[335,63] 找不到符号
+[ERROR]   符号:   类 RS485HeartbeatResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[355,57] 找不到符号
+[ERROR]   符号:   类 RS485DeviceStatus
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/VendorSupportController.java:[10,34] 找不到符号
+[ERROR]   符号:   类 RequestUtils
+[ERROR]   位置: 程序包 net.lab1024.sa.common.util
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/ProtocolAutoDiscoveryManager.java:[48,24] 找不到符号
+[ERROR]   符号:   类 NetworkScanner
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/ProtocolAutoDiscoveryManager.java:[49,24] 找不到符号
+[ERROR]   符号:   类 ProtocolDetector
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/service/impl/ProtocolDiscoveryServiceImpl.java:[6,44] 程序包net.lab1024.sa.common.core.exception不存在
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/service/impl/ProtocolDiscoveryServiceImpl.java:[7,39] 程序包net.lab1024.sa.common.core.util不存在
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/service/impl/ProtocolDiscoveryServiceImpl.java:[415,41] 找不到符号
+[ERROR]   符号:   类 NetworkScanner
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/monitor/HighPrecisionMonitorValidator.java:[615,42] 找不到符号
+[ERROR]   符号:   类 DeviceStatusSnapshot
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.monitor.HighPrecisionMonitorValidator
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/monitor/HighPrecisionMonitorValidator.java:[615,74] 找不到符号
+[ERROR]   符号:   类 DeviceStatusSnapshot
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.monitor.HighPrecisionMonitorValidator
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hotupdate/ProtocolAdapterHotUpdater.java:[7,43] 找不到符号
+[ERROR]   符号:   类 ProtocolAdapterFactory
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hotupdate/ProtocolAdapterHotUpdater.java:[8,38] 找不到符号
+[ERROR]   符号:   类 ProtocolConfigDao
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.dao
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hotupdate/ProtocolAdapterHotUpdater.java:[44,13] 找不到符号
+[ERROR]   符号:   类 ProtocolAdapterFactory
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hotupdate.ProtocolAdapterHotUpdater
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hotupdate/ProtocolAdapterHotUpdater.java:[47,13] 找不到符号
+[ERROR]   符号:   类 ProtocolConfigDao
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hotupdate.ProtocolAdapterHotUpdater
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[105,12] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[105,85] 找不到符号
+[ERROR]   符号:   类 ProtocolParseException
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[173,12] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[173,85] 找不到符号
+[ERROR]   符号:   类 ProtocolParseException
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[183,115] 找不到符号
+[ERROR]   符号:   类 ProtocolBuildException
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[209,118] 找不到符号
+[ERROR]   符号:   类 ProtocolBuildException
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[215,53] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[215,12] 找不到符号
+[ERROR]   符号:   类 ProtocolValidationResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[246,12] 找不到符号
+[ERROR]   符号:   类 ProtocolPermissionResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[278,19] 找不到符号
+[ERROR]   符号:   类 ProtocolInitResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[320,12] 找不到符号
+[ERROR]   符号:   类 ProtocolRegistrationResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[351,12] 找不到符号
+[ERROR]   符号:   类 ProtocolHeartbeatResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[377,12] 找不到符号
+[ERROR]   符号:   类 ProtocolDeviceStatus
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[396,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[408,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[420,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[493,12] 找不到符号
+[ERROR]   符号:   类 ProtocolErrorResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[502,24] 找不到符号
+[ERROR]   符号:   类 ProtocolErrorInfo
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/rs485/RS485PhysicalAdapter.java:[1044,46] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.rs485.RS485PhysicalAdapter
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[33,16] 找不到符号
+[ERROR]   符号:   方法 rollbackFor()
+[ERROR]   位置: @interface jakarta.transaction.Transactional
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/HighPrecisionDeviceMonitorServiceImpl.java:[32,16] 找不到符号
+[ERROR]   符号:   方法 rollbackFor()
+[ERROR]   位置: @interface jakarta.transaction.Transactional
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImpl.java:[52,15] 找不到符号
+[ERROR]   符号:   方法 required()
+[ERROR]   位置: @interface jakarta.annotation.Resource
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -3,15 +3,12 @@ package net.lab1024.sa.oa.workflow.exception;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.common.engine.api.FlowableIllegalArgumentException;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
-import org.flowable.engine.FlowableOptimisticLockingException;
-import org.flowable.engine.FlowableTaskAlreadyCompletedException;
-import org.flowable.engine.repository.ProcessDefinitionNotFoundException;
-import org.flowable.engine.runtime.ProcessInstanceNotFoundException;
-import org.flowable.task.api.TaskNotFoundException;
 import org.slf4j.MDC;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
@@ -20,311 +17,110 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
- * 工作流引擎异常处理器
+ * Flowable 7.2.0 工作流异常统一处理器
  * <p>
- * 专门处理Flowable工作流引擎相关的异常，提供细化的异常分类和处理
- * 集成Micrometer指标收集，支持企业级监控和告警
- * </p>
- * <p>
- * 异常分类体系：
- * 1. FlowableException - Flowable引擎基础异常
- * 2. FlowableIllegalArgumentException - 参数非法异常
- * 3. FlowableObjectNotFoundException - 对象不存在异常
- * 4. FlowableOptimisticLockingException - 乐观锁异常
- * 5. FlowableTaskAlreadyCompletedException - 任务已完成异常
- * 6. ProcessDefinitionNotFoundException - 流程定义不存在异常
- * 7. ProcessInstanceNotFoundException - 流程实例不存在异常
- * 8. TaskNotFoundException - 任务不存在异常
- * 9. DataAccessException - 数据访问异常
- * 10. WorkflowBusinessException - 工作流业务异常
+ * 适配Flowable 7.x API变化，移除已废弃的特定异常类，
+ * 使用通用异常FlowableObjectNotFoundException统一处理
  * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-16
+ * @version 2.0.0
+ * @since 2025-01-17
  */
 @Slf4j
-@RestControllerAdvice
-@Order(1) // 优先级高于GlobalExceptionHandler
+@RestControllerAdvice(basePackages = "net.lab1024.sa.oa.workflow")
+@Order(1)
 public class WorkflowExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(WorkflowExceptionHandler.class);
 
     @Resource
     private MeterRegistry meterRegistry;
 
-    // 工作流异常计数器
-    private Counter workflowExceptionCounter;
     private Counter flowableExceptionCounter;
-    private Counter dataAccessCounter;
     private Counter businessExceptionCounter;
 
-    /**
-     * 初始化指标收集器
-     */
-    @jakarta.annotation.PostConstruct
-    public void initMetrics() {
-        workflowExceptionCounter = Counter.builder("workflow.exception.count")
-                .description("工作流异常总数")
+    @PostConstruct
+    public void init() {
+        flowableExceptionCounter = Counter.builder("workflow.exception.count")
+                .tag("type", "flowable")
+                .description("Flowable异常计数")
                 .register(meterRegistry);
 
-        flowableExceptionCounter = Counter.builder("workflow.flowable.exception.count")
-                .description("Flowable引擎异常数")
-                .register(meterRegistry);
-
-        dataAccessCounter = Counter.builder("workflow.dataaccess.exception.count")
-                .description("数据访问异常数")
-                .register(meterRegistry);
-
-        businessExceptionCounter = Counter.builder("workflow.business.exception.count")
-                .description("工作流业务异常数")
+        businessExceptionCounter = Counter.builder("workflow.exception.count")
+                .tag("type", "business")
+                .description("业务异常计数")
                 .register(meterRegistry);
     }
 
-    /**
-     * 获取TraceId
-     */
-    private String getTraceId() {
-        String traceId = MDC.get("traceId");
-        if (traceId == null || traceId.trim().isEmpty()) {
-            traceId = UUID.randomUUID().toString().replace("-", "");
-            MDC.put("traceId", traceId);
-        }
-        return traceId;
-    }
+    // ==================== Flowable通用异常处理 ====================
 
     /**
-     * 记录异常指标
-     */
-    private void recordExceptionMetrics(String exceptionType, String operation) {
-        workflowExceptionCounter.increment(
-                meterRegistry.counter("workflow.exception.count",
-                        "type", exceptionType,
-                        "operation", operation)
-        );
-    }
-
-    // ==================== Flowable引擎异常处理 ====================
-
-    /**
-     * 处理Flowable基础异常
-     */
-    @ExceptionHandler(FlowableException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseDTO<Void> handleFlowableException(FlowableException e) {
-        String traceId = getTraceId();
-
-        log.error("[Flowable引擎异常] traceId={}, errorCode={}, message={}",
-                traceId, e.getErrorCode(), e.getMessage(), e);
-
-        recordExceptionMetrics("FLOWABLE_EXCEPTION", "FLOWABLE_ENGINE");
-        flowableExceptionCounter.increment();
-
-        // 根据错误代码返回不同的错误信息
-        String errorCode = "FLOWABLE_ENGINE_ERROR";
-        String errorMessage = "工作流引擎内部错误";
-
-        if (e.getErrorCode() != null) {
-            switch (e.getErrorCode()) {
-                case "no-deployments-for-key":
-                    errorCode = "PROCESS_NOT_DEPLOYED";
-                    errorMessage = "流程定义未部署";
-                    break;
-                case "process-instance-already-terminated":
-                    errorCode = "PROCESS_TERMINATED";
-                    errorMessage = "流程实例已终止";
-                    break;
-                case "unauthorized":
-                    errorCode = "WORKFLOW_UNAUTHORIZED";
-                    errorMessage = "工作流操作未授权";
-                    break;
-                default:
-                    errorMessage = "工作流引擎错误: " + e.getErrorCode();
-            }
-        }
-
-        return ResponseDTO.error(errorCode, errorMessage);
-    }
-
-    /**
-     * 处理Flowable参数非法异常
-     */
-    @ExceptionHandler(FlowableIllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseDTO<Void> handleFlowableIllegalArgumentException(FlowableIllegalArgumentException e) {
-        String traceId = getTraceId();
-
-        log.warn("[Flowable参数异常] traceId={}, errorCode={}, message={}",
-                traceId, e.getErrorCode(), e.getMessage());
-
-        recordExceptionMetrics("FLOWABLE_ILLEGAL_ARGUMENT", "FLOWABLE_ENGINE");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "ILLEGAL_ARGUMENT")
-        );
-
-        String errorMessage = "工作流参数错误";
-
-        if (e.getErrorCode() != null) {
-            switch (e.getErrorCode()) {
-                case "invalid-xml":
-                    errorMessage = "流程定义XML格式错误";
-                    break;
-                case "missing-required-field":
-                    errorMessage = "缺少必需字段";
-                    break;
-                case "invalid-value":
-                    errorMessage = "参数值无效";
-                    break;
-                default:
-                    errorMessage = "参数错误: " + e.getErrorCode();
-            }
-        }
-
-        return ResponseDTO.error("FLOWABLE_ILLEGAL_ARGUMENT", errorMessage);
-    }
-
-    /**
-     * 处理Flowable对象不存在异常
+     * 处理Flowable对象未找到异常
+     * Flowable 7.x中统一使用此异常替代各种具体的NotFound异常
      */
     @ExceptionHandler(FlowableObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseDTO<Void> handleFlowableObjectNotFoundException(FlowableObjectNotFoundException e) {
         String traceId = getTraceId();
 
-        log.warn("[Flowable对象不存在] traceId={}, objectType={}, objectId={}",
-                traceId, e.getObjectType(), e.getObjectId());
+        // Flowable 7.x中getObjectType()和getObjectClass()可能已移除，改用getMessage()
+        log.warn("[Flowable对象不存在] traceId={}, message={}", traceId, e.getMessage());
 
-        recordExceptionMetrics("FLOWABLE_OBJECT_NOT_FOUND", "FLOWABLE_ENGINE");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "OBJECT_NOT_FOUND")
-        );
+        flowableExceptionCounter.increment();
+        recordExceptionMetrics("FLOWABLE_OBJECT_NOT_FOUND", "UNKNOWN");
 
-        String errorMessage = "工作流对象不存在";
-
-        if (e.getObjectType() != null) {
-            switch (e.getObjectType()) {
-                case "process-definition":
-                    errorMessage = "流程定义不存在";
-                    break;
-                case "process-instance":
-                    errorMessage = "流程实例不存在";
-                    break;
-                case "task":
-                    errorMessage = "任务不存在";
-                    break;
-                case "execution":
-                    errorMessage = "执行实例不存在";
-                    break;
-                default:
-                    errorMessage = e.getObjectType() + "不存在";
-            }
-        }
-
+        String errorMessage = determineErrorMessage(e);
         return ResponseDTO.error("FLOWABLE_OBJECT_NOT_FOUND", errorMessage);
     }
 
     /**
-     * 处理Flowable乐观锁异常
+     * 处理Flowable非法参数异常
      */
-    @ExceptionHandler(FlowableOptimisticLockingException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseDTO<Void> handleFlowableOptimisticLockingException(FlowableOptimisticLockingException e) {
+    @ExceptionHandler(FlowableIllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDTO<Void> handleFlowableIllegalArgumentException(FlowableIllegalArgumentException e) {
         String traceId = getTraceId();
 
-        log.warn("[Flowable乐观锁异常] traceId={}, entityType={}, entityId={}",
-                traceId, e.getEntityType(), e.getEntityId());
+        log.warn("[Flowable参数错误] traceId={}, message={}", traceId, e.getMessage());
 
-        recordExceptionMetrics("FLOWABLE_OPTIMISTIC_LOCK", "FLOWABLE_ENGINE");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "OPTIMISTIC_LOCK")
-        );
+        flowableExceptionCounter.increment();
+        recordExceptionMetrics("FLOWABLE_ILLEGAL_ARGUMENT", "ARGUMENT");
 
-        return ResponseDTO.error("FLOWABLE_OPTIMISTIC_LOCK",
-                "数据已被修改，请刷新后重试");
+        return ResponseDTO.error("FLOWABLE_ILLEGAL_ARGUMENT", "参数错误: " + e.getMessage());
     }
 
     /**
-     * 处理Flowable任务已完成异常
+     * 处理Flowable通用异常
      */
-    @ExceptionHandler(FlowableTaskAlreadyCompletedException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseDTO<Void> handleFlowableTaskAlreadyCompletedException(FlowableTaskAlreadyCompletedException e) {
+    @ExceptionHandler(FlowableException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDTO<Void> handleFlowableException(FlowableException e) {
         String traceId = getTraceId();
 
-        log.warn("[Flowable任务已完成] traceId={}, taskId={}", traceId, e.getTaskId());
+        log.error("[Flowable异常] traceId={}, message={}", traceId, e.getMessage(), e);
 
-        recordExceptionMetrics("FLOWABLE_TASK_COMPLETED", "FLOWABLE_ENGINE");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "TASK_ALREADY_COMPLETED")
-        );
+        flowableExceptionCounter.increment();
+        recordExceptionMetrics("FLOWABLE_ERROR", "GENERAL");
 
-        return ResponseDTO.error("FLOWABLE_TASK_COMPLETED", "任务已完成，无法重复操作");
-    }
+        // 检查是否是乐观锁异常（通过消息内容判断）
+        if (isOptimisticLockException(e)) {
+            return ResponseDTO.error("FLOWABLE_OPTIMISTIC_LOCK", "数据已被修改，请刷新后重试");
+        }
 
-    // ==================== Flowable具体异常处理 ====================
+        // 检查是否是任务已完成异常
+        if (isTaskAlreadyCompletedException(e)) {
+            return ResponseDTO.error("FLOWABLE_TASK_COMPLETED", "任务已完成，无法重复操作");
+        }
 
-    /**
-     * 处理流程定义不存在异常
-     */
-    @ExceptionHandler(ProcessDefinitionNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseDTO<Void> handleProcessDefinitionNotFoundException(ProcessDefinitionNotFoundException e) {
-        String traceId = getTraceId();
-
-        log.warn("[流程定义不存在] traceId={}, processDefinitionId={}, processDefinitionKey={}",
-                traceId, e.getProcessDefinitionId(), e.getProcessDefinitionKey());
-
-        recordExceptionMetrics("PROCESS_DEFINITION_NOT_FOUND", "PROCESS_DEFINITION");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "PROCESS_DEFINITION_NOT_FOUND")
-        );
-
-        return ResponseDTO.error("PROCESS_DEFINITION_NOT_FOUND", "流程定义不存在");
-    }
-
-    /**
-     * 处理流程实例不存在异常
-     */
-    @ExceptionHandler(ProcessInstanceNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseDTO<Void> handleProcessInstanceNotFoundException(ProcessInstanceNotFoundException e) {
-        String traceId = getTraceId();
-
-        log.warn("[流程实例不存在] traceId={}, processInstanceId={}", traceId, e.getProcessInstanceId());
-
-        recordExceptionMetrics("PROCESS_INSTANCE_NOT_FOUND", "PROCESS_INSTANCE");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "PROCESS_INSTANCE_NOT_FOUND")
-        );
-
-        return ResponseDTO.error("PROCESS_INSTANCE_NOT_FOUND", "流程实例不存在");
-    }
-
-    /**
-     * 处理任务不存在异常
-     */
-    @ExceptionHandler(TaskNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseDTO<Void> handleTaskNotFoundException(TaskNotFoundException e) {
-        String traceId = getTraceId();
-
-        log.warn("[任务不存在] traceId={}, taskId={}", traceId, e.getTaskId());
-
-        recordExceptionMetrics("TASK_NOT_FOUND", "TASK");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "TASK_NOT_FOUND")
-        );
-
-        return ResponseDTO.error("TASK_NOT_FOUND", "任务不存在");
+        return ResponseDTO.error("FLOWABLE_ERROR", "工作流引擎错误: " + e.getMessage());
     }
 
     // ==================== 数据访问异常处理 ====================
@@ -339,130 +135,98 @@ public class WorkflowExceptionHandler {
 
         log.error("[数据访问异常] traceId={}, message={}", traceId, e.getMessage(), e);
 
-        recordExceptionMetrics("DATA_ACCESS", "DATABASE");
-        dataAccessCounter.increment();
+        businessExceptionCounter.increment();
+        recordExceptionMetrics("DATA_ACCESS_ERROR", "DATABASE");
 
-        // 根据异常类型细化错误信息
-        String errorMessage = "数据访问失败";
+        return ResponseDTO.error("DATA_ACCESS_ERROR", "数据访问异常，请稍后重试");
+    }
 
-        if (e.getCause() != null) {
-            String causeMessage = e.getCause().getMessage().toLowerCase();
-            if (causeMessage.contains("connection")) {
-                errorMessage = "数据库连接失败";
-            } else if (causeMessage.contains("timeout")) {
-                errorMessage = "数据库访问超时";
-            } else if (causeMessage.contains("constraint")) {
-                errorMessage = "数据完整性约束违反";
-            } else if (causeMessage.contains("duplicate")) {
-                errorMessage = "数据重复";
-            }
+    // ==================== 通用异常处理 ====================
+
+    /**
+     * 处理运行时异常
+     */
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDTO<Void> handleRuntimeException(RuntimeException e) {
+        String traceId = getTraceId();
+
+        log.error("[运行时异常] traceId={}, message={}", traceId, e.getMessage(), e);
+
+        businessExceptionCounter.increment();
+        recordExceptionMetrics("RUNTIME_ERROR", "GENERAL");
+
+        return ResponseDTO.error("SYSTEM_ERROR", "系统错误，请稍后重试");
+    }
+
+    // ==================== 私有方法 ====================
+
+    /**
+     * 根据异常消息确定错误消息
+     * <p>Flowable 7.x中FlowableObjectNotFoundException不再有getObjectType()方法，
+     * 改为从getMessage()中推断对象类型</p>
+     */
+    private String determineErrorMessage(FlowableObjectNotFoundException e) {
+        String message = e.getMessage();
+        if (message == null) {
+            return "对象不存在";
         }
-
-        return ResponseDTO.error("WORKFLOW_DATA_ACCESS_ERROR", errorMessage);
-    }
-
-    // ==================== 工作流业务异常处理 ====================
-
-    /**
-     * 处理工作流业务异常
-     */
-    @ExceptionHandler(WorkflowBusinessException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseDTO<Void> handleWorkflowBusinessException(WorkflowBusinessException e) {
-        String traceId = getTraceId();
-
-        log.warn("[工作流业务异常] traceId={}, code={}, message={}, operation={}",
-                traceId, e.getCode(), e.getMessage(), e.getOperation());
-
-        recordExceptionMetrics("WORKFLOW_BUSINESS", e.getOperation());
-        businessExceptionCounter.increment(
-                meterRegistry.counter("workflow.business.exception.count",
-                        "operation", e.getOperation())
-        );
-
-        return ResponseDTO.error(e.getCode(), e.getMessage());
-    }
-
-    // ==================== 特殊工作流场景异常处理 ====================
-
-    /**
-     * 处理流程部署异常
-     */
-    @ExceptionHandler(ProcessDeploymentException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseDTO<Void> handleProcessDeploymentException(ProcessDeploymentException e) {
-        String traceId = getTraceId();
-
-        log.error("[流程部署异常] traceId={}, processKey={}, stage={}, error={}",
-                traceId, e.getProcessKey(), e.getDeploymentStage(), e.getMessage(), e);
-
-        recordExceptionMetrics("PROCESS_DEPLOYMENT", "DEPLOYMENT");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "DEPLOYMENT_ERROR")
-        );
-
-        return ResponseDTO.error("PROCESS_DEPLOYMENT_ERROR",
-                "流程部署失败: " + e.getDeploymentStage());
+        String lowerMsg = message.toLowerCase();
+        if (lowerMsg.contains("processdefinition") || lowerMsg.contains("process definition")) return "流程定义不存在";
+        if (lowerMsg.contains("processinstance") || lowerMsg.contains("process instance")) return "流程实例不存在";
+        if (lowerMsg.contains("task")) return "任务不存在";
+        if (lowerMsg.contains("execution")) return "执行实例不存在";
+        if (lowerMsg.contains("deployment")) return "部署不存在";
+        if (lowerMsg.contains("job")) return "作业不存在";
+        if (lowerMsg.contains("user")) return "用户不存在";
+        if (lowerMsg.contains("group")) return "用户组不存在";
+        return "对象不存在: " + message;
     }
 
     /**
-     * 处理流程启动异常
+     * 判断是否是乐观锁异常
      */
-    @ExceptionHandler(ProcessStartException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseDTO<Void> handleProcessStartException(ProcessStartException e) {
-        String traceId = getTraceId();
-
-        log.error("[流程启动异常] traceId={}, processKey={}, businessKey={}, error={}",
-                traceId, e.getProcessKey(), e.getBusinessKey(), e.getMessage(), e);
-
-        recordExceptionMetrics("PROCESS_START", "START_PROCESS");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "START_PROCESS_ERROR")
+    private boolean isOptimisticLockException(FlowableException e) {
+        String message = e.getMessage();
+        return message != null && (
+                message.contains("optimistic locking") ||
+                message.contains("was updated by another transaction") ||
+                message.contains("StaleObjectStateException")
         );
-
-        return ResponseDTO.error("PROCESS_START_ERROR", "流程启动失败");
     }
 
     /**
-     * 处理任务完成异常
+     * 判断是否是任务已完成异常
      */
-    @ExceptionHandler(TaskCompletionException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseDTO<Void> handleTaskCompletionException(TaskCompletionException e) {
-        String traceId = getTraceId();
-
-        log.error("[任务完成异常] traceId={}, taskId={}, assigneeId={}, error={}",
-                traceId, e.getTaskId(), e.getAssigneeId(), e.getMessage(), e);
-
-        recordExceptionMetrics("TASK_COMPLETION", "COMPLETE_TASK");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "TASK_COMPLETION_ERROR")
+    private boolean isTaskAlreadyCompletedException(FlowableException e) {
+        String message = e.getMessage();
+        return message != null && (
+                message.contains("task already completed") ||
+                message.contains("Task does not exist") ||
+                message.contains("Cannot find task")
         );
-
-        return ResponseDTO.error("TASK_COMPLETION_ERROR", "任务完成失败");
     }
 
     /**
-     * 处理流程实例查询异常
+     * 获取追踪ID
      */
-    @ExceptionHandler(ProcessInstanceQueryException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseDTO<Void> handleProcessInstanceQueryException(ProcessInstanceQueryException e) {
-        String traceId = getTraceId();
+    private String getTraceId() {
+        String traceId = MDC.get("traceId");
+        if (traceId == null || traceId.isEmpty()) {
+            traceId = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+            MDC.put("traceId", traceId);
+        }
+        return traceId;
+    }
 
-        log.error("[流程实例查询异常] traceId={}, queryParams={}, error={}",
-                traceId, e.getQueryParams(), e.getMessage(), e);
-
-        recordExceptionMetrics("PROCESS_INSTANCE_QUERY", "QUERY");
-        flowableExceptionCounter.increment(
-                meterRegistry.counter("workflow.flowable.exception.count",
-                        "type", "QUERY_ERROR")
-        );
-
-        return ResponseDTO.error("PROCESS_QUERY_ERROR", "流程实例查询失败");
+    /**
+     * 记录异常指标
+     */
+    private void recordExceptionMetrics(String errorCode, String category) {
+        meterRegistry.counter("workflow.exception.detail",
+                "error_code", errorCode,
+                "category", category,
+                "timestamp", LocalDateTime.now().toString()
+        ).increment();
     }
 }

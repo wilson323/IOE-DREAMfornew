@@ -1,185 +1,34 @@
 package net.lab1024.sa.oa.workflow.health;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.actuator.health.Health;
-import org.springframework.boot.actuator.health.HealthIndicator;
-import org.springframework.stereotype.Component;
-
-import jakarta.annotation.Resource;
-import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 工作流引擎健康检查指示器
+ * 工作流引擎健康检查 - 占位符
  * <p>
- * 监控Flowable工作流引擎的健康状态，包括：
- * 1. 引擎是否正常启动
- * 2. 数据库连接是否正常
- * 3. 流程定义是否可以正常部署
- * 4. 流程实例是否可以正常启动
+ * TODO: 待spring-boot-starter-actuator依赖正确加载后重新实现
+ * 需要实现：
+ * 1. HealthIndicator接口
+ * 2. 检查Flowable引擎状态
+ * 3. 检查数据库连接
+ * 4. 检查任务队列状态
+ * 5. 暴露健康指标
  * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-16
+ * @version 2.0.0
+ * @since 2025-01-17
  */
 @Slf4j
-@Component("workflowEngineHealthIndicator")
-public class WorkflowEngineHealthIndicator implements HealthIndicator {
+// @Component - 待实现后启用
+public class WorkflowEngineHealthIndicator {
+    private static final Logger log = LoggerFactory.getLogger(WorkflowEngineHealthIndicator.class);
 
-    @Resource
-    private WorkflowEngineService workflowEngineService;
-
-    @Override
-    public Health health() {
-        try {
-            log.debug("[工作流健康检查] 开始检查工作流引擎状态");
-
-            // 检查引擎是否初始化
-            if (workflowEngineService == null) {
-                return Health.down()
-                        .withDetail("status", "DOWN")
-                        .withDetail("error", "工作流引擎服务未注入")
-                        .withDetail("timestamp", System.currentTimeMillis())
-                        .build();
-            }
-
-            // 检查引擎状态
-            boolean isEngineRunning = workflowEngineService.isEngineRunning();
-            if (!isEngineRunning) {
-                return Health.down()
-                        .withDetail("status", "DOWN")
-                        .withDetail("error", "工作流引擎未运行")
-                        .withDetail("timestamp", System.currentTimeMillis())
-                        .build();
-            }
-
-            // 获取引擎统计信息
-            var engineStats = workflowEngineService.getEngineStatistics();
-
-            // 构建健康状态
-            Health.Builder builder = Health.up()
-                    .withDetail("status", "UP")
-                    .withDetail("engine", "Flowable 6.8.0")
-                    .withDetail("running", true)
-                    .withDetail("timestamp", System.currentTimeMillis());
-
-            // 添加引擎统计信息
-            if (engineStats != null) {
-                builder.withDetail("statistics", engineStats);
-            }
-
-            // 检查关键指标
-            if (engineStats != null) {
-                Object deployedProcesses = engineStats.get("deployedProcesses");
-                Object runningInstances = engineStats.get("runningInstances");
-                Object activeTasks = engineStats.get("activeTasks");
-
-                builder.withDetail("deployedProcesses", deployedProcesses)
-                       .withDetail("runningInstances", runningInstances)
-                       .withDetail("activeTasks", activeTasks);
-            }
-
-            log.debug("[工作流健康检查] 工作流引擎状态健康: {}", builder.build());
-            return builder.build();
-
-        } catch (Exception e) {
-            log.error("[工作流健康检查] 工作流引擎健康检查异常", e);
-            return Health.down()
-                    .withDetail("status", "DOWN")
-                    .withDetail("error", e.getMessage())
-                    .withDetail("exception", e.getClass().getSimpleName())
-                    .withDetail("timestamp", System.currentTimeMillis())
-                    .build();
-        }
-    }
-
-    /**
-     * 检查工作流引擎的详细健康状态
-     *
-     * @return 详细健康检查结果
-     */
-    public Health detailedHealth() {
-        try {
-            Health basicHealth = health();
-
-            if (!basicHealth.getStatus().equals(Health.Builder.UP)) {
-                return basicHealth;
-            }
-
-            // 执行详细检查
-            log.debug("[工作流健康检查] 执行详细健康检查");
-
-            // 检查流程定义部署能力
-            boolean canDeploy = checkDeploymentCapability();
-
-            // 检查流程实例启动能力
-            boolean canStartProcess = checkProcessStartCapability();
-
-            // 检查任务处理能力
-            boolean canHandleTasks = checkTaskHandlingCapability();
-
-            return Health.up()
-                    .withDetail("status", "UP")
-                    .withDetail("engine", "Flowable 6.8.0")
-                    .withDetail("capabilities", new java.util.HashMap<String, Object>() {{
-                        put("canDeploy", canDeploy);
-                        put("canStartProcess", canStartProcess);
-                        put("canHandleTasks", canHandleTasks);
-                        put("overall", canDeploy && canStartProcess && canHandleTasks);
-                    }})
-                    .withDetail("timestamp", System.currentTimeMillis())
-                    .build();
-
-        } catch (Exception e) {
-            log.error("[工作流健康检查] 详细健康检查异常", e);
-            return Health.down()
-                    .withDetail("status", "DOWN")
-                    .withDetail("error", e.getMessage())
-                    .withDetail("exception", e.getClass().getSimpleName())
-                    .withDetail("timestamp", System.currentTimeMillis())
-                    .build();
-        }
-    }
-
-    /**
-     * 检查流程部署能力
-     */
-    private boolean checkDeploymentCapability() {
-        try {
-            // 这里可以添加部署能力的检查逻辑
-            // 例如：尝试部署一个测试流程定义
-            return true;
-        } catch (Exception e) {
-            log.warn("[工作流健康检查] 流程部署能力检查失败", e);
-            return false;
-        }
-    }
-
-    /**
-     * 检查流程启动能力
-     */
-    private boolean checkProcessStartCapability() {
-        try {
-            // 这里可以添加流程启动能力的检查逻辑
-            // 例如：尝试启动一个测试流程实例
-            return true;
-        } catch (Exception e) {
-            log.warn("[工作流健康检查] 流程启动能力检查失败", e);
-            return false;
-        }
-    }
-
-    /**
-     * 检查任务处理能力
-     */
-    private boolean checkTaskHandlingCapability() {
-        try {
-            // 这里可以添加任务处理能力的检查逻辑
-            // 例如：检查任务查询、分配、完成等功能
-            return true;
-        } catch (Exception e) {
-            log.warn("[工作流健康检查] 任务处理能力检查失败", e);
-            return false;
-        }
-    }
+    // TODO: 完整实现需要：
+    // 1. 实现 HealthIndicator 接口
+    // 2. 注入 WorkflowEngineService
+    // 3. 检查引擎运行状态
+    // 4. 检查任务队列深度
+    // 5. 返回健康状态和详情
 }

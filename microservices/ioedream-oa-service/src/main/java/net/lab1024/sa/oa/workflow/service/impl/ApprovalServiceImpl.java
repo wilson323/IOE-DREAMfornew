@@ -1008,7 +1008,7 @@ public class ApprovalServiceImpl implements ApprovalService {
             // 计算处理时长
             if (task.getStartTime() != null) {
                 long duration = java.time.Duration.between(task.getStartTime(), LocalDateTime.now()).toMinutes();
-                task.setDuration(duration.intValue());
+                task.setDuration(duration);
             }
 
             int updated = workflowTaskDao.updateById(task);
@@ -1108,7 +1108,7 @@ public class ApprovalServiceImpl implements ApprovalService {
             // 计算流程总时长
             if (instance.getStartTime() != null) {
                 long duration = java.time.Duration.between(instance.getStartTime(), LocalDateTime.now()).toMinutes();
-                instance.setDuration(duration.intValue());
+                instance.setDuration(duration);
             }
 
             int updated = approvalInstanceDao.updateById(instance);

@@ -135,6 +135,46 @@ public interface WorkflowDefinitionDao extends BaseMapper<WorkflowDefinitionEnti
             "<if test='excludeId != null'>AND id != #{excludeId}</if>" +
             "</script>")
     int countByProcessKey(@Param("processKey") String processKey, @Param("excludeId") Long excludeId);
+
+    /**
+     * 按流程Key和状态统计数量
+     *
+     * @param processKey 流程编码
+     * @param status     状态
+     * @return 数量
+     */
+    @Transactional(readOnly = true)
+    @Select("SELECT COUNT(1) FROM t_common_workflow_definition " +
+            "WHERE process_key = #{processKey} AND status = #{status} AND deleted_flag = 0")
+    int countByProcessKey(@Param("processKey") String processKey, @Param("status") String status);
+
+    /**
+     * 更新最新版本状态
+     *
+     * @param processKey 流程编码
+     * @param isLatest   是否最新
+     * @return 更新数量
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Update("UPDATE t_common_workflow_definition SET " +
+            "is_latest = #{isLatest}, " +
+            "update_time = NOW() " +
+            "WHERE process_key = #{processKey} AND deleted_flag = 0")
+    int updateLatestStatus(@Param("processKey") String processKey, @Param("isLatest") int isLatest);
+
+    /**
+     * 按状态统计流程定义数量
+     * <p>
+     * 状态说明：
+     * DRAFT-草稿 PUBLISHED-已发布 DISABLED-已禁用 ACTIVE-活跃
+     * </p>
+     *
+     * @param status 定义状态
+     * @return 统计数量
+     */
+    @Transactional(readOnly = true)
+    @Select("SELECT COUNT(1) FROM t_common_workflow_definition WHERE status = #{status} AND deleted_flag = 0")
+    Long countByStatus(@Param("status") String status);
 }
 
 

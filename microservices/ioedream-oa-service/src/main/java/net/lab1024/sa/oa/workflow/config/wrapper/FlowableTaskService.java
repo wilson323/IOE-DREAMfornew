@@ -1,10 +1,12 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
-import org.flowable.task.service.TaskService;
+import org.flowable.engine.TaskService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Map;
 @Service
 public class FlowableTaskService {
 
+    private static final Logger log = LoggerFactory.getLogger(FlowableTaskService.class);
     private final TaskService taskService;
 
     public FlowableTaskService(TaskService taskService) {
@@ -418,7 +421,7 @@ public class FlowableTaskService {
      * @param taskId 任务ID
      * @return 评论列表
      */
-    public List<org.flowable.task.api.Comment> getTaskComments(String taskId) {
+    public List<org.flowable.engine.task.Comment> getTaskComments(String taskId) {
         log.debug("[Flowable] 获取任务评论: taskId={}", taskId);
 
         try {
@@ -466,6 +469,30 @@ public class FlowableTaskService {
         } catch (Exception e) {
             log.error("[Flowable] 设置任务变量失败: taskId={}, error={}", taskId, e.getMessage(), e);
             throw new RuntimeException("设置任务变量失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 根据流程实例ID获取任务列表
+     *
+     * @param processInstanceId 流程实例ID
+     * @return 任务列表
+     */
+    public List<Task> getTasksByProcessInstanceId(String processInstanceId) {
+        log.debug("[Flowable] 根据流程实例ID获取任务: processInstanceId={}", processInstanceId);
+
+        try {
+            return taskService.createTaskQuery()
+                    .processInstanceId(processInstanceId)
+                    .active()
+                    .orderByTaskCreateTime()
+                    .desc()
+                    .list();
+
+        } catch (Exception e) {
+            log.error("[Flowable] 根据流程实例ID获取任务失败: processInstanceId={}, error={}",
+                    processInstanceId, e.getMessage(), e);
+            return List.of();
         }
     }
 }

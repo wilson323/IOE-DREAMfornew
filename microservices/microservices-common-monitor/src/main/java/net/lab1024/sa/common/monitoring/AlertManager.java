@@ -3,11 +3,11 @@ package net.lab1024.sa.common.monitoring;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.notification.manager.NotificationConfigManager;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Gauge;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 告警管理器
@@ -31,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class AlertManager {
 
-    private final MeterRegistry meterRegistry;
+    private final MetricsCollector metricsCollector;
     private final ScheduledExecutorService scheduler;
     private final AlertConfig alertConfig;
     private final GatewayServiceClient gatewayServiceClient; // 网关服务客户端（可选）
@@ -43,7 +42,6 @@ public class AlertManager {
     private final String smsApiKey; // 短信API密钥（可选）
     private final String smsPhoneNumbers; // 短信接收号码（可选，逗号分隔）
     private final String smsProvider; // 短信服务商（aliyun/tencent/webhook，默认webhook）
-    private final AlertNotificationDispatcher alertNotificationDispatcher;
 
     // 告警规则缓存
     private final Map<String, AlertRule> alertRules = new ConcurrentHashMap<>();
@@ -55,8 +53,8 @@ public class AlertManager {
     private final List<AlertRecord> alertHistory = Collections.synchronizedList(new ArrayList<>());
 
     // 构造函数注入依赖
-    public AlertManager(MeterRegistry meterRegistry) {
-        this(meterRegistry, null, null, null, null, null, null, null, null, null);
+    public AlertManager(MetricsCollector metricsCollector) {
+        this(metricsCollector, null, null, null, null, null, null, null, null, null);
     }
 
     /**
@@ -66,11 +64,11 @@ public class AlertManager {
      * 通过构造函数接收依赖，保持为纯Java类
      * </p>
      *
-     * @param meterRegistry 指标注册表
+     * @param metricsCollector 指标收集器
      * @param gatewayServiceClient 网关服务客户端（可选，如果为null则只记录日志）
      */
-    public AlertManager(MeterRegistry meterRegistry, GatewayServiceClient gatewayServiceClient) {
-        this(meterRegistry, gatewayServiceClient, null, null, null, null, null, null, null, null);
+    public AlertManager(MetricsCollector metricsCollector, GatewayServiceClient gatewayServiceClient) {
+        this(metricsCollector, gatewayServiceClient, null, null, null, null, null, null, null, null);
     }
 
     /**
@@ -86,7 +84,7 @@ public class AlertManager {
      * 3. 如果都没有，使用默认配置
      * </p>
      *
-     * @param meterRegistry 指标注册表
+     * @param metricsCollector 指标收集器
      * @param gatewayServiceClient 网关服务客户端（可选，如果为null则只记录日志）
      * @param notificationConfigManager 通知配置管理器（可选，用于从数据库读取配置）
      * @param restTemplate HTTP客户端（可选，用于直接调用钉钉API、企业微信API和短信API）
@@ -97,26 +95,11 @@ public class AlertManager {
      * @param smsPhoneNumbers 短信接收号码（可选，逗号分隔）
      * @param smsProvider 短信服务商（aliyun/tencent/webhook，默认webhook）
      */
-    public AlertManager(MeterRegistry meterRegistry, GatewayServiceClient gatewayServiceClient,
+    public AlertManager(MetricsCollector metricsCollector, GatewayServiceClient gatewayServiceClient,
                         NotificationConfigManager notificationConfigManager,
                         RestTemplate restTemplate, String dingTalkWebhookUrl, String weChatWebhookUrl,
                         String smsApiUrl, String smsApiKey, String smsPhoneNumbers, String smsProvider) {
-        this(meterRegistry, gatewayServiceClient, notificationConfigManager, restTemplate,
-                dingTalkWebhookUrl, weChatWebhookUrl, smsApiUrl, smsApiKey, smsPhoneNumbers, smsProvider, null);
-    }
-
-    /**
-     * 构造函数注入依赖（完整版本，支持自定义通知分发器注入）
-     * <p>
-     * 用于单元测试或在特定场景下替换通知分发实现；保持原构造器兼容。
-     * </p>
-     */
-    public AlertManager(MeterRegistry meterRegistry, GatewayServiceClient gatewayServiceClient,
-                        NotificationConfigManager notificationConfigManager,
-                        RestTemplate restTemplate, String dingTalkWebhookUrl, String weChatWebhookUrl,
-                        String smsApiUrl, String smsApiKey, String smsPhoneNumbers, String smsProvider,
-                        AlertNotificationDispatcher alertNotificationDispatcher) {
-        this.meterRegistry = meterRegistry;
+        this.metricsCollector = metricsCollector;
         this.gatewayServiceClient = gatewayServiceClient;
         this.notificationConfigManager = notificationConfigManager;
         this.restTemplate = restTemplate != null ? restTemplate : new RestTemplate();
@@ -126,34 +109,11 @@ public class AlertManager {
         this.smsApiKey = smsApiKey;
         this.smsPhoneNumbers = smsPhoneNumbers;
         this.smsProvider = smsProvider != null && !smsProvider.isEmpty() ? smsProvider : "webhook";
-        this.scheduler = Executors.newScheduledThreadPool(4, createDaemonThreadFactory("alert-manager"));
+        this.scheduler = Executors.newScheduledThreadPool(4);
         this.alertConfig = new AlertConfig(notificationConfigManager);
-        this.alertNotificationDispatcher = alertNotificationDispatcher != null
-                ? alertNotificationDispatcher
-                : new AlertNotificationDispatcher(
-                        this.alertConfig,
-                        this.gatewayServiceClient,
-                        this.restTemplate,
-                        this.dingTalkWebhookUrl,
-                        this.weChatWebhookUrl,
-                        this.smsApiUrl,
-                        this.smsApiKey,
-                        this.smsPhoneNumbers,
-                        this.smsProvider
-                );
 
         initializeAlertRules();
         startAlertMonitoring();
-    }
-
-    private static java.util.concurrent.ThreadFactory createDaemonThreadFactory(String namePrefix) {
-        AtomicLong threadIndex = new AtomicLong(0L);
-        return runnable -> {
-            Thread thread = new Thread(runnable);
-            thread.setName(namePrefix + "-" + threadIndex.incrementAndGet());
-            thread.setDaemon(true);
-            return thread;
-        };
     }
 
     /**
@@ -648,7 +608,7 @@ public class AlertManager {
      */
     public void checkAlertRules() {
         try {
-            MetricOverview overview = getMetricOverview();
+            MetricsCollector.MetricOverview overview = metricsCollector.getMetricOverview();
 
             for (Map.Entry<String, AlertRule> entry : alertRules.entrySet()) {
                 // ruleId 未使用，直接使用 rule
@@ -669,7 +629,7 @@ public class AlertManager {
     /**
      * 检查单个告警规则
      */
-    private void checkAlertRule(AlertRule rule, MetricOverview overview) {
+    private void checkAlertRule(AlertRule rule, MetricsCollector.MetricOverview overview) {
         double currentValue = getMetricValue(rule.getMetric(), overview);
         AlertStatus status = alertStatuses.computeIfAbsent(rule.getId(), AlertStatus::new);
 
@@ -690,7 +650,7 @@ public class AlertManager {
     /**
      * 获取指标值
      */
-    private double getMetricValue(String metric, MetricOverview overview) {
+    private double getMetricValue(String metric, MetricsCollector.MetricOverview overview) {
         return switch (metric) {
             case "http.error.rate" -> calculateHttpErrorRate(overview);
             case "http.request.duration" -> overview.getAverageResponseTime();
@@ -706,7 +666,7 @@ public class AlertManager {
     /**
      * 计算HTTP错误率
      */
-    private double calculateHttpErrorRate(MetricOverview overview) {
+    private double calculateHttpErrorRate(MetricsCollector.MetricOverview overview) {
         long totalRequests = overview.getTotalRequests();
         long errorRequests = overview.getErrorRequests();
 
@@ -716,7 +676,7 @@ public class AlertManager {
     /**
      * 计算系统错误率
      */
-    private double calculateSystemErrorRate(MetricOverview overview) {
+    private double calculateSystemErrorRate(MetricsCollector.MetricOverview overview) {
         long totalOperations = overview.getTotalRequests() + overview.getBusinessOperations();
         long systemErrors = overview.getErrorCount();
 
@@ -726,7 +686,7 @@ public class AlertManager {
     /**
      * 计算业务错误率
      */
-    private double calculateBusinessErrorRate(MetricOverview overview) {
+    private double calculateBusinessErrorRate(MetricsCollector.MetricOverview overview) {
         long totalOperations = overview.getTotalRequests() + overview.getBusinessOperations();
         long businessErrors = overview.getBusinessErrorCount();
 
@@ -774,7 +734,8 @@ public class AlertManager {
 
         alertHistory.add(record);
 
-        alertNotificationDispatcher.sendAlertNotification(rule, record, false);
+        // 发送告警通知
+        sendAlertNotification(rule, record, false);
 
         log.warn("[告警管理] 触发告警: {}", message);
     }
@@ -801,7 +762,8 @@ public class AlertManager {
             AlertRecord record = new AlertRecord(rule.getId(), rule.getName(), rule.getSeverity(),
                     currentValue, rule.getThreshold(), message);
 
-            alertNotificationDispatcher.sendAlertNotification(rule, record, true);
+            // 发送告警通知
+            sendAlertNotification(rule, record, true);
 
             status.setLastNotificationTime(now);
         }
@@ -826,11 +788,621 @@ public class AlertManager {
             alertHistory.add(resolvedRecord);
         }
 
-        alertNotificationDispatcher.sendRecoveryNotification(rule, currentValue);
+        // 发送恢复通知
+        sendRecoveryNotification(rule, currentValue);
 
         log.info("[告警管理] 告警已恢复: {}", message);
     }
 
+    /**
+     * 发送告警通知
+     */
+    private void sendAlertNotification(AlertRule rule, AlertRecord record, boolean isRepeated) {
+        for (Map.Entry<String, NotificationChannel> entry : alertConfig.getChannels().entrySet()) {
+            NotificationChannel channel = entry.getValue();
+
+            if (channel.isEnabled()) {
+                try {
+                    sendNotification(channel, rule, record, isRepeated);
+                } catch (Exception e) {
+                    log.error("[告警管理] 发送通知失败, channel={}", channel.getType(), e);
+                }
+            }
+        }
+    }
+
+    /**
+     * 发送恢复通知
+     */
+    private void sendRecoveryNotification(AlertRule rule, double currentValue) {
+        for (Map.Entry<String, NotificationChannel> entry : alertConfig.getChannels().entrySet()) {
+            NotificationChannel channel = entry.getValue();
+
+            if (channel.isEnabled() && "dingtalk".equals(channel.getType())) {
+                try {
+                    sendDingTalkRecoveryNotification(rule, currentValue);
+                } catch (Exception e) {
+                    log.error("[告警管理] 发送恢复通知失败, channel={}", channel.getType(), e);
+                }
+            }
+        }
+    }
+
+    /**
+     * 发送具体渠道通知
+     */
+    private void sendNotification(NotificationChannel channel, AlertRule rule, AlertRecord record, boolean isRepeated) {
+        switch (channel.getType()) {
+            case "dingtalk":
+                sendDingTalkNotification(rule, record, isRepeated);
+                break;
+            case "wechat":
+                sendWeChatNotification(rule, record, isRepeated);
+                break;
+            case "email":
+                sendEmailNotification(rule, record, isRepeated);
+                break;
+            case "sms":
+                sendSMSNotification(rule, record, isRepeated);
+                break;
+        }
+    }
+
+    /**
+     * 发送钉钉通知
+     * <p>
+     * 注意：此方法仅在渠道已启用时才会被调用（由sendNotification方法控制）
+     * 如果渠道已启用但缺少必要配置（GatewayServiceClient和Webhook URL），则记录警告
+     * </p>
+     */
+    private void sendDingTalkNotification(AlertRule rule, AlertRecord record, boolean isRepeated) {
+        String title = isRepeated ? "【持续告警】" : "【新告警】";
+        String content = String.format(
+                "%s %s\n\n" +
+                "告警级别: %s %s\n" +
+                "当前数值: %.2f\n" +
+                "阈值设定: %.2f\n" +
+                "告警描述: %s\n" +
+                "触发时间: %s\n" +
+                "系统: IOE-DREAM智能管理平台",
+                title, rule.getName(),
+                record.getSeverity().getIcon(), record.getSeverity().getName(),
+                record.getValue(), record.getThreshold(),
+                rule.getDescription(), record.getTriggerTime()
+        );
+
+        try {
+            // 方式1: 如果配置了钉钉Webhook URL，直接调用钉钉API
+            if (dingTalkWebhookUrl != null && !dingTalkWebhookUrl.isEmpty()) {
+                sendDingTalkNotificationDirectly(content);
+                log.info("[告警管理] 钉钉通知已发送（直接调用）: rule={}, value={}", rule.getName(), record.getValue());
+                return;
+            }
+
+            // 方式2: 通过网关调用钉钉通知服务
+            if (gatewayServiceClient != null) {
+                Map<String, Object> request = new HashMap<>();
+                request.put("notificationType", "dingtalk");
+                request.put("msgtype", "text");
+                Map<String, Object> message = new HashMap<>();
+                message.put("content", content);
+                request.put("message", message);
+
+                gatewayServiceClient.callCommonService(
+                        "/api/v1/notification/dingtalk/send",
+                        HttpMethod.POST,
+                        request,
+                        Object.class
+                );
+                log.info("[告警管理] 钉钉通知已发送（通过网关）: rule={}, value={}", rule.getName(), record.getValue());
+            } else {
+                // 渠道已启用但缺少必要配置，记录警告
+                log.warn("[告警管理] 钉钉通知渠道已启用但未配置（GatewayServiceClient和Webhook URL均未配置），无法发送通知: rule={}, value={}",
+                        rule.getName(), record.getValue());
+            }
+
+            // 对于严重告警（CRITICAL），额外发送短信通知
+            if (record.getSeverity() == AlertSeverity.CRITICAL) {
+                try {
+                    // 方式1: 如果配置了短信API URL，直接调用短信API
+                    if (smsApiUrl != null && !smsApiUrl.isEmpty() && smsPhoneNumbers != null && !smsPhoneNumbers.isEmpty()) {
+                        String smsContent = String.format(
+                                "【IOE-DREAM告警】%s：当前值%.2f，阈值%.2f，触发时间%s",
+                                rule.getName(), record.getValue(), record.getThreshold(), record.getTriggerTime()
+                        );
+                        sendSmsNotificationDirectly(smsContent);
+                        log.info("[告警管理] 严重告警短信通知已发送（直接调用）: rule={}, value={}, threshold={}",
+                                rule.getName(), record.getValue(), record.getThreshold());
+                    } else if (gatewayServiceClient != null) {
+                        // 方式2: 通过网关调用短信通知服务
+                        String smsContent = String.format(
+                                "【IOE-DREAM告警】%s：当前值%.2f，阈值%.2f，触发时间%s",
+                                rule.getName(), record.getValue(), record.getThreshold(), record.getTriggerTime()
+                        );
+                        Map<String, Object> smsRequest = new HashMap<>();
+                        smsRequest.put("notificationType", "sms");
+                        smsRequest.put("content", smsContent);
+                        smsRequest.put("templateCode", "ALERT_SMS");
+
+                        gatewayServiceClient.callCommonService(
+                                "/api/v1/notification/sms/send",
+                                HttpMethod.POST,
+                                smsRequest,
+                                Object.class
+                        );
+                        log.info("[告警管理] 严重告警短信通知已发送（通过网关）: rule={}, value={}, threshold={}",
+                                rule.getName(), record.getValue(), record.getThreshold());
+                    } else {
+                        log.warn("[告警管理] 严重告警短信通知未配置（GatewayServiceClient和短信API URL均未配置）: rule={}, value={}, threshold={}",
+                                rule.getName(), record.getValue(), record.getThreshold());
+                    }
+                } catch (Exception smsEx) {
+                    log.error("[告警管理] 发送严重告警短信通知失败, rule={}, error={}", rule.getName(), smsEx.getMessage(), smsEx);
+                    // 短信发送失败不影响钉钉通知，继续执行
+                }
+            }
+        } catch (Exception e) {
+            log.error("[告警管理] 发送钉钉通知失败, rule={}, error={}", rule.getName(), e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 直接调用钉钉机器人API发送通知
+     * <p>
+     * 使用钉钉Webhook URL直接调用钉钉机器人API
+     * 符合钉钉机器人消息格式规范
+     * </p>
+     *
+     * @param content 通知内容
+     */
+    @SuppressWarnings("null")
+    private void sendDingTalkNotificationDirectly(String content) {
+        try {
+            // 检查Webhook URL是否配置
+            if (dingTalkWebhookUrl == null || dingTalkWebhookUrl.isEmpty()) {
+                log.warn("[告警管理] 钉钉Webhook URL未配置，跳过直接调用");
+                return;
+            }
+
+            // 构建钉钉机器人消息格式
+            Map<String, Object> text = new HashMap<>();
+            text.put("content", content);
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("msgtype", "text");
+            payload.put("text", text);
+
+            // 设置HTTP请求头
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // 发送HTTP POST请求
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
+            // dingTalkWebhookUrl 已在上方检查非空
+            @SuppressWarnings("null")
+            String nonNullWebhookUrl = dingTalkWebhookUrl;
+            restTemplate.postForEntity(nonNullWebhookUrl, entity, String.class);
+
+            log.debug("[告警管理] 钉钉通知发送成功（直接调用）");
+        } catch (Exception e) {
+            log.error("[告警管理] 直接调用钉钉API失败: error={}", e.getMessage(), e);
+            // 不抛出异常，允许降级处理
+        }
+    }
+
+    /**
+     * 发送钉钉恢复通知
+     */
+    private void sendDingTalkRecoveryNotification(AlertRule rule, double currentValue) {
+        String content = String.format(
+                "【告警恢复】%s\n\n" +
+                "当前数值: %.2f\n" +
+                "阈值设定: %.2f\n" +
+                "恢复时间: %s\n" +
+                "系统: IOE-DREAM智能管理平台",
+                rule.getName(), currentValue, rule.getThreshold(), LocalDateTime.now()
+        );
+
+        try {
+            // 方式1: 如果配置了钉钉Webhook URL，直接调用钉钉API
+            if (dingTalkWebhookUrl != null && !dingTalkWebhookUrl.isEmpty()) {
+                sendDingTalkNotificationDirectly(content);
+                log.info("[告警管理] 钉钉恢复通知已发送（直接调用）: rule={}, value={}", rule.getName(), currentValue);
+                return;
+            }
+
+            // 方式2: 通过网关调用钉钉通知服务
+            if (gatewayServiceClient != null) {
+                Map<String, Object> request = new HashMap<>();
+                request.put("notificationType", "dingtalk");
+                request.put("msgtype", "text");
+                Map<String, Object> message = new HashMap<>();
+                message.put("content", content);
+                request.put("message", message);
+
+                gatewayServiceClient.callCommonService(
+                        "/api/v1/notification/dingtalk/send",
+                        HttpMethod.POST,
+                        request,
+                        Object.class
+                );
+                log.info("[告警管理] 钉钉恢复通知已发送（通过网关）: rule={}, value={}", rule.getName(), currentValue);
+            } else {
+                log.warn("[告警管理] 钉钉恢复通知未配置（GatewayServiceClient和Webhook URL均未配置）: {}", content);
+            }
+        } catch (Exception e) {
+            log.error("[告警管理] 发送钉钉恢复通知失败, rule={}, error={}", rule.getName(), e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 发送企业微信通知
+     */
+    private void sendWeChatNotification(AlertRule rule, AlertRecord record, boolean isRepeated) {
+        String title = isRepeated ? "【持续告警】" : "【新告警】";
+        String content = String.format(
+                "%s %s\n\n" +
+                "告警级别: %s %s\n" +
+                "当前数值: %.2f\n" +
+                "阈值设定: %.2f\n" +
+                "告警描述: %s\n" +
+                "触发时间: %s\n" +
+                "系统: IOE-DREAM智能管理平台",
+                title, rule.getName(),
+                record.getSeverity().getIcon(), record.getSeverity().getName(),
+                record.getValue(), record.getThreshold(),
+                rule.getDescription(), record.getTriggerTime()
+        );
+
+        try {
+            // 方式1: 如果配置了企业微信Webhook URL，直接调用企业微信API
+            if (weChatWebhookUrl != null && !weChatWebhookUrl.isEmpty()) {
+                sendWeChatNotificationDirectly(content);
+                log.info("[告警管理] 企业微信通知已发送（直接调用）: rule={}, value={}", rule.getName(), record.getValue());
+                return;
+            }
+
+            // 方式2: 通过网关调用企业微信通知服务
+            if (gatewayServiceClient != null) {
+                Map<String, Object> request = new HashMap<>();
+                request.put("notificationType", "wechat");
+                request.put("msgtype", "text");
+                Map<String, Object> message = new HashMap<>();
+                message.put("content", content);
+                request.put("message", message);
+
+                gatewayServiceClient.callCommonService(
+                        "/api/v1/notification/wechat/send",
+                        HttpMethod.POST,
+                        request,
+                        Object.class
+                );
+                log.info("[告警管理] 企业微信通知已发送（通过网关）: rule={}, value={}", rule.getName(), record.getValue());
+            } else {
+                log.warn("[告警管理] 企业微信通知未配置（GatewayServiceClient和Webhook URL均未配置）: rule={}, value={}",
+                        rule.getName(), record.getValue());
+            }
+        } catch (Exception e) {
+            log.error("[告警管理] 发送企业微信通知失败, rule={}, error={}", rule.getName(), e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 直接调用企业微信机器人API发送通知
+     * <p>
+     * 使用企业微信Webhook URL直接调用企业微信机器人API
+     * 符合企业微信机器人消息格式规范
+     * </p>
+     *
+     * @param content 通知内容
+     */
+    @SuppressWarnings("null")
+    private void sendWeChatNotificationDirectly(String content) {
+        try {
+            // 检查Webhook URL是否配置
+            if (weChatWebhookUrl == null || weChatWebhookUrl.isEmpty()) {
+                log.warn("[告警管理] 企业微信Webhook URL未配置，跳过直接调用");
+                return;
+            }
+
+            // 构建企业微信机器人消息格式
+            // 企业微信机器人支持text、markdown、image、news等消息类型
+            // 这里使用text类型，格式与钉钉类似
+            Map<String, Object> text = new HashMap<>();
+            text.put("content", content);
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("msgtype", "text");
+            payload.put("text", text);
+
+            // 设置HTTP请求头
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // 发送HTTP POST请求
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
+            // weChatWebhookUrl 已在上方检查非空
+            @SuppressWarnings("null")
+            String nonNullWebhookUrl = weChatWebhookUrl;
+            restTemplate.postForEntity(nonNullWebhookUrl, entity, String.class);
+
+            log.debug("[告警管理] 企业微信通知发送成功（直接调用）");
+        } catch (Exception e) {
+            log.error("[告警管理] 直接调用企业微信API失败: error={}", e.getMessage(), e);
+            // 不抛出异常，允许降级处理
+        }
+    }
+
+    /**
+     * 发送邮件通知
+     * <p>
+     * 注意：此方法仅在渠道已启用时才会被调用（由sendNotification方法控制）
+     * 如果渠道已启用但缺少必要配置（GatewayServiceClient），则记录警告
+     * </p>
+     */
+    private void sendEmailNotification(AlertRule rule, AlertRecord record, boolean isRepeated) {
+        String title = isRepeated ? "【持续告警】" : "【新告警】";
+        String subject = String.format("%s %s - IOE-DREAM智能管理平台", title, rule.getName());
+        String content = String.format(
+                "<h2>%s %s</h2>" +
+                "<p><strong>告警级别:</strong> %s %s</p>" +
+                "<p><strong>当前数值:</strong> %.2f</p>" +
+                "<p><strong>阈值设定:</strong> %.2f</p>" +
+                "<p><strong>告警描述:</strong> %s</p>" +
+                "<p><strong>触发时间:</strong> %s</p>" +
+                "<p><strong>系统:</strong> IOE-DREAM智能管理平台</p>",
+                title, rule.getName(),
+                record.getSeverity().getIcon(), record.getSeverity().getName(),
+                record.getValue(), record.getThreshold(),
+                rule.getDescription(), record.getTriggerTime()
+        );
+
+        try {
+            if (gatewayServiceClient != null) {
+                // 通过网关调用邮件通知服务
+                // 注意：实际使用时需要配置收件人列表
+                Map<String, Object> request = new HashMap<>();
+                request.put("notificationType", "email");
+                request.put("subject", subject);
+                request.put("content", content);
+                request.put("templateCode", "ALERT_NOTIFICATION");
+
+                gatewayServiceClient.callCommonService(
+                        "/api/v1/notification/email/send",
+                        HttpMethod.POST,
+                        request,
+                        Object.class
+                );
+                log.info("[告警管理] 邮件通知已发送, rule={}, value={}", rule.getName(), record.getValue());
+            } else {
+                // 渠道已启用但缺少必要配置，记录警告
+                log.warn("[告警管理] 邮件通知渠道已启用但未配置（GatewayServiceClient未配置），无法发送通知: rule={}, value={}",
+                        rule.getName(), record.getValue());
+            }
+        } catch (Exception e) {
+            log.error("[告警管理] 发送邮件通知失败, rule={}, error={}", rule.getName(), e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 发送短信通知
+     * <p>
+     * 注意：此方法仅在渠道已启用时才会被调用（由sendNotification方法控制）
+     * 只对严重告警（CRITICAL）发送短信
+     * 如果渠道已启用但缺少必要配置（GatewayServiceClient），则记录警告
+     * </p>
+     */
+    private void sendSMSNotification(AlertRule rule, AlertRecord record, boolean isRepeated) {
+        // 只对严重告警发送短信
+        if (record.getSeverity() == AlertSeverity.CRITICAL) {
+            String content = String.format(
+                    "【IOE-DREAM告警】%s：当前值%.2f，阈值%.2f，触发时间%s",
+                    rule.getName(), record.getValue(), record.getThreshold(), record.getTriggerTime()
+            );
+
+            try {
+                // 方式1: 如果配置了短信API URL，直接调用短信API
+                if (smsApiUrl != null && !smsApiUrl.isEmpty() && smsPhoneNumbers != null && !smsPhoneNumbers.isEmpty()) {
+                    sendSmsNotificationDirectly(content);
+                    log.info("[告警管理] 短信通知已发送（直接调用）: rule={}, value={}", rule.getName(), record.getValue());
+                    return;
+                }
+
+                // 方式2: 通过网关调用短信通知服务
+                if (gatewayServiceClient != null) {
+                    Map<String, Object> request = new HashMap<>();
+                    request.put("notificationType", "sms");
+                    request.put("content", content);
+                    request.put("templateCode", "ALERT_SMS");
+
+                    gatewayServiceClient.callCommonService(
+                            "/api/v1/notification/sms/send",
+                            HttpMethod.POST,
+                            request,
+                            Object.class
+                    );
+                    log.info("[告警管理] 短信通知已发送（通过网关）: rule={}, value={}", rule.getName(), record.getValue());
+                } else {
+                    // 渠道已启用但缺少必要配置，记录警告
+                    log.warn("[告警管理] 短信通知渠道已启用但未配置（GatewayServiceClient和短信API URL均未配置），无法发送通知: rule={}, value={}",
+                            rule.getName(), record.getValue());
+                }
+            } catch (Exception e) {
+                log.error("[告警管理] 发送短信通知失败, rule={}, error={}", rule.getName(), e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
+     * 直接调用短信API发送通知
+     * <p>
+     * 支持多种短信服务商：阿里云、腾讯云、Webhook
+     * 根据配置的smsProvider选择不同的发送方式
+     * </p>
+     *
+     * @param content 短信内容
+     */
+    @SuppressWarnings("null")
+    private void sendSmsNotificationDirectly(String content) {
+        try {
+            // 检查短信配置
+            if (smsApiUrl == null || smsApiUrl.isEmpty()) {
+                log.warn("[告警管理] 短信API URL未配置，跳过直接调用");
+                return;
+            }
+
+            if (smsPhoneNumbers == null || smsPhoneNumbers.isEmpty()) {
+                log.warn("[告警管理] 短信接收号码未配置，跳过直接调用");
+                return;
+            }
+
+            // 根据短信服务商选择不同的发送方式
+            boolean success = false;
+            String provider = smsProvider != null ? smsProvider.toLowerCase() : "webhook";
+            switch (provider) {
+                case "aliyun":
+                    success = sendAliyunSms(content, smsPhoneNumbers);
+                    break;
+                case "tencent":
+                    success = sendTencentSms(content, smsPhoneNumbers);
+                    break;
+                case "webhook":
+                default:
+                    success = sendSmsViaWebhook(content, smsPhoneNumbers);
+                    break;
+            }
+
+            if (success) {
+                log.debug("[告警管理] 短信通知发送成功（直接调用）: provider={}", provider);
+            } else {
+                log.error("[告警管理] 短信通知发送失败（直接调用）: provider={}", provider);
+            }
+        } catch (Exception e) {
+            log.error("[告警管理] 直接调用短信API失败: error={}", e.getMessage(), e);
+            // 不抛出异常，允许降级处理
+        }
+    }
+
+    /**
+     * 通过Webhook方式发送短信（通用方式）
+     *
+     * @param content 短信内容
+     * @param phoneNumbers 接收号码（逗号分隔）
+     * @return 是否发送成功
+     */
+    @SuppressWarnings("null")
+    private boolean sendSmsViaWebhook(String content, String phoneNumbers) {
+        try {
+            if (smsApiUrl == null || smsApiUrl.isEmpty()) {
+                log.warn("[告警管理] 短信API URL未配置，跳过发送");
+                return false;
+            }
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("phones", phoneNumbers.split(","));
+            payload.put("content", content);
+            payload.put("timestamp", LocalDateTime.now().toString());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            if (smsApiKey != null && !smsApiKey.isEmpty()) {
+                headers.set("Authorization", "Bearer " + smsApiKey);
+            }
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
+            // smsApiUrl 已在上方检查非空
+            @SuppressWarnings("null")
+            String nonNullApiUrl = smsApiUrl;
+            restTemplate.postForEntity(nonNullApiUrl, entity, String.class);
+            return true;
+        } catch (Exception e) {
+            log.error("[告警管理] Webhook短信发送失败: error={}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * 发送阿里云短信
+     *
+     * @param content 短信内容
+     * @param phoneNumbers 接收号码（逗号分隔）
+     * @return 是否发送成功
+     */
+    @SuppressWarnings("null")
+    private boolean sendAliyunSms(String content, String phoneNumbers) {
+        try {
+            if (smsApiUrl == null || smsApiUrl.isEmpty()) {
+                log.warn("[告警管理] 短信API URL未配置，跳过发送");
+                return false;
+            }
+
+            // 阿里云短信API调用逻辑
+            // 实际实现需要集成阿里云SDK或调用REST API
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("PhoneNumbers", phoneNumbers);
+            payload.put("SignName", "IOE-DREAM");
+            payload.put("TemplateCode", "SMS_ALERT");
+            Map<String, Object> templateParam = new HashMap<>();
+            templateParam.put("content", content);
+            payload.put("TemplateParam", templateParam);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            if (smsApiKey != null && !smsApiKey.isEmpty()) {
+                headers.set("Authorization", "Bearer " + smsApiKey);
+            }
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
+            // smsApiUrl 已在上方检查非空
+            @SuppressWarnings("null")
+            String nonNullApiUrl = smsApiUrl;
+            restTemplate.postForEntity(nonNullApiUrl, entity, String.class);
+            return true;
+        } catch (Exception e) {
+            log.error("[告警管理] 阿里云短信发送失败: error={}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * 发送腾讯云短信
+     *
+     * @param content 短信内容
+     * @param phoneNumbers 接收号码（逗号分隔）
+     * @return 是否发送成功
+     */
+    @SuppressWarnings("null")
+    private boolean sendTencentSms(String content, String phoneNumbers) {
+        try {
+            if (smsApiUrl == null || smsApiUrl.isEmpty()) {
+                log.warn("[告警管理] 短信API URL未配置，跳过发送");
+                return false;
+            }
+
+            // 腾讯云短信API调用逻辑
+            // 实际实现需要集成腾讯云SDK或调用REST API
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("PhoneNumberSet", phoneNumbers.split(","));
+            payload.put("TemplateID", "SMS_ALERT");
+            payload.put("TemplateParamSet", Collections.singletonList(content));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            if (smsApiKey != null && !smsApiKey.isEmpty()) {
+                headers.set("Authorization", "Bearer " + smsApiKey);
+            }
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
+            // smsApiUrl 已在上方检查非空
+            @SuppressWarnings("null")
+            String nonNullApiUrl = smsApiUrl;
+            restTemplate.postForEntity(nonNullApiUrl, entity, String.class);
+            return true;
+        } catch (Exception e) {
+            log.error("[告警管理] 腾讯云短信发送失败: error={}", e.getMessage(), e);
+            return false;
+        }
+    }
 
     /**
      * 清理过期告警记录
@@ -917,145 +1489,10 @@ public class AlertManager {
                 scheduler.shutdownNow();
             }
         } catch (InterruptedException e) {
-            log.debug("[告警管理] 调度器关闭被中断");
             scheduler.shutdownNow();
             Thread.currentThread().interrupt();
         }
 
         log.info("[告警管理] 告警管理器已关闭");
-    }
-
-    /**
-     * 获取所有指标概览（使用Micrometer直接查询）
-     * <p>
-     * 替代已废弃的 MetricsCollector.getMetricOverview
-     * 使用 Micrometer 标准 API 直接查询指标
-     * </p>
-     *
-     * @return 指标概览
-     */
-    private MetricOverview getMetricOverview() {
-        MetricOverview overview = new MetricOverview();
-
-        try {
-            // 基础统计
-            Counter totalRequestsCounter = meterRegistry.find("http.server.requests").counter();
-            long totalRequests = totalRequestsCounter != null ? (long) totalRequestsCounter.count() : 0L;
-            overview.setTotalRequests(totalRequests);
-
-            // 查询成功请求数（状态码2xx）
-            AtomicLong successRequests = new AtomicLong(0L);
-            meterRegistry.find("http.server.requests")
-                    .tag("status", "2xx")
-                    .counters()
-                    .forEach(counter -> successRequests.addAndGet((long) counter.count()));
-            overview.setSuccessRequests(successRequests.get());
-
-            // 查询错误请求数（状态码4xx和5xx）
-            AtomicLong errorRequests = new AtomicLong(0L);
-            meterRegistry.find("http.server.requests")
-                    .tag("status", "4xx")
-                    .counters()
-                    .forEach(counter -> errorRequests.addAndGet((long) counter.count()));
-            meterRegistry.find("http.server.requests")
-                    .tag("status", "5xx")
-                    .counters()
-                    .forEach(counter -> errorRequests.addAndGet((long) counter.count()));
-            overview.setErrorRequests(errorRequests.get());
-
-            // 业务操作数（使用计数器数量作为近似值）
-            int businessOperations = (int) meterRegistry.getMeters().stream()
-                    .filter(meter -> meter.getId().getName().startsWith("business."))
-                    .count();
-            overview.setBusinessOperations(businessOperations);
-
-            // 性能统计
-            Timer httpTimer = meterRegistry.find("http.server.requests").timer();
-            double averageResponseTime = httpTimer != null ? httpTimer.mean(TimeUnit.MILLISECONDS) : 0.0;
-            overview.setAverageResponseTime(averageResponseTime);
-
-            // 缓存命中率
-            Counter cacheHitCounter = meterRegistry.find("cache.hit").counter();
-            Counter cacheMissCounter = meterRegistry.find("cache.miss").counter();
-            long cacheHits = cacheHitCounter != null ? (long) cacheHitCounter.count() : 0L;
-            long cacheMisses = cacheMissCounter != null ? (long) cacheMissCounter.count() : 0L;
-            long cacheTotal = cacheHits + cacheMisses;
-            double cacheHitRate = cacheTotal > 0 ? (double) cacheHits / cacheTotal : 0.0;
-            overview.setCacheHitRate(cacheHitRate);
-
-            // 系统健康状态
-            Counter systemErrorCounter = meterRegistry.find("error.system.total").counter();
-            long errorCount = systemErrorCounter != null ? (long) systemErrorCounter.count() : 0L;
-            overview.setErrorCount(errorCount);
-
-            Counter businessErrorCounter = meterRegistry.find("error.business.total").counter();
-            long businessErrorCount = businessErrorCounter != null ? (long) businessErrorCounter.count() : 0L;
-            overview.setBusinessErrorCount(businessErrorCount);
-
-            // 应用运行时间
-            Gauge uptimeGauge = meterRegistry.find("application.uptime").gauge();
-            double uptime = uptimeGauge != null ? uptimeGauge.value() : 0.0;
-            overview.setUptime(uptime);
-
-            // 时间戳
-            overview.setLastUpdateTime(LocalDateTime.now());
-
-        } catch (Exception e) {
-            log.error("[告警管理] 获取指标概览失败", e);
-            // 返回默认值
-            overview.setTotalRequests(0L);
-            overview.setSuccessRequests(0L);
-            overview.setErrorRequests(0L);
-            overview.setBusinessOperations(0);
-            overview.setAverageResponseTime(0.0);
-            overview.setCacheHitRate(0.0);
-            overview.setErrorCount(0L);
-            overview.setBusinessErrorCount(0L);
-            overview.setUptime(0.0);
-            overview.setLastUpdateTime(LocalDateTime.now());
-        }
-
-        return overview;
-    }
-
-    /**
-     * 指标概览数据结构
-     * <p>
-     * 替代已废弃的 MetricsCollector.MetricOverview
-     * </p>
-     */
-    public static class MetricOverview {
-        private long totalRequests;
-        private long successRequests;
-        private long errorRequests;
-        private int businessOperations;
-        private double averageResponseTime;
-        private double cacheHitRate;
-        private long errorCount;
-        private long businessErrorCount;
-        private double uptime;
-        private LocalDateTime lastUpdateTime;
-
-        // getters and setters
-        public long getTotalRequests() { return totalRequests; }
-        public void setTotalRequests(long totalRequests) { this.totalRequests = totalRequests; }
-        public long getSuccessRequests() { return successRequests; }
-        public void setSuccessRequests(long successRequests) { this.successRequests = successRequests; }
-        public long getErrorRequests() { return errorRequests; }
-        public void setErrorRequests(long errorRequests) { this.errorRequests = errorRequests; }
-        public int getBusinessOperations() { return businessOperations; }
-        public void setBusinessOperations(int businessOperations) { this.businessOperations = businessOperations; }
-        public double getAverageResponseTime() { return averageResponseTime; }
-        public void setAverageResponseTime(double averageResponseTime) { this.averageResponseTime = averageResponseTime; }
-        public double getCacheHitRate() { return cacheHitRate; }
-        public void setCacheHitRate(double cacheHitRate) { this.cacheHitRate = cacheHitRate; }
-        public long getErrorCount() { return errorCount; }
-        public void setErrorCount(long errorCount) { this.errorCount = errorCount; }
-        public long getBusinessErrorCount() { return businessErrorCount; }
-        public void setBusinessErrorCount(long businessErrorCount) { this.businessErrorCount = businessErrorCount; }
-        public double getUptime() { return uptime; }
-        public void setUptime(double uptime) { this.uptime = uptime; }
-        public LocalDateTime getLastUpdateTime() { return lastUpdateTime; }
-        public void setLastUpdateTime(LocalDateTime lastUpdateTime) { this.lastUpdateTime = lastUpdateTime; }
     }
 }

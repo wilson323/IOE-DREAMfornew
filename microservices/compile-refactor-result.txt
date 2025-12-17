@@ -1,0 +1,437 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] ioedream-microservices-parent                                      [pom]
+[INFO] IOE-DREAM Common Core                                              [jar]
+[INFO] IOE-DREAM Common Security Module                                   [jar]
+[INFO] IOE-DREAM Common Data Module                                       [jar]
+[INFO] IOE-DREAM Common Cache Module                                      [jar]
+[INFO] IOE-DREAM Common Export Module                                     [jar]
+[INFO] IOE-DREAM Common Workflow Module                                   [jar]
+[INFO] IOE-DREAM Common Business Module                                   [jar]
+[INFO] IOE-DREAM Common Monitor Module                                    [jar]
+[INFO] IOE-DREAM Common Module                                            [jar]
+[INFO] IOE-DREAM Common Permission                                        [jar]
+[INFO] ioedream-db-init                                                   [jar]
+[INFO] IOE-DREAM Gateway Service                                          [jar]
+[INFO] IOE-DREAM Common Service                                           [jar]
+[INFO] IOE-DREAM Device Communication Service                             [jar]
+[INFO] IOE-DREAM OA Service                                               [jar]
+[INFO] IOE-DREAM Access Service                                           [jar]
+[INFO] IOE-DREAM Attendance Service                                       [jar]
+[INFO] IOE-DREAM Video Service                                            [jar]
+[INFO] IOE-DREAM Consume Service                                          [jar]
+[INFO] IOE-DREAM Visitor Service                                          [jar]
+[INFO] ioedream-database-service                                          [jar]
+[INFO] 
+[INFO] Using the MultiThreadedBuilder implementation with a thread count of 4
+[INFO] 
+[INFO] ------------< net.lab1024.sa:ioedream-microservices-parent >------------
+[INFO] Building ioedream-microservices-parent 1.0.0                      [1/22]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ ioedream-microservices-parent ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-microservices-parent ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-microservices-parent ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-microservices-parent ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=d:\\IOE-DREAM\\microservices\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] 
+[INFO] --------------< net.lab1024.sa:microservices-common-core >--------------
+[INFO] ------------------< net.lab1024.sa:ioedream-db-init >-------------------
+[INFO] Building IOE-DREAM Common Core 1.0.0                              [2/22]
+[INFO] Building ioedream-db-init 1.0.0                                   [3/22]
+[INFO]   from microservices-common-core\pom.xml
+[INFO]   from ioedream-db-init\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ ioedream-db-init ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-db-init\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-db-init ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-db-init ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-db-init ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-db-init\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-db-init ---
+[INFO] Copying 18 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-db-init ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-core ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-core\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-core ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-core ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-core ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-core\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-core ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-core\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-core\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-core ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 41 source files with javac [debug release 17] to target\classes
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by lombok.permit.Permit
+WARNING: Please consider reporting this to the maintainers of class lombok.permit.Permit
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[INFO] 
+[INFO] 
+[INFO] 
+[INFO] --------------< net.lab1024.sa:microservices-common-data >--------------
+[INFO] Building IOE-DREAM Common Data Module 1.0.0                       [4/22]
+[INFO] 
+[INFO] -------------< net.lab1024.sa:microservices-common-export >-------------
+[INFO] -------------< net.lab1024.sa:microservices-common-cache >--------------
+[INFO]   from microservices-common-data\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] ------------< net.lab1024.sa:microservices-common-security >------------
+[INFO] Building IOE-DREAM Common Export Module 1.0.0                     [5/22]
+[INFO] Building IOE-DREAM Common Cache Module 1.0.0                      [6/22]
+[INFO] Building IOE-DREAM Common Security Module 1.0.0                   [7/22]
+[INFO]   from microservices-common-export\pom.xml
+[INFO]   from microservices-common-cache\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]   from microservices-common-security\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-data ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-data\target
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-security ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-security\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-data ---
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-cache ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-cache\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-cache ---
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-export ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-export\target
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-cache ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-data ---
+[INFO] skipping execute as per configuration
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-cache ---
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-data ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-security ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-data\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-cache\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-data ---
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-cache ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-security ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-security ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-cache\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-cache\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-cache ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-data\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-data\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-data ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-security\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-security ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-security\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-security\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-security ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-export ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-export ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-export ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-export\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-export ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-export\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-export\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-export ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 2 source files with javac [debug release 17] to target\classes
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 2 source files with javac [debug release 17] to target\classes
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug release 17] to target\classes
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 44 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-workflow >------------
+[INFO] Building IOE-DREAM Common Workflow Module 1.0.0                   [8/22]
+[INFO]   from microservices-common-workflow\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-business >------------
+[INFO] Building IOE-DREAM Common Business Module 1.0.0                   [9/22]
+[INFO]   from microservices-common-business\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-workflow ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-workflow\target
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-business ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-business\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-workflow ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-workflow ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-workflow ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-workflow\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-workflow ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-workflow\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-workflow\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-workflow ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-business ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-business ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-business ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-business\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-business ---
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-business ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 103 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-monitor >-------------
+[INFO] Building IOE-DREAM Common Monitor Module 1.0.0                   [10/22]
+[INFO]   from microservices-common-monitor\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-monitor ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-monitor\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-monitor ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-monitor ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-monitor ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-monitor\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-monitor ---
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-monitor ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 54 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ----------------< net.lab1024.sa:microservices-common >-----------------
+[INFO] Building IOE-DREAM Common Module 1.0.0                           [11/22]
+[INFO]   from microservices-common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 55 source files with javac [debug release 17] to target\classes
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java:[102,50] 未经检查的转换
+  需要: T
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java:[112,62] 未经检查的转换
+  需要: T
+  找到:    java.lang.Object
+[INFO] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/video/manager/VideoFaceManager.java: D:\IOE-DREAM\microservices\microservices-common\src\main\java\net\lab1024\sa\common\video\manager\VideoFaceManager.java使用或覆盖了已过时的 API。
+[INFO] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/video/manager/VideoFaceManager.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 
+[INFO] 
+[INFO] 
+[INFO] -----------< net.lab1024.sa:microservices-common-permission >-----------
+[INFO] --------------< net.lab1024.sa:ioedream-gateway-service >---------------
+[INFO] --------------< net.lab1024.sa:ioedream-database-service >--------------
+[INFO] Building IOE-DREAM Common Permission 1.0.0                       [12/22]
+[INFO] Building IOE-DREAM Gateway Service 1.0.0                         [13/22]
+[INFO]   from microservices-common-permission\pom.xml
+[INFO]   from ioedream-gateway-service\pom.xml
+[INFO] Building ioedream-database-service 1.0.0                         [14/22]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]   from ioedream-database-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-permission ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-permission\target
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ ioedream-database-service ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-database-service\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-permission ---
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ ioedream-gateway-service ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-gateway-service\target
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-permission ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-permission ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-permission\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-permission ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-permission\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-permission\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-permission ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-database-service ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-database-service ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-gateway-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-database-service ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-gateway-service ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-database-service\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-database-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-gateway-service ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-gateway-service\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-gateway-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 42 source files with javac [debug release 17] to target\classes
+[INFO] Copying 10 resources from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-database-service ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 6 source files with javac [debug release 17] to target\classes
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-gateway-service ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 14 source files with javac [debug release 17] to target\classes
+[WARNING] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/entity/DatabaseVersionEntity.java:[16,1] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-gateway-service/src/main/java/net/lab1024/sa/gateway/config/AuthenticationConfig.java:[3,39] 程序包net.lab1024.sa.common.auth.util不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-gateway-service/src/main/java/net/lab1024/sa/gateway/config/AuthenticationConfig.java:[47,12] 找不到符号
+  符号:   类 JwtTokenUtil
+  位置: 类 net.lab1024.sa.gateway.config.AuthenticationConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-gateway-service/src/main/java/net/lab1024/sa/gateway/filter/JwtAuthenticationGlobalFilter.java:[6,39] 程序包net.lab1024.sa.common.auth.util不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-gateway-service/src/main/java/net/lab1024/sa/gateway/filter/JwtAuthenticationGlobalFilter.java:[49,13] 找不到符号
+  符号:   类 JwtTokenUtil
+  位置: 类 net.lab1024.sa.gateway.filter.JwtAuthenticationGlobalFilter
+[INFO] 4 errors 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[187,103] 未经检查的转换
+  需要: java.util.List<net.lab1024.sa.common.permission.domain.vo.MenuPermissionVO>
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[276,103] 未经检查的转换
+  需要: java.util.List<net.lab1024.sa.common.permission.domain.vo.PermissionDataVO>
+  找到:    java.lang.Object
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for ioedream-microservices-parent 1.0.0:
+[INFO] 
+[INFO] ioedream-microservices-parent ...................... SUCCESS [  0.399 s]
+[INFO] IOE-DREAM Common Core .............................. SUCCESS [  3.252 s]
+[INFO] IOE-DREAM Common Security Module ................... SUCCESS [  2.761 s]
+[INFO] IOE-DREAM Common Data Module ....................... SUCCESS [  1.624 s]
+[INFO] IOE-DREAM Common Cache Module ...................... SUCCESS [  1.623 s]
+[INFO] IOE-DREAM Common Export Module ..................... SUCCESS [  1.639 s]
+[INFO] IOE-DREAM Common Workflow Module ................... SUCCESS [  1.279 s]
+[INFO] IOE-DREAM Common Business Module ................... SUCCESS [  3.554 s]
+[INFO] IOE-DREAM Common Monitor Module .................... SUCCESS [  1.806 s]
+[INFO] IOE-DREAM Common Module ............................ SUCCESS [  2.337 s]
+[INFO] IOE-DREAM Common Permission ........................ SUCCESS [  2.640 s]
+[INFO] ioedream-db-init ................................... SUCCESS [  0.259 s]
+[INFO] IOE-DREAM Gateway Service .......................... FAILURE [  1.543 s]
+[INFO] IOE-DREAM Common Service ........................... SKIPPED
+[INFO] IOE-DREAM Device Communication Service ............. SKIPPED
+[INFO] IOE-DREAM OA Service ............................... SKIPPED
+[INFO] IOE-DREAM Access Service ........................... SKIPPED
+[INFO] IOE-DREAM Attendance Service ....................... SKIPPED
+[INFO] IOE-DREAM Video Service ............................ SKIPPED
+[INFO] IOE-DREAM Consume Service .......................... SKIPPED
+[INFO] IOE-DREAM Visitor Service .......................... SKIPPED
+[INFO] ioedream-database-service .......................... SUCCESS [  1.448 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.969 s (Wall Clock)
+[INFO] Finished at: 2025-12-17T21:30:01+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-gateway-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-gateway-service/src/main/java/net/lab1024/sa/gateway/config/AuthenticationConfig.java:[3,39] 程序包net.lab1024.sa.common.auth.util不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-gateway-service/src/main/java/net/lab1024/sa/gateway/config/AuthenticationConfig.java:[47,12] 找不到符号
+[ERROR]   符号:   类 JwtTokenUtil
+[ERROR]   位置: 类 net.lab1024.sa.gateway.config.AuthenticationConfig
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-gateway-service/src/main/java/net/lab1024/sa/gateway/filter/JwtAuthenticationGlobalFilter.java:[6,39] 程序包net.lab1024.sa.common.auth.util不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-gateway-service/src/main/java/net/lab1024/sa/gateway/filter/JwtAuthenticationGlobalFilter.java:[49,13] 找不到符号
+[ERROR]   符号:   类 JwtTokenUtil
+[ERROR]   位置: 类 net.lab1024.sa.gateway.filter.JwtAuthenticationGlobalFilter
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :ioedream-gateway-service

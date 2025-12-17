@@ -1,0 +1,962 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] ioedream-microservices-parent                                      [pom]
+[INFO] IOE-DREAM Common Core                                              [jar]
+[INFO] IOE-DREAM Common Security Module                                   [jar]
+[INFO] IOE-DREAM Common Data Module                                       [jar]
+[INFO] IOE-DREAM Common Cache Module                                      [jar]
+[INFO] IOE-DREAM Common Export Module                                     [jar]
+[INFO] IOE-DREAM Common Workflow Module                                   [jar]
+[INFO] IOE-DREAM Common Business Module                                   [jar]
+[INFO] IOE-DREAM Common Monitor Module                                    [jar]
+[INFO] IOE-DREAM Common Module                                            [jar]
+[INFO] IOE-DREAM Common Permission                                        [jar]
+[INFO] ioedream-db-init                                                   [jar]
+[INFO] IOE-DREAM Gateway Service                                          [jar]
+[INFO] IOE-DREAM Common Service                                           [jar]
+[INFO] IOE-DREAM Device Communication Service                             [jar]
+[INFO] IOE-DREAM OA Service                                               [jar]
+[INFO] IOE-DREAM Access Service                                           [jar]
+[INFO] IOE-DREAM Attendance Service                                       [jar]
+[INFO] IOE-DREAM Video Service                                            [jar]
+[INFO] IOE-DREAM Consume Service                                          [jar]
+[INFO] IOE-DREAM Visitor Service                                          [jar]
+[INFO] ioedream-database-service                                          [jar]
+[INFO] 
+[INFO] ------------< net.lab1024.sa:ioedream-microservices-parent >------------
+[INFO] Building ioedream-microservices-parent 1.0.0                      [1/22]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-microservices-parent ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-microservices-parent ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-microservices-parent ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=d:\\IOE-DREAM\\microservices\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --------------< net.lab1024.sa:microservices-common-core >--------------
+[INFO] Building IOE-DREAM Common Core 1.0.0                              [2/22]
+[INFO]   from microservices-common-core\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-core ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-core ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-core ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-core\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-core ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-core\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-core\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-core ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-security >------------
+[INFO] Building IOE-DREAM Common Security Module 1.0.0                   [3/22]
+[INFO]   from microservices-common-security\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-security ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-security ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-security ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-security\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-security ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-security\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-security\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-security ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --------------< net.lab1024.sa:microservices-common-data >--------------
+[INFO] Building IOE-DREAM Common Data Module 1.0.0                       [4/22]
+[INFO]   from microservices-common-data\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-data ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-data ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-data ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-data\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-data ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-data\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-data\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-data ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] -------------< net.lab1024.sa:microservices-common-cache >--------------
+[INFO] Building IOE-DREAM Common Cache Module 1.0.0                      [5/22]
+[INFO]   from microservices-common-cache\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-cache ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-cache ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-cache ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-cache\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-cache ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-cache\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-cache\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-cache ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] -------------< net.lab1024.sa:microservices-common-export >-------------
+[INFO] Building IOE-DREAM Common Export Module 1.0.0                     [6/22]
+[INFO]   from microservices-common-export\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-export ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-export ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-export ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-export\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-export ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-export\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-export\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-export ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-workflow >------------
+[INFO] Building IOE-DREAM Common Workflow Module 1.0.0                   [7/22]
+[INFO]   from microservices-common-workflow\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-workflow ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-workflow ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-workflow ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-workflow\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-workflow ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-workflow\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-workflow\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-workflow ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-business >------------
+[INFO] Building IOE-DREAM Common Business Module 1.0.0                   [8/22]
+[INFO]   from microservices-common-business\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-business ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-business ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-business ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-business\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-business ---
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-business ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-monitor >-------------
+[INFO] Building IOE-DREAM Common Monitor Module 1.0.0                    [9/22]
+[INFO]   from microservices-common-monitor\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-monitor ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-monitor ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-monitor ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-monitor\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-monitor ---
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-monitor ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ----------------< net.lab1024.sa:microservices-common >-----------------
+[INFO] Building IOE-DREAM Common Module 1.0.0                           [10/22]
+[INFO]   from microservices-common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] -----------< net.lab1024.sa:microservices-common-permission >-----------
+[INFO] Building IOE-DREAM Common Permission 1.0.0                       [11/22]
+[INFO]   from microservices-common-permission\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-permission ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-permission ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-permission ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-permission\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-permission ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-permission\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-permission\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-permission ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ------------------< net.lab1024.sa:ioedream-db-init >-------------------
+[INFO] Building ioedream-db-init 1.0.0                                  [12/22]
+[INFO]   from ioedream-db-init\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-db-init ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-db-init ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-db-init ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-db-init\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-db-init ---
+[INFO] Copying 18 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-db-init ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --------------< net.lab1024.sa:ioedream-gateway-service >---------------
+[INFO] Building IOE-DREAM Gateway Service 1.0.0                         [13/22]
+[INFO]   from ioedream-gateway-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-gateway-service ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-gateway-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-gateway-service ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-gateway-service\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-gateway-service ---
+[INFO] Copying 10 resources from src\main\resources to target\classes
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-gateway-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-common-service >---------------
+[INFO] Building IOE-DREAM Common Service 1.0.0                          [14/22]
+[INFO]   from ioedream-common-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-common-service ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-common-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-common-service ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-common-service\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-common-service ---
+[INFO] Copying 10 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-common-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 100 source files with javac [debug release 17] to target\classes
+[WARNING] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/config/ManagerConfiguration.java:[440,37] 未使用 @Deprecated 对已过时的项目进行批注
+[INFO] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/organization/service/impl/RegionalHierarchyServiceImpl.java: D:\IOE-DREAM\microservices\ioedream-common-service\src\main\java\net\lab1024\sa\common\organization\service\impl\RegionalHierarchyServiceImpl.java使用或覆盖了已过时的 API。
+[INFO] /D:/IOE-DREAM/microservices/ioedream-common-service/src/main/java/net/lab1024/sa/common/organization/service/impl/RegionalHierarchyServiceImpl.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 
+[INFO] ------------< net.lab1024.sa:ioedream-device-comm-service >-------------
+[INFO] Building IOE-DREAM Device Communication Service 1.0.0            [15/22]
+[INFO]   from ioedream-device-comm-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-device-comm-service ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-device-comm-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-device-comm-service ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-device-comm-service\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-device-comm-service ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-device-comm-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 96 source files with javac [debug release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[6,43] 找不到符号
+  符号:   类 DeviceMessage
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[7,43] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[6,43] 找不到符号
+  符号:   类 DeviceMessage
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[7,43] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[6,43] 找不到符号
+  符号:   类 DeviceMessage
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[7,43] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[6,43] 找不到符号
+  符号:   类 DeviceMessage
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[7,43] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[135,42] 找不到符号
+  符号:   类 DeviceMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[135,12] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[241,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[275,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[305,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[328,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[356,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[384,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[416,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[449,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[471,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[500,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[528,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[556,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[711,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[724,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[128,42] 找不到符号
+  符号:   类 DeviceMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[128,12] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[232,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[266,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[297,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[320,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[350,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[377,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[409,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[440,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[463,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[492,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[520,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[756,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[769,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[112,42] 找不到符号
+  符号:   类 DeviceMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[112,12] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[216,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[248,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[276,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[298,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[326,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[353,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[380,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[406,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[426,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[618,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[631,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[111,42] 找不到符号
+  符号:   类 DeviceMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[111,12] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[208,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[238,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[264,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[285,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[312,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[336,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[365,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[394,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[490,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[503,13] 找不到符号
+  符号:   类 DeviceResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[111,12] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[203,12] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[291,53] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[291,12] 找不到符号
+  符号:   类 ProtocolValidationResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[368,12] 找不到符号
+  符号:   类 ProtocolPermissionResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[397,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[433,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[444,19] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[687,13] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[719,13] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[741,13] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[763,13] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[954,19] 找不到符号
+  符号:   类 ProtocolInitResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[960,12] 找不到符号
+  符号:   类 ProtocolRegistrationResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[966,12] 找不到符号
+  符号:   类 ProtocolHeartbeatResult
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[972,12] 找不到符号
+  符号:   类 ProtocolDeviceStatus
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[990,12] 找不到符号
+  符号:   类 ProtocolErrorResponse
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[996,24] 找不到符号
+  符号:   类 ProtocolErrorInfo
+  位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[52,24] 找不到符号
+  符号:   类 ProtocolMessage
+  位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[142,24] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[185,24] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[228,24] 找不到符号
+  符号:   类 ProtocolProcessResult
+  位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/RS485ProtocolController.java:[11,42] 找不到符号
+  符号:   类 RS485ProtocolService
+  位置: 程序包 net.lab1024.sa.device.comm.service
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/RS485ProtocolController.java:[46,13] 找不到符号
+  符号:   类 RS485ProtocolService
+  位置: 类 net.lab1024.sa.device.comm.controller.RS485ProtocolController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[10,42] 找不到符号
+  符号:   类 RS485ProtocolService
+  位置: 程序包 net.lab1024.sa.device.comm.service
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[34,50] 找不到符号
+  符号: 类 RS485ProtocolService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[307,53] 找不到符号
+  符号:   类 RS485InitResult
+  位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[318,59] 找不到符号
+  符号:   类 RS485ProcessResult
+  位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[335,63] 找不到符号
+  符号:   类 RS485HeartbeatResult
+  位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[355,57] 找不到符号
+  符号:   类 RS485DeviceStatus
+  位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/VendorSupportController.java:[10,34] 找不到符号
+  符号:   类 RequestUtils
+  位置: 程序包 net.lab1024.sa.common.util
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/ProtocolAutoDiscoveryManager.java:[48,24] 找不到符号
+  符号:   类 NetworkScanner
+  位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/ProtocolAutoDiscoveryManager.java:[49,24] 找不到符号
+  符号:   类 ProtocolDetector
+  位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/controller/ProtocolDiscoveryController.java:[7,41] 程序包net.lab1024.sa.common.core.domain不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/service/ProtocolDiscoveryService.java:[5,41] 程序包net.lab1024.sa.common.core.domain不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/controller/ProtocolDiscoveryController.java:[49,12] 找不到符号
+  符号:   类 ResponseDTO
+  位置: 类 net.lab1024.sa.device.comm.discovery.controller.ProtocolDiscoveryController
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for ioedream-microservices-parent 1.0.0:
+[INFO] 
+[INFO] ioedream-microservices-parent ...................... SUCCESS [  0.364 s]
+[INFO] IOE-DREAM Common Core .............................. SUCCESS [  0.516 s]
+[INFO] IOE-DREAM Common Security Module ................... SUCCESS [  0.112 s]
+[INFO] IOE-DREAM Common Data Module ....................... SUCCESS [  0.071 s]
+[INFO] IOE-DREAM Common Cache Module ...................... SUCCESS [  0.101 s]
+[INFO] IOE-DREAM Common Export Module ..................... SUCCESS [  0.109 s]
+[INFO] IOE-DREAM Common Workflow Module ................... SUCCESS [  0.042 s]
+[INFO] IOE-DREAM Common Business Module ................... SUCCESS [  0.063 s]
+[INFO] IOE-DREAM Common Monitor Module .................... SUCCESS [  0.081 s]
+[INFO] IOE-DREAM Common Module ............................ SUCCESS [  0.127 s]
+[INFO] IOE-DREAM Common Permission ........................ SUCCESS [  0.062 s]
+[INFO] ioedream-db-init ................................... SUCCESS [  0.015 s]
+[INFO] IOE-DREAM Gateway Service .......................... SUCCESS [  0.245 s]
+[INFO] IOE-DREAM Common Service ........................... SUCCESS [  6.217 s]
+[INFO] IOE-DREAM Device Communication Service ............. FAILURE [  2.688 s]
+[INFO] IOE-DREAM OA Service ............................... SKIPPED
+[INFO] IOE-DREAM Access Service ........................... SKIPPED
+[INFO] IOE-DREAM Attendance Service ....................... SKIPPED
+[INFO] IOE-DREAM Video Service ............................ SKIPPED
+[INFO] IOE-DREAM Consume Service .......................... SKIPPED
+[INFO] IOE-DREAM Visitor Service .......................... SKIPPED
+[INFO] ioedream-database-service .......................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.197 s
+[INFO] Finished at: 2025-12-17T22:58:26+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-device-comm-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[6,43] 找不到符号
+[ERROR]   符号:   类 DeviceMessage
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[7,43] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[6,43] 找不到符号
+[ERROR]   符号:   类 DeviceMessage
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[7,43] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[6,43] 找不到符号
+[ERROR]   符号:   类 DeviceMessage
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[7,43] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[6,43] 找不到符号
+[ERROR]   符号:   类 DeviceMessage
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[7,43] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.protocol
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[135,42] 找不到符号
+[ERROR]   符号:   类 DeviceMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[135,12] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[241,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[275,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[305,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[328,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[356,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[384,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[416,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[449,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[471,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[500,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[528,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[556,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[711,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/ezviz/VideoEzvizV20Adapter.java:[724,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[128,42] 找不到符号
+[ERROR]   符号:   类 DeviceMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[128,12] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[232,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[266,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[297,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[320,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[350,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[377,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[409,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[440,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[463,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[492,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[520,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[756,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/uniview/VideoUniviewV20Adapter.java:[769,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[112,42] 找不到符号
+[ERROR]   符号:   类 DeviceMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[112,12] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[216,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[248,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[276,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[298,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[326,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[353,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[380,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[406,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[426,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[618,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/dahua/VideoDahuaV20Adapter.java:[631,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[111,42] 找不到符号
+[ERROR]   符号:   类 DeviceMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[111,12] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[208,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[238,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[264,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[285,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[312,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[336,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[365,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[394,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[490,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/hikvision/VideoHikvisionV20Adapter.java:[503,13] 找不到符号
+[ERROR]   符号:   类 DeviceResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[111,12] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[203,12] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[291,53] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[291,12] 找不到符号
+[ERROR]   符号:   类 ProtocolValidationResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[368,12] 找不到符号
+[ERROR]   符号:   类 ProtocolPermissionResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[397,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[433,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[444,19] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[687,13] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[719,13] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[741,13] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[763,13] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[954,19] 找不到符号
+[ERROR]   符号:   类 ProtocolInitResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[960,12] 找不到符号
+[ERROR]   符号:   类 ProtocolRegistrationResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[966,12] 找不到符号
+[ERROR]   符号:   类 ProtocolHeartbeatResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[972,12] 找不到符号
+[ERROR]   符号:   类 ProtocolDeviceStatus
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[990,12] 找不到符号
+[ERROR]   符号:   类 ProtocolErrorResponse
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/protocol/entropy/AccessEntropyV48Adapter.java:[996,24] 找不到符号
+[ERROR]   符号:   类 ProtocolErrorInfo
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[52,24] 找不到符号
+[ERROR]   符号:   类 ProtocolMessage
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[142,24] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[185,24] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/DeviceCommunicationController.java:[228,24] 找不到符号
+[ERROR]   符号:   类 ProtocolProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.DeviceCommunicationController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/RS485ProtocolController.java:[11,42] 找不到符号
+[ERROR]   符号:   类 RS485ProtocolService
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.service
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/RS485ProtocolController.java:[46,13] 找不到符号
+[ERROR]   符号:   类 RS485ProtocolService
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.controller.RS485ProtocolController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[10,42] 找不到符号
+[ERROR]   符号:   类 RS485ProtocolService
+[ERROR]   位置: 程序包 net.lab1024.sa.device.comm.service
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[34,50] 找不到符号
+[ERROR]   符号: 类 RS485ProtocolService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[307,53] 找不到符号
+[ERROR]   符号:   类 RS485InitResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[318,59] 找不到符号
+[ERROR]   符号:   类 RS485ProcessResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[335,63] 找不到符号
+[ERROR]   符号:   类 RS485HeartbeatResult
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/service/impl/RS485ProtocolServiceImpl.java:[355,57] 找不到符号
+[ERROR]   符号:   类 RS485DeviceStatus
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/controller/VendorSupportController.java:[10,34] 找不到符号
+[ERROR]   符号:   类 RequestUtils
+[ERROR]   位置: 程序包 net.lab1024.sa.common.util
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/ProtocolAutoDiscoveryManager.java:[48,24] 找不到符号
+[ERROR]   符号:   类 NetworkScanner
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/ProtocolAutoDiscoveryManager.java:[49,24] 找不到符号
+[ERROR]   符号:   类 ProtocolDetector
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/controller/ProtocolDiscoveryController.java:[7,41] 程序包net.lab1024.sa.common.core.domain不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/service/ProtocolDiscoveryService.java:[5,41] 程序包net.lab1024.sa.common.core.domain不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/main/java/net/lab1024/sa/device/comm/discovery/controller/ProtocolDiscoveryController.java:[49,12] 找不到符号
+[ERROR]   符号:   类 ResponseDTO
+[ERROR]   位置: 类 net.lab1024.sa.device.comm.discovery.controller.ProtocolDiscoveryController
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :ioedream-device-comm-service

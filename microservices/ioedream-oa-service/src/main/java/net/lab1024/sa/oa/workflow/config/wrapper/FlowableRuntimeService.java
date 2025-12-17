@@ -1,6 +1,9 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.runtime.ProcessInstanceQuery;
@@ -25,6 +28,7 @@ import java.util.Map;
 @Service
 public class FlowableRuntimeService {
 
+    private static final Logger log = LoggerFactory.getLogger(FlowableRuntimeService.class);
     private final RuntimeService runtimeService;
 
     public FlowableRuntimeService(RuntimeService runtimeService) {
@@ -50,7 +54,7 @@ public class FlowableRuntimeService {
 
         try {
             // 设置发起人
-            runtimeService.setAuthenticatedUserId(starterUserId);
+            Authentication.setAuthenticatedUserId(starterUserId);
 
             ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
                     processDefinitionKey,
@@ -62,6 +66,44 @@ public class FlowableRuntimeService {
                     processInstance.getId(), processInstance.getProcessDefinitionId());
 
             return processInstance.getId();
+
+        } catch (Exception e) {
+            log.error("[Flowable] 启动流程实例失败: processDefinitionKey={}, businessKey={}, error={}",
+                    processDefinitionKey, businessKey, e.getMessage(), e);
+            throw new RuntimeException("启动流程实例失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 启动流程实例并返回完整ProcessInstance对象
+     *
+     * @param processDefinitionKey 流程定义键
+     * @param businessKey         业务键
+     * @param variables          流程变量
+     * @param starterUserId       发起人ID
+     * @return 流程实例对象
+     */
+    public ProcessInstance startProcessInstanceByKeyWithFullResult(String processDefinitionKey,
+                                           String businessKey,
+                                           Map<String, Object> variables,
+                                           String starterUserId) {
+        log.info("[Flowable] 启动流程实例: processDefinitionKey={}, businessKey={}, starterUserId={}",
+                processDefinitionKey, businessKey, starterUserId);
+
+        try {
+            // 设置发起人
+            Authentication.setAuthenticatedUserId(starterUserId);
+
+            ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
+                    processDefinitionKey,
+                    businessKey,
+                    variables
+            );
+
+            log.info("[Flowable] 流程实例启动成功: processInstanceId={}, processDefinitionId={}",
+                    processInstance.getId(), processInstance.getProcessDefinitionId());
+
+            return processInstance;
 
         } catch (Exception e) {
             log.error("[Flowable] 启动流程实例失败: processDefinitionKey={}, businessKey={}, error={}",
@@ -88,7 +130,7 @@ public class FlowableRuntimeService {
 
         try {
             // 设置发起人
-            runtimeService.setAuthenticatedUserId(starterUserId);
+            Authentication.setAuthenticatedUserId(starterUserId);
 
             ProcessInstance processInstance = runtimeService.startProcessInstanceById(
                     processDefinitionId,

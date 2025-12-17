@@ -64,7 +64,7 @@ public class VideoOpenApiController {
             @Parameter(description = "设备ID") @PathVariable String deviceId,
             @Valid @RequestBody StartStreamRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -85,7 +85,7 @@ public class VideoOpenApiController {
             @Parameter(description = "设备ID") @PathVariable String deviceId,
             @Valid @RequestBody StopStreamRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -158,7 +158,7 @@ public class VideoOpenApiController {
             @Parameter(description = "录像ID") @PathVariable String recordingId,
             @Valid @RequestBody DownloadRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -178,7 +178,7 @@ public class VideoOpenApiController {
     public ResponseDTO<FaceDetectionResponse> faceDetection(
             @Valid @RequestBody FaceDetectionRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -198,7 +198,7 @@ public class VideoOpenApiController {
     public ResponseDTO<BehaviorAnalysisResponse> behaviorAnalysis(
             @Valid @RequestBody BehaviorAnalysisRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -218,7 +218,7 @@ public class VideoOpenApiController {
     public ResponseDTO<ObjectTrackingResponse> objectTracking(
             @Valid @RequestBody ObjectTrackingRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
@@ -321,7 +321,7 @@ public class VideoOpenApiController {
             @Parameter(description = "设备ID") @PathVariable String deviceId,
             @Valid @RequestBody PTZControlRequest request,
             @RequestHeader("Authorization") String authorization,
-            @HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) {
 
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);

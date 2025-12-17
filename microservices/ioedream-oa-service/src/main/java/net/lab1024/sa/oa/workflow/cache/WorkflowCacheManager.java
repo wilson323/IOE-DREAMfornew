@@ -3,6 +3,8 @@ package net.lab1024.sa.oa.workflow.cache;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class WorkflowCacheManager {
+
+    private static final Logger log = LoggerFactory.getLogger(WorkflowCacheManager.class);
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -289,7 +294,8 @@ public class WorkflowCacheManager {
         List<String> missedKeys = new ArrayList<>();
 
         for (String key : keys) {
-            T value = get(key, type);
+            // 使用get方法时提供空加载器，仅查询缓存
+            T value = get(key, type, () -> null);
             if (value != null) {
                 result.put(key, value);
             } else {

@@ -3,6 +3,8 @@ package net.lab1024.sa.oa.workflow.domain.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Map;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "工作流批量操作结果")
 public class WorkflowBatchOperationResultVO {
 
@@ -77,6 +81,12 @@ public class WorkflowBatchOperationResultVO {
     @Schema(description = "跳过详情")
     private List<OperationResult> skippedResults;
 
+    @Schema(description = "操作项结果")
+    private List<BatchItemResult> itemResults;
+
+    @Schema(description = "错误消息")
+    private String errorMessage;
+
     @Schema(description = "统计信息")
     private BatchStatistics statistics;
 
@@ -121,13 +131,27 @@ public class WorkflowBatchOperationResultVO {
      */
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(description = "操作进度")
     public static class BatchProgress {
+        @Schema(description = "批次ID")
+        private String batchId;
+
         @Schema(description = "进度百分比")
         private Double progressPercentage;
 
         @Schema(description = "已处理数量")
         private Integer processedCount;
+
+        @Schema(description = "已完成数量")
+        private Integer completedCount;
+
+        @Schema(description = "成功数量")
+        private Integer successCount;
+
+        @Schema(description = "失败数量")
+        private Integer failedCount;
 
         @Schema(description = "总数量")
         private Integer totalCount;
@@ -146,6 +170,9 @@ public class WorkflowBatchOperationResultVO {
 
         @Schema(description = "预计完成时间")
         private LocalDateTime estimatedCompletionTime;
+
+        @Schema(description = "操作状态")
+        private BatchOperationStatus status;
     }
 
     /**
@@ -153,6 +180,8 @@ public class WorkflowBatchOperationResultVO {
      */
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(description = "操作结果")
     public static class OperationResult {
         @Schema(description = "项目ID")
@@ -221,6 +250,8 @@ public class WorkflowBatchOperationResultVO {
      */
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(description = "批量统计信息")
     public static class BatchStatistics {
         @Schema(description = "平均执行时间（毫秒）")
@@ -262,6 +293,8 @@ public class WorkflowBatchOperationResultVO {
      */
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(description = "批量操作历史")
     public static class BatchOperationHistory {
         @Schema(description = "历史ID")
@@ -315,6 +348,8 @@ public class WorkflowBatchOperationResultVO {
      */
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(description = "导出结果")
     public static class ExportResult {
         @Schema(description = "导出ID")
@@ -375,5 +410,42 @@ public class WorkflowBatchOperationResultVO {
         public String getDescription() {
             return description;
         }
+    }
+
+    /**
+     * 批量操作项结果
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(description = "批量操作项结果")
+    public static class BatchItemResult {
+        @Schema(description = "项目ID")
+        private String itemId;
+
+        @Schema(description = "项目名称")
+        private String itemName;
+
+        @Schema(description = "目标ID")
+        private String targetId;
+
+        @Schema(description = "是否成功")
+        private Boolean success;
+
+        @Schema(description = "结果消息")
+        private String message;
+
+        @Schema(description = "错误代码")
+        private String errorCode;
+
+        @Schema(description = "执行耗时（毫秒）")
+        private Long executionTime;
+
+        @Schema(description = "操作时间戳")
+        private LocalDateTime timestamp;
+
+        @Schema(description = "返回数据")
+        private Map<String, Object> data;
     }
 }

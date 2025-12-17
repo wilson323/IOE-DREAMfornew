@@ -20,10 +20,11 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
-import com.github.benman.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 

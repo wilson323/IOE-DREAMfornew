@@ -585,9 +585,9 @@ public class AccessAdvancedController {
     @Timed(value = "analysis.comprehensive", description = "综合分析耗时")
     public ResponseDTO<ComprehensiveAnalysisResult> performComprehensiveAnalysis(
             @RequestParam @Parameter(description = "分析类型") String analysisType,
-            @RequestParam @RequestParam(required = false) @Parameter(description = "用户ID") Long userId,
-            @RequestParam @Parameter(required = false) @Parameter(description = "设备ID") Long deviceId,
-            @RequestParam @RequestParam(required = false) @Parameter(description = "分析周期") String analysisPeriod,
+            @RequestParam(required = false) @Parameter(description = "用户ID") Long userId,
+            @RequestParam(required = false) @Parameter(description = "设备ID") Long deviceId,
+            @RequestParam(required = false) @Parameter(description = "分析周期") String analysisPeriod,
             @RequestParam(required = false) @Parameter(description = "开始时间") LocalDateTime startTime,
             @RequestParam(required = false) @Parameter(description = "结束时间") LocalDateTime endTime) {
 

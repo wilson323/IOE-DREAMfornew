@@ -11,6 +11,8 @@ import org.springframework.http.HttpMethod;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
@@ -39,6 +41,8 @@ import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 // 暂时禁用此Listener，因为依赖的WorkflowApprovalManager需要类型兼容性修复
 // @Component
 public class WorkflowApprovalResultListener {
+
+    private static final Logger log = LoggerFactory.getLogger(WorkflowApprovalResultListener.class);
 
     @Resource
     private WorkflowApprovalManager workflowApprovalManager;

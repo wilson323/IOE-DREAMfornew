@@ -4,6 +4,8 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import net.lab1024.sa.oa.workflow.websocket.WorkflowWebSocketController;
 
 /**
  * 工作流实时通知服务
@@ -37,6 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @Service
 public class WorkflowNotificationService {
+    private static final Logger log = LoggerFactory.getLogger(WorkflowNotificationService.class);
 
     @Resource
     private WorkflowWebSocketController webSocketController;
@@ -121,7 +125,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendNewTaskNotification(Long userId, Map<String, Object> taskData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅任务通知，跳过发送", userId);
@@ -150,7 +154,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendTaskStatusChangedNotification(Long userId, Map<String, Object> taskData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅任务通知，跳过发送", userId);
@@ -179,7 +183,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendTaskAssignedNotification(Long userId, Map<String, Object> taskData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅任务通知，跳过发送", userId);
@@ -208,7 +212,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendTaskCompletedNotification(Long userId, Map<String, Object> taskData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅任务通知，跳过发送", userId);
@@ -237,7 +241,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendTaskTimeoutNotification(Long userId, Map<String, Object> taskData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅任务通知，跳过发送", userId);
@@ -268,7 +272,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendProcessStartedNotification(Long userId, Map<String, Object> processData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅流程通知，跳过发送", userId);
@@ -297,7 +301,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendProcessCompletedNotification(Long userId, Map<String, Object> processData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅流程通知，跳过发送", userId);
@@ -326,7 +330,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendProcessTerminatedNotification(Long userId, Map<String, Object> processData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅流程通知，跳过发送", userId);
@@ -357,7 +361,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendApprovalRequestedNotification(Long userId, Map<String, Object> approvalData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅审批通知，跳过发送", userId);
@@ -386,7 +390,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendApprovalApprovedNotification(Long userId, Map<String, Object> approvalData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅审批通知，跳过发送", userId);
@@ -415,7 +419,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendApprovalRejectedNotification(Long userId, Map<String, Object> approvalData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅审批通知，跳过发送", userId);
@@ -444,7 +448,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendApprovalTimeoutNotification(Long userId, Map<String, Object> approvalData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (!isUserSubscribed(userId)) {
                     log.debug("[工作流通知] 用户{}未订阅审批通知，跳过发送", userId);
@@ -475,7 +479,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendSystemErrorNotification(String errorType, String errorMessage, Map<String, Object> errorData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 Map<String, Object> message = Map.of(
                     "type", NOTIFICATION_TYPE_SYSTEM_ERROR,
@@ -504,7 +508,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendSystemMaintenanceNotification(String maintenanceType, String startTime, String endTime, Map<String, Object> maintenanceData) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 Map<String, Object> message = Map.of(
                     "type", NOTIFICATION_TYPE_SYSTEM_MAINTENANCE,
@@ -536,7 +540,7 @@ public class WorkflowNotificationService {
     @Async("workflowNotificationExecutor")
     public CompletableFuture<Void> sendBatchNotifications(List<Long> userIds, String notificationType, Map<String, Object> data) {
         return CompletableFuture.runAsync(() -> {
-            Timer.Sample sample = Timer.start(notificationProcessingTimer);
+            Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 if (userIds == null || userIds.isEmpty()) {
                     log.debug("[工作流通知] 用户列表为空，跳过批量发送");

@@ -99,7 +99,7 @@ public class VideoStreamController {
      * @return 操作结果
      */
     @PostMapping("/{streamId}/resume")
-    @Operation(summary = "恢复视频流", description =恢复暂停的视频流")
+    @Operation(summary = "恢复视频流", description = "恢复暂停的视频流")
     @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
     public ResponseDTO<Void> resumeStream(
             @Parameter(description = "流ID", required = true)
