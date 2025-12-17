@@ -17,7 +17,7 @@
     <description>工作流模块：Aviator表达式引擎、工作流定义、流程调度、规则引擎等</description>
 
     <properties>
-        <aviator.version>5.4.3</aviator.version>
+        <!-- Aviator版本统一使用父POM的 ${aviator.version} -->
     </properties>
 
     <dependencies>

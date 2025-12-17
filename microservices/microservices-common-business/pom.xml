@@ -73,7 +73,7 @@
         <dependency>
             <groupId>com.googlecode.aviator</groupId>
             <artifactId>aviator</artifactId>
-            <version>5.4.3</version>
+            <version>${aviator.version}</version>
         </dependency>
 
         <!-- Test -->

@@ -6,12 +6,12 @@
 
     <parent>
         <groupId>net.lab1024.sa</groupId>
-        <artifactId>ioedream-parent</artifactId>
+        <artifactId>ioedream-microservices-parent</artifactId>
         <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ioedream-database-service</artifactId>
-    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>ioedream-database-service</name>
@@ -24,29 +24,25 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Boot Starter Data JPA -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <!-- MyBatis Plus Boot Starter -->
+        <!-- MyBatis-Plus (Spring Boot 3.x专用，禁止使用JPA) -->
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>${mybatis-plus.version}</version>
         </dependency>
 
-        <!-- MySQL Connector -->
+        <!-- MySQL Driver (统一使用新版groupId) -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Druid Connection Pool -->
+        <!-- Druid数据库连接池 (Spring Boot 3.x专用) -->
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
+            <version>${druid.version}</version>
         </dependency>
 
         <!-- Flyway Database Migration -->
@@ -89,11 +85,18 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Microservices Common -->
+        <!-- 依赖公共模块 -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common</artifactId>
-            <version>1.0.0</version>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 依赖核心模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Nacos Discovery -->

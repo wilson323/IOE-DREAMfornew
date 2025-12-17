@@ -81,6 +81,15 @@
 
         <!-- Tencent Cloud -->
         <tencentcloud-ocr.version>3.1.1115</tencentcloud-ocr.version>
+
+        <!-- ZXing (QR Code) - 统一版本 -->
+        <zxing.version>3.5.4</zxing.version>
+
+        <!-- Aviator Expression Engine - 统一版本 -->
+        <aviator.version>5.4.3</aviator.version>
+
+        <!-- Springdoc OpenAPI - 统一版本 -->
+        <springdoc.version>2.6.0</springdoc.version>
     </properties>
 
     <modules>
@@ -104,6 +113,7 @@
         <module>ioedream-video-service</module>
         <module>ioedream-consume-service</module>
         <module>ioedream-visitor-service</module>
+        <module>ioedream-database-service</module>
     </modules>
 
     <dependencyManagement>

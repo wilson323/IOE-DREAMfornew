@@ -19,7 +19,7 @@
     <properties>
         <easyexcel.version>3.3.4</easyexcel.version>
         <itextpdf.version>8.0.5</itextpdf.version>
-        <zxing.version>3.5.3</zxing.version>
+        <!-- ZXing版本统一使用父POM的 ${zxing.version} -->
     </properties>
 
     <dependencies>

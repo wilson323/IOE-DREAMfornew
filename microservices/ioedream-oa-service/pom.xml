@@ -120,7 +120,7 @@
         <dependency>
             <groupId>com.googlecode.aviator</groupId>
             <artifactId>aviator</artifactId>
-            <version>5.3.3</version>
+            <version>${aviator.version}</version>
         </dependency>
 
         <!-- Flowable 6.8.0 工作流引擎 -->
