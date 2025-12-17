@@ -2,8 +2,8 @@ package net.lab1024.sa.visitor.service;
 
 import io.github.resilience4j.annotation.CircuitBreaker;
 import io.github.resilience4j.annotation.TimeLimiter;
-import net.lab1024.sa.common.response.ResponseDTO;
-import net.lab1024.sa.common.response.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.dto.PageResult;
 import net.lab1024.sa.visitor.domain.form.ApprovalDecisionForm;
 import net.lab1024.sa.visitor.domain.vo.ApprovalRecordVO;
 import net.lab1024.sa.visitor.domain.vo.PendingApprovalVO;

@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.page.PageParam;
 import net.lab1024.sa.common.page.PageResult;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.video.dao.VideoBehaviorDao;
 import net.lab1024.sa.common.video.dao.VideoBehaviorPatternDao;
 import net.lab1024.sa.common.video.entity.VideoBehaviorEntity;

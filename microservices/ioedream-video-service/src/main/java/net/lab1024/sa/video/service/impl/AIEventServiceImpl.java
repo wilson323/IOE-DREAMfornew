@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.lab1024.sa.common.response.PageResult;
+import net.lab1024.sa.common.dto.PageResult;
 import net.lab1024.sa.video.dao.AIEventDao;
 import net.lab1024.sa.video.domain.entity.AIEventEntity;
 import net.lab1024.sa.video.domain.form.AIEventAddForm;

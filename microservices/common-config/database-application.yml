@@ -1,0 +1,144 @@
+# =====================================================
+# IOE-DREAM 统一数据库连接池配置
+# 优化Druid连接池参数,启用连接泄漏检测
+# =====================================================
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # ===========================================
+      # 基础连接配置（优化后）
+      # ===========================================
+      initial-size: 5                # 初始连接数（从10降至5）
+      min-idle: 5                     # 最小空闲连接（从10降至5）
+      max-active: 30                  # 最大活跃连接（从50降至30）
+      max-wait: 30000                 # 获取连接最大等待时间30秒
+
+      # ===========================================
+      # 连接有效性检查配置
+      # ===========================================
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false          # 不在借用时检测(性能优化)
+      test-on-return: false
+      validation-query-timeout: 3
+
+      # ===========================================
+      # 连接回收策略
+      # ===========================================
+      time-between-eviction-runs-millis: 60000    # 每60秒检查空闲连接
+      min-evictable-idle-time-millis: 300000      # 空闲5分钟可被回收
+      max-evictable-idle-time-millis: 900000      # 空闲15分钟强制回收
+      keep-alive: true                             # 保持连接活跃
+
+      # ===========================================
+      # 连接泄漏检测（新增）
+      # ===========================================
+      remove-abandoned: true                       # 启用泄漏检测
+      remove-abandoned-timeout: 300                # 连接使用超过5分钟视为泄漏
+      log-abandoned: true                          # 记录泄漏日志
+
+      # ===========================================
+      # 性能优化
+      # ===========================================
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+
+      # ===========================================
+      # 监控配置
+      # ===========================================
+      filter:
+        stat:
+          enabled: true
+          log-slow-sql: true
+          slow-sql-millis: 2000      # 慢SQL阈值调整为2秒
+          merge-sql: true
+
+        wall:
+          enabled: true
+          db-type: mysql
+          config:
+            # 允许的SQL操作
+            multi-statement-allow: false
+            delete-allow: true
+            update-allow: true
+            insert-allow: true
+            select-allow: true
+            # 禁止的SQL操作
+            drop-table-allow: false
+            create-table-allow: false
+            alter-table-allow: false
+            truncate-allow: false
+
+        slf4j:
+          enabled: true
+          statement-execute-error-after-log-enabled: true
+          statement-execute-batch-after-log-enabled: true
+
+---
+# ===========================================
+# 开发环境配置
+# ===========================================
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    druid:
+      initial-size: 3                # 开发环境更少连接
+      min-idle: 3
+      max-active: 10
+      filter:
+        stat:
+          slow-sql-millis: 1000      # 开发环境1秒即为慢SQL
+
+---
+# ===========================================
+# 测试环境配置
+# ===========================================
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      filter:
+        stat:
+          slow-sql-millis: 1500      # 测试环境1.5秒为慢SQL
+
+---
+# ===========================================
+# 生产环境配置
+# ===========================================
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 30
+      # 生产环境启用监控面板
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: ${DRUID_ADMIN_USERNAME:admin}
+        login-password: ${DRUID_ADMIN_PASSWORD}
+        allow: ${DRUID_ALLOW_IPS:127.0.0.1,192.168.0.0/16}
+      
+      # Web监控配置
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/actuator/*"
+        session-stat-enable: true
+        session-stat-max-count: 1000

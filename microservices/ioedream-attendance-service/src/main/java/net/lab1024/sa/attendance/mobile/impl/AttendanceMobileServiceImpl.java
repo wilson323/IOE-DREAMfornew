@@ -16,7 +16,7 @@ import net.lab1024.sa.attendance.common.entity.ShiftScheduleEntity;
 import net.lab1024.sa.attendance.common.dao.ShiftScheduleDao;
 import net.lab1024.sa.attendance.common.entity.EmployeeEntity;
 import net.lab1024.sa.attendance.common.dao.EmployeeDao;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,8 +30,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import jakarta.annotation.Resource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * 移动端考勤服务实现类
@@ -60,8 +61,9 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
     private final Map<String, MobileUserSession> userSessionCache = new ConcurrentHashMap<>();
     private final Map<String, MobileDeviceInfo> deviceInfoCache = new ConcurrentHashMap<>();
 
-    // 异步处理线程池 - 性能优化
-    private final ExecutorService asyncExecutor = Executors.newFixedThreadPool(10);
+    // 异步处理线程池 - 使用统一配置的异步线程池
+    @Resource(name = "asyncExecutor")
+    private ThreadPoolTaskExecutor asyncExecutor;
 
     // ==================== 用户认证相关 ====================
 

@@ -135,7 +135,7 @@ public class PermissionAuditLogger {
             .operation(operation)
             .resource(resource)
             .result("DENIED")
-            .failureReason(reason)
+            .reason(reason)
             .build();
 
         logPermissionValidation(auditDTO);
@@ -158,7 +158,7 @@ public class PermissionAuditLogger {
             .operation(operation)
             .resource(resource)
             .result("GRANTED")
-            .validationTime(validationTime)
+            .duration(validationTime)
             .build();
 
         logPermissionValidation(auditDTO);
@@ -617,8 +617,6 @@ public class PermissionAuditLogger {
     /**
      * 权限告警信息
      */
-    @lombok.Data
-    @lombok.Builder
     public static class PermissionAlert {
         private Long userId;
         private String operation;
@@ -627,12 +625,67 @@ public class PermissionAuditLogger {
         private LocalDateTime createTime;
         private String severity;
         private String status; // ACTIVE, RESOLVED
+
+        public PermissionAlert() {}
+
+        private PermissionAlert(Builder builder) {
+            this.userId = builder.userId;
+            this.operation = builder.operation;
+            this.alertType = builder.alertType;
+            this.message = builder.message;
+            this.createTime = builder.createTime;
+            this.severity = builder.severity;
+            this.status = builder.status;
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        // Getters
+        public Long getUserId() { return userId; }
+        public String getOperation() { return operation; }
+        public String getAlertType() { return alertType; }
+        public String getMessage() { return message; }
+        public LocalDateTime getCreateTime() { return createTime; }
+        public String getSeverity() { return severity; }
+        public String getStatus() { return status; }
+
+        // Setters
+        public void setUserId(Long userId) { this.userId = userId; }
+        public void setOperation(String operation) { this.operation = operation; }
+        public void setAlertType(String alertType) { this.alertType = alertType; }
+        public void setMessage(String message) { this.message = message; }
+        public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
+        public void setSeverity(String severity) { this.severity = severity; }
+        public void setStatus(String status) { this.status = status; }
+
+        public static class Builder {
+            private Long userId;
+            private String operation;
+            private String alertType;
+            private String message;
+            private LocalDateTime createTime;
+            private String severity;
+            private String status;
+
+            public Builder userId(Long userId) { this.userId = userId; return this; }
+            public Builder operation(String operation) { this.operation = operation; return this; }
+            public Builder alertType(String alertType) { this.alertType = alertType; return this; }
+            public Builder message(String message) { this.message = message; return this; }
+            public Builder createTime(LocalDateTime createTime) { this.createTime = createTime; return this; }
+            public Builder severity(String severity) { this.severity = severity; return this; }
+            public Builder status(String status) { this.status = status; return this; }
+
+            public PermissionAlert build() {
+                return new PermissionAlert(this);
+            }
+        }
     }
 
     /**
      * 权限审计统计信息
      */
-    @lombok.Data
     public static class PermissionAuditStats {
         private Long totalCount = 0L;
         private Long grantedCount = 0L;
@@ -641,5 +694,23 @@ public class PermissionAuditLogger {
         private Double averageValidationTime = 0.0;
         private LocalDateTime lastUpdateTime;
         private String summary;
+
+        // Getters
+        public Long getTotalCount() { return totalCount; }
+        public Long getGrantedCount() { return grantedCount; }
+        public Long getDeniedCount() { return deniedCount; }
+        public Long getFailureCount() { return failureCount; }
+        public Double getAverageValidationTime() { return averageValidationTime; }
+        public LocalDateTime getLastUpdateTime() { return lastUpdateTime; }
+        public String getSummary() { return summary; }
+
+        // Setters
+        public void setTotalCount(Long totalCount) { this.totalCount = totalCount; }
+        public void setGrantedCount(Long grantedCount) { this.grantedCount = grantedCount; }
+        public void setDeniedCount(Long deniedCount) { this.deniedCount = deniedCount; }
+        public void setFailureCount(Long failureCount) { this.failureCount = failureCount; }
+        public void setAverageValidationTime(Double averageValidationTime) { this.averageValidationTime = averageValidationTime; }
+        public void setLastUpdateTime(LocalDateTime lastUpdateTime) { this.lastUpdateTime = lastUpdateTime; }
+        public void setSummary(String summary) { this.summary = summary; }
     }
 }

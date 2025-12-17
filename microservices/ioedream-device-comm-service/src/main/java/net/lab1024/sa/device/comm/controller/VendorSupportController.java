@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.common.domain.ResponseDTO;
-import net.lab1024.sa.common.common.util.RequestUtils;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.util.RequestUtils;
 import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
 import org.springframework.web.bind.annotation.*;
 

@@ -36,7 +36,7 @@ import net.lab1024.sa.common.exception.ParamException;
  * <p>
  * 严格遵循CLAUDE.md规范:
  * - 使用@Service注解标识服务实现
- * - 使用@Resource依赖注入（禁止@Autowired）
+ * - 使用@Resource依赖注入（符合架构规范）
  * - 使用@Transactional管理事务
  * - 完整的异常处理和日志记录
  * </p>

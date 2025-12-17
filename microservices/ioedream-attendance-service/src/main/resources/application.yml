@@ -17,11 +17,11 @@ spring:
     name: ioedream-attendance-service
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
-  # Spring Boot 2.4+ 要求显式声明配置导入
-  # 升级到Spring Cloud Alibaba 2025.0.0.0后，使用optional前缀允许配置中心可选
-  # dataId格式：${spring.application.name}-${spring.profiles.active}.${file-extension}
+  # 引入统一配置文件
   config:
     import:
+      - "classpath:common-config/cache-application.yml"
+      - "classpath:common-config/database-application.yml"
       - "optional:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z):ioedream-attendance-service-docker.yaml"  # 2025.0.0.0版本需要显式指定dataId
 
   # ==================== 数据源配置 ====================

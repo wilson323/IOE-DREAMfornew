@@ -36,7 +36,7 @@ import net.lab1024.sa.common.exception.SystemException;
  * <p>
  * 严格遵循CLAUDE.md规范:
  * - 使用@RestController注解
- * - 使用@Resource依赖注入（禁止@Autowired）
+ * - 使用@Resource依赖注入（符合架构规范）
  * - 返回统一ResponseDTO格式
  * - 完整的Swagger文档
  * - 完整的异常处理和日志记录

@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.ScheduleEngine;
 import net.lab1024.sa.attendance.engine.model.*;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import net.lab1024.sa.common.permission.PermissionCheck;

@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import java.util.List;
 import java.util.Set;

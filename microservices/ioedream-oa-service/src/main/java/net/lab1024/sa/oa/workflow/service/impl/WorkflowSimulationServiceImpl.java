@@ -1,7 +1,7 @@
 package net.lab1024.sa.oa.workflow.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.oa.workflow.domain.form.WorkflowSimulationForm;
 import net.lab1024.sa.oa.workflow.domain.vo.WorkflowPathAnalysisVO;
 import net.lab1024.sa.oa.workflow.domain.vo.WorkflowSimulationResultVO;

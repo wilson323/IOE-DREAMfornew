@@ -12,7 +12,7 @@ import net.lab1024.sa.attendance.manager.SmartSchedulingEngine;
 import net.lab1024.sa.attendance.manager.SmartSchedulingEngine.SchedulingRequest;
 import net.lab1024.sa.attendance.manager.SmartSchedulingEngine.SchedulingResult;
 import net.lab1024.sa.attendance.service.ScheduleService;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;

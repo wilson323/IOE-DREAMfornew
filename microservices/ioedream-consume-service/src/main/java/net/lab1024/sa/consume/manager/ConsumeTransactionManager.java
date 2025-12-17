@@ -13,7 +13,6 @@ import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO;
 import net.lab1024.sa.common.consume.entity.AccountEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -25,24 +24,31 @@ import java.util.Map;
  * 消费事务管理器（使用Seata分布式事务）
  * <p>
  * 替换原有的SagaManager，使用Seata的@GlobalTransactional实现分布式事务
+ * 严格遵循CLAUDE.md全局架构规范：纯Java类，不使用Spring注解
  * </p>
  *
  * @author IOE-DREAM架构团队
  * @version 2.0.0
  * @since 2025-01-30
+ * @updated 2025-12-17 移除@Component注解，改为纯Java类，使用构造函数注入
  */
 @Slf4j
-@Component
 public class ConsumeTransactionManager {
 
-    @Resource
-    private ConsumeRecordDao consumeRecordDao;
+    private final ConsumeRecordDao consumeRecordDao;
+    private final AccountDao accountDao;
+    private final GatewayServiceClient gatewayServiceClient;
 
-    @Resource
-    private AccountDao accountDao;
-
-    @Resource
-    private GatewayServiceClient gatewayServiceClient;
+    /**
+     * 构造函数注入依赖
+     */
+    public ConsumeTransactionManager(ConsumeRecordDao consumeRecordDao,
+                                   AccountDao accountDao,
+                                   GatewayServiceClient gatewayServiceClient) {
+        this.consumeRecordDao = consumeRecordDao;
+        this.accountDao = accountDao;
+        this.gatewayServiceClient = gatewayServiceClient;
+    }
 
     /**
      * 执行消费事务（使用Seata分布式事务）
@@ -229,7 +235,3 @@ public class ConsumeTransactionManager {
         }
     }
 }
-
-
-
-

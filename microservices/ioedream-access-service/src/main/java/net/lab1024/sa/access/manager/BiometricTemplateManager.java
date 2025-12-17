@@ -9,14 +9,11 @@ import net.lab1024.sa.access.domain.entity.BiometricAuthRecordEntity;
 import net.lab1024.sa.access.domain.entity.BiometricConfigEntity;
 import net.lab1024.sa.common.core.util.SmartBiometricUtil;
 import net.lab1024.sa.common.core.util.SmartAESUtil;
-import net.lab1024.sa.common.core.domain.ResponseDTO;
 import net.lab1024.sa.common.core.constant.SecurityConst;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -26,34 +23,41 @@ import java.util.concurrent.TimeUnit;
 /**
  * 生物识别模板管理器
  * 负责复杂的生物识别模板业务流程编排
+ * 严格遵循CLAUDE.md全局架构规范：纯Java类，不使用Spring注解
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-30
+ * @updated 2025-12-17 移除@Component注解，改为纯Java类，使用构造函数注入
  */
 @Slf4j
-@Component
 public class BiometricTemplateManager {
 
-    @Resource
-    private BiometricTemplateDao biometricTemplateDao;
-
-    @Resource
-    private BiometricConfigDao biometricConfigDao;
-
-    @Resource
-    private BiometricAuthRecordDao biometricAuthRecordDao;
-
-    @Resource
-    private DeviceDao deviceDao;
-
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private final BiometricTemplateDao biometricTemplateDao;
+    private final BiometricConfigDao biometricConfigDao;
+    private final BiometricAuthRecordDao biometricAuthRecordDao;
+    private final DeviceDao deviceDao;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     // 缓存键前缀
     private static final String CACHE_KEY_PREFIX = "biometric:template:";
     private static final String CACHE_KEY_USER_TEMPLATES = "biometric:user:templates:";
     private static final String LOCK_KEY_PREFIX = "biometric:lock:";
+
+    /**
+     * 构造函数注入依赖
+     */
+    public BiometricTemplateManager(BiometricTemplateDao biometricTemplateDao,
+                                   BiometricConfigDao biometricConfigDao,
+                                   BiometricAuthRecordDao biometricAuthRecordDao,
+                                   DeviceDao deviceDao,
+                                   RedisTemplate<String, Object> redisTemplate) {
+        this.biometricTemplateDao = biometricTemplateDao;
+        this.biometricConfigDao = biometricConfigDao;
+        this.biometricAuthRecordDao = biometricAuthRecordDao;
+        this.deviceDao = deviceDao;
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * 注册生物识别模板

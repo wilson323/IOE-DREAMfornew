@@ -87,7 +87,7 @@ public class AreaPermissionController {
         vo.setUserName(entity.getRealName());
         vo.setUserCode(entity.getUsername());
         vo.setPermissionLevel(mapPermissionLevel(entity.getPermissionLevel()));
-        vo.setStatus(entity.getRelationStatus() != null && entity.getRelationStatus() == 1 ? 1 : 0);
+        vo.setStatus(entity.getDeviceSyncStatus() != null && entity.getDeviceSyncStatus() == 2 ? 1 : 0);
 
         if (entity.getEffectiveTime() != null) {
             vo.setStartTime(entity.getEffectiveTime().format(TIME_FORMATTER));

@@ -33,7 +33,7 @@ import net.lab1024.sa.common.system.employee.service.EmployeeService;
  * <p>
  * 严格遵循CLAUDE.md规范:
  * - 使用@RestController注解
- * - 使用@Resource依赖注入（禁止@Autowired）
+ * - 使用@Resource依赖注入（符合架构规范）
  * - 使用@Valid参数校验
  * - 返回统一ResponseDTO格式
  * </p>

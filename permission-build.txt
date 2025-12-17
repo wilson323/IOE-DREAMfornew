@@ -1,0 +1,587 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------< net.lab1024.sa:microservices-common-permission >-----------
+[INFO] Building IOE-DREAM Common Permission 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-permission ---
+[INFO] Deleting d:\IOE-DREAM\microservices\microservices-common-permission\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-permission ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-permission ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-permission ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=d:\\IOE-DREAM\\microservices\\microservices-common-permission\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-permission ---
+[INFO] skip non existing resourceDirectory d:\IOE-DREAM\microservices\microservices-common-permission\src\main\resources
+[INFO] skip non existing resourceDirectory d:\IOE-DREAM\microservices\microservices-common-permission\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-permission ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 30 source files with javac [debug release 17] to target\classes
+[INFO] 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/PermissionDataService.java:[139,17] 已在接口 net.lab1024.sa.common.permission.service.PermissionDataService中定义了方法 getUserPermissions(java.lang.Long)
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[518,24] 已在类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl中定义了方法 getUserPermissions(java.lang.Long)
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[68,5] 批注接口不适用于此类型的声明
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[4,46] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 程序包 net.lab1024.sa.common.permission.audit
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[4,51] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 程序包 net.lab1024.sa.common.permission.domain.dto
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[78,40] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[108,41] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[140,49] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[166,45] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[189,47] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[212,92] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[233,96] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[254,61] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[273,72] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[292,81] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[311,63] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[329,71] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[348,61] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[48,33] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[87,41] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[173,51] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[204,17] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[309,45] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[347,40] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[362,36] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[450,35] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[492,34] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/aspect/PermissionParameterResolver.java:[339,12] 找不到符号
+  符号:   类 Set
+  位置: 类 net.lab1024.sa.common.permission.aspect.PermissionParameterResolver
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditAspect.java:[6,51] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 程序包 net.lab1024.sa.common.permission.domain.dto
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditAspect.java:[9,37] 程序包net.lab1024.sa.common.service不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditAspect.java:[55,13] 找不到符号
+  符号:   类 AuthService
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditAspect
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditAspect.java:[146,13] 找不到符号
+  符号:   类 PermissionAuditDTO
+  位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditAspect
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/monitor/PermissionPerformanceMonitor.java:[7,46] 程序包net.lab1024.sa.common.permission.cache不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/optimize/PermissionPerformanceOptimizer.java:[4,46] 程序包net.lab1024.sa.common.permission.cache不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/optimize/PermissionPerformanceOptimizer.java:[55,13] 找不到符号
+  符号:   类 UnifiedCacheManager
+  位置: 类 net.lab1024.sa.common.permission.optimize.PermissionPerformanceOptimizer
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/monitor/PermissionPerformanceMonitor.java:[44,13] 找不到符号
+  符号:   类 UnifiedCacheManager
+  位置: 类 net.lab1024.sa.common.permission.monitor.PermissionPerformanceMonitor
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/manager/impl/PermissionCacheManagerImpl.java:[4,35] 找不到符号
+  符号:   类 UnifiedCacheManager
+  位置: 程序包 net.lab1024.sa.common.cache
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/manager/impl/PermissionCacheManagerImpl.java:[37,19] 找不到符号
+  符号:   类 UnifiedCacheManager
+  位置: 类 net.lab1024.sa.common.permission.manager.impl.PermissionCacheManagerImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/manager/impl/PermissionCacheManagerImpl.java:[53,39] 找不到符号
+  符号:   类 UnifiedCacheManager
+  位置: 类 net.lab1024.sa.common.permission.manager.impl.PermissionCacheManagerImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/manager/impl/PermissionCacheManagerImpl.java:[61,39] 找不到符号
+  符号:   类 UnifiedCacheManager
+  位置: 类 net.lab1024.sa.common.permission.manager.impl.PermissionCacheManagerImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[9,46] 程序包net.lab1024.sa.common.organization.dao不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[10,46] 程序包net.lab1024.sa.common.organization.dao不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[11,46] 程序包net.lab1024.sa.common.organization.dao不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[12,46] 程序包net.lab1024.sa.common.organization.dao不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[13,49] 程序包net.lab1024.sa.common.organization.entity不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[14,49] 程序包net.lab1024.sa.common.organization.entity不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[15,49] 程序包net.lab1024.sa.common.organization.entity不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[16,49] 程序包net.lab1024.sa.common.organization.entity不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[17,37] 程序包net.lab1024.sa.common.service不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[52,13] 找不到符号
+  符号:   类 UserDao
+  位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[55,13] 找不到符号
+  符号:   类 MenuDao
+  位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[58,13] 找不到符号
+  符号:   类 RoleDao
+  位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[61,13] 找不到符号
+  符号:   类 PermissionDao
+  位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[73,13] 找不到符号
+  符号:   类 AuthService
+  位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[643,56] 找不到符号
+  符号:   类 MenuEntity
+  位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[683,39] 找不到符号
+  符号:   类 MenuEntity
+  位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[101,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[123,75] 找不到符号
+  符号:   方法 getThreshold()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule的变量 userFailureRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[131,50] 找不到符号
+  符号:   方法 getThreshold()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule的变量 ipAbnormalRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[146,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[160,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[160,51] 找不到符号
+  符号:   方法 getMessage()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[213,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[221,98] 找不到符号
+  符号:   方法 getThreshold()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[234,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[242,100] 找不到符号
+  符号:   方法 getThreshold()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[255,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[274,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[293,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[312,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[330,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[349,48] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[370,63] 找不到符号
+  符号:   方法 getAlertId()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[388,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[389,27] 找不到符号
+  符号:   方法 getAlertType()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[389,49] 找不到符号
+  符号:   方法 getSeverity()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[389,70] 找不到符号
+  符号:   方法 getUserId()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[389,89] 找不到符号
+  符号:   方法 getMessage()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[392,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[402,26] 找不到符号
+  符号:   方法 getSeverity()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[424,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[433,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[433,47] 找不到符号
+  符号:   方法 getMessage()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[441,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[441,47] 找不到符号
+  符号:   方法 getMessage()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[449,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[449,47] 找不到符号
+  符号:   方法 getMessage()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[458,65] 找不到符号
+  符号:   方法 getAlertType()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[459,65] 找不到符号
+  符号:   方法 getSeverity()
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[463,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[472,59] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[484,58] 找不到符号
+  符号:   方法 builder()
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[495,9] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[519,13] 找不到符号
+  符号:   变量 log
+  位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[621,30] 找不到符号
+  符号:   方法 setUserFailureAlerts(java.lang.Long)
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[623,30] 找不到符号
+  符号:   方法 setIpAbnormalAlerts(java.lang.Long)
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[625,30] 找不到符号
+  符号:   方法 setCriticalAlerts(java.lang.Long)
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[627,30] 找不到符号
+  符号:   方法 setHighAlerts(java.lang.Long)
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[629,30] 找不到符号
+  符号:   方法 setMediumAlerts(java.lang.Long)
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[631,30] 找不到符号
+  符号:   方法 setLowAlerts(java.lang.Long)
+  位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.860 s
+[INFO] Finished at: 2025-12-17T13:32:48+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project microservices-common-permission: Compilation failure: Compilation failure: 
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/PermissionDataService.java:[139,17] 已在接口 net.lab1024.sa.common.permission.service.PermissionDataService中定义了方法 getUserPermissions(java.lang.Long)
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[518,24] 已在类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl中定义了方法 getUserPermissions(java.lang.Long)
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[68,5] 批注接口不适用于此类型的声明
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[4,46] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 程序包 net.lab1024.sa.common.permission.audit
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[4,51] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 程序包 net.lab1024.sa.common.permission.domain.dto
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[78,40] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[108,41] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[140,49] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[166,45] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[189,47] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[212,92] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[233,96] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[254,61] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[273,72] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[292,81] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[311,63] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[329,71] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[348,61] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[48,33] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[87,41] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[173,51] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[204,17] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[309,45] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[347,40] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[362,36] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[450,35] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditLogger.java:[492,34] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditLogger
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/aspect/PermissionParameterResolver.java:[339,12] 找不到符号
+[ERROR]   符号:   类 Set
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.aspect.PermissionParameterResolver
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditAspect.java:[6,51] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 程序包 net.lab1024.sa.common.permission.domain.dto
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditAspect.java:[9,37] 程序包net.lab1024.sa.common.service不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditAspect.java:[55,13] 找不到符号
+[ERROR]   符号:   类 AuthService
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditAspect
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/audit/PermissionAuditAspect.java:[146,13] 找不到符号
+[ERROR]   符号:   类 PermissionAuditDTO
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.audit.PermissionAuditAspect
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/monitor/PermissionPerformanceMonitor.java:[7,46] 程序包net.lab1024.sa.common.permission.cache不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/optimize/PermissionPerformanceOptimizer.java:[4,46] 程序包net.lab1024.sa.common.permission.cache不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/optimize/PermissionPerformanceOptimizer.java:[55,13] 找不到符号
+[ERROR]   符号:   类 UnifiedCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.optimize.PermissionPerformanceOptimizer
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/monitor/PermissionPerformanceMonitor.java:[44,13] 找不到符号
+[ERROR]   符号:   类 UnifiedCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.monitor.PermissionPerformanceMonitor
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/manager/impl/PermissionCacheManagerImpl.java:[4,35] 找不到符号
+[ERROR]   符号:   类 UnifiedCacheManager
+[ERROR]   位置: 程序包 net.lab1024.sa.common.cache
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/manager/impl/PermissionCacheManagerImpl.java:[37,19] 找不到符号
+[ERROR]   符号:   类 UnifiedCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.manager.impl.PermissionCacheManagerImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/manager/impl/PermissionCacheManagerImpl.java:[53,39] 找不到符号
+[ERROR]   符号:   类 UnifiedCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.manager.impl.PermissionCacheManagerImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/manager/impl/PermissionCacheManagerImpl.java:[61,39] 找不到符号
+[ERROR]   符号:   类 UnifiedCacheManager
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.manager.impl.PermissionCacheManagerImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[9,46] 程序包net.lab1024.sa.common.organization.dao不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[10,46] 程序包net.lab1024.sa.common.organization.dao不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[11,46] 程序包net.lab1024.sa.common.organization.dao不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[12,46] 程序包net.lab1024.sa.common.organization.dao不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[13,49] 程序包net.lab1024.sa.common.organization.entity不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[14,49] 程序包net.lab1024.sa.common.organization.entity不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[15,49] 程序包net.lab1024.sa.common.organization.entity不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[16,49] 程序包net.lab1024.sa.common.organization.entity不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[17,37] 程序包net.lab1024.sa.common.service不存在
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[52,13] 找不到符号
+[ERROR]   符号:   类 UserDao
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[55,13] 找不到符号
+[ERROR]   符号:   类 MenuDao
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[58,13] 找不到符号
+[ERROR]   符号:   类 RoleDao
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[61,13] 找不到符号
+[ERROR]   符号:   类 PermissionDao
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[73,13] 找不到符号
+[ERROR]   符号:   类 AuthService
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[643,56] 找不到符号
+[ERROR]   符号:   类 MenuEntity
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/service/impl/PermissionDataServiceImpl.java:[683,39] 找不到符号
+[ERROR]   符号:   类 MenuEntity
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.service.impl.PermissionDataServiceImpl
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[101,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[123,75] 找不到符号
+[ERROR]   符号:   方法 getThreshold()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule的变量 userFailureRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[131,50] 找不到符号
+[ERROR]   符号:   方法 getThreshold()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule的变量 ipAbnormalRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[146,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[160,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[160,51] 找不到符号
+[ERROR]   符号:   方法 getMessage()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[213,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[221,98] 找不到符号
+[ERROR]   符号:   方法 getThreshold()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[234,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[242,100] 找不到符号
+[ERROR]   符号:   方法 getThreshold()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[255,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[274,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[293,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[312,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[330,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[349,48] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[370,63] 找不到符号
+[ERROR]   符号:   方法 getAlertId()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[388,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[389,27] 找不到符号
+[ERROR]   符号:   方法 getAlertType()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[389,49] 找不到符号
+[ERROR]   符号:   方法 getSeverity()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[389,70] 找不到符号
+[ERROR]   符号:   方法 getUserId()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[389,89] 找不到符号
+[ERROR]   符号:   方法 getMessage()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[392,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[402,26] 找不到符号
+[ERROR]   符号:   方法 getSeverity()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[424,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[433,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[433,47] 找不到符号
+[ERROR]   符号:   方法 getMessage()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[441,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[441,47] 找不到符号
+[ERROR]   符号:   方法 getMessage()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[449,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[449,47] 找不到符号
+[ERROR]   符号:   方法 getMessage()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[458,65] 找不到符号
+[ERROR]   符号:   方法 getAlertType()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[459,65] 找不到符号
+[ERROR]   符号:   方法 getSeverity()
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.PermissionAlert的变量 alert
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[463,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[472,59] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[484,58] 找不到符号
+[ERROR]   符号:   方法 builder()
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertRule
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[495,9] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[519,13] 找不到符号
+[ERROR]   符号:   变量 log
+[ERROR]   位置: 类 net.lab1024.sa.common.permission.alert.PermissionAlertManager
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[621,30] 找不到符号
+[ERROR]   符号:   方法 setUserFailureAlerts(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[623,30] 找不到符号
+[ERROR]   符号:   方法 setIpAbnormalAlerts(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[625,30] 找不到符号
+[ERROR]   符号:   方法 setCriticalAlerts(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[627,30] 找不到符号
+[ERROR]   符号:   方法 setHighAlerts(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[629,30] 找不到符号
+[ERROR]   符号:   方法 setMediumAlerts(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] /d:/IOE-DREAM/microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/alert/PermissionAlertManager.java:[631,30] 找不到符号
+[ERROR]   符号:   方法 setLowAlerts(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.common.permission.alert.PermissionAlertManager.AlertStatistics的变量 stats
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

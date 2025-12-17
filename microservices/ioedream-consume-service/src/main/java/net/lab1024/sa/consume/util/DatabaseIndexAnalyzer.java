@@ -24,7 +24,7 @@ import net.lab1024.sa.common.exception.SystemException;
  * 数据库索引分析工具类
  * 提供数据库索引分析、性能监控和优化建议功能
  * 严格遵循CLAUDE.md规范：
- * - 使用@Resource依赖注入（禁止@Autowired）
+ * - 使用@Resource依赖注入（符合架构规范）
  * - 完整的异常处理和日志记录
  * - 企业级代码质量标准
  *

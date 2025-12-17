@@ -190,9 +190,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4G
+          memory: 2.5G
+          cpus: '2'
         reservations:
-          memory: 1G
+          memory: 1.5G
+          cpus: '1'
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
@@ -222,7 +224,7 @@ services:
       - MYSQL_USERNAME=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - TZ=Asia/Shanghai
-      - JVM_OPTS=-Xms1g -Xmx2g -XX:+UseG1GC
+      - JVM_OPTS=-server -Xms512m -Xmx1g -Xmn256m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+HeapDumpOnOutOfMemoryError
     ports:
       - "${COMMON_SERVICE_PORT:-8088}:8088"
     depends_on:
@@ -238,9 +240,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 3G
+          memory: 1.5G
+          cpus: '1.5'
         reservations:
-          memory: 1G
+          memory: 768M
+          cpus: '0.5'
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8088/actuator/health"]
       interval: 30s
@@ -270,7 +274,7 @@ services:
       - MYSQL_USERNAME=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - TZ=Asia/Shanghai
-      - JVM_OPTS=-Xms1g -Xmx2g -XX:+UseG1GC
+      - JVM_OPTS=-server -Xms256m -Xmx512m -XX:MaxDirectMemorySize=256m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC -XX:MaxGCPauseMillis=150 -XX:+HeapDumpOnOutOfMemoryError
     ports:
       - "${DEVICE_COMM_PORT:-8087}:8087"
     depends_on:

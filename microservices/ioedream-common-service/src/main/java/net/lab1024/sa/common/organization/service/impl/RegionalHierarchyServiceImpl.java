@@ -6,7 +6,7 @@ import net.lab1024.sa.common.organization.service.RegionalHierarchyService;
 import net.lab1024.sa.common.organization.manager.RegionalHierarchyManager;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.dao.AreaDao;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

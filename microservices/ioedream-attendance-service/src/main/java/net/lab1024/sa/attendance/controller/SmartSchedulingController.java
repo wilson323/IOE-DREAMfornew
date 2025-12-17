@@ -15,7 +15,7 @@ import net.lab1024.sa.attendance.domain.vo.ScheduleRecordVO;
 import net.lab1024.sa.attendance.domain.vo.ScheduleTemplateVO;
 import net.lab1024.sa.attendance.domain.vo.SchedulingStatisticsVO;
 import net.lab1024.sa.attendance.service.ScheduleService;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.format.annotation.DateTimeFormat;

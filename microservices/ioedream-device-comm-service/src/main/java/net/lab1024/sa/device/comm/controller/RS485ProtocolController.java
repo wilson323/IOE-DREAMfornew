@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.device.comm.service.RS485ProtocolService;
 import net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl;
 import org.springframework.web.bind.annotation.*;

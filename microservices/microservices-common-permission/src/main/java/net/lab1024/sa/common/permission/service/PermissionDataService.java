@@ -131,14 +131,6 @@ public interface PermissionDataService {
     boolean hasRole(Long userId, String role);
 
     /**
-     * 获取用户所有权限
-     *
-     * @param userId 用户ID
-     * @return 权限集合
-     */
-    Set<String> getUserPermissions(Long userId);
-
-    /**
      * 获取用户所有角色
      *
      * @param userId 用户ID

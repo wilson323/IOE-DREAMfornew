@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.mobile.AttendanceMobileService;
 import net.lab1024.sa.attendance.mobile.model.*;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;

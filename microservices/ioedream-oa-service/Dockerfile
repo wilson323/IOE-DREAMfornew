@@ -16,7 +16,8 @@ EXPOSE 8089
 HEALTHCHECK --interval=30s --timeout=3s --start-period=90s --retries=3 \
   CMD curl -f http://localhost:8089/actuator/health || exit 1
 
-ENV JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC"
+# 启动配置 - OA服务JVM优化
+ENV JAVA_OPTS="-server -Xms512m -Xmx1g -Xmn256m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/app/logs/heapdump/"
 ENV SPRING_PROFILES_ACTIVE=docker
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

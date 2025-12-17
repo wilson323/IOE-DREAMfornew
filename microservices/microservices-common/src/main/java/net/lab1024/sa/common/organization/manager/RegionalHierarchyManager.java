@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.dao.AreaDao;
-import net.lab1024.sa.common.response.PageResult;
-import org.springframework.stereotype.Component;
+import net.lab1024.sa.common.dto.PageResult;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
  * @since 2025-01-16
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class RegionalHierarchyManager {
 

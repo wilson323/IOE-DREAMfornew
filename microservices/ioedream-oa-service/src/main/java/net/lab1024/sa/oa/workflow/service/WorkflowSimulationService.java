@@ -1,6 +1,6 @@
 package net.lab1024.sa.oa.workflow.service;
 
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.oa.workflow.domain.form.WorkflowSimulationForm;
 import net.lab1024.sa.oa.workflow.domain.vo.WorkflowSimulationResultVO;
 import net.lab1024.sa.oa.workflow.domain.vo.WorkflowPathAnalysisVO;

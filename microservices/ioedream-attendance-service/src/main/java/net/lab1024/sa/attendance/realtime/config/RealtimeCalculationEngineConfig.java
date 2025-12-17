@@ -6,11 +6,10 @@ import net.lab1024.sa.attendance.realtime.event.impl.AttendanceEventProcessor;
 import net.lab1024.sa.attendance.realtime.impl.RealtimeCalculationEngineImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 实时计算引擎配置类
@@ -47,88 +46,67 @@ public class RealtimeCalculationEngineConfig {
     }
 
     /**
-     * 事件处理线程池
+     * 事件处理线程池 - 使用ThreadPoolTaskExecutor
      *
      * @return 事件处理线程池
      */
     @Bean(name = "eventProcessingExecutor")
-    public ExecutorService eventProcessingExecutor() {
-        ThreadFactory threadFactory = new ThreadFactory() {
-            private int counter = 0;
-
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName("realtime-event-processor-" + (++counter));
-                thread.setDaemon(false);
-                thread.setPriority(Thread.NORM_PRIORITY);
-                return thread;
-            }
-        };
-
+    public ThreadPoolTaskExecutor eventProcessingExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        
         // 核心线程数：CPU核心数
         int corePoolSize = Runtime.getRuntime().availableProcessors();
         // 最大线程数：CPU核心数 * 2
         int maximumPoolSize = corePoolSize * 2;
-        // 队列容量：1000
+        // 队列容量
         int queueCapacity = 1000;
-
-        return Executors.newFixedThreadPool(corePoolSize, threadFactory);
+        
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maximumPoolSize);
+        executor.setQueueCapacity(queueCapacity);
+        executor.setThreadNamePrefix("realtime-event-processor-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(60);
+        executor.initialize();
+        
+        return executor;
     }
 
     /**
-     * 计算任务线程池
+     * 计算任务线程池 - 使用ThreadPoolTaskExecutor
      *
      * @return 计算任务线程池
      */
     @Bean(name = "calculationExecutor")
-    public ExecutorService calculationExecutor() {
-        ThreadFactory threadFactory = new ThreadFactory() {
-            private int counter = 0;
-
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName("realtime-calculation-" + (++counter));
-                thread.setDaemon(false);
-                thread.setPriority(Thread.NORM_PRIORITY + 1); // 计算任务优先级稍高
-                return thread;
-            }
-        };
-
+    public ThreadPoolTaskExecutor calculationExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        
         // 核心线程数：CPU核心数 / 2（计算密集型）
         int corePoolSize = Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
         // 最大线程数：CPU核心数
         int maximumPoolSize = Runtime.getRuntime().availableProcessors();
-
-        return Executors.newFixedThreadPool(corePoolSize, threadFactory);
+        
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maximumPoolSize);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("realtime-calculation-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(60);
+        executor.initialize();
+        
+        return executor;
     }
 
     /**
-     * 定时任务线程池
+     * 定时任务线程池 - 使用ThreadPoolTaskExecutor(由于需要ScheduledExecutorService功能，这里可能依然使用Executors或使用统一的scheduledExecutor)
+     * 注：对于ScheduledExecutorService，可以使用统一配置中的scheduledExecutor Bean
      *
      * @return 定时任务线程池
      */
-    @Bean(name = "scheduledExecutor")
-    public ScheduledExecutorService scheduledExecutor() {
-        ThreadFactory threadFactory = new ThreadFactory() {
-            private int counter = 0;
-
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName("realtime-scheduler-" + (++counter));
-                thread.setDaemon(false);
-                thread.setPriority(Thread.NORM_PRIORITY);
-                return thread;
-            }
-        };
-
-        // 核心线程数：2（主要用于定时清理、缓存刷新等任务）
-        int corePoolSize = 2;
-
-        return Executors.newScheduledThreadPool(corePoolSize, threadFactory);
-    }
+    // 不再在这里创建,使用统一配置中的scheduledExecutor
+    // 如果确实需要，可以通过@Resource(name="scheduledExecutor")注入
 
     /**
      * 实时计算引擎参数配置Bean

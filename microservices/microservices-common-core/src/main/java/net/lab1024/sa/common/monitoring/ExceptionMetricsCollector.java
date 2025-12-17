@@ -84,15 +84,15 @@ public class ExceptionMetricsCollector {
 
         // 内存使用监控 - 修复Micrometer Gauge API使用方式
         // 正确的Gauge注册方式：使用监控对象和方法引用
-        this.memoryUsageGauge = Gauge.builder("jvm.memory.exception.usage")
+        this.memoryUsageGauge = Gauge.builder("jvm.memory.exception.usage", this, ExceptionMetricsCollector::getMemoryUsage)
                 .description("异常处理内存使用量(MB)")
                 .tag("application", getApplicationName())
-                .register(meterRegistry, this, ExceptionMetricsCollector::getMemoryUsage);
+                .register(meterRegistry);
 
-        this.cacheSizeGauge = Gauge.builder("exception.cache.size")
+        this.cacheSizeGauge = Gauge.builder("exception.cache.size", this, ExceptionMetricsCollector::getCacheSize)
                 .description("异常缓存大小")
                 .tag("application", getApplicationName())
-                .register(meterRegistry, this, ExceptionMetricsCollector::getCacheSize);
+                .register(meterRegistry);
 
         log.info("ExceptionMetricsCollector初始化完成，应用: {}", getApplicationName());
     }

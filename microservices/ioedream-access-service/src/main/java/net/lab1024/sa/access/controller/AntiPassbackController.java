@@ -9,7 +9,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.service.AntiPassbackService;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.validation.annotation.Validated;

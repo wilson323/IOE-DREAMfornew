@@ -2,7 +2,7 @@ package net.lab1024.sa.video.service;
 
 import io.github.resilience4j.annotation.CircuitBreaker;
 import io.github.resilience4j.annotation.TimeLimiter;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;

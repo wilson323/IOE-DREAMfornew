@@ -7,7 +7,6 @@ import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext;
 import net.lab1024.sa.attendance.engine.rule.model.RuleEvaluationResult;
 
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
 import java.time.Duration;
@@ -27,14 +26,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 2025-12-16
  */
 @Slf4j
-@Component("ruleCacheManager")
 public class RuleCacheManagerImpl implements RuleCacheManager {
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
-
-    @Resource
-    private ObjectMapper objectMapper;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     // L1本地缓存
     private final Map<String, RuleEvaluationResult> localCache = new ConcurrentHashMap<>();
@@ -55,6 +50,14 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
     private static final String CACHE_PREFIX = "attendance:rule:result:";
     private static final String USER_CACHE_PREFIX = "attendance:rule:user:";
     private static final String DEPT_CACHE_PREFIX = "attendance:rule:dept:";
+
+    /**
+     * 构造函数注入依赖
+     */
+    public RuleCacheManagerImpl(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
+        this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * 缓存规则评估结果

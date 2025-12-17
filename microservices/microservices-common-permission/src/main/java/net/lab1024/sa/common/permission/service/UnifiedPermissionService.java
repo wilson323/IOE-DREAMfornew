@@ -1,5 +1,10 @@
 package net.lab1024.sa.common.permission.service;
 
+import net.lab1024.sa.common.permission.domain.dto.PermissionValidationResult;
+import net.lab1024.sa.common.permission.domain.dto.PermissionValidationStats;
+import net.lab1024.sa.common.permission.domain.enums.PermissionCondition;
+import net.lab1024.sa.common.permission.domain.enums.LogicOperator;
+
 import java.util.Set;
 
 /**

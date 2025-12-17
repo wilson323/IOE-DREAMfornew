@@ -1,0 +1,129 @@
+# =====================================================
+# IOE-DREAM 统一缓存配置
+# 三级缓存优化：热数据/冷数据/临时数据
+# =====================================================
+
+spring:
+  # ===========================================
+  # Caffeine本地缓存配置
+  # ===========================================
+  caffeine:
+    # 默认配置规格
+    spec: maximumSize=2000,expireAfterWrite=600s,expireAfterAccess=300s,recordStats=true,softValues=true
+    # 默认缓存名称
+    cache-names: 
+      - user
+      - dict
+      - menu
+      - permission
+      - config
+      - device
+      - area
+
+# ===========================================
+# 缓存分类配置
+# ===========================================
+cache:
+  # 热数据缓存配置（用户、权限、菜单）
+  # 特点：访问频繁、数据量中等、更新较频繁
+  hot-data:
+    maximum-size: 5000              # 最大缓存5000条
+    expire-after-write: 1800s       # 写入后30分钟过期
+    expire-after-access: 600s       # 访问后10分钟过期
+    soft-values: true               # 使用软引用,允许GC回收
+    record-stats: true              # 启用统计
+    
+  # 冷数据缓存配置（字典、系统配置）  
+  # 特点：访问频率低、数据量小、更新很少
+  cold-data:
+    maximum-size: 1000              # 最大缓存1000条
+    expire-after-write: 3600s       # 写入后1小时过期
+    expire-after-access: 1800s      # 访问后30分钟过期
+    weak-keys: true                 # 使用弱引用键
+    soft-values: true               # 使用软引用值
+    record-stats: true              # 启用统计
+    
+  # 临时数据缓存配置（验证码、临时令牌）
+  # 特点：访问频繁但生命周期短、数据量小
+  temp-data:
+    maximum-size: 500               # 最大缓存500条
+    expire-after-write: 300s        # 写入后5分钟过期
+    soft-values: true               # 使用软引用值
+    record-stats: true              # 启用统计
+
+  # ===========================================
+  # 缓存监控配置
+  # ===========================================
+  monitoring:
+    enabled: true
+    # 统计信息收集间隔
+    stats-interval: 60s
+    # 缓存命中率告警阈值
+    hit-rate-threshold: 0.8
+    # 缓存大小告警阈值
+    size-threshold: 0.9
+    # 是否启用实时监控
+    real-time: true
+
+---
+# ===========================================
+# 开发环境配置
+# ===========================================
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+cache:
+  hot-data:
+    maximum-size: 1000              # 开发环境降低配置
+    expire-after-write: 900s        # 15分钟
+    expire-after-access: 300s       # 5分钟
+  cold-data:
+    maximum-size: 500
+    expire-after-write: 1800s       # 30分钟
+  temp-data:
+    maximum-size: 200
+    expire-after-write: 180s        # 3分钟
+
+---
+# ===========================================
+# 测试环境配置
+# ===========================================
+spring:
+  config:
+    activate:
+      on-profile: test
+
+cache:
+  hot-data:
+    maximum-size: 3000
+    expire-after-write: 1200s       # 20分钟
+    expire-after-access: 480s       # 8分钟
+  cold-data:
+    maximum-size: 800
+    expire-after-write: 2700s       # 45分钟
+  temp-data:
+    maximum-size: 300
+    expire-after-write: 240s        # 4分钟
+
+---
+# ===========================================
+# 生产环境配置
+# ===========================================
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+cache:
+  hot-data:
+    maximum-size: 5000
+    expire-after-write: 1800s       # 30分钟
+    expire-after-access: 600s       # 10分钟
+  cold-data:
+    maximum-size: 1000
+    expire-after-write: 3600s       # 1小时
+  temp-data:
+    maximum-size: 500
+    expire-after-write: 300s        # 5分钟

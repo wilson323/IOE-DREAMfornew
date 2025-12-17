@@ -3,7 +3,7 @@ package net.lab1024.sa.oa.workflow.service.impl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.oa.workflow.domain.form.WorkflowBatchOperationForm;
 import net.lab1024.sa.oa.workflow.domain.vo.WorkflowBatchOperationResultVO;
 import net.lab1024.sa.oa.workflow.service.WorkflowBatchOperationService;

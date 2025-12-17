@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +41,9 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
     // 边缘安全设备管理
     private final Map<String, EdgeDevice> securityDevices = new ConcurrentHashMap<>();
 
-    // 线程池
-    private final ExecutorService securityTaskExecutor;
+    // 线程池 - 使用统一配置的异步线程池
+    @Resource(name = "asyncExecutor")
+    private ThreadPoolTaskExecutor securityTaskExecutor;
 
     // 边缘视频处理器（复用）
     private final EdgeVideoProcessor edgeVideoProcessor;
@@ -54,8 +55,6 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
      * 构造函数
      */
     public EdgeSecurityServiceImpl() {
-        this.securityTaskExecutor = Executors.newFixedThreadPool(20);
-
         // 初始化边缘配置
         this.edgeConfig = createEdgeSecurityConfig();
 
@@ -65,7 +64,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
             new EdgeCommunicationManager(edgeConfig)
         );
 
-        log.info("[边缘安全服务] 初始化完成，线程池大小={}", 20);
+        log.info("[边缘安全服务] 初始化完成，使用统一异步线程池");
     }
 
     // ==================== 核心推理接口实现 ====================

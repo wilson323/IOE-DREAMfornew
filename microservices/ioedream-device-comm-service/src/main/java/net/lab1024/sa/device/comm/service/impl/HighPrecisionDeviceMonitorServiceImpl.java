@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.device.comm.monitor.HighPrecisionDeviceMonitor;
 import net.lab1024.sa.device.comm.service.HighPrecisionDeviceMonitorService;
 import org.springframework.stereotype.Service;

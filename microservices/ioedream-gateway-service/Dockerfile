@@ -21,8 +21,8 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=90s --retries=3 \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
-# 启动配置
-ENV JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC"
+# 启动配置 - 网关服务JVM优化
+ENV JAVA_OPTS="-server -Xms1g -Xmx2g -Xmn512m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:G1HeapRegionSize=16m -XX:InitiatingHeapOccupancyPercent=45 -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/app/logs/heapdump/ -XX:+PrintGCDetails -Xloggc:/app/logs/gc/gc.log"
 ENV SPRING_PROFILES_ACTIVE=docker
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

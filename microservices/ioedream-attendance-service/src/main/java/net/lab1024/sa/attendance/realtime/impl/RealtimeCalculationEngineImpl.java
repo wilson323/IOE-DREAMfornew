@@ -1,5 +1,6 @@
 package net.lab1024.sa.attendance.realtime.impl;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.realtime.RealtimeCalculationEngine;
@@ -8,6 +9,7 @@ import net.lab1024.sa.attendance.realtime.event.CalculationTriggerEvent;
 import net.lab1024.sa.attendance.realtime.event.EventProcessor;
 import net.lab1024.sa.attendance.realtime.event.impl.AttendanceEventProcessor;
 import net.lab1024.sa.attendance.realtime.model.*;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -33,11 +35,13 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
     // 引擎状态
     private volatile EngineStatus status = EngineStatus.STOPPED;
 
-    // 事件处理线程池
-    private ExecutorService eventProcessingExecutor;
+    // 事件处理线程池 - 使用统一配置的线程池
+    @Resource(name = "eventProcessingExecutor")
+    private ThreadPoolTaskExecutor eventProcessingExecutor;
 
-    // 计算线程池
-    private ExecutorService calculationExecutor;
+    // 计算线程池 - 使用统一配置的线程池
+    @Resource(name = "calculationExecutor")
+    private ThreadPoolTaskExecutor calculationExecutor;
 
     // 事件处理器
     private final List<EventProcessor> eventProcessors = new CopyOnWriteArrayList<>();
@@ -68,20 +72,8 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
                         .build();
             }
 
-            // 1. 初始化线程池
-            eventProcessingExecutor = Executors.newFixedThreadPool(
-                    10, r -> {
-                        Thread t = new Thread(r, "EventProcessing-" + System.currentTimeMillis());
-                        t.setDaemon(true);
-                        return t;
-                    });
-
-            calculationExecutor = Executors.newFixedThreadPool(
-                    5, r -> {
-                        Thread t = new Thread(r, "Calculation-" + System.currentTimeMillis());
-                        t.setDaemon(true);
-                        return t;
-                    });
+            // 1. 初始化线程池(已通过@Resource注入,无需手动创建)
+            // eventProcessingExecutor和calculationExecutor已经通过Spring统一管理
 
             // 2. 初始化事件处理器
             initializeEventProcessors();
@@ -131,21 +123,11 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
             // 1. 停止接收新的事件
             // TODO: 实现事件接收停止逻辑
 
-            // 2. 等待当前事件处理完成
-            if (eventProcessingExecutor != null) {
-                eventProcessingExecutor.shutdown();
-                if (!eventProcessingExecutor.awaitTermination(30, TimeUnit.SECONDS)) {
-                    eventProcessingExecutor.shutdownNow();
-                }
-            }
+            // 2. 等待当前事件处理完成(使用Spring管理的线程池,由Spring负责shutdown)
+            // 注：由于ThreadPoolTaskExecutor已配置了setWaitForTasksToCompleteOnShutdown(true)，
+            // Spring容器关闭时会自动等待任务完成,这里无需手动shutdown
 
-            // 3. 停止计算线程
-            if (calculationExecutor != null) {
-                calculationExecutor.shutdown();
-                if (!calculationExecutor.awaitTermination(30, TimeUnit.SECONDS)) {
-                    calculationExecutor.shutdownNow();
-                }
-            }
+            // 3. 停止计算线程(由Spring统一管理)
 
             // 4. 停止事件处理器
             for (EventProcessor processor : eventProcessors) {

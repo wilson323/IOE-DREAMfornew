@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.page.PageParam;
 import net.lab1024.sa.common.page.PageResult;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.form.VideoBehaviorAnalysisForm;
 import net.lab1024.sa.video.domain.form.VideoBehaviorPatternForm;
 import net.lab1024.sa.video.domain.vo.VideoBehaviorVO;

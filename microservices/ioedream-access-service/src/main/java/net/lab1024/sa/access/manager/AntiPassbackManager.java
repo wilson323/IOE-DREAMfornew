@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import net.lab1024.sa.access.dao.AccessRecordDao;
@@ -30,7 +29,8 @@ import net.lab1024.sa.common.organization.service.DeviceService;
  * 严格遵循CLAUDE.md规范：
  * - 使用Manager后缀标识业务编排层
  * - 处理复杂业务流程和数据组装
- * - 通过构造函数注入依赖，不使用Spring注解
+ * - 纯Java类，不使用Spring注解（@Component, @Service等）
+ * - 通过构造函数注入依赖
  * - 集成Redis缓存提升性能
  * - 提供统计分析和决策支持
  * </p>
@@ -47,7 +47,6 @@ import net.lab1024.sa.common.organization.service.DeviceService;
  * @since 2025-01-30
  */
 @Slf4j
-@Component
 public class AntiPassbackManager {
 
     private final AccessRecordDao accessRecordDao;

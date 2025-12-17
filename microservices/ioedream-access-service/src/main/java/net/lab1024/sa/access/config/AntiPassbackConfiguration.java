@@ -9,6 +9,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import net.lab1024.sa.access.dao.AccessRecordDao;
+import net.lab1024.sa.access.manager.AntiPassbackManager;
+import net.lab1024.sa.common.organization.service.AreaService;
+import net.lab1024.sa.common.organization.service.DeviceService;
+
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.ratelimiter.RateLimiter;
@@ -105,5 +110,23 @@ public class AntiPassbackConfiguration {
                 .timeoutDuration(Duration.ofSeconds(10))  // 超时时间10秒
                 .cancelRunningFuture(true)         // 取消运行中的Future
                 .build());
+    }
+
+    /**
+     * 注册反潜回管理器为Spring Bean
+     *
+     * @param accessRecordDao 访问记录DAO
+     * @param redisTemplate Redis模板
+     * @param deviceService 设备服务
+     * @param areaService 区域服务
+     * @return 反潜回管理器实例
+     */
+    @Bean
+    public AntiPassbackManager antiPassbackManager(
+            AccessRecordDao accessRecordDao,
+            RedisTemplate<String, Object> redisTemplate,
+            DeviceService deviceService,
+            AreaService areaService) {
+        return new AntiPassbackManager(accessRecordDao, redisTemplate, deviceService, areaService);
     }
 }

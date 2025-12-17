@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-// import org.springframework.stereotype.Repository; // 禁止使用@Repository注解
+// 已移除Repository导入，统一使用@Mapper注解
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -6,7 +6,7 @@ import net.lab1024.sa.common.visitor.entity.LogisticsReservationEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-// import org.springframework.stereotype.Repository; // 禁止使用@Repository注解
+// 已移除Repository导入，统一使用@Mapper注解
 
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;

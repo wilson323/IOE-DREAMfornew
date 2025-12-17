@@ -1,7 +1,7 @@
 package net.lab1024.sa.consume.service.engine;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.domain.form.consume.ConsumeRequestForm;
 import net.lab1024.sa.consume.domain.vo.consume.PaymentResultVO;
 import net.lab1024.sa.consume.domain.vo.consume.RefundResultVO;

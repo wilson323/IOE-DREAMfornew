@@ -660,8 +660,6 @@ public class PermissionAlertManager {
     /**
      * 告警规则配置
      */
-    @lombok.Data
-    @lombok.Builder
     public static class AlertRule {
         private String ruleId;
         private String ruleName;
@@ -672,13 +670,77 @@ public class PermissionAlertManager {
         private Boolean enabled;
         private String description;
         private Map<String, Object> parameters;
+
+        public AlertRule() {}
+
+        private AlertRule(Builder builder) {
+            this.ruleId = builder.ruleId;
+            this.ruleName = builder.ruleName;
+            this.alertType = builder.alertType;
+            this.threshold = builder.threshold;
+            this.timeWindow = builder.timeWindow;
+            this.severity = builder.severity;
+            this.enabled = builder.enabled;
+            this.description = builder.description;
+            this.parameters = builder.parameters;
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        // Getters
+        public String getRuleId() { return ruleId; }
+        public String getRuleName() { return ruleName; }
+        public String getAlertType() { return alertType; }
+        public Long getThreshold() { return threshold; }
+        public Integer getTimeWindow() { return timeWindow; }
+        public String getSeverity() { return severity; }
+        public Boolean getEnabled() { return enabled; }
+        public String getDescription() { return description; }
+        public Map<String, Object> getParameters() { return parameters; }
+
+        // Setters
+        public void setRuleId(String ruleId) { this.ruleId = ruleId; }
+        public void setRuleName(String ruleName) { this.ruleName = ruleName; }
+        public void setAlertType(String alertType) { this.alertType = alertType; }
+        public void setThreshold(Long threshold) { this.threshold = threshold; }
+        public void setTimeWindow(Integer timeWindow) { this.timeWindow = timeWindow; }
+        public void setSeverity(String severity) { this.severity = severity; }
+        public void setEnabled(Boolean enabled) { this.enabled = enabled; }
+        public void setDescription(String description) { this.description = description; }
+        public void setParameters(Map<String, Object> parameters) { this.parameters = parameters; }
+
+        public static class Builder {
+            private String ruleId;
+            private String ruleName;
+            private String alertType;
+            private Long threshold;
+            private Integer timeWindow;
+            private String severity;
+            private Boolean enabled;
+            private String description;
+            private Map<String, Object> parameters;
+
+            public Builder ruleId(String ruleId) { this.ruleId = ruleId; return this; }
+            public Builder ruleName(String ruleName) { this.ruleName = ruleName; return this; }
+            public Builder alertType(String alertType) { this.alertType = alertType; return this; }
+            public Builder threshold(Long threshold) { this.threshold = threshold; return this; }
+            public Builder timeWindow(Integer timeWindow) { this.timeWindow = timeWindow; return this; }
+            public Builder severity(String severity) { this.severity = severity; return this; }
+            public Builder enabled(Boolean enabled) { this.enabled = enabled; return this; }
+            public Builder description(String description) { this.description = description; return this; }
+            public Builder parameters(Map<String, Object> parameters) { this.parameters = parameters; return this; }
+
+            public AlertRule build() {
+                return new AlertRule(this);
+            }
+        }
     }
 
     /**
      * 权限告警实体
      */
-    @lombok.Data
-    @lombok.Builder
     public static class PermissionAlert {
         private String alertId;
         private Long userId;
@@ -693,12 +755,97 @@ public class PermissionAlertManager {
         private Map<String, Object> metadata;
         private LocalDateTime resolvedTime;
         private String resolvedBy;
+
+        public PermissionAlert() {}
+
+        private PermissionAlert(Builder builder) {
+            this.alertId = builder.alertId;
+            this.userId = builder.userId;
+            this.clientIp = builder.clientIp;
+            this.operation = builder.operation;
+            this.resource = builder.resource;
+            this.alertType = builder.alertType;
+            this.severity = builder.severity;
+            this.message = builder.message;
+            this.createTime = builder.createTime;
+            this.status = builder.status;
+            this.metadata = builder.metadata;
+            this.resolvedTime = builder.resolvedTime;
+            this.resolvedBy = builder.resolvedBy;
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        // Getters
+        public String getAlertId() { return alertId; }
+        public Long getUserId() { return userId; }
+        public String getClientIp() { return clientIp; }
+        public String getOperation() { return operation; }
+        public String getResource() { return resource; }
+        public String getAlertType() { return alertType; }
+        public String getSeverity() { return severity; }
+        public String getMessage() { return message; }
+        public LocalDateTime getCreateTime() { return createTime; }
+        public String getStatus() { return status; }
+        public Map<String, Object> getMetadata() { return metadata; }
+        public LocalDateTime getResolvedTime() { return resolvedTime; }
+        public String getResolvedBy() { return resolvedBy; }
+
+        // Setters
+        public void setAlertId(String alertId) { this.alertId = alertId; }
+        public void setUserId(Long userId) { this.userId = userId; }
+        public void setClientIp(String clientIp) { this.clientIp = clientIp; }
+        public void setOperation(String operation) { this.operation = operation; }
+        public void setResource(String resource) { this.resource = resource; }
+        public void setAlertType(String alertType) { this.alertType = alertType; }
+        public void setSeverity(String severity) { this.severity = severity; }
+        public void setMessage(String message) { this.message = message; }
+        public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
+        public void setStatus(String status) { this.status = status; }
+        public void setMetadata(Map<String, Object> metadata) { this.metadata = metadata; }
+        public void setResolvedTime(LocalDateTime resolvedTime) { this.resolvedTime = resolvedTime; }
+        public void setResolvedBy(String resolvedBy) { this.resolvedBy = resolvedBy; }
+
+        public static class Builder {
+            private String alertId;
+            private Long userId;
+            private String clientIp;
+            private String operation;
+            private String resource;
+            private String alertType;
+            private String severity;
+            private String message;
+            private LocalDateTime createTime;
+            private String status;
+            private Map<String, Object> metadata;
+            private LocalDateTime resolvedTime;
+            private String resolvedBy;
+
+            public Builder alertId(String alertId) { this.alertId = alertId; return this; }
+            public Builder userId(Long userId) { this.userId = userId; return this; }
+            public Builder clientIp(String clientIp) { this.clientIp = clientIp; return this; }
+            public Builder operation(String operation) { this.operation = operation; return this; }
+            public Builder resource(String resource) { this.resource = resource; return this; }
+            public Builder alertType(String alertType) { this.alertType = alertType; return this; }
+            public Builder severity(String severity) { this.severity = severity; return this; }
+            public Builder message(String message) { this.message = message; return this; }
+            public Builder createTime(LocalDateTime createTime) { this.createTime = createTime; return this; }
+            public Builder status(String status) { this.status = status; return this; }
+            public Builder metadata(Map<String, Object> metadata) { this.metadata = metadata; return this; }
+            public Builder resolvedTime(LocalDateTime resolvedTime) { this.resolvedTime = resolvedTime; return this; }
+            public Builder resolvedBy(String resolvedBy) { this.resolvedBy = resolvedBy; return this; }
+
+            public PermissionAlert build() {
+                return new PermissionAlert(this);
+            }
+        }
     }
 
     /**
      * 告警统计信息
      */
-    @lombok.Data
     public static class AlertStatistics {
         private Long totalAlerts = 0L;
         private Long activeAlerts = 0L;
@@ -709,5 +856,27 @@ public class PermissionAlertManager {
         private Long mediumAlerts = 0L;
         private Long lowAlerts = 0L;
         private LocalDateTime lastUpdateTime = LocalDateTime.now();
+
+        // Getters
+        public Long getTotalAlerts() { return totalAlerts; }
+        public Long getActiveAlerts() { return activeAlerts; }
+        public Long getUserFailureAlerts() { return userFailureAlerts; }
+        public Long getIpAbnormalAlerts() { return ipAbnormalAlerts; }
+        public Long getCriticalAlerts() { return criticalAlerts; }
+        public Long getHighAlerts() { return highAlerts; }
+        public Long getMediumAlerts() { return mediumAlerts; }
+        public Long getLowAlerts() { return lowAlerts; }
+        public LocalDateTime getLastUpdateTime() { return lastUpdateTime; }
+
+        // Setters
+        public void setTotalAlerts(Long totalAlerts) { this.totalAlerts = totalAlerts; }
+        public void setActiveAlerts(Long activeAlerts) { this.activeAlerts = activeAlerts; }
+        public void setUserFailureAlerts(Long userFailureAlerts) { this.userFailureAlerts = userFailureAlerts; }
+        public void setIpAbnormalAlerts(Long ipAbnormalAlerts) { this.ipAbnormalAlerts = ipAbnormalAlerts; }
+        public void setCriticalAlerts(Long criticalAlerts) { this.criticalAlerts = criticalAlerts; }
+        public void setHighAlerts(Long highAlerts) { this.highAlerts = highAlerts; }
+        public void setMediumAlerts(Long mediumAlerts) { this.mediumAlerts = mediumAlerts; }
+        public void setLowAlerts(Long lowAlerts) { this.lowAlerts = lowAlerts; }
+        public void setLastUpdateTime(LocalDateTime lastUpdateTime) { this.lastUpdateTime = lastUpdateTime; }
     }
 }

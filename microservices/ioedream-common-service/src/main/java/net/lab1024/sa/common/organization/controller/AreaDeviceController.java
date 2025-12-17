@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
-import net.lab1024.sa.common.organization.manager.AreaDeviceManager;
+// 已移除Manager层导入，Controller应只与Service层交互
 import net.lab1024.sa.common.organization.service.AreaDeviceService;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,11 +76,8 @@ public class AreaDeviceController {
 
     @PostMapping("/batch-add")
     @Operation(summary = "批量添加设备到区域", description = "批量将多个设备添加到指定区域")
-    public ResponseDTO<Integer> batchAddDevicesToArea(
-            @Parameter(description = "区域ID", required = true)
-            @RequestParam @NotNull Long areaId,
-            @RequestBody @Valid List<AreaDeviceManager.DeviceRequest> deviceRequests) {
-        return ResponseDTO.ok(areaDeviceService.batchAddDevicesToArea(areaId, deviceRequests));
+    public ResponseDTO<Integer> batchAddDevicesToArea(@RequestBody @Valid AreaDeviceBatchAddRequest request) {
+        return ResponseDTO.ok(areaDeviceService.batchAddDevicesToArea(request.getAreaId(), request.getDeviceRequests()));
     }
 
     @PutMapping("/attributes")
@@ -188,7 +185,7 @@ public class AreaDeviceController {
 
     @GetMapping("/statistics/{areaId}")
     @Operation(summary = "获取区域设备统计信息", description = "获取指定区域中设备的详细统计信息")
-    public ResponseDTO<AreaDeviceManager.AreaDeviceStatistics> getAreaDeviceStatistics(
+    public ResponseDTO<AreaDeviceStatisticsVO> getAreaDeviceStatistics(
             @Parameter(description = "区域ID", required = true)
             @PathVariable @NotNull Long areaId) {
         return ResponseDTO.ok(areaDeviceService.getAreaDeviceStatistics(areaId));
@@ -204,7 +201,7 @@ public class AreaDeviceController {
 
     @GetMapping("/distribution/{businessModule}")
     @Operation(summary = "获取业务模块设备分布", description = "获取指定业务模块在各区域的设备分布统计")
-    public ResponseDTO<List<AreaDeviceManager.ModuleDeviceDistribution>> getModuleDeviceDistribution(
+    public ResponseDTO<List<ModuleDeviceDistributionVO>> getModuleDeviceDistribution(
             @Parameter(description = "业务模块", required = true)
             @PathVariable @NotBlank String businessModule) {
         return ResponseDTO.ok(areaDeviceService.getModuleDeviceDistribution(businessModule));
@@ -212,7 +209,7 @@ public class AreaDeviceController {
 
     @GetMapping("/distribution/all")
     @Operation(summary = "获取所有模块设备分布统计", description = "获取所有业务模块的设备分布统计")
-    public ResponseDTO<Map<String, List<AreaDeviceManager.ModuleDeviceDistribution>>> getAllModuleDeviceDistribution() {
+    public ResponseDTO<Map<String, List<ModuleDeviceDistributionVO>>> getAllModuleDeviceDistribution() {
         return ResponseDTO.ok(areaDeviceService.getAllModuleDeviceDistribution());
     }
 
@@ -315,5 +312,113 @@ public class AreaDeviceController {
         public void setOldAreaId(Long oldAreaId) { this.oldAreaId = oldAreaId; }
         public Long getNewAreaId() { return newAreaId; }
         public void setNewAreaId(Long newAreaId) { this.newAreaId = newAreaId; }
+    }
+
+    /**
+     * 区域设备批量添加请求
+     */
+    public static class AreaDeviceBatchAddRequest {
+        @NotNull(message = "区域ID不能为空")
+        private Long areaId;
+
+        @Valid
+        private List<DeviceRequest> deviceRequests;
+
+        public Long getAreaId() { return areaId; }
+        public void setAreaId(Long areaId) { this.areaId = areaId; }
+        public List<DeviceRequest> getDeviceRequests() { return deviceRequests; }
+        public void setDeviceRequests(List<DeviceRequest> deviceRequests) { this.deviceRequests = deviceRequests; }
+    }
+
+    /**
+     * 设备请求
+     */
+    public static class DeviceRequest {
+        @NotBlank(message = "设备ID不能为空")
+        private String deviceId;
+
+        @NotBlank(message = "设备编码不能为空")
+        private String deviceCode;
+
+        @NotBlank(message = "设备名称不能为空")
+        private String deviceName;
+
+        @NotNull(message = "设备类型不能为空")
+        private Integer deviceType;
+
+        private Integer deviceSubType;
+
+        @NotBlank(message = "业务模块不能为空")
+        private String businessModule;
+
+        private Integer priority;
+
+        // getters and setters
+        public String getDeviceId() { return deviceId; }
+        public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+        public String getDeviceCode() { return deviceCode; }
+        public void setDeviceCode(String deviceCode) { this.deviceCode = deviceCode; }
+        public String getDeviceName() { return deviceName; }
+        public void setDeviceName(String deviceName) { this.deviceName = deviceName; }
+        public Integer getDeviceType() { return deviceType; }
+        public void setDeviceType(Integer deviceType) { this.deviceType = deviceType; }
+        public Integer getDeviceSubType() { return deviceSubType; }
+        public void setDeviceSubType(Integer deviceSubType) { this.deviceSubType = deviceSubType; }
+        public String getBusinessModule() { return businessModule; }
+        public void setBusinessModule(String businessModule) { this.businessModule = businessModule; }
+        public Integer getPriority() { return priority; }
+        public void setPriority(Integer priority) { this.priority = priority; }
+    }
+
+    /**
+     * 区域设备统计VO
+     */
+    public static class AreaDeviceStatisticsVO {
+        private Long areaId;
+        private Integer totalDevices;
+        private Integer onlineDevices;
+        private Integer offlineDevices;
+        private Map<Integer, Integer> deviceTypeDistribution;
+        private Map<String, Integer> moduleDistribution;
+
+        // getters and setters
+        public Long getAreaId() { return areaId; }
+        public void setAreaId(Long areaId) { this.areaId = areaId; }
+        public Integer getTotalDevices() { return totalDevices; }
+        public void setTotalDevices(Integer totalDevices) { this.totalDevices = totalDevices; }
+        public Integer getOnlineDevices() { return onlineDevices; }
+        public void setOnlineDevices(Integer onlineDevices) { this.onlineDevices = onlineDevices; }
+        public Integer getOfflineDevices() { return offlineDevices; }
+        public void setOfflineDevices(Integer offlineDevices) { this.offlineDevices = offlineDevices; }
+        public Map<Integer, Integer> getDeviceTypeDistribution() { return deviceTypeDistribution; }
+        public void setDeviceTypeDistribution(Map<Integer, Integer> deviceTypeDistribution) { this.deviceTypeDistribution = deviceTypeDistribution; }
+        public Map<String, Integer> getModuleDistribution() { return moduleDistribution; }
+        public void setModuleDistribution(Map<String, Integer> moduleDistribution) { this.moduleDistribution = moduleDistribution; }
+    }
+
+    /**
+     * 模块设备分布VO
+     */
+    public static class ModuleDeviceDistributionVO {
+        private String businessModule;
+        private String moduleName;
+        private Long areaId;
+        private String areaName;
+        private Integer deviceCount;
+        private Double percentage;
+
+        // getters and setters
+        public String getBusinessModule() { return businessModule; }
+        public void setBusinessModule(String businessModule) { this.businessModule = businessModule; }
+        public String getModuleName() { return moduleName; }
+        public void setModuleName(String moduleName) { this.moduleName = moduleName; }
+        public Long getAreaId() { return areaId; }
+        public void setAreaId(Long areaId) { this.areaId = areaId; }
+        public String getAreaName() { return areaName; }
+        public void setAreaName(String areaName) { this.areaName = areaName; }
+        public Integer getDeviceCount() { return deviceCount; }
+        public void setDeviceCount(Integer deviceCount) { this.deviceCount = deviceCount; }
+        public Double getPercentage() { return percentage; }
+        public void setPercentage(Double percentage) { this.percentage = percentage; }
     }
 }

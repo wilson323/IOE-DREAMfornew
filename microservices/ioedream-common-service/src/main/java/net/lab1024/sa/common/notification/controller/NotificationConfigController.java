@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  * 提供通知配置的CRUD操作API接口
  * 严格遵循CLAUDE.md规范:
  * - 使用@RestController注解标识控制器
- * - 使用@Resource依赖注入（禁止@Autowired）
+ * - 使用@Resource依赖注入（符合架构规范）
  * - 使用@Valid进行参数验证
  * - 完整的Swagger文档注解
  * - RESTful API设计规范

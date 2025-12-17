@@ -7,12 +7,14 @@ import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.dao.AccountDao;
 import net.lab1024.sa.consume.dao.ConsumeAreaDao;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
+import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 import net.lab1024.sa.consume.manager.ConsumeDeviceManager;
 import net.lab1024.sa.consume.manager.ConsumeExecutionManager;
+import net.lab1024.sa.consume.manager.ConsumeTransactionManager;
 import net.lab1024.sa.consume.consume.manager.MobileConsumeStatisticsManager;
 import net.lab1024.sa.consume.consume.manager.MobileAccountInfoManager;
 import net.lab1024.sa.consume.manager.MultiPaymentManager;
@@ -40,6 +42,7 @@ import org.springframework.web.client.RestTemplate;
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-14
+ * @updated 2025-12-17 添加ConsumeTransactionManager Bean注册，修复Manager注解违规
  */
 @Slf4j
 @Configuration
@@ -159,5 +162,26 @@ public class ManagerConfiguration {
                 bankPaymentEnabled,
                 creditLimitEnabled,
                 defaultCreditLimit);
+    }
+
+    /**
+     * 注册 ConsumeTransactionManager Bean
+     * <p>
+     * 消费事务管理器，使用Seata分布式事务
+     * 负责复杂的消费事务编排：账户验证、余额扣减、记录创建等
+     * </p>
+     *
+     * @param consumeRecordDao 消费记录DAO
+     * @param accountDao 账户DAO
+     * @param gatewayServiceClient 网关服务客户端
+     * @return ConsumeTransactionManager实例
+     */
+    @Bean
+    public ConsumeTransactionManager consumeTransactionManager(
+            ConsumeRecordDao consumeRecordDao,
+            AccountDao accountDao,
+            GatewayServiceClient gatewayServiceClient) {
+        log.info("[ManagerConfiguration] 初始化ConsumeTransactionManager");
+        return new ConsumeTransactionManager(consumeRecordDao, accountDao, gatewayServiceClient);
     }
 }

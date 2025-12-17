@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import jakarta.annotation.Resource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +56,10 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     // 模拟数据存储
     private final Map<String, VideoLinkageResult> linkageStore = new ConcurrentHashMap<>();
     private final Map<String, String> activeStreams = new ConcurrentHashMap<>();
-    private final ExecutorService asyncExecutor = Executors.newFixedThreadPool(10);
+    
+    // 线程池 - 使用统一配置的异步线程池
+    @Resource(name = "asyncExecutor")
+    private ThreadPoolTaskExecutor asyncExecutor;
 
     @Override
     @Timed(value = "video.linkage.trigger", description = "视频联动触发耗时")
