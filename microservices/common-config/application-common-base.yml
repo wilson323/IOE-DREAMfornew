@@ -73,6 +73,13 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
+# ==================== 服务器配置（响应压缩） ====================
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+    min-response-size: 1024   # 1KB以上才压缩
+
 # ==================== Actuator监控配置 ====================
 management:
   endpoints:

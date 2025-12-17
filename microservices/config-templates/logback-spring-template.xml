@@ -143,17 +143,23 @@
     <logger name="org.springframework.web" level="INFO" additivity="false"/>
 
     <!-- 数据库相关日志 -->
-    <logger name="org.mybatis" level="DEBUG" additivity="false"/>
-    <logger name="com.alibaba.druid" level="INFO" additivity="false"/>
+    <logger name="org.mybatis" level="WARN" additivity="false"/>
+    <logger name="com.alibaba.druid" level="WARN" additivity="false"/>
 
     <!-- Resilience4j日志 -->
-    <logger name="io.github.resilience4j" level="INFO" additivity="false"/>
+    <logger name="io.github.resilience4j" level="WARN" additivity="false"/>
 
     <!-- Nacos相关日志 -->
-    <logger name="com.alibaba.nacos" level="INFO" additivity="false"/>
+    <logger name="com.alibaba.nacos" level="WARN" additivity="false"/>
 
     <!-- HTTP客户端日志 -->
     <logger name="org.apache.http" level="WARN" additivity="false"/>
+
+    <!-- 缓存日志 -->
+    <logger name="net.lab1024.sa.common.cache" level="WARN" additivity="false"/>
+    
+    <!-- 事务日志 -->
+    <logger name="org.springframework.transaction" level="WARN" additivity="false"/>
 
     <!-- 根日志级别 -->
     <root level="${LOG_LEVEL}">

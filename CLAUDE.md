@@ -22,7 +22,7 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 > **项目定位**: 企业级智慧安防管理平台  
 > **核心价值**: 多模态生物识别 + 一卡通 + 智能安防一体化解决方案  
 > **技术架构**: Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Spring Cloud Alibaba 2025.0.0.0 + Vue3 + 微服务架构
-> **数据库架构**: 统一MySQL 8.0 + Flyway 9.x企业级迁移 + MyBatis-Plus 3.5.15
+> **数据库架构**: 统一MySQL 8.0.35 + Druid 1.2.25 + MyBatis-Plus 3.5.15
 > **安全等级**: 国家三级等保合规 + 金融级安全防护
 
 ---
@@ -240,10 +240,14 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 - **Spring Cloud 2025.0.0**: 最新微服务框架，完全兼容Spring Boot 3.5.8
 - **Spring Cloud Alibaba 2025.0.0.0**: 最新稳定版，完全兼容当前技术栈，支持完整的`optional:nacos:`功能
 - **Java 17**: LTS版本，长期支持，性能优化
+- **MySQL 8.0.35 + MyBatis-Plus 3.5.15**: 数据库访问层
+- **Druid 1.2.25**: 数据库连接池，监控功能完善
 - **Vue3 + Vite5**: 前端现代化，开发体验优秀
-- **多级缓存**: L1本地缓存 + L2 Redis缓存 + L3网关缓存
-- **分布式事务**: SAGA模式，确保数据一致性
+- **多级缓存**: Caffeine 3.1.8本地缓存 + Redis分布式缓存
+- **分布式事务**: Seata 2.0.0，确保数据一致性
+- **容错机制**: Resilience4j 2.1.0熔断限流
 - **微服务治理**: Nacos注册中心 + 配置中心（支持可选配置加载）
+- **监控指标**: Micrometer 1.13.6 + Prometheus
 
 ---
 
@@ -2261,7 +2265,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 ### 2. 前端技术栈规范
 
 ```yaml
-# 前端技术栈 (保持不变)
+# 前端技术栈
 框架: Vue 3.4.x
 构建工具: Vite 5.x
 状态管理: Pinia 2.x
@@ -2271,6 +2275,22 @@ HTTP客户端: Axios 1.6.x
 图表: ECharts 5.4.x
 国际化: Vue I18n 9.x
 代码规范: ESLint + Prettier
+
+# 后端核心技术栈版本（与pom.xml保持一致）
+Java: 17
+Spring Boot: 3.5.8
+Spring Cloud: 2025.0.0
+Spring Cloud Alibaba: 2025.0.0.0
+MySQL: 8.0.35
+MyBatis-Plus: 3.5.15
+Druid: 1.2.25
+Seata: 2.0.0
+Resilience4j: 2.1.0
+Caffeine: 3.1.8
+Micrometer: 1.13.6
+Lombok: 1.18.42
+Jackson: 2.18.2
+JWT: 0.12.6
 ```
 
 ### 3. 移动端技术栈规范
