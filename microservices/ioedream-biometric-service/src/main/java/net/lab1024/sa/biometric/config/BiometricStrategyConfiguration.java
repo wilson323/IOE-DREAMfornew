@@ -15,13 +15,24 @@ import java.util.stream.Collectors;
 /**
  * 生物识别策略配置类
  * <p>
+ * ⚠️ 已废弃：本配置类注册的是不应该在服务端实现的识别策略
+ * 根据ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md架构方案，识别功能应由设备端完成
+ * </p>
+ * <p>
+ * 请使用 {@link BiometricFeatureExtractionStrategyConfiguration} 替代
+ * 新配置类只注册特征提取策略，符合架构要求
+ * </p>
+ * <p>
  * 注册5大识别策略，并创建策略工厂
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-18
+ * @deprecated 请使用 {@link BiometricFeatureExtractionStrategyConfiguration} 替代
+ * @see BiometricFeatureExtractionStrategyConfiguration
  */
+@Deprecated
 @Slf4j
 @Configuration
 public class BiometricStrategyConfiguration {

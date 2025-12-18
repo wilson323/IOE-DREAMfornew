@@ -15,6 +15,14 @@ import java.util.List;
 /**
  * 人脸识别策略实现
  * <p>
+ * ⚠️ 已废弃：本类实现了不应该在服务端实现的方法（verify、identify、detectLiveness）
+ * 根据ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md架构方案，识别功能应由设备端完成
+ * </p>
+ * <p>
+ * 请使用 {@link FaceFeatureExtractionStrategy} 替代
+ * 新策略只实现特征提取功能，符合架构要求
+ * </p>
+ * <p>
  * 使用FaceNet算法提取512维特征向量
  * 支持活体检测（眨眼、嘴部动作、头部姿态）
  * </p>
@@ -22,7 +30,10 @@ import java.util.List;
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-18
+ * @deprecated 请使用 {@link FaceFeatureExtractionStrategy} 替代
+ * @see FaceFeatureExtractionStrategy
  */
+@Deprecated
 @Slf4j
 @Component
 public class FaceRecognitionStrategy implements IBiometricRecognitionStrategy {

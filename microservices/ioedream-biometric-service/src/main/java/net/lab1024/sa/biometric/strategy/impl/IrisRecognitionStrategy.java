@@ -15,6 +15,14 @@ import java.util.List;
 /**
  * 虹膜识别策略实现
  * <p>
+ * ⚠️ 已废弃：本类实现了不应该在服务端实现的方法（verify、identify、detectLiveness）
+ * 根据ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md架构方案，识别功能应由设备端完成
+ * </p>
+ * <p>
+ * 请创建 {@link IBiometricFeatureExtractionStrategy} 的实现类替代
+ * 新策略只实现特征提取功能，符合架构要求
+ * </p>
+ * <p>
  * 使用Gabor滤波器提取256维特征向量
  * 支持活体检测（瞳孔反应、虹膜纹理）
  * </p>
@@ -22,7 +30,10 @@ import java.util.List;
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-18
+ * @deprecated 请创建新的特征提取策略实现类替代
+ * @see IBiometricFeatureExtractionStrategy
  */
+@Deprecated
 @Slf4j
 @Component
 public class IrisRecognitionStrategy implements IBiometricRecognitionStrategy {
