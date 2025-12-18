@@ -227,8 +227,8 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 return ResponseDTO.error("ADD_DEVICE_ERROR", "娣诲姞璁惧澶辫触");
             }
 
-            log.info("[闂ㄧ璁惧] 娣诲姞璁惧鎴愬姛锛宒eviceId={}", device.getId());
-            return ResponseDTO.ok(device.getId());
+            log.info("[闂ㄧ璁惧] 娣诲姞璁惧鎴愬姛锛宒eviceId={}", device.getDeviceId());
+            return ResponseDTO.ok(device.getDeviceId());
 
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[闂ㄧ璁惧] 娣诲姞璁惧鍙傛暟寮傚父, error={}", e.getMessage());
@@ -452,7 +452,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                     Double deviceLng = getLongitudeFromDevice(device);
 
                     if (deviceLat == null || deviceLng == null) {
-                        log.debug("[闂ㄧ璁惧] 璁惧缂哄皯GPS鍧愭爣锛岃烦杩囷紝deviceId={}", device.getId());
+                        log.debug("[闂ㄧ璁惧] 璁惧缂哄皯GPS鍧愭爣锛岃烦杩囷紝deviceId={}", device.getDeviceId());
                         continue;
                     }
 
@@ -460,7 +460,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
 
                     if (distance <= radiusToUse) {
                         AccessMobileController.MobileDeviceItem item = new AccessMobileController.MobileDeviceItem();
-                        item.setDeviceId(device.getId());
+                        item.setDeviceId(device.getDeviceId());
                         item.setDeviceName(device.getDeviceName());
                         item.setDeviceLocation(getDeviceLocation(device));
                         item.setLatitude(deviceLat);
@@ -469,16 +469,16 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                         nearbyDevices.add(item);
                     }
                 } catch (IllegalArgumentException | ParamException e) {
-                    log.warn("[闂ㄧ璁惧] 澶勭悊璁惧鍙傛暟閿欒, deviceId={}, error={}", device.getId(), e.getMessage());
+                    log.warn("[闂ㄧ璁惧] 澶勭悊璁惧鍙傛暟閿欒, deviceId={}, error={}", device.getDeviceId(), e.getMessage());
                     // 鍗曚釜璁惧澶勭悊澶辫触涓嶅奖鍝嶅叾浠栬澶囷紝缁х画澶勭悊
                 } catch (BusinessException e) {
-                    log.warn("[闂ㄧ璁惧] 澶勭悊璁惧涓氬姟寮傚父, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage());
+                    log.warn("[闂ㄧ璁惧] 澶勭悊璁惧涓氬姟寮傚父, deviceId={}, code={}, message={}", device.getDeviceId(), e.getCode(), e.getMessage());
                     // 鍗曚釜璁惧澶勭悊澶辫触涓嶅奖鍝嶅叾浠栬澶囷紝缁х画澶勭悊
                 } catch (SystemException e) {
-                    log.warn("[闂ㄧ璁惧] 澶勭悊璁惧绯荤粺寮傚父, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage(), e);
+                    log.warn("[闂ㄧ璁惧] 澶勭悊璁惧绯荤粺寮傚父, deviceId={}, code={}, message={}", device.getDeviceId(), e.getCode(), e.getMessage(), e);
                     // 鍗曚釜璁惧澶勭悊澶辫触涓嶅奖鍝嶅叾浠栬澶囷紝缁х画澶勭悊
                 } catch (Exception e) {
-                    log.warn("[闂ㄧ璁惧] 澶勭悊璁惧鏈煡寮傚父, deviceId={}", device.getId(), e);
+                    log.warn("[闂ㄧ璁惧] 澶勭悊璁惧鏈煡寮傚父, deviceId={}", device.getDeviceId(), e);
                     // 鍗曚釜璁惧澶勭悊澶辫触涓嶅奖鍝嶅叾浠栬澶囷紝缁х画澶勭悊
                 }
             }
@@ -591,7 +591,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             }
 
             AccessMobileController.MobileRealTimeStatus status = new AccessMobileController.MobileRealTimeStatus();
-            status.setDeviceId(device.getId());
+            status.setDeviceId(device.getDeviceId());
             status.setDeviceName(device.getDeviceName());
             status.setDeviceStatus(device.getDeviceStatus());
 
@@ -634,7 +634,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      */
     private AccessDeviceVO convertToVO(DeviceEntity device) {
         AccessDeviceVO vo = new AccessDeviceVO();
-        vo.setDeviceId(device.getId());
+        vo.setDeviceId(device.getDeviceId());
         vo.setDeviceName(device.getDeviceName());
         vo.setDeviceCode(device.getDeviceCode());
         vo.setDeviceType(device.getDeviceType());
@@ -710,16 +710,16 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             }
             return null;
         } catch (IllegalArgumentException | ParamException e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧绾害鍙傛暟閿欒, deviceId={}, error={}", device.getId(), e.getMessage());
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧绾害鍙傛暟閿欒, deviceId={}, error={}", device.getDeviceId(), e.getMessage());
             return null;
         } catch (BusinessException e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧绾害涓氬姟寮傚父, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage());
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧绾害涓氬姟寮傚父, deviceId={}, code={}, message={}", device.getDeviceId(), e.getCode(), e.getMessage());
             return null;
         } catch (SystemException e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧绾害绯荤粺寮傚父, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage(), e);
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧绾害绯荤粺寮傚父, deviceId={}, code={}, message={}", device.getDeviceId(), e.getCode(), e.getMessage(), e);
             return null;
         } catch (Exception e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧绾害鏈煡寮傚父, deviceId={}", device.getId(), e);
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧绾害鏈煡寮傚父, deviceId={}", device.getDeviceId(), e);
             return null;
         }
     }
@@ -743,16 +743,16 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             }
             return null;
         } catch (IllegalArgumentException | ParamException e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧缁忓害鍙傛暟閿欒, deviceId={}, error={}", device.getId(), e.getMessage());
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧缁忓害鍙傛暟閿欒, deviceId={}, error={}", device.getDeviceId(), e.getMessage());
             return null;
         } catch (BusinessException e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧缁忓害涓氬姟寮傚父, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage());
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧缁忓害涓氬姟寮傚父, deviceId={}, code={}, message={}", device.getDeviceId(), e.getCode(), e.getMessage());
             return null;
         } catch (SystemException e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧缁忓害绯荤粺寮傚父, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage(), e);
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧缁忓害绯荤粺寮傚父, deviceId={}, code={}, message={}", device.getDeviceId(), e.getCode(), e.getMessage(), e);
             return null;
         } catch (Exception e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧缁忓害鏈煡寮傚父, deviceId={}", device.getId(), e);
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽璁惧缁忓害鏈煡寮傚父, deviceId={}", device.getDeviceId(), e);
             return null;
         }
     }
@@ -787,16 +787,16 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
 
             return device.getDeviceName() != null ? device.getDeviceName() : "鏈煡浣嶇疆";
         } catch (IllegalArgumentException | ParamException e) {
-            log.debug("[闂ㄧ璁惧] 鑾峰彇璁惧浣嶇疆鍙傛暟閿欒, deviceId={}, error={}", device.getId(), e.getMessage());
+            log.debug("[闂ㄧ璁惧] 鑾峰彇璁惧浣嶇疆鍙傛暟閿欒, deviceId={}, error={}", device.getDeviceId(), e.getMessage());
             return device.getDeviceName() != null ? device.getDeviceName() : "鏈煡浣嶇疆";
         } catch (BusinessException e) {
-            log.debug("[闂ㄧ璁惧] 鑾峰彇璁惧浣嶇疆涓氬姟寮傚父, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage());
+            log.debug("[闂ㄧ璁惧] 鑾峰彇璁惧浣嶇疆涓氬姟寮傚父, deviceId={}, code={}, message={}", device.getDeviceId(), e.getCode(), e.getMessage());
             return device.getDeviceName() != null ? device.getDeviceName() : "鏈煡浣嶇疆";
         } catch (SystemException e) {
-            log.debug("[闂ㄧ璁惧] 鑾峰彇璁惧浣嶇疆绯荤粺寮傚父, deviceId={}, code={}, message={}", device.getId(), e.getCode(), e.getMessage(), e);
+            log.debug("[闂ㄧ璁惧] 鑾峰彇璁惧浣嶇疆绯荤粺寮傚父, deviceId={}, code={}, message={}", device.getDeviceId(), e.getCode(), e.getMessage(), e);
             return device.getDeviceName() != null ? device.getDeviceName() : "鏈煡浣嶇疆";
         } catch (Exception e) {
-            log.debug("[闂ㄧ璁惧] 鑾峰彇璁惧浣嶇疆鏈煡寮傚父, deviceId={}", device.getId(), e);
+            log.debug("[闂ㄧ璁惧] 鑾峰彇璁惧浣嶇疆鏈煡寮傚父, deviceId={}", device.getDeviceId(), e);
             return device.getDeviceName() != null ? device.getDeviceName() : "鏈煡浣嶇疆";
         }
     }
@@ -1296,8 +1296,8 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 return ResponseDTO.error("ADD_MOBILE_DEVICE_ERROR", "娣诲姞璁惧澶辫触");
             }
 
-            log.info("[闂ㄧ璁惧] 绉诲姩绔坊鍔犺澶囨垚鍔燂紝deviceId={}", device.getId());
-            return ResponseDTO.ok(device.getId());
+            log.info("[闂ㄧ璁惧] 绉诲姩绔坊鍔犺澶囨垚鍔燂紝deviceId={}", device.getDeviceId());
+            return ResponseDTO.ok(device.getDeviceId());
 
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[闂ㄧ璁惧] 绉诲姩绔坊鍔犺澶囧弬鏁板紓甯? error={}", e.getMessage());
@@ -1433,7 +1433,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
      */
     private MobileDeviceVO convertToMobileVO(DeviceEntity device) {
         MobileDeviceVO vo = MobileDeviceVO.builder()
-                .deviceId(device.getId())
+                .deviceId(device.getDeviceId())
                 .deviceCode(device.getDeviceCode())
                 .deviceName(device.getDeviceName())
                 .deviceType(1) // 闂ㄧ璁惧绫诲瀷涓?
@@ -1489,7 +1489,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 }
             }
         } catch (Exception e) {
-            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽鎵╁睍灞炴€уけ璐ワ紝deviceId={}", device.getId(), e);
+            log.debug("[闂ㄧ璁惧] 瑙ｆ瀽鎵╁睍灞炴€уけ璐ワ紝deviceId={}", device.getDeviceId(), e);
         }
 
         // 妯℃嫙杩愯鐘舵€佹暟鎹紙瀹為檯搴旇浠庤澶囬€氳鏈嶅姟鑾峰彇锛?        vo.setSignalStrength(-45 + (int)(Math.random() * 20));
@@ -1542,7 +1542,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
 
             return DeviceControlResultVO.builder()
                     .taskId(taskId)
-                    .deviceId(device.getId())
+                    .deviceId(device.getDeviceId())
                     .deviceName(device.getDeviceName())
                     .command(command)
                     .status(status)
@@ -1560,7 +1560,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             Thread.currentThread().interrupt();
             return DeviceControlResultVO.builder()
                     .taskId(taskId)
-                    .deviceId(device.getId())
+                    .deviceId(device.getDeviceId())
                     .deviceName(device.getDeviceName())
                     .command(request.getCommand())
                     .status("failed")
@@ -1575,7 +1575,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
         } catch (Exception e) {
             return DeviceControlResultVO.builder()
                     .taskId(taskId)
-                    .deviceId(device.getId())
+                    .deviceId(device.getDeviceId())
                     .deviceName(device.getDeviceName())
                     .command(request.getCommand())
                     .status("failed")

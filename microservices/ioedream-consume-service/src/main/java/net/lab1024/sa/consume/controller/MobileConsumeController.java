@@ -354,7 +354,7 @@ public class MobileConsumeController {
                 DeviceEntity device = deviceResponse.getData();
 
                 // 映射DeviceEntity到MobileDeviceInfoVO
-                deviceInfo.setDeviceId(device.getId() != null ? device.getId().toString() : deviceId);
+                deviceInfo.setDeviceId(device.getDeviceId() != null ? device.getDeviceId() : deviceId);
                 deviceInfo.setDeviceName(device.getDeviceName() != null ? device.getDeviceName() : "未知设备");
                 deviceInfo.setDeviceType(device.getDeviceType() != null ? device.getDeviceType() : "UNKNOWN");
                 deviceInfo.setDeviceTypeDescription(getDeviceTypeDescription(device.getDeviceType()));

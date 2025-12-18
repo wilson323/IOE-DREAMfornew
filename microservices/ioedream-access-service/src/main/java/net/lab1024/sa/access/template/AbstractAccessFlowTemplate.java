@@ -148,7 +148,7 @@ public abstract class AbstractAccessFlowTemplate {
         if (device == null) {
             throw new IllegalArgumentException("设备不存在: " + deviceId);
         }
-        if (device.getDeviceStatus() != null && device.getDeviceStatus() != 1) {
+        if (device.getStatus() != 1) {
             throw new IllegalArgumentException("设备未启用: " + deviceId);
         }
         return device;
@@ -176,7 +176,7 @@ public abstract class AbstractAccessFlowTemplate {
     private void recordFailedAccess(UserIdentityResult identity, DeviceEntity device, String reason) {
         AccessRecordEntity record = new AccessRecordEntity();
         record.setUserId(identity.getUserId());
-        record.setDeviceId(device.getId());
+        record.setDeviceId(device.getDeviceId());
         record.setAccessTime(LocalDateTime.now());
         record.setAuthResult("FAILED");
         record.setDoorOpened(false);
@@ -190,7 +190,7 @@ public abstract class AbstractAccessFlowTemplate {
     private void recordSuccessAccess(UserIdentityResult identity, DeviceEntity device, AccessRequest request) {
         AccessRecordEntity record = new AccessRecordEntity();
         record.setUserId(identity.getUserId());
-        record.setDeviceId(device.getId());
+        record.setDeviceId(device.getDeviceId());
         record.setAccessTime(LocalDateTime.now());
         record.setAuthResult("SUCCESS");
         record.setAuthMethod(request.getBiometricData() != null ? "BIOMETRIC" : "CARD");

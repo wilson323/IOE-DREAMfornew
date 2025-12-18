@@ -334,7 +334,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
             // 转换为VO返回
             VideoDeviceVO vo = convertToVO(device);
-            log.info("[视频设备] 新增设备成功，deviceId={}, deviceCode={}", device.getId(), device.getDeviceCode());
+            log.info("[视频设备] 新增设备成功，deviceId={}, deviceCode={}", device.getDeviceId(), device.getDeviceCode());
             return ResponseDTO.ok(vo);
 
         } catch (BusinessException e) {
