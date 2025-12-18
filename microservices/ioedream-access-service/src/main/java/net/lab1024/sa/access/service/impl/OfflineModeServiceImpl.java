@@ -245,7 +245,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
             // 楠岃瘉鏃堕棿鏈夋晥鎬?
             if (!validateTimeValidity(permissions)) {
-                return createValidationResult(false, "鏉冮檺宸茶繃鏈?, null, remainingQuota);
+                return createValidationResult(false, "权限已过期", null, remainingQuota);
             }
 
             // 楠岃瘉璁块棶绫诲瀷
@@ -303,7 +303,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
         } catch (Exception e) {
             log.error("[绂荤嚎鐘舵€乚 鏌ヨ澶辫触: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("STATUS_QUERY_FAILED", "绂荤嚎鐘舵€佹煡璇㈠け璐?);
+            return ResponseDTO.error("STATUS_QUERY_FAILED", "离线状态查询失败");
         }
     }
 
@@ -411,7 +411,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
         } catch (Exception e) {
             log.error("[绂荤嚎鏁版嵁鍖匽 鐢熸垚澶辫触: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("PACKAGE_GENERATION_FAILED", "绂荤嚎鏁版嵁鍖呯敓鎴愬け璐?);
+            return ResponseDTO.error("PACKAGE_GENERATION_FAILED", "离线数据包生成失败");
         }
     }
 
@@ -455,7 +455,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
                 validationErrors.add("鏁版嵁鏍煎紡涓嶆纭?);
             }
             if (result.isExpired()) {
-                validationErrors.add("鏁版嵁宸茶繃鏈?);
+                validationErrors.add("数据已过期");
             }
             result.setValidationErrors(validationErrors);
 
@@ -615,7 +615,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
         List<OfflineAreaPermission> areaPermissions = new ArrayList<>();
         OfflineAreaPermission areaPermission = new OfflineAreaPermission();
         areaPermission.setAreaId(1L);
-        areaPermission.setAreaName("鍔炲叕鍖?);
+        areaPermission.setAreaName("办公区");
         areaPermission.setPermissionLevel("FULL");
         areaPermission.setValidFrom(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         areaPermission.setValidUntil(cache.getExpiryTime());

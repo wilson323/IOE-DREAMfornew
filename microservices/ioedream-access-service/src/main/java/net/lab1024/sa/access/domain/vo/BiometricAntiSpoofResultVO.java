@@ -12,13 +12,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 鐢熺墿璇嗗埆闃蹭吉妫€娴嬬粨鏋滆鍥惧璞?
+ * 生物识别防伪检测结果视图对象
  * <p>
- * 鐢熺墿璇嗗埆闃蹭吉鍒嗘瀽缁撴灉鐨勬暟鎹紶杈撳璞?
- * 涓ユ牸閬靛惊CLADE.md瑙勮寖锛?
- * - 浣跨敤@Data娉ㄨВ
- * - 瀹屾暣鐨勫瓧娈垫枃妗ｆ敞瑙?
- * - 鏋勫缓鑰呮ā寮忔敮鎸?
+ * 生物识别防伪分析结果的数据传输对象
+ * 严格遵循CLAUDE.md规范：
+ * - 使用@Data注解
+ * - 完整的字段文档注释
+ * - 构建者模式支持
  * </p>
  *
  * @author IOE-DREAM Team
@@ -29,193 +29,193 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "鐢熺墿璇嗗埆闃蹭吉妫€娴嬬粨鏋?)
+@Schema(description = "生物识别防伪检测结果")
 public class BiometricAntiSpoofResultVO {
 
     /**
-     * 鐢ㄦ埛ID
+     * 用户ID
      */
-    @Schema(description = "鐢ㄦ埛ID", example = "1001")
+    @Schema(description = "用户ID", example = "1001")
     private Long userId;
 
     /**
-     * 鐢熺墿璇嗗埆绫诲瀷
+     * 生物识别类型
      */
-    @Schema(description = "鐢熺墿璇嗗埆绫诲瀷", example = "FACE")
+    @Schema(description = "生物识别类型", example = "FACE")
     private String biometricType;
 
     /**
-     * 娲讳綋妫€娴嬭瘎鍒嗭紙0-100锛?
+     * 活体检测评分（0-100）
      */
-    @Schema(description = "娲讳綋妫€娴嬭瘎鍒嗭紙0-100锛?, example = "96.8")
+    @Schema(description = "活体检测评分（0-100）", example = "96.8")
     private BigDecimal livenessScore;
 
     /**
-     * 娣卞害浼€犳娴嬭瘎鍒嗭紙0-100锛?
+     * 深度伪造检测评分（0-100）
      */
-    @Schema(description = "娣卞害浼€犳娴嬭瘎鍒嗭紙0-100锛?, example = "94.2")
+    @Schema(description = "深度伪造检测评分（0-100）", example = "94.2")
     private BigDecimal deepfakeScore;
 
     /**
-     * 璐ㄩ噺璇勪及璇勫垎锛?-100锛?
+     * 质量评估评分（0-100）
      */
-    @Schema(description = "璐ㄩ噺璇勪及璇勫垎锛?-100锛?, example = "91.5")
+    @Schema(description = "质量评估评分（0-100）", example = "91.5")
     private BigDecimal qualityScore;
 
     /**
-     * 3D缁撴瀯鍒嗘瀽璇勫垎锛?-100锛?
+     * 3D结构分析评分（0-100）
      */
-    @Schema(description = "3D缁撴瀯鍒嗘瀽璇勫垎锛?-100锛?, example = "89.7")
+    @Schema(description = "3D结构分析评分（0-100）", example = "89.7")
     private BigDecimal structureScore;
 
     /**
-     * 缁煎悎闃蹭吉璇勫垎锛?-100锛?
+     * 综合防伪评分（0-100）
      */
-    @Schema(description = "缁煎悎闃蹭吉璇勫垎锛?-100锛?, example = "92.8")
+    @Schema(description = "综合防伪评分（0-100）", example = "92.8")
     private BigDecimal overallScore;
 
     /**
-     * 鏄惁閫氳繃闃蹭吉妫€娴?
+     * 是否通过防伪检测
      */
-    @Schema(description = "鏄惁閫氳繃闃蹭吉妫€娴?, example = "true")
+    @Schema(description = "是否通过防伪检测", example = "true")
     private Boolean passedAntiSpoofing;
 
     /**
-     * 椋庨櫓绛夌骇
-     * LOW - 浣庨闄?
-     * MEDIUM - 涓瓑椋庨櫓
-     * HIGH - 楂橀闄?
-     * CRITICAL - 涓ラ噸椋庨櫓
+     * 风险等级
+     * LOW - 低风险
+     * MEDIUM - 中等风险
+     * HIGH - 高风险
+     * CRITICAL - 严重风险
      */
-    @Schema(description = "椋庨櫓绛夌骇", example = "LOW")
+    @Schema(description = "风险等级", example = "LOW")
     private String riskLevel;
 
     /**
-     * 妫€娴嬭鎯?
+     * 检测详情
      */
-    @Schema(description = "妫€娴嬭鎯?)
+    @Schema(description = "检测详情")
     private Map<String, Object> detectionDetails;
 
     /**
-     * 妫€娴嬪埌鐨勬敾鍑荤被鍨?
+     * 检测到的攻击类型
      */
-    @Schema(description = "妫€娴嬪埌鐨勬敾鍑荤被鍨?)
+    @Schema(description = "检测到的攻击类型")
     private List<String> detectedAttackTypes;
 
     /**
-     * 淇′换搴﹀垎鏁?
+     * 信任度分数
      */
-    @Schema(description = "淇′换搴﹀垎鏁?, example = "0.98")
+    @Schema(description = "信任度分数", example = "0.98")
     private BigDecimal trustScore;
 
     /**
-     * 澶勭悊寤鸿
+     * 处理建议
      */
-    @Schema(description = "澶勭悊寤鸿", example = "鐢熺墿璇嗗埆鏁版嵁璐ㄩ噺鑹ソ锛屽彲浠ユ甯镐娇鐢?)
+    @Schema(description = "处理建议", example = "生物识别数据质量良好，可以正常使用")
     private String recommendation;
 
     /**
-     * 妫€娴嬭€楁椂锛堟绉掞級
+     * 检测耗时（毫秒）
      */
-    @Schema(description = "妫€娴嬭€楁椂锛堟绉掞級", example = "156")
+    @Schema(description = "检测耗时（毫秒）", example = "156")
     private Long detectionDuration;
 
     /**
-     * 妫€娴嬫椂闂?
+     * 检测时间
      */
-    @Schema(description = "妫€娴嬫椂闂?, example = "2025-01-30T15:45:00")
+    @Schema(description = "检测时间", example = "2025-01-30T15:45:00")
     private LocalDateTime detectionTime;
 
     /**
-     * 璁惧淇℃伅
+     * 设备信息
      */
-    @Schema(description = "璁惧淇℃伅", example = "iPhone 13 Pro")
+    @Schema(description = "设备信息", example = "iPhone 13 Pro")
     private String deviceInfo;
 
     /**
-     * 鐜鏉′欢
+     * 环境条件
      */
-    @Schema(description = "鐜鏉′欢", example = "瀹ゅ唴姝ｅ父鍏夌収")
+    @Schema(description = "环境条件", example = "室内正常光照")
     private String environmentalConditions;
 
     /**
-     * 妫€娴嬫寚鏍囪鎯呭唴閮ㄧ被
+     * 检测指标详情内部类
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "妫€娴嬫寚鏍囪鎯?)
+    @Schema(description = "检测指标详情")
     public static class DetectionMetricVO {
 
-        @Schema(description = "鎸囨爣鍚嶇О", example = "鐪ㄧ溂妫€娴?)
+        @Schema(description = "指标名称", example = "眨眼检测")
         private String metricName;
 
-        @Schema(description = "鎸囨爣鍊?, example = "0.95")
+        @Schema(description = "指标值", example = "0.95")
         private BigDecimal metricValue;
 
-        @Schema(description = "闃堝€?, example = "0.7")
+        @Schema(description = "阈值", example = "0.7")
         private BigDecimal threshold;
 
-        @Schema(description = "鏄惁閫氳繃", example = "true")
+        @Schema(description = "是否通过", example = "true")
         private Boolean passed;
 
-        @Schema(description = "鎸囨爣鎻忚堪", example = "妫€娴嬪埌鑷劧鐨勭湪鐪艰涓?)
+        @Schema(description = "指标描述", example = "检测到自然的眨眼运动")
         private String description;
 
-        @Schema(description = "鏉冮噸", example = "0.25")
+        @Schema(description = "权重", example = "0.25")
         private BigDecimal weight;
     }
 
     /**
-     * 鏀诲嚮绫诲瀷璇︽儏鍐呴儴绫?
+     * 攻击类型详情内部类
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "鏀诲嚮绫诲瀷璇︽儏")
+    @Schema(description = "攻击类型详情")
     public static class AttackTypeVO {
 
-        @Schema(description = "鏀诲嚮绫诲瀷", example = "PHOTO_ATTACK")
+        @Schema(description = "攻击类型", example = "PHOTO_ATTACK")
         private String attackType;
 
-        @Schema(description = "缃俊搴?, example = "0.15")
+        @Schema(description = "置信度", example = "0.15")
         private BigDecimal confidence;
 
-        @Schema(description = "鎻忚堪", example = "妫€娴嬪埌鐓х墖鏀诲嚮鐨勫彲鑳芥€?)
+        @Schema(description = "描述", example = "检测到照片攻击的可能性")
         private String description;
 
-        @Schema(description = "涓ラ噸绋嬪害", example = "LOW")
+        @Schema(description = "严重程度", example = "LOW")
         private String severity;
 
-        @Schema(description = "闃叉姢寤鸿", example = "瑕佹眰鐢ㄦ埛鎻愪緵鏇撮珮璐ㄩ噺鐨勭敓鐗╄瘑鍒暟鎹?)
+        @Schema(description = "防护建议", example = "要求用户提供更高质量的生物识别数据")
         private String mitigationAdvice;
     }
 
     /**
-     * 鐜鍒嗘瀽鍐呴儴绫?
+     * 环境分析内部类
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "鐜鍒嗘瀽")
+    @Schema(description = "环境分析")
     public static class EnvironmentalAnalysisVO {
 
-        @Schema(description = "鍏夌収鏉′欢", example = "NORMAL")
+        @Schema(description = "光照条件", example = "NORMAL")
         private String lightingCondition;
 
-        @Schema(description = "鑳屾櫙澶嶆潅搴?, example = "LOW")
+        @Schema(description = "背景复杂度", example = "LOW")
         private String backgroundComplexity;
 
-        @Schema(description = "璁惧瑙掑害", example = "NORMAL")
+        @Schema(description = "设备角度", example = "NORMAL")
         private String deviceAngle;
 
-        @Schema(description = "閬尅鎯呭喌", example = "NONE")
+        @Schema(description = "遮挡情况", example = "NONE")
         private String occlusionStatus;
 
-        @Schema(description = "鐜璇勫垎", example = "92.5")
+        @Schema(description = "环境评分", example = "92.5")
         private BigDecimal environmentalScore;
     }
 }

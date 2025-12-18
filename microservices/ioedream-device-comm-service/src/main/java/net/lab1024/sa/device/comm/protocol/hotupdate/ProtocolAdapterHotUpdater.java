@@ -232,7 +232,7 @@ public class ProtocolAdapterHotUpdater {
                 }
 
                 if (targetRecord == null) {
-                    return CompletableFuture.completedFuture(HotUpdateResult.failure("未找到指定版本的更新记录: " + version));
+                    return HotUpdateResult.failure("未找到指定版本的更新记录: " + version);
                 }
 
                 // 恢复指定版本
@@ -923,8 +923,12 @@ public class ProtocolAdapterHotUpdater {
                             byte[] bytes = is.readAllBytes();
                             return defineClass(name, bytes, 0, bytes.length);
                         }
+                    } else {
+                        throw new ClassNotFoundException("类文件未在JAR中找到: " + name);
                     }
                 }
+            } catch (ClassNotFoundException e) {
+                throw e;
             } catch (Exception e) {
                 throw new ClassNotFoundException("无法从JAR文件加载类: " + name, e);
             }

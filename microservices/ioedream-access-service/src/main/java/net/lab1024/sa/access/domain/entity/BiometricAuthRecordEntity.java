@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
 /**
- * 鐢熺墿璇嗗埆楠岃瘉璁板綍瀹炰綋
- * 璁板綍姣忔鐢熺墿璇嗗埆楠岃瘉鐨勮缁嗕俊鎭?
+ * 生物识别认证记录实体
+ * 记录每次生物识别认证的详细信息
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -26,106 +26,106 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("t_access_biometric_auth_record")
-@Schema(description = "鐢熺墿璇嗗埆楠岃瘉璁板綍瀹炰綋")
+@Schema(description = "生物识别认证记录实体")
 public class BiometricAuthRecordEntity extends BaseEntity {
 
     @TableId(type = IdType.ASSIGN_ID)
-    @Schema(description = "楠岃瘉ID", example = "BIO_AUTH_20250130_001")
+    @Schema(description = "认证ID", example = "BIO_AUTH_20250130_001")
     private String authId;
 
     @NotNull
-    @Schema(description = "鐢ㄦ埛ID", example = "1001")
+    @Schema(description = "用户ID", example = "1001")
     private Long userId;
 
     @NotNull
-    @Schema(description = "璁惧ID", example = "DEVICE_001")
+    @Schema(description = "设备ID", example = "DEVICE_001")
     private String deviceId;
 
     @NotNull
-    @Schema(description = "鐢熺墿璇嗗埆绫诲瀷", example = "1", allowableValues = {"1", "2", "3"})
+    @Schema(description = "生物识别类型", example = "1", allowableValues = {"1", "2", "3"})
     private Integer biometricType;
 
     @NotNull
-    @Schema(description = "楠岃瘉绫诲瀷", example = "1", allowableValues = {"1", "2", "3"})
+    @Schema(description = "认证类型", example = "1", allowableValues = {"1", "2", "3"})
     private Integer authType;
 
     @NotNull
-    @Schema(description = "楠岃瘉缁撴灉", example = "1", allowableValues = {"1", "2", "3"})
+    @Schema(description = "认证结果", example = "1", allowableValues = {"1", "2", "3"})
     private Integer authResult;
 
-    @Schema(description = "鍖归厤寰楀垎", example = "0.95")
+    @Schema(description = "匹配得分", example = "0.95")
     private BigDecimal matchScore;
 
-    @Schema(description = "鍖归厤闃堝€?, example = "0.85")
+    @Schema(description = "匹配阈值", example = "0.85")
     private BigDecimal matchThreshold;
 
-    @Schema(description = "娲讳綋妫€娴嬪緱鍒?, example = "0.92")
+    @Schema(description = "活体检测得分", example = "0.92")
     private BigDecimal livenessScore;
 
-    @Schema(description = "娲讳綋妫€娴嬬粨鏋?, example = "true")
+    @Schema(description = "活体检测结果", example = "true")
     private Boolean livenessPassed;
 
-    @Schema(description = "楠岃瘉鏃堕棿(姣)", example = "1250")
+    @Schema(description = "认证耗时(毫秒)", example = "1250")
     private Long authDuration;
 
-    @Schema(description = "楠岃瘉鏃堕棿", example = "2025-01-30T14:30:00")
+    @Schema(description = "认证时间", example = "2025-01-30T14:30:00")
     private LocalDateTime authTime;
 
-    @Schema(description = "妯℃澘ID", example = "1001")
+    @Schema(description = "模板ID", example = "1001")
     private Long templateId;
 
-    @Schema(description = "楠岃瘉鍥剧墖璺緞", example = "/biometric/auth/face_20250130_143000.jpg")
+    @Schema(description = "认证图片路径", example = "/biometric/auth/face_20250130_143000.jpg")
     private String authImagePath;
 
-    @Schema(description = "璇嗗埆閿欒鐮?, example = "")
+    @Schema(description = "识别错误码", example = "")
     private String errorCode;
 
-    @Schema(description = "璇嗗埆閿欒淇℃伅", example = "")
+    @Schema(description = "识别错误信息", example = "")
     private String errorMessage;
 
-    @Schema(description = "瀹㈡埛绔疘P鍦板潃", example = "192.168.1.100")
+    @Schema(description = "客户端IP地址", example = "192.168.1.100")
     private String clientIp;
 
-    @Schema(description = "瀹㈡埛绔俊鎭?, example = "iOS App v1.2.0")
+    @Schema(description = "客户端信息", example = "iOS App v1.2.0")
     private String clientInfo;
 
-    @Schema(description = "璁惧浣嶇疆", example = "A鏍?妤煎ぇ鍘?)
+    @Schema(description = "设备位置", example = "A栋1楼大厅")
     private String deviceLocation;
 
-    @Schema(description = "鐜淇℃伅", example = "{\"temperature\":25.5,\"humidity\":60,\"lighting\":0.8}")
+    @Schema(description = "环境信息", example = "{\"temperature\":25.5,\"humidity\":60,\"lighting\":0.8}")
     private String environmentInfo;
 
-    @Schema(description = "绠楁硶鐗堟湰", example = "v2.1.0")
+    @Schema(description = "算法版本", example = "v2.1.0")
     private String algorithmVersion;
 
-    @Schema(description = "瀹夊叏绾у埆", example = "2")
+    @Schema(description = "安全级别", example = "2")
     private Integer securityLevel;
 
-    @Schema(description = "鏄惁鍙枒鎿嶄綔", example = "false")
+    @Schema(description = "是否可疑操作", example = "false")
     private Boolean suspiciousOperation;
 
-    @Schema(description = "鍙枒鍘熷洜", example = "")
+    @Schema(description = "可疑原因", example = "")
     private String suspiciousReason;
 
-    @Schema(description = "浜哄伐澶嶆牳鐘舵€?, example = "0")
+    @Schema(description = "人工复核状态", example = "0")
     private Integer manualReviewStatus;
 
-    @Schema(description = "澶嶆牳浜哄憳ID", example = "2001")
+    @Schema(description = "复核人员ID", example = "2001")
     private Long reviewerId;
 
-    @Schema(description = "澶嶆牳鏃堕棿", example = "2025-01-30T14:35:00")
+    @Schema(description = "复核时间", example = "2025-01-30T14:35:00")
     private LocalDateTime reviewTime;
 
-    @Schema(description = "澶嶆牳鎰忚", example = "楠岃瘉姝ｅ父锛岄€氳繃")
+    @Schema(description = "复核意见", example = "认证正常，通过")
     private String reviewComment;
 
-    // 鏋氫妇瀹氫箟
+    // 枚举定义
     public enum AuthType {
-        LOGIN(1, "鐧诲綍楠岃瘉"),
-        ACCESS(2, "闂ㄧ楠岃瘉"),
-        ATTENDANCE(3, "鑰冨嫟楠岃瘉"),
-        PAYMENT(4, "鏀粯楠岃瘉"),
-        REGISTER(5, "娉ㄥ唽楠岃瘉");
+        LOGIN(1, "登录认证"),
+        ACCESS(2, "门禁认证"),
+        ATTENDANCE(3, "考勤认证"),
+        PAYMENT(4, "支付认证"),
+        REGISTER(5, "注册认证");
 
         private final int code;
         private final String description;
@@ -154,10 +154,10 @@ public class BiometricAuthRecordEntity extends BaseEntity {
     }
 
     public enum AuthResult {
-        SUCCESS(1, "楠岃瘉鎴愬姛"),
-        FAILED(2, "楠岃瘉澶辫触"),
-        TIMEOUT(3, "楠岃瘉瓒呮椂"),
-        ERROR(4, "绯荤粺閿欒");
+        SUCCESS(1, "认证成功"),
+        FAILED(2, "认证失败"),
+        TIMEOUT(3, "认证超时"),
+        ERROR(4, "系统错误");
 
         private final int code;
         private final String description;
@@ -186,10 +186,10 @@ public class BiometricAuthRecordEntity extends BaseEntity {
     }
 
     public enum ManualReviewStatus {
-        NOT_REVIEWED(0, "鏈鏍?),
-        APPROVED(1, "閫氳繃"),
-        REJECTED(2, "鎷掔粷"),
-        PENDING(3, "寰呭鏍?);
+        NOT_REVIEWED(0, "未复核"),
+        APPROVED(1, "通过"),
+        REJECTED(2, "拒绝"),
+        PENDING(3, "待复核");
 
         private final int code;
         private final String description;

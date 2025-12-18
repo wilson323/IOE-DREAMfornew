@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.device.comm.protocol.rs485.*;
 import net.lab1024.sa.device.comm.protocol.*;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
 import net.lab1024.sa.device.comm.service.RS485ProtocolService;
 import net.lab1024.sa.device.comm.dao.DeviceCommLogDao;
 import org.springframework.stereotype.Service;
@@ -166,7 +167,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
                     .message(heartbeatResult.getResponseMessage() != null ? heartbeatResult.getResponseMessage() : "心跳处理成功")
                     .deviceId(deviceId)
                     .online(heartbeatResult.isOnline())
-                    .latency(heartbeatResult.getLatency())
+                    .latency(0L) // ProtocolHeartbeatResult没有latency字段，使用默认值0
                     .heartbeatTime(heartbeatResult.getHeartbeatTime() != null 
                             ? heartbeatResult.getHeartbeatTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
                             : System.currentTimeMillis())
@@ -427,10 +428,10 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     private RS485DeviceStatusVO convertToDeviceStatusVO(RS485DeviceStatus status) {
         return RS485DeviceStatusVO.builder()
                 .deviceId(status.getDeviceId())
-                .status(status.getStatus())
-                .message(status.getMessage())
+                .status(status.isOnline() ? "ONLINE" : "OFFLINE")
+                .message(status.getConnectionStatus())
                 .checkTime(System.currentTimeMillis())
-                .deviceData(status.getDeviceData())
+                .deviceData(null) // RS485DeviceStatus没有deviceData字段
                 .build();
     }
 
@@ -441,7 +442,14 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
         try {
             // 异步记录日志，避免影响主流程性能
             if (deviceCommLogDao != null) {
-                deviceCommLogDao.insertCommLog(deviceId, operation, message, null);
+                net.lab1024.sa.device.comm.entity.DeviceCommLogEntity logEntity = 
+                    new net.lab1024.sa.device.comm.entity.DeviceCommLogEntity();
+                logEntity.setDeviceId(deviceId);
+                logEntity.setCommType(operation);
+                logEntity.setRequestContent(message);
+                logEntity.setStatus("SUCCESS");
+                logEntity.setCreateTime(java.time.LocalDateTime.now());
+                deviceCommLogDao.insert(logEntity);
             }
         } catch (Exception e) {
             log.warn("[RS485服务] 记录设备通讯日志失败, operation={}, deviceId={}", operation, deviceId, e);

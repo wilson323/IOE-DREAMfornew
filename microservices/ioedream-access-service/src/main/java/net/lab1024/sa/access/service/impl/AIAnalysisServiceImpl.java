@@ -104,8 +104,8 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
 
             UserBehaviorPatternVO result = new UserBehaviorPatternVO();
             result.setUserId(userId);
-            result.setUserName("鐢ㄦ埛" + userId); // TODO: 浠庣敤鎴疯〃鑾峰彇鐪熷疄濮撳悕
-            result.setAnalysisPeriod("鏈€杩? + analysisDays + "澶?);
+            result.setUserName("用户" + userId); // TODO: 从用户表获取真实姓名
+            result.setAnalysisPeriod("最近" + analysisDays + "天");
             result.setAccessTimePattern(timePattern);
             result.setDevicePreferencePattern(devicePattern);
             result.setAccessPathPattern(pathPattern);
@@ -191,15 +191,15 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI寮傚父妫€娴媇 妫€娴嬪け璐? userId={}, deviceId={}, error={}",
+            log.error("[AI异常检测] 检测失败: userId={}, deviceId={}, error={}",
                     request.getUserId(), request.getDeviceId(), e.getMessage(), e);
-            return ResponseDTO.error("ANOMALY_DETECTION_FAILED", "寮傚父琛屼负妫€娴嬪け璐?);
+            return ResponseDTO.error("ANOMALY_DETECTION_FAILED", "异常行为检测失败");
         }
     }
 
     @Override
-    @Timed(value = "ai.predictive.maintenance", description = "棰勬祴鎬х淮鎶ゅ垎鏋愯€楁椂")
-    @Counted(value = "ai.predictive.maintenance.count", description = "棰勬祴鎬х淮鎶ゅ垎鏋愭鏁?)
+    @Timed(value = "ai.predictive.maintenance", description = "预测性维护分析耗时")
+    @Counted(value = "ai.predictive.maintenance.count", description = "预测性维护分析次数")
     public ResponseDTO<PredictiveMaintenanceResult> performPredictiveMaintenanceAnalysis(Long deviceId, Integer predictionDays) {
         log.info("[AI棰勬祴缁存姢] 寮€濮嬮娴嬫€х淮鎶ゅ垎鏋? deviceId={}, predictionDays={}",
                 deviceId, predictionDays != null ? predictionDays : 90);
@@ -266,7 +266,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
 
         } catch (Exception e) {
             log.error("[AI棰勬祴缁存姢] 鍒嗘瀽澶辫触: deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseDTO.error("PREDICTIVE_MAINTENANCE_FAILED", "棰勬祴鎬х淮鎶ゅ垎鏋愬け璐?);
+            return ResponseDTO.error("PREDICTIVE_MAINTENANCE_FAILED", "预测性维护分析失败");
         }
     }
 
@@ -384,7 +384,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                 // 濡傛灉娌℃湁缂撳瓨鐨勬ā寮忥紝鍏堝垎鏋?
                 ResponseDTO<UserBehaviorPatternVO> analysisResult = analyzeUserBehaviorPattern(userId, 30);
                 if (!analysisResult.isSuccess()) {
-                    return ResponseDTO.error("PATTERN_NOT_AVAILABLE", "鐢ㄦ埛琛屼负妯″紡涓嶅彲鐢?);
+                    return ResponseDTO.error("PATTERN_NOT_AVAILABLE", "用户行为模式不可用");
                 }
                 UserBehaviorPatternVO patternData = analysisResult.getData();
                 pattern = new UserBehaviorPattern();
@@ -625,13 +625,13 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     private ResponseDTO<UserBehaviorPatternVO> createEmptyBehaviorPattern(Long userId) {
         UserBehaviorPatternVO pattern = new UserBehaviorPatternVO();
         pattern.setUserId(userId);
-        pattern.setAnalysisPeriod("鏈€杩?0澶?);
+        pattern.setAnalysisPeriod("最近30天");
         pattern.setAccessTimePattern(new AccessTimePattern());
         pattern.setDevicePreferencePattern(new DevicePreferencePattern());
         pattern.setAccessPathPattern(new AccessPathPattern());
         pattern.setDetectedAnomalies(new ArrayList<>());
         pattern.setRiskLevel("LOW");
-        pattern.setRecommendations(Arrays.asList("鏁版嵁涓嶈冻锛屾棤娉曡繘琛屾湁鏁堝垎鏋?));
+        pattern.setRecommendations(Arrays.asList("数据不足，无法进行有效分析"));
         pattern.setConfidenceScore(0.0);
         pattern.setLastAnalysisTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         return ResponseDTO.ok(pattern);
@@ -986,8 +986,8 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             actions.add("璋冩煡鏍规湰鍘熷洜");
             actions.add("璁″垝淇鎺柦");
         } else {
-            actions.add("鐩戞帶鍚庣画鐘舵€?);
-            actions.add("鏇存柊澶勭悊鏂囨。");
+            actions.add("监控后续状态");
+            actions.add("更新处理文档");
         }
 
         return actions;
@@ -1032,7 +1032,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         List<TrendAnalysis> trends = new ArrayList<>();
 
         TrendAnalysis trend1 = new TrendAnalysis();
-        trend1.setMetricName("璁块棶閲?);
+        trend1.setMetricName("访问量");
         trend1.setTrendDirection("INCREASING");
         trend1.setChangeRate(15.5);
         trend1.setTrendPeriod("monthly");
@@ -1044,7 +1044,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
 
     private List<String> generateReportRecommendations() {
         return Arrays.asList(
-                "缁х画瀹炴柦褰撳墠鐨勫畨鍏ㄧ瓥鐣?,
+                "继续实施当前的安全策略",
                 "鐩戞帶绯荤粺鎬ц兘鎸囨爣",
                 "瀹氭湡鏇存柊AI妯″瀷",
                 "鍔犲己鍛樺伐瀹夊叏鍩硅"

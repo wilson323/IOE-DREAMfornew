@@ -163,6 +163,154 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
         return errorMapping;
     }
 
+    @Override
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage parseDeviceMessage(byte[] rawData, Long deviceId) 
+            throws net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException {
+        log.debug("[宇视科技适配器] 解析设备消息, deviceId={}", deviceId);
+        // TODO: 实现协议消息解析
+        throw new net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException("parseDeviceMessage未实现");
+    }
+
+    @Override
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage parseDeviceMessage(String hexData, Long deviceId) 
+            throws net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException {
+        log.debug("[宇视科技适配器] 解析设备消息(十六进制), deviceId={}", deviceId);
+        // TODO: 实现协议消息解析（十六进制）
+        throw new net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException("parseDeviceMessage未实现");
+    }
+
+    @Override
+    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId) 
+            throws net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException {
+        log.debug("[宇视科技适配器] 构建设备响应, deviceId={}, messageType={}", deviceId, messageType);
+        // TODO: 实现设备响应构建
+        throw new net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException("buildDeviceResponse未实现");
+    }
+
+    @Override
+    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId) 
+            throws net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException {
+        log.debug("[宇视科技适配器] 构建设备响应(十六进制), deviceId={}, messageType={}", deviceId, messageType);
+        // TODO: 实现设备响应构建（十六进制）
+        throw new net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException("buildDeviceResponseHex未实现");
+    }
+
+    @Override
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult validateMessage(
+            net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage message) {
+        log.debug("[宇视科技适配器] 验证消息, deviceId={}", message.getDeviceId());
+        // TODO: 实现消息验证
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult result = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult();
+        result.setValid(true);
+        return result;
+    }
+
+    @Override
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult validateDevicePermission(
+            Long deviceId, String operation) {
+        log.debug("[宇视科技适配器] 验证设备权限, deviceId={}, operation={}", deviceId, operation);
+        // TODO: 实现设备权限验证
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult result = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult();
+        result.setAllowed(true);
+        return result;
+    }
+
+    @Override
+    public java.util.concurrent.Future<net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult> initializeDevice(
+            Map<String, Object> deviceInfo, Map<String, Object> config) {
+        log.debug("[宇视科技适配器] 初始化设备");
+        // TODO: 实现设备初始化
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult result = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult();
+        result.setSuccess(true);
+        return java.util.concurrent.CompletableFuture.completedFuture(result);
+    }
+
+    @Override
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult handleDeviceRegistration(
+            Map<String, Object> registrationData, Long deviceId) {
+        log.debug("[宇视科技适配器] 处理设备注册, deviceId={}", deviceId);
+        // TODO: 实现设备注册处理
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult result = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult();
+        result.setSuccess(true);
+        return result;
+    }
+
+    @Override
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult handleDeviceHeartbeat(
+            Map<String, Object> heartbeatData, Long deviceId) {
+        log.debug("[宇视科技适配器] 处理设备心跳, deviceId={}", deviceId);
+        // TODO: 实现设备心跳处理
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult result = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult();
+        result.setSuccess(true);
+        result.setDeviceId(deviceId);
+        result.setOnline(true);
+        result.setHeartbeatTime(java.time.LocalDateTime.now());
+        return result;
+    }
+
+    @Override
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus getDeviceStatus(Long deviceId) {
+        log.debug("[宇视科技适配器] 获取设备状态, deviceId={}", deviceId);
+        // TODO: 实现设备状态获取
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus status = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus();
+        status.setDeviceId(deviceId);
+        status.setOnline(true);
+        return status;
+    }
+
+    @Override
+    public Map<String, Object> getProtocolConfig(Long deviceId) {
+        log.debug("[宇视科技适配器] 获取协议配置, deviceId={}", deviceId);
+        // TODO: 实现协议配置获取
+        return new HashMap<>();
+    }
+
+    @Override
+    public boolean updateProtocolConfig(Long deviceId, Map<String, Object> config) {
+        log.debug("[宇视科技适配器] 更新协议配置, deviceId={}", deviceId);
+        // TODO: 实现协议配置更新
+        return true;
+    }
+
+    @Override
+    public java.util.concurrent.Future<net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult> processAccessBusiness(
+            String businessType, Map<String, Object> businessData, Long deviceId) {
+        log.debug("[宇视科技适配器] 处理门禁业务, deviceId={}, businessType={}", deviceId, businessType);
+        // TODO: 实现门禁业务处理
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
+        result.setSuccess(true);
+        return java.util.concurrent.CompletableFuture.completedFuture(result);
+    }
+
+    @Override
+    public java.util.concurrent.Future<net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult> processAttendanceBusiness(
+            String businessType, Map<String, Object> businessData, Long deviceId) {
+        log.debug("[宇视科技适配器] 处理考勤业务, deviceId={}, businessType={}", deviceId, businessType);
+        // TODO: 实现考勤业务处理
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
+        result.setSuccess(true);
+        return java.util.concurrent.CompletableFuture.completedFuture(result);
+    }
+
+    @Override
+    public java.util.concurrent.Future<net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult> processConsumeBusiness(
+            String businessType, Map<String, Object> businessData, Long deviceId) {
+        log.debug("[宇视科技适配器] 处理消费业务, deviceId={}, businessType={}", deviceId, businessType);
+        // TODO: 实现消费业务处理
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = 
+            new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
+        result.setSuccess(true);
+        return java.util.concurrent.CompletableFuture.completedFuture(result);
+    }
+
     /**
      * 获取实时视频流
      */

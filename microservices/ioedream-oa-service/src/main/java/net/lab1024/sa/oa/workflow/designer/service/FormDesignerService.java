@@ -67,7 +67,7 @@ public class FormDesignerService {
      * 获取表单定义
      */
     public FormDefinitionDTO getFormDefinition(String formKey) {
-        FormSchemaEntity entity = formSchemaRepository.findLatestByKey(formKey);
+        FormSchemaEntity entity = formSchemaDao.findLatestByKey(formKey);
         if (entity == null) {
             return null;
         }

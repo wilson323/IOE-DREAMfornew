@@ -11,13 +11,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 缁存姢棰勬祴瑙嗗浘瀵硅薄
+ * 维护预测视图对象
  * <p>
- * 璁惧棰勬祴鎬х淮鎶ょ粨鏋滅殑鏁版嵁浼犺緭瀵硅薄
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
- * - 浣跨敤@Data娉ㄨВ
- * - 瀹屾暣鐨勫瓧娈垫枃妗ｆ敞瑙?
- * - 鏋勫缓鑰呮ā寮忔敮鎸?
+ * 设备预测性维护结果的数据传输对象
+ * 严格遵循CLAUDE.md规范：
+ * - 使用@Data注解
+ * - 完整的字段文档注释
+ * - 构建者模式支持
  * </p>
  *
  * @author IOE-DREAM Team
@@ -28,180 +28,180 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "缁存姢棰勬祴淇℃伅")
+@Schema(description = "维护预测信息")
 public class MaintenancePredictionVO {
 
     /**
-     * 璁惧ID
+     * 设备ID
      */
-    @Schema(description = "璁惧ID", example = "1001")
+    @Schema(description = "设备ID", example = "1001")
     private Long deviceId;
 
     /**
-     * 璁惧鍚嶇О
+     * 设备名称
      */
-    @Schema(description = "璁惧鍚嶇О", example = "涓诲叆鍙ｉ棬绂佹帶鍒跺櫒")
+    @Schema(description = "设备名称", example = "主入口门禁控制器")
     private String deviceName;
 
     /**
-     * 棰勬祴缁存姢绫诲瀷
-     * PREVENTIVE - 棰勯槻鎬х淮鎶?
-     * CORRECTIVE - 绾犳鎬х淮鎶?
-     * PREDICTIVE - 棰勬祴鎬х淮鎶?
-     * EMERGENCY - 绱ф€ョ淮鎶?
+     * 预测维护类型
+     * PREVENTIVE - 预防性维护
+     * CORRECTIVE - 纠正性维护
+     * PREDICTIVE - 预测性维护
+     * EMERGENCY - 紧急维护
      */
-    @Schema(description = "棰勬祴缁存姢绫诲瀷", example = "PREDICTIVE")
+    @Schema(description = "预测维护类型", example = "PREDICTIVE")
     private String maintenanceType;
 
     /**
-     * 棰勬祴鏁呴殰姒傜巼锛?锛?
+     * 预测故障概率（%）
      */
-    @Schema(description = "棰勬祴鏁呴殰姒傜巼锛?锛?, example = "23.5")
+    @Schema(description = "预测故障概率（%）", example = "23.5")
     private BigDecimal failureProbability;
 
     /**
-     * 椋庨櫓绛夌骇
-     * LOW - 浣庨闄?
-     * MEDIUM - 涓瓑椋庨櫓
-     * HIGH - 楂橀闄?
-     * CRITICAL - 涓ラ噸椋庨櫓
+     * 风险等级
+     * LOW - 低风险
+     * MEDIUM - 中等风险
+     * HIGH - 高风险
+     * CRITICAL - 严重风险
      */
-    @Schema(description = "椋庨櫓绛夌骇", example = "MEDIUM")
+    @Schema(description = "风险等级", example = "MEDIUM")
     private String riskLevel;
 
     /**
-     * 寤鸿缁存姢鏃堕棿
+     * 建议维护时间
      */
-    @Schema(description = "寤鸿缁存姢鏃堕棿", example = "2025-02-15T09:00:00")
+    @Schema(description = "建议维护时间", example = "2025-02-15T09:00:00")
     private LocalDateTime recommendedMaintenanceTime;
 
     /**
-     * 缁存姢浼樺厛绾?
+     * 维护优先级
      */
-    @Schema(description = "缁存姢浼樺厛绾?, example = "2")
+    @Schema(description = "维护优先级", example = "2")
     private Integer priority;
 
     /**
-     * 棰勮鍋滄満鏃堕暱锛堝皬鏃讹級
+     * 预计停机时长（小时）
      */
-    @Schema(description = "棰勮鍋滄満鏃堕暱锛堝皬鏃讹級", example = "2")
+    @Schema(description = "预计停机时长（小时）", example = "2")
     private Integer estimatedDowntimeHours;
 
     /**
-     * 棰勮缁存姢鎴愭湰
+     * 预计维护成本
      */
-    @Schema(description = "棰勮缁存姢鎴愭湰", example = "1200.00")
+    @Schema(description = "预计维护成本", example = "1200.00")
     private BigDecimal estimatedMaintenanceCost;
 
     /**
-     * 棰勮鍑忓皯鎹熷け
+     * 预计减少损失
      */
-    @Schema(description = "棰勮鍑忓皯鎹熷け", example = "5800.00")
+    @Schema(description = "预计减少损失", example = "5800.00")
     private BigDecimal estimatedLossReduction;
 
     /**
-     * 鏁呴殰鎻忚堪
+     * 故障描述
      */
-    @Schema(description = "鏁呴殰鎻忚堪", example = "鍩轰簬鍘嗗彶鏁版嵁鍒嗘瀽锛岃澶囩綉缁滄ā鍧楀彲鑳藉湪15澶╁悗鍑虹幇杩炴帴涓嶇ǔ瀹?)
+    @Schema(description = "故障描述", example = "基于历史数据分析，设备网络模块可能在15天后出现连接不稳定")
     private String failureDescription;
 
     /**
-     * 褰卞搷鍒嗘瀽
+     * 影响分析
      */
-    @Schema(description = "褰卞搷鍒嗘瀽", example = "鍙兘瀵艰嚧闂ㄧ鍝嶅簲寤惰繜锛屽奖鍝嶅憳宸ラ€氳鏁堢巼")
+    @Schema(description = "影响分析", example = "可能导致门禁响应延迟，影响员工通行效率")
     private String impactAnalysis;
 
     /**
-     * 缁存姢寤鸿
+     * 维护建议
      */
-    @Schema(description = "缁存姢寤鸿", example = "寤鸿妫€鏌ョ綉缁滆繛鎺ュ櫒锛屾洿鏂板浐浠剁増鏈?)
+    @Schema(description = "维护建议", example = "建议检查网络连接器，更新固件版本")
     private String maintenanceRecommendation;
 
     /**
-     * 鎵€闇€澶囦欢
+     * 所需备件
      */
-    @Schema(description = "鎵€闇€澶囦欢")
+    @Schema(description = "所需备件")
     private List<RequiredPartVO> requiredParts;
 
     /**
-     * 缁存姢姝ラ
+     * 维护步骤
      */
-    @Schema(description = "缁存姢姝ラ")
+    @Schema(description = "维护步骤")
     private List<MaintenanceStepVO> maintenanceSteps;
 
     /**
-     * 棰勬祴缃俊搴︼紙%锛?
+     * 预测置信度（%）
      */
-    @Schema(description = "棰勬祴缃俊搴︼紙%锛?, example = "87.5")
+    @Schema(description = "预测置信度（%）", example = "87.5")
     private BigDecimal confidenceLevel;
 
     /**
-     * 棰勬祴妯″瀷
+     * 预测模型
      */
-    @Schema(description = "棰勬祴妯″瀷", example = "HYBRID_ML_STATISTICAL")
+    @Schema(description = "预测模型", example = "HYBRID_ML_STATISTICAL")
     private String predictionModel;
 
     /**
-     * 鏁版嵁鏉ユ簮
+     * 数据来源
      */
-    @Schema(description = "鏁版嵁鏉ユ簮", example = "璁惧杩愯鏃ュ織銆佹晠闅滃巻鍙层€佺幆澧冩暟鎹?)
+    @Schema(description = "数据来源", example = "设备运行日志、故障历史、环境数据")
     private String dataSource;
 
     /**
-     * 棰勬祴鐢熸垚鏃堕棿
+     * 预测生成时间
      */
-    @Schema(description = "棰勬祴鐢熸垚鏃堕棿", example = "2025-01-30T15:45:00")
+    @Schema(description = "预测生成时间", example = "2025-01-30T15:45:00")
     private LocalDateTime predictionTime;
 
     /**
-     * 鎵€闇€澶囦欢鍐呴儴绫?
+     * 所需备件内部类
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "鎵€闇€澶囦欢")
+    @Schema(description = "所需备件")
     public static class RequiredPartVO {
 
-        @Schema(description = "澶囦欢鍚嶇О", example = "缃戠粶妯″潡")
+        @Schema(description = "备件名称", example = "网络模块")
         private String partName;
 
-        @Schema(description = "澶囦欢鍨嬪彿", example = "NM-2000A")
+        @Schema(description = "备件型号", example = "NM-2000A")
         private String partModel;
 
-        @Schema(description = "澶囦欢鏁伴噺", example = "1")
+        @Schema(description = "备件数量", example = "1")
         private Integer quantity;
 
-        @Schema(description = "棰勮鎴愭湰", example = "450.00")
+        @Schema(description = "预计成本", example = "450.00")
         private BigDecimal estimatedCost;
 
-        @Schema(description = "渚涘簲鍟?, example = "璁惧鍘熷巶")
+        @Schema(description = "供应商", example = "设备原厂")
         private String supplier;
     }
 
     /**
-     * 缁存姢姝ラ鍐呴儴绫?
+     * 维护步骤内部类
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "缁存姢姝ラ")
+    @Schema(description = "维护步骤")
     public static class MaintenanceStepVO {
 
-        @Schema(description = "姝ラ搴忓彿", example = "1")
+        @Schema(description = "步骤序号", example = "1")
         private Integer stepNumber;
 
-        @Schema(description = "姝ラ鎻忚堪", example = "鏂紑璁惧鐢垫簮")
+        @Schema(description = "步骤描述", example = "断开设备电源")
         private String stepDescription;
 
-        @Schema(description = "棰勮鑰楁椂锛堝垎閽燂級", example = "5")
+        @Schema(description = "预计耗时（分钟）", example = "5")
         private Integer estimatedMinutes;
 
-        @Schema(description = "鎶€鑳借姹?, example = "BASIC")
+        @Schema(description = "技能要求", example = "BASIC")
         private String skillRequirement;
 
-        @Schema(description = "瀹夊叏娉ㄦ剰浜嬮」", example = "纭繚瀹屽叏鏂數鍚庡啀鎿嶄綔")
+        @Schema(description = "安全注意事项", example = "确保完全断电后再操作")
         private String safetyNote;
     }
 }

@@ -326,46 +326,53 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
                 return ProtocolValidationResult.failure("MSG_NULL", "协议消息为空");
             }
 
-            // 将ProtocolMessage转换为ConsumeZktecoV10Message
-            ConsumeZktecoV10Message zktecoMessage = convertFromProtocolMessage(message);
-            if (zktecoMessage == null) {
-                return ProtocolValidationResult.failure("MSG_TYPE_MISMATCH", "消息类型不匹配");
+            // 2. 协议类型验证
+            if (message.getProtocolType() == null || !message.getProtocolType().equals(PROTOCOL_TYPE)) {
+                return ProtocolValidationResult.failure("PROTOCOL_TYPE_MISMATCH", 
+                        "协议类型不匹配: " + message.getProtocolType());
             }
 
-            // 2. 必填字段验证
-            if (zktecoMessage.getDeviceId() == null || zktecoMessage.getDeviceId().trim().isEmpty()) {
+            // 3. 必填字段验证
+            if (message.getDeviceId() == null) {
                 return ProtocolValidationResult.failure("DEVICE_ID_EMPTY", "设备ID为空");
             }
 
-            if (zktecoMessage.getMessageTypeCode() == null) {
+            if (message.getMessageType() == null || message.getMessageType().trim().isEmpty()) {
                 return ProtocolValidationResult.failure("MSG_TYPE_EMPTY", "消息类型为空");
             }
 
-            // 3. 消息类型验证
-            if (!isValidMessageType(zktecoMessage.getMessageTypeCode())) {
-                return ProtocolValidationResult.failure("MSG_TYPE_INVALID", 
-                        "无效的消息类型: " + zktecoMessage.getMessageTypeCode());
+            // 4. 消息数据验证
+            if (message.getBusinessData() == null) {
+                return ProtocolValidationResult.failure("MSG_DATA_EMPTY", "消息数据为空");
             }
 
-            // 4. 设备型号验证
-            if (zktecoMessage.getDeviceModel() != null &&
-                !isDeviceModelSupported(zktecoMessage.getDeviceModel())) {
-                return ProtocolValidationResult.failure("DEVICE_MODEL_UNSUPPORTED", 
-                        "不支持的设备型号: " + zktecoMessage.getDeviceModel());
+            // 4. 设备型号验证（从businessData中获取）
+            Map<String, Object> messageData = message.getBusinessData();
+            if (messageData != null && messageData.containsKey("deviceModel")) {
+                String deviceModel = (String) messageData.get("deviceModel");
+                if (deviceModel != null && !isDeviceModelSupported(deviceModel)) {
+                    return ProtocolValidationResult.failure("DEVICE_MODEL_UNSUPPORTED", 
+                            "不支持的设备型号: " + deviceModel);
+                }
             }
 
-            // 5. 消费金额验证
-            if (zktecoMessage.getConsumeAmount() != null) {
-                if (zktecoMessage.getConsumeAmount().compareTo(BigDecimal.ZERO) <= 0) {
-                    return ProtocolValidationResult.failure("INVALID_CONSUME_AMOUNT", 
-                            "消费金额必须大于0");
+            // 5. 消费金额验证（从messageData中获取）
+            if (messageData != null && messageData.containsKey("consumeAmount")) {
+                Object amountObj = messageData.get("consumeAmount");
+                if (amountObj instanceof BigDecimal) {
+                    BigDecimal consumeAmount = (BigDecimal) amountObj;
+                    if (consumeAmount.compareTo(BigDecimal.ZERO) <= 0) {
+                        return ProtocolValidationResult.failure("INVALID_CONSUME_AMOUNT", 
+                                "消费金额必须大于0");
+                    }
                 }
             }
 
             // 6. 时间戳验证
-            if (zktecoMessage.getTimestamp() != null) {
+            if (message.getTimestamp() != null) {
                 long currentTime = System.currentTimeMillis();
-                long messageTime = zktecoMessage.getTimestamp();
+                long messageTime = message.getTimestamp().atZone(java.time.ZoneId.systemDefault())
+                        .toInstant().toEpochMilli();
                 if (Math.abs(currentTime - messageTime) > 300000) { // 5分钟
                     return ProtocolValidationResult.failure("TIMESTAMP_OUT_OF_RANGE", 
                             "消息时间戳超出允许范围");
@@ -1284,13 +1291,45 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private ProtocolMessage convertToProtocolMessage(ConsumeZktecoV10Message zktecoMessage) {
         ProtocolMessage protocolMessage = new ProtocolMessage();
-        protocolMessage.setMessageId(zktecoMessage.getMessageId());
-        protocolMessage.setDeviceId(Long.parseLong(zktecoMessage.getDeviceId()));
+        protocolMessage.setMessageId(zktecoMessage.getSequenceNumber() != null ? 
+            String.valueOf(zktecoMessage.getSequenceNumber()) : UUID.randomUUID().toString());
+        
+        // 转换deviceId为Long类型
+        try {
+            if (zktecoMessage.getDeviceId() != null && !zktecoMessage.getDeviceId().trim().isEmpty()) {
+                protocolMessage.setDeviceId(Long.parseLong(zktecoMessage.getDeviceId()));
+            }
+        } catch (NumberFormatException e) {
+            log.warn("[中控消费协议V1.0] 设备ID格式错误: {}", zktecoMessage.getDeviceId());
+        }
+        
         protocolMessage.setDeviceCode(zktecoMessage.getDeviceId());
         protocolMessage.setProtocolType(PROTOCOL_TYPE);
         protocolMessage.setMessageType(zktecoMessage.getMessageTypeName());
-        protocolMessage.setMessageData(zktecoMessage.getBusinessData());
-        protocolMessage.setTimestamp(zktecoMessage.getTimestamp());
+        
+        // 将业务数据转换为Map
+        Map<String, Object> messageData = new HashMap<>();
+        if (zktecoMessage.getConsumeRecordNumber() != null) {
+            messageData.put("consumeRecordNumber", zktecoMessage.getConsumeRecordNumber());
+        }
+        if (zktecoMessage.getUserId() != null) {
+            messageData.put("userId", zktecoMessage.getUserId());
+        }
+        if (zktecoMessage.getCardNumber() != null) {
+            messageData.put("cardNumber", zktecoMessage.getCardNumber());
+        }
+        if (zktecoMessage.getConsumeAmount() != null) {
+            messageData.put("consumeAmount", zktecoMessage.getConsumeAmount());
+        }
+        protocolMessage.setBusinessData(messageData);
+        
+        if (zktecoMessage.getTimestamp() != null) {
+            protocolMessage.setTimestamp(java.time.LocalDateTime.ofEpochSecond(
+                zktecoMessage.getTimestamp(), 0, java.time.ZoneOffset.UTC));
+        } else {
+            protocolMessage.setTimestamp(java.time.LocalDateTime.now());
+        }
+        
         return protocolMessage;
     }
 

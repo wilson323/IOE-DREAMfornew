@@ -80,6 +80,6 @@ public class DeviceAdapterFactory {
      * @return 协议类型列表
      */
     public java.util.List<String> getSupportedProtocols() {
-        return protocolAdapterFactory.getSupportedProtocols();
+        return protocolAdapterFactory.getSupportedProtocolTypes();
     }
 }

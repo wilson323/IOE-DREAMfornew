@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -148,6 +150,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
     @Override
     @Observed(name = "access.device.getDetail", contextualName = "access-device-get-detail")
     @Transactional(readOnly = true)
+    @Cacheable(value = "access:device:detail", key = "#deviceId", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<AccessDeviceVO> getDeviceDetail(Long deviceId) {
         log.info("[闂ㄧ璁惧] 鏌ヨ璁惧璇︽儏锛宒eviceId={}", deviceId);
 
@@ -189,6 +192,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
     @RateLimiter(name = "write-operation-ratelimiter")
     @Timed(value = "access.device.add", description = "闂ㄧ璁惧娣诲姞鑰楁椂")
     @Counted(value = "access.device.add.count", description = "闂ㄧ璁惧娣诲姞娆℃暟")
+    @CacheEvict(value = "access:device:detail", allEntries = true)
     public ResponseDTO<Long> addDevice(AccessDeviceAddForm addForm) {
         log.info("[闂ㄧ璁惧] 娣诲姞璁惧锛宒eviceName={}, deviceCode={}, areaId={}",
                 addForm.getDeviceName(), addForm.getDeviceCode(), addForm.getAreaId());
@@ -252,7 +256,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
     @RateLimiter(name = "write-operation-ratelimiter")
     @Timed(value = "access.device.update", description = "闂ㄧ璁惧鏇存柊鑰楁椂")
     @Counted(value = "access.device.update.count", description = "闂ㄧ璁惧鏇存柊娆℃暟")
-    public ResponseDTO<Boolean> updateDevice(AccessDeviceUpdateForm updateForm) {
+    @CacheEvict(value = "access:device:detail", key = "#updateForm.deviceId")    public ResponseDTO<Boolean> updateDevice(AccessDeviceUpdateForm updateForm) {
         log.info("[闂ㄧ璁惧] 鏇存柊璁惧锛宒eviceId={}", updateForm.getDeviceId());
 
         try {
@@ -323,6 +327,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
     @RateLimiter(name = "write-operation-ratelimiter")
     @Timed(value = "access.device.delete", description = "闂ㄧ璁惧鍒犻櫎鑰楁椂")
     @Counted(value = "access.device.delete.count", description = "闂ㄧ璁惧鍒犻櫎娆℃暟")
+    @CacheEvict(value = "access:device:detail", key = "#deviceId")
     public ResponseDTO<Boolean> deleteDevice(Long deviceId) {
         log.info("[闂ㄧ璁惧] 鍒犻櫎璁惧锛宒eviceId={}", deviceId);
 
@@ -361,6 +366,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "access:device:detail", key = "#deviceId")
     public ResponseDTO<Boolean> updateDeviceStatus(Long deviceId, Integer status) {
         log.info("[闂ㄧ璁惧] 鏇存柊璁惧鐘舵€侊紝deviceId={}, status={}", deviceId, status);
 

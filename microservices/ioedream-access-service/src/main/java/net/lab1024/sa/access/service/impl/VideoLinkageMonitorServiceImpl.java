@@ -441,8 +441,8 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
         log.debug("[瑙嗛鑱斿姩] 澶勭悊鎽勫儚澶磋仈鍔? linkageId={}, cameraId={}", linkageId, cameraId);
 
         // 妯℃嫙鎽勫儚澶翠俊鎭幏鍙?
-        String cameraName = "鎽勫儚澶?" + cameraId;
-        String cameraLocation = "鍖哄煙-" + request.getAreaId();
+        String cameraName = "摄像头" + cameraId;
+        String cameraLocation = "区域-" + request.getAreaId();
         String streamUrl = "rtsp://192.168.1.100:554/camera/" + cameraId + "/stream";
 
         // 鍚姩褰曞埗锛堝鏋滈渶瑕侊級
@@ -490,7 +490,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .faceImageUrl("/api/v1/video/capture/face/" + linkageId + ".jpg")
                     .verifyTime(LocalDateTime.now())
                     .verifyMethod("REAL_TIME_RECOGNITION")
-                    .failureReasons(success ? null : List.of("浜鸿劯鍖归厤搴﹁繃浣?))
+                    .failureReasons(success ? null : List.of("人脸匹配度过低"))
                     .build();
 
         } catch (InterruptedException e) {
@@ -669,7 +669,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .recognitionSuccess(success)
                     .confidenceScore(confidence)
                     .matchedUserId(success ? request.getUserId() : null)
-                    .matchedUserName(success ? "鐢ㄦ埛" + request.getUserId() : null)
+                    .matchedUserName(success ? "用户" + request.getUserId() : null)
                     .capturedFaceUrl("/api/v1/video/face/capture/" + request.getStreamId() + ".jpg")
                     .recognitionTime(LocalDateTime.now())
                     .faceCount(1)
@@ -680,7 +680,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                             .detectionMethod("MULTI_MODAL")
                             .spoofingIndicators(new ArrayList<>())
                             .build())
-                    .failureReasons(success ? null : List.of("浜鸿劯鍖归厤搴﹁繃浣?, "鍥剧墖璐ㄩ噺涓嶄匠"))
+                    .failureReasons(success ? null : List.of("人脸匹配度过低", "图片质量不佳"))
                     .build();
 
         } catch (InterruptedException e) {
@@ -759,7 +759,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .behaviorCount(behaviors.size())
                     .riskScore(riskScore)
                     .alertLevel(alertLevel)
-                    .recommendedActions(hasAbnormal ? List.of("閫氱煡瀹変繚浜哄憳", "淇濆瓨璇佹嵁", "缁х画鐩戞帶") : new ArrayList<>())
+                    .recommendedActions(hasAbnormal ? List.of("通知安保人员", "保存证据", "继续监控") : new ArrayList<>())
                     .build();
 
         } catch (InterruptedException e) {
@@ -854,7 +854,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
         for (Long cameraId : request.getCameraIds()) {
             CameraStreamInfo stream = CameraStreamInfo.builder()
                     .cameraId(cameraId)
-                    .cameraName("鎽勫儚澶?" + cameraId)
+                    .cameraName("摄像头" + cameraId)
                     .streamUrl("rtsp://192.168.1.100:554/camera/" + cameraId + "/stream")
                     .position("浣嶇疆-" + (streams.size() + 1))
                     .width(1920)
@@ -1039,7 +1039,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
         for (Long cameraId : cameraIds != null ? cameraIds : List.of(1L, 2L, 3L)) {
             CameraStatistics stat = CameraStatistics.builder()
                     .cameraId(cameraId)
-                    .cameraName("鎽勫儚澶?" + cameraId)
+                    .cameraName("摄像头" + cameraId)
                     .linkageEventCount(25 + (long)(Math.random() * 50))
                     .recordingDuration((long)(Math.random() * 100))
                     .storageUsed((long)(Math.random() * 20))

@@ -42,7 +42,11 @@
 ### 2. ioedream-access-service (8090) - 门禁管理服务
 
 #### 缓存使用检查
-- ⏳ 待检查
+- ✅ `AccessDeviceServiceImpl.getDeviceDetail()` - 已使用@Cacheable
+- ✅ `AccessDeviceServiceImpl.addDevice()` - 已使用@CacheEvict（清除所有缓存）
+- ✅ `AccessDeviceServiceImpl.updateDevice()` - 已使用@CacheEvict（清除指定设备缓存）
+- ✅ `AccessDeviceServiceImpl.deleteDevice()` - 已使用@CacheEvict（清除指定设备缓存）
+- ✅ `AccessDeviceServiceImpl.updateDeviceStatus()` - 已使用@CacheEvict（清除指定设备缓存）
 
 #### 数据库查询优化
 - ⏳ 待检查

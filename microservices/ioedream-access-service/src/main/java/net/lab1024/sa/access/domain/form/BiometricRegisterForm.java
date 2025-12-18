@@ -8,35 +8,35 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * 鐢熺墿璇嗗埆娉ㄥ唽琛ㄥ崟
+ * 生物识别注册表单
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-30
  */
 @Data
-@Schema(description = "鐢熺墿璇嗗埆娉ㄥ唽琛ㄥ崟")
+@Schema(description = "生物识别注册表单")
 public class BiometricRegisterForm {
 
-    @NotNull(message = "鐢ㄦ埛ID涓嶈兘涓虹┖")
-    @Schema(description = "鐢ㄦ埛ID", example = "1001")
+    @NotNull(message = "用户ID不能为空")
+    @Schema(description = "用户ID", example = "1001")
     private Long userId;
 
-    @NotNull(message = "鐢熺墿璇嗗埆绫诲瀷涓嶈兘涓虹┖")
-    @Schema(description = "鐢熺墿璇嗗埆绫诲瀷", example = "1", allowableValues = {"1", "2", "3", "4", "5"})
+    @NotNull(message = "生物识别类型不能为空")
+    @Schema(description = "生物识别类型", example = "1", allowableValues = {"1", "2", "3", "4", "5"})
     private Integer biometricType;
 
-    @NotBlank(message = "鐗瑰緛鏁版嵁涓嶈兘涓虹┖")
-    @Size(max = 5000000, message = "鐗瑰緛鏁版嵁涓嶈兘瓒呰繃5MB")
-    @Schema(description = "鐗瑰緛鏁版嵁(Base64缂栫爜)", example = "base64_encoded_feature_data")
+    @NotBlank(message = "特征数据不能为空")
+    @Size(max = 5000000, message = "特征数据不能超过5MB")
+    @Schema(description = "特征数据(Base64编码)", example = "base64_encoded_feature_data")
     private String featureData;
 
-    @NotBlank(message = "璁惧ID涓嶈兘涓虹┖")
-    @Size(max = 100, message = "璁惧ID闀垮害涓嶈兘瓒呰繃100涓瓧绗?)
-    @Schema(description = "璁惧ID", example = "DEVICE_001")
+    @NotBlank(message = "设备ID不能为空")
+    @Size(max = 100, message = "设备ID长度不能超过100个字符")
+    @Schema(description = "设备ID", example = "DEVICE_001")
     private String deviceId;
 
-    @Size(max = 200, message = "澶囨敞闀垮害涓嶈兘瓒呰繃200涓瓧绗?)
-    @Schema(description = "澶囨敞", example = "浜鸿劯璇嗗埆妯℃澘")
+    @Size(max = 200, message = "备注长度不能超过200个字符")
+    @Schema(description = "备注", example = "人脸识别模板")
     private String remarks;
 }
