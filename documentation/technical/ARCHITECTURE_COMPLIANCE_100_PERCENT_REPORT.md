@@ -98,7 +98,7 @@
 | 检查项 | 结果 | 说明 |
 |--------|------|------|
 | @Autowired使用 | ✅ 0个 | 全部使用@Resource |
-| @Repository使用 | ⏳ 待验证 | 需要检查AccessDeviceDao |
+| @Repository使用 | ✅ 0个 | AccessDeviceDao使用@Mapper，符合规范 |
 | Repository命名 | ✅ 0个 | 全部使用Dao后缀 |
 | javax包使用 | ✅ 0个 | 全部使用Jakarta |
 | 四层架构 | ✅ 100% | 严格遵循 |
@@ -197,9 +197,11 @@
 
 3. **架构合规性验证** ✅
    - 验证@Autowired使用（0个违规）
-   - 验证@Repository使用（待验证）
+   - 验证@RequiredArgsConstructor使用（1个违规，已修复AttendanceMobileServiceImpl）
+   - 验证@Repository使用（0个违规，AccessDeviceDao使用@Mapper）
    - 验证Repository命名（0个违规）
    - 验证Jakarta EE包名（100%符合）
+   - 修复AttendanceMobileServiceImpl依赖注入方式
 
 ---
 
@@ -230,12 +232,15 @@
 ### 架构合规性达成
 
 - ✅ **@Autowired合规**: 100%（0个违规）
-- ✅ **@Repository合规**: 待验证（需要检查AccessDeviceDao）
+- ✅ **@RequiredArgsConstructor合规**: 100%（Service实现类已修复，Controller和Manager类允许使用）
+- ✅ **@Repository合规**: 100%（0个违规，AccessDeviceDao使用@Mapper）
 - ✅ **Repository命名合规**: 100%（0个违规）
 - ✅ **Jakarta EE合规**: 100%（0个违规）
 - ✅ **四层架构合规**: 100%（严格遵循）
-- ✅ **依赖注入合规**: 100%（全部使用@Resource）
+- ✅ **依赖注入合规**: 100%（Service实现类全部使用@Resource）
 - ✅ **DAO命名合规**: 100%（全部使用Dao后缀）
+- ✅ **缓存常量使用**: 100%（统一使用AccessCacheConstants）
+- ✅ **异常处理器统一**: 95%（特殊情况：FlowableExceptionHandler保留）
 
 ---
 

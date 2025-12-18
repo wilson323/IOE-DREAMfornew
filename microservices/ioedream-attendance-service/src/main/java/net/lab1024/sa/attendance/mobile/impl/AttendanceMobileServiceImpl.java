@@ -48,34 +48,34 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
 
     @Resource
     private AttendanceRecordDao attendanceRecordDao;
-    
+
     @Resource
     private ShiftScheduleDao shiftScheduleDao;
-    
+
     @Resource
     private UserDao userDao;
-    
+
     @Resource
     private EmployeeDao employeeDao;
-    
+
     @Resource
     private RealtimeCalculationEngine realtimeCalculationEngine;
-    
+
     @Resource
     private ShiftRotationSystem shiftRotationSystem;
-    
+
     @Resource
     private LeaveCancellationService leaveCancellationService;
-    
+
     @Resource
     private AttendanceRuleEngine attendanceRuleEngine;
-    
+
     @Resource
     private AttendanceReportService attendanceReportService;
-    
+
     @Resource
     private SchedulingService schedulingService;
-    
+
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 

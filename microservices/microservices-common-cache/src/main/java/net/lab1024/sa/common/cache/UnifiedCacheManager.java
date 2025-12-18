@@ -381,7 +381,7 @@ public class UnifiedCacheManager {
             caffeineStats.hitRate(),
             caffeineStats.evictionCount(),
             caffeineStats.loadCount(),
-            caffeineStats.loadExceptionCount(),
+            caffeineStats.loadFailureCount(), // 使用loadFailureCount替代loadExceptionCount
             caffeineStats.averageLoadPenalty() / 1_000_000.0 // 转换为毫秒
         );
     }
