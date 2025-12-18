@@ -9,7 +9,7 @@ import net.lab1024.sa.attendance.engine.conflict.ConflictDetector;
 import net.lab1024.sa.attendance.engine.conflict.ConflictResolver;
 import net.lab1024.sa.attendance.engine.optimizer.ScheduleOptimizer;
 import net.lab1024.sa.attendance.engine.prediction.SchedulePredictor;
-import net.lab1024.sa.attendance.engine.statistics.ScheduleStatisticsCalculator;
+// 注意：ScheduleStatisticsCalculator接口可能不存在，使用statisticsCalculator直接调用
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
