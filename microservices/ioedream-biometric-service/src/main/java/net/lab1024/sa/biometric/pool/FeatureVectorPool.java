@@ -12,11 +12,11 @@ import java.util.Arrays;
 /**
  * 特征向量对象池
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 管理特征向量对象的复用，减少内存分配和GC压力
- * 严格遵循CLAUDE.md规范：
- * - 使用对象池模式实现
- * - 支持对象复用机制
- * - 内存优化
+ * - 使用Apache Commons Pool2实现
+ * - 512维向量对象池（FaceNet标准）
+ * - 对象复用机制
  * </p>
  *
  * @author IOE-DREAM Team
