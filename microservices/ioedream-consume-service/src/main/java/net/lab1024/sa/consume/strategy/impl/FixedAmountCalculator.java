@@ -64,7 +64,7 @@ public class FixedAmountCalculator implements ConsumeAmountCalculator {
 
         try {
             // 1. 构建消费请求DTO
-            net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO requestDTO = 
+            net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO requestDTO =
                     new net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO();
             requestDTO.setUserId(account.getUserId());
             requestDTO.setAccountId(accountId);
@@ -81,7 +81,7 @@ public class FixedAmountCalculator implements ConsumeAmountCalculator {
             BigDecimal fixedAmount = BigDecimal.valueOf(fixedAmountInCents)
                     .divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
 
-            log.debug("[定值策略] 定值金额计算完成，accountId={}, areaId={}, amount={}", 
+            log.debug("[定值策略] 定值金额计算完成，accountId={}, areaId={}, amount={}",
                     accountId, areaId, fixedAmount);
             return fixedAmount;
 
@@ -117,7 +117,7 @@ public class FixedAmountCalculator implements ConsumeAmountCalculator {
                 return false;
             }
 
-            net.lab1024.sa.common.consume.entity.ConsumeAreaEntity area = 
+            net.lab1024.sa.common.consume.entity.ConsumeAreaEntity area =
                     consumeAreaManager.getAreaById(areaId);
             if (area == null) {
                 log.warn("[定值策略] 区域不存在，areaId={}", areaId);
@@ -132,7 +132,7 @@ public class FixedAmountCalculator implements ConsumeAmountCalculator {
             }
 
             boolean supported = manageMode == 1 || manageMode == 3;
-            log.debug("[定值策略] 定值模式支持验证，areaId={}, manageMode={}, supported={}", 
+            log.debug("[定值策略] 定值模式支持验证，areaId={}, manageMode={}, supported={}",
                     areaId, manageMode, supported);
             return supported;
 

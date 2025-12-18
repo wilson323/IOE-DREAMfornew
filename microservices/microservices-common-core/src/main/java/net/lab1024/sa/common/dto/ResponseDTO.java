@@ -193,6 +193,17 @@ public class ResponseDTO<T> implements Serializable {
      * <p>
      * 便捷方法，用于快速返回错误响应
      * 使用默认错误码500（服务器内部错误）
+     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
+     * </p>
+     *
+     * @param message 错误消息
+     * @return 错误响应
+     */
+    public static <T> ResponseDTO<T> error(String message) {
+        ResponseDTO<T> response = new ResponseDTO<>();
+        response.setCode(500);
+        response.setMessage(message);
+        response.setTimestamp(System.currentTimeMillis());
         return response;
     }
 
@@ -279,3 +290,4 @@ public class ResponseDTO<T> implements Serializable {
         return this.code != null && this.code == 200;
     }
 }
+

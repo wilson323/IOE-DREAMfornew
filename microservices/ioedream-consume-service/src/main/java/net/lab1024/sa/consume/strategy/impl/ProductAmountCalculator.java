@@ -73,7 +73,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
             // 1. 验证区域是否支持商品模式
             ConsumeAreaEntity area = consumeAreaManager.getAreaById(areaId);
             if (area == null || area.getManageMode() == null || area.getManageMode() != 2) {
-                log.warn("[商品策略] 区域不支持商品模式，areaId={}, manageMode={}", 
+                log.warn("[商品策略] 区域不支持商品模式，areaId={}, manageMode={}",
                         areaId, area != null ? area.getManageMode() : null);
                 return BigDecimal.ZERO;
             }
@@ -97,7 +97,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
                 return BigDecimal.ZERO;
             }
 
-            log.debug("[商品策略] 商品总价计算完成，accountId={}, areaId={}, totalPrice={}", 
+            log.debug("[商品策略] 商品总价计算完成，accountId={}, areaId={}, totalPrice={}",
                     accountId, areaId, totalPrice);
             return totalPrice;
 
@@ -128,7 +128,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
         }
 
         // 多商品模式
-        if (form.getProductIds() != null && !form.getProductIds().isEmpty() 
+        if (form.getProductIds() != null && !form.getProductIds().isEmpty()
                 && form.getProductQuantities() != null) {
             for (String productId : form.getProductIds()) {
                 Integer quantity = form.getProductQuantities().get(productId);
@@ -246,7 +246,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
             net.lab1024.sa.common.dto.ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
                     accountKindConfigClient.getAccountKind(account.getAccountKindId());
 
-            if (accountKindResponse == null || !accountKindResponse.isSuccess() 
+            if (accountKindResponse == null || !accountKindResponse.isSuccess()
                     || accountKindResponse.getData() == null) {
                 return BigDecimal.ZERO;
             }
@@ -262,7 +262,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
             // 4. 解析mode_config
             java.util.Map<String, Object> modeConfig;
             if (modeConfigObj instanceof String) {
-                modeConfig = objectMapper.readValue((String) modeConfigObj, 
+                modeConfig = objectMapper.readValue((String) modeConfigObj,
                         new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
             } else if (modeConfigObj instanceof java.util.Map) {
                 @SuppressWarnings("unchecked")
@@ -280,7 +280,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
 
             java.util.Map<String, Object> productConfig;
             if (productObj instanceof String) {
-                productConfig = objectMapper.readValue((String) productObj, 
+                productConfig = objectMapper.readValue((String) productObj,
                         new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
             } else if (productObj instanceof java.util.Map) {
                 @SuppressWarnings("unchecked")
@@ -306,7 +306,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
             }
 
             // 7. 验证折扣率范围（0-1之间）
-            if (discountRate.compareTo(BigDecimal.ZERO) < 0 
+            if (discountRate.compareTo(BigDecimal.ZERO) < 0
                     || discountRate.compareTo(BigDecimal.ONE) > 0) {
                 log.warn("[商品策略] 折扣率超出范围，accountId={}, discountRate={}", accountId, discountRate);
                 return BigDecimal.ZERO;
@@ -360,7 +360,7 @@ public class ProductAmountCalculator implements ConsumeAmountCalculator {
             }
 
             boolean supported = manageMode == 2 || manageMode == 3;
-            log.debug("[商品策略] 商品模式支持验证，areaId={}, manageMode={}, supported={}", 
+            log.debug("[商品策略] 商品模式支持验证，areaId={}, manageMode={}, supported={}",
                     areaId, manageMode, supported);
             return supported;
 

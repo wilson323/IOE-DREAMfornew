@@ -8,6 +8,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.common.factory.StrategyMarker;
 import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
@@ -15,11 +16,8 @@ import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
 /**
  * 计次模式计算器策略实现
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 用于计算计次消费模式的消费金额
- * 严格遵循CLAUDE.md规范：
- * - 策略实现类使用@Component注解
- * - 使用@Resource注入依赖
- * - 实现ConsumeAmountCalculator接口
  * </p>
  * <p>
  * 业务场景：
@@ -34,6 +32,7 @@ import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
  */
 @Slf4j
 @Component
+@StrategyMarker(name = "COUNT", type = "CONSUME_MODE", priority = 80)
 public class CountAmountCalculator implements ConsumeAmountCalculator {
 
     @Resource
@@ -70,7 +69,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
 	            ResponseDTO<java.util.Map<String, Object>> accountKindResponse =
 	                    accountKindConfigClient.getAccountKind(accountKindId);
 
-            if (accountKindResponse == null || !accountKindResponse.isSuccess() 
+            if (accountKindResponse == null || !accountKindResponse.isSuccess()
                     || accountKindResponse.getData() == null) {
                 log.warn("[计次策略] 获取账户类别信息失败，accountKindId={}", accountKindId);
                 return BigDecimal.ZERO;
@@ -107,7 +106,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
             // 7. 检查子类型是否为COUNT
             Object subTypeObj = meteredConfig.get("subType");
             if (subTypeObj == null || !"COUNT".equals(subTypeObj.toString())) {
-                log.warn("[计次策略] METERED子类型不是COUNT，accountKindId={}, subType={}", 
+                log.warn("[计次策略] METERED子类型不是COUNT，accountKindId={}, subType={}",
                         accountKindId, subTypeObj);
                 return BigDecimal.ZERO;
             }
@@ -130,7 +129,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
 
             // 11. 应用折扣规则（如有）
             Object applyDiscountObj = countConfig.get("applyDiscount");
-            boolean applyDiscount = applyDiscountObj != null 
+            boolean applyDiscount = applyDiscountObj != null
                     && Boolean.parseBoolean(applyDiscountObj.toString());
             if (applyDiscount) {
                 BigDecimal discountRate = getCountModeDiscountRate(accountKind);
@@ -142,7 +141,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
                 }
             }
 
-            log.debug("[计次策略] 计次金额计算完成，accountId={}, areaId={}, amount={}", 
+            log.debug("[计次策略] 计次金额计算完成，accountId={}, areaId={}, amount={}",
                     accountId, areaId, amount);
             return amount;
 
@@ -158,7 +157,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
     private java.util.Map<String, Object> parseModeConfig(Object modeConfigObj) {
         try {
             if (modeConfigObj instanceof String) {
-                return objectMapper.readValue((String) modeConfigObj, 
+                return objectMapper.readValue((String) modeConfigObj,
                         new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
             } else if (modeConfigObj instanceof java.util.Map) {
                 @SuppressWarnings("unchecked")
@@ -187,7 +186,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
             }
 
             if (meteredObj instanceof String) {
-                return objectMapper.readValue((String) meteredObj, 
+                return objectMapper.readValue((String) meteredObj,
                         new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
             } else if (meteredObj instanceof java.util.Map) {
                 @SuppressWarnings("unchecked")
@@ -216,7 +215,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
             }
 
             if (countObj instanceof String) {
-                return objectMapper.readValue((String) countObj, 
+                return objectMapper.readValue((String) countObj,
                         new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
             } else if (countObj instanceof java.util.Map) {
                 @SuppressWarnings("unchecked")
@@ -254,7 +253,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
             }
 
             if (pricePerTimeInCents <= 0) {
-                log.warn("[计次策略] pricePerTime无效，accountKindId={}, pricePerTime={}", 
+                log.warn("[计次策略] pricePerTime无效，accountKindId={}, pricePerTime={}",
                         accountKindId, pricePerTimeInCents);
                 return null;
             }
@@ -311,7 +310,7 @@ public class CountAmountCalculator implements ConsumeAmountCalculator {
             }
 
             // 5. 验证折扣率范围（0-1之间）
-            if (discountRate.compareTo(BigDecimal.ZERO) < 0 
+            if (discountRate.compareTo(BigDecimal.ZERO) < 0
                     || discountRate.compareTo(BigDecimal.ONE) > 0) {
                 log.warn("[计次策略] 折扣率超出范围，discountRate={}", discountRate);
                 return BigDecimal.ZERO;
