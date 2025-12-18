@@ -3,6 +3,7 @@ package net.lab1024.sa.biometric.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.biometric.dao.BiometricTemplateDao;
 import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity;
+import net.lab1024.sa.biometric.domain.dto.BiometricTemplateSyncRequest;
 import net.lab1024.sa.biometric.domain.vo.TemplateSyncRecordVO;
 import net.lab1024.sa.biometric.domain.vo.TemplateSyncResultVO;
 import net.lab1024.sa.biometric.service.BiometricTemplateSyncService;
@@ -14,6 +15,9 @@ import net.lab1024.sa.common.organization.dao.AreaUserDao;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 import net.lab1024.sa.common.organization.entity.AreaUserEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
+import net.lab1024.sa.common.security.entity.UserEntity;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -61,6 +65,14 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
 
     @Resource
     private GatewayServiceClient gatewayServiceClient;
+
+    @Resource
+    @Qualifier("templateSyncExecutor")
+    private TaskExecutor templateSyncExecutor;
+
+    @Resource
+    @Qualifier("permissionSyncExecutor")
+    private TaskExecutor permissionSyncExecutor;
 
     // 设备类型常量（门禁设备）
     private static final Integer DEVICE_TYPE_ACCESS = 1;
@@ -115,12 +127,13 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
                 return ResponseDTO.error("BIOMETRIC_TEMPLATE_NOT_FOUND", "用户无生物模板");
             }
 
-            // 并行同步到所有设备
+            // 并行同步到所有设备（使用独立线程池）
             List<CompletableFuture<TemplateSyncRecordVO>> futures = new ArrayList<>();
             for (String deviceId : deviceIds) {
                 for (BiometricTemplateEntity template : templates) {
                     CompletableFuture<TemplateSyncRecordVO> future = CompletableFuture.supplyAsync(() ->
-                            syncSingleTemplate(template, deviceId)
+                            syncSingleTemplate(template, deviceId),
+                            templateSyncExecutor
                     );
                     futures.add(future);
                 }
@@ -157,15 +170,30 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
         try {
             log.info("[模板同步] 从设备删除模板开始 userId={}, deviceId={}", userId, deviceId);
 
-            // 通过设备通讯服务删除模板
-            // TODO: 实现设备通讯服务调用
-            // gatewayServiceClient.callDeviceService(...)
+            // 构建删除请求
+            Map<String, Object> deleteRequest = new HashMap<>();
+            deleteRequest.put("userId", userId);
+            deleteRequest.put("deviceId", deviceId);
 
-            log.info("[模板同步] 从设备删除模板完成 userId={}, deviceId={}", userId, deviceId);
-            return ResponseDTO.ok();
+            // 通过设备通讯服务删除模板
+            ResponseDTO<Void> response = gatewayServiceClient.callDeviceCommService(
+                    "/api/v1/device/biometric/template/delete",
+                    HttpMethod.POST,
+                    deleteRequest,
+                    Void.class
+            );
+
+            if (response != null && response.isSuccess()) {
+                log.info("[模板同步] 从设备删除模板完成 userId={}, deviceId={}", userId, deviceId);
+                return ResponseDTO.ok();
+            } else {
+                String errorMsg = response != null ? response.getMessage() : "响应为空";
+                log.warn("[模板同步] 从设备删除模板失败 userId={}, deviceId={}, message={}", userId, deviceId, errorMsg);
+                return ResponseDTO.error("TEMPLATE_DELETE_ERROR", "删除模板失败: " + errorMsg);
+            }
 
         } catch (Exception e) {
-            log.error("[模板同步] 从设备删除模板失败 userId={}, deviceId={}", userId, deviceId, e);
+            log.error("[模板同步] 从设备删除模板异常 userId={}, deviceId={}", userId, deviceId, e);
             throw new BusinessException("TEMPLATE_DELETE_ERROR", "删除模板失败: " + e.getMessage());
         }
     }
@@ -178,7 +206,7 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
             // 1. 查询所有门禁设备
             List<AreaDeviceEntity> allAccessDevices = areaDeviceDao.selectByAreaIdAndDeviceType(null, DEVICE_TYPE_ACCESS);
 
-            // 2. 并行删除模板
+            // 2. 并行删除模板（使用独立线程池）
             List<CompletableFuture<Void>> futures = allAccessDevices.stream()
                     .map(device -> CompletableFuture.runAsync(() -> {
                         try {
@@ -187,7 +215,7 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
                             log.error("[模板同步] 从设备删除模板失败 deviceId={}, userId={}",
                                     device.getDeviceId(), userId, e);
                         }
-                    }))
+                    }, templateSyncExecutor))
                     .collect(Collectors.toList());
 
             // 等待所有删除完成
@@ -309,26 +337,77 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
         record.setSyncTime(LocalDateTime.now());
 
         try {
-            // 通过设备通讯服务同步模板
-            // TODO: 实现设备通讯服务调用
-            // ResponseDTO<Void> response = gatewayServiceClient.callDeviceService(
-            //     "/api/v1/device/biometric/sync",
-            //     HttpMethod.POST,
-            //     buildSyncRequest(template, deviceId),
-            //     Void.class
-            // );
+            // 1. 获取用户信息（用于同步请求）
+            String userName = getUserName(template.getUserId());
 
-            // 临时实现：标记为成功
-            record.setSyncStatus(1);
-            record.setSyncStatusDesc("成功");
+            // 2. 构建同步请求
+            BiometricTemplateSyncRequest syncRequest = BiometricTemplateSyncRequest.builder()
+                    .userId(template.getUserId())
+                    .userName(userName)
+                    .biometricType(template.getBiometricType())
+                    .featureData(template.getFeatureData())
+                    .qualityScore(template.getQualityScore())
+                    .templateVersion(template.getTemplateVersion())
+                    .build();
+
+            // 2. 通过设备通讯服务同步模板
+            ResponseDTO<Void> response = gatewayServiceClient.callDeviceCommService(
+                    "/api/v1/device/biometric/template/sync",
+                    HttpMethod.POST,
+                    syncRequest,
+                    Void.class
+            );
+
+            // 3. 处理响应
+            if (response != null && response.isSuccess()) {
+                record.setSyncStatus(1);
+                record.setSyncStatusDesc("成功");
+                log.debug("[模板同步] 同步模板成功 templateId={}, deviceId={}", template.getTemplateId(), deviceId);
+            } else {
+                record.setSyncStatus(2);
+                record.setSyncStatusDesc("失败");
+                record.setErrorMessage(response != null ? response.getMessage() : "响应为空");
+                log.warn("[模板同步] 同步模板失败 templateId={}, deviceId={}, message={}",
+                        template.getTemplateId(), deviceId, record.getErrorMessage());
+            }
 
         } catch (Exception e) {
-            log.error("[模板同步] 同步模板失败 templateId={}, deviceId={}", template.getTemplateId(), deviceId, e);
+            log.error("[模板同步] 同步模板异常 templateId={}, deviceId={}", template.getTemplateId(), deviceId, e);
             record.setSyncStatus(2);
             record.setSyncStatusDesc("失败");
-            record.setErrorMessage(e.getMessage());
+            record.setErrorMessage("系统异常: " + e.getMessage());
         }
 
         return record;
+    }
+
+    /**
+     * 获取用户姓名
+     * <p>
+     * 通过common-service获取用户信息
+     * </p>
+     */
+    private String getUserName(Long userId) {
+        try {
+            ResponseDTO<UserEntity> response = gatewayServiceClient.callCommonService(
+                    "/api/v1/users/" + userId,
+                    HttpMethod.GET,
+                    null,
+                    UserEntity.class
+            );
+
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                UserEntity user = response.getData();
+                // 优先使用realName，如果为空则使用username
+                return user.getRealName() != null && !user.getRealName().isEmpty()
+                        ? user.getRealName()
+                        : user.getUsername();
+            }
+
+            return "用户" + userId;
+        } catch (Exception e) {
+            log.warn("[模板同步] 获取用户信息失败 userId={}, error={}", userId, e.getMessage());
+            return "用户" + userId;
+        }
     }
 }

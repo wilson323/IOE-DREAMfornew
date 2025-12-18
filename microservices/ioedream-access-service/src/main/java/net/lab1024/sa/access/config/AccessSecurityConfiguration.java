@@ -40,14 +40,14 @@ import net.lab1024.sa.access.security.SecurityHeadersFilter;
  * 闂ㄧ寰湇鍔″畨鍏ㄩ厤缃?
  * <p>
  * 鎻愪緵鍏ㄩ潰鐨勫畨鍏ㄩ槻鎶ら厤缃紝鍖呮嫭锛?
- * - JWT璁よ瘉鍜屾巿鏉?
+ * - JWT认证和授权
  * - API璁块棶鎺у埗鍜屾潈闄愮鐞?
- * - 璺ㄥ煙璇锋眰鎺у埗(CORS)
- * - 瀹夊叏澶撮儴閰嶇疆
- * - 璇锋眰棰戠巼闄愬埗
- * - 浼氳瘽绠＄悊
- * - 瀵嗙爜鍔犲瘑绛栫暐
- * - 瀹¤鏃ュ織璁板綍
+ * - 跨域请求控制(CORS)
+ * - 安全头部配置
+ * - 请求频率限制
+ * - 会话管理
+ * - 密码加密策略
+ * - 审计日志记录
  * </p>
  *
  * @author IOE-DREAM Team
@@ -70,7 +70,7 @@ public class AccessSecurityConfiguration {
     private AccessSecurityProperties securityProperties;
 
     /**
-     * 瀹夊叏杩囨护鍣ㄩ摼閰嶇疆
+     * 安全过滤器链配置
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -152,7 +152,7 @@ public class AccessSecurityConfiguration {
             .addFilterBefore(new RateLimitingFilter(securityProperties.getRateLimit()),
                 SecurityHeadersFilter.class);
 
-        log.info("[瀹夊叏閰嶇疆] 瀹夊叏杩囨护鍣ㄩ摼閰嶇疆瀹屾垚");
+        log.info("[瀹夊叏閰嶇疆] 安全过滤器链配置瀹屾垚");
         return http.build();
     }
 

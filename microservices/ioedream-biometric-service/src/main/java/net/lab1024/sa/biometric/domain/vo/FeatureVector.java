@@ -1,5 +1,6 @@
 package net.lab1024.sa.biometric.domain.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 /**
  * 特征向量VO
  * <p>
- * 封装从生物样本中提取的特征向量
+ * 封装生物特征提取的结果
  * </p>
  *
  * @author IOE-DREAM Team
@@ -19,24 +20,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "特征向量")
 public class FeatureVector {
-    /**
-     * 特征向量数据（浮点数组）
-     */
-    private float[] features;
 
-    /**
-     * 特征向量维度
-     */
+    @Schema(description = "生物识别类型", example = "1")
+    private Integer biometricType;
+
+    @Schema(description = "特征向量维度", example = "512")
     private Integer dimension;
 
-    /**
-     * 用户ID（关联用户）
-     */
-    private Long userId;
+    @Schema(description = "特征数据(Base64编码)", example = "base64_encoded_feature_data")
+    private String data;
 
-    /**
-     * 模板ID（关联模板）
-     */
-    private Long templateId;
+    @Schema(description = "质量分数", example = "0.95")
+    private Double qualityScore;
+
+    @Schema(description = "算法版本", example = "v2.1.0")
+    private String algorithmVersion;
 }

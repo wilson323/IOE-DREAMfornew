@@ -12,16 +12,28 @@ import net.lab1024.sa.biometric.domain.form.BiometricTemplateUpdateForm;
 import net.lab1024.sa.biometric.domain.vo.BiometricTemplateVO;
 import net.lab1024.sa.biometric.manager.BiometricTemplateManager;
 import net.lab1024.sa.biometric.service.BiometricTemplateService;
+import net.lab1024.sa.biometric.service.BiometricTemplateSyncService;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.common.organization.dao.AreaUserDao;
+import net.lab1024.sa.common.organization.dao.AreaDeviceDao;
+import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
+import net.lab1024.sa.common.organization.entity.AreaUserEntity;
+import net.lab1024.sa.common.security.entity.UserEntity;
 import net.lab1024.sa.common.util.SmartBeanUtil;
+import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +61,21 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     @Resource
     private BiometricTemplateManager biometricTemplateManager;
 
+    @Resource
+    private BiometricTemplateSyncService biometricTemplateSyncService;
+
+    @Resource
+    private AreaUserDao areaUserDao;
+
+    @Resource
+    private AreaDeviceDao areaDeviceDao;
+
+    @Resource
+    private GatewayServiceClient gatewayServiceClient;
+
+    // 设备类型常量（门禁设备）
+    private static final Integer DEVICE_TYPE_ACCESS = 1;
+
     @Override
     public ResponseDTO<BiometricTemplateVO> addTemplate(BiometricTemplateAddForm addForm) {
         try {
@@ -68,6 +95,9 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
 
             // 3. 转换为VO
             BiometricTemplateVO templateVO = convertToVO(template);
+
+            // 4. 异步同步模板到设备（根据用户权限智能同步）
+            syncTemplateToUserDevicesAsync(addForm.getUserId());
 
             log.info("[生物模板管理] 添加模板成功 templateId={}", template.getTemplateId());
             return ResponseDTO.ok(templateVO);
@@ -303,6 +333,12 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
             vo.setTemplateStatusDesc(status.getDescription());
         }
         
+        // 获取用户姓名
+        if (template.getUserId() != null) {
+            String userName = getUserName(template.getUserId());
+            vo.setUserName(userName);
+        }
+        
         // 计算成功率
         if (template.getUseCount() != null && template.getUseCount() > 0) {
             double successRate = (double) template.getSuccessCount() / template.getUseCount() * 100;
@@ -310,5 +346,79 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
         }
 
         return vo;
+    }
+
+    /**
+     * 获取用户姓名
+     */
+    private String getUserName(Long userId) {
+        try {
+            ResponseDTO<UserEntity> response = gatewayServiceClient.callCommonService(
+                    "/api/v1/users/" + userId,
+                    HttpMethod.GET,
+                    null,
+                    UserEntity.class
+            );
+
+            if (response != null && response.isSuccess() && response.getData() != null) {
+                UserEntity user = response.getData();
+                // 优先使用realName，如果为空则使用username
+                return user.getRealName() != null && !user.getRealName().isEmpty()
+                        ? user.getRealName()
+                        : user.getUsername();
+            }
+
+            return "用户" + userId;
+        } catch (Exception e) {
+            log.warn("[生物模板管理] 获取用户信息失败 userId={}, error={}", userId, e.getMessage());
+            return "用户" + userId;
+        }
+    }
+
+    /**
+     * 异步同步模板到用户有权限的设备
+     * <p>
+     * 场景：用户新增模板时，自动同步到有权限的设备
+     * </p>
+     */
+    @Async("templateSyncExecutor")
+    private void syncTemplateToUserDevicesAsync(Long userId) {
+        try {
+            log.info("[生物模板管理] 开始智能同步模板到设备 userId={}", userId);
+
+            // 1. 查询用户有权限的区域
+            List<AreaUserEntity> permissions = areaUserDao.selectByUserId(userId);
+            if (permissions.isEmpty()) {
+                log.warn("[生物模板管理] 用户无任何区域权限，无需同步模板 userId={}", userId);
+                return;
+            }
+
+            // 2. 查询这些区域的所有门禁设备
+            Set<String> targetDeviceIds = new HashSet<>();
+            for (AreaUserEntity permission : permissions) {
+                List<AreaDeviceEntity> devices = areaDeviceDao.selectByAreaIdAndDeviceType(
+                        permission.getAreaId(),
+                        DEVICE_TYPE_ACCESS
+                );
+                devices.forEach(d -> targetDeviceIds.add(d.getDeviceId()));
+            }
+
+            if (targetDeviceIds.isEmpty()) {
+                log.warn("[生物模板管理] 用户权限区域无门禁设备，无需同步模板 userId={}", userId);
+                return;
+            }
+
+            log.info("[生物模板管理] 开始同步模板到设备 userId={}, targetDeviceCount={}",
+                    userId, targetDeviceIds.size());
+
+            // 3. 同步模板到所有目标设备
+            biometricTemplateSyncService.syncTemplateToDevices(userId, new ArrayList<>(targetDeviceIds));
+
+            log.info("[生物模板管理] 智能同步模板完成 userId={}, deviceCount={}", userId, targetDeviceIds.size());
+
+        } catch (Exception e) {
+            log.error("[生物模板管理] 智能同步模板失败 userId={}", userId, e);
+            // 不抛出异常，避免影响主流程
+        }
     }
 }
