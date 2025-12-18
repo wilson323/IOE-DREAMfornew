@@ -13,11 +13,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * 异步任务配置
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 统一配置异步任务执行器，支持线程池优化和任务编排
- * 严格遵循CLAUDE.md规范：
- * - 自定义线程池配置
- * - 合理的线程池参数设置
- * - 完善的异常处理
+ * - 独立线程池配置（taskExecutor、ioTaskExecutor、cpuTaskExecutor）
+ * - 合理的线程池参数设置（根据任务类型优化）
+ * - 完善的异常处理和超时控制
  * </p>
  *
  * @author IOE-DREAM Team

@@ -56,7 +56,7 @@ public class AsyncTaskOrchestrator {
      */
     public <T> CompletableFuture<List<TaskResult<T>>> executeParallel(List<Supplier<T>> tasks) {
         List<CompletableFuture<TaskResult<T>>> futures = tasks.stream()
-                .map(task -> CompletableFuture.supplyAsync(() -> {
+                .<CompletableFuture<TaskResult<T>>>map(task -> CompletableFuture.supplyAsync(() -> {
                     long startTime = System.currentTimeMillis();
                     try {
                         T result = task.get();
@@ -66,7 +66,7 @@ public class AsyncTaskOrchestrator {
                     } catch (Exception e) {
                         long duration = System.currentTimeMillis() - startTime;
                         log.error("[异步编排] 任务执行失败, duration={}ms", duration, e);
-                        return TaskResult.failed(e.getMessage(), duration);
+                        return TaskResult.<T>failed(e.getMessage(), duration);
                     }
                 }, executor))
                 .collect(Collectors.toList());
