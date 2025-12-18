@@ -10,17 +10,24 @@ import lombok.EqualsAndHashCode;
 import net.lab1024.sa.common.entity.BaseEntity;
 
 /**
- * 鍖哄煙闂ㄧ鎵╁睍瀹炰綋绫? * <p>
- * 鐢ㄤ簬绠＄悊鍖哄煙鐨勯棬绂佹墿灞曚俊鎭紝鍖呮嫭闂ㄧ绾у埆銆佹ā寮忋€侀獙璇佹柟寮忕瓑
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 缁ф壙BaseEntity鑾峰彇瀹¤瀛楁
- * - 浣跨敤@TableName鎸囧畾鏁版嵁搴撹〃鍚? * - 瀛楁鏁版帶鍒跺湪30涓互鍐? * - 琛屾暟鎺у埗鍦?00琛屼互鍐? * </p>
+ * 区域门禁扩展实体类
  * <p>
- * 涓氬姟鍦烘櫙锛? * - 闂ㄧ鍖哄煙鎵╁睍閰嶇疆
- * - 闂ㄧ绾у埆绠＄悊
- * - 楠岃瘉鏂瑰紡閰嶇疆
+ * 用于管理区域的门禁扩展信息，包括门禁级别、模式、验证方式等
+ * 严格遵循CLAUDE.md规范：
+ * - 继承BaseEntity获取审计字段
+ * - 使用@TableName指定数据库表名
+ * - 字段数量控制在30个以内
+ * - 类行数控制在400行以内
  * </p>
  * <p>
- * 鏁版嵁搴撹〃锛歵_access_area_ext锛堟牴鎹瓺AO涓殑SQL鎺ㄦ柇锛? * </p>
+ * 业务场景：
+ * - 门禁区域扩展配置
+ * - 门禁级别管理
+ * - 验证方式配置
+ * </p>
+ * <p>
+ * 数据库表：t_access_area_ext（根据DAO中的SQL推荐）
+ * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -35,48 +42,48 @@ public class AreaAccessExtEntity extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 鎵╁睍ID锛堜富閿級
+     * 扩展ID（主键）
      * <p>
-     * 缁熶竴浣跨敤id浣滀负涓婚敭瀛楁鍚嶏紝閫氳繃@TableId鐨剉alue灞炴€ф槧灏勫埌鏁版嵁搴撳垪ext_id
-     * 绗﹀悎瀹炰綋绫讳富閿懡鍚嶈鑼冿細缁熶竴浣跨敤id锛岄伩鍏嶆柟娉曞紩鐢ㄩ敊璇?     * </p>
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列ext_id
+     * 符合实体类主键命名规范：统一使用id，避免方法引用错误
+     * </p>
      */
     @TableId(value = "ext_id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 鍖哄煙ID
+     * 区域ID
      */
     @TableField("area_id")
     private Long areaId;
 
     /**
-     * 闂ㄧ绾у埆
+     * 门禁级别
      */
     @TableField("access_level")
     private Integer accessLevel;
 
     /**
-     * 闂ㄧ妯″紡
+     * 门禁模式
      */
     @TableField("access_mode")
     private String accessMode;
 
     /**
-     * 楠岃瘉鏂瑰紡
+     * 验证方式
      */
     @TableField("verification_mode")
     private String verificationMode;
 
     /**
-     * 璁惧鏁伴噺
+     * 设备数量
      */
     @TableField("device_count")
     private Integer deviceCount;
 
     /**
-     * 鎵╁睍閰嶇疆锛圝SON鏍煎紡锛?     */
+     * 扩展配置（JSON格式）
+     */
     @TableField("ext_config")
     private String extConfig;
 }
-
-

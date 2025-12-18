@@ -116,6 +116,7 @@
         <module>ioedream-consume-service</module>
         <module>ioedream-visitor-service</module>
         <module>ioedream-database-service</module>
+        <module>ioedream-biometric-service</module>
     </modules>
 
     <dependencyManagement>
