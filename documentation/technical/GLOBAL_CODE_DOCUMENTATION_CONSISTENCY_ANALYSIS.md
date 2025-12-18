@@ -414,14 +414,27 @@
 
 #### 近期修复（P1）
 
-1. **门禁服务 - 完善边缘验证模式的异常处理**
+1. **门禁服务 - 完善边缘验证模式的异常处理** ✅ **已完成（2025-01-30）**
    - **任务**: 完善`EdgeVerificationStrategy`的异常处理和离线支持机制
-   - **文件**: `microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/strategy/impl/EdgeVerificationStrategy.java`
-   - **改进点**: 
-     - 添加离线验证记录缓存机制
-     - 完善异常处理和重试机制
-     - 添加记录验证的详细日志
-   - **预计工作量**: 2-3天
+   - **文件**: 
+     - ✅ `microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/strategy/impl/EdgeVerificationStrategy.java`
+     - ✅ `microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/util/AccessRecordIdempotencyUtil.java`
+     - ✅ `microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/service/EdgeOfflineRecordReplayService.java`
+     - ✅ `microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/service/impl/EdgeOfflineRecordReplayServiceImpl.java`
+     - ✅ `microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/EdgeOfflineRecordReplayConfig.java`
+     - ✅ `microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/EdgeOfflineRecordReplayController.java`
+   - **完成功能**: 
+     - ✅ 添加离线验证记录缓存机制（Redis）
+     - ✅ 完善异常处理和重试机制（Resilience4j）
+     - ✅ 添加记录验证的详细日志
+     - ✅ 创建统一工具类（避免代码冗余）
+     - ✅ 创建离线记录补录服务（定时任务+手动触发）
+     - ✅ 创建Controller API（手动触发补录、查询统计）
+   - **架构改进**:
+     - ✅ 模块化组件化设计（工具类、服务、配置分离）
+     - ✅ 高复用性（统一工具类，EdgeVerificationStrategy和AccessRecordBatchServiceImpl复用）
+     - ✅ 全局一致性（统一缓存键、统一幂等性检查逻辑）
+     - ✅ 企业级高质量（完整异常处理、详细日志、降级方案）
 
 2. **考勤服务 - 完善排班管理功能**
    - **任务**: 对比文档和代码，确保所有排班管理功能都已实现
