@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.attendance.manager.AttendanceManager;
+import net.lab1024.sa.attendance.manager.AttendanceManager;
 import net.lab1024.sa.attendance.engine.rule.cache.RuleCacheManager;
 import net.lab1024.sa.attendance.engine.rule.cache.impl.RuleCacheManagerImpl;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;

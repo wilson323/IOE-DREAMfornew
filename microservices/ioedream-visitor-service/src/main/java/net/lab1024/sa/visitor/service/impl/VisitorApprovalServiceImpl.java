@@ -12,8 +12,8 @@ import net.lab1024.sa.visitor.domain.form.ApprovalDecisionForm;
 import net.lab1024.sa.visitor.domain.vo.ApprovalRecordVO;
 import net.lab1024.sa.visitor.domain.vo.PendingApprovalVO;
 import net.lab1024.sa.visitor.service.VisitorApprovalService;
-import net.lab1024.sa.visitor.visitor.dao.VisitorApprovalRecordDao;
-import net.lab1024.sa.visitor.visitor.entity.VisitorApprovalRecordEntity;
+import net.lab1024.sa.visitor.dao.VisitorApprovalRecordDao;
+import net.lab1024.sa.visitor.entity.VisitorApprovalRecordEntity;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;

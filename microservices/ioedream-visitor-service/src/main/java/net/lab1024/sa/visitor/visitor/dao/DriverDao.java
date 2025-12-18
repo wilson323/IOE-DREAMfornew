@@ -1,10 +1,10 @@
-package net.lab1024.sa.visitor.visitor.dao;
+package net.lab1024.sa.visitor.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.visitor.visitor.entity.DriverEntity;
+import net.lab1024.sa.visitor.entity.DriverEntity;
 
 /**
  * 访客司机数据访问层

@@ -23,8 +23,8 @@ import net.lab1024.sa.common.util.CursorPagination;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.manager.MultiPaymentManager;
-import net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm;
-import net.lab1024.sa.consume.consume.domain.form.RefundApplyForm;
+import net.lab1024.sa.consume.domain.form.PaymentProcessForm;
+import net.lab1024.sa.consume.domain.form.RefundApplyForm;
 import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
 
 /**

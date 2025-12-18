@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.consume.domain.form;
+package net.lab1024.sa.consume.domain.form;
 
 import lombok.Data;
 import jakarta.validation.constraints.NotBlank;

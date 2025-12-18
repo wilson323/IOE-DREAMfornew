@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.visitor.entity;
+package net.lab1024.sa.visitor.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

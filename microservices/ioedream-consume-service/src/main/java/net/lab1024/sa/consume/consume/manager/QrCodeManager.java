@@ -1,11 +1,11 @@
-package net.lab1024.sa.consume.consume.manager;
+package net.lab1024.sa.consume.manager;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.consume.entity.QrCodeEntity;
-import net.lab1024.sa.consume.consume.dao.QrCodeDao;
-import net.lab1024.sa.consume.consume.domain.form.QrCodeGenerateForm;
-import net.lab1024.sa.consume.consume.domain.form.QrCodeConsumeForm;
-import net.lab1024.sa.consume.consume.domain.vo.QrCodeVO;
+import net.lab1024.sa.consume.dao.QrCodeDao;
+import net.lab1024.sa.consume.domain.form.QrCodeGenerateForm;
+import net.lab1024.sa.consume.domain.form.QrCodeConsumeForm;
+import net.lab1024.sa.consume.domain.vo.QrCodeVO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.exception.SystemException;
 import com.fasterxml.jackson.databind.ObjectMapper;

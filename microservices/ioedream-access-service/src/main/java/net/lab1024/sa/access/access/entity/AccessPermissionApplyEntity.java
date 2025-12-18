@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.access.entity;
+package net.lab1024.sa.access.entity;
 
 import java.time.LocalDateTime;
 

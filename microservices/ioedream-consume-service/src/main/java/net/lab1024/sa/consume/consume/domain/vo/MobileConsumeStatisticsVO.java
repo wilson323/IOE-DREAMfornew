@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.consume.domain.vo;
+package net.lab1024.sa.consume.domain.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

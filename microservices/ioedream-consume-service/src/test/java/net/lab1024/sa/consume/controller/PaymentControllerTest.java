@@ -19,9 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.consume.consume.service.PaymentService;
-import net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm;
-import net.lab1024.sa.consume.consume.domain.form.RefundApplyForm;
+import net.lab1024.sa.consume.service.PaymentService;
+import net.lab1024.sa.consume.domain.form.PaymentProcessForm;
+import net.lab1024.sa.consume.domain.form.RefundApplyForm;
 
 /**
  * PaymentController单元测试

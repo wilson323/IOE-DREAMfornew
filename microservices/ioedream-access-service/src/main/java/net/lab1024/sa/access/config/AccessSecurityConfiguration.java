@@ -37,11 +37,11 @@ import net.lab1024.sa.access.security.RateLimitingFilter;
 import net.lab1024.sa.access.security.SecurityHeadersFilter;
 
 /**
- * 闂ㄧ寰湇鍔″畨鍏ㄩ厤缃?
+ * 门禁访问服务安全配置
  * <p>
- * 鎻愪緵鍏ㄩ潰鐨勫畨鍏ㄩ槻鎶ら厤缃紝鍖呮嫭锛?
+ * 提供全面的安全防护配置，包括：
  * - JWT认证和授权
- * - API璁块棶鎺у埗鍜屾潈闄愮鐞?
+ * - API访问控制和权限管理
  * - 跨域请求控制(CORS)
  * - 安全头部配置
  * - 请求频率限制
@@ -74,22 +74,22 @@ public class AccessSecurityConfiguration {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("[瀹夊叏閰嶇疆] 寮€濮嬮厤缃畨鍏ㄨ繃婊ゅ櫒閾?);
+        log.info("[安全配置] 开始配置安全过滤器链");
 
-        // 绂佺敤CSRF锛堜娇鐢↗WT鏃朵笉闇€瑕侊級
+        // 禁用CSRF（使用JWT时不需要）
         http.csrf(AbstractHttpConfigurer::disable)
 
-            // 鍚敤CORS
+            // 启用CORS
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-            // 閰嶇疆浼氳瘽绠＄悊
+            // 配置会话管理
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .maximumSessions(securityProperties.getSession().getMaximumSessions())
                 .maxSessionsPreventsLogin(securityProperties.getSession().isMaxSessionsPreventsLogin())
                 .sessionRegistry(sessionRegistry()))
 
-            // 閰嶇疆瀹夊叏澶撮儴
+            // 配置安全头部
             .headers(headers -> headers
                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
                 .contentTypeOptions(HeadersConfigurer.ContentTypeOptionsConfig::and)
@@ -98,74 +98,74 @@ public class AccessSecurityConfiguration {
                     .includeSubDomains(securityProperties.getHeaders().getHsts().isIncludeSubDomains()))
                 .xssProtection(HeadersConfigurer.XXSSConfig::and))
 
-            // 閰嶇疆璇锋眰鎺堟潈
+            // 配置请求授权
             .authorizeHttpRequests(authz -> authz
-                // 鍏佽鍋ュ悍妫€鏌ョ鐐?
+                // 允许健康检查端点
                 .requestMatchers(EndpointRequest.to("health", "info", "metrics", "prometheus")).permitAll()
 
-                // 鍏佽鍏叡API
+                // 允许公共API
                 .requestMatchers("/api/v1/access/public/**").permitAll()
                 .requestMatchers("/api/v1/access/mobile/login").permitAll()
                 .requestMatchers("/api/v1/access/mobile/refresh/token").permitAll()
 
-                // 鍏佽闈欐€佽祫婧?
+                // 允许静态资源
                 .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
 
-                // 鍏佽Swagger鏂囨。锛堜粎寮€鍙戠幆澧冿級
+                // 允许Swagger文档（仅开发环境）
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
 
-                // 绠＄悊鍛樻帴鍙?
+                // 管理员接口
                 .requestMatchers("/api/v1/access/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/access/advanced/admin/**").hasRole("ADMIN")
 
-                // 鎿嶄綔鍛樻帴鍙?
+                // 操作员接口
                 .requestMatchers("/api/v1/access/operation/**").hasAnyRole("ADMIN", "OPERATOR")
 
-                // 闇€瑕佽璇佺殑鎺ュ彛
+                // 需要认证的接口
                 .requestMatchers("/api/v1/access/**").authenticated()
                 .requestMatchers("/api/v1/access/mobile/**").authenticated()
                 .requestMatchers("/api/v1/access/advanced/**").authenticated()
 
-                // 鍏朵粬鎵€鏈夎姹傞渶瑕佽璇?
+                // 其他所有请求需要认证
                 .anyRequest().authenticated())
 
-            // 閰嶇疆寮傚父澶勭悊
+            // 配置异常处理
             .exceptionHandling(exceptions -> exceptions
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    log.error("[瀹夊叏閰嶇疆] 璁块棶琚嫆缁?- IP: {}, URL: {}",
+                    log.error("[安全配置] 访问被拒绝 - IP: {}, URL: {}",
                         request.getRemoteAddr(), request.getRequestURL());
                     response.setStatus(403);
                     response.setContentType("application/json;charset=UTF-8");
-                    response.getWriter().write("{\"code\":403,\"message\":\"璁块棶琚嫆缁漒",\"data\":null}");
+                    response.getWriter().write("{\"code\":403,\"message\":\"访问被拒绝\",\"data\":null}");
                 }))
 
-            // 娣诲姞JWT杩囨护鍣?
+            // 添加JWT过滤器
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService),
                 UsernamePasswordAuthenticationFilter.class)
 
-            // 娣诲姞瀹夊叏澶撮儴杩囨护鍣?
+            // 添加安全头部过滤器
             .addFilterBefore(new SecurityHeadersFilter(securityProperties.getHeaders()),
                 JwtAuthenticationFilter.class)
 
-            // 娣诲姞棰戠巼闄愬埗杩囨护鍣?
+            // 添加频率限制过滤器
             .addFilterBefore(new RateLimitingFilter(securityProperties.getRateLimit()),
                 SecurityHeadersFilter.class);
 
-        log.info("[瀹夊叏閰嶇疆] 安全过滤器链配置瀹屾垚");
+        log.info("[安全配置] 安全过滤器链配置完成");
         return http.build();
     }
 
     /**
-     * CORS閰嶇疆婧?
+     * CORS配置源
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        log.info("[瀹夊叏閰嶇疆] 閰嶇疆CORS绛栫暐");
+        log.info("[安全配置] 配置CORS策略");
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 鍏佽鐨勬簮
+        // 允许的源
         List<String> allowedOrigins = securityProperties.getCors().getAllowedOrigins();
         if (!allowedOrigins.isEmpty()) {
             configuration.setAllowedOriginPatterns(allowedOrigins);
@@ -173,7 +173,7 @@ public class AccessSecurityConfiguration {
             configuration.addAllowedOriginPattern("*");
         }
 
-        // 鍏佽鐨勬柟娉?
+        // 允许的方法
         configuration.setAllowedMethods(Arrays.asList(
             HttpMethod.GET.name(),
             HttpMethod.POST.name(),
@@ -182,16 +182,16 @@ public class AccessSecurityConfiguration {
             HttpMethod.OPTIONS.name()
         ));
 
-        // 鍏佽鐨勫ご閮?
+        // 允许的头部
         configuration.setAllowedHeaders(Arrays.asList("*"));
 
-        // 鍏佽鍑瘉
+        // 允许凭证
         configuration.setAllowCredentials(true);
 
-        // 棰勬璇锋眰缂撳瓨鏃堕棿
+        // 预检请求缓存时间
         configuration.setMaxAge(Duration.ofHours(1));
 
-        // 鏆撮湶鐨勫ご閮?
+        // 暴露的头部
         configuration.setExposedHeaders(Arrays.asList(
             "Authorization",
             "Content-Type",
@@ -209,16 +209,16 @@ public class AccessSecurityConfiguration {
     }
 
     /**
-     * 瀵嗙爜缂栫爜鍣?
+     * 密码编码器
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // 浣跨敤BCrypt鍔犲瘑锛屽己搴︿负12
+        // 使用BCrypt加密，强度为12
         return new BCryptPasswordEncoder(12);
     }
 
     /**
-     * 璁よ瘉绠＄悊鍣?
+     * 认证管理器
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -226,7 +226,7 @@ public class AccessSecurityConfiguration {
     }
 
     /**
-     * DAO璁よ瘉鎻愪緵鑰?
+     * DAO认证提供者
      */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -238,7 +238,7 @@ public class AccessSecurityConfiguration {
     }
 
     /**
-     * 浼氳瘽娉ㄥ唽鍣?
+     * 会话注册器
      */
     @Bean
     public org.springframework.security.core.session.SessionRegistry sessionRegistry() {
@@ -246,7 +246,7 @@ public class AccessSecurityConfiguration {
     }
 
     /**
-     * HTTP浼氳瘽浜嬩欢鍙戝竷鍣?
+     * HTTP会话事件发布器
      */
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
@@ -254,7 +254,7 @@ public class AccessSecurityConfiguration {
     }
 
     /**
-     * 瀹夊叏閰嶇疆灞炴€х被
+     * 安全配置属性类
      */
     public static class AccessSecurityProperties {
         private CorsProperties cors = new CorsProperties();
@@ -296,7 +296,7 @@ public class AccessSecurityConfiguration {
         }
 
         /**
-         * CORS閰嶇疆灞炴€?
+         * CORS配置属性
          */
         public static class CorsProperties {
             private List<String> allowedOrigins = Arrays.asList("http://localhost:3000", "http://localhost:8080");
@@ -311,7 +311,7 @@ public class AccessSecurityConfiguration {
         }
 
         /**
-         * 瀹夊叏澶撮儴閰嶇疆灞炴€?
+         * 安全头部配置属性
          */
         public static class HeadersProperties {
             private HstsProperties hsts = new HstsProperties();
@@ -325,7 +325,7 @@ public class AccessSecurityConfiguration {
             }
 
             public static class HstsProperties {
-                private int maxAge = 31536000; // 1骞?
+                private int maxAge = 31536000; // 1年
                 private boolean includeSubDomains = true;
 
                 public int getMaxAge() {
@@ -347,7 +347,7 @@ public class AccessSecurityConfiguration {
         }
 
         /**
-         * 浼氳瘽绠＄悊閰嶇疆灞炴€?
+         * 会话管理配置属性
          */
         public static class SessionProperties {
             private int maximumSessions = 10;
@@ -371,7 +371,7 @@ public class AccessSecurityConfiguration {
         }
 
         /**
-         * 棰戠巼闄愬埗閰嶇疆灞炴€?
+         * 频率限制配置属性
          */
         public static class RateLimitProperties {
             private int requestsPerMinute = 100;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.consume.dao;
+package net.lab1024.sa.consume.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

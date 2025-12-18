@@ -1,7 +1,7 @@
-package net.lab1024.sa.consume.consume.manager;
+package net.lab1024.sa.consume.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.consume.domain.vo.MobileAccountInfoVO;
+import net.lab1024.sa.consume.domain.vo.MobileAccountInfoVO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;

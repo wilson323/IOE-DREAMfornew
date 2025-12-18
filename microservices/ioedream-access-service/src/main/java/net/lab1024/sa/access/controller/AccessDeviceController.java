@@ -27,17 +27,21 @@ import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.access.service.AccessDeviceService;
 
 /**
- * 闂ㄧ璁惧绠＄悊PC绔帶鍒跺櫒
+ * 门禁设备管理PC端控制器
  * <p>
- * 鎻愪緵PC绔棬绂佽澶囩鐞嗙浉鍏矨PI
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤@RestController娉ㄨВ
- * - 浣跨敤@Resource渚濊禆娉ㄥ叆
- * - 浣跨敤@Valid鍙傛暟鏍￠獙
- * - 杩斿洖缁熶竴ResponseDTO鏍煎紡
+ * 提供PC端门禁设备管理相关API
+ * 严格遵循CLAUDE.md规范：
+ * - 使用@RestController注解
+ * - 使用@Resource依赖注入
+ * - 使用@Valid参数验证
+ * - 返回统一ResponseDTO格式
  * </p>
  * <p>
- * 涓氬姟鍦烘櫙锛? * - 璁惧CRUD鎿嶄綔
- * - 璁惧鐘舵€佺鐞? * - 璁惧鏌ヨ鍜岀粺璁? * </p>
+ * 业务场景：
+ * - 设备CRUD操作
+ * - 设备状态管理
+ * - 设备查询和统计
+ * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -46,58 +50,65 @@ import net.lab1024.sa.access.service.AccessDeviceService;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/access/device")
-@Tag(name = "闂ㄧ璁惧绠＄悊PC绔?, description = "璁惧鏌ヨ銆佹坊鍔犮€佹洿鏂般€佸垹闄ゃ€佺姸鎬佺鐞嗙瓑API")
-@PermissionCheck(value = "ACCESS_DEVICE", description = "闂ㄧ璁惧绠＄悊妯″潡鏉冮檺")
+@Tag(name = "门禁设备管理PC端", description = "设备查询、添加、更新、删除、状态管理等API")
+@PermissionCheck(value = "ACCESS_DEVICE", description = "门禁设备管理模块权限")
 public class AccessDeviceController {
 
     @Resource
     private AccessDeviceService accessDeviceService;
 
     /**
-     * 鍒嗛〉鏌ヨ璁惧
+     * 分页查询设备
      * <p>
-     * 鏀寔澶氭潯浠剁瓫閫夛細鍏抽敭璇嶏紙璁惧鍚嶇О銆佽澶囩紪鍙凤級銆佸尯鍩烮D銆佽澶囩姸鎬併€佸惎鐢ㄧ姸鎬佺瓑
-     * 鏀寔鍒嗛〉鏌ヨ锛岄粯璁ゆ瘡椤?0鏉¤褰?     * </p>
+     * 支持多条件筛选：关键词（设备名称、设备编码）、区域ID、设备状态、启用状态等
+     * 支持分页查询，默认每页20条记录
+     * </p>
      *
-     * @param pageNum 椤电爜锛堜粠1寮€濮嬶紝榛樿1锛?     * @param pageSize 姣忛〉澶у皬锛堥粯璁?0锛?     * @param keyword 鍏抽敭璇嶏紙璁惧鍚嶇О銆佽澶囩紪鍙凤紝鍙€夛級
-     * @param areaId 鍖哄煙ID锛堝彲閫夛級
-     * @param deviceStatus 璁惧鐘舵€侊紙鍙€夛細ONLINE-鍦ㄧ嚎銆丱FFLINE-绂荤嚎銆丗AULT-鏁呴殰锛?     * @param enabledFlag 鍚敤鐘舵€侊紙鍙€夛細1-鍚敤銆?-绂佺敤锛?     * @return 鍒嗛〉鐨勮澶囧垪琛?     * @apiNote 绀轰緥璇锋眰锛?     * <pre>
-     * GET /api/v1/access/device/query?pageNum=1&pageSize=20&keyword=闂ㄧ&areaId=4001&deviceStatus=ONLINE&enabledFlag=1
+     * @param pageNum 页码（从1开始，默认1）
+     * @param pageSize 每页大小（默认20）
+     * @param keyword 关键词（设备名称、设备编码，可选）
+     * @param areaId 区域ID（可选）
+     * @param deviceStatus 设备状态（可选：ONLINE-在线、OFFLINE-离线、FAULT-故障）
+     * @param enabledFlag 启用状态（可选：1-启用、0-禁用）
+     * @return 分页的设备列表
+     * @apiNote 示例请求：
+     * <pre>
+     * GET /api/v1/access/device/query?pageNum=1&pageSize=20&keyword=门禁&areaId=4001&deviceStatus=ONLINE&enabledFlag=1
      * </pre>
      */
     @Observed(name = "accessDevice.queryDevices", contextualName = "access-device-query")
     @GetMapping("/query")
     @Operation(
-        summary = "鍒嗛〉鏌ヨ璁惧",
-        description = "鏍规嵁鏉′欢鍒嗛〉鏌ヨ闂ㄧ璁惧锛屾敮鎸佸鏉′欢绛涢€夛紙鍏抽敭璇嶃€佸尯鍩烮D銆佽澶囩姸鎬併€佸惎鐢ㄧ姸鎬佺瓑锛夈€傛敮鎸佸垎椤垫煡璇紝榛樿姣忛〉20鏉¤褰曘€備弗鏍奸伒寰猂ESTful瑙勮寖锛氭煡璇㈡搷浣滀娇鐢℅ET鏂规硶銆?,
-        tags = {"闂ㄧ璁惧绠＄悊PC绔?}
+        summary = "分页查询设备",
+        description = "根据条件分页查询门禁设备，支持多条件筛选（关键词、区域ID、设备状态、启用状态等）。支持分页查询，默认每页20条记录。严格遵循RESTful规范：查询操作使用GET方法。",
+        tags = {"门禁设备管理PC端"}
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
-        description = "鏌ヨ鎴愬姛",
+        description = "查询成功",
         content = @io.swagger.v3.oas.annotations.media.Content(
             mediaType = "application/json",
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class)
         )
     )
-    @PermissionCheck(value = "ACCESS_DEVICE_VIEW", description = "鏌ヨ闂ㄧ璁惧")
+    @PermissionCheck(value = "ACCESS_DEVICE_VIEW", description = "查询门禁设备")
     public ResponseDTO<PageResult<net.lab1024.sa.access.domain.vo.AccessDeviceVO>> queryDevices(
-            @Parameter(description = "椤电爜锛堜粠1寮€濮嬶級", example = "1")
+            @Parameter(description = "页码（从1开始）", example = "1")
             @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "姣忛〉澶у皬", example = "20")
+            @Parameter(description = "每页大小", example = "20")
             @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "鍏抽敭璇嶏紙璁惧鍚嶇О銆佽澶囩紪鍙凤級", example = "闂ㄧ")
+            @Parameter(description = "关键词（设备名称、设备编码）", example = "门禁")
             @RequestParam(required = false) String keyword,
-            @Parameter(description = "鍖哄煙ID", example = "4001")
+            @Parameter(description = "区域ID", example = "4001")
             @RequestParam(required = false) Long areaId,
-            @Parameter(description = "璁惧鐘舵€侊紙ONLINE/OFFLINE/FAULT锛?, example = "ONLINE")
+            @Parameter(description = "设备状态（ONLINE/OFFLINE/FAULT）", example = "ONLINE")
             @RequestParam(required = false) String deviceStatus,
-            @Parameter(description = "鍚敤鐘舵€侊紙1-鍚敤銆?-绂佺敤锛?, example = "1")
+            @Parameter(description = "启用状态（1-启用、0-禁用）", example = "1")
             @RequestParam(required = false) Integer enabledFlag) {
-        log.info("[闂ㄧ璁惧] 鍒嗛〉鏌ヨ璁惧锛宲ageNum={}, pageSize={}, keyword={}, areaId={}, deviceStatus={}, enabledFlag={}",
+        log.info("[门禁设备] 分页查询设备：pageNum={}, pageSize={}, keyword={}, areaId={}, deviceStatus={}, enabledFlag={}",
                 pageNum, pageSize, keyword, areaId, deviceStatus, enabledFlag);
         try {
-            // 鏋勫缓鏌ヨ琛ㄥ崟
+            // 构建查询表单
             net.lab1024.sa.access.domain.form.AccessDeviceQueryForm queryForm = new net.lab1024.sa.access.domain.form.AccessDeviceQueryForm();
             queryForm.setPageNum(pageNum);
             queryForm.setPageSize(pageSize);
@@ -106,169 +117,175 @@ public class AccessDeviceController {
             queryForm.setDeviceStatus(deviceStatus);
             queryForm.setEnabledFlag(enabledFlag);
 
-            // 璋冪敤Service灞傛煡璇?            return accessDeviceService.queryDevices(queryForm);
+            // 调用Service层查询
+            return accessDeviceService.queryDevices(queryForm);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[闂ㄧ璁惧] 鍒嗛〉鏌ヨ璁惧鍙傛暟閿欒: pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
-            return ResponseDTO.error("INVALID_PARAMETER", "鍙傛暟閿欒锛? + e.getMessage());
+            log.warn("[门禁设备] 分页查询设备参数错误：pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[闂ㄧ璁惧] 鍒嗛〉鏌ヨ璁惧涓氬姟寮傚父: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
+            log.warn("[门禁设备] 分页查询设备业务异常：pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[闂ㄧ璁惧] 鍒嗛〉鏌ヨ璁惧绯荤粺寮傚父: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
-            return ResponseDTO.error("QUERY_DEVICES_SYSTEM_ERROR", "鏌ヨ璁惧澶辫触锛? + e.getMessage());
+            log.error("[门禁设备] 分页查询设备系统异常：pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("QUERY_DEVICES_SYSTEM_ERROR", "查询设备失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[闂ㄧ璁惧] 鍒嗛〉鏌ヨ璁惧鏈煡寮傚父: pageNum={}, pageSize={}", pageNum, pageSize, e);
-            return ResponseDTO.error("QUERY_DEVICES_ERROR", "鏌ヨ璁惧澶辫触: " + e.getMessage());
+            log.error("[门禁设备] 分页查询设备未知异常：pageNum={}, pageSize={}", pageNum, pageSize, e);
+            return ResponseDTO.error("QUERY_DEVICES_ERROR", "查询设备失败: " + e.getMessage());
         }
     }
 
     /**
-     * 鏌ヨ璁惧璇︽儏
+     * 查询设备详情
      *
-     * @param deviceId 璁惧ID
-     * @return 璁惧璇︽儏
+     * @param deviceId 设备ID
+     * @return 设备详情
      */
     @Observed(name = "accessDevice.getDeviceDetail", contextualName = "access-device-get-detail")
     @GetMapping("/{deviceId}")
-    @Operation(summary = "鏌ヨ璁惧璇︽儏", description = "鏍规嵁璁惧ID鏌ヨ璁惧璇︾粏淇℃伅")
-    @PermissionCheck(value = "ACCESS_DEVICE_VIEW", description = "鏌ヨ璁惧璇︽儏")
+    @Operation(summary = "查询设备详情", description = "根据设备ID查询设备详细信息")
+    @PermissionCheck(value = "ACCESS_DEVICE_VIEW", description = "查询设备详情")
     public ResponseDTO<net.lab1024.sa.access.domain.vo.AccessDeviceVO> getDeviceDetail(
-            @Parameter(description = "璁惧ID", required = true) @PathVariable @NotNull Long deviceId) {
-        log.info("[闂ㄧ璁惧] 鏌ヨ璁惧璇︽儏锛宒eviceId={}", deviceId);
+            @Parameter(description = "设备ID", required = true) @PathVariable @NotNull Long deviceId) {
+        log.info("[门禁设备] 查询设备详情：deviceId={}", deviceId);
         try {
-            // 璋冪敤Service灞傛煡璇?            return accessDeviceService.getDeviceDetail(deviceId);
+            // 调用Service层查询
+            return accessDeviceService.getDeviceDetail(deviceId);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[闂ㄧ璁惧] 鏌ヨ璁惧璇︽儏鍙傛暟閿欒: deviceId={}, error={}", deviceId, e.getMessage());
-            return ResponseDTO.error("INVALID_PARAMETER", "鍙傛暟閿欒锛? + e.getMessage());
+            log.warn("[门禁设备] 查询设备详情参数错误：deviceId={}, error={}", deviceId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[闂ㄧ璁惧] 鏌ヨ璁惧璇︽儏涓氬姟寮傚父: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            log.warn("[门禁设备] 查询设备详情业务异常：deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[闂ㄧ璁惧] 鏌ヨ璁惧璇︽儏绯荤粺寮傚父: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
-            return ResponseDTO.error("GET_DEVICE_SYSTEM_ERROR", "鏌ヨ璁惧璇︽儏澶辫触锛? + e.getMessage());
+            log.error("[门禁设备] 查询设备详情系统异常：deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_DEVICE_SYSTEM_ERROR", "查询设备详情失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[闂ㄧ璁惧] 鏌ヨ璁惧璇︽儏鏈煡寮傚父: deviceId={}", deviceId, e);
-            return ResponseDTO.error("GET_DEVICE_ERROR", "鏌ヨ璁惧璇︽儏澶辫触: " + e.getMessage());
+            log.error("[门禁设备] 查询设备详情未知异常：deviceId={}", deviceId, e);
+            return ResponseDTO.error("GET_DEVICE_ERROR", "查询设备详情失败: " + e.getMessage());
         }
     }
 
     /**
-     * 娣诲姞璁惧
+     * 添加设备
      *
-     * @param form 璁惧娣诲姞琛ㄥ崟
-     * @return 璁惧ID
+     * @param form 设备添加表单
+     * @return 设备ID
      */
     @Observed(name = "accessDevice.addDevice", contextualName = "access-device-add")
     @PostMapping("/add")
-    @Operation(summary = "娣诲姞璁惧", description = "娣诲姞鏂扮殑闂ㄧ璁惧")
-    @PermissionCheck(value = "ACCESS_DEVICE_ADD", description = "娣诲姞闂ㄧ璁惧")
+    @Operation(summary = "添加设备", description = "添加新的门禁设备")
+    @PermissionCheck(value = "ACCESS_DEVICE_ADD", description = "添加门禁设备")
     public ResponseDTO<Long> addDevice(@Valid @RequestBody net.lab1024.sa.access.domain.form.AccessDeviceAddForm form) {
-        log.info("[闂ㄧ璁惧] 娣诲姞璁惧锛宒eviceName={}, deviceCode={}", form.getDeviceName(), form.getDeviceCode());
+        log.info("[门禁设备] 添加设备：deviceName={}, deviceCode={}", form.getDeviceName(), form.getDeviceCode());
         try {
-            // 璋冪敤Service灞傛坊鍔?            return accessDeviceService.addDevice(form);
+            // 调用Service层添加
+            return accessDeviceService.addDevice(form);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[闂ㄧ璁惧] 娣诲姞璁惧鍙傛暟閿欒: deviceName={}, deviceCode={}, error={}", form.getDeviceName(), form.getDeviceCode(), e.getMessage());
-            return ResponseDTO.error("INVALID_PARAMETER", "鍙傛暟閿欒锛? + e.getMessage());
+            log.warn("[门禁设备] 添加设备参数错误：deviceName={}, deviceCode={}, error={}", form.getDeviceName(), form.getDeviceCode(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[闂ㄧ璁惧] 娣诲姞璁惧涓氬姟寮傚父: deviceName={}, deviceCode={}, code={}, message={}", form.getDeviceName(), form.getDeviceCode(), e.getCode(), e.getMessage());
+            log.warn("[门禁设备] 添加设备业务异常：deviceName={}, deviceCode={}, code={}, message={}", form.getDeviceName(), form.getDeviceCode(), e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[闂ㄧ璁惧] 娣诲姞璁惧绯荤粺寮傚父: deviceName={}, deviceCode={}, code={}, message={}", form.getDeviceName(), form.getDeviceCode(), e.getCode(), e.getMessage(), e);
-            return ResponseDTO.error("ADD_DEVICE_SYSTEM_ERROR", "娣诲姞璁惧澶辫触锛? + e.getMessage());
+            log.error("[门禁设备] 添加设备系统异常：deviceName={}, deviceCode={}, code={}, message={}", form.getDeviceName(), form.getDeviceCode(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("ADD_DEVICE_SYSTEM_ERROR", "添加设备失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[闂ㄧ璁惧] 娣诲姞璁惧鏈煡寮傚父: deviceName={}, deviceCode={}", form.getDeviceName(), form.getDeviceCode(), e);
-            return ResponseDTO.error("ADD_DEVICE_ERROR", "娣诲姞璁惧澶辫触: " + e.getMessage());
+            log.error("[门禁设备] 添加设备未知异常：deviceName={}, deviceCode={}", form.getDeviceName(), form.getDeviceCode(), e);
+            return ResponseDTO.error("ADD_DEVICE_ERROR", "添加设备失败: " + e.getMessage());
         }
     }
 
     /**
-     * 鏇存柊璁惧
+     * 更新设备
      *
-     * @param form 璁惧鏇存柊琛ㄥ崟
-     * @return 鏄惁鎴愬姛
+     * @param form 设备更新表单
+     * @return 是否成功
      */
     @Observed(name = "accessDevice.updateDevice", contextualName = "access-device-update")
     @PutMapping("/update")
-    @Operation(summary = "鏇存柊璁惧", description = "鏇存柊闂ㄧ璁惧淇℃伅")
-    @PermissionCheck(value = "ACCESS_DEVICE_UPDATE", description = "鏇存柊闂ㄧ璁惧")
+    @Operation(summary = "更新设备", description = "更新门禁设备信息")
+    @PermissionCheck(value = "ACCESS_DEVICE_UPDATE", description = "更新门禁设备")
     public ResponseDTO<Boolean> updateDevice(@Valid @RequestBody net.lab1024.sa.access.domain.form.AccessDeviceUpdateForm form) {
-        log.info("[闂ㄧ璁惧] 鏇存柊璁惧锛宒eviceId={}", form.getDeviceId());
+        log.info("[门禁设备] 更新设备：deviceId={}", form.getDeviceId());
         try {
-            // 璋冪敤Service灞傛洿鏂?            return accessDeviceService.updateDevice(form);
+            // 调用Service层更新
+            return accessDeviceService.updateDevice(form);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[闂ㄧ璁惧] 鏇存柊璁惧鍙傛暟閿欒: deviceId={}, error={}", form.getDeviceId(), e.getMessage());
-            return ResponseDTO.error("INVALID_PARAMETER", "鍙傛暟閿欒锛? + e.getMessage());
+            log.warn("[门禁设备] 更新设备参数错误：deviceId={}, error={}", form.getDeviceId(), e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[闂ㄧ璁惧] 鏇存柊璁惧涓氬姟寮傚父: deviceId={}, code={}, message={}", form.getDeviceId(), e.getCode(), e.getMessage());
+            log.warn("[门禁设备] 更新设备业务异常：deviceId={}, code={}, message={}", form.getDeviceId(), e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[闂ㄧ璁惧] 鏇存柊璁惧绯荤粺寮傚父: deviceId={}, code={}, message={}", form.getDeviceId(), e.getCode(), e.getMessage(), e);
-            return ResponseDTO.error("UPDATE_DEVICE_SYSTEM_ERROR", "鏇存柊璁惧澶辫触锛? + e.getMessage());
+            log.error("[门禁设备] 更新设备系统异常：deviceId={}, code={}, message={}", form.getDeviceId(), e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("UPDATE_DEVICE_SYSTEM_ERROR", "更新设备失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[闂ㄧ璁惧] 鏇存柊璁惧鏈煡寮傚父: deviceId={}", form.getDeviceId(), e);
-            return ResponseDTO.error("UPDATE_DEVICE_ERROR", "鏇存柊璁惧澶辫触: " + e.getMessage());
+            log.error("[门禁设备] 更新设备未知异常：deviceId={}", form.getDeviceId(), e);
+            return ResponseDTO.error("UPDATE_DEVICE_ERROR", "更新设备失败: " + e.getMessage());
         }
     }
 
     /**
-     * 鍒犻櫎璁惧
+     * 删除设备
      *
-     * @param deviceId 璁惧ID
-     * @return 鏄惁鎴愬姛
+     * @param deviceId 设备ID
+     * @return 是否成功
      */
     @Observed(name = "accessDevice.deleteDevice", contextualName = "access-device-delete")
     @DeleteMapping("/{deviceId}")
-    @Operation(summary = "鍒犻櫎璁惧", description = "鍒犻櫎闂ㄧ璁惧锛堣蒋鍒犻櫎锛?)
-    @PermissionCheck(value = "ACCESS_DEVICE_DELETE", description = "鍒犻櫎闂ㄧ璁惧")
+    @Operation(summary = "删除设备", description = "删除门禁设备（软删除）")
+    @PermissionCheck(value = "ACCESS_DEVICE_DELETE", description = "删除门禁设备")
     public ResponseDTO<Boolean> deleteDevice(
-            @Parameter(description = "璁惧ID", required = true) @PathVariable @NotNull Long deviceId) {
-        log.info("[闂ㄧ璁惧] 鍒犻櫎璁惧锛宒eviceId={}", deviceId);
+            @Parameter(description = "设备ID", required = true) @PathVariable @NotNull Long deviceId) {
+        log.info("[门禁设备] 删除设备：deviceId={}", deviceId);
         try {
-            // 璋冪敤Service灞傚垹闄?            return accessDeviceService.deleteDevice(deviceId);
+            // 调用Service层删除
+            return accessDeviceService.deleteDevice(deviceId);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[闂ㄧ璁惧] 鍒犻櫎璁惧鍙傛暟閿欒: deviceId={}, error={}", deviceId, e.getMessage());
-            return ResponseDTO.error("INVALID_PARAMETER", "鍙傛暟閿欒锛? + e.getMessage());
+            log.warn("[门禁设备] 删除设备参数错误：deviceId={}, error={}", deviceId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[闂ㄧ璁惧] 鍒犻櫎璁惧涓氬姟寮傚父: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
+            log.warn("[门禁设备] 删除设备业务异常：deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[闂ㄧ璁惧] 鍒犻櫎璁惧绯荤粺寮傚父: deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
-            return ResponseDTO.error("DELETE_DEVICE_SYSTEM_ERROR", "鍒犻櫎璁惧澶辫触锛? + e.getMessage());
+            log.error("[门禁设备] 删除设备系统异常：deviceId={}, code={}, message={}", deviceId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("DELETE_DEVICE_SYSTEM_ERROR", "删除设备失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[闂ㄧ璁惧] 鍒犻櫎璁惧鏈煡寮傚父: deviceId={}", deviceId, e);
-            return ResponseDTO.error("DELETE_DEVICE_ERROR", "鍒犻櫎璁惧澶辫触: " + e.getMessage());
+            log.error("[门禁设备] 删除设备未知异常：deviceId={}", deviceId, e);
+            return ResponseDTO.error("DELETE_DEVICE_ERROR", "删除设备失败: " + e.getMessage());
         }
     }
 
     /**
-     * 鏇存柊璁惧鐘舵€?     *
-     * @param deviceId 璁惧ID
-     * @param status 璁惧鐘舵€?     * @return 鏄惁鎴愬姛
+     * 更新设备状态
+     *
+     * @param deviceId 设备ID
+     * @param status 设备状态
+     * @return 是否成功
      */
     @Observed(name = "accessDevice.updateDeviceStatus", contextualName = "access-device-update-status")
     @PutMapping("/{deviceId}/status")
-    @Operation(summary = "鏇存柊璁惧鐘舵€?, description = "鏇存柊闂ㄧ璁惧鐘舵€?)
-    @PermissionCheck(value = "ACCESS_DEVICE_UPDATE", description = "鏇存柊璁惧鐘舵€?)
+    @Operation(summary = "更新设备状态", description = "更新门禁设备状态")
+    @PermissionCheck(value = "ACCESS_DEVICE_UPDATE", description = "更新设备状态")
     public ResponseDTO<Boolean> updateDeviceStatus(
-            @Parameter(description = "璁惧ID") @PathVariable @NotNull Long deviceId,
-            @Parameter(description = "璁惧鐘舵€?) @RequestParam @NotNull Integer status) {
-        log.info("[闂ㄧ璁惧] 鏇存柊璁惧鐘舵€侊紝deviceId={}, status={}", deviceId, status);
+            @Parameter(description = "设备ID") @PathVariable @NotNull Long deviceId,
+            @Parameter(description = "设备状态") @RequestParam @NotNull Integer status) {
+        log.info("[门禁设备] 更新设备状态：deviceId={}, status={}", deviceId, status);
         try {
-            // 璋冪敤Service灞傛洿鏂扮姸鎬?            return accessDeviceService.updateDeviceStatus(deviceId, status);
+            // 调用Service层更新状态
+            return accessDeviceService.updateDeviceStatus(deviceId, status);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[闂ㄧ璁惧] 鏇存柊璁惧鐘舵€佸弬鏁伴敊璇? deviceId={}, status={}, error={}", deviceId, status, e.getMessage());
-            return ResponseDTO.error("INVALID_PARAMETER", "鍙傛暟閿欒锛? + e.getMessage());
+            log.warn("[门禁设备] 更新设备状态参数错误：deviceId={}, status={}, error={}", deviceId, status, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[闂ㄧ璁惧] 鏇存柊璁惧鐘舵€佷笟鍔″紓甯? deviceId={}, status={}, code={}, message={}", deviceId, status, e.getCode(), e.getMessage());
+            log.warn("[门禁设备] 更新设备状态业务异常：deviceId={}, status={}, code={}, message={}", deviceId, status, e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[闂ㄧ璁惧] 鏇存柊璁惧鐘舵€佺郴缁熷紓甯? deviceId={}, status={}, code={}, message={}", deviceId, status, e.getCode(), e.getMessage(), e);
-            return ResponseDTO.error("UPDATE_DEVICE_STATUS_SYSTEM_ERROR", "鏇存柊璁惧鐘舵€佸け璐ワ細" + e.getMessage());
+            log.error("[门禁设备] 更新设备状态系统异常：deviceId={}, status={}, code={}, message={}", deviceId, status, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("UPDATE_DEVICE_STATUS_SYSTEM_ERROR", "更新设备状态失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[闂ㄧ璁惧] 鏇存柊璁惧鐘舵€佹湭鐭ュ紓甯? deviceId={}, status={}", deviceId, status, e);
-            return ResponseDTO.error("UPDATE_DEVICE_STATUS_ERROR", "鏇存柊璁惧鐘舵€佸け璐? " + e.getMessage());
+            log.error("[门禁设备] 更新设备状态未知异常：deviceId={}, status={}", deviceId, status, e);
+            return ResponseDTO.error("UPDATE_DEVICE_STATUS_ERROR", "更新设备状态失败: " + e.getMessage());
         }
     }
 }
-
-

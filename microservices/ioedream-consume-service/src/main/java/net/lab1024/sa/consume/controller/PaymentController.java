@@ -20,9 +20,9 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.consume.consume.service.PaymentService;
-import net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm;
-import net.lab1024.sa.consume.consume.domain.form.RefundApplyForm;
+import net.lab1024.sa.consume.service.PaymentService;
+import net.lab1024.sa.consume.domain.form.PaymentProcessForm;
+import net.lab1024.sa.consume.domain.form.RefundApplyForm;
 import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
 

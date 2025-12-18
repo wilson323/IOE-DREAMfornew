@@ -25,22 +25,22 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.http.HttpMethod;
 
 /**
- * 闂ㄧ鍙嶆綔鍥炵鐞嗗櫒
+ * 门禁反潜回管理器
  * <p>
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锟?
- * - 浣跨敤Manager鍚庣紑鏍囪瘑涓氬姟缂栨帓锟?
- * - 澶勭悊澶嶆潅涓氬姟娴佺▼鍜屾暟鎹粍锟?
- * - 绾疛ava绫伙紝涓嶄娇鐢⊿pring娉ㄨВ锛園Component, @Service绛夛級
- * - 閫氳繃鏋勯€犲嚱鏁版敞鍏ヤ緷锟?
- * - 闆嗘垚Redis缂撳瓨鎻愬崌鎬ц兘
- * - 鎻愪緵缁熻鍒嗘瀽鍜屽喅绛栨敮锟?
+ * 严格遵循CLAUDE.md规范：
+ * - 使用Manager后缀标识业务编排层
+ * - 处理复杂业务流程和数据组装
+ * - 纯Java类，不使用Spring注解（如@Component, @Service等）
+ * - 通过构造函数注入依赖
+ * - 完成Redis缓存提升性能
+ * - 提供统计分析和决策支持
  * </p>
  * <p>
- * 鑱岃矗锟?
- * - 鍙嶆綔鍥炵瓥鐣ョ锟?
- * - 杩濊鏁版嵁缁熻鍒嗘瀽
- * - 瀹炴椂鐩戞帶鍜屽憡锟?
- * - 鎬ц兘浼樺寲鍜岀紦瀛樼锟?
+ * 职责：
+ * - 反潜回逻辑管理
+ * - 违规数据统计分析
+ * - 实时监控和告警
+ * - 性能优化和缓存管理
  * </p>
  *
  * @author IOE-DREAM Team
@@ -54,17 +54,17 @@ public class AntiPassbackManager {
     private final RedisTemplate<String, Object> redisTemplate;
     private final GatewayServiceClient gatewayServiceClient;
 
-    // 缂撳瓨閿墠缂€
+    // 缓存键值前缀
     private static final String POLICY_CACHE_PREFIX = "anti_passback_policy:";
     private static final String STATISTICS_CACHE_PREFIX = "anti_passback_stats:";
     private static final String VIOLATION_RECORD_PREFIX = "violation_record:";
 
-    // 缂撳瓨杩囨湡鏃堕棿
+    // 缓存过期时间
     private static final long CACHE_EXPIRE_MINUTES = 30;
     private static final long STATISTICS_CACHE_EXPIRE_MINUTES = 15;
 
     /**
-     * 鏋勯€犲嚱锟?
+     * 构造函数
      */
     public AntiPassbackManager(AccessRecordDao accessRecordDao,
                               RedisTemplate<String, Object> redisTemplate,
@@ -75,10 +75,10 @@ public class AntiPassbackManager {
     }
 
     /**
-     * 閫氳繃缃戝叧鑾峰彇鍖哄煙淇℃伅锛堥€傞厤鍣ㄦ柟娉曪級
+     * 通过网关获取区域信息（适配器方法）
      *
-     * @param areaId 鍖哄煙ID
-     * @return 鍖哄煙瀹炰綋
+     * @param areaId 区域ID
+     * @return 区域实体
      */
     private AreaEntity getAreaById(Long areaId) {
         try {
@@ -90,16 +90,16 @@ public class AntiPassbackManager {
             );
             return result != null && result.getOk() ? result.getData() : null;
         } catch (Exception e) {
-            log.warn("[鍙嶆綔鍥炵鐞嗗櫒] 鑾峰彇鍖哄煙淇℃伅澶辫触, areaId={}", areaId, e);
+            log.warn("[反潜回管理器] 获取区域信息失败, areaId={}", areaId, e);
             return null;
         }
     }
 
     /**
-     * 閫氳繃缃戝叧鑾峰彇璁惧淇℃伅锛堥€傞厤鍣ㄦ柟娉曪級
+     * 通过网关获取设备信息（适配器方法）
      *
-     * @param deviceId 璁惧ID
-     * @return 璁惧瀹炰綋
+     * @param deviceId 设备ID
+     * @return 设备实体
      */
     private DeviceEntity getDeviceById(String deviceId) {
         try {
@@ -111,29 +111,29 @@ public class AntiPassbackManager {
             );
             return result != null && result.getOk() ? result.getData() : null;
         } catch (Exception e) {
-            log.warn("[鍙嶆綔鍥炵鐞嗗櫒] 鑾峰彇璁惧淇℃伅澶辫触, deviceId={}", deviceId, e);
+            log.warn("[反潜回管理器] 获取设备信息失败, deviceId={}", deviceId, e);
             return null;
         }
     }
 
     /**
-     * 鑾峰彇鍙嶆綔鍥炵粺璁℃暟锟?
+     * 获取反潜回统计数据
      */
     public AntiPassbackStatisticsVO getAntiPassbackStatistics(LocalDateTime startTime, LocalDateTime endTime) {
-        log.debug("[鍙嶆綔鍥炵鐞嗗櫒] 鑾峰彇缁熻鏁版嵁 startTime={}, endTime={}", startTime, endTime);
+        log.debug("[反潜回管理器] 获取统计数据 startTime={}, endTime={}", startTime, endTime);
 
         String cacheKey = STATISTICS_CACHE_PREFIX + startTime.toLocalDate() + "_" + endTime.toLocalDate();
 
-        // 灏濊瘯浠庣紦瀛樿幏锟?
+        // 尝试从缓存获取
         AntiPassbackStatisticsVO cachedStats = (AntiPassbackStatisticsVO) redisTemplate.opsForValue().get(cacheKey);
         if (cachedStats != null) {
             return cachedStats;
         }
 
-        // 鏌ヨ鏁版嵁搴撶粺璁℃暟锟?
+        // 查询数据库统计数据
         AntiPassbackStatisticsVO statistics = buildStatisticsFromDatabase(startTime, endTime);
 
-        // 缂撳瓨缁撴灉
+        // 缓存结果
         redisTemplate.opsForValue().set(cacheKey, statistics,
                                        Duration.ofMinutes(STATISTICS_CACHE_EXPIRE_MINUTES));
 
@@ -141,17 +141,17 @@ public class AntiPassbackManager {
     }
 
     /**
-     * 鍒嗘瀽鍙嶆綔鍥炶秼锟?
+     * 分析反潜回趋势
      */
     public Map<String, Object> analyzeAntiPassbackTrends(int days) {
-        log.debug("[鍙嶆綔鍥炵鐞嗗櫒] 鍒嗘瀽瓒嬪娍 days={}", days);
+        log.debug("[反潜回管理器] 分析趋势 days={}", days);
 
         LocalDateTime endTime = LocalDateTime.now();
         LocalDateTime startTime = endTime.minusDays(days);
 
         Map<String, Object> trends = new HashMap<>();
 
-        // 鏃ュ潎杩濊瓒嬪娍
+        // 按日违规趋势
         List<Map<String, Object>> dailyTrends = new ArrayList<>();
         for (int i = days - 1; i >= 0; i--) {
             LocalDateTime dayStart = startTime.plusDays(i);
@@ -170,11 +170,11 @@ public class AntiPassbackManager {
         }
         trends.put("dailyTrends", dailyTrends);
 
-        // 楂橀闄╂椂娈靛垎锟?
+        // 高风险时段分析
         Map<String, Long> highRiskPeriods = analyzeHighRiskPeriods(startTime, endTime);
         trends.put("highRiskPeriods", highRiskPeriods);
 
-        // 杩濊绫诲瀷鍒嗗竷
+        // 违规类型分布
         Map<String, Long> violationTypeDistribution = analyzeViolationTypeDistribution(startTime, endTime);
         trends.put("violationTypeDistribution", violationTypeDistribution);
 
@@ -182,22 +182,22 @@ public class AntiPassbackManager {
     }
 
     /**
-     * 妫€鏌ュ尯鍩熷锟?
+     * 检查区域容量
      */
     public boolean checkAreaCapacity(Long areaId) {
-        log.debug("[鍙嶆綔鍥炵鐞嗗櫒] 妫€鏌ュ尯鍩熷锟?areaId={}", areaId);
+        log.debug("[反潜回管理器] 检查区域容量:areaId={}", areaId);
 
         try {
             AreaEntity area = getAreaById(areaId);
             if (area == null || area.getMaxCapacity() == null) {
-                return true; // 鏃犲閲忛檺锟?
+                return true; // 无容量限制
             }
 
             String currentCountKey = "area_current_count:" + areaId;
             Integer currentCount = (Integer) redisTemplate.opsForValue().get(currentCountKey);
 
             if (currentCount == null) {
-                // 濡傛灉缂撳瓨涓病鏈夛紝浠庢暟鎹簱璁＄畻
+                // 如果缓存中没有，从数据库计算
                 currentCount = calculateCurrentAreaOccupancy(areaId);
                 redisTemplate.opsForValue().set(currentCountKey, currentCount, Duration.ofMinutes(5));
             }
@@ -205,16 +205,16 @@ public class AntiPassbackManager {
             return currentCount < area.getMaxCapacity();
 
         } catch (Exception e) {
-            log.error("[鍙嶆綔鍥炵鐞嗗櫒] 妫€鏌ュ尯鍩熷閲忓紓锟?areaId={}, error={}", areaId, e.getMessage(), e);
-            return true; // 寮傚父鏃跺厑璁搁€氳
+            log.error("[反潜回管理器] 检查区域容量异常:areaId={}, error={}", areaId, e.getMessage(), e);
+            return true; // 异常时允许通行
         }
     }
 
     /**
-     * 鏇存柊鍖哄煙浜烘暟
+     * 更新区域人数
      */
     public void updateAreaOccupancy(Long areaId, String accessType) {
-        log.debug("[鍙嶆綔鍥炵鐞嗗櫒] 鏇存柊鍖哄煙浜烘暟 areaId={}, accessType={}", areaId, accessType);
+        log.debug("[反潜回管理器] 更新区域人数 areaId={}, accessType={}", areaId, accessType);
 
         String currentCountKey = "area_current_count:" + areaId;
 
@@ -224,19 +224,19 @@ public class AntiPassbackManager {
             redisTemplate.opsForValue().decrement(currentCountKey);
         }
 
-        // 璁剧疆杩囨湡鏃堕棿
+        // 设置过期时间
         redisTemplate.expire(currentCountKey, Duration.ofMinutes(10));
     }
 
     /**
-     * 璁板綍杩濊浜嬩欢
+     * 记录违规事件
      */
     public void recordViolation(Long userId, Long deviceId, Long areaId, String violationType, String reason) {
-        log.warn("[鍙嶆綔鍥炵鐞嗗櫒] 璁板綍杩濊 userId={}, deviceId={}, areaId={}, type={}",
+        log.warn("[反潜回管理器] 记录违规 userId={}, deviceId={}, areaId={}, type={}",
                 userId, deviceId, areaId, violationType);
 
         try {
-            // 璁板綍鍒癛edis
+            // 记录到Redis
             String violationKey = VIOLATION_RECORD_PREFIX + LocalDateTime.now().toLocalDate();
             String violationData = String.format("%d:%d:%d:%s:%s:%d",
                     userId, deviceId, areaId, violationType, reason, System.currentTimeMillis());
@@ -244,30 +244,30 @@ public class AntiPassbackManager {
             redisTemplate.opsForList().rightPush(violationKey, violationData);
             redisTemplate.expire(violationKey, Duration.ofDays(7));
 
-            // 妫€鏌ユ槸鍚﹂渶瑕佸彂閫佸憡锟?
+            // 检查是否需要发送告警
             checkAndSendAlert(userId, violationType);
 
         } catch (Exception e) {
-            log.error("[鍙嶆綔鍥炵鐞嗗櫒] 璁板綍杩濊寮傚父 userId={}, error={}", userId, e.getMessage(), e);
+            log.error("[反潜回管理器] 记录违规异常 userId={}, error={}", userId, e.getMessage(), e);
         }
     }
 
     /**
-     * 鑾峰彇鐢ㄦ埛鍙嶆綔鍥炲巻锟?
+     * 获取用户反潜回历史
      */
     public Page<Map<String, Object>> getUserAntiPassbackHistory(Long userId, int page, int size) {
-        log.debug("[鍙嶆綔鍥炵鐞嗗櫒] 鑾峰彇鐢ㄦ埛鍙嶆綔鍥炲巻锟?userId={}, page={}, size={}", userId, page, size);
+        log.debug("[反潜回管理器] 获取用户反潜回历史:userId={}, page={}, size={}", userId, page, size);
 
         Pageable pageable = PageRequest.of(page, size);
 
-        // 鏌ヨ鐢ㄦ埛閫氳璁板綍
+        // 查询用户通行记录
         LocalDateTime endTime = LocalDateTime.now();
         LocalDateTime startTime = endTime.minusDays(30);
 
         List<AccessRecordEntity> records = accessRecordDao.selectByUserIdAndTimeRange(
                 userId, startTime, endTime, size * (page + 1));
 
-        // 杞崲涓哄寘鍚弽娼滃洖淇℃伅鐨勫巻鍙茶锟?
+        // 转换为包含违规分析信息的历史记录
         List<Map<String, Object>> history = records.stream()
                 .skip((long) page * size)
                 .limit(size)
@@ -278,10 +278,10 @@ public class AntiPassbackManager {
     }
 
     /**
-     * 娓呯悊杩囨湡缂撳瓨
+     * 清理过期缓存
      */
     public void cleanExpiredCache() {
-        log.debug("[鍙嶆綔鍥炵鐞嗗櫒] 娓呯悊杩囨湡缂撳瓨");
+        log.debug("[反潜回管理器] 清理过期缓存");
 
         try {
             Set<String> keys = redisTemplate.keys(POLICY_CACHE_PREFIX + "*");
@@ -293,36 +293,36 @@ public class AntiPassbackManager {
 
             if (!allKeys.isEmpty()) {
                 redisTemplate.delete(allKeys);
-                log.info("[鍙嶆綔鍥炵鐞嗗櫒] 娓呯悊杩囨湡缂撳瓨瀹屾垚锛屾竻鐞唟}涓紦锟?, allKeys.size());
+                log.info("[反潜回管理器] 清理过期缓存完成，清除{}个键", allKeys.size());
             }
 
         } catch (Exception e) {
-            log.error("[鍙嶆綔鍥炵鐞嗗櫒] 娓呯悊杩囨湡缂撳瓨寮傚父 error={}", e.getMessage(), e);
+            log.error("[反潜回管理器] 清理过期缓存异常 error={}", e.getMessage(), e);
         }
     }
 
-    // ==================== 绉佹湁鏂规硶 ====================
+    // ==================== 私有方法 ====================
 
     /**
-     * 浠庢暟鎹簱鏋勫缓缁熻鏁版嵁
+     * 从数据库构建统计数据
      */
     private AntiPassbackStatisticsVO buildStatisticsFromDatabase(LocalDateTime startTime, LocalDateTime endTime) {
-        // 鏌ヨ鎬绘鏌ユ锟?
+        // 查询总检查次数
         Long totalCheckCount = countTotalChecksByTimeRange(startTime, endTime);
 
-        // 鏌ヨ鎴愬姛娆℃暟
+        // 查询成功次数
         Long successCount = countSuccessChecksByTimeRange(startTime, endTime);
 
-        // 鏌ヨ鍚勭被杩濊娆℃暟
+        // 查询各类违规次数
         Long hardViolations = countViolationsByType(startTime, endTime, "HARD");
         Long softExceptions = countViolationsByType(startTime, endTime, "SOFT");
         Long areaViolations = countViolationsByType(startTime, endTime, "AREA");
         Long globalViolations = countViolationsByType(startTime, endTime, "GLOBAL");
 
-        // 璁＄畻澶辫触娆℃暟
+        // 计算失败次数
         Long failureCount = totalCheckCount - successCount;
 
-        // 璁＄畻鎴愬姛锟?
+        // 计算成功率
         Double successRate = totalCheckCount > 0 ? (double) successCount / totalCheckCount : 0.0;
 
         return AntiPassbackStatisticsVO.builder()
@@ -342,28 +342,28 @@ public class AntiPassbackManager {
     }
 
     /**
-     * 鏋勫缓鍖哄煙缁熻
+     * 构建区域统计
      */
     private List<AntiPassbackStatisticsVO.AreaStatistics> buildAreaStatistics(LocalDateTime startTime, LocalDateTime endTime) {
-        // TODO: 瀹炵幇鍖哄煙缁熻鏌ヨ
+        // TODO: 实现区域统计查询
         return new ArrayList<>();
     }
 
     /**
-     * 鏋勫缓璁惧缁熻
+     * 构建设备统计
      */
     private List<AntiPassbackStatisticsVO.DeviceStatistics> buildDeviceStatistics(LocalDateTime startTime, LocalDateTime endTime) {
-        // TODO: 瀹炵幇璁惧缁熻鏌ヨ
+        // TODO: 实现设备统计查询
         return new ArrayList<>();
     }
 
     /**
-     * 鏋勫缓鏃堕棿鍒嗗竷
+     * 构建时间分布
      */
     private Map<String, Long> buildTimeDistribution(LocalDateTime startTime, LocalDateTime endTime) {
         Map<String, Long> distribution = new HashMap<>();
 
-        // 鎸夊皬鏃剁粺锟?
+        // 按小时统计
         for (int hour = 0; hour < 24; hour++) {
             Long count = countChecksByHour(startTime, endTime, hour);
             distribution.put(String.format("%02d:00", hour), count);
@@ -373,7 +373,7 @@ public class AntiPassbackManager {
     }
 
     /**
-     * 鏋勫缓鍙嶆綔鍥炲巻鍙茶锟?
+     * 构建反潜回历史详情
      */
     private Map<String, Object> buildAntiPassbackHistory(AccessRecordEntity record) {
         Map<String, Object> history = new HashMap<>();
@@ -386,14 +386,14 @@ public class AntiPassbackManager {
         history.put("deviceId", record.getDeviceId());
         history.put("areaId", record.getAreaId());
 
-        // 鑾峰彇璁惧淇℃伅
+        // 获取设备信息
         DeviceEntity device = getDeviceById(record.getDeviceId());
         if (device != null) {
             history.put("deviceName", device.getDeviceName());
             history.put("deviceLocation", device.getDeviceLocation());
         }
 
-        // 鑾峰彇鍖哄煙淇℃伅
+        // 获取区域信息
         AreaEntity area = getAreaById(record.getAreaId());
         if (area != null) {
             history.put("areaName", area.getAreaName());
@@ -403,66 +403,66 @@ public class AntiPassbackManager {
     }
 
     /**
-     * 妫€鏌ュ苟鍙戦€佸憡锟?
+     * 检查并发送告警
      */
     private void checkAndSendAlert(Long userId, String violationType) {
         String alertKey = "violation_alert:" + userId;
 
-        // 妫€鏌ユ渶杩戠殑杩濊娆℃暟
+        // 检查用户最近的违规次数
         List<String> recentViolations = redisTemplate.opsForList().range(
                 VIOLATION_RECORD_PREFIX + LocalDateTime.now().toLocalDate(), 0, -1);
 
-        if (recentViolations.size() >= 5) { // 杩濊5娆¤Е鍙戝憡锟?
-            log.warn("[鍙嶆綔鍥炵鐞嗗櫒] 鐢ㄦ埛杩濊娆℃暟杩囧锛岃Е鍙戝憡锟?userId={}, count={}", userId, recentViolations.size());
+        if (recentViolations.size() >= 5) { // 违规5次以上发送告警
+            log.warn("[反潜回管理器] 用户违规次数过多，发送告警:userId={}, count={}", userId, recentViolations.size());
 
-            // 鍙戦€佸憡璀︼紙杩欓噷鍙互闆嗘垚鍛婅绯荤粺锟?
+            // 发送告警（这里可以集成告警系统）
             sendAlert(userId, violationType, recentViolations.size());
         }
     }
 
     /**
-     * 鍙戦€佸憡锟?
+     * 发送告警
      */
     private void sendAlert(Long userId, String violationType, int violationCount) {
-        // TODO: 瀹炵幇鍛婅鍙戦€侀€昏緫
-        log.info("[鍙嶆綔鍥炵鐞嗗櫒] 鍙戦€佸憡锟?userId={}, type={}, count={}", userId, violationType, violationCount);
+        // TODO: 实现告警发送逻辑
+        log.info("[反潜回管理器] 发送告警:userId={}, type={}, count={}", userId, violationType, violationCount);
     }
 
     /**
-     * 璁＄畻褰撳墠鍖哄煙鍗犵敤浜烘暟
+     * 计算当前区域占用人数
      */
     private Integer calculateCurrentAreaOccupancy(Long areaId) {
-        // 鏌ヨ鏈€杩戠殑杩涘叆鍜岀寮€璁板綍
-        // TODO: 瀹炵幇鏇寸簿纭殑浜烘暟璁＄畻
+        // 查询最近的进入和离开记录
+        // TODO: 实现更精确的人数计算
         return 0;
     }
 
-    // 鏁版嵁鏌ヨ杈呭姪鏂规硶锛堢畝鍖栧疄鐜帮紝瀹為檯搴旇浣跨敤SQL锟?
+    // 数据查询辅助方法（占位符，实际应使用SQL）
     private Long countTotalChecksByTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
-        return 0L; // TODO: 瀹炵幇鏁版嵁搴撴煡锟?
+        return 0L; // TODO: 实现数据库查询
     }
 
     private Long countSuccessChecksByTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
-        return 0L; // TODO: 瀹炵幇鏁版嵁搴撴煡锟?
+        return 0L; // TODO: 实现数据库查询
     }
 
     private Long countViolationsByTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
-        return 0L; // TODO: 瀹炵幇鏁版嵁搴撴煡锟?
+        return 0L; // TODO: 实现数据库查询
     }
 
     private Long countViolationsByType(LocalDateTime startTime, LocalDateTime endTime, String type) {
-        return 0L; // TODO: 瀹炵幇鏁版嵁搴撴煡锟?
+        return 0L; // TODO: 实现数据库查询
     }
 
     private Long countChecksByHour(LocalDateTime startTime, LocalDateTime endTime, int hour) {
-        return 0L; // TODO: 瀹炵幇鏁版嵁搴撴煡锟?
+        return 0L; // TODO: 实现数据库查询
     }
 
     private Map<String, Long> analyzeHighRiskPeriods(LocalDateTime startTime, LocalDateTime endTime) {
-        return new HashMap<>(); // TODO: 瀹炵幇楂橀闄╂椂娈靛垎锟?
+        return new HashMap<>(); // TODO: 实现高风险时段分析
     }
 
     private Map<String, Long> analyzeViolationTypeDistribution(LocalDateTime startTime, LocalDateTime endTime) {
-        return new HashMap<>(); // TODO: 瀹炵幇杩濊绫诲瀷鍒嗗竷鍒嗘瀽
+        return new HashMap<>(); // TODO: 实现违规类型分布分析
     }
 }

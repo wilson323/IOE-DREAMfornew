@@ -12,8 +12,8 @@ import net.lab1024.sa.visitor.domain.form.BlacklistAddForm;
 import net.lab1024.sa.visitor.domain.form.BlacklistQueryForm;
 import net.lab1024.sa.visitor.domain.vo.BlacklistVO;
 import net.lab1024.sa.visitor.service.VisitorBlacklistService;
-import net.lab1024.sa.visitor.visitor.dao.VisitorBlacklistDao;
-import net.lab1024.sa.visitor.visitor.entity.VisitorBlacklistEntity;
+import net.lab1024.sa.visitor.dao.VisitorBlacklistDao;
+import net.lab1024.sa.visitor.entity.VisitorBlacklistEntity;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.attendance.manager;
+package net.lab1024.sa.attendance.manager;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
