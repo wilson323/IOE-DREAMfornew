@@ -1150,61 +1150,28 @@ public class BiometricFeatureExtractionService {
      * 保存模板到数据库（用于后续下发到设备）
      */
     public ResponseDTO<Void> saveTemplate(Long userId, BiometricType type, FeatureVector featureVector) {
-        // 保存模板逻辑
-        MatchResult matchResult = strategy.verify(probeFeature, galleryFeature);
-        
-        return ResponseDTO.ok(matchResult);
-    }
-    
-    /**
-     * 1:N识别
-     */
-    public ResponseDTO<IdentificationResult> identify(BiometricIdentifyDTO identifyDTO) {
-        // 1. 选择识别策略
-        IBiometricRecognitionStrategy strategy = strategyFactory.get(
-            identifyDTO.getBiometricType().name()
-        );
-        
-        // 2. 提取特征
-        BiometricSample sample = BiometricSample.builder()
-            .type(identifyDTO.getBiometricType())
-            .imageData(identifyDTO.getFeatureData())
+        BiometricTemplateEntity template = BiometricTemplateEntity.builder()
+            .userId(userId)
+            .biometricType(type.getCode())
+            .featureData(serializeFeatureVector(featureVector))
             .build();
-        FeatureVector probeFeature = strategy.extractFeature(sample);
+        templateDao.insert(template);
         
-        // 3. 获取设备关联的所有模板
-        List<BiometricTemplateEntity> templates = getDeviceTemplates(
-            identifyDTO.getDeviceId(),
-            identifyDTO.getBiometricType()
-        );
+        // 清除缓存
+        String cacheKey = String.format("biometric:template:%d:%s", userId, type.name());
+        cacheManager.evict(cacheKey);
         
-        List<FeatureVector> galleryFeatures = templates.stream()
-            .map(t -> deserializeFeature(t.getFeatureData()))
-            .collect(Collectors.toList());
-        
-        // 4. 活体检测
-        LivenessResult livenessResult = strategy.detectLiveness(sample);
-        if (!livenessResult.isAlive()) {
-            return ResponseDTO.error("活体检测失败");
-        }
-        
-        // 5. 识别
-        IdentificationResult result = strategy.identify(probeFeature, galleryFeatures);
-        
-        return ResponseDTO.ok(result);
+        return ResponseDTO.ok();
     }
     
     /**
-     * 获取用户模板(多级缓存)
+     * 获取模板（带缓存）
      */
     private BiometricTemplateEntity getTemplate(Long userId, BiometricType type) {
-        String cacheKey = "biometric:template:" + userId + ":" + type;
-        
-        return cacheManager.get(
-            cacheKey,
-            BiometricTemplateEntity.class,
-            () -> templateDao.selectByUserIdAndType(userId, type)
-        );
+        String cacheKey = String.format("biometric:template:%d:%s", userId, type.name());
+        return cacheManager.get(cacheKey, () -> {
+            return templateDao.selectByUserIdAndType(userId, type.getCode());
+        });
     }
 }
 ```
