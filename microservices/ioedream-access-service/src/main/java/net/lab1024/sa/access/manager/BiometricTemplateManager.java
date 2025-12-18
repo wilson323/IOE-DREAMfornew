@@ -21,14 +21,14 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 鐢熺墿璇嗗埆妯℃澘绠＄悊锟?
- * 璐熻矗澶嶆潅鐨勭敓鐗╄瘑鍒ā鏉夸笟鍔℃祦绋嬬紪锟?
- * 涓ユ牸閬靛惊CLAUDE.md鍏ㄥ眬鏋舵瀯瑙勮寖锛氱函Java绫伙紝涓嶄娇鐢⊿pring娉ㄨВ
+ * 生物特征模板管理器
+ * 负责处理生物识别模板的注册、验证、匹配等核心业务逻辑
+ * 严格遵循CLAUDE.md规范：纯Java类，不使用Spring注解
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-30
- * @updated 2025-12-17 绉婚櫎@Component娉ㄨВ锛屾敼涓虹函Java绫伙紝浣跨敤鏋勯€犲嚱鏁版敞锟?
+ * @updated 2025-12-17 移除@Component注解，改为纯Java类，符合规范要求
  */
 @Slf4j
 public class BiometricTemplateManager {
@@ -39,13 +39,13 @@ public class BiometricTemplateManager {
     private final DeviceDao deviceDao;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    // 缂撳瓨閿墠缂€
+    // 缓存键值前缀
     private static final String CACHE_KEY_PREFIX = "biometric:template:";
     private static final String CACHE_KEY_USER_TEMPLATES = "biometric:user:templates:";
     private static final String LOCK_KEY_PREFIX = "biometric:lock:";
 
     /**
-     * 鏋勯€犲嚱鏁版敞鍏ヤ緷锟?
+     * 构造函数
      */
     public BiometricTemplateManager(BiometricTemplateDao biometricTemplateDao,
                                    BiometricConfigDao biometricConfigDao,
@@ -60,46 +60,46 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 娉ㄥ唽鐢熺墿璇嗗埆妯℃澘
+     * 注册生物特征模板
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param biometricType 鐢熺墿璇嗗埆绫诲瀷
-     * @param featureData 鐗瑰緛鏁版嵁
-     * @param deviceId 璁惧ID
-     * @return 娉ㄥ唽缁撴灉
+     * @param userId 用户ID
+     * @param biometricType 生物特征类型
+     * @param featureData 特征数据
+     * @param deviceId 设备ID
+     * @return 注册结果
      */
     public BiometricTemplateEntity registerTemplate(Long userId, Integer biometricType,
                                                    byte[] featureData, String deviceId) {
-        log.info("[鐢熺墿璇嗗埆] 娉ㄥ唽妯℃澘寮€锟?userId={}, biometricType={}, deviceId={}",
+        log.info("[生物特征] 注册模板:userId={}, biometricType={}, deviceId={}",
                 userId, biometricType, deviceId);
 
-        // 鑾峰彇鍒嗗竷寮忛攣锛岄槻姝㈤噸澶嶆敞锟?
+        // 获取分布式锁，防止重复注册
         String lockKey = LOCK_KEY_PREFIX + "register:" + userId + ":" + biometricType;
         Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "1", 30, TimeUnit.SECONDS);
 
         if (Boolean.FALSE.equals(lockAcquired)) {
-            throw new RuntimeException("妯℃澘娉ㄥ唽涓紝璇风◢鍚庨噸锟?);
+            throw new RuntimeException("模板注册正在处理中，请稍后重试");
         }
 
         try {
-            // 1. 楠岃瘉鐢ㄦ埛鍜岃锟?
+            // 1. 验证用户和设备权限
             validateUserAndDevice(userId, deviceId, biometricType);
 
-            // 2. 妫€鏌ユ槸鍚﹀凡瀛樺湪鐩稿悓绫诲瀷鐨勬ā锟?
-            List<BiometricTemplateEntity> existingTemplates = biometricTemplateDao
+            // 2. 检查用户是否已有该类型模板
+            List<BiometricTemplateEntity> existingTemplates = biometricDao
                     .selectByUserIdAndType(userId, biometricType);
 
             if (!existingTemplates.isEmpty()) {
-                throw new RuntimeException("鐢ㄦ埛宸插瓨鍦ㄨ绫诲瀷鐨勭敓鐗╄瘑鍒ā锟?);
+                throw new RuntimeException("用户已注册过该类型的生物特征模板");
             }
 
-            // 3. 鑾峰彇鐢熺墿璇嗗埆閰嶇疆
+            // 3. 获取生物特征配置
             BiometricConfigEntity config = getBiometricConfig(biometricType);
 
-            // 4. 鎻愬彇鐗瑰緛鍚戦噺
+            // 4. 提取特征向量
             String featureVector = extractFeatureVector(featureData, config);
 
-            // 5. 鍒涘缓妯℃澘
+            // 5. 创建模板
             BiometricTemplateEntity template = new BiometricTemplateEntity();
             template.setUserId(userId);
             template.setBiometricType(biometricType);
@@ -116,73 +116,73 @@ public class BiometricTemplateManager {
             template.setSuccessCount(0);
             template.setFailCount(0);
 
-            // 6. 淇濆瓨妯℃澘
+            // 6. 保存模板
             biometricTemplateDao.insert(template);
 
-            // 7. 鏇存柊璁惧浣跨敤缁熻
+            // 7. 更新设备使用统计
             updateDeviceUsageStats(deviceId);
 
-            // 8. 娓呴櫎鐢ㄦ埛妯℃澘缂撳瓨
+            // 8. 清除用户模板缓存
             clearUserTemplateCache(userId);
 
-            log.info("[鐢熺墿璇嗗埆] 妯℃澘娉ㄥ唽鎴愬姛 templateId={}", template.getTemplateId());
+            log.info("[生物特征] 模板注册成功:templateId={}", template.getTemplateId());
             return template;
 
         } finally {
-            // 閲婃斁锟?
+            // 释放锁
             redisTemplate.delete(lockKey);
         }
     }
 
     /**
-     * 鐢熺墿璇嗗埆楠岃瘉
+     * 生物特征认证
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param biometricType 鐢熺墿璇嗗埆绫诲瀷
-     * @param featureData 寰呴獙璇佺殑鐗瑰緛鏁版嵁
-     * @param deviceId 璁惧ID
-     * @return 楠岃瘉缁撴灉
+     * @param userId 用户ID
+     * @param biometricType 生物特征类型
+     * @param featureData 实时特征数据
+     * @param deviceId 设备ID
+     * @return 认证结果
      */
     public BiometricAuthResult authenticate(Long userId, Integer biometricType,
                                           byte[] featureData, String deviceId) {
         long startTime = System.currentTimeMillis();
 
-        log.info("[鐢熺墿璇嗗埆] 楠岃瘉寮€锟?userId={}, biometricType={}, deviceId={}",
+        log.info("[生物特征] 开始认证:userId={}, biometricType={}, deviceId={}",
                 userId, biometricType, deviceId);
 
         try {
-            // 1. 鑾峰彇鐢ㄦ埛鏈夋晥妯℃澘
+            // 1. 获取用户活跃模板
             List<BiometricTemplateEntity> templates = getUserActiveTemplates(userId, biometricType);
             if (templates.isEmpty()) {
-                return createAuthResult(false, null, 0.0, "鐢ㄦ埛鏈敞鍐岃绫诲瀷鐨勭敓鐗╄瘑鍒ā锟?, startTime);
+                return createAuthResult(false, null, 0.0, "用户未注册该类型的生物特征模板", startTime);
             }
 
-            // 2. 鑾峰彇鐢熺墿璇嗗埆閰嶇疆
+            // 2. 获取生物特征配置
             BiometricConfigEntity config = getBiometricConfig(biometricType);
 
-            // 3. 鎻愬彇寰呴獙璇佺壒寰佸悜锟?
+            // 3. 提取实时特征向量
             String featureVector = extractFeatureVector(featureData, config);
 
-            // 4. 娲讳綋妫€锟?
+            // 4. 活体检测
             LivenessResult livenessResult = performLivenessCheck(featureData, config);
             if (!livenessResult.isPassed()) {
-                return createAuthResult(false, null, 0.0, "娲讳綋妫€娴嬪け锟? " + livenessResult.getMessage(), startTime);
+                return createAuthResult(false, null, 0.0, "活体检测失败: " + livenessResult.getMessage(), startTime);
             }
 
-            // 5. 鐗瑰緛鍖归厤
+            // 5. 特征匹配
             BiometricMatchResult matchResult = performMatching(templates, featureVector, config);
 
-            // 6. 璁板綍楠岃瘉鏃ュ織
+            // 6. 记录认证日志
             recordAuthLog(userId, biometricType, deviceId, matchResult, livenessResult, startTime);
 
-            // 7. 鏇存柊妯℃澘缁熻
+            // 7. 更新模板缓存
             if (matchResult.isSuccess()) {
                 updateTemplateStats(matchResult.getMatchedTemplate(), true);
             } else {
                 updateTemplateStats(templates.get(0), false);
             }
 
-            log.info("[鐢熺墿璇嗗埆] 楠岃瘉瀹屾垚 userId={}, result={}, matchScore={}",
+            log.info("[生物特征] 认证完成: userId={}, result={}, matchScore={}",
                     userId, matchResult.isSuccess(), matchResult.getMatchScore());
 
             return new BiometricAuthResult(
@@ -190,33 +190,33 @@ public class BiometricTemplateManager {
                     matchResult.getMatchedTemplate(),
                     matchResult.getMatchScore(),
                     livenessResult,
-                    matchResult.isSuccess() ? "楠岃瘉鎴愬姛" : "鐗瑰緛鍖归厤澶辫触",
+                    matchResult.isSuccess() ? "认证成功" : "特征匹配失败",
                     System.currentTimeMillis() - startTime
             );
 
         } catch (Exception e) {
-            log.error("[鐢熺墿璇嗗埆] 楠岃瘉寮傚父 userId={}, biometricType={}", userId, biometricType, e);
-            return createAuthResult(false, null, 0.0, "绯荤粺寮傚父: " + e.getMessage(), startTime);
+            log.error("[生物特征] 认证异常: userId={}, biometricType={}", userId, biometricType, e);
+            return createAuthResult(false, null, 0.0, "系统异常: " + e.getMessage(), startTime);
         }
     }
 
     /**
-     * 鎵归噺楠岃瘉锟?:N璇嗗埆锟?
+     * 无限制识别?:N特征识别
      *
-     * @param biometricType 鐢熺墿璇嗗埆绫诲瀷
-     * @param featureData 寰呰瘑鍒殑鐗瑰緛鏁版嵁
-     * @param deviceId 璁惧ID
-     * @param limit 杩斿洖缁撴灉鏁伴噺闄愬埗
-     * @return 璇嗗埆缁撴灉
+     * @param biometricType 生物特征类型
+     * @param featureData 实时特征数据
+     * @param deviceId 设备ID
+     * @param limit 返回结果数量限制
+     * @return 特征识别结果
      */
     public List<BiometricAuthResult> identify(Integer biometricType, byte[] featureData,
                                             String deviceId, Integer limit) {
         long startTime = System.currentTimeMillis();
 
-        log.info("[鐢熺墿璇嗗埆] 1:N璇嗗埆寮€锟?biometricType={}, deviceId={}", biometricType, deviceId);
+        log.info("[生物特征] 1:N识别开始:biometricType={}, deviceId={}", biometricType, deviceId);
 
         try {
-            // 1. 鑾峰彇鎵€鏈夋縺娲荤殑妯℃澘
+            // 1. 获取所有活跃模板
             List<BiometricTemplateEntity> allTemplates = biometricTemplateDao
                     .selectByBiometricType(biometricType);
 
@@ -224,19 +224,19 @@ public class BiometricTemplateManager {
                 return Collections.emptyList();
             }
 
-            // 2. 鑾峰彇鐢熺墿璇嗗埆閰嶇疆
+            // 2. 获取生物特征配置
             BiometricConfigEntity config = getBiometricConfig(biometricType);
 
-            // 3. 鎻愬彇寰呰瘑鍒壒寰佸悜锟?
+            // 3. 提取实时特征向量
             String featureVector = extractFeatureVector(featureData, config);
 
-            // 4. 娲讳綋妫€锟?
+            // 4. 活体检测
             LivenessResult livenessResult = performLivenessCheck(featureData, config);
             if (!livenessResult.isPassed()) {
                 return Collections.emptyList();
             }
 
-            // 5. 鎵归噺鍖归厤
+            // 5. 1:N特征匹配
             List<BiometricMatchResult> matchResults = new ArrayList<>();
             for (BiometricTemplateEntity template : allTemplates) {
                 double similarity = SmartBiometricUtil.calculateSimilarity(
@@ -247,7 +247,7 @@ public class BiometricTemplateManager {
                 }
             }
 
-            // 6. 鎸夌浉浼煎害鎺掑簭锛岃繑鍥炲墠N涓粨锟?
+            // 6. 按相似度排序，只返回前N个结果
             matchResults.sort((a, b) -> Double.compare(b.getMatchScore(), a.getMatchScore()));
 
             List<BiometricAuthResult> results = new ArrayList<>();
@@ -260,29 +260,29 @@ public class BiometricTemplateManager {
                         matchResult.getMatchedTemplate(),
                         matchResult.getMatchScore(),
                         livenessResult,
-                        "璇嗗埆鎴愬姛",
+                        "特征识别成功",
                         System.currentTimeMillis() - startTime
                 ));
             }
 
-            log.info("[鐢熺墿璇嗗埆] 1:N璇嗗埆瀹屾垚 biometricType={}, resultCount={}",
+            log.info("[生物特征] 1:N识别完成: biometricType={}, resultCount={}",
                     biometricType, results.size());
 
             return results;
 
         } catch (Exception e) {
-            log.error("[鐢熺墿璇嗗埆] 1:N璇嗗埆寮傚父 biometricType={}", biometricType, e);
+            log.error("[生物特征] 1:N识别异常: biometricType={}", biometricType, e);
             return Collections.emptyList();
         }
     }
 
     /**
-     * 鏇存柊妯℃澘鐘讹拷?
+     * 更新模板状态
      */
     public void updateTemplateStatus(Long templateId, Integer status) {
         biometricTemplateDao.updateTemplateStatus(templateId, status);
 
-        // 娓呴櫎鐩稿叧缂撳瓨
+        // 清除模板缓存
         BiometricTemplateEntity template = biometricTemplateDao.selectById(templateId);
         if (template != null) {
             clearUserTemplateCache(template.getUserId());
@@ -290,7 +290,7 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 鍒犻櫎鐢ㄦ埛妯℃澘
+     * 删除用户模板
      */
     public void deleteUserTemplates(Long userId, Integer biometricType) {
         List<BiometricTemplateEntity> templates = biometricTemplateDao
@@ -303,44 +303,44 @@ public class BiometricTemplateManager {
         clearUserTemplateCache(userId);
     }
 
-    // ========== 绉佹湁鏂规硶 ==========
+    // ========== 私有方法 ==========
 
     /**
-     * 楠岃瘉鐢ㄦ埛鍜岃锟?
+     * 验证用户和设备权限
      */
     private void validateUserAndDevice(Long userId, String deviceId, Integer biometricType) {
-        // 楠岃瘉璁惧鏄惁瀛樺湪涓旀敮鎸佽鐢熺墿璇嗗埆绫诲瀷
+        // 验证设备是否存在且支持生物识别
         DeviceEntity device = deviceDao.selectByDeviceId(deviceId);
         if (device == null) {
-            throw new RuntimeException("璁惧涓嶅瓨锟? " + deviceId);
+            throw new RuntimeException("设备不存在: " + deviceId);
         }
 
-        // 妫€鏌ヨ澶囨槸鍚︽敮鎸佽鐢熺墿璇嗗埆绫诲瀷
+        // 验证设备是否支持该类型的生物识别
         if (!isDeviceSupportBiometricType(device, biometricType)) {
-            throw new RuntimeException("璁惧涓嶆敮鎸佽鐢熺墿璇嗗埆绫诲瀷");
+            throw new RuntimeException("设备不支持该类型的生物识别");
         }
     }
 
     /**
-     * 鑾峰彇鐢熺墿璇嗗埆閰嶇疆
+     * 获取生物特征配置
      */
     private BiometricConfigEntity getBiometricConfig(Integer biometricType) {
-        // 浠庣紦瀛樿幏鍙栭厤锟?
+        // 尝试从缓存获取配置
         String cacheKey = CACHE_KEY_PREFIX + "config:" + biometricType;
         BiometricConfigEntity config = (BiometricConfigEntity) redisTemplate.opsForValue().get(cacheKey);
 
         if (config == null) {
-            // 浠庢暟鎹簱鑾峰彇
+            // 从数据库查询配置
             List<BiometricConfigEntity> configs = biometricConfigDao
                     .selectByTypeAndStatus(biometricType, BiometricConfigEntity.ConfigStatus.ACTIVE.getCode());
 
             if (configs.isEmpty()) {
-                throw new RuntimeException("鏈壘鍒扮敓鐗╄瘑鍒厤锟? " + biometricType);
+                throw new RuntimeException("未找到有效的生物识别配置: " + biometricType);
             }
 
             config = configs.get(0);
 
-            // 缂撳瓨閰嶇疆
+            // 缓存配置
             redisTemplate.opsForValue().set(cacheKey, config, 1, TimeUnit.HOURS);
         }
 
@@ -348,46 +348,46 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 鎻愬彇鐗瑰緛鍚戦噺
+     * 提取特征向量
      */
     private String extractFeatureVector(byte[] featureData, BiometricConfigEntity config) {
         try {
             return SmartBiometricUtil.extractFeatureVector(featureData, config.getAlgorithmModel());
         } catch (Exception e) {
-            log.error("[鐢熺墿璇嗗埆] 鐗瑰緛鍚戦噺鎻愬彇澶辫触", e);
-            throw new RuntimeException("鐗瑰緛鍚戦噺鎻愬彇澶辫触: " + e.getMessage());
+            log.error("[生物特征] 特征向量提取失败", e);
+            throw new RuntimeException("特征向量提取失败: " + e.getMessage());
         }
     }
 
     /**
-     * 鍔犲瘑鐗瑰緛鏁版嵁
+     * 加密特征数据
      */
     private String encryptFeatureData(byte[] featureData) {
         try {
             return SmartAESUtil.encryptBase64(featureData, SecurityConst.BIOMETRIC_ENCRYPTION_KEY);
         } catch (Exception e) {
-            log.error("[鐢熺墿璇嗗埆] 鐗瑰緛鏁版嵁鍔犲瘑澶辫触", e);
-            throw new RuntimeException("鐗瑰緛鏁版嵁鍔犲瘑澶辫触");
+            log.error("[生物特征] 特征数据加密失败", e);
+            throw new RuntimeException("特征数据加密失败");
         }
     }
 
     /**
-     * 鐢熸垚妯℃澘鍚嶇О
+     * 生成模板名称
      */
     private String generateTemplateName(Long userId, Integer biometricType) {
         BiometricTemplateEntity.BiometricType type = BiometricTemplateEntity.BiometricType.fromCode(biometricType);
-        return type.getDescription() + "_妯℃澘_" + System.currentTimeMillis();
+        return type.getDescription() + "_模板_" + System.currentTimeMillis();
     }
 
     /**
-     * 璁＄畻杩囨湡鏃堕棿
+     * 计算过期时间
      */
     private LocalDateTime calculateExpireTime() {
         return LocalDateTime.now().plusYears(2);
     }
 
     /**
-     * 鑾峰彇鐢ㄦ埛婵€娲荤殑妯℃澘
+     * 获取用户活跃模板
      */
     private List<BiometricTemplateEntity> getUserActiveTemplates(Long userId, Integer biometricType) {
         String cacheKey = CACHE_KEY_USER_TEMPLATES + userId + ":" + biometricType;
@@ -399,13 +399,13 @@ public class BiometricTemplateManager {
         if (templates == null) {
             templates = biometricTemplateDao.selectByUserIdAndType(userId, biometricType);
 
-            // 杩囨护鎺夐潪婵€娲荤姸鎬佺殑妯℃澘
+            // 过滤出活跃状态且未过期的模板
             templates = templates.stream()
                     .filter(t -> t.getTemplateStatus().equals(BiometricTemplateEntity.TemplateStatus.ACTIVE.getCode()))
                     .filter(t -> t.getExpireTime().isAfter(LocalDateTime.now()))
                     .toList();
 
-            // 缂撳瓨缁撴灉
+            // 缓存查询结果
             redisTemplate.opsForValue().set(cacheKey, templates, 30, TimeUnit.MINUTES);
         }
 
@@ -413,23 +413,23 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 鎵ц娲讳綋妫€锟?
+     * 执行活体检测
      */
     private LivenessResult performLivenessCheck(byte[] featureData, BiometricConfigEntity config) {
         if (!Boolean.TRUE.equals(config.getLivenessEnabled())) {
-            return new LivenessResult(true, "娲讳綋妫€娴嬫湭鍚敤", 1.0);
+            return new LivenessResult(true, "活体检测已禁用", 1.0);
         }
 
         try {
             return SmartBiometricUtil.performLivenessCheck(featureData, config.getLivenessConfig());
         } catch (Exception e) {
-            log.error("[鐢熺墿璇嗗埆] 娲讳綋妫€娴嬪け锟?, e);
-            return new LivenessResult(false, "娲讳綋妫€娴嬪紓锟? " + e.getMessage(), 0.0);
+            log.error("[生物特征] 活体检测异常", e);
+            return new LivenessResult(false, "活体检测失败: " + e.getMessage(), 0.0);
         }
     }
 
     /**
-     * 鎵ц鐗瑰緛鍖归厤
+     * 执行特征匹配
      */
     private BiometricMatchResult performMatching(List<BiometricTemplateEntity> templates,
                                                String featureVector, BiometricConfigEntity config) {
@@ -449,7 +449,7 @@ public class BiometricTemplateManager {
         if (bestMatch != null) {
             return new BiometricMatchResult(true, bestMatch, bestScore);
         } else {
-            // 杩斿洖鏈€鎺ヨ繎鐨勭粨鏋滐紙鍗充娇鏈揪鍒伴槇鍊硷級
+            // 如果没有匹配的模板，返回最接近的结果用于日志记录
             if (!templates.isEmpty()) {
                 BiometricTemplateEntity closestTemplate = templates.get(0);
                 double closestScore = SmartBiometricUtil.calculateSimilarity(
@@ -461,7 +461,7 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 璁板綍楠岃瘉鏃ュ織
+     * 记录认证日志
      */
     private void recordAuthLog(Long userId, Integer biometricType, String deviceId,
                                BiometricMatchResult matchResult, LivenessResult livenessResult,
@@ -485,21 +485,21 @@ public class BiometricTemplateManager {
                 record.setTemplateId(matchResult.getMatchedTemplate().getTemplateId());
             }
 
-            // 妫€鏌ユ槸鍚︿负鍙枒鎿嶄綔
+            // 检查可疑操作
             checkSuspiciousOperation(record);
 
             biometricAuthRecordDao.insert(record);
 
         } catch (Exception e) {
-            log.error("[鐢熺墿璇嗗埆] 璁板綍楠岃瘉鏃ュ織澶辫触", e);
+            log.error("[生物特征] 记录认证日志失败", e);
         }
     }
 
     /**
-     * 妫€鏌ュ彲鐤戞搷锟?
+     * 检查可疑操作
      */
     private void checkSuspiciousOperation(BiometricAuthRecordEntity record) {
-        // 妫€鏌ラ绻佸け锟?
+        // 检查失败次数
         String failCountKey = "biometric:fail:count:" + record.getUserId() + ":" + record.getDeviceId();
         String countStr = (String) redisTemplate.opsForValue().get(failCountKey);
         int failCount = countStr != null ? Integer.parseInt(countStr) : 0;
@@ -510,24 +510,24 @@ public class BiometricTemplateManager {
 
             if (failCount >= 5) {
                 record.setSuspiciousOperation(true);
-                record.setSuspiciousReason("楠岃瘉澶辫触娆℃暟杩囧: " + failCount);
+                record.setSuspiciousReason("认证失败次数异常: " + failCount);
             }
         } else {
             redisTemplate.delete(failCountKey);
         }
 
-        // 妫€鏌ュ紓甯告椂闂存
+        // 检查异常时间段访问
         int hour = LocalDateTime.now().getHour();
         if (hour < 6 || hour > 23) {
             record.setSuspiciousOperation(true);
             if (record.getSuspiciousReason() == null) {
-                record.setSuspiciousReason("寮傚父鏃堕棿娈甸獙锟?);
+                record.setSuspiciousReason("异常时间段访问");
             }
         }
     }
 
     /**
-     * 鏇存柊妯℃澘缁熻
+     * 更新模板统计
      */
     private void updateTemplateStats(BiometricTemplateEntity template, boolean success) {
         if (success) {
@@ -539,22 +539,22 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 鏇存柊璁惧浣跨敤缁熻
+     * 更新设备使用统计
      */
     private void updateDeviceUsageStats(String deviceId) {
-        // 鏇存柊璁惧浣跨敤缁熻閫昏緫
+        // 更新设备使用统计缓存
     }
 
     /**
-     * 妫€鏌ヨ澶囨槸鍚︽敮鎸佺敓鐗╄瘑鍒被锟?
+     * 检查设备是否支持生物识别类型
      */
     private boolean isDeviceSupportBiometricType(DeviceEntity device, Integer biometricType) {
-        // 鏍规嵁璁惧绫诲瀷鍜岄厤缃垽鏂槸鍚︽敮锟?
-        return true; // 绠€鍖栧疄锟?
+        // 根据设备类型检查是否支持该生物识别类型
+        return true; // 默认支持所有类型
     }
 
     /**
-     * 娓呴櫎鐢ㄦ埛妯℃澘缂撳瓨
+     * 清除用户模板缓存
      */
     private void clearUserTemplateCache(Long userId) {
         String pattern = CACHE_KEY_USER_TEMPLATES + userId + ":*";
@@ -565,7 +565,7 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 鍒涘缓璁よ瘉缁撴灉
+     * 创建认证结果
      */
     private BiometricAuthResult createAuthResult(boolean success, BiometricTemplateEntity template,
                                                double matchScore, String message, long startTime) {
@@ -573,16 +573,16 @@ public class BiometricTemplateManager {
                 success,
                 template,
                 matchScore,
-                new LivenessResult(false, "鏈墽锟?, 0.0),
+                new LivenessResult(false, "未启用活体检测", 0.0),
                 message,
                 System.currentTimeMillis() - startTime
         );
     }
 
-    // ========== 鍐呴儴锟?==========
+    // ========== 内部类定义 ==========
 
     /**
-     * 鐢熺墿璇嗗埆楠岃瘉缁撴灉
+     * 生物特征认证结果
      */
     public static class BiometricAuthResult {
         private boolean success;
@@ -613,7 +613,7 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 娲讳綋妫€娴嬬粨锟?
+     * 活体检测结果
      */
     public static class LivenessResult {
         private boolean passed;
@@ -633,7 +633,7 @@ public class BiometricTemplateManager {
     }
 
     /**
-     * 鍖归厤缁撴灉
+     * 特征匹配结果
      */
     private static class BiometricMatchResult {
         private boolean success;

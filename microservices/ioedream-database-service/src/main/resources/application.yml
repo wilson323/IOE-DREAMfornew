@@ -1,7 +1,7 @@
 server:
-  port: 8889
+  port: ${DATABASE_SERVICE_PORT:8093}
   servlet:
-    context-path: /database
+    context-path: /
 
 spring:
   application:

@@ -125,6 +125,14 @@ spring:
                 - Path=/api/v1/device/**
               filters:
                 - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: deviceCommCB
+                    fallbackUri: forward:/fallback/device
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
 
             # 生物模板管理服务路由（端口8096）
             - id: ioedream-biometric-service
@@ -133,6 +141,14 @@ spring:
                 - Path=/api/v1/biometric/**
               filters:
                 - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: biometricCB
+                    fallbackUri: forward:/fallback/biometric
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
 
             # 门禁管理服务路由
             - id: ioedream-access-service
@@ -141,6 +157,14 @@ spring:
                 - Path=/api/v1/access/**,/api/v1/mobile/access/**
               filters:
                 - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: accessCB
+                    fallbackUri: forward:/fallback/access
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
 
             # 考勤管理服务路由
             - id: ioedream-attendance-service
@@ -149,6 +173,14 @@ spring:
                 - Path=/api/v1/attendance/**,/api/attendance/mobile/**,/api/attendance/mobile
               filters:
                 - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: attendanceCB
+                    fallbackUri: forward:/fallback/attendance
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
 
             # 消费管理服务路由
             # 支持路径：/api/v1/consume/**, /api/v1/payment/**, /api/consume/**, /api/mobile/v1/consume/**
@@ -158,6 +190,14 @@ spring:
                 - Path=/api/v1/consume/**,/api/v1/payment/**,/api/consume/**,/api/mobile/v1/consume/**
               filters:
                 - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: consumeCB
+                    fallbackUri: forward:/fallback/consume
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
 
             # 访客管理服务路由
             - id: ioedream-visitor-service
@@ -166,6 +206,14 @@ spring:
                 - Path=/api/v1/visitor/**,/api/v1/mobile/visitor/**
               filters:
                 - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: visitorCB
+                    fallbackUri: forward:/fallback/visitor
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
 
             # 视频监控服务路由
             - id: ioedream-video-service
@@ -174,6 +222,14 @@ spring:
                 - Path=/api/v1/video/**,/api/v1/mobile/video/**
               filters:
                 - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: videoCB
+                    fallbackUri: forward:/fallback/video
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
 
             # OA办公服务路由
             - id: ioedream-oa-service
@@ -182,6 +238,30 @@ spring:
                 - Path=/api/v1/approval/**,/api/v1/workflow/**
               filters:
                 - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: oaCB
+                    fallbackUri: forward:/fallback/oa
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
+
+            # 数据库管理服务路由（端口8093）
+            - id: ioedream-database-service
+              uri: lb://ioedream-database-service
+              predicates:
+                - Path=/api/v1/database/**
+              filters:
+                - StripPrefix=0
+                - name: CircuitBreaker
+                  args:
+                    name: databaseCB
+                    fallbackUri: forward:/fallback/database
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 50
+                    redis-rate-limiter.burstCapacity: 100
 
             # 登录认证路由（优先级高）
             - id: ioedream-login-service

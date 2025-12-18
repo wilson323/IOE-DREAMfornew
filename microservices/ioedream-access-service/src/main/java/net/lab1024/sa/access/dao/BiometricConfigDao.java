@@ -9,7 +9,14 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
- * 鐢熺墿璇嗗埆閰嶇疆鏁版嵁璁块棶灞?
+ * 生物识别配置数据访问层
+ * <p>
+ * 严格遵循DAO设计规范：
+ * - 继承BaseMapper使用MyBatis-Plus
+ * - 使用@Mapper注解而非@Repository
+ * - 专注于生物识别配置的数据访问操作
+ * - 提供常用的查询方法
+ * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -19,7 +26,7 @@ import java.util.List;
 public interface BiometricConfigDao extends BaseMapper<BiometricConfigEntity> {
 
     /**
-     * 鏍规嵁鐢熺墿璇嗗埆绫诲瀷鏌ヨ婵€娲婚厤缃?
+     * 根据生物识别类型和状态查询配置
      */
     @Select("SELECT * FROM t_access_biometric_config WHERE biometric_type = #{biometricType} " +
             "AND config_status = #{configStatus} AND deleted_flag = 0 ORDER BY config_id DESC LIMIT 1")
@@ -27,13 +34,13 @@ public interface BiometricConfigDao extends BaseMapper<BiometricConfigEntity> {
                                               @Param("configStatus") Integer configStatus);
 
     /**
-     * 鏌ヨ鎵€鏈夋縺娲婚厤缃?
+     * 查询所有激活的配置
      */
     @Select("SELECT * FROM t_access_biometric_config WHERE config_status = 2 AND deleted_flag = 0 ORDER BY biometric_type")
     List<BiometricConfigEntity> selectActiveConfigs();
 
     /**
-     * 鏍规嵁绠楁硶鎻愪緵鍟嗘煡璇㈤厤缃?
+     * 根据算法提供者查询配置
      */
     @Select("SELECT * FROM t_access_biometric_config WHERE algorithm_provider = #{provider} " +
             "AND config_status = 2 AND deleted_flag = 0")

@@ -51,5 +51,29 @@ public final class SystemConstants {
      * 协议测试消息数量
      */
     public static final int PROTOCOL_TEST_MESSAGE_COUNT = 1000;
+
+    /**
+     * 缓存键前缀
+     * <p>
+     * 所有Redis缓存键统一使用此前缀，便于管理和清理
+     * </p>
+     */
+    public static final String CACHE_PREFIX = "ioedream:";
+
+    /**
+     * Token过期时间（秒）
+     * <p>
+     * 默认2小时，可通过配置覆盖
+     * </p>
+     */
+    public static final long TOKEN_EXPIRE_SECONDS = 7200;
+
+    /**
+     * 最大上传文件大小（MB）
+     * <p>
+     * 默认50MB，可通过配置覆盖
+     * </p>
+     */
+    public static final int MAX_UPLOAD_SIZE_MB = 50;
 }
 

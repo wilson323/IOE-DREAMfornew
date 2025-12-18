@@ -1,7 +1,6 @@
 package net.lab1024.sa.common.factory;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
  * - 支持动态加载策略
  * - 支持策略优先级排序
  * - 支持策略热插拔
+ * - 构造函数注入（Spring 4.3+自动识别，无需注解）
  * </p>
  * <p>
  * 使用场景:
@@ -40,7 +40,10 @@ public class StrategyFactory<T> {
     private final ApplicationContext applicationContext;
     private final Map<Class<?>, Map<String, T>> strategyCache = new ConcurrentHashMap<>();
 
-    @Autowired
+    /**
+     * 构造函数注入（Spring 4.3+自动识别，无需@Autowired注解）
+     * 严格遵循CLAUDE.md规范：统一使用@Resource，但构造函数注入无需注解
+     */
     public StrategyFactory(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }

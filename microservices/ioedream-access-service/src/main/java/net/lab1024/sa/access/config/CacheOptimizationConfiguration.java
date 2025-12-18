@@ -29,16 +29,16 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 缂撳瓨浼樺寲閰嶇疆
+ * 缓存优化配置
  * <p>
- * 瀹炵幇涓夌骇缂撳瓨鏋舵瀯锛?
- * - L1鏈湴缂撳瓨锛欳affeine锛屾绉掔骇鍝嶅簲
- * - L2 Redis缂撳瓨锛氬垎甯冨紡缂撳瓨锛屾暟鎹竴鑷存€?
- * - L3缃戝叧缂撳瓨锛氭湇鍔￠棿璋冪敤缂撳瓨
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
- * - 浣跨敤@Configuration娉ㄨВ
- * - 缁熶竴浣跨敤@Resource渚濊禆娉ㄥ叆
- * - 瀹屾暣鐨勬棩蹇楄褰?
+ * 实现三级缓存架构：
+ * - L1本地缓存：Caffeine，毫秒级响应
+ * - L2 Redis缓存：分布式缓存，数据一致性
+ * - L3网关缓存：服务间调用缓存
+ * 严格遵循CLAUDE.md规范：
+ * - 使用@Configuration注解
+ * - 统一使用@Resource依赖注入
+ * - 完整的日志记录
  * </p>
  *
  * @author IOE-DREAM Team
@@ -51,50 +51,50 @@ import lombok.extern.slf4j.Slf4j;
 public class CacheOptimizationConfiguration {
 
     /**
-     * Redis杩炴帴宸ュ巶
+     * Redis连接工厂
      */
     @Resource
     private RedisConnectionFactory redisConnectionFactory;
 
     /**
-     * 鎬ц兘鎸囨爣娉ㄥ唽鍣?
+     * 性能指标注册器
      */
     @Resource
     private MeterRegistry meterRegistry;
 
     /**
-     * 鏈湴缂撳瓨绠＄悊鍣紙L1缂撳瓨锛?
+     * 本地缓存管理器（L1缓存）
      */
     @Bean("localCacheManager")
     public CacheManager localCacheManager() {
-        log.info("[缂撳瓨閰嶇疆] 鍒濆鍖栨湰鍦扮紦瀛樼鐞嗗櫒");
+        log.info("[缓存配置] 初始化Caffeine本地缓存管理器");
 
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
 
-        // 璁惧淇℃伅缂撳瓨 - 30鍒嗛挓
+        // 设备信息缓存 - 30分钟
         cacheManager.registerCustomCache("device", buildDeviceCacheSpec());
 
-        // 鐢ㄦ埛鏉冮檺缂撳瓨 - 15鍒嗛挓
+        // 用户权限缓存 - 15分钟
         cacheManager.registerCustomCache("permission", buildPermissionCacheSpec());
 
-        // 鍖哄煙淇℃伅缂撳瓨 - 60鍒嗛挓
+        // 区域信息缓存 - 60分钟
         cacheManager.registerCustomCache("area", buildAreaCacheSpec());
 
-        // 璁块棶璁板綍缂撳瓨 - 5鍒嗛挓
+        // 访问记录缓存 - 5分钟
         cacheManager.registerCustomCache("accessRecord", buildAccessRecordCacheSpec());
 
-        // 鐑偣鏁版嵁缂撳瓨 - 10鍒嗛挓
+        // 热点数据缓存 - 10分钟
         cacheManager.registerCustomCache("hotData", buildHotDataCacheSpec());
 
         return cacheManager;
     }
 
     /**
-     * Redis鍒嗗竷寮忕紦瀛樼鐞嗗櫒锛圠2缂撳瓨锛?
+     * Redis分布式缓存管理器（L2缓存）
      */
     @Bean("redisCacheManager")
     public RedisCacheManager redisCacheManager() {
-        log.info("[缂撳瓨閰嶇疆] 鍒濆鍖朢edis缂撳瓨绠＄悊鍣?);
+        log.info("[缓存配置] 初始化Redis缓存管理器");
 
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofMinutes(30))
@@ -104,19 +104,19 @@ public class CacheOptimizationConfiguration {
 
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
 
-        // 璁惧缂撳瓨閰嶇疆
+        // 设备缓存配置
         cacheConfigurations.put("device", defaultConfig.entryTtl(Duration.ofMinutes(30)));
 
-        // 鏉冮檺缂撳瓨閰嶇疆
+        // 权限缓存配置
         cacheConfigurations.put("permission", defaultConfig.entryTtl(Duration.ofMinutes(15)));
 
-        // 鍖哄煙缂撳瓨閰嶇疆
+        // 区域缓存配置
         cacheConfigurations.put("area", defaultConfig.entryTtl(Duration.ofMinutes(60)));
 
-        // 璁块棶璁板綍缂撳瓨閰嶇疆
+        // 访问记录缓存配置
         cacheConfigurations.put("accessRecord", defaultConfig.entryTtl(Duration.ofMinutes(5)));
 
-        // 缁熻鏁版嵁缂撳瓨閰嶇疆
+        // 统计数据缓存配置
         cacheConfigurations.put("statistics", defaultConfig.entryTtl(Duration.ofMinutes(10)));
 
         RedisCacheManager cacheManager = RedisCacheManager.builder(redisConnectionFactory)
@@ -129,22 +129,22 @@ public class CacheOptimizationConfiguration {
     }
 
     /**
-     * 澶嶅悎缂撳瓨绠＄悊鍣紙L1 + L2锛?
+     * 复合缓存管理器（L1 + L2）
      */
     @Bean
     @Primary
     public CacheManager compositeCacheManager(
             org.springframework.cache.CacheManager localCacheManager,
             org.springframework.cache.CacheManager redisCacheManager) {
-        log.info("[缂撳瓨閰嶇疆] 鍒濆鍖栧鍚堢紦瀛樼鐞嗗櫒");
+        log.info("[缓存配置] 初始化复合缓存管理器");
 
-        // 浣跨敤Caffeine浣滀负涓荤紦瀛橈紝Redis浣滀负浜岀骇缂撳瓨
-        // 杩欓噷鍙互鏍规嵁闇€瑕侀€夋嫨涓嶅悓鐨勫鍚堢瓥鐣?
+        // 使用Caffeine作为主缓存，Redis作为二级缓存
+        // 这里可以根据需要选择不同的复合策略
         return localCacheManager;
     }
 
     /**
-     * 缂撳瓨鍋ュ悍妫€鏌?
+     * 缓存健康检查
      */
     @Bean
     public HealthIndicator cacheHealthIndicator() {
@@ -152,7 +152,7 @@ public class CacheOptimizationConfiguration {
     }
 
     /**
-     * 缂撳瓨鎸囨爣鏀堕泦鍣?
+     * 缓存指标收集器
      */
     @Bean
     public CacheMetricsCollector cacheMetricsCollector() {
@@ -160,16 +160,16 @@ public class CacheOptimizationConfiguration {
     }
 
     /**
-     * 鏋勫缓璁惧缂撳瓨瑙勬牸
+     * 构建设备缓存规格
      */
     private Caffeine<Object, Object> buildDeviceCacheSpec() {
         return Caffeine.newBuilder()
-            .maximumSize(10000)  // 鏈€澶х紦瀛樻潯鐩?
-            .expireAfterWrite(30, TimeUnit.MINUTES)  // 鍐欏叆鍚?0鍒嗛挓杩囨湡
-            .recordStats()  // 璁板綍缁熻淇℃伅
+            .maximumSize(10000)  // 最大缓存条目
+            .expireAfterWrite(30, TimeUnit.MINUTES)  // 写入后30分钟过期
+            .recordStats()  // 记录统计信息
             .removalListener((key, value, cause) -> {
-                log.debug("[缂撳瓨绉婚櫎] 璁惧缂撳瓨绉婚櫎: key={}, cause={}", key, cause);
-                // 璁板綍缂撳瓨绉婚櫎鎸囨爣
+                log.debug("[缓存移除] 设备缓存移除: key={}, cause={}", key, cause);
+                // 记录缓存移除指标
                 Counter.builder("cache.eviction")
                     .tag("cache", "device")
                     .tag("cause", cause.toString())
@@ -180,51 +180,51 @@ public class CacheOptimizationConfiguration {
     }
 
     /**
-     * 鏋勫缓鏉冮檺缂撳瓨瑙勬牸
+     * 构建权限缓存规格
      */
     private Caffeine<Object, Object> buildPermissionCacheSpec() {
         return Caffeine.newBuilder()
-            .maximumSize(50000)  // 鏈€澶х紦瀛樻潯鐩?
-            .expireAfterWrite(15, TimeUnit.MINUTES)  // 鍐欏叆鍚?5鍒嗛挓杩囨湡
+            .maximumSize(50000)  // 最大缓存条目
+            .expireAfterWrite(15, TimeUnit.MINUTES)  // 写入后15分钟过期
             .recordStats()
             .build();
     }
 
     /**
-     * 鏋勫缓鍖哄煙缂撳瓨瑙勬牸
+     * 构建区域缓存规格
      */
     private Caffeine<Object, Object> buildAreaCacheSpec() {
         return Caffeine.newBuilder()
-            .maximumSize(5000)  // 鏈€澶х紦瀛樻潯鐩?
-            .expireAfterWrite(60, TimeUnit.MINUTES)  // 鍐欏叆鍚?0鍒嗛挓杩囨湡
+            .maximumSize(5000)  // 最大缓存条目
+            .expireAfterWrite(60, TimeUnit.MINUTES)  // 写入后60分钟过期
             .recordStats()
             .build();
     }
 
     /**
-     * 鏋勫缓璁块棶璁板綍缂撳瓨瑙勬牸
+     * 构建访问记录缓存规格
      */
     private Caffeine<Object, Object> buildAccessRecordCacheSpec() {
         return Caffeine.newBuilder()
-            .maximumSize(100000)  // 鏈€澶х紦瀛樻潯鐩?
-            .expireAfterWrite(5, TimeUnit.MINUTES)  // 鍐欏叆鍚?鍒嗛挓杩囨湡
+            .maximumSize(100000)  // 最大缓存条目
+            .expireAfterWrite(5, TimeUnit.MINUTES)  // 写入后5分钟过期
             .recordStats()
             .build();
     }
 
     /**
-     * 鏋勫缓鐑偣鏁版嵁缂撳瓨瑙勬牸
+     * 构建热点数据缓存规格
      */
     private Caffeine<Object, Object> buildHotDataCacheSpec() {
         return Caffeine.newBuilder()
-            .maximumSize(20000)  // 鏈€澶х紦瀛樻潯鐩?
-            .expireAfterWrite(10, TimeUnit.MINUTES)  // 鍐欏叆鍚?0鍒嗛挓杩囨湡
+            .maximumSize(20000)  // 最大缓存条目
+            .expireAfterWrite(10, TimeUnit.MINUTES)  // 写入后10分钟过期
             .recordStats()
             .build();
     }
 
     /**
-     * 缂撳瓨鍋ュ悍妫€鏌ュ櫒
+     * 缓存健康检查器
      */
     private class CacheHealthIndicator implements HealthIndicator {
 
@@ -233,15 +233,15 @@ public class CacheOptimizationConfiguration {
             try {
                 Map<String, Object> details = new HashMap<>();
 
-                // 鏈湴缂撳瓨鍋ュ悍妫€鏌?
+                // 本地缓存健康检查
                 Map<String, Object> localCacheStats = checkLocalCacheHealth();
                 details.put("localCache", localCacheStats);
 
-                // Redis缂撳瓨鍋ュ悍妫€鏌?
+                // Redis缓存健康检查
                 Map<String, Object> redisCacheStats = checkRedisCacheHealth();
                 details.put("redisCache", redisCacheStats);
 
-                // 缁煎悎鍋ュ悍鍒ゆ柇
+                // 综合健康判断
                 boolean isHealthy = (Boolean) localCacheStats.get("healthy") && (Boolean) redisCacheStats.get("healthy");
 
                 if (isHealthy) {
@@ -255,7 +255,7 @@ public class CacheOptimizationConfiguration {
                 }
 
             } catch (Exception e) {
-                log.error("[缂撳瓨鍋ュ悍妫€鏌 鍋ュ悍妫€鏌ュ紓甯?, e);
+                log.error("[缓存健康检查] 健康检查异常", e);
                 return Health.down()
                     .withDetail("error", e.getMessage())
                     .build();
@@ -265,7 +265,7 @@ public class CacheOptimizationConfiguration {
         private Map<String, Object> checkLocalCacheHealth() {
             Map<String, Object> stats = new HashMap<>();
 
-            // TODO: 妫€鏌ユ湰鍦扮紦瀛樼姸鎬?
+            // TODO: 检查本地缓存状态
             stats.put("healthy", true);
             stats.put("estimatedSize", 15000);
             stats.put("hitRate", "0.85");
@@ -277,7 +277,7 @@ public class CacheOptimizationConfiguration {
         private Map<String, Object> checkRedisCacheHealth() {
             Map<String, Object> stats = new HashMap<>();
 
-            // TODO: 妫€鏌edis杩炴帴鐘舵€?
+            // TODO: 检查Redis连接状态
             stats.put("healthy", true);
             stats.put("connectionCount", 5);
             stats.put("memoryUsage", "45%");
@@ -288,7 +288,7 @@ public class CacheOptimizationConfiguration {
     }
 
     /**
-     * 缂撳瓨鎸囨爣鏀堕泦鍣?
+     * 缓存指标收集器
      */
     private static class CacheMetricsCollector {
 
@@ -299,7 +299,7 @@ public class CacheOptimizationConfiguration {
         }
 
         /**
-         * 璁板綍缂撳瓨鍛戒腑
+         * 记录缓存命中
          */
         public void recordCacheHit(String cacheName) {
             Counter.builder("cache.hit")
@@ -309,7 +309,7 @@ public class CacheOptimizationConfiguration {
         }
 
         /**
-         * 璁板綍缂撳瓨鏈懡涓?
+         * 记录缓存未命中
          */
         public void recordCacheMiss(String cacheName) {
             Counter.builder("cache.miss")
@@ -319,7 +319,7 @@ public class CacheOptimizationConfiguration {
         }
 
         /**
-         * 璁板綍缂撳瓨鍔犺浇
+         * 记录缓存加载
          */
         public void recordCacheLoad(String cacheName, long duration) {
             Counter.builder("cache.load")
@@ -334,7 +334,7 @@ public class CacheOptimizationConfiguration {
         }
 
         /**
-         * 璁板綍缂撳瓨椹遍€?
+         * 记录缓存驱逐
          */
         public void recordCacheEviction(String cacheName, String cause) {
             Counter.builder("cache.eviction")
