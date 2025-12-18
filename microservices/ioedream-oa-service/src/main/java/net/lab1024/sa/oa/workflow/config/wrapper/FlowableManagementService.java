@@ -1,8 +1,6 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.flowable.engine.ManagementService;
 import org.flowable.job.api.Job;
 import org.flowable.job.api.TimerJobQuery;
@@ -22,8 +20,6 @@ import java.util.Map;
 @Slf4j
 @Service
 public class FlowableManagementService {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableManagementService.class);
     private final ManagementService managementService;
 
     public FlowableManagementService(ManagementService managementService) {

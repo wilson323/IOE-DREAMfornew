@@ -7,36 +7,36 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * 门禁控制请求
+ * 闂ㄧ鎺у埗璇锋眰
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-16
  */
 @Data
-@Schema(description = "门禁控制请求")
+@Schema(description = "闂ㄧ鎺у埗璇锋眰")
 public class AccessControlRequest {
 
-    @NotBlank(message = "设备ID不能为空")
-    @Schema(description = "门禁设备ID", example = "ACCESS_001", required = true)
+    @NotBlank(message = "璁惧ID涓嶈兘涓虹┖")
+    @Schema(description = "闂ㄧ璁惧ID", example = "ACCESS_001", required = true)
     private String deviceId;
 
-    @Size(max = 500, message = "操作原因长度不能超过500个字符")
-    @Schema(description = "操作原因", example = "访客通行")
+    @Size(max = 500, message = "鎿嶄綔鍘熷洜闀垮害涓嶈兘瓒呰繃500涓瓧绗?)
+    @Schema(description = "鎿嶄綔鍘熷洜", example = "璁垮閫氳")
     private String reason;
 
-    @Schema(description = "操作人ID", example = "1001")
+    @Schema(description = "鎿嶄綔浜篒D", example = "1001")
     private Long operatorId;
 
-    @Schema(description = "操作人姓名", example = "张三")
+    @Schema(description = "鎿嶄綔浜哄鍚?, example = "寮犱笁")
     private String operatorName;
 
-    @Schema(description = "是否记录日志", example = "true")
+    @Schema(description = "鏄惁璁板綍鏃ュ織", example = "true")
     private Boolean recordLog = true;
 
-    @Schema(description = "开门时长（秒）", example = "30")
+    @Schema(description = "寮€闂ㄦ椂闀匡紙绉掞級", example = "30")
     private Integer openDuration;
 
-    @Schema(description = "扩展参数（JSON格式）", example = "{\"key1\":\"value1\"}")
+    @Schema(description = "鎵╁睍鍙傛暟锛圝SON鏍煎紡锛?, example = "{\"key1\":\"value1\"}")
     private String extendedParams;
 }

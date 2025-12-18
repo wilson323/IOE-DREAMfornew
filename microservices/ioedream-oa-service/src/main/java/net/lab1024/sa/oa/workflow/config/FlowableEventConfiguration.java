@@ -1,8 +1,6 @@
 package net.lab1024.sa.oa.workflow.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Flowable事件配置 - 占位符
@@ -23,7 +21,6 @@ import org.slf4j.LoggerFactory;
 @Slf4j
 // @Configuration - 待实现后启用
 public class FlowableEventConfiguration {
-    private static final Logger log = LoggerFactory.getLogger(FlowableEventConfiguration.class);
 
     // TODO: 完整实现需要：
     // 1. 配置FlowableEngineEventListener Bean

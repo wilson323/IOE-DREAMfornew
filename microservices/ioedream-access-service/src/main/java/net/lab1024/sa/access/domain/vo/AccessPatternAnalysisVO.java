@@ -10,13 +10,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 访问模式分析视图对象
+ * 璁块棶妯″紡鍒嗘瀽瑙嗗浘瀵硅薄
  * <p>
- * 用户访问模式分析结果的数据传输对象
- * 严格遵循CLAUDE.md规范：
- * - 使用@Data注解
- * - 完整的字段文档注解
- * - 构建者模式支持
+ * 鐢ㄦ埛璁块棶妯″紡鍒嗘瀽缁撴灉鐨勬暟鎹紶杈撳璞?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Data娉ㄨВ
+ * - 瀹屾暣鐨勫瓧娈垫枃妗ｆ敞瑙?
+ * - 鏋勫缓鑰呮ā寮忔敮鎸?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -27,58 +27,58 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "访问模式分析信息")
+@Schema(description = "璁块棶妯″紡鍒嗘瀽淇℃伅")
 public class AccessPatternAnalysisVO {
 
     /**
-     * 用户ID
+     * 鐢ㄦ埛ID
      */
-    @Schema(description = "用户ID", example = "1001")
+    @Schema(description = "鐢ㄦ埛ID", example = "1001")
     private Long userId;
 
     /**
-     * 区域ID
+     * 鍖哄煙ID
      */
-    @Schema(description = "区域ID", example = "2001")
+    @Schema(description = "鍖哄煙ID", example = "2001")
     private Long areaId;
 
     /**
-     * 模式评分（0-100）
+     * 妯″紡璇勫垎锛?-100锛?
      */
-    @Schema(description = "模式评分（0-100）", example = "85.5")
+    @Schema(description = "妯″紡璇勫垎锛?-100锛?, example = "85.5")
     private BigDecimal patternScore;
 
     /**
-     * 是否检测到异常
+     * 鏄惁妫€娴嬪埌寮傚父
      */
-    @Schema(description = "是否检测到异常", example = "false")
+    @Schema(description = "鏄惁妫€娴嬪埌寮傚父", example = "false")
     private Boolean anomalyDetected;
 
     /**
-     * 常规访问时间模式
+     * 甯歌璁块棶鏃堕棿妯″紡
      */
-    @Schema(description = "常规访问时间模式", example = "WORKING_HOURS")
+    @Schema(description = "甯歌璁块棶鏃堕棿妯″紡", example = "WORKING_HOURS")
     private String regularTimePattern;
 
     /**
-     * 访问频率等级
-     * LOW - 低频
-     * NORMAL - 正常
-     * HIGH - 高频
-     * EXCESSIVE - 过频
+     * 璁块棶棰戠巼绛夌骇
+     * LOW - 浣庨
+     * NORMAL - 姝ｅ父
+     * HIGH - 楂橀
+     * EXCESSIVE - 杩囬
      */
-    @Schema(description = "访问频率等级", example = "NORMAL")
+    @Schema(description = "璁块棶棰戠巼绛夌骇", example = "NORMAL")
     private String accessFrequencyLevel;
 
     /**
-     * 一致性评分
+     * 涓€鑷存€ц瘎鍒?
      */
-    @Schema(description = "一致性评分", example = "92.3")
+    @Schema(description = "涓€鑷存€ц瘎鍒?, example = "92.3")
     private BigDecimal consistencyScore;
 
     /**
-     * 分析时间
+     * 鍒嗘瀽鏃堕棿
      */
-    @Schema(description = "分析时间", example = "2025-01-30T15:45:00")
+    @Schema(description = "鍒嗘瀽鏃堕棿", example = "2025-01-30T15:45:00")
     private LocalDateTime analysisTime;
 }

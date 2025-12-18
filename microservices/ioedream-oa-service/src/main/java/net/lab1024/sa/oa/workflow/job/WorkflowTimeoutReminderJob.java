@@ -15,8 +15,6 @@ import org.springframework.http.HttpMethod;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.monitor.dao.NotificationDao;
@@ -49,7 +47,6 @@ import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 // 暂时禁用此Job，因为依赖的WorkflowApprovalManager需要类型兼容性修复
 // @Component
 public class WorkflowTimeoutReminderJob {
-    private static final Logger log = LoggerFactory.getLogger(WorkflowTimeoutReminderJob.class);
 
     @Resource
     private WorkflowTaskDao workflowTaskDao;

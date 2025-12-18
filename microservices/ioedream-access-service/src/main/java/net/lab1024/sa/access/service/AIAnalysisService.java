@@ -6,18 +6,18 @@ import java.util.List;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
- * AI智能分析服务接口
+ * AI鏅鸿兘鍒嗘瀽鏈嶅姟鎺ュ彛
  * <p>
- * 提供基于人工智能的门禁分析功能：
- * - 用户行为模式分析
- * - 异常访问行为检测
- * - 设备预测性维护
- * - 安全风险评估和预警
- * - 访问趋势预测
- * 严格遵循CLAUDE.md规范：
- * - Service接口定义在业务服务模块中
- * - 清晰的方法注释
- * - 统一的数据传输对象
+ * 鎻愪緵鍩轰簬浜哄伐鏅鸿兘鐨勯棬绂佸垎鏋愬姛鑳斤細
+ * - 鐢ㄦ埛琛屼负妯″紡鍒嗘瀽
+ * - 寮傚父璁块棶琛屼负妫€娴?
+ * - 璁惧棰勬祴鎬х淮鎶?
+ * - 瀹夊叏椋庨櫓璇勪及鍜岄璀?
+ * - 璁块棶瓒嬪娍棰勬祴
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - Service鎺ュ彛瀹氫箟鍦ㄤ笟鍔℃湇鍔℃ā鍧椾腑
+ * - 娓呮櫚鐨勬柟娉曟敞閲?
+ * - 缁熶竴鐨勬暟鎹紶杈撳璞?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -27,224 +27,224 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 public interface AIAnalysisService {
 
     /**
-     * 用户行为模式分析
+     * 鐢ㄦ埛琛屼负妯″紡鍒嗘瀽
      * <p>
-     * 分析用户的门禁访问行为模式：
-     * - 访问时间规律
-     * - 设备偏好分析
-     * - 访问路径模式
-     * - 异常行为识别
+     * 鍒嗘瀽鐢ㄦ埛鐨勯棬绂佽闂涓烘ā寮忥細
+     * - 璁块棶鏃堕棿瑙勫緥
+     * - 璁惧鍋忓ソ鍒嗘瀽
+     * - 璁块棶璺緞妯″紡
+     * - 寮傚父琛屼负璇嗗埆
      * </p>
      *
-     * @param userId 用户ID
-     * @param analysisDays 分析天数（默认30天）
-     * @return 行为模式分析结果
+     * @param userId 鐢ㄦ埛ID
+     * @param analysisDays 鍒嗘瀽澶╂暟锛堥粯璁?0澶╋級
+     * @return 琛屼负妯″紡鍒嗘瀽缁撴灉
      */
     ResponseDTO<UserBehaviorPatternVO> analyzeUserBehaviorPattern(Long userId, Integer analysisDays);
 
     /**
-     * 异常访问行为检测
+     * 寮傚父璁块棶琛屼负妫€娴?
      * <p>
-     * 实时检测用户和设备的异常访问行为：
-     * - 时间异常检测
-     * - 地理位置异常
-     * - 频率异常检测
-     * - 多设备并发异常
+     * 瀹炴椂妫€娴嬬敤鎴峰拰璁惧鐨勫紓甯歌闂涓猴細
+     * - 鏃堕棿寮傚父妫€娴?
+     * - 鍦扮悊浣嶇疆寮傚父
+     * - 棰戠巼寮傚父妫€娴?
+     * - 澶氳澶囧苟鍙戝紓甯?
      * </p>
      *
-     * @param request 检测请求
-     * @return 异常检测结果
+     * @param request 妫€娴嬭姹?
+     * @return 寮傚父妫€娴嬬粨鏋?
      */
     ResponseDTO<AnomalyDetectionResult> detectAnomalousAccessBehavior(AnomalyDetectionRequest request);
 
     /**
-     * 设备预测性维护分析
+     * 璁惧棰勬祴鎬х淮鎶ゅ垎鏋?
      * <p>
-     * 基于设备数据进行预测性维护分析：
-     * - 故障预测模型
-     - 维护计划建议
-     - 设备健康评分
-     - 更换成本估算
+     * 鍩轰簬璁惧鏁版嵁杩涜棰勬祴鎬х淮鎶ゅ垎鏋愶細
+     * - 鏁呴殰棰勬祴妯″瀷
+     - 缁存姢璁″垝寤鸿
+     - 璁惧鍋ュ悍璇勫垎
+     - 鏇存崲鎴愭湰浼扮畻
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param predictionDays 预测天数（默认90天）
-     * @return 预测性维护分析结果
+     * @param deviceId 璁惧ID
+     * @param predictionDays 棰勬祴澶╂暟锛堥粯璁?0澶╋級
+     * @return 棰勬祴鎬х淮鎶ゅ垎鏋愮粨鏋?
      */
     ResponseDTO<PredictiveMaintenanceResult> performPredictiveMaintenanceAnalysis(Long deviceId, Integer predictionDays);
 
     /**
-     * 安全风险评估和预警
+     * 瀹夊叏椋庨櫓璇勪及鍜岄璀?
      * <p>
-     * 综合评估门禁系统的安全风险：
-     * - 用户风险评估
-     * - 设备安全评分
-     * - 区域安全分析
-     * - 威胁情报分析
+     * 缁煎悎璇勪及闂ㄧ绯荤粺鐨勫畨鍏ㄩ闄╋細
+     * - 鐢ㄦ埛椋庨櫓璇勪及
+     * - 璁惧瀹夊叏璇勫垎
+     * - 鍖哄煙瀹夊叏鍒嗘瀽
+     * - 濞佽儊鎯呮姤鍒嗘瀽
      * </p>
      *
-     * @param request 评估请求
-     * @return 安全风险评估结果
+     * @param request 璇勪及璇锋眰
+     * @return 瀹夊叏椋庨櫓璇勪及缁撴灉
      */
     ResponseDTO<SecurityRiskAssessmentVO> assessSecurityRisk(SecurityRiskAssessmentRequest request);
 
     /**
-     * 访问趋势预测
+     * 璁块棶瓒嬪娍棰勬祴
      * <p>
-     * 基于历史数据预测访问趋势：
-     * - 访问量预测
-     - 峰值时段预测
-     - 设备负载预测
-     - 容量规划建议
+     * 鍩轰簬鍘嗗彶鏁版嵁棰勬祴璁块棶瓒嬪娍锛?
+     * - 璁块棶閲忛娴?
+     - 宄板€兼椂娈甸娴?
+     - 璁惧璐熻浇棰勬祴
+     - 瀹归噺瑙勫垝寤鸿
      * </p>
      *
-     * @param request 预测请求
-     * @return 趋势预测结果
+     * @param request 棰勬祴璇锋眰
+     * @return 瓒嬪娍棰勬祴缁撴灉
      */
     ResponseDTO<AccessTrendPredictionVO> predictAccessTrends(AccessTrendPredictionRequest request);
 
     /**
-     * 智能访问控制优化
+     * 鏅鸿兘璁块棶鎺у埗浼樺寲
      * <p>
-     * 基于AI分析结果优化访问控制策略：
-     * - 权限优化建议
-     - 访问规则调整
-     - 风险分级管理
-     - 个性化设置
+     * 鍩轰簬AI鍒嗘瀽缁撴灉浼樺寲璁块棶鎺у埗绛栫暐锛?
+     * - 鏉冮檺浼樺寲寤鸿
+     - 璁块棶瑙勫垯璋冩暣
+     - 椋庨櫓鍒嗙骇绠＄悊
+     - 涓€у寲璁剧疆
      * </p>
      *
-     * @param userId 用户ID
-     * @return 访问控制优化建议
+     * @param userId 鐢ㄦ埛ID
+     * @return 璁块棶鎺у埗浼樺寲寤鸿
      */
     ResponseDTO<AccessControlOptimizationVO> optimizeAccessControl(Long userId);
 
     /**
-     * 设备利用率分析
+     * 璁惧鍒╃敤鐜囧垎鏋?
      * <p>
-     * 分析设备的使用效率和利用率：
-     * - 使用频率统计
-     * - 空闲时段分析
-     * - 负载均衡建议
-     * - 设备配置优化
+     * 鍒嗘瀽璁惧鐨勪娇鐢ㄦ晥鐜囧拰鍒╃敤鐜囷細
+     * - 浣跨敤棰戠巼缁熻
+     * - 绌洪棽鏃舵鍒嗘瀽
+     * - 璐熻浇鍧囪　寤鸿
+     * - 璁惧閰嶇疆浼樺寲
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param analysisPeriod 分析周期（天）
-     * @return 设备利用率分析结果
+     * @param deviceId 璁惧ID
+     * @param analysisPeriod 鍒嗘瀽鍛ㄦ湡锛堝ぉ锛?
+     * @return 璁惧鍒╃敤鐜囧垎鏋愮粨鏋?
      */
     ResponseDTO<DeviceUtilizationAnalysisVO> analyzeDeviceUtilization(Long deviceId, Integer analysisPeriod);
 
     /**
-     * 智能异常事件处理
+     * 鏅鸿兘寮傚父浜嬩欢澶勭悊
      * <p>
-     * 自动处理和响应异常事件：
-     * - 异常事件分类
-     * - 自动响应策略
-     * - 通知规则配置
-     * - 处理效果评估
+     * 鑷姩澶勭悊鍜屽搷搴斿紓甯镐簨浠讹細
+     * - 寮傚父浜嬩欢鍒嗙被
+     * - 鑷姩鍝嶅簲绛栫暐
+     * - 閫氱煡瑙勫垯閰嶇疆
+     * - 澶勭悊鏁堟灉璇勪及
      * </p>
      *
-     * @param request 异常事件处理请求
-     * @return 处理结果
+     * @param request 寮傚父浜嬩欢澶勭悊璇锋眰
+     * @return 澶勭悊缁撴灉
      */
     ResponseDTO<AnomalyEventProcessingResult> processAnomalyEvent(AnomalyEventProcessingRequest request);
 
     /**
-     * AI模型训练和更新
+     * AI妯″瀷璁粌鍜屾洿鏂?
      * <p>
-     * 训练和更新AI分析模型：
-     * - 行为模式模型训练
-     * - 异常检测模型优化
-     * - 预测准确性评估
-     * - 模型版本管理
+     * 璁粌鍜屾洿鏂癆I鍒嗘瀽妯″瀷锛?
+     * - 琛屼负妯″紡妯″瀷璁粌
+     * - 寮傚父妫€娴嬫ā鍨嬩紭鍖?
+     * - 棰勬祴鍑嗙‘鎬ц瘎浼?
+     * - 妯″瀷鐗堟湰绠＄悊
      * </p>
      *
-     * @param modelType 模型类型
-     * @param trainingData 训练数据集
-     * @return 模型训练结果
+     * @param modelType 妯″瀷绫诲瀷
+     * @param trainingData 璁粌鏁版嵁闆?
+     * @return 妯″瀷璁粌缁撴灉
      */
     ResponseDTO<AIModelTrainingResult> trainAndUpdateAIModel(String modelType, Object trainingData);
 
     /**
-     * 获取AI分析报告
+     * 鑾峰彇AI鍒嗘瀽鎶ュ憡
      * <p>
-     * 生成综合的AI分析报告：
-     * - 系统健康报告
-     * - 安全态势分析
-     * - 性能优化建议
-     * - 趋势分析总结
+     * 鐢熸垚缁煎悎鐨凙I鍒嗘瀽鎶ュ憡锛?
+     * - 绯荤粺鍋ュ悍鎶ュ憡
+     * - 瀹夊叏鎬佸娍鍒嗘瀽
+     * - 鎬ц兘浼樺寲寤鸿
+     * - 瓒嬪娍鍒嗘瀽鎬荤粨
      * </p>
      *
-     * @param request 报告请求
-     * @return AI分析报告
+     * @param request 鎶ュ憡璇锋眰
+     * @return AI鍒嗘瀽鎶ュ憡
      */
     ResponseDTO<AIAnalysisReportVO> generateAIAnalysisReport(AIAnalysisReportRequest request);
 
-    // ==================== 内部数据传输对象 ====================
+    // ==================== 鍐呴儴鏁版嵁浼犺緭瀵硅薄 ====================
 
     /**
-     * 用户行为模式分析结果
+     * 鐢ㄦ埛琛屼负妯″紡鍒嗘瀽缁撴灉
      */
     class UserBehaviorPatternVO {
         private Long userId;
         private String userName;
-        private String analysisPeriod;      // 分析周期
-        private AccessTimePattern accessTimePattern;  // 访问时间模式
-        private DevicePreferencePattern devicePreferencePattern;  // 设备偏好模式
-        private AccessPathPattern accessPathPattern;  // 访问路径模式
-        private List<BehaviorAnomaly> detectedAnomalies;  // 检测到的异常
-        private String riskLevel;           // 风险等级
-        private List<String> recommendations;  // 建议措施
-        private Double confidenceScore;     // 置信度评分
-        private String lastAnalysisTime;   // 最后分析时间
+        private String analysisPeriod;      // 鍒嗘瀽鍛ㄦ湡
+        private AccessTimePattern accessTimePattern;  // 璁块棶鏃堕棿妯″紡
+        private DevicePreferencePattern devicePreferencePattern;  // 璁惧鍋忓ソ妯″紡
+        private AccessPathPattern accessPathPattern;  // 璁块棶璺緞妯″紡
+        private List<BehaviorAnomaly> detectedAnomalies;  // 妫€娴嬪埌鐨勫紓甯?
+        private String riskLevel;           // 椋庨櫓绛夌骇
+        private List<String> recommendations;  // 寤鸿鎺柦
+        private Double confidenceScore;     // 缃俊搴﹁瘎鍒?
+        private String lastAnalysisTime;   // 鏈€鍚庡垎鏋愭椂闂?
     }
 
     /**
-     * 访问时间模式
+     * 璁块棶鏃堕棿妯″紡
      */
     class AccessTimePattern {
-        private List<String> peakHours;    // 高峰时段
-        private List<String> quietHours;   // 低谷时段
-        private Integer avgDailyAccess;     // 日均访问次数
-        private Integer weeklyPattern;      // 周访问模式
-        private Boolean weekendAccess;     // 周末访问
-        private String timeVariability;    // 时间变异性
+        private List<String> peakHours;    // 楂樺嘲鏃舵
+        private List<String> quietHours;   // 浣庤胺鏃舵
+        private Integer avgDailyAccess;     // 鏃ュ潎璁块棶娆℃暟
+        private Integer weeklyPattern;      // 鍛ㄨ闂ā寮?
+        private Boolean weekendAccess;     // 鍛ㄦ湯璁块棶
+        private String timeVariability;    // 鏃堕棿鍙樺紓鎬?
     }
 
     /**
-     * 设备偏好模式
+     * 璁惧鍋忓ソ妯″紡
      */
     class DevicePreferencePattern {
-        private List<DeviceUsageRanking> deviceRankings;  // 设备使用排名
-        private String preferredDeviceType;  // 偏好设备类型
-        private Integer deviceDiversity;     // 设备多样性
-        private String switchingPattern;     // 设备切换模式
+        private List<DeviceUsageRanking> deviceRankings;  // 璁惧浣跨敤鎺掑悕
+        private String preferredDeviceType;  // 鍋忓ソ璁惧绫诲瀷
+        private Integer deviceDiversity;     // 璁惧澶氭牱鎬?
+        private String switchingPattern;     // 璁惧鍒囨崲妯″紡
     }
 
     /**
-     * 访问路径模式
+     * 璁块棶璺緞妯″紡
      */
     class AccessPathPattern {
-        private List<String> frequentPaths;  // 频繁访问路径
-        private String typicalPathLength;   // 典型路径长度
-        private List<String> unusualPaths;   // 异常路径
-        private Double pathEfficiency;       // 路径效率
+        private List<String> frequentPaths;  // 棰戠箒璁块棶璺緞
+        private String typicalPathLength;   // 鍏稿瀷璺緞闀垮害
+        private List<String> unusualPaths;   // 寮傚父璺緞
+        private Double pathEfficiency;       // 璺緞鏁堢巼
     }
 
     /**
-     * 行为异常
+     * 琛屼负寮傚父
      */
     class BehaviorAnomaly {
-        private String anomalyType;        // 异常类型
-        private String description;         // 描述
-        private LocalDateTime detectionTime; // 检测时间
-        private String severity;            // 严重程度
-        private Double anomalyScore;        // 异常评分
-        private List<String> relatedFactors; // 相关因素
+        private String anomalyType;        // 寮傚父绫诲瀷
+        private String description;         // 鎻忚堪
+        private LocalDateTime detectionTime; // 妫€娴嬫椂闂?
+        private String severity;            // 涓ラ噸绋嬪害
+        private Double anomalyScore;        // 寮傚父璇勫垎
+        private List<String> relatedFactors; // 鐩稿叧鍥犵礌
     }
 
     /**
-     * 异常检测结果
+     * 寮傚父妫€娴嬬粨鏋?
      */
     class AnomalyDetectionResult {
         private Long userId;
@@ -259,7 +259,7 @@ public interface AIAnalysisService {
     }
 
     /**
-     * 检测到的异常
+     * 妫€娴嬪埌鐨勫紓甯?
      */
     class DetectedAnomaly {
         private String anomalyId;
@@ -272,7 +272,7 @@ public interface AIAnalysisService {
     }
 
     /**
-     * 预测性维护分析结果
+     * 棰勬祴鎬х淮鎶ゅ垎鏋愮粨鏋?
      */
     class PredictiveMaintenanceResult {
         private Long deviceId;
@@ -288,31 +288,31 @@ public interface AIAnalysisService {
     }
 
     /**
-     * 维护建议
+     * 缁存姢寤鸿
      */
     class MaintenanceRecommendation {
-        private String recommendationType;  // 建议类型
-        private String description;         // 描述
-        private String urgency;             // 紧急程度
-        private Integer estimatedCost;       // 估算成本
-        private String timeFrame;           // 时间框架
-        private List<String> requiredActions; // 必要操作
+        private String recommendationType;  // 寤鸿绫诲瀷
+        private String description;         // 鎻忚堪
+        private String urgency;             // 绱ф€ョ▼搴?
+        private Integer estimatedCost;       // 浼扮畻鎴愭湰
+        private String timeFrame;           // 鏃堕棿妗嗘灦
+        private List<String> requiredActions; // 蹇呰鎿嶄綔
     }
 
     /**
-     * 安全风险评估请求
+     * 瀹夊叏椋庨櫓璇勪及璇锋眰
      */
     class SecurityRiskAssessmentRequest {
         private Long userId;
         private Long deviceId;
         private Long areaId;
-        private String assessmentScope;     // 评估范围
-        private List<String> riskFactors;  // 风险因素
-        private String assessmentPeriod;   // 评估周期
+        private String assessmentScope;     // 璇勪及鑼冨洿
+        private List<String> riskFactors;  // 椋庨櫓鍥犵礌
+        private String assessmentPeriod;   // 璇勪及鍛ㄦ湡
     }
 
     /**
-     * 安全风险评估结果
+     * 瀹夊叏椋庨櫓璇勪及缁撴灉
      */
     class SecurityRiskAssessmentVO {
         private Long userId;
@@ -328,157 +328,157 @@ public interface AIAnalysisService {
     }
 
     /**
-     * 安全风险因素
+     * 瀹夊叏椋庨櫓鍥犵礌
      */
     class SecurityRiskFactor {
-        private String factorName;         // 因素名称
-        private String category;            // 类别
-        private Double riskWeight;          // 风险权重
-        private String description;         // 描述
-        private String currentStatus;       // 当前状态
+        private String factorName;         // 鍥犵礌鍚嶇О
+        private String category;            // 绫诲埆
+        private Double riskWeight;          // 椋庨櫓鏉冮噸
+        private String description;         // 鎻忚堪
+        private String currentStatus;       // 褰撳墠鐘舵€?
     }
 
     /**
-     * 风险缓解措施
+     * 椋庨櫓缂撹В鎺柦
      */
     class RiskMitigationMeasure {
-        private String measureName;        // 措施名称
-        private String description;         // 描述
-        private String implementationTime;  // 实施时间
-        private Integer priority;          // 优先级
-        private String expectedEffect;     // 预期效果
+        private String measureName;        // 鎺柦鍚嶇О
+        private String description;         // 鎻忚堪
+        private String implementationTime;  // 瀹炴柦鏃堕棿
+        private Integer priority;          // 浼樺厛绾?
+        private String expectedEffect;     // 棰勬湡鏁堟灉
     }
 
     /**
-     * 访问趋势预测结果
+     * 璁块棶瓒嬪娍棰勬祴缁撴灉
      */
     class AccessTrendPredictionVO {
-        private String predictionPeriod;    // 预测周期
-        private List<AccessTrendData> predictedTrends; // 预测趋势
-        private List<PeakPrediction> peakPredictions;   // 峰值预测
-        private List<DeviceLoadPrediction> deviceLoadPredictions; // 设备负载预测
-        private List<CapacityRecommendation> capacityRecommendations; // 容量建议
-        private Double predictionAccuracy;  // 预测准确性
-        private String modelVersion;        // 模型版本
+        private String predictionPeriod;    // 棰勬祴鍛ㄦ湡
+        private List<AccessTrendData> predictedTrends; // 棰勬祴瓒嬪娍
+        private List<PeakPrediction> peakPredictions;   // 宄板€奸娴?
+        private List<DeviceLoadPrediction> deviceLoadPredictions; // 璁惧璐熻浇棰勬祴
+        private List<CapacityRecommendation> capacityRecommendations; // 瀹归噺寤鸿
+        private Double predictionAccuracy;  // 棰勬祴鍑嗙‘鎬?
+        private String modelVersion;        // 妯″瀷鐗堟湰
     }
 
     /**
-     * 访问趋势数据
+     * 璁块棶瓒嬪娍鏁版嵁
      */
     class AccessTrendData {
-        private String date;               // 日期
-        private Integer predictedVolume;   // 预测访问量
-        private Integer actualVolume;     // 实际访问量
-        private Integer variance;         // 差异
-        private String confidenceLevel;    // 置信度
+        private String date;               // 鏃ユ湡
+        private Integer predictedVolume;   // 棰勬祴璁块棶閲?
+        private Integer actualVolume;     // 瀹為檯璁块棶閲?
+        private Integer variance;         // 宸紓
+        private String confidenceLevel;    // 缃俊搴?
     }
 
     /**
-     * 峰值预测
+     * 宄板€奸娴?
      */
     class PeakPrediction {
-        private String peakTime;          // 峰值时间
-        private Integer predictedVolume;  // 预测访问量
-        private Integer duration;          // 持续时间
-        private List<String> affectedDevices; // 影响设备
+        private String peakTime;          // 宄板€兼椂闂?
+        private Integer predictedVolume;  // 棰勬祴璁块棶閲?
+        private Integer duration;          // 鎸佺画鏃堕棿
+        private List<String> affectedDevices; // 褰卞搷璁惧
     }
 
     /**
-     * 设备负载预测
+     * 璁惧璐熻浇棰勬祴
      */
     class DeviceLoadPrediction {
         private Long deviceId;
         private String deviceName;
         private String predictionPeriod;
-        private Integer predictedLoad;     // 预测负载
-        private Integer maxCapacity;       // 最大容量
-        private Integer loadPercentage;    // 负载百分比
-        private List<String> optimizationSuggestions; // 优化建议
+        private Integer predictedLoad;     // 棰勬祴璐熻浇
+        private Integer maxCapacity;       // 鏈€澶у閲?
+        private Integer loadPercentage;    // 璐熻浇鐧惧垎姣?
+        private List<String> optimizationSuggestions; // 浼樺寲寤鸿
     }
 
     /**
-     * 容量建议
+     * 瀹归噺寤鸿
      */
     class CapacityRecommendation {
-        private String recommendationType;  // 建议类型
-        private String description;         // 描述
-        private String targetDate;         // 目标日期
-        private Integer estimatedCost;     // 估算成本
-        private String impactLevel;        // 影响级别
+        private String recommendationType;  // 寤鸿绫诲瀷
+        private String description;         // 鎻忚堪
+        private String targetDate;         // 鐩爣鏃ユ湡
+        private Integer estimatedCost;     // 浼扮畻鎴愭湰
+        private String impactLevel;        // 褰卞搷绾у埆
     }
 
     /**
-     * 访问控制优化建议
+     * 璁块棶鎺у埗浼樺寲寤鸿
      */
     class AccessControlOptimizationVO {
         private Long userId;
         private String analysisTime;
-        private String currentPolicy;     // 当前策略
-        private List<OptimizationSuggestion> suggestions; // 优化建议
-        private Integer potentialRiskReduction; // 潜在风险降低
-        private Double efficiencyImprovement; // 效率提升
-        private List<String> implementationSteps; // 实施步骤
+        private String currentPolicy;     // 褰撳墠绛栫暐
+        private List<OptimizationSuggestion> suggestions; // 浼樺寲寤鸿
+        private Integer potentialRiskReduction; // 娼滃湪椋庨櫓闄嶄綆
+        private Double efficiencyImprovement; // 鏁堢巼鎻愬崌
+        private List<String> implementationSteps; // 瀹炴柦姝ラ
     }
 
     /**
-     * 优化建议
+     * 浼樺寲寤鸿
      */
     class OptimizationSuggestion {
-        private String suggestionType;     // 建议类型
-        private String description;        // 描述
-        private String impactLevel;        // 影响级别
-        private String implementationComplexity; // 实施复杂度
-        private String expectedBenefit;    // 预期收益
+        private String suggestionType;     // 寤鸿绫诲瀷
+        private String description;        // 鎻忚堪
+        private String impactLevel;        // 褰卞搷绾у埆
+        private String implementationComplexity; // 瀹炴柦澶嶆潅搴?
+        private String expectedBenefit;    // 棰勬湡鏀剁泭
     }
 
     /**
-     * 设备利用率分析结果
+     * 璁惧鍒╃敤鐜囧垎鏋愮粨鏋?
      */
     class DeviceUtilizationAnalysisVO {
         private Long deviceId;
         private String deviceName;
         private String analysisPeriod;
-        private Integer totalOperatingHours;  // 总运行时长
-        private Integer activeHours;         // 活跃时长
-        private Double utilizationRate;      // 利用率
-        private List<UsageStatistics> hourlyUsage; // 小时使用统计
-        private List<PeakUsagePeriod> peakPeriods; // 高峰时段
-        private List<OptimizationOpportunity> optimizationOpportunities; // 优化机会
-        private Integer potentialImprovement; // 潜在改进
+        private Integer totalOperatingHours;  // 鎬昏繍琛屾椂闀?
+        private Integer activeHours;         // 娲昏穬鏃堕暱
+        private Double utilizationRate;      // 鍒╃敤鐜?
+        private List<UsageStatistics> hourlyUsage; // 灏忔椂浣跨敤缁熻
+        private List<PeakUsagePeriod> peakPeriods; // 楂樺嘲鏃舵
+        private List<OptimizationOpportunity> optimizationOpportunities; // 浼樺寲鏈轰細
+        private Integer potentialImprovement; // 娼滃湪鏀硅繘
     }
 
     /**
-     * 使用统计
+     * 浣跨敤缁熻
      */
     class UsageStatistics {
-        private String hour;               // 小时
-        private Integer accessCount;       // 访问次数
-        private Integer averageResponseTime; // 平均响应时间
-        private Integer successRate;        // 成功率
+        private String hour;               // 灏忔椂
+        private Integer accessCount;       // 璁块棶娆℃暟
+        private Integer averageResponseTime; // 骞冲潎鍝嶅簲鏃堕棿
+        private Integer successRate;        // 鎴愬姛鐜?
     }
 
     /**
-     * 高峰时段
+     * 楂樺嘲鏃舵
      */
     class PeakUsagePeriod {
-        private String startTime;          // 开始时间
-        private String endTime;            // 结束时间
-        private Integer maxConcurrentAccess; // 最大并发访问
-        private Double loadFactor;        // 负载因子
+        private String startTime;          // 寮€濮嬫椂闂?
+        private String endTime;            // 缁撴潫鏃堕棿
+        private Integer maxConcurrentAccess; // 鏈€澶у苟鍙戣闂?
+        private Double loadFactor;        // 璐熻浇鍥犲瓙
     }
 
     /**
-     * 优化机会
+     * 浼樺寲鏈轰細
      */
     class OptimizationOpportunity {
-        private String opportunityType;    // 机会类型
-        private String description;         // 描述
-        private Integer potentialGain;     // 潜在收益
-        private String implementationCost;  // 实施成本
+        private String opportunityType;    // 鏈轰細绫诲瀷
+        private String description;         // 鎻忚堪
+        private Integer potentialGain;     // 娼滃湪鏀剁泭
+        private String implementationCost;  // 瀹炴柦鎴愭湰
     }
 
     /**
-     * 异常事件处理结果
+     * 寮傚父浜嬩欢澶勭悊缁撴灉
      */
     class AnomalyEventProcessingResult {
         private String eventId;
@@ -492,7 +492,7 @@ public interface AIAnalysisService {
     }
 
     /**
-     * AI模型训练结果
+     * AI妯″瀷璁粌缁撴灉
      */
     class AIModelTrainingResult {
         private String modelType;
@@ -508,7 +508,7 @@ public interface AIAnalysisService {
     }
 
     /**
-     * AI分析报告
+     * AI鍒嗘瀽鎶ュ憡
      */
     class AIAnalysisReportVO {
         private String reportId;
@@ -525,7 +525,7 @@ public interface AIAnalysisService {
     }
 
     /**
-     * 系统健康指标
+     * 绯荤粺鍋ュ悍鎸囨爣
      */
     class SystemHealthMetrics {
         private Integer overallHealthScore;
@@ -537,7 +537,7 @@ public interface AIAnalysisService {
     }
 
     /**
-     * 安全态势分析
+     * 瀹夊叏鎬佸娍鍒嗘瀽
      */
     class SecurityPostureAnalysis {
         private Integer securityScore;
@@ -548,7 +548,7 @@ public interface AIAnalysisService {
     }
 
     /**
-     * 性能分析
+     * 鎬ц兘鍒嗘瀽
      */
     class PerformanceAnalysis {
         private Double averageResponseTime;
@@ -558,7 +558,7 @@ public interface AIAnalysisService {
     }
 
     /**
-     * 趋势分析
+     * 瓒嬪娍鍒嗘瀽
      */
     class TrendAnalysis {
         private String metricName;

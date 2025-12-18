@@ -9,14 +9,14 @@ import net.lab1024.sa.video.edge.model.InferenceRequest;
 import net.lab1024.sa.video.edge.model.InferenceResult;
 
 /**
- * 边缘安全服务接口
+ * 杈圭紭瀹夊叏鏈嶅姟鎺ュ彛
  * <p>
- * 定义边缘设备安全推理服务的核心功能接口：
- * - 边缘设备安全推理管理
- * - 安全模型动态更新
- * - 设备状态监控
- * - 统计信息收集
- * - 云边协同推理
+ * 瀹氫箟杈圭紭璁惧瀹夊叏鎺ㄧ悊鏈嶅姟鐨勬牳蹇冨姛鑳芥帴鍙ｏ細
+ * - 杈圭紭璁惧瀹夊叏鎺ㄧ悊绠＄悊
+ * - 瀹夊叏妯″瀷鍔ㄦ€佹洿鏂?
+ * - 璁惧鐘舵€佺洃鎺?
+ * - 缁熻淇℃伅鏀堕泦
+ * - 浜戣竟鍗忓悓鎺ㄧ悊
  * </p>
  *
  * @author IOE-DREAM Team
@@ -25,316 +25,316 @@ import net.lab1024.sa.video.edge.model.InferenceResult;
  */
 public interface EdgeSecurityService {
 
-    // ==================== 核心推理接口 ====================
+    // ==================== 鏍稿績鎺ㄧ悊鎺ュ彛 ====================
 
     /**
-     * 执行安全推理
+     * 鎵ц瀹夊叏鎺ㄧ悊
      * <p>
-     * 在边缘设备上执行安全相关的AI推理任务
-     * 支持活体检测、人脸识别、行为分析等
+     * 鍦ㄨ竟缂樿澶囦笂鎵ц瀹夊叏鐩稿叧鐨凙I鎺ㄧ悊浠诲姟
+     * 鏀寔娲讳綋妫€娴嬨€佷汉鑴歌瘑鍒€佽涓哄垎鏋愮瓑
      * </p>
      *
-     * @param inferenceRequest 推理请求
-     * @return 推理结果Future
+     * @param inferenceRequest 鎺ㄧ悊璇锋眰
+     * @return 鎺ㄧ悊缁撴灉Future
      */
     Future<InferenceResult> performSecurityInference(InferenceRequest inferenceRequest);
 
     /**
-     * 执行协同安全推理
+     * 鎵ц鍗忓悓瀹夊叏鎺ㄧ悊
      * <p>
-     * 复杂推理任务的云边协同处理
-     * 边缘设备优先，云端辅助，结果融合
+     * 澶嶆潅鎺ㄧ悊浠诲姟鐨勪簯杈瑰崗鍚屽鐞?
+     * 杈圭紭璁惧浼樺厛锛屼簯绔緟鍔╋紝缁撴灉铻嶅悎
      * </p>
      *
-     * @param inferenceRequest 推理请求
-     * @return 协同推理结果Future
+     * @param inferenceRequest 鎺ㄧ悊璇锋眰
+     * @return 鍗忓悓鎺ㄧ悊缁撴灉Future
      */
     Future<InferenceResult> performCollaborativeSecurityInference(InferenceRequest inferenceRequest);
 
     /**
-     * 批量安全推理
+     * 鎵归噺瀹夊叏鎺ㄧ悊
      * <p>
-     * 批量处理多个安全推理任务
-     * 提高边缘设备利用率
+     * 鎵归噺澶勭悊澶氫釜瀹夊叏鎺ㄧ悊浠诲姟
+     * 鎻愰珮杈圭紭璁惧鍒╃敤鐜?
      * </p>
      *
-     * @param inferenceRequests 推理请求Map (taskId -> InferenceRequest)
-     * @return 批量推理结果Map (taskId -> Future<InferenceResult>)
+     * @param inferenceRequests 鎺ㄧ悊璇锋眰Map (taskId -> InferenceRequest)
+     * @return 鎵归噺鎺ㄧ悊缁撴灉Map (taskId -> Future<InferenceResult>)
      */
     Map<String, Future<InferenceResult>> performBatchSecurityInference(Map<String, InferenceRequest> inferenceRequests);
 
-    // ==================== 设备管理接口 ====================
+    // ==================== 璁惧绠＄悊鎺ュ彛 ====================
 
     /**
-     * 注册边缘安全设备
+     * 娉ㄥ唽杈圭紭瀹夊叏璁惧
      * <p>
-     * 注册新的边缘安全设备到系统中
-     * 建立连接并同步安全AI模型
+     * 娉ㄥ唽鏂扮殑杈圭紭瀹夊叏璁惧鍒扮郴缁熶腑
+     * 寤虹珛杩炴帴骞跺悓姝ュ畨鍏ˋI妯″瀷
      * </p>
      *
-     * @param edgeDevice 边缘设备信息
-     * @return 注册结果
+     * @param edgeDevice 杈圭紭璁惧淇℃伅
+     * @return 娉ㄥ唽缁撴灉
      */
     boolean registerEdgeSecurityDevice(EdgeDevice edgeDevice);
 
     /**
-     * 注销边缘安全设备
+     * 娉ㄩ攢杈圭紭瀹夊叏璁惧
      * <p>
-     * 从系统中注销边缘安全设备
-     * 清理连接和相关资源
+     * 浠庣郴缁熶腑娉ㄩ攢杈圭紭瀹夊叏璁惧
+     * 娓呯悊杩炴帴鍜岀浉鍏宠祫婧?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 注销结果
+     * @param deviceId 璁惧ID
+     * @return 娉ㄩ攢缁撴灉
      */
     boolean unregisterEdgeSecurityDevice(String deviceId);
 
     /**
-     * 获取边缘设备安全状态
+     * 鑾峰彇杈圭紭璁惧瀹夊叏鐘舵€?
      * <p>
-     * 查询边缘安全设备的运行状态和性能指标
+     * 鏌ヨ杈圭紭瀹夊叏璁惧鐨勮繍琛岀姸鎬佸拰鎬ц兘鎸囨爣
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 设备状态信息Map
+     * @param deviceId 璁惧ID
+     * @return 璁惧鐘舵€佷俊鎭疢ap
      */
     Map<String, Object> getEdgeDeviceSecurityStatus(String deviceId);
 
     /**
-     * 获取所有边缘安全设备状态
+     * 鑾峰彇鎵€鏈夎竟缂樺畨鍏ㄨ澶囩姸鎬?
      * <p>
-     * 批量查询所有边缘安全设备的状态
+     * 鎵归噺鏌ヨ鎵€鏈夎竟缂樺畨鍏ㄨ澶囩殑鐘舵€?
      * </p>
      *
-     * @return 设备状态列表
+     * @return 璁惧鐘舵€佸垪琛?
      */
     List<Map<String, Object>> getAllEdgeSecurityDeviceStatus();
 
-    // ==================== 模型管理接口 ====================
+    // ==================== 妯″瀷绠＄悊鎺ュ彛 ====================
 
     /**
-     * 更新边缘设备安全模型
+     * 鏇存柊杈圭紭璁惧瀹夊叏妯″瀷
      * <p>
-     * 动态更新边缘设备上的安全AI模型
-     * 支持热更新，不影响设备正常运行
+     * 鍔ㄦ€佹洿鏂拌竟缂樿澶囦笂鐨勫畨鍏ˋI妯″瀷
+     * 鏀寔鐑洿鏂帮紝涓嶅奖鍝嶈澶囨甯歌繍琛?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param modelType 模型类型
-     * @param modelData 模型数据
-     * @return 更新结果
+     * @param deviceId 璁惧ID
+     * @param modelType 妯″瀷绫诲瀷
+     * @param modelData 妯″瀷鏁版嵁
+     * @return 鏇存柊缁撴灉
      */
     boolean updateEdgeSecurityModel(String deviceId, String modelType, byte[] modelData);
 
     /**
-     * 获取边缘设备模型信息
+     * 鑾峰彇杈圭紭璁惧妯″瀷淇℃伅
      * <p>
-     * 查询边缘设备上加载的安全模型信息
+     * 鏌ヨ杈圭紭璁惧涓婂姞杞界殑瀹夊叏妯″瀷淇℃伅
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 模型信息Map
+     * @param deviceId 璁惧ID
+     * @return 妯″瀷淇℃伅Map
      */
     Map<String, Object> getEdgeDeviceModels(String deviceId);
 
     /**
-     * 同步安全模型到边缘设备
+     * 鍚屾瀹夊叏妯″瀷鍒拌竟缂樿澶?
      * <p>
-     * 将云端的安全模型同步到边缘设备
+     * 灏嗕簯绔殑瀹夊叏妯″瀷鍚屾鍒拌竟缂樿澶?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param modelTypes 模型类型列表
-     * @return 同步结果
+     * @param deviceId 璁惧ID
+     * @param modelTypes 妯″瀷绫诲瀷鍒楄〃
+     * @return 鍚屾缁撴灉
      */
     boolean syncSecurityModelsToDevice(String deviceId, List<String> modelTypes);
 
-    // ==================== 统计信息接口 ====================
+    // ==================== 缁熻淇℃伅鎺ュ彛 ====================
 
     /**
-     * 获取边缘安全统计信息
+     * 鑾峰彇杈圭紭瀹夊叏缁熻淇℃伅
      * <p>
-     * 获取边缘安全系统的运行统计信息
-     * 包括设备数量、推理成功率、平均响应时间等
+     * 鑾峰彇杈圭紭瀹夊叏绯荤粺鐨勮繍琛岀粺璁′俊鎭?
+     * 鍖呮嫭璁惧鏁伴噺銆佹帹鐞嗘垚鍔熺巼銆佸钩鍧囧搷搴旀椂闂寸瓑
      * </p>
      *
-     * @return 统计信息Map
+     * @return 缁熻淇℃伅Map
      */
     Map<String, Object> getEdgeSecurityStatistics();
 
     /**
-     * 获取边缘设备性能指标
+     * 鑾峰彇杈圭紭璁惧鎬ц兘鎸囨爣
      * <p>
-     * 获取指定边缘设备的详细性能指标
+     * 鑾峰彇鎸囧畾杈圭紭璁惧鐨勮缁嗘€ц兘鎸囨爣
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 性能指标Map
+     * @param deviceId 璁惧ID
+     * @return 鎬ц兘鎸囨爣Map
      */
     Map<String, Object> getEdgeDevicePerformanceMetrics(String deviceId);
 
     /**
-     * 获取推理任务统计信息
+     * 鑾峰彇鎺ㄧ悊浠诲姟缁熻淇℃伅
      * <p>
-     * 获取指定时间范围内的推理任务统计
+     * 鑾峰彇鎸囧畾鏃堕棿鑼冨洿鍐呯殑鎺ㄧ悊浠诲姟缁熻
      * </p>
      *
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @param deviceId 设备ID（可选）
-     * @return 任务统计信息Map
+     * @param startTime 寮€濮嬫椂闂?
+     * @param endTime 缁撴潫鏃堕棿
+     * @param deviceId 璁惧ID锛堝彲閫夛級
+     * @return 浠诲姟缁熻淇℃伅Map
      */
     Map<String, Object> getInferenceTaskStatistics(java.time.LocalDateTime startTime,
                                                    java.time.LocalDateTime endTime,
                                                    String deviceId);
 
-    // ==================== 安全策略接口 ====================
+    // ==================== 瀹夊叏绛栫暐鎺ュ彛 ====================
 
     /**
-     * 配置边缘设备安全策略
+     * 閰嶇疆杈圭紭璁惧瀹夊叏绛栫暐
      * <p>
-     * 为边缘设备配置安全相关的策略参数
+     * 涓鸿竟缂樿澶囬厤缃畨鍏ㄧ浉鍏崇殑绛栫暐鍙傛暟
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param securityPolicies 安全策略Map
-     * @return 配置结果
+     * @param deviceId 璁惧ID
+     * @param securityPolicies 瀹夊叏绛栫暐Map
+     * @return 閰嶇疆缁撴灉
      */
     boolean configureEdgeSecurityPolicies(String deviceId, Map<String, Object> securityPolicies);
 
     /**
-     * 获取边缘设备安全策略
+     * 鑾峰彇杈圭紭璁惧瀹夊叏绛栫暐
      * <p>
-     * 查询边缘设备当前的安全策略配置
+     * 鏌ヨ杈圭紭璁惧褰撳墠鐨勫畨鍏ㄧ瓥鐣ラ厤缃?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 安全策略Map
+     * @param deviceId 璁惧ID
+     * @return 瀹夊叏绛栫暐Map
      */
     Map<String, Object> getEdgeSecurityPolicies(String deviceId);
 
     /**
-     * 评估边缘设备安全风险
+     * 璇勪及杈圭紭璁惧瀹夊叏椋庨櫓
      * <p>
-     * 基于设备运行状态和安全策略进行风险评估
+     * 鍩轰簬璁惧杩愯鐘舵€佸拰瀹夊叏绛栫暐杩涜椋庨櫓璇勪及
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 风险评估结果Map
+     * @param deviceId 璁惧ID
+     * @return 椋庨櫓璇勪及缁撴灉Map
      */
     Map<String, Object> assessEdgeSecurityRisk(String deviceId);
 
-    // ==================== 告警通知接口 ====================
+    // ==================== 鍛婅閫氱煡鎺ュ彛 ====================
 
     /**
-     * 配置边缘设备告警规则
+     * 閰嶇疆杈圭紭璁惧鍛婅瑙勫垯
      * <p>
-     * 为边缘设备配置安全告警规则
+     * 涓鸿竟缂樿澶囬厤缃畨鍏ㄥ憡璀﹁鍒?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param alertRules 告警规则列表
-     * @return 配置结果
+     * @param deviceId 璁惧ID
+     * @param alertRules 鍛婅瑙勫垯鍒楄〃
+     * @return 閰嶇疆缁撴灉
      */
     boolean configureEdgeSecurityAlerts(String deviceId, List<Map<String, Object>> alertRules);
 
     /**
-     * 发送安全告警通知
+     * 鍙戦€佸畨鍏ㄥ憡璀﹂€氱煡
      * <p>
-     * 当检测到安全威胁时发送告警通知
+     * 褰撴娴嬪埌瀹夊叏濞佽儊鏃跺彂閫佸憡璀﹂€氱煡
      * </p>
      *
-     * @param alertData 告警数据Map
-     * @return 发送结果
+     * @param alertData 鍛婅鏁版嵁Map
+     * @return 鍙戦€佺粨鏋?
      */
     boolean sendSecurityAlertNotification(Map<String, Object> alertData);
 
     /**
-     * 获取边缘安全告警历史
+     * 鑾峰彇杈圭紭瀹夊叏鍛婅鍘嗗彶
      * <p>
-     * 查询边缘设备的安全告警历史记录
+     * 鏌ヨ杈圭紭璁惧鐨勫畨鍏ㄥ憡璀﹀巻鍙茶褰?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @return 告警历史列表
+     * @param deviceId 璁惧ID
+     * @param startTime 寮€濮嬫椂闂?
+     * @param endTime 缁撴潫鏃堕棿
+     * @return 鍛婅鍘嗗彶鍒楄〃
      */
     List<Map<String, Object>> getEdgeSecurityAlertHistory(String deviceId,
                                                          java.time.LocalDateTime startTime,
                                                          java.time.LocalDateTime endTime);
 
-    // ==================== 数据管理接口 ====================
+    // ==================== 鏁版嵁绠＄悊鎺ュ彛 ====================
 
     /**
-     * 备份边缘安全数据
+     * 澶囦唤杈圭紭瀹夊叏鏁版嵁
      * <p>
-     * 备份边缘设备上的重要安全数据
+     * 澶囦唤杈圭紭璁惧涓婄殑閲嶈瀹夊叏鏁版嵁
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param dataTypes 数据类型列表
-     * @return 备份结果
+     * @param deviceId 璁惧ID
+     * @param dataTypes 鏁版嵁绫诲瀷鍒楄〃
+     * @return 澶囦唤缁撴灉
      */
     boolean backupEdgeSecurityData(String deviceId, List<String> dataTypes);
 
     /**
-     * 恢复边缘安全数据
+     * 鎭㈠杈圭紭瀹夊叏鏁版嵁
      * <p>
-     * 从云端恢复边缘安全数据
+     * 浠庝簯绔仮澶嶈竟缂樺畨鍏ㄦ暟鎹?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param backupData 备份数据
-     * @return 恢复结果
+     * @param deviceId 璁惧ID
+     * @param backupData 澶囦唤鏁版嵁
+     * @return 鎭㈠缁撴灉
      */
     boolean restoreEdgeSecurityData(String deviceId, Map<String, Object> backupData);
 
     /**
-     * 清理边缘安全缓存
+     * 娓呯悊杈圭紭瀹夊叏缂撳瓨
      * <p>
-     * 清理边缘设备上的安全相关缓存数据
+     * 娓呯悊杈圭紭璁惧涓婄殑瀹夊叏鐩稿叧缂撳瓨鏁版嵁
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param cacheTypes 缓存类型列表
-     * @return 清理结果
+     * @param deviceId 璁惧ID
+     * @param cacheTypes 缂撳瓨绫诲瀷鍒楄〃
+     * @return 娓呯悊缁撴灉
      */
     boolean clearEdgeSecurityCache(String deviceId, List<String> cacheTypes);
 
-    // ==================== 健康检查接口 ====================
+    // ==================== 鍋ュ悍妫€鏌ユ帴鍙?====================
 
     /**
-     * 执行边缘设备健康检查
+     * 鎵ц杈圭紭璁惧鍋ュ悍妫€鏌?
      * <p>
-     * 对边缘设备进行全面的健康检查
+     * 瀵硅竟缂樿澶囪繘琛屽叏闈㈢殑鍋ュ悍妫€鏌?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 健康检查结果Map
+     * @param deviceId 璁惧ID
+     * @return 鍋ュ悍妫€鏌ョ粨鏋淢ap
      */
     Map<String, Object> performEdgeDeviceHealthCheck(String deviceId);
 
     /**
-     * 获取边缘设备诊断信息
+     * 鑾峰彇杈圭紭璁惧璇婃柇淇℃伅
      * <p>
-     * 获取边缘设备的详细诊断信息
+     * 鑾峰彇杈圭紭璁惧鐨勮缁嗚瘖鏂俊鎭?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 诊断信息Map
+     * @param deviceId 璁惧ID
+     * @return 璇婃柇淇℃伅Map
      */
     Map<String, Object> getEdgeDeviceDiagnosticInfo(String deviceId);
 
     /**
-     * 修复边缘设备问题
+     * 淇杈圭紭璁惧闂
      * <p>
-     * 尝试自动修复边缘设备发现的问题
+     * 灏濊瘯鑷姩淇杈圭紭璁惧鍙戠幇鐨勯棶棰?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param issueTypes 问题类型列表
-     * @return 修复结果Map
+     * @param deviceId 璁惧ID
+     * @param issueTypes 闂绫诲瀷鍒楄〃
+     * @return 淇缁撴灉Map
      */
     Map<String, Object> repairEdgeDeviceIssues(String deviceId, List<String> issueTypes);
 }

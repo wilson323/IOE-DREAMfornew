@@ -1,7 +1,8 @@
 package net.lab1024.sa.device.comm.protocol.entropy;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.*;
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.domain.*;
 import net.lab1024.sa.device.comm.protocol.entity.ProtocolMessageEntity;
 import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
@@ -159,9 +160,9 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
             AccessEntropyV48Message message = new AccessEntropyV48Message();
             message.setDeviceSn(deviceSn);
             message.setMessageTypeCode((int) messageTypeCode);
-            message.setCommandCode((int) commandCode);
-            message.setSequenceNumber((long) sequenceNumber);
-            message.setTimestamp(timestamp);
+            message.setCommandCodeInt((int) commandCode);
+            message.setSequenceNumberLong((long) sequenceNumber);
+            message.setTimestampLong(timestamp);
             message.setReceiveTime(java.time.LocalDateTime.now());
 
             // 4. 根据消息类型解析业务数据
@@ -335,9 +336,9 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
             }
 
             // 5. 时间戳验证
-            if (entropyMessage.getTimestamp() != null) {
+            if (entropyMessage.getTimestampLong() != null) {
                 long currentTime = System.currentTimeMillis();
-                long messageTime = entropyMessage.getTimestamp();
+                long messageTime = entropyMessage.getTimestampLong();
                 if (Math.abs(currentTime - messageTime) > 300000) { // 5分钟
                     result.setValid(false);
                     result.setErrorCode("TIMESTAMP_OUT_OF_RANGE");
@@ -701,7 +702,7 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
             // TODO: 触发门禁控制、视频联动等
 
             result.setSuccess(true);
-            result.setProcessDetails("实时事件处理完成");
+            result.setMessage("实时事件处理完成");
 
         } catch (Exception e) {
             log.error("[熵基门禁协议V4.8] 实时事件处理失败", e);
@@ -723,7 +724,7 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
             // TODO: 实现门禁验证逻辑
 
             result.setSuccess(true);
-            result.setProcessDetails("门禁验证处理完成");
+            result.setMessage("门禁验证处理完成");
 
         } catch (Exception e) {
             log.error("[熵基门禁协议V4.8] 门禁验证处理失败", e);
@@ -745,7 +746,7 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
             // TODO: 实现门控操作逻辑
 
             result.setSuccess(true);
-            result.setProcessDetails("门控操作处理完成");
+            result.setMessage("门控操作处理完成");
 
         } catch (Exception e) {
             log.error("[熵基门禁协议V4.8] 门控操作处理失败", e);
@@ -767,7 +768,7 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
             // TODO: 实现报警事件处理逻辑
 
             result.setSuccess(true);
-            result.setProcessDetails("报警事件处理完成");
+            result.setMessage("报警事件处理完成");
 
         } catch (Exception e) {
             log.error("[熵基门禁协议V4.8] 报警事件处理失败", e);

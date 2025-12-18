@@ -17,19 +17,13 @@ import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.exception.BusinessException;
 
 /**
- * 高级门禁控制服务实现类
- * <p>
- * 提供智能门禁控制相关业务功能，包括：
- * - 智能风险评估
- * - 动态权限调整
- * - 异常行为检测
- * - 访问模式分析
- * 严格遵循CLAUDE.md规范：
- * - 使用@Service注解标识服务类
- * - 使用@Transactional管理事务
- * - 统一异常处理
- * - 完整的日志记录
- * </p>
+ * 楂樼骇闂ㄧ鎺у埗鏈嶅姟瀹炵幇绫? * <p>
+ * 鎻愪緵鏅鸿兘闂ㄧ鎺у埗鐩稿叧涓氬姟鍔熻兘锛屽寘鎷細
+ * - 鏅鸿兘椋庨櫓璇勪及
+ * - 鍔ㄦ€佹潈闄愯皟鏁? * - 寮傚父琛屼负妫€娴? * - 璁块棶妯″紡鍒嗘瀽
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤@Service娉ㄨВ鏍囪瘑鏈嶅姟绫? * - 浣跨敤@Transactional绠＄悊浜嬪姟
+ * - 缁熶竴寮傚父澶勭悊
+ * - 瀹屾暣鐨勬棩蹇楄褰? * </p>
  *
  * @author IOE-DREAM Team
  * @version 2.0.0
@@ -41,24 +35,23 @@ import net.lab1024.sa.common.exception.BusinessException;
 public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlService {
 
     /**
-     * 访问事件服务
+     * 璁块棶浜嬩欢鏈嶅姟
      */
     @Resource
     private AccessEventService accessEventService;
 
     /**
-     * 网关服务客户端
-     */
+     * 缃戝叧鏈嶅姟瀹㈡埛绔?     */
     @Resource
     private GatewayServiceClient gatewayServiceClient;
 
     /**
-     * 智能决策引擎
+     * 鏅鸿兘鍐崇瓥寮曟搸
      */
     private final IntelligentDecisionEngine intelligentDecisionEngine = new IntelligentDecisionEngine();
 
     /**
-     * 随机数生成器
+     * 闅忔満鏁扮敓鎴愬櫒
      */
     private final Random random = new Random();
 
@@ -69,39 +62,38 @@ public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlSe
             Long areaId,
             String verificationData,
             String accessType) {
-        log.info("[智能门禁控制] 执行智能访问检查: userId={}, deviceId={}, areaId={}, accessType={}",
+        log.info("[鏅鸿兘闂ㄧ鎺у埗] 鎵ц鏅鸿兘璁块棶妫€鏌? userId={}, deviceId={}, areaId={}, accessType={}",
                 userId, deviceId, areaId, accessType);
 
         try {
-            // 1. 基础权限验证
+            // 1. 鍩虹鏉冮檺楠岃瘉
             AccessControlResult result = performBasicAccessControl(userId, deviceId, areaId);
 
-            // 2. 如果基础验证通过，进行智能风险评估
-            if (result.isAllowed()) {
+            // 2. 濡傛灉鍩虹楠岃瘉閫氳繃锛岃繘琛屾櫤鑳介闄╄瘎浼?            if (result.isAllowed()) {
                 RiskAssessmentVO riskAssessment = assessAccessRisk(userId, areaId, accessType);
-                log.debug("[智能门禁控制] 风险评估完成，riskScore={}, riskLevel={}",
+                log.debug("[鏅鸿兘闂ㄧ鎺у埗] 椋庨櫓璇勪及瀹屾垚锛宺iskScore={}, riskLevel={}",
                     riskAssessment.getRiskScore(), riskAssessment.getRiskLevel());
 
-                // 3. 智能决策
+                // 3. 鏅鸿兘鍐崇瓥
                 AccessDecision decision = intelligentDecisionEngine.decide(
                     userId, deviceId, areaId, riskAssessment);
 
-                // 4. 应用决策结果
+                // 4. 搴旂敤鍐崇瓥缁撴灉
                 applyDecision(result, decision);
             }
 
-            // 5. 记录访问事件
+            // 5. 璁板綍璁块棶浜嬩欢
             recordAccessEvent(userId, deviceId, areaId, accessType, result);
 
-            log.info("[智能门禁控制] 检查完成: userId={}, allowed={}, accessLevel={}, requireSecondary={}",
+            log.info("[鏅鸿兘闂ㄧ鎺у埗] 妫€鏌ュ畬鎴? userId={}, allowed={}, accessLevel={}, requireSecondary={}",
                 userId, result.isAllowed(), result.getAccessLevel(), result.getRequireSecondaryVerification());
 
             return result;
 
         } catch (Exception e) {
-            log.error("[智能门禁控制] 检查异常: userId={}, deviceId={}, error={}",
+            log.error("[鏅鸿兘闂ㄧ鎺у埗] 妫€鏌ュ紓甯? userId={}, deviceId={}, error={}",
                 userId, deviceId, e.getMessage(), e);
-            throw new BusinessException("ACCESS_CONTROL_CHECK_ERROR", "访问控制检查失败：" + e.getMessage());
+            throw new BusinessException("ACCESS_CONTROL_CHECK_ERROR", "璁块棶鎺у埗妫€鏌ュけ璐ワ細" + e.getMessage());
         }
     }
 
@@ -109,42 +101,38 @@ public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlSe
     public AccessControlResult performIntelligentAccessControl(
             Long userId, Long deviceId, Long areaId,
             String verificationData, String accessType) {
-        log.info("[智能门禁控制] 执行高级智能访问控制: userId={}, deviceId={}, areaId={}, accessType={}",
+        log.info("[鏅鸿兘闂ㄧ鎺у埗] 鎵ц楂樼骇鏅鸿兘璁块棶鎺у埗: userId={}, deviceId={}, areaId={}, accessType={}",
                 userId, deviceId, areaId, accessType);
 
         try {
-            // 1. 执行基础访问控制
+            // 1. 鎵ц鍩虹璁块棶鎺у埗
             AccessControlResult result = performAccessControlCheck(userId, deviceId, areaId, verificationData, accessType);
 
-            // 2. 如果允许访问，进行高级智能分析
-            if (result.isAllowed()) {
-                // 3. 访问模式分析
+            // 2. 濡傛灉鍏佽璁块棶锛岃繘琛岄珮绾ф櫤鑳藉垎鏋?            if (result.isAllowed()) {
+                // 3. 璁块棶妯″紡鍒嗘瀽
                 AccessPatternAnalysis patternAnalysis = analyzeAccessPattern(userId, areaId);
 
-                // 4. 动态权限调整
-                adjustAccessPermissions(result, patternAnalysis);
+                // 4. 鍔ㄦ€佹潈闄愯皟鏁?                adjustAccessPermissions(result, patternAnalysis);
 
-                // 5. 异常行为检测
-                detectAnomalousBehavior(userId, deviceId, areaId, result);
+                // 5. 寮傚父琛屼负妫€娴?                detectAnomalousBehavior(userId, deviceId, areaId, result);
             }
 
             return result;
 
         } catch (Exception e) {
-            log.error("[智能门禁控制] 高级智能控制异常: userId={}, deviceId={}, error={}",
+            log.error("[鏅鸿兘闂ㄧ鎺у埗] 楂樼骇鏅鸿兘鎺у埗寮傚父: userId={}, deviceId={}, error={}",
                 userId, deviceId, e.getMessage(), e);
-            throw new BusinessException("INTELLIGENT_ACCESS_CONTROL_ERROR", "智能访问控制失败：" + e.getMessage());
+            throw new BusinessException("INTELLIGENT_ACCESS_CONTROL_ERROR", "鏅鸿兘璁块棶鎺у埗澶辫触锛? + e.getMessage());
         }
     }
 
     /**
-     * 执行基础访问控制检查
-     */
+     * 鎵ц鍩虹璁块棶鎺у埗妫€鏌?     */
     private AccessControlResult performBasicAccessControl(Long userId, Long deviceId, Long areaId) {
         AccessControlResult result = new AccessControlResult();
 
-        // TODO: 实现基础权限验证逻辑
-        // 这里应该调用权限服务验证用户是否有权限访问指定区域和设备
+        // TODO: 瀹炵幇鍩虹鏉冮檺楠岃瘉閫昏緫
+        // 杩欓噷搴旇璋冪敤鏉冮檺鏈嶅姟楠岃瘉鐢ㄦ埛鏄惁鏈夋潈闄愯闂寚瀹氬尯鍩熷拰璁惧
         boolean hasPermission = checkBasicPermission(userId, deviceId, areaId);
 
         result.setAllowed(hasPermission);
@@ -155,18 +143,18 @@ public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlSe
     }
 
     /**
-     * 检查基础权限
+     * 妫€鏌ュ熀纭€鏉冮檺
      */
     private boolean checkBasicPermission(Long userId, Long deviceId, Long areaId) {
-        // 模拟权限检查 - 实际应该调用权限服务
-        return true; // 临时返回true
+        // 妯℃嫙鏉冮檺妫€鏌?- 瀹為檯搴旇璋冪敤鏉冮檺鏈嶅姟
+        return true; // 涓存椂杩斿洖true
     }
 
     /**
-     * 访问风险评估
+     * 璁块棶椋庨櫓璇勪及
      */
     private RiskAssessmentVO assessAccessRisk(Long userId, Long areaId, String accessType) {
-        log.debug("[风险评估] 开始评估访问风险: userId={}, areaId={}, accessType={}",
+        log.debug("[椋庨櫓璇勪及] 寮€濮嬭瘎浼拌闂闄? userId={}, areaId={}, accessType={}",
             userId, areaId, accessType);
 
         RiskAssessmentVO assessment = RiskAssessmentVO.builder()
@@ -176,87 +164,85 @@ public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlSe
             .assessmentTime(LocalDateTime.now())
             .build();
 
-        // 1. 时间风险评估
+        // 1. 鏃堕棿椋庨櫓璇勪及
         assessTimeRisk(assessment);
 
-        // 2. 频率风险评估
+        // 2. 棰戠巼椋庨櫓璇勪及
         assessFrequencyRisk(assessment);
 
-        // 3. 位置风险评估
+        // 3. 浣嶇疆椋庨櫓璇勪及
         assessLocationRisk(assessment);
 
-        // 4. 用户行为风险评估
+        // 4. 鐢ㄦ埛琛屼负椋庨櫓璇勪及
         assessUserBehaviorRisk(assessment);
 
-        // 5. 计算综合风险评分
+        // 5. 璁＄畻缁煎悎椋庨櫓璇勫垎
         calculateOverallRiskScore(assessment);
 
         return assessment;
     }
 
     /**
-     * 时间风险评估
+     * 鏃堕棿椋庨櫓璇勪及
      */
     private void assessTimeRisk(RiskAssessmentVO assessment) {
         LocalDateTime now = LocalDateTime.now();
         int hour = now.getHour();
 
-        // 非工作时间风险较高
-        if (hour < 6 || hour > 22) {
+        // 闈炲伐浣滄椂闂撮闄╄緝楂?        if (hour < 6 || hour > 22) {
             assessment.addRiskFactor("NON_WORKING_HOURS", 25);
         }
-        // 周末时间风险较高
+        // 鍛ㄦ湯鏃堕棿椋庨櫓杈冮珮
         if (now.getDayOfWeek().getValue() >= 6) {
             assessment.addRiskFactor("WEEKEND_ACCESS", 15);
         }
     }
 
     /**
-     * 频率风险评估
+     * 棰戠巼椋庨櫓璇勪及
      */
     private void assessFrequencyRisk(RiskAssessmentVO assessment) {
-        // TODO: 查询用户最近的访问频率
-        // 模拟高频访问风险
-        if (random.nextDouble() < 0.1) { // 10%概率高频访问
+        // TODO: 鏌ヨ鐢ㄦ埛鏈€杩戠殑璁块棶棰戠巼
+        // 妯℃嫙楂橀璁块棶椋庨櫓
+        if (random.nextDouble() < 0.1) { // 10%姒傜巼楂橀璁块棶
             assessment.addRiskFactor("HIGH_FREQUENCY_ACCESS", 20);
         }
     }
 
     /**
-     * 位置风险评估
+     * 浣嶇疆椋庨櫓璇勪及
      */
     private void assessLocationRisk(RiskAssessmentVO assessment) {
-        // TODO: 检查用户当前位置与访问区域的一致性
-        // 模拟位置异常风险
-        if (random.nextDouble() < 0.05) { // 5%概率位置异常
+        // TODO: 妫€鏌ョ敤鎴峰綋鍓嶄綅缃笌璁块棶鍖哄煙鐨勪竴鑷存€?        // 妯℃嫙浣嶇疆寮傚父椋庨櫓
+        if (random.nextDouble() < 0.05) { // 5%姒傜巼浣嶇疆寮傚父
             assessment.addRiskFactor("LOCATION_ANOMALY", 30);
         }
     }
 
     /**
-     * 用户行为风险评估
+     * 鐢ㄦ埛琛屼负椋庨櫓璇勪及
      */
     private void assessUserBehaviorRisk(RiskAssessmentVO assessment) {
-        // TODO: 分析用户历史行为模式
-        // 模拟行为异常风险
-        if (random.nextDouble() < 0.08) { // 8%概率行为异常
+        // TODO: 鍒嗘瀽鐢ㄦ埛鍘嗗彶琛屼负妯″紡
+        // 妯℃嫙琛屼负寮傚父椋庨櫓
+        if (random.nextDouble() < 0.08) { // 8%姒傜巼琛屼负寮傚父
             assessment.addRiskFactor("BEHAVIOR_ANOMALY", 35);
         }
     }
 
     /**
-     * 计算综合风险评分
+     * 璁＄畻缁煎悎椋庨櫓璇勫垎
      */
     private void calculateOverallRiskScore(RiskAssessmentVO assessment) {
         double totalRisk = assessment.getRiskFactors().values().stream()
             .mapToDouble(Integer::doubleValue)
             .sum();
 
-        // 风险评分归一化到0-100
+        // 椋庨櫓璇勫垎褰掍竴鍖栧埌0-100
         double riskScore = Math.min(100, totalRisk);
         assessment.setRiskScore(BigDecimal.valueOf(riskScore).setScale(1, BigDecimal.ROUND_HALF_UP));
 
-        // 确定风险等级
+        // 纭畾椋庨櫓绛夌骇
         if (riskScore < 20) {
             assessment.setRiskLevel("LOW");
         } else if (riskScore < 50) {
@@ -269,10 +255,10 @@ public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlSe
     }
 
     /**
-     * 访问模式分析
+     * 璁块棶妯″紡鍒嗘瀽
      */
     private AccessPatternAnalysis analyzeAccessPattern(Long userId, Long areaId) {
-        // TODO: 分析用户访问模式
+        // TODO: 鍒嗘瀽鐢ㄦ埛璁块棶妯″紡
         return AccessPatternAnalysis.builder()
             .userId(userId)
             .areaId(areaId)
@@ -283,11 +269,9 @@ public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlSe
     }
 
     /**
-     * 动态权限调整
-     */
+     * 鍔ㄦ€佹潈闄愯皟鏁?     */
     private void adjustAccessPermissions(AccessControlResult result, AccessPatternAnalysis patternAnalysis) {
-        // 基于模式分析结果动态调整访问权限
-        if (patternAnalysis.getAnomalyDetected()) {
+        // 鍩轰簬妯″紡鍒嗘瀽缁撴灉鍔ㄦ€佽皟鏁磋闂潈闄?        if (patternAnalysis.getAnomalyDetected()) {
             result.setRequireSecondaryVerification(true);
             result.setAccessLevel("RESTRICTED");
         } else if (patternAnalysis.getPatternScore().doubleValue() > 90) {
@@ -296,19 +280,18 @@ public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlSe
     }
 
     /**
-     * 异常行为检测
-     */
+     * 寮傚父琛屼负妫€娴?     */
     private void detectAnomalousBehavior(Long userId, Long deviceId, Long areaId, AccessControlResult result) {
-        // TODO: 实现异常行为检测逻辑
-        if (random.nextDouble() < 0.02) { // 2%概率检测到异常
+        // TODO: 瀹炵幇寮傚父琛屼负妫€娴嬮€昏緫
+        if (random.nextDouble() < 0.02) { // 2%姒傜巼妫€娴嬪埌寮傚父
             result.setAnomalousBehavior(true);
-            result.setAnomalyDescription("检测到异常访问模式，建议进一步验证");
+            result.setAnomalyDescription("妫€娴嬪埌寮傚父璁块棶妯″紡锛屽缓璁繘涓€姝ラ獙璇?);
             result.setRequireSecondaryVerification(true);
         }
     }
 
     /**
-     * 应用决策结果
+     * 搴旂敤鍐崇瓥缁撴灉
      */
     private void applyDecision(AccessControlResult result, AccessDecision decision) {
         result.setAccessLevel(decision.getAccessLevel());
@@ -317,26 +300,24 @@ public class AdvancedAccessControlServiceImpl implements AdvancedAccessControlSe
 
         if (decision.getRiskLevel().equals("CRITICAL")) {
             result.setAllowed(false);
-            result.setDenyReason("高风险访问被拒绝");
+            result.setDenyReason("楂橀闄╄闂鎷掔粷");
         }
     }
 
     /**
-     * 记录访问事件
+     * 璁板綍璁块棶浜嬩欢
      */
     private void recordAccessEvent(Long userId, Long deviceId, Long areaId, String accessType, AccessControlResult result) {
         try {
-            // TODO: 记录访问事件到审计日志
-            log.debug("[访问事件] 记录访问事件: userId={}, deviceId={}, allowed={}",
+            // TODO: 璁板綍璁块棶浜嬩欢鍒板璁℃棩蹇?            log.debug("[璁块棶浜嬩欢] 璁板綍璁块棶浜嬩欢: userId={}, deviceId={}, allowed={}",
                 userId, deviceId, result.isAllowed());
         } catch (Exception e) {
-            log.warn("[访问事件] 记录访问事件失败: userId={}, error={}", userId, e.getMessage());
+            log.warn("[璁块棶浜嬩欢] 璁板綍璁块棶浜嬩欢澶辫触: userId={}, error={}", userId, e.getMessage());
         }
     }
 
     /**
-     * 智能决策引擎内部类
-     */
+     * 鏅鸿兘鍐崇瓥寮曟搸鍐呴儴绫?     */
     private static class IntelligentDecisionEngine {
 
         public AccessDecision decide(Long userId, Long deviceId, Long areaId, RiskAssessmentVO riskAssessment) {

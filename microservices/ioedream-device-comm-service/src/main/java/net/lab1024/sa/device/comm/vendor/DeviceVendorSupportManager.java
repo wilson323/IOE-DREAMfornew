@@ -154,7 +154,11 @@ public class DeviceVendorSupportManager {
         stats.setVendorDeviceCount(vendorDeviceCount);
 
         // 按设备类型统计
-        stats.setDeviceTypeCount(new HashMap<>(deviceTypeCounts));
+        Map<String, Integer> typeCountMap = new HashMap<>();
+        for (Map.Entry<String, AtomicInteger> entry : deviceTypeCounts.entrySet()) {
+            typeCountMap.put(entry.getKey(), entry.getValue().get());
+        }
+        stats.setDeviceTypeCount(typeCountMap);
 
         // 厂商分类统计
         Map<String, Integer> categoryCount = new HashMap<>();
@@ -241,14 +245,14 @@ public class DeviceVendorSupportManager {
 
             // 更新设备类型统计
             String deviceType = deviceInfo.getDeviceType();
-            deviceTypeCounts.merge(deviceType, 1, Integer::sum);
+            deviceTypeCounts.computeIfAbsent(deviceType, k -> new AtomicInteger(0)).incrementAndGet();
 
             // 更新厂商的协议支持
             vendorInfo.getSupportedProtocols().add(deviceInfo.getProtocolType());
             totalSupportedProtocols.set(new HashSet<>(
                     vendorRegistry.values().stream()
-                            .flatMap(vendor -> Arrays.stream(vendor.getSupportedProtocols()))
-                            .collect(Collectors.toSet())
+                            .flatMap(vendor -> vendor.getSupportedProtocols().stream())
+                            .collect(java.util.stream.Collectors.toSet())
             ).size());
 
             log.info("[厂商支持管理] 厂商设备注册成功: {} - {}, 总设备数: {}, 总协议数: {}",
@@ -399,7 +403,7 @@ public class DeviceVendorSupportManager {
         hikvision.setVendorName("海康威视");
         hikvision.setEnglishName("Hikvision");
         hikvision.setCategory("视频监控");
-        hikvision.setFoundedYear("2001");
+        hikvision.setFoundedYear(2001);
         hikvision.setWebsite("https://www.hikvision.com");
         hikvision.setDescription("全球领先的视频监控产品及解决方案提供商");
         hikvision.setSupportedProtocols(new ArrayList<>(Arrays.asList("HIKVISION_VIDEO_V2_0", "HIKVISION_ISAPI_V3.0")));
@@ -415,7 +419,7 @@ public class DeviceVendorSupportManager {
         dahua.setVendorName("大华技术");
         dahua.setEnglishName("Dahua Technology");
         dahua.setCategory("视频监控");
-        dahua.setFoundedYear("2001");
+        dahua.setFoundedYear(2001);
         dahua.setWebsite("https://www.dahuatech.com");
         dahua.setDescription("视频监控领域的领先企业");
         dahua.setSupportedProtocols(new ArrayList<>(Arrays.asList("DAHUA_VIDEO_V2_0", "DAHUA_ISAPI_V3.0")));
@@ -430,7 +434,7 @@ public class DeviceVendorSupportManager {
         uniview.setVendorName("宇视科技");
         uniview.setEnglishName("Uniview");
         uniview.setCategory("视频监控");
-        uniview.setFoundedYear("2005");
+        uniview.setFoundedYear(2005);
         uniview.setWebsite("https://www.uniview.com");
         uniview.setDescription("专业的视频监控产品制造商");
         uniview.setSupportedProtocols(new ArrayList<>(Arrays.asList("UNIVIEW_ONVIF_V2_0")));
@@ -450,7 +454,7 @@ public class DeviceVendorSupportManager {
         entropy.setVendorName("熵基科技");
         entropy.setEnglishName("Entropy Biometric");
         entropy.setCategory("门禁控制");
-        entropy.setFoundedYear("2015");
+        entropy.setFoundedYear(2015);
         entropy.setWebsite("https://www.entropybiometric.com");
         entropy.setDescription("生物识别门禁系统解决方案提供商");
         entropy.setSupportedProtocols(new ArrayList<>(Arrays.asList("ENTROPY_ACCESS_V4_8")));
@@ -465,7 +469,7 @@ public class DeviceVendorSupportManager {
         rockstone.setVendorName("营石科技");
         rockstone.setEnglishName("Rockstone");
         rockstone.setCategory("门禁控制");
-        rockstone.setFoundedYear("2010");
+        rockstone.setFoundedYear(2010);
         rockstone.setWebsite("https://www.rockstone.com.cn");
         rockstone.setDescription("智能门禁系统产品制造商");
         rockstone.setSupportedProtocols(new ArrayList<>(Arrays.asList("ROCKSTONE_ACCESS_V1_5")));
@@ -485,7 +489,7 @@ public class DeviceVendorSupportManager {
         zkteco.setVendorName("中控智慧");
         zkteco.setEnglishName("ZKTeco");
         zkteco.setCategory("考勤管理");
-        zkteco.setFoundedYear("1985");
+        zkteco.setFoundedYear(1985);
         zkteco.setWebsite("https://www.zkteco.com");
         zkteco.setDescription("全球领先的考勤管理解决方案提供商");
         zkteco.setSupportedProtocols(new ArrayList<>(Arrays.asList("ZKTeco_TIME_CLOCK_V1_0")));
@@ -505,7 +509,7 @@ public class DeviceVendorSupportManager {
         xinbeiyang.setVendorName("新北洋");
         xinbeiyang.setEnglishName("Xinbeiyang");
         xinbeiyang.setCategory("消费管理");
-        xinbeiyang.setFoundedYear("1994");
+        xinbeiyang.setFoundedYear(1994);
         xinbeiyang.setWebsite("https://www.xinbeiyang.com");
         xinbeiyang.setDescription("智能POS机和收银系统提供商");
         xinbeiyang.setSupportedProtocols(new ArrayList<>(Arrays.asList("XINBEIYANG_POS_V1_2")));

@@ -24,19 +24,19 @@ import net.lab1024.sa.common.entity.UserEntity;
 import net.lab1024.sa.common.util.SmartStringUtil;
 
 /**
- * AI智能分析服务实现
+ * AI鏅鸿兘鍒嗘瀽鏈嶅姟瀹炵幇
  * <p>
- * 提供基于人工智能的门禁分析功能：
- * - 用户行为模式分析和建模
- * - 异常访问行为检测和预警
- * - 设备预测性维护和健康评估
- * - 安全风险评估和趋势分析
- * - 访问控制策略优化
- * 严格遵循CLAUDE.md规范：
- * - 使用@Service注解
- * - 使用@Transactional事务管理
- * - 完整的日志记录和错误处理
- * - 性能监控和指标收集
+ * 鎻愪緵鍩轰簬浜哄伐鏅鸿兘鐨勯棬绂佸垎鏋愬姛鑳斤細
+ * - 鐢ㄦ埛琛屼负妯″紡鍒嗘瀽鍜屽缓妯?
+ * - 寮傚父璁块棶琛屼负妫€娴嬪拰棰勮
+ * - 璁惧棰勬祴鎬х淮鎶ゅ拰鍋ュ悍璇勪及
+ * - 瀹夊叏椋庨櫓璇勪及鍜岃秼鍔垮垎鏋?
+ * - 璁块棶鎺у埗绛栫暐浼樺寲
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Service娉ㄨВ
+ * - 浣跨敤@Transactional浜嬪姟绠＄悊
+ * - 瀹屾暣鐨勬棩蹇楄褰曞拰閿欒澶勭悊
+ * - 鎬ц兘鐩戞帶鍜屾寚鏍囨敹闆?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -54,20 +54,20 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     @Resource
     private AccessDeviceDao accessDeviceDao;
 
-    // AI模型缓存
+    // AI妯″瀷缂撳瓨
     private final Map<String, AIModel> modelCache = new ConcurrentHashMap<>();
 
-    // 用户行为模式缓存
+    // 鐢ㄦ埛琛屼负妯″紡缂撳瓨
     private final Map<Long, UserBehaviorPattern> behaviorPatternCache = new ConcurrentHashMap<>();
 
-    // 设备健康状态缓存
+    // 璁惧鍋ュ悍鐘舵€佺紦瀛?
     private final Map<Long, DeviceHealthStatus> healthStatusCache = new ConcurrentHashMap<>();
 
     @Override
-    @Timed(value = "ai.behavior.analysis", description = "用户行为分析耗时")
-    @Counted(value = "ai.behavior.analysis.count", description = "用户行为分析次数")
+    @Timed(value = "ai.behavior.analysis", description = "鐢ㄦ埛琛屼负鍒嗘瀽鑰楁椂")
+    @Counted(value = "ai.behavior.analysis.count", description = "鐢ㄦ埛琛屼负鍒嗘瀽娆℃暟")
     public ResponseDTO<UserBehaviorPatternVO> analyzeUserBehaviorPattern(Long userId, Integer analysisDays) {
-        log.info("[AI行为分析] 开始分析用户行为模式: userId={}, analysisDays={}",
+        log.info("[AI琛屼负鍒嗘瀽] 寮€濮嬪垎鏋愮敤鎴疯涓烘ā寮? userId={}, analysisDays={}",
                 userId, analysisDays != null ? analysisDays : 30);
 
         try {
@@ -75,37 +75,37 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                 analysisDays = 30;
             }
 
-            // 获取用户访问记录
+            // 鑾峰彇鐢ㄦ埛璁块棶璁板綍
             List<AccessRecordEntity> records = getAccessRecordsByUser(userId, analysisDays);
             if (records.isEmpty()) {
                 return createEmptyBehaviorPattern(userId);
             }
 
-            // 分析访问时间模式
+            // 鍒嗘瀽璁块棶鏃堕棿妯″紡
             AccessTimePattern timePattern = analyzeAccessTimePattern(records);
 
-            // 分析设备偏好模式
+            // 鍒嗘瀽璁惧鍋忓ソ妯″紡
             DevicePreferencePattern devicePattern = analyzeDevicePreferencePattern(records, userId);
 
-            // 分析访问路径模式
+            // 鍒嗘瀽璁块棶璺緞妯″紡
             AccessPathPattern pathPattern = analyzeAccessPathPattern(records);
 
-            // 检测行为异常
+            // 妫€娴嬭涓哄紓甯?
             List<BehaviorAnomaly> anomalies = detectBehaviorAnomalies(records, timePattern, devicePattern, pathPattern);
 
-            // 评估风险等级
+            // 璇勪及椋庨櫓绛夌骇
             String riskLevel = assessBehaviorRisk(anomalies);
 
-            // 生成建议
+            // 鐢熸垚寤鸿
             List<String> recommendations = generateBehaviorRecommendations(anomalies, riskLevel);
 
-            // 计算置信度
+            // 璁＄畻缃俊搴?
             Double confidenceScore = calculateAnalysisConfidence(records.size(), analysisDays);
 
             UserBehaviorPatternVO result = new UserBehaviorPatternVO();
             result.setUserId(userId);
-            result.setUserName("用户" + userId); // TODO: 从用户表获取真实姓名
-            result.setAnalysisPeriod("最近" + analysisDays + "天");
+            result.setUserName("鐢ㄦ埛" + userId); // TODO: 浠庣敤鎴疯〃鑾峰彇鐪熷疄濮撳悕
+            result.setAnalysisPeriod("鏈€杩? + analysisDays + "澶?);
             result.setAccessTimePattern(timePattern);
             result.setDevicePreferencePattern(devicePattern);
             result.setAccessPathPattern(pathPattern);
@@ -115,62 +115,62 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setConfidenceScore(confidenceScore);
             result.setLastAnalysisTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-            // 缓存分析结果
+            // 缂撳瓨鍒嗘瀽缁撴灉
             UserBehaviorPattern pattern = new UserBehaviorPattern();
             pattern.setUserId(userId);
             pattern.setAnalysisTime(System.currentTimeMillis());
             pattern.setPatternData(result);
             behaviorPatternCache.put(userId, pattern);
 
-            log.info("[AI行为分析] 分析完成: userId={}, anomalyCount={}, riskLevel={}, confidence={}%",
+            log.info("[AI琛屼负鍒嗘瀽] 鍒嗘瀽瀹屾垚: userId={}, anomalyCount={}, riskLevel={}, confidence={}%",
                     userId, anomalies.size(), riskLevel, confidenceScore);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI行为分析] 分析失败: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("BEHAVIOR_ANALYSIS_FAILED", "用户行为分析失败");
+            log.error("[AI琛屼负鍒嗘瀽] 鍒嗘瀽澶辫触: userId={}, error={}", userId, e.getMessage(), e);
+            return ResponseDTO.error("BEHAVIOR_ANALYSIS_FAILED", "鐢ㄦ埛琛屼负鍒嗘瀽澶辫触");
         }
     }
 
     @Override
-    @Timed(value = "ai.anomaly.detection", description = "异常行为检测耗时")
-    @Counted(value = "ai.anomaly.detection.count", description = "异常行为检测次数")
+    @Timed(value = "ai.anomaly.detection", description = "寮傚父琛屼负妫€娴嬭€楁椂")
+    @Counted(value = "ai.anomaly.detection.count", description = "寮傚父琛屼负妫€娴嬫鏁?)
     public ResponseDTO<AnomalyDetectionResult> detectAnomalousAccessBehavior(AnomalyDetectionRequest request) {
-        log.info("[AI异常检测] 开始检测异常访问行为: userId={}, deviceId={}",
+        log.info("[AI寮傚父妫€娴媇 寮€濮嬫娴嬪紓甯歌闂涓? userId={}, deviceId={}",
                 request.getUserId(), request.getDeviceId());
 
         try {
             List<DetectedAnomaly> anomalies = new ArrayList<>();
 
-            // 获取最近的访问记录
+            // 鑾峰彇鏈€杩戠殑璁块棶璁板綍
             List<AccessRecordEntity> recentRecords = getRecentAccessRecords(
                     request.getUserId(), request.getDeviceId(), 24);
 
-            // 检测时间异常
+            // 妫€娴嬫椂闂村紓甯?
             anomalies.addAll(detectTimeAnomalies(recentRecords));
 
-            // 检测频率异常
+            // 妫€娴嬮鐜囧紓甯?
             anomalies.addAll(detectFrequencyAnomalies(recentRecords));
 
-            // 检测地理位置异常（如果有位置数据）
+            // 妫€娴嬪湴鐞嗕綅缃紓甯革紙濡傛灉鏈変綅缃暟鎹級
             anomalies.addAll(detectLocationAnomalies(recentRecords));
 
-            // 检测设备异常切换
+            // 妫€娴嬭澶囧紓甯稿垏鎹?
             anomalies.addAll(detectDeviceSwitchingAnomalies(recentRecords));
 
-            // 检测并发访问异常
+            // 妫€娴嬪苟鍙戣闂紓甯?
             anomalies.addAll(detectConcurrentAccessAnomalies(recentRecords));
 
-            // 过滤和排序异常
+            // 杩囨护鍜屾帓搴忓紓甯?
             List<DetectedAnomaly> filteredAnomalies = filterAndSortAnomalies(anomalies);
 
-            // 评估整体风险
+            // 璇勪及鏁翠綋椋庨櫓
             String overallRiskLevel = assessOverallRiskLevel(filteredAnomalies);
 
-            // 确定是否需要立即行动
+            // 纭畾鏄惁闇€瑕佺珛鍗宠鍔?
             Boolean requiresAction = determineActionRequirement(filteredAnomalies, overallRiskLevel);
 
-            // 生成建议措施
+            // 鐢熸垚寤鸿鎺柦
             List<String> recommendedActions = generateRecommendedActions(filteredAnomalies, overallRiskLevel);
 
             AnomalyDetectionResult result = new AnomalyDetectionResult();
@@ -186,22 +186,22 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setRequiresAction(requiresAction);
             result.setRecommendedActions(recommendedActions);
 
-            log.info("[AI异常检测] 检测完成: userId={}, totalAnomalies={}, highRisk={}, riskLevel={}",
+            log.info("[AI寮傚父妫€娴媇 妫€娴嬪畬鎴? userId={}, totalAnomalies={}, highRisk={}, riskLevel={}",
                     request.getUserId(), filteredAnomalies.size(), result.getHighRiskAnomalies(), overallRiskLevel);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI异常检测] 检测失败: userId={}, deviceId={}, error={}",
+            log.error("[AI寮傚父妫€娴媇 妫€娴嬪け璐? userId={}, deviceId={}, error={}",
                     request.getUserId(), request.getDeviceId(), e.getMessage(), e);
-            return ResponseDTO.error("ANOMALY_DETECTION_FAILED", "异常行为检测失败");
+            return ResponseDTO.error("ANOMALY_DETECTION_FAILED", "寮傚父琛屼负妫€娴嬪け璐?);
         }
     }
 
     @Override
-    @Timed(value = "ai.predictive.maintenance", description = "预测性维护分析耗时")
-    @Counted(value = "ai.predictive.maintenance.count", description = "预测性维护分析次数")
+    @Timed(value = "ai.predictive.maintenance", description = "棰勬祴鎬х淮鎶ゅ垎鏋愯€楁椂")
+    @Counted(value = "ai.predictive.maintenance.count", description = "棰勬祴鎬х淮鎶ゅ垎鏋愭鏁?)
     public ResponseDTO<PredictiveMaintenanceResult> performPredictiveMaintenanceAnalysis(Long deviceId, Integer predictionDays) {
-        log.info("[AI预测维护] 开始预测性维护分析: deviceId={}, predictionDays={}",
+        log.info("[AI棰勬祴缁存姢] 寮€濮嬮娴嬫€х淮鎶ゅ垎鏋? deviceId={}, predictionDays={}",
                 deviceId, predictionDays != null ? predictionDays : 90);
 
         try {
@@ -209,35 +209,35 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                 predictionDays = 90;
             }
 
-            // 获取设备信息
+            // 鑾峰彇璁惧淇℃伅
             DeviceEntity device = accessDeviceDao.selectById(deviceId);
             if (device == null) {
-                return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
+                return ResponseDTO.error("DEVICE_NOT_FOUND", "璁惧涓嶅瓨鍦?);
             }
 
-            // 获取设备历史数据
-            List<AccessRecordEntity> deviceRecords = getAccessRecordsByDevice(deviceId, 180); // 获取6个月历史数据
+            // 鑾峰彇璁惧鍘嗗彶鏁版嵁
+            List<AccessRecordEntity> deviceRecords = getAccessRecordsByDevice(deviceId, 180); // 鑾峰彇6涓湀鍘嗗彶鏁版嵁
 
-            // 计算当前健康评分
+            // 璁＄畻褰撳墠鍋ュ悍璇勫垎
             Integer currentHealthScore = calculateDeviceHealthScore(device, deviceRecords);
 
-            // 预测未来健康评分
+            // 棰勬祴鏈潵鍋ュ悍璇勫垎
             Integer predictedHealthScore = predictFutureHealthScore(deviceRecords, predictionDays);
 
-            // 确定维护优先级
+            // 纭畾缁存姢浼樺厛绾?
             String maintenancePriority = determineMaintenancePriority(currentHealthScore, predictedHealthScore);
 
-            // 生成维护建议
+            // 鐢熸垚缁存姢寤鸿
             List<MaintenanceRecommendation> recommendations = generateMaintenanceRecommendations(
                     device, currentHealthScore, predictedHealthScore, maintenancePriority);
 
-            // 预估故障天数
+            // 棰勪及鏁呴殰澶╂暟
             Integer estimatedFailureDays = estimateFailureDays(currentHealthScore, predictedHealthScore);
 
-            // 计算更换概率
+            // 璁＄畻鏇存崲姒傜巼
             Double replacementProbability = calculateReplacementProbability(currentHealthScore, predictedHealthScore);
 
-            // 识别关键组件
+            // 璇嗗埆鍏抽敭缁勪欢
             List<String> criticalComponents = identifyCriticalComponents(device, deviceRecords);
 
             PredictiveMaintenanceResult result = new PredictiveMaintenanceResult();
@@ -252,7 +252,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setReplacementProbability(replacementProbability);
             result.setCriticalComponents(criticalComponents);
 
-            // 更新设备健康状态缓存
+            // 鏇存柊璁惧鍋ュ悍鐘舵€佺紦瀛?
             DeviceHealthStatus healthStatus = new DeviceHealthStatus();
             healthStatus.setDeviceId(deviceId);
             healthStatus.setLastAnalysisTime(System.currentTimeMillis());
@@ -260,46 +260,46 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             healthStatus.setPredictedHealthScore(predictedHealthScore);
             healthStatusCache.put(deviceId, healthStatus);
 
-            log.info("[AI预测维护] 分析完成: deviceId={}, currentScore={}, predictedScore={}, priority={}, daysToFailure={}",
+            log.info("[AI棰勬祴缁存姢] 鍒嗘瀽瀹屾垚: deviceId={}, currentScore={}, predictedScore={}, priority={}, daysToFailure={}",
                     deviceId, currentHealthScore, predictedHealthScore, maintenancePriority, estimatedFailureDays);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI预测维护] 分析失败: deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseDTO.error("PREDICTIVE_MAINTENANCE_FAILED", "预测性维护分析失败");
+            log.error("[AI棰勬祴缁存姢] 鍒嗘瀽澶辫触: deviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error("PREDICTIVE_MAINTENANCE_FAILED", "棰勬祴鎬х淮鎶ゅ垎鏋愬け璐?);
         }
     }
 
     @Override
-    @Timed(value = "ai.security.risk.assessment", description = "安全风险评估耗时")
-    @Counted(value = "ai.security.risk.assessment.count", description = "安全风险评估次数")
+    @Timed(value = "ai.security.risk.assessment", description = "瀹夊叏椋庨櫓璇勪及鑰楁椂")
+    @Counted(value = "ai.security.risk.assessment.count", description = "瀹夊叏椋庨櫓璇勪及娆℃暟")
     public ResponseDTO<SecurityRiskAssessmentVO> assessSecurityRisk(SecurityRiskAssessmentRequest request) {
-        log.info("[AI安全评估] 开始安全风险评估: userId={}, deviceId={}, scope={}",
+        log.info("[AI瀹夊叏璇勪及] 寮€濮嬪畨鍏ㄩ闄╄瘎浼? userId={}, deviceId={}, scope={}",
                 request.getUserId(), request.getDeviceId(), request.getAssessmentScope());
 
         try {
-            // 获取相关数据
+            // 鑾峰彇鐩稿叧鏁版嵁
             List<AccessRecordEntity> records = getAccessRecordsByUserAndDevice(
                     request.getUserId(), request.getDeviceId(), 30);
 
             DeviceEntity device = accessDeviceDao.selectById(request.getDeviceId());
 
-            // 识别风险因素
+            // 璇嗗埆椋庨櫓鍥犵礌
             List<SecurityRiskFactor> riskFactors = identifySecurityRiskFactors(request, records, device);
 
-            // 计算整体风险评分
+            // 璁＄畻鏁翠綋椋庨櫓璇勫垎
             Integer overallRiskScore = calculateOverallRiskScore(riskFactors);
 
-            // 确定风险等级
+            // 纭畾椋庨櫓绛夌骇
             String riskLevel = determineRiskLevel(overallRiskScore);
 
-            // 生成缓解措施
+            // 鐢熸垚缂撹В鎺柦
             List<RiskMitigationMeasure> mitigationMeasures = generateRiskMitigationMeasures(riskFactors, riskLevel);
 
-            // 确定建议级别
+            // 纭畾寤鸿绾у埆
             String recommendationLevel = determineRecommendationLevel(riskLevel);
 
-            // 生成立即行动建议
+            // 鐢熸垚绔嬪嵆琛屽姩寤鸿
             List<String> immediateActions = generateImmediateActions(riskFactors, riskLevel);
 
             SecurityRiskAssessmentVO result = new SecurityRiskAssessmentVO();
@@ -314,44 +314,44 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setRecommendationLevel(recommendationLevel);
             result.setImmediateActions(immediateActions);
 
-            log.info("[AI安全评估] 评估完成: userId={}, deviceId={}, riskScore={}, riskLevel={}",
+            log.info("[AI瀹夊叏璇勪及] 璇勪及瀹屾垚: userId={}, deviceId={}, riskScore={}, riskLevel={}",
                     request.getUserId(), request.getDeviceId(), overallRiskScore, riskLevel);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI安全评估] 评估失败: userId={}, deviceId={}, error={}",
+            log.error("[AI瀹夊叏璇勪及] 璇勪及澶辫触: userId={}, deviceId={}, error={}",
                     request.getUserId(), request.getDeviceId(), e.getMessage(), e);
-            return ResponseDTO.error("SECURITY_RISK_ASSESSMENT_FAILED", "安全风险评估失败");
+            return ResponseDTO.error("SECURITY_RISK_ASSESSMENT_FAILED", "瀹夊叏椋庨櫓璇勪及澶辫触");
         }
     }
 
     @Override
-    @Timed(value = "ai.trend.prediction", description = "访问趋势预测耗时")
-    @Counted(value = "ai.trend.prediction.count", description = "访问趋势预测次数")
+    @Timed(value = "ai.trend.prediction", description = "璁块棶瓒嬪娍棰勬祴鑰楁椂")
+    @Counted(value = "ai.trend.prediction.count", description = "璁块棶瓒嬪娍棰勬祴娆℃暟")
     public ResponseDTO<AccessTrendPredictionVO> predictAccessTrends(AccessTrendPredictionRequest request) {
-        log.info("[AI趋势预测] 开始访问趋势预测: period={}, deviceCount={}",
+        log.info("[AI瓒嬪娍棰勬祴] 寮€濮嬭闂秼鍔块娴? period={}, deviceCount={}",
                 request.getPredictionPeriod(), request.getDeviceIds().size());
 
         try {
-            // 获取历史访问数据
+            // 鑾峰彇鍘嗗彶璁块棶鏁版嵁
             List<AccessRecordEntity> historicalData = getHistoricalAccessData(
                     request.getDeviceIds(), request.getHistoricalDays());
 
-            // 预测访问趋势
+            // 棰勬祴璁块棶瓒嬪娍
             List<AccessTrendData> predictedTrends = predictAccessTrends(historicalData, request.getPredictionPeriod());
 
-            // 预测峰值时段
+            // 棰勬祴宄板€兼椂娈?
             List<PeakPrediction> peakPredictions = predictPeakPeriods(predictedTrends);
 
-            // 预测设备负载
+            // 棰勬祴璁惧璐熻浇
             List<DeviceLoadPrediction> deviceLoadPredictions = predictDeviceLoad(
                     request.getDeviceIds(), predictedTrends);
 
-            // 生成容量建议
+            // 鐢熸垚瀹归噺寤鸿
             List<CapacityRecommendation> capacityRecommendations = generateCapacityRecommendations(
                     predictedTrends, deviceLoadPredictions);
 
-            // 估算预测准确性
+            // 浼扮畻棰勬祴鍑嗙‘鎬?
             Double predictionAccuracy = estimatePredictionAccuracy(historicalData);
 
             AccessTrendPredictionVO result = new AccessTrendPredictionVO();
@@ -363,28 +363,28 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setPredictionAccuracy(predictionAccuracy);
             result.setModelVersion("2.1.0");
 
-            log.info("[AI趋势预测] 预测完成: period={}, dataPoints={}, accuracy={}%",
+            log.info("[AI瓒嬪娍棰勬祴] 棰勬祴瀹屾垚: period={}, dataPoints={}, accuracy={}%",
                     request.getPredictionPeriod(), predictedTrends.size(), predictionAccuracy);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI趋势预测] 预测失败: period={}, error={}", request.getPredictionPeriod(), e.getMessage(), e);
-            return ResponseDTO.error("TREND_PREDICTION_FAILED", "访问趋势预测失败");
+            log.error("[AI瓒嬪娍棰勬祴] 棰勬祴澶辫触: period={}, error={}", request.getPredictionPeriod(), e.getMessage(), e);
+            return ResponseDTO.error("TREND_PREDICTION_FAILED", "璁块棶瓒嬪娍棰勬祴澶辫触");
         }
     }
 
     @Override
     public ResponseDTO<AccessControlOptimizationVO> optimizeAccessControl(Long userId) {
-        log.info("[AI优化] 开始访问控制优化: userId={}", userId);
+        log.info("[AI浼樺寲] 寮€濮嬭闂帶鍒朵紭鍖? userId={}", userId);
 
         try {
-            // 获取用户行为模式
+            // 鑾峰彇鐢ㄦ埛琛屼负妯″紡
             UserBehaviorPattern pattern = behaviorPatternCache.get(userId);
             if (pattern == null) {
-                // 如果没有缓存的模式，先分析
+                // 濡傛灉娌℃湁缂撳瓨鐨勬ā寮忥紝鍏堝垎鏋?
                 ResponseDTO<UserBehaviorPatternVO> analysisResult = analyzeUserBehaviorPattern(userId, 30);
                 if (!analysisResult.isSuccess()) {
-                    return ResponseDTO.error("PATTERN_NOT_AVAILABLE", "用户行为模式不可用");
+                    return ResponseDTO.error("PATTERN_NOT_AVAILABLE", "鐢ㄦ埛琛屼负妯″紡涓嶅彲鐢?);
                 }
                 UserBehaviorPatternVO patternData = analysisResult.getData();
                 pattern = new UserBehaviorPattern();
@@ -393,70 +393,70 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                 behaviorPatternCache.put(userId, pattern);
             }
 
-            // 生成优化建议
+            // 鐢熸垚浼樺寲寤鸿
             List<OptimizationSuggestion> suggestions = generateAccessControlSuggestions(pattern.getPatternData());
 
-            // 评估潜在风险降低
+            // 璇勪及娼滃湪椋庨櫓闄嶄綆
             Integer potentialRiskReduction = assessRiskReductionPotential(suggestions);
 
-            // 估算效率提升
+            // 浼扮畻鏁堢巼鎻愬崌
             Double efficiencyImprovement = estimateEfficiencyImprovement(suggestions);
 
-            // 生成实施步骤
+            // 鐢熸垚瀹炴柦姝ラ
             List<String> implementationSteps = generateImplementationSteps(suggestions);
 
             AccessControlOptimizationVO result = new AccessControlOptimizationVO();
             result.setUserId(userId);
             result.setAnalysisTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            result.setCurrentPolicy("标准访问控制策略");
+            result.setCurrentPolicy("鏍囧噯璁块棶鎺у埗绛栫暐");
             result.setSuggestions(suggestions);
             result.setPotentialRiskReduction(potentialRiskReduction);
             result.setEfficiencyImprovement(efficiencyImprovement);
             result.setImplementationSteps(implementationSteps);
 
-            log.info("[AI优化] 优化完成: userId={}, suggestions={}, riskReduction={}%, efficiencyImprovement={}%",
+            log.info("[AI浼樺寲] 浼樺寲瀹屾垚: userId={}, suggestions={}, riskReduction={}%, efficiencyImprovement={}%",
                     userId, suggestions.size(), potentialRiskReduction, efficiencyImprovement);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI优化] 优化失败: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("ACCESS_CONTROL_OPTIMIZATION_FAILED", "访问控制优化失败");
+            log.error("[AI浼樺寲] 浼樺寲澶辫触: userId={}, error={}", userId, e.getMessage(), e);
+            return ResponseDTO.error("ACCESS_CONTROL_OPTIMIZATION_FAILED", "璁块棶鎺у埗浼樺寲澶辫触");
         }
     }
 
     @Override
     public ResponseDTO<DeviceUtilizationAnalysisVO> analyzeDeviceUtilization(Long deviceId, Integer analysisPeriod) {
-        log.info("[AI设备利用] 开始分析设备利用率: deviceId={}, period={}", deviceId, analysisPeriod);
+        log.info("[AI璁惧鍒╃敤] 寮€濮嬪垎鏋愯澶囧埄鐢ㄧ巼: deviceId={}, period={}", deviceId, analysisPeriod);
 
         try {
             if (analysisPeriod == null) {
                 analysisPeriod = 30;
             }
 
-            // 获取设备访问记录
+            // 鑾峰彇璁惧璁块棶璁板綍
             List<AccessRecordEntity> records = getAccessRecordsByDevice(deviceId, analysisPeriod);
 
-            // 计算基础统计
+            // 璁＄畻鍩虹缁熻
             Integer totalOperatingHours = calculateTotalOperatingHours(records, analysisPeriod);
             Integer activeHours = calculateActiveHours(records);
             Double utilizationRate = calculateUtilizationRate(totalOperatingHours, activeHours, analysisPeriod);
 
-            // 分析小时使用统计
+            // 鍒嗘瀽灏忔椂浣跨敤缁熻
             List<UsageStatistics> hourlyUsage = analyzeHourlyUsage(records);
 
-            // 识别高峰时段
+            // 璇嗗埆楂樺嘲鏃舵
             List<PeakUsagePeriod> peakPeriods = identifyPeakPeriods(hourlyUsage);
 
-            // 识别优化机会
+            // 璇嗗埆浼樺寲鏈轰細
             List<OptimizationOpportunity> opportunities = identifyOptimizationOpportunities(records, utilizationRate);
 
-            // 估算潜在改进
+            // 浼扮畻娼滃湪鏀硅繘
             Integer potentialImprovement = estimatePotentialImprovement(opportunities);
 
             DeviceUtilizationAnalysisVO result = new DeviceUtilizationAnalysisVO();
             result.setDeviceId(deviceId);
-            result.setDeviceName("设备" + deviceId); // TODO: 从设备表获取真实名称
-            result.setAnalysisPeriod("最近" + analysisPeriod + "天");
+            result.setDeviceName("璁惧" + deviceId); // TODO: 浠庤澶囪〃鑾峰彇鐪熷疄鍚嶇О
+            result.setAnalysisPeriod("鏈€杩? + analysisPeriod + "澶?);
             result.setTotalOperatingHours(totalOperatingHours);
             result.setActiveHours(activeHours);
             result.setUtilizationRate(utilizationRate);
@@ -465,34 +465,34 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setOptimizationOpportunities(opportunities);
             result.setPotentialImprovement(potentialImprovement);
 
-            log.info("[AI设备利用] 分析完成: deviceId={}, utilization={}%, improvement={}%",
+            log.info("[AI璁惧鍒╃敤] 鍒嗘瀽瀹屾垚: deviceId={}, utilization={}%, improvement={}%",
                     deviceId, utilizationRate, potentialImprovement);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI设备利用] 分析失败: deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseDTO.error("DEVICE_UTILIZATION_ANALYSIS_FAILED", "设备利用率分析失败");
+            log.error("[AI璁惧鍒╃敤] 鍒嗘瀽澶辫触: deviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseDTO.error("DEVICE_UTILIZATION_ANALYSIS_FAILED", "璁惧鍒╃敤鐜囧垎鏋愬け璐?);
         }
     }
 
     @Override
     public ResponseDTO<AnomalyEventProcessingResult> processAnomalyEvent(AnomalyEventProcessingRequest request) {
-        log.info("[AI事件处理] 开始处理异常事件: eventType={}", request.getEventType());
+        log.info("[AI浜嬩欢澶勭悊] 寮€濮嬪鐞嗗紓甯镐簨浠? eventType={}", request.getEventType());
 
         try {
-            // 生成事件ID
+            // 鐢熸垚浜嬩欢ID
             String eventId = generateEventId();
 
-            // 自动响应策略
+            // 鑷姩鍝嶅簲绛栫暐
             Boolean automaticResponse = shouldAutoRespond(request.getEventType());
 
-            // 确定响应动作
+            // 纭畾鍝嶅簲鍔ㄤ綔
             String responseAction = determineResponseAction(request.getEventType(), automaticResponse);
 
-            // 执行响应动作
+            // 鎵ц鍝嶅簲鍔ㄤ綔
             Boolean issueResolved = executeResponseAction(eventId, responseAction, request);
 
-            // 生成后续行动建议
+            // 鐢熸垚鍚庣画琛屽姩寤鸿
             List<String> followUpActions = generateFollowUpActions(request.getEventType(), issueResolved);
 
             AnomalyEventProcessingResult result = new AnomalyEventProcessingResult();
@@ -506,49 +506,49 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : null);
             result.setFollowUpActions(followUpActions);
 
-            log.info("[AI事件处理] 处理完成: eventId={}, autoResponse={}, resolved={}",
+            log.info("[AI浜嬩欢澶勭悊] 澶勭悊瀹屾垚: eventId={}, autoResponse={}, resolved={}",
                     eventId, automaticResponse, issueResolved);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI事件处理] 处理失败: eventType={}, error={}", request.getEventType(), e.getMessage(), e);
-            return ResponseDTO.error("ANOMALY_EVENT_PROCESSING_FAILED", "异常事件处理失败");
+            log.error("[AI浜嬩欢澶勭悊] 澶勭悊澶辫触: eventType={}, error={}", request.getEventType(), e.getMessage(), e);
+            return ResponseDTO.error("ANOMALY_EVENT_PROCESSING_FAILED", "寮傚父浜嬩欢澶勭悊澶辫触");
         }
     }
 
     @Override
     public ResponseDTO<AIModelTrainingResult> trainAndUpdateAIModel(String modelType, Object trainingData) {
-        log.info("[AI模型训练] 开始训练AI模型: modelType={}", modelType);
+        log.info("[AI妯″瀷璁粌] 寮€濮嬭缁傾I妯″瀷: modelType={}", modelType);
 
         try {
             String modelVersion = "3.0.0";
             String trainingStartTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-            // 模拟模型训练过程
-            long trainingDuration = 5000 + (long)(Math.random() * 10000); // 5-15秒
+            // 妯℃嫙妯″瀷璁粌杩囩▼
+            long trainingDuration = 5000 + (long)(Math.random() * 10000); // 5-15绉?
 
-            // 生成训练结果
+            // 鐢熸垚璁粌缁撴灉
             AIModelTrainingResult result = new AIModelTrainingResult();
             result.setModelType(modelType);
             result.setModelVersion(modelVersion);
             result.setTrainingStartTime(trainingStartTime);
             result.setTrainingEndTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            result.setTrainingDataSize(10000); // 模拟数据集大小
+            result.setTrainingDataSize(10000); // 妯℃嫙鏁版嵁闆嗗ぇ灏?
             result.setTrainingAccuracy(0.85 + (Math.random() * 0.1)); // 85-95%
             result.setValidationAccuracy(0.82 + (Math.random() * 0.08)); // 82-90%
             result.setTrainingSuccessful(true);
             result.setModelStatus("ACTIVE");
 
-            // 生成性能指标
+            // 鐢熸垚鎬ц兘鎸囨爣
             List<String> performanceMetrics = Arrays.asList(
-                    "训练准确率: 90.5%",
-                    "验证准确率: 87.2%",
-                    "召回率: 89.1%",
-                    "F1分数: 88.8%"
+                    "璁粌鍑嗙‘鐜? 90.5%",
+                    "楠岃瘉鍑嗙‘鐜? 87.2%",
+                    "鍙洖鐜? 89.1%",
+                    "F1鍒嗘暟: 88.8%"
             );
             result.setPerformanceMetrics(performanceMetrics);
 
-            // 缓存训练好的模型
+            // 缂撳瓨璁粌濂界殑妯″瀷
             AIModel model = new AIModel();
             model.setModelType(modelType);
             model.setModelVersion(modelVersion);
@@ -557,44 +557,44 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             model.setAvailable(true);
             modelCache.put(modelType, model);
 
-            log.info("[AI模型训练] 训练完成: modelType={}, version={}, accuracy={}%",
+            log.info("[AI妯″瀷璁粌] 璁粌瀹屾垚: modelType={}, version={}, accuracy={}%",
                     modelType, modelVersion, result.getTrainingAccuracy());
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI模型训练] 训练失败: modelType={}, error={}", modelType, e.getMessage(), e);
-            return ResponseDTO.error("AI_MODEL_TRAINING_FAILED", "AI模型训练失败");
+            log.error("[AI妯″瀷璁粌] 璁粌澶辫触: modelType={}, error={}", modelType, e.getMessage(), e);
+            return ResponseDTO.error("AI_MODEL_TRAINING_FAILED", "AI妯″瀷璁粌澶辫触");
         }
     }
 
     @Override
     public ResponseDTO<AIAnalysisReportVO> generateAIAnalysisReport(AIAnalysisReportRequest request) {
-        log.info("[AI分析报告] 开始生成AI分析报告: reportType={}", request.getReportType());
+        log.info("[AI鍒嗘瀽鎶ュ憡] 寮€濮嬬敓鎴怉I鍒嗘瀽鎶ュ憡: reportType={}", request.getReportType());
 
         try {
             String reportId = generateReportId();
             String generationTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             String reportPeriod = request.getReportPeriod();
 
-            // 生成执行摘要
+            // 鐢熸垚鎵ц鎽樿
             String executiveSummary = generateExecutiveSummary(request);
 
-            // 生成系统健康指标
+            // 鐢熸垚绯荤粺鍋ュ悍鎸囨爣
             SystemHealthMetrics systemHealth = generateSystemHealthMetrics();
 
-            // 生成安全态势分析
+            // 鐢熸垚瀹夊叏鎬佸娍鍒嗘瀽
             SecurityPostureAnalysis securityPosture = generateSecurityPostureAnalysis();
 
-            // 生成性能分析
+            // 鐢熸垚鎬ц兘鍒嗘瀽
             PerformanceAnalysis performance = generatePerformanceAnalysis();
 
-            // 生成趋势分析
+            // 鐢熸垚瓒嬪娍鍒嗘瀽
             List<TrendAnalysis> trends = generateTrendAnalysis();
 
-            // 生成建议
+            // 鐢熸垚寤鸿
             List<String> recommendations = generateReportRecommendations();
 
-            // 确定下次审查日期
+            // 纭畾涓嬫瀹℃煡鏃ユ湡
             String nextReviewDate = LocalDateTime.now().plusMonths(1)
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
@@ -611,72 +611,72 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setRecommendations(recommendations);
             result.setNextReviewDate(nextReviewDate);
 
-            log.info("[AI分析报告] 报告生成完成: reportId={}, type={}", reportId, request.getReportType());
+            log.info("[AI鍒嗘瀽鎶ュ憡] 鎶ュ憡鐢熸垚瀹屾垚: reportId={}, type={}", reportId, request.getReportType());
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[AI分析报告] 报告生成失败: reportType={}, error={}", request.getReportType(), e.getMessage(), e);
-            return ResponseDTO.error("AI_ANALYSIS_REPORT_FAILED", "AI分析报告生成失败");
+            log.error("[AI鍒嗘瀽鎶ュ憡] 鎶ュ憡鐢熸垚澶辫触: reportType={}, error={}", request.getReportType(), e.getMessage(), e);
+            return ResponseDTO.error("AI_ANALYSIS_REPORT_FAILED", "AI鍒嗘瀽鎶ュ憡鐢熸垚澶辫触");
         }
     }
 
-    // ==================== 私有辅助方法 ====================
+    // ==================== 绉佹湁杈呭姪鏂规硶 ====================
 
     private ResponseDTO<UserBehaviorPatternVO> createEmptyBehaviorPattern(Long userId) {
         UserBehaviorPatternVO pattern = new UserBehaviorPatternVO();
         pattern.setUserId(userId);
-        pattern.setAnalysisPeriod("最近30天");
+        pattern.setAnalysisPeriod("鏈€杩?0澶?);
         pattern.setAccessTimePattern(new AccessTimePattern());
         pattern.setDevicePreferencePattern(new DevicePreferencePattern());
         pattern.setAccessPathPattern(new AccessPathPattern());
         pattern.setDetectedAnomalies(new ArrayList<>());
         pattern.setRiskLevel("LOW");
-        pattern.setRecommendations(Arrays.asList("数据不足，无法进行有效分析"));
+        pattern.setRecommendations(Arrays.asList("鏁版嵁涓嶈冻锛屾棤娉曡繘琛屾湁鏁堝垎鏋?));
         pattern.setConfidenceScore(0.0);
         pattern.setLastAnalysisTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         return ResponseDTO.ok(pattern);
     }
 
     private List<AccessRecordEntity> getAccessRecordsByUser(Long userId, Integer days) {
-        // TODO: 实现从数据库获取用户访问记录的逻辑
-        return new ArrayList<>(); // 临时返回空列表
+        // TODO: 瀹炵幇浠庢暟鎹簱鑾峰彇鐢ㄦ埛璁块棶璁板綍鐨勯€昏緫
+        return new ArrayList<>(); // 涓存椂杩斿洖绌哄垪琛?
     }
 
     private List<AccessRecordEntity> getAccessRecordsByDevice(Long deviceId, Integer days) {
-        // TODO: 实现从数据库获取设备访问记录的逻辑
-        return new ArrayList<>(); // 临时返回空列表
+        // TODO: 瀹炵幇浠庢暟鎹簱鑾峰彇璁惧璁块棶璁板綍鐨勯€昏緫
+        return new ArrayList<>(); // 涓存椂杩斿洖绌哄垪琛?
     }
 
     private List<AccessRecordEntity> getRecentAccessRecords(Long userId, Long deviceId, Integer hours) {
-        // TODO: 实现获取最近访问记录的逻辑
-        return new ArrayList<>(); // 临时返回空列表
+        // TODO: 瀹炵幇鑾峰彇鏈€杩戣闂褰曠殑閫昏緫
+        return new ArrayList<>(); // 涓存椂杩斿洖绌哄垪琛?
     }
 
     private List<AccessRecordEntity> getAccessRecordsByUserAndDevice(Long userId, Long deviceId, Integer days) {
-        // TODO: 实现获取用户和设备访问记录的逻辑
-        return new ArrayList<>(); // 临时返回空列表
+        // TODO: 瀹炵幇鑾峰彇鐢ㄦ埛鍜岃澶囪闂褰曠殑閫昏緫
+        return new ArrayList<>(); // 涓存椂杩斿洖绌哄垪琛?
     }
 
     private List<AccessRecordEntity> getHistoricalAccessData(List<Long> deviceIds, Integer days) {
-        // TODO: 实现获取历史访问数据的逻辑
-        return new ArrayList<>(); // 临时返回空列表
+        // TODO: 瀹炵幇鑾峰彇鍘嗗彶璁块棶鏁版嵁鐨勯€昏緫
+        return new ArrayList<>(); // 涓存椂杩斿洖绌哄垪琛?
     }
 
     private AccessTimePattern analyzeAccessTimePattern(List<AccessRecordEntity> records) {
         AccessTimePattern pattern = new AccessTimePattern();
 
-        // 分析小时分布
+        // 鍒嗘瀽灏忔椂鍒嗗竷
         Map<Integer, Long> hourDistribution = records.stream()
                 .collect(Collectors.groupingBy(
                         record -> record.getCreateTime().getHour(),
                         Collectors.counting()
                 ));
 
-        // 识别高峰和低谷时段
+        // 璇嗗埆楂樺嘲鍜屼綆璋锋椂娈?
         List<String> peakHours = new ArrayList<>();
         List<String> quietHours = new ArrayList<>();
 
-        // 简化实现：基于访问次数确定高峰和低谷
+        // 绠€鍖栧疄鐜帮細鍩轰簬璁块棶娆℃暟纭畾楂樺嘲鍜屼綆璋?
         long avgAccess = records.size() / 24;
         for (Map.Entry<Integer, Long> entry : hourDistribution.entrySet()) {
             if (entry.getValue() > avgAccess * 1.5) {
@@ -689,8 +689,8 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         pattern.setPeakHours(peakHours);
         pattern.setQuietHours(quietHours);
         pattern.setAvgDailyAccess((int) avgAccess);
-        pattern.setWeeklyPattern("WEEKDAY_PEAK"); // 简化实现
-        pattern.setWeekendAccess(true); // 简化实现
+        pattern.setWeeklyPattern("WEEKDAY_PEAK"); // 绠€鍖栧疄鐜?
+        pattern.setWeekendAccess(true); // 绠€鍖栧疄鐜?
         pattern.setTimeVariability("MEDIUM");
 
         return pattern;
@@ -699,14 +699,14 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     private DevicePreferencePattern analyzeDevicePreferencePattern(List<AccessRecordEntity> records, Long userId) {
         DevicePreferencePattern pattern = new DevicePreferencePattern();
 
-        // 统计设备使用次数
+        // 缁熻璁惧浣跨敤娆℃暟
         Map<Long, Long> deviceUsageCount = records.stream()
                 .collect(Collectors.groupingBy(
                         AccessRecordEntity::getDeviceId,
                         Collectors.counting()
                 ));
 
-        // 创建设备使用排名
+        // 鍒涘缓璁惧浣跨敤鎺掑悕
         List<DeviceUsageRanking> rankings = deviceUsageCount.entrySet().stream()
                 .sorted(Map.Entry.<Long, Long>comparingByValue(Map.Entry::getValue).reversed())
                 .limit(5)
@@ -720,7 +720,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                 .collect(Collectors.toList());
 
         pattern.setDeviceRankings(rankings);
-        pattern.setPreferredDeviceType("BLUETOOTH"); // 简化实现
+        pattern.setPreferredDeviceType("BLUETOOTH"); // 绠€鍖栧疄鐜?
         pattern.setDeviceDiversity(deviceUsageCount.size());
         pattern.setwitchingPattern("LOW_SWITCHING");
 
@@ -730,8 +730,8 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     private AccessPathPattern analyzeAccessPathPattern(List<AccessRecordEntity> records) {
         AccessPathPattern pattern = new AccessPathPattern();
 
-        // 简化实现：基于记录顺序分析路径
-        List<String> frequentPaths = Arrays.asList("设备1->设备2->区域A", "设备3->区域B");
+        // 绠€鍖栧疄鐜帮細鍩轰簬璁板綍椤哄簭鍒嗘瀽璺緞
+        List<String> frequentPaths = Arrays.asList("璁惧1->璁惧2->鍖哄煙A", "璁惧3->鍖哄煙B");
         pattern.setFrequentPaths(frequentPaths);
         pattern.setTypicalPathLength("2-3");
         pattern.setUnusualPaths(new ArrayList<>());
@@ -747,7 +747,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             AccessPathPattern pathPattern) {
         List<BehaviorAnomaly> anomalies = new ArrayList<>();
 
-        // 检测时间异常
+        // 妫€娴嬫椂闂村紓甯?
         List<AccessRecordEntity> timeAnomalies = records.stream()
                 .filter(this::isTimeAnomaly)
                 .collect(Collectors.toList());
@@ -755,22 +755,22 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         for (AccessRecordEntity record : timeAnomalies) {
             BehaviorAnomaly anomaly = new BehaviorAnomaly();
             anomaly.setAnomalyType("TIME_ANOMALY");
-            anomaly.setDescription("非正常时间访问");
+            anomaly.setDescription("闈炴甯告椂闂磋闂?);
             anomaly.setDetectionTime(record.getCreateTime());
             anomaly.setSeverity("MEDIUM");
             anomaly.setAnomalyScore(65.0);
             anomalies.add(anomaly);
         }
 
-        // 检测设备异常
-        // TODO: 实现其他异常检测逻辑
+        // 妫€娴嬭澶囧紓甯?
+        // TODO: 瀹炵幇鍏朵粬寮傚父妫€娴嬮€昏緫
 
         return anomalies;
     }
 
     private boolean isTimeAnomaly(AccessRecordEntity record) {
         int hour = record.getCreateTime().getHour();
-        // 简化判断：深夜和凌晨访问为异常
+        // 绠€鍖栧垽鏂細娣卞鍜屽噷鏅ㄨ闂负寮傚父
         return hour < 6 || hour > 22;
     }
 
@@ -789,53 +789,53 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     private List<String> generateBehaviorRecommendations(List<BehaviorAnomaly> anomalies, String riskLevel) {
         List<String> recommendations = new ArrayList<>();
 
-        recommendations.add("定期审查用户访问模式");
+        recommendations.add("瀹氭湡瀹℃煡鐢ㄦ埛璁块棶妯″紡");
 
         if (!anomalies.isEmpty()) {
-            recommendations.add("关注异常访问行为");
-            recommendations.add("考虑实施更严格的访问控制");
+            recommendations.add("鍏虫敞寮傚父璁块棶琛屼负");
+            recommendations.add("鑰冭檻瀹炴柦鏇翠弗鏍肩殑璁块棶鎺у埗");
         }
 
         if ("HIGH".equals(riskLevel) || "CRITICAL".equals(riskLevel)) {
-            recommendations.add("立即采取安全措施");
-            recommendations.add("通知安全团队");
+            recommendations.add("绔嬪嵆閲囧彇瀹夊叏鎺柦");
+            recommendations.add("閫氱煡瀹夊叏鍥㈤槦");
         }
 
         return recommendations;
     }
 
     private Double calculateAnalysisConfidence(int recordCount, int analysisDays) {
-        // 基于数据量和时间窗口计算置信度
-        double dataFactor = Math.min(recordCount / 100.0, 1.0); // 数据量因子
-        double timeFactor = Math.min(analysisDays / 30.0, 1.0); // 时间因子
+        // 鍩轰簬鏁版嵁閲忓拰鏃堕棿绐楀彛璁＄畻缃俊搴?
+        double dataFactor = Math.min(recordCount / 100.0, 1.0); // 鏁版嵁閲忓洜瀛?
+        double timeFactor = Math.min(analysisDays / 30.0, 1.0); // 鏃堕棿鍥犲瓙
         return (dataFactor + timeFactor) / 2.0;
     }
 
-    // 继续实现其他私有方法...
-    // 为了代码简洁，这里省略了部分私有方法的实现
+    // 缁х画瀹炵幇鍏朵粬绉佹湁鏂规硶...
+    // 涓轰簡浠ｇ爜绠€娲侊紝杩欓噷鐪佺暐浜嗛儴鍒嗙鏈夋柟娉曠殑瀹炵幇
 
     private List<DetectedAnomaly> detectTimeAnomalies(List<AccessRecordEntity> records) {
-        // TODO: 实现时间异常检测
+        // TODO: 瀹炵幇鏃堕棿寮傚父妫€娴?
         return new ArrayList<>();
     }
 
     private List<DetectedAnomaly> detectFrequencyAnomalies(List<AccessRecordEntity> records) {
-        // TODO: 实现频率异常检测
+        // TODO: 瀹炵幇棰戠巼寮傚父妫€娴?
         return new ArrayList<>();
     }
 
     private List<DetectedAnomaly> detectLocationAnomalies(List<AccessRecordEntity> records) {
-        // TODO: 实现位置异常检测
+        // TODO: 瀹炵幇浣嶇疆寮傚父妫€娴?
         return new ArrayList<>();
     }
 
     private List<DetectedAnomaly> detectDeviceSwitchingAnomalies(List<AccessRecordEntity> records) {
-        // TODO: 实现设备切换异常检测
+        // TODO: 瀹炵幇璁惧鍒囨崲寮傚父妫€娴?
         return new ArrayList<>();
     }
 
     private List<DetectedAnomaly> detectConcurrentAccessAnomalies(List<AccessRecordEntity> records) {
-        // TODO: 实现并发访问异常检测
+        // TODO: 瀹炵幇骞跺彂璁块棶寮傚父妫€娴?
         return new ArrayList<>();
     }
 
@@ -846,7 +846,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     }
 
     private String assessOverallRiskLevel(List<DetectedAnomaly> anomalies) {
-        // 基于异常数量和严重程度评估整体风险
+        // 鍩轰簬寮傚父鏁伴噺鍜屼弗閲嶇▼搴﹁瘎浼版暣浣撻闄?
         long criticalCount = anomalies.stream()
                 .filter(a -> "CRITICAL".equals(a.getSeverity()))
                 .count();
@@ -873,21 +873,21 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         List<String> actions = new ArrayList<>();
 
         if ("CRITICAL".equals(riskLevel)) {
-            actions.add("立即阻止访问");
-            actions.add("通知管理员");
-            actions.add("记录安全事件");
+            actions.add("绔嬪嵆闃绘璁块棶");
+            actions.add("閫氱煡绠＄悊鍛?);
+            actions.add("璁板綍瀹夊叏浜嬩欢");
         } else if ("HIGH".equals(riskLevel)) {
-            actions.add("增加验证步骤");
-            actions.add("监控后续行为");
+            actions.add("澧炲姞楠岃瘉姝ラ");
+            actions.add("鐩戞帶鍚庣画琛屼负");
         }
 
         return actions;
     }
 
-    // 为了节省篇幅，其他私有方法的实现将类似地处理...
-    // 实际项目中需要完整实现所有方法
+    // 涓轰簡鑺傜渷绡囧箙锛屽叾浠栫鏈夋柟娉曠殑瀹炵幇灏嗙被浼煎湴澶勭悊...
+    // 瀹為檯椤圭洰涓渶瑕佸畬鏁村疄鐜版墍鏈夋柟娉?
 
-    // ==================== 内部数据类 ====================
+    // ==================== 鍐呴儴鏁版嵁绫?====================
 
     private static class UserBehaviorPattern {
         private Long userId;
@@ -940,8 +940,8 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         public void setAvailable(Boolean available) { this.available = available; }
     }
 
-    // 为了节省篇幅，其他内部数据类的实现将类似地处理
-    // 实际项目中需要完整实现所有数据类
+    // 涓轰簡鑺傜渷绡囧箙锛屽叾浠栧唴閮ㄦ暟鎹被鐨勫疄鐜板皢绫讳技鍦板鐞?
+    // 瀹為檯椤圭洰涓渶瑕佸畬鏁村疄鐜版墍鏈夋暟鎹被
 
     private String generateEventId() {
         return "EVT_" + System.currentTimeMillis();
@@ -952,7 +952,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     }
 
     private boolean shouldAutoRespond(String eventType) {
-        // 简化实现：大部分事件类型都自动响应
+        // 绠€鍖栧疄鐜帮細澶ч儴鍒嗕簨浠剁被鍨嬮兘鑷姩鍝嶅簲
         return !"MANUAL".equals(eventType);
     }
 
@@ -961,7 +961,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             return "WAITING_MANUAL_REVIEW";
         }
 
-        // 根据事件类型确定响应动作
+        // 鏍规嵁浜嬩欢绫诲瀷纭畾鍝嶅簲鍔ㄤ綔
         switch (eventType) {
             case "HIGH_RISK_ANOMALY":
                 return "BLOCK_AND_ALERT";
@@ -975,27 +975,27 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     }
 
     private Boolean executeResponseAction(String eventId, String responseAction, AnomalyEventProcessingRequest request) {
-        // TODO: 实现响应动作执行逻辑
-        return true; // 简化实现，假设总是成功
+        // TODO: 瀹炵幇鍝嶅簲鍔ㄤ綔鎵ц閫昏緫
+        return true; // 绠€鍖栧疄鐜帮紝鍋囪鎬绘槸鎴愬姛
     }
 
     private List<String> generateFollowUpActions(String eventType, Boolean issueResolved) {
         List<String> actions = new ArrayList<>();
 
         if (!issueResolved) {
-            actions.add("调查根本原因");
-            actions.add("计划修复措施");
+            actions.add("璋冩煡鏍规湰鍘熷洜");
+            actions.add("璁″垝淇鎺柦");
         } else {
-            actions.add("监控后续状态");
-            actions.add("更新处理文档");
+            actions.add("鐩戞帶鍚庣画鐘舵€?);
+            actions.add("鏇存柊澶勭悊鏂囨。");
         }
 
         return actions;
     }
 
     private String generateExecutiveSummary(AIAnalysisReportRequest request) {
-        return "AI分析系统在报告期间表现良好，各项指标均在正常范围内。"
-                + "系统整体运行稳定，建议继续保持当前的安全策略和性能优化措施。";
+        return "AI鍒嗘瀽绯荤粺鍦ㄦ姤鍛婃湡闂磋〃鐜拌壇濂斤紝鍚勯」鎸囨爣鍧囧湪姝ｅ父鑼冨洿鍐呫€?
+                + "绯荤粺鏁翠綋杩愯绋冲畾锛屽缓璁户缁繚鎸佸綋鍓嶇殑瀹夊叏绛栫暐鍜屾€ц兘浼樺寲鎺柦銆?;
     }
 
     private SystemHealthMetrics generateSystemHealthMetrics() {
@@ -1004,7 +1004,7 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         metrics.setDeviceHealthScore(88);
         metrics.setNetworkHealthScore(82);
         metrics.setSecurityHealthScore(90);
-        metrics.setHealthWarnings(Arrays.asList("部分设备负载较高"));
+        metrics.setHealthWarnings(Arrays.asList("閮ㄥ垎璁惧璐熻浇杈冮珮"));
         metrics.setCriticalIssues(new ArrayList<>());
         return metrics;
     }
@@ -1014,8 +1014,8 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         analysis.setSecurityScore(92);
         analysis.setThreatLevel("LOW");
         analysis.setSecurityTrends(new ArrayList<>());
-        analysis.setIdentifiedVulnerabilities(Arrays.asList("需要更新设备固件"));
-        analysis.setRemediationActions(Arrays.asList("安排固件升级计划"));
+        analysis.setIdentifiedVulnerabilities(Arrays.asList("闇€瑕佹洿鏂拌澶囧浐浠?));
+        analysis.setRemediationActions(Arrays.asList("瀹夋帓鍥轰欢鍗囩骇璁″垝"));
         return analysis;
     }
 
@@ -1032,11 +1032,11 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         List<TrendAnalysis> trends = new ArrayList<>();
 
         TrendAnalysis trend1 = new TrendAnalysis();
-        trend1.setMetricName("访问量");
+        trend1.setMetricName("璁块棶閲?);
         trend1.setTrendDirection("INCREASING");
         trend1.setChangeRate(15.5);
         trend1.setTrendPeriod("monthly");
-        trend1.setInfluencingFactors(Arrays.asList("用户增长", "业务扩展"));
+        trend1.setInfluencingFactors(Arrays.asList("鐢ㄦ埛澧為暱", "涓氬姟鎵╁睍"));
         trends.add(trend1);
 
         return trends;
@@ -1044,12 +1044,12 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
 
     private List<String> generateReportRecommendations() {
         return Arrays.asList(
-                "继续实施当前的安全策略",
-                "监控系统性能指标",
-                "定期更新AI模型",
-                "加强员工安全培训"
+                "缁х画瀹炴柦褰撳墠鐨勫畨鍏ㄧ瓥鐣?,
+                "鐩戞帶绯荤粺鎬ц兘鎸囨爣",
+                "瀹氭湡鏇存柊AI妯″瀷",
+                "鍔犲己鍛樺伐瀹夊叏鍩硅"
         );
     }
 
-    // 为了节省篇幅，其他辅助方法的实现类似处理...
+    // 涓轰簡鑺傜渷绡囧箙锛屽叾浠栬緟鍔╂柟娉曠殑瀹炵幇绫讳技澶勭悊...
 }

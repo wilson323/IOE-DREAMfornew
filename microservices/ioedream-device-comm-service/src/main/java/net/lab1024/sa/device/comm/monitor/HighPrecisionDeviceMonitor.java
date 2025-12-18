@@ -18,6 +18,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * 高精度设备监控器
@@ -158,14 +159,14 @@ public class HighPrecisionDeviceMonitor {
     @Schema(description = "设备指标历史数据")
     public static class DeviceMetricsHistory {
         private String deviceId;
-        private Queue<DeviceStatusSnapshot> recentSnapshots;
+        private Deque<DeviceStatusSnapshot> recentSnapshots;
         private int maxHistorySize;
         private LocalDateTime lastUpdateTime;
 
         public DeviceMetricsHistory(String deviceId, int maxHistorySize) {
             this.deviceId = deviceId;
             this.maxHistorySize = maxHistorySize;
-            this.recentSnapshots = new ConcurrentLinkedQueue<>();
+            this.recentSnapshots = new ConcurrentLinkedDeque<>();
             this.lastUpdateTime = LocalDateTime.now();
         }
 
@@ -190,7 +191,7 @@ public class HighPrecisionDeviceMonitor {
 
         // getters
         public String getDeviceId() { return deviceId; }
-        public Queue<DeviceStatusSnapshot> getRecentSnapshots() { return recentSnapshots; }
+        public Deque<DeviceStatusSnapshot> getRecentSnapshots() { return recentSnapshots; }
         public int getMaxHistorySize() { return maxHistorySize; }
         public LocalDateTime getLastUpdateTime() { return lastUpdateTime; }
     }
@@ -453,7 +454,7 @@ public class HighPrecisionDeviceMonitor {
      */
     private DeviceStatusSnapshot collectHighPrecisionStatus(DeviceEntity device, DeviceMonitorConfig config) {
         DeviceStatusSnapshot snapshot = new DeviceStatusSnapshot();
-        snapshot.setDeviceId(device.getId().toString());
+        snapshot.setDeviceId(device.getDeviceId());
         snapshot.setDeviceType(device.getDeviceType());
 
         // 1. 基础状态检查
@@ -480,7 +481,7 @@ public class HighPrecisionDeviceMonitor {
      */
     private DeviceStatus checkDeviceBasicStatus(DeviceEntity device) {
         // 检查设备启用状态
-        if (device.getEnabledFlag() == null || device.getEnabledFlag() == 0) {
+        if (device.getEnabled() == null || device.getEnabled() == 0) {
             return DeviceStatus.MAINTENANCE;
         }
 
@@ -495,15 +496,15 @@ public class HighPrecisionDeviceMonitor {
             }
         }
 
-        // 检查设备状态字段
-        String status = device.getStatus();
-        if ("0".equals(status)) {
+        // 检查设备状态字段（Integer类型：1-在线 2-离线 3-故障 4-维护 5-停用）
+        Integer deviceStatus = device.getDeviceStatus();
+        if (deviceStatus == null || deviceStatus == 2) {
             return DeviceStatus.OFFLINE;
-        } else if ("2".equals(status)) {
-            return DeviceStatus.BUSY;
-        } else if ("3".equals(status)) {
+        } else if (deviceStatus == 3) {
             return DeviceStatus.ERROR;
-        } else if ("4".equals(status)) {
+        } else if (deviceStatus == 4) {
+            return DeviceStatus.MAINTENANCE;
+        } else if (deviceStatus == 5) {
             return DeviceStatus.MAINTENANCE;
         }
 
@@ -523,14 +524,14 @@ public class HighPrecisionDeviceMonitor {
                             try {
                                 return (ResponseDTO<Map<String, Object>>) (ResponseDTO<?>)
                                         gatewayServiceClient.callDeviceCommService(
-                                                "/api/v1/device/realtime-metrics/" + device.getId(),
+                                                "/api/v1/device/realtime-metrics/" + device.getDeviceId(),
                                                 HttpMethod.GET,
                                                 null,
                                                 Map.class
                                         );
                             } catch (Exception e) {
                                 log.debug("[高精度监控] 获取实时指标失败, deviceId={}, error={}",
-                                        device.getId(), e.getMessage());
+                                        device.getDeviceId(), e.getMessage());
                                 return null;
                             }
                         });
@@ -553,9 +554,9 @@ public class HighPrecisionDeviceMonitor {
 
         } catch (TimeoutException e) {
             log.warn("[高精度监控] 获取指标超时, deviceId={}, timeout={}ms",
-                    device.getId(), config.getTimeoutMs());
+                    device.getDeviceId(), config.getTimeoutMs());
         } catch (Exception e) {
-            log.debug("[高精度监控] 收集性能指标异常, deviceId={}", device.getId(), e);
+            log.debug("[高精度监控] 收集性能指标异常, deviceId={}", device.getDeviceId(), e);
         }
     }
 
@@ -628,17 +629,17 @@ public class HighPrecisionDeviceMonitor {
         // 设备基础信息
         extendedAttributes.put("deviceName", device.getDeviceName());
         extendedAttributes.put("deviceCode", device.getDeviceCode());
-        extendedAttributes.put("deviceModel", device.getDeviceModel());
-        extendedAttributes.put("manufacturer", device.getManufacturer());
+        extendedAttributes.put("deviceModel", device.getModel());
+        extendedAttributes.put("manufacturer", device.getBrand());
 
         // 位置信息
         if (device.getAreaId() != null) {
             extendedAttributes.put("areaId", device.getAreaId());
         }
 
-        // 协议信息
-        if (device.getProtocolType() != null) {
-            extendedAttributes.put("protocolType", device.getProtocolType());
+        // 协议信息（从扩展属性中解析，或使用业务模块）
+        if (device.getBusinessModule() != null) {
+            extendedAttributes.put("businessModule", device.getBusinessModule());
         }
 
         // 其他业务属性
@@ -814,12 +815,12 @@ public class HighPrecisionDeviceMonitor {
             List<DeviceEntity> devices = deviceDao.selectList(null);
             return devices.stream()
                     .filter(device -> {
-                        DeviceMonitorConfig config = getDeviceMonitorConfig(device.getId().toString());
+                        DeviceMonitorConfig config = getDeviceMonitorConfig(device.getDeviceId());
                         return config.isEnableHighPrecision() &&
                                DeviceStatus.ONLINE.equals(checkDeviceBasicStatus(device));
                     })
-                    .map(device -> device.getId().toString())
-                    .toList();
+                    .map(DeviceEntity::getDeviceId)
+                    .collect(java.util.stream.Collectors.toList());
         } catch (Exception e) {
             log.error("[高精度监控] 获取高精度设备列表失败", e);
             return new ArrayList<>();

@@ -3,7 +3,10 @@ package net.lab1024.sa.device.comm.protocol.rs485;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.*;
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.domain.*;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -218,11 +221,11 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
 
             // 验证消息格式
             if (rs485Message.getDeviceAddress() == 0) {
-                return new ProtocolValidationResult(false, "设备地址不能为0");
+                return ProtocolValidationResult.failure("INVALID_ADDRESS", "设备地址不能为0");
             }
 
             if (rs485Message.getFunctionCode() == 0) {
-                return new ProtocolValidationResult(false, "功能码不能为0");
+                return ProtocolValidationResult.failure("INVALID_FUNCTION_CODE", "功能码不能为0");
             }
 
             // 验证CRC校验
@@ -230,15 +233,15 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
                 byte[] rawData = rs485Message.getRawData();
                 if (rawData != null && rawData.length >= rs485Message.getCrc().length + 2) {
                     if (!validateCRC(rawData, rawData.length, rs485Message.getCrc())) {
-                        return new ProtocolValidationResult(false, "CRC校验失败");
+                        return ProtocolValidationResult.failure("CRC_ERROR", "CRC校验失败");
                     }
                 }
             }
 
-            return new ProtocolValidationResult(true, "验证通过");
+            return ProtocolValidationResult.success();
 
         } catch (Exception e) {
-            return new ProtocolValidationResult(false, "验证异常: " + e.getMessage());
+            return ProtocolValidationResult.failure("VALIDATION_ERROR", "验证异常: " + e.getMessage());
         }
     }
 
@@ -247,11 +250,11 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         // RS485工业设备权限验证逻辑
         RS485Connection connection = connections.get(deviceId);
         if (connection == null) {
-            return new ProtocolPermissionResult(false, "设备未连接");
+            return ProtocolPermissionResult.deny("设备未连接");
         }
 
         if (!connection.isAuthenticated()) {
-            return new ProtocolPermissionResult(false, "设备未认证");
+            return ProtocolPermissionResult.deny("设备未认证");
         }
 
         // 检查操作权限
@@ -259,18 +262,18 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
             case "read":
             case "read_holding_registers":
             case "read_input_registers":
-                return new ProtocolPermissionResult(true, "读操作权限验证通过");
+                return ProtocolPermissionResult.permit();
 
             case "write":
             case "write_single_register":
             case "write_multiple_registers":
                 if (!connection.isWriteEnabled()) {
-                    return new ProtocolPermissionResult(false, "设备禁止写入操作");
+                    return ProtocolPermissionResult.deny("设备禁止写入操作");
                 }
-                return new ProtocolPermissionResult(true, "写操作权限验证通过");
+                return ProtocolPermissionResult.permit();
 
             default:
-                return new ProtocolPermissionResult(false, "不支持的操作类型: " + operation);
+                return ProtocolPermissionResult.deny("不支持的操作类型: " + operation);
         }
     }
 
@@ -307,11 +310,11 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
                 connections.put(deviceId, connection);
 
                 log.info("[RS485设备初始化] 初始化成功, deviceId={}", deviceId);
-                return new ProtocolInitResult(true, "RS485设备初始化成功");
+                return ProtocolInitResult.success(deviceId, "RS485-" + deviceId);
 
             } catch (Exception e) {
                 log.error("[RS485设备初始化] 初始化失败, error={}", e.getMessage(), e);
-                return new ProtocolInitResult(false, "RS485设备初始化失败: " + e.getMessage());
+                return ProtocolInitResult.failure("RS485设备初始化失败: " + e.getMessage());
             }
         });
     }
@@ -326,7 +329,7 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
             String firmwareVersion = (String) registrationData.get("firmwareVersion");
 
             if (!isDeviceModelSupported(deviceModel)) {
-                return new ProtocolRegistrationResult(false, "不支持的设备型号: " + deviceModel);
+                return ProtocolRegistrationResult.failure("不支持的设备型号: " + deviceModel);
             }
 
             // 创建设备信息
@@ -339,11 +342,11 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
             deviceInfo.put("registerTime", System.currentTimeMillis());
 
             log.info("[RS485设备注册] 注册成功, deviceId={}, deviceModel={}", deviceId, deviceModel);
-            return new ProtocolRegistrationResult(true, "RS485设备注册成功", deviceInfo);
+            return ProtocolRegistrationResult.success(deviceId, "RS485-REG-" + deviceId);
 
         } catch (Exception e) {
             log.error("[RS485设备注册] 注册失败, deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return new ProtocolRegistrationResult(false, "RS485设备注册失败: " + e.getMessage());
+            return ProtocolRegistrationResult.failure("RS485设备注册失败: " + e.getMessage());
         }
     }
 
@@ -354,7 +357,7 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
 
             RS485Connection connection = connections.get(deviceId);
             if (connection == null) {
-                return new ProtocolHeartbeatResult(false, "设备连接不存在");
+                return ProtocolHeartbeatResult.failure("设备连接不存在");
             }
 
             // 更新设备状态
@@ -365,11 +368,11 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
             connection.setStatus(status);
 
             log.debug("[RS485设备心跳] 心跳处理成功, deviceId={}", deviceId);
-            return new ProtocolHeartbeatResult(true, "心跳处理成功", status);
+            return ProtocolHeartbeatResult.success(deviceId);
 
         } catch (Exception e) {
             log.error("[RS485设备心跳] 心跳处理失败, deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return new ProtocolHeartbeatResult(false, "心跳处理失败: " + e.getMessage());
+            return ProtocolHeartbeatResult.failure("心跳处理失败: " + e.getMessage());
         }
     }
 
@@ -378,53 +381,40 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         try {
             RS485Connection connection = connections.get(deviceId);
             if (connection == null) {
-                return new ProtocolDeviceStatus(deviceId, "OFFLINE", "设备未连接");
+                return ProtocolDeviceStatus.offline(deviceId);
             }
 
-            Map<String, Object> status = connection.getStatus();
-            String statusStr = connection.isConnected() ? "ONLINE" : "OFFLINE";
+            String statusStr = connection.isConnected() ? "CONNECTED" : "DISCONNECTED";
 
-            return new ProtocolDeviceStatus(deviceId, statusStr, "设备状态正常", status);
+            return ProtocolDeviceStatus.online(deviceId, "RS485-" + deviceId, statusStr);
 
         } catch (Exception e) {
             log.error("[RS485设备状态] 获取状态失败, deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return new ProtocolDeviceStatus(deviceId, "ERROR", "获取状态失败: " + e.getMessage());
+            return ProtocolDeviceStatus.offline(deviceId);
         }
     }
 
     @Override
     public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
         return executorService.submit(() -> {
-            try {
-                // RS485主要用于工业控制，不处理门禁业务
-                return new ProtocolProcessResult(false, "RS485协议不支持门禁业务");
-            } catch (Exception e) {
-                return new ProtocolProcessResult(false, "业务处理异常: " + e.getMessage());
-            }
+            // RS485主要用于工业控制，不处理门禁业务
+            return ProtocolProcessResult.failure("ACCESS", "NOT_SUPPORTED", "RS485协议不支持门禁业务");
         });
     }
 
     @Override
     public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
         return executorService.submit(() -> {
-            try {
-                // RS485主要用于工业控制，不处理考勤业务
-                return new ProtocolProcessResult(false, "RS485协议不支持考勤业务");
-            } catch (Exception e) {
-                return new ProtocolProcessResult(false, "业务处理异常: " + e.getMessage());
-            }
+            // RS485主要用于工业控制，不处理考勤业务
+            return ProtocolProcessResult.failure("ATTENDANCE", "NOT_SUPPORTED", "RS485协议不支持考勤业务");
         });
     }
 
     @Override
     public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
         return executorService.submit(() -> {
-            try {
-                // RS485主要用于工业控制，不处理消费业务
-                return new ProtocolProcessResult(false, "RS485协议不支持消费业务");
-            } catch (Exception e) {
-                return new ProtocolProcessResult(false, "业务处理异常: " + e.getMessage());
-            }
+            // RS485主要用于工业控制，不处理消费业务
+            return ProtocolProcessResult.failure("CONSUME", "NOT_SUPPORTED", "RS485协议不支持消费业务");
         });
     }
 
@@ -495,7 +485,7 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         String protocolErrorCode = mapToRS485ErrorCode(errorCode);
         String protocolErrorMessage = mapToRS485ErrorMessage(errorCode, errorMessage);
 
-        return new ProtocolErrorResponse(protocolErrorCode, protocolErrorMessage, deviceId);
+        return ProtocolErrorResponse.create(protocolErrorCode, protocolErrorMessage, deviceId);
     }
 
     @Override
@@ -503,19 +493,19 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         Map<String, ProtocolErrorInfo> errorMapping = new HashMap<>();
 
         // CRC校验错误
-        errorMapping.put("CRC_ERROR", new ProtocolErrorInfo("CRC_ERROR", "CRC校验失败", "严重", "检查通讯线路"));
+        errorMapping.put("CRC_ERROR", ProtocolErrorInfo.of("CRC_ERROR", "CRC校验失败", "PROTOCOL", "HIGH"));
 
         // 超时错误
-        errorMapping.put("TIMEOUT_ERROR", new ProtocolErrorInfo("TIMEOUT_ERROR", "通讯超时", "中等", "检查设备响应"));
+        errorMapping.put("TIMEOUT_ERROR", ProtocolErrorInfo.of("TIMEOUT_ERROR", "通讯超时", "NETWORK", "MEDIUM"));
 
         // 地址错误
-        errorMapping.put("ADDRESS_ERROR", new ProtocolErrorInfo("ADDRESS_ERROR", "设备地址错误", "中等", "检查设备配置"));
+        errorMapping.put("ADDRESS_ERROR", ProtocolErrorInfo.of("ADDRESS_ERROR", "设备地址错误", "PROTOCOL", "MEDIUM"));
 
         // 功能码错误
-        errorMapping.put("FUNCTION_ERROR", new ProtocolErrorInfo("FUNCTION_ERROR", "功能码不支持", "轻微", "检查设备功能"));
+        errorMapping.put("FUNCTION_ERROR", ProtocolErrorInfo.of("FUNCTION_ERROR", "功能码不支持", "PROTOCOL", "LOW"));
 
         // 数据格式错误
-        errorMapping.put("DATA_FORMAT_ERROR", new ProtocolErrorInfo("DATA_FORMAT_ERROR", "数据格式错误", "中等", "检查数据格式"));
+        errorMapping.put("DATA_FORMAT_ERROR", ProtocolErrorInfo.of("DATA_FORMAT_ERROR", "数据格式错误", "PROTOCOL", "MEDIUM"));
 
         return errorMapping;
     }
@@ -1036,6 +1026,7 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         public long getMessageCount() { return messageCount; }
         public long getErrorCount() { return errorCount; }
         public Map<String, Object> getStatus() { return status; }
+        public void setStatus(Map<String, Object> status) { this.status = status != null ? status : new HashMap<>(); }
     }
 
     /**
@@ -1048,6 +1039,8 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         private byte[] crc;
         private String messageType;
         private Map<String, Object> businessData;
+        private byte[] rawData;
+        private long receiveTime;
 
         // getters and setters
         public byte getDeviceAddress() { return deviceAddress; }
@@ -1062,5 +1055,9 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         public void setMessageType(String messageType) { this.messageType = messageType; }
         public Map<String, Object> getBusinessData() { return businessData; }
         public void setBusinessData(Map<String, Object> businessData) { this.businessData = businessData; }
+        public byte[] getRawData() { return rawData; }
+        public void setRawData(byte[] rawData) { this.rawData = rawData; }
+        public long getReceiveTime() { return receiveTime; }
+        public void setReceiveTime(long receiveTime) { this.receiveTime = receiveTime; }
     }
 }

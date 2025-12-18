@@ -2,7 +2,7 @@ package net.lab1024.sa.device.comm.service.impl;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.device.comm.protocol.rs485.*;
@@ -66,19 +66,24 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
                 return ResponseDTO.error("UNSUPPORTED_DEVICE", "不支持的设备型号: " + deviceModel);
             }
 
-            // 调用Manager层处理
-            Future<RS485InitResult> future = rs485ProtocolManager.initializeDevice(deviceId, deviceInfo, config);
-            RS485InitResult result = future.get();
+            // 调用Adapter层处理
+            var initFuture = rs485ProtocolAdapter.initializeDevice(deviceInfo, config);
+            var initResult = initFuture.get();
 
             // 记录操作日志
             logDeviceCommOperation("INITIALIZE_DEVICE", deviceId,
-                    result.isSuccess() ? "设备初始化成功" : "设备初始化失败: " + result.getErrorMessage());
+                    initResult.isSuccess() ? "设备初始化成功" : "设备初始化失败: " + initResult.getErrorMessage());
 
-            if (result.isSuccess()) {
-                RS485InitResultVO vo = convertToInitResultVO(result);
+            if (initResult.isSuccess()) {
+                RS485InitResult rs485Result = RS485InitResult.success(
+                        deviceId,
+                        (String) deviceInfo.getOrDefault("serialNumber", "UNKNOWN")
+                );
+                rs485Result.setMessage("设备初始化成功");
+                RS485InitResultVO vo = convertToInitResultVO(rs485Result);
                 return ResponseDTO.ok(vo);
             } else {
-                return ResponseDTO.error("INITIALIZE_FAILED", result.getErrorMessage());
+                return ResponseDTO.error("INITIALIZE_FAILED", initResult.getErrorMessage());
             }
 
         } catch (Exception e) {
@@ -106,9 +111,21 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
                 return ResponseDTO.error("PARAM_ERROR", "协议类型不能为空");
             }
 
-            // 调用Manager层处理
-            Future<RS485ProcessResult> future = rs485ProtocolManager.processDeviceMessage(deviceId, rawData, protocolType);
-            RS485ProcessResult result = future.get();
+            // 调用Manager层处理 (protocolType暂不使用，Manager已有协议类型)
+            var processResultFuture = rs485ProtocolManager.processDeviceMessage(rawData, deviceId);
+            var processResult = processResultFuture.get();
+
+            // 转换为RS485ProcessResult
+            RS485ProcessResult result;
+            if (processResult.isSuccess()) {
+                result = RS485ProcessResult.success(deviceId, protocolType, processResult.getResultData());
+                result.setMessage(processResult.getMessage() != null ? processResult.getMessage() : "消息处理成功");
+            } else {
+                result = RS485ProcessResult.failure(
+                        processResult.getErrorCode() != null ? processResult.getErrorCode() : "PROCESS_ERROR",
+                        processResult.getErrorMessage() != null ? processResult.getErrorMessage() : "消息处理失败"
+                );
+            }
 
             // 记录操作日志
             logDeviceCommOperation("PROCESS_MESSAGE", deviceId,
@@ -125,6 +142,46 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
             log.error("[RS485服务] 设备消息处理异常, deviceId={}", deviceId, e);
             logDeviceCommOperation("PROCESS_MESSAGE_ERROR", deviceId, e.getMessage());
             return ResponseDTO.error("SYSTEM_ERROR", "消息处理失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO<RS485HeartbeatResultVO> sendHeartbeat(Long deviceId) {
+        try {
+            log.debug("[RS485服务] 发送心跳检测, deviceId={}", deviceId);
+
+            // 参数验证
+            if (deviceId == null) {
+                return ResponseDTO.error("PARAM_ERROR", "设备ID不能为空");
+            }
+
+            // 调用Adapter层处理心跳（主动发送心跳）
+            Map<String, Object> heartbeatData = new HashMap<>();
+            heartbeatData.put("timestamp", System.currentTimeMillis());
+            ProtocolHeartbeatResult heartbeatResult = rs485ProtocolAdapter.handleDeviceHeartbeat(heartbeatData, deviceId);
+
+            // 转换为VO
+            RS485HeartbeatResultVO vo = RS485HeartbeatResultVO.builder()
+                    .success(heartbeatResult.isSuccess())
+                    .message(heartbeatResult.getResponseMessage() != null ? heartbeatResult.getResponseMessage() : "心跳处理成功")
+                    .deviceId(deviceId)
+                    .online(heartbeatResult.isOnline())
+                    .latency(heartbeatResult.getLatency())
+                    .heartbeatTime(heartbeatResult.getHeartbeatTime() != null 
+                            ? heartbeatResult.getHeartbeatTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                            : System.currentTimeMillis())
+                    .build();
+
+            if (heartbeatResult.isSuccess()) {
+                return ResponseDTO.ok(vo);
+            } else {
+                return ResponseDTO.error("HEARTBEAT_FAILED", heartbeatResult.getResponseMessage());
+            }
+
+        } catch (Exception e) {
+            log.error("[RS485服务] 发送心跳检测异常, deviceId={}", deviceId, e);
+            logDeviceCommOperation("SEND_HEARTBEAT_ERROR", deviceId, e.getMessage());
+            return ResponseDTO.error("SYSTEM_ERROR", "心跳发送失败: " + e.getMessage());
         }
     }
 
@@ -221,7 +278,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     }
 
     @Override
-    public ResponseDTO<Boolean> disconnectDevice(Long deviceId) {
+    public ResponseDTO<Void> disconnectDevice(Long deviceId) {
         try {
             log.info("[RS485服务] 断开设备连接, deviceId={}", deviceId);
 
@@ -237,7 +294,11 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
             logDeviceCommOperation("DISCONNECT_DEVICE", deviceId,
                     result ? "设备断开成功" : "设备断开失败");
 
-            return ResponseDTO.ok(result);
+            if (result) {
+                return ResponseDTO.ok();
+            } else {
+                return ResponseDTO.error("DISCONNECT_FAILED", "设备断开失败");
+            }
 
         } catch (Exception e) {
             log.error("[RS485服务] 断开设备连接异常, deviceId={}", deviceId, e);
@@ -303,63 +364,74 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
 
     /**
      * 转换初始化结果为VO
+     * <p>
+     * 采用适配器模式进行Result到VO的转换
+     * </p>
      */
     private RS485InitResultVO convertToInitResultVO(RS485InitResult result) {
-        RS485InitResultVO vo = new RS485InitResultVO();
-        vo.setSuccess(result.isSuccess());
-        vo.setMessage(result.getMessage());
-        vo.setInitTime(System.currentTimeMillis());
-        return vo;
+        return RS485InitResultVO.builder()
+                .success(result.isSuccess())
+                .message(result.getMessage() != null ? result.getMessage() : (result.isSuccess() ? "初始化成功" : "初始化失败"))
+                .deviceId(result.getDeviceId())
+                .serialNumber(result.getSerialNumber())
+                .protocolVersion(result.getProtocolVersion())
+                .initTime(result.getInitTime() != null ? result.getInitTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : System.currentTimeMillis())
+                .status(result.isSuccess() ? "SUCCESS" : "FAILED")
+                .build();
     }
 
     /**
      * 转换处理结果为VO
+     * <p>
+     * 采用适配器模式进行Result到VO的转换
+     * </p>
      */
     private RS485ProcessResultVO convertToProcessResultVO(RS485ProcessResult result) {
-        RS485ProcessResultVO vo = new RS485ProcessResultVO();
-        vo.setSuccess(result.isSuccess());
-        vo.setMessage(result.getMessage());
-        vo.setProcessTime(System.currentTimeMillis());
+        RS485ProcessResultVO.RS485ProcessResultVOBuilder builder = RS485ProcessResultVO.builder()
+                .success(result.isSuccess())
+                .message(result.getMessage() != null ? result.getMessage() : (result.isSuccess() ? "处理成功" : "处理失败"))
+                .deviceId(result.getDeviceId())
+                .messageType(result.getMessageType())
+                .processTime(result.getProcessTime() != null ? result.getProcessTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : System.currentTimeMillis())
+                .responseData(result.getResponseData())
+                .status(result.isSuccess() ? "SUCCESS" : "FAILED");
 
-        if (result.getBusinessResult() != null) {
-            vo.setBusinessData(result.getBusinessResult().getBusinessData());
-            vo.setBusinessType(result.getBusinessResult().getBusinessType());
+        // 如果有业务数据，设置业务相关字段
+        if (result.getResponseData() != null && !result.getResponseData().isEmpty()) {
+            builder.businessData(result.getResponseData());
         }
 
-        return vo;
+        return builder.build();
     }
 
     /**
      * 转换心跳结果为VO
+     * <p>
+     * 采用适配器模式进行Result到VO的转换
+     * </p>
      */
     private RS485HeartbeatResultVO convertToHeartbeatResultVO(RS485HeartbeatResult result) {
-        RS485HeartbeatResultVO vo = new RS485HeartbeatResultVO();
-        vo.setSuccess(result.isSuccess());
-        vo.setMessage(result.getMessage());
-        vo.setHeartbeatTime(System.currentTimeMillis());
-
-        if (result.getDeviceStatus() != null) {
-            vo.setDeviceStatus(result.getDeviceStatus());
-        }
-
-        if (result.getHealthStatus() != null) {
-            vo.setHealthStatus(result.getHealthStatus().name());
-        }
-
-        return vo;
+        return RS485HeartbeatResultVO.builder()
+                .success(result.isSuccess())
+                .message(result.getErrorMessage() != null ? result.getErrorMessage() : (result.isSuccess() ? "心跳成功" : "心跳失败"))
+                .deviceId(result.getDeviceId())
+                .online(result.isOnline())
+                .latency(result.getLatency())
+                .heartbeatTime(result.getHeartbeatTime() != null ? result.getHeartbeatTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : System.currentTimeMillis())
+                .build();
     }
 
     /**
      * 转换设备状态为VO
      */
     private RS485DeviceStatusVO convertToDeviceStatusVO(RS485DeviceStatus status) {
-        RS485DeviceStatusVO vo = new RS485DeviceStatusVO();
-        vo.setDeviceId(status.getDeviceId());
-        vo.setStatus(status.getStatus());
-        vo.setMessage(status.getMessage());
-        vo.setCheckTime(System.currentTimeMillis());
-        vo.setDeviceData(status.getDeviceData());
-        return vo;
+        return RS485DeviceStatusVO.builder()
+                .deviceId(status.getDeviceId())
+                .status(status.getStatus())
+                .message(status.getMessage())
+                .checkTime(System.currentTimeMillis())
+                .deviceData(status.getDeviceData())
+                .build();
     }
 
     /**
@@ -376,127 +448,5 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
         }
     }
 
-    // ==================== VO类 ====================
-
-    /**
-     * RS485初始化结果VO
-     */
-    @Schema(description = "RS485初始化结果")
-    public static class RS485InitResultVO {
-        @Schema(description = "是否成功")
-        private Boolean success;
-
-        @Schema(description = "消息")
-        private String message;
-
-        @Schema(description = "初始化时间")
-        private Long initTime;
-
-        // getters and setters
-        public Boolean getSuccess() { return success; }
-        public void setSuccess(Boolean success) { this.success = success; }
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
-        public Long getInitTime() { return initTime; }
-        public void setInitTime(Long initTime) { this.initTime = initTime; }
-    }
-
-    /**
-     * RS485处理结果VO
-     */
-    @Schema(description = "RS485处理结果")
-    public static class RS485ProcessResultVO {
-        @Schema(description = "是否成功")
-        private Boolean success;
-
-        @Schema(description = "消息")
-        private String message;
-
-        @Schema(description = "处理时间")
-        private Long processTime;
-
-        @Schema(description = "业务类型")
-        private String businessType;
-
-        @Schema(description = "业务数据")
-        private Map<String, Object> businessData;
-
-        // getters and setters
-        public Boolean getSuccess() { return success; }
-        public void setSuccess(Boolean success) { this.success = success; }
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
-        public Long getProcessTime() { return processTime; }
-        public void setProcessTime(Long processTime) { this.processTime = processTime; }
-        public String getBusinessType() { return businessType; }
-        public void setBusinessType(String businessType) { this.businessType = businessType; }
-        public Map<String, Object> getBusinessData() { return businessData; }
-        public void setBusinessData(Map<String, Object> businessData) { this.businessData = businessData; }
-    }
-
-    /**
-     * RS485心跳结果VO
-     */
-    @Schema(description = "RS485心跳结果")
-    public static class RS485HeartbeatResultVO {
-        @Schema(description = "是否成功")
-        private Boolean success;
-
-        @Schema(description = "消息")
-        private String message;
-
-        @Schema(description = "心跳时间")
-        private Long heartbeatTime;
-
-        @Schema(description = "设备状态")
-        private Map<String, Object> deviceStatus;
-
-        @Schema(description = "健康状态")
-        private String healthStatus;
-
-        // getters and setters
-        public Boolean getSuccess() { return success; }
-        public void setSuccess(Boolean success) { this.success = success; }
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
-        public Long getHeartbeatTime() { return heartbeatTime; }
-        public void setHeartbeatTime(Long heartbeatTime) { this.heartbeatTime = heartbeatTime; }
-        public Map<String, Object> getDeviceStatus() { return deviceStatus; }
-        public void setDeviceStatus(Map<String, Object> deviceStatus) { this.deviceStatus = deviceStatus; }
-        public String getHealthStatus() { return healthStatus; }
-        public void setHealthStatus(String healthStatus) { this.healthStatus = healthStatus; }
-    }
-
-    /**
-     * RS485设备状态VO
-     */
-    @Schema(description = "RS485设备状态")
-    public static class RS485DeviceStatusVO {
-        @Schema(description = "设备ID")
-        private Long deviceId;
-
-        @Schema(description = "状态")
-        private String status;
-
-        @Schema(description = "消息")
-        private String message;
-
-        @Schema(description = "检查时间")
-        private Long checkTime;
-
-        @Schema(description = "设备数据")
-        private Map<String, Object> deviceData;
-
-        // getters and setters
-        public Long getDeviceId() { return deviceId; }
-        public void setDeviceId(Long deviceId) { this.deviceId = deviceId; }
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
-        public Long getCheckTime() { return checkTime; }
-        public void setCheckTime(Long checkTime) { this.checkTime = checkTime; }
-        public Map<String, Object> getDeviceData() { return deviceData; }
-        public void setDeviceData(Map<String, Object> deviceData) { this.deviceData = deviceData; }
-    }
+    // 注：所有VO类已移动到 net.lab1024.sa.device.comm.protocol.rs485 包下
 }

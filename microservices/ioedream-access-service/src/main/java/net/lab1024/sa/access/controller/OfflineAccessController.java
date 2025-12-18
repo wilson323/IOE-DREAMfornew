@@ -22,19 +22,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.domain.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.access.service.OfflineAccessService;
 import net.lab1024.sa.access.domain.vo.OfflineAccessResultVO;
 
 /**
- * 离线门禁控制器
+ * 绂荤嚎闂ㄧ鎺у埗鍣?
  * <p>
- * 专门处理离线门禁功能，包括：
- * - 离线身份验证和权限校验
- * - 本地生物识别验证和活体检测
- * - 离线通行记录缓存和同步
- * - 应急门禁策略和安全监控
- * - 网络状态感知和自动切换
+ * 涓撻棬澶勭悊绂荤嚎闂ㄧ鍔熻兘锛屽寘鎷細
+ * - 绂荤嚎韬唤楠岃瘉鍜屾潈闄愭牎楠?
+ * - 鏈湴鐢熺墿璇嗗埆楠岃瘉鍜屾椿浣撴娴?
+ * - 绂荤嚎閫氳璁板綍缂撳瓨鍜屽悓姝?
+ * - 搴旀€ラ棬绂佺瓥鐣ュ拰瀹夊叏鐩戞帶
+ * - 缃戠粶鐘舵€佹劅鐭ュ拰鑷姩鍒囨崲
  * </p>
  *
  * @author IOE-DREAM Team
@@ -44,71 +44,71 @@ import net.lab1024.sa.access.domain.vo.OfflineAccessResultVO;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/access/offline")
-@Tag(name = "离线门禁", description = "离线门禁管理")
-@PermissionCheck(value = "ACCESS", description = "离线门禁管理")
+@Tag(name = "绂荤嚎闂ㄧ", description = "绂荤嚎闂ㄧ绠＄悊")
+@PermissionCheck(value = "ACCESS", description = "绂荤嚎闂ㄧ绠＄悊")
 public class OfflineAccessController {
 
     @Resource
     private OfflineAccessService offlineAccessService;
 
-    // ==================== 离线身份验证核心接口 ====================
+    // ==================== 绂荤嚎韬唤楠岃瘉鏍稿績鎺ュ彛 ====================
 
     /**
-     * 执行离线门禁验证
+     * 鎵ц绂荤嚎闂ㄧ楠岃瘉
      * <p>
-     * 在网络中断或设备离线状态下执行门禁验证
+     * 鍦ㄧ綉缁滀腑鏂垨璁惧绂荤嚎鐘舵€佷笅鎵ц闂ㄧ楠岃瘉
      * </p>
      *
-     * @param verificationRequest 验证请求数据
-     * @return 离线验证结果Future
+     * @param verificationRequest 楠岃瘉璇锋眰鏁版嵁
+     * @return 绂荤嚎楠岃瘉缁撴灉Future
      */
     @Observed(name = "offline.access.verification", contextualName = "offline-access-verification")
     @PostMapping("/verify")
     @Operation(
-            summary = "执行离线门禁验证",
-            description = "在网络中断或设备离线状态下执行门禁验证"
+            summary = "鎵ц绂荤嚎闂ㄧ楠岃瘉",
+            description = "鍦ㄧ綉缁滀腑鏂垨璁惧绂荤嚎鐘舵€佷笅鎵ц闂ㄧ楠岃瘉"
     )
-    @PermissionCheck(value = "ACCESS_USER", description = "执行离线门禁验证")
+    @PermissionCheck(value = "ACCESS_USER", description = "鎵ц绂荤嚎闂ㄧ楠岃瘉")
     public ResponseEntity<ResponseDTO<OfflineAccessResultVO>> performOfflineAccessVerification(
             @Valid @RequestBody Map<String, Object> verificationRequest) {
 
-        log.info("[离线门禁] 执行离线门禁验证，deviceId={}, userId={}",
+        log.info("[绂荤嚎闂ㄧ] 鎵ц绂荤嚎闂ㄧ楠岃瘉锛宒eviceId={}, userId={}",
                 verificationRequest.get("deviceId"), verificationRequest.get("userId"));
 
         try {
             Future<OfflineAccessResultVO> result = offlineAccessService.performOfflineAccessVerification(verificationRequest);
 
-            log.info("[离线门禁] 离线门禁验证任务提交成功，deviceId={}",
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎闂ㄧ楠岃瘉浠诲姟鎻愪氦鎴愬姛锛宒eviceId={}",
                     verificationRequest.get("deviceId"));
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 离线门禁验证异常，error={}", e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("OFFLINE_VERIFICATION_ERROR", "离线门禁验证异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 绂荤嚎闂ㄧ楠岃瘉寮傚父锛宔rror={}", e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("OFFLINE_VERIFICATION_ERROR", "绂荤嚎闂ㄧ楠岃瘉寮傚父锛? + e.getMessage()));
         }
     }
 
     /**
-     * 离线生物特征验证
+     * 绂荤嚎鐢熺墿鐗瑰緛楠岃瘉
      * <p>
-     * 专门处理离线环境下的生物特征验证
+     * 涓撻棬澶勭悊绂荤嚎鐜涓嬬殑鐢熺墿鐗瑰緛楠岃瘉
      * </p>
      *
-     * @param verificationRequest 验证请求（包含生物特征数据）
-     * @return 生物特征验证结果
+     * @param verificationRequest 楠岃瘉璇锋眰锛堝寘鍚敓鐗╃壒寰佹暟鎹級
+     * @return 鐢熺墿鐗瑰緛楠岃瘉缁撴灉
      */
     @Observed(name = "offline.access.biometric", contextualName = "offline-access-biometric")
     @PostMapping("/biometric/verify")
     @Operation(
-            summary = "离线生物特征验证",
-            description = "专门处理离线环境下的生物特征验证"
+            summary = "绂荤嚎鐢熺墿鐗瑰緛楠岃瘉",
+            description = "涓撻棬澶勭悊绂荤嚎鐜涓嬬殑鐢熺墿鐗瑰緛楠岃瘉"
     )
-    @PermissionCheck(value = "ACCESS_USER", description = "执行离线门禁验证")
+    @PermissionCheck(value = "ACCESS_USER", description = "鎵ц绂荤嚎闂ㄧ楠岃瘉")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> performOfflineBiometricVerification(
             @Valid @RequestBody Map<String, Object> verificationRequest) {
 
-        log.info("[离线门禁] 执行离线生物特征验证，deviceId={}, biometricType={}",
+        log.info("[绂荤嚎闂ㄧ] 鎵ц绂荤嚎鐢熺墿鐗瑰緛楠岃瘉锛宒eviceId={}, biometricType={}",
                 verificationRequest.get("deviceId"), verificationRequest.get("biometricType"));
 
         try {
@@ -120,37 +120,37 @@ public class OfflineAccessController {
             Map<String, Object> result = offlineAccessService.performOfflineBiometricVerification(
                     biometricData, deviceInfo);
 
-            log.info("[离线门禁] 离线生物特征验证完成，deviceId={}, verified={}",
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎鐢熺墿鐗瑰緛楠岃瘉瀹屾垚锛宒eviceId={}, verified={}",
                     verificationRequest.get("deviceId"), result.get("verified"));
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 离线生物特征验证异常，error={}", e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("OFFLINE_BIOMETRIC_ERROR", "离线生物特征验证异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 绂荤嚎鐢熺墿鐗瑰緛楠岃瘉寮傚父锛宔rror={}", e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("OFFLINE_BIOMETRIC_ERROR", "绂荤嚎鐢熺墿鐗瑰緛楠岃瘉寮傚父锛? + e.getMessage()));
         }
     }
 
     /**
-     * 多因素离线认证
+     * 澶氬洜绱犵绾胯璇?
      * <p>
-     * 执行多因素离线身份认证
+     * 鎵ц澶氬洜绱犵绾胯韩浠借璇?
      * </p>
      *
-     * @param authRequest 认证请求（包含多个认证因子）
-     * @return 多因素认证结果
+     * @param authRequest 璁よ瘉璇锋眰锛堝寘鍚涓璇佸洜瀛愶級
+     * @return 澶氬洜绱犺璇佺粨鏋?
      */
     @Observed(name = "offline.access.multiFactor", contextualName = "offline-access-multi-factor")
     @PostMapping("/multi-factor/verify")
     @Operation(
-            summary = "多因素离线认证",
-            description = "执行多因素离线身份认证"
+            summary = "澶氬洜绱犵绾胯璇?,
+            description = "鎵ц澶氬洜绱犵绾胯韩浠借璇?
     )
-    @PermissionCheck(value = "ACCESS_USER", description = "执行离线门禁验证")
+    @PermissionCheck(value = "ACCESS_USER", description = "鎵ц绂荤嚎闂ㄧ楠岃瘉")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> performMultiFactorOfflineAuth(
             @Valid @RequestBody Map<String, Object> authRequest) {
 
-        log.info("[离线门禁] 执行多因素离线认证，deviceId={}, factorCount={}",
+        log.info("[绂荤嚎闂ㄧ] 鎵ц澶氬洜绱犵绾胯璇侊紝deviceId={}, factorCount={}",
                 authRequest.get("deviceId"), authRequest.get("factorCount"));
 
         try {
@@ -160,37 +160,37 @@ public class OfflineAccessController {
 
             Map<String, Object> result = offlineAccessService.performMultiFactorOfflineAuth(authFactors, accessLevel);
 
-            log.info("[离线门禁] 多因素离线认证完成，deviceId={}, authenticated={}",
+            log.info("[绂荤嚎闂ㄧ] 澶氬洜绱犵绾胯璇佸畬鎴愶紝deviceId={}, authenticated={}",
                     authRequest.get("deviceId"), result.get("authenticated"));
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 多因素离线认证异常，error={}", e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("OFFLINE_MULTI_FACTOR_ERROR", "多因素离线认证异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 澶氬洜绱犵绾胯璇佸紓甯革紝error={}", e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("OFFLINE_MULTI_FACTOR_ERROR", "澶氬洜绱犵绾胯璇佸紓甯革細" + e.getMessage()));
         }
     }
 
     /**
-     * 离线权限实时检查
+     * 绂荤嚎鏉冮檺瀹炴椂妫€鏌?
      * <p>
-     * 检查用户的离线访问权限
+     * 妫€鏌ョ敤鎴风殑绂荤嚎璁块棶鏉冮檺
      * </p>
      *
-     * @param permissionRequest 权限检查请求
-     * @return 权限检查结果
+     * @param permissionRequest 鏉冮檺妫€鏌ヨ姹?
+     * @return 鏉冮檺妫€鏌ョ粨鏋?
      */
     @Observed(name = "offline.access.checkPermission", contextualName = "offline-access-check-permission")
     @PostMapping("/check-permission")
     @Operation(
-            summary = "离线权限实时检查",
-            description = "检查用户的离线访问权限"
+            summary = "绂荤嚎鏉冮檺瀹炴椂妫€鏌?,
+            description = "妫€鏌ョ敤鎴风殑绂荤嚎璁块棶鏉冮檺"
     )
-    @PermissionCheck(value = "ACCESS_USER", description = "执行离线门禁验证")
+    @PermissionCheck(value = "ACCESS_USER", description = "鎵ц绂荤嚎闂ㄧ楠岃瘉")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> checkOfflineAccessPermissions(
             @Valid @RequestBody Map<String, Object> permissionRequest) {
 
-        log.info("[离线门禁] 检查离线访问权限，userId={}, deviceId={}",
+        log.info("[绂荤嚎闂ㄧ] 妫€鏌ョ绾胯闂潈闄愶紝userId={}, deviceId={}",
                 permissionRequest.get("userId"), permissionRequest.get("deviceId"));
 
         try {
@@ -201,84 +201,84 @@ public class OfflineAccessController {
 
             Map<String, Object> result = offlineAccessService.checkOfflineAccessPermissions(userId, deviceId, accessPoint);
 
-            log.info("[离线门禁] 离线权限检查完成，userId={}, deviceId={}, hasPermission={}",
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎鏉冮檺妫€鏌ュ畬鎴愶紝userId={}, deviceId={}, hasPermission={}",
                     userId, deviceId, result.get("hasPermission"));
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 离线权限检查异常，error={}", e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("OFFLINE_PERMISSION_CHECK_ERROR", "离线权限检查异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 绂荤嚎鏉冮檺妫€鏌ュ紓甯革紝error={}", e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("OFFLINE_PERMISSION_CHECK_ERROR", "绂荤嚎鏉冮檺妫€鏌ュ紓甯革細" + e.getMessage()));
         }
     }
 
-    // ==================== 离线数据管理接口 ====================
+    // ==================== 绂荤嚎鏁版嵁绠＄悊鎺ュ彛 ====================
 
     /**
-     * 准备离线访问权限数据
+     * 鍑嗗绂荤嚎璁块棶鏉冮檺鏁版嵁
      * <p>
-     * 为指定设备准备离线访问所需的权限数据
+     * 涓烘寚瀹氳澶囧噯澶囩绾胯闂墍闇€鐨勬潈闄愭暟鎹?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param userIds 用户ID列表（可选）
-     * @return 离线权限数据包
+     * @param deviceId 璁惧ID
+     * @param userIds 鐢ㄦ埛ID鍒楄〃锛堝彲閫夛級
+     * @return 绂荤嚎鏉冮檺鏁版嵁鍖?
      */
     @Observed(name = "offline.access.prepareData", contextualName = "offline-access-prepare-data")
     @PostMapping("/device/{deviceId}/prepare-data")
     @Operation(
-            summary = "准备离线访问权限数据",
-            description = "为指定设备准备离线访问所需的权限数据",
+            summary = "鍑嗗绂荤嚎璁块棶鏉冮檺鏁版嵁",
+            description = "涓烘寚瀹氳澶囧噯澶囩绾胯闂墍闇€鐨勬潈闄愭暟鎹?,
             parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true)
+                    @Parameter(name = "deviceId", description = "璁惧ID", required = true)
             }
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> prepareOfflineAccessData(
             @PathVariable String deviceId,
             @RequestBody(required = false) List<Long> userIds) {
 
-        log.info("[离线门禁] 准备离线访问权限数据，deviceId={}, userCount={}",
+        log.info("[绂荤嚎闂ㄧ] 鍑嗗绂荤嚎璁块棶鏉冮檺鏁版嵁锛宒eviceId={}, userCount={}",
                 deviceId, userIds != null ? userIds.size() : 0);
 
         try {
             Map<String, Object> accessData = offlineAccessService.prepareOfflineAccessData(deviceId, userIds);
 
-            log.info("[离线门禁] 离线访问权限数据准备完成，deviceId={}", deviceId);
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎璁块棶鏉冮檺鏁版嵁鍑嗗瀹屾垚锛宒eviceId={}", deviceId);
 
             return ResponseEntity.ok(ResponseDTO.ok(accessData));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 准备离线访问权限数据异常，deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("PREPARE_OFFLINE_DATA_ERROR", "准备离线访问权限数据异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 鍑嗗绂荤嚎璁块棶鏉冮檺鏁版嵁寮傚父锛宒eviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("PREPARE_OFFLINE_DATA_ERROR", "鍑嗗绂荤嚎璁块棶鏉冮檺鏁版嵁寮傚父锛? + e.getMessage()));
         }
     }
 
     /**
-     * 同步离线访问数据到设备
+     * 鍚屾绂荤嚎璁块棶鏁版嵁鍒拌澶?
      * <p>
-     * 将访问权限数据同步到门禁设备
+     * 灏嗚闂潈闄愭暟鎹悓姝ュ埌闂ㄧ璁惧
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param syncRequest 同步请求
-     * @return 同步结果Future
+     * @param deviceId 璁惧ID
+     * @param syncRequest 鍚屾璇锋眰
+     * @return 鍚屾缁撴灉Future
      */
     @Observed(name = "offline.access.syncData", contextualName = "offline-access-sync-data")
     @PostMapping("/device/{deviceId}/sync-data")
     @Operation(
-            summary = "同步离线访问数据到设备",
-            description = "将访问权限数据同步到门禁设备",
+            summary = "鍚屾绂荤嚎璁块棶鏁版嵁鍒拌澶?,
+            description = "灏嗚闂潈闄愭暟鎹悓姝ュ埌闂ㄧ璁惧",
             parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true)
+                    @Parameter(name = "deviceId", description = "璁惧ID", required = true)
             }
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> syncOfflineAccessDataToDevice(
             @PathVariable String deviceId,
             @Valid @RequestBody Map<String, Object> syncRequest) {
 
-        log.info("[离线门禁] 同步离线访问数据到设备，deviceId={}", deviceId);
+        log.info("[绂荤嚎闂ㄧ] 鍚屾绂荤嚎璁块棶鏁版嵁鍒拌澶囷紝deviceId={}", deviceId);
 
         try {
             @SuppressWarnings("unchecked")
@@ -286,74 +286,74 @@ public class OfflineAccessController {
 
             Future<Map<String, Object>> result = offlineAccessService.syncOfflineAccessDataToDevice(deviceId, accessData);
 
-            log.info("[离线门禁] 离线访问数据同步任务提交成功，deviceId={}", deviceId);
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎璁块棶鏁版嵁鍚屾浠诲姟鎻愪氦鎴愬姛锛宒eviceId={}", deviceId);
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 同步离线访问数据异常，deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("SYNC_OFFLINE_DATA_ERROR", "同步离线访问数据异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 鍚屾绂荤嚎璁块棶鏁版嵁寮傚父锛宒eviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("SYNC_OFFLINE_DATA_ERROR", "鍚屾绂荤嚎璁块棶鏁版嵁寮傚父锛? + e.getMessage()));
         }
     }
 
     /**
-     * 验证离线访问数据完整性
+     * 楠岃瘉绂荤嚎璁块棶鏁版嵁瀹屾暣鎬?
      * <p>
-     * 验证设备上的离线访问数据完整性
+     * 楠岃瘉璁惧涓婄殑绂荤嚎璁块棶鏁版嵁瀹屾暣鎬?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 数据完整性验证结果
+     * @param deviceId 璁惧ID
+     * @return 鏁版嵁瀹屾暣鎬ч獙璇佺粨鏋?
      */
     @Observed(name = "offline.access.validateDataIntegrity", contextualName = "offline-access-validate-data-integrity")
     @GetMapping("/device/{deviceId}/validate-data-integrity")
     @Operation(
-            summary = "验证离线访问数据完整性",
-            description = "验证设备上的离线访问数据完整性",
+            summary = "楠岃瘉绂荤嚎璁块棶鏁版嵁瀹屾暣鎬?,
+            description = "楠岃瘉璁惧涓婄殑绂荤嚎璁块棶鏁版嵁瀹屾暣鎬?,
             parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true)
+                    @Parameter(name = "deviceId", description = "璁惧ID", required = true)
             }
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> validateOfflineAccessDataIntegrity(@PathVariable String deviceId) {
-        log.info("[离线门禁] 验证离线访问数据完整性，deviceId={}", deviceId);
+        log.info("[绂荤嚎闂ㄧ] 楠岃瘉绂荤嚎璁块棶鏁版嵁瀹屾暣鎬э紝deviceId={}", deviceId);
 
         try {
             Map<String, Object> validation = offlineAccessService.validateOfflineAccessDataIntegrity(deviceId);
 
-            log.info("[离线门禁] 离线访问数据完整性验证完成，deviceId={}, integrity={}",
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎璁块棶鏁版嵁瀹屾暣鎬ч獙璇佸畬鎴愶紝deviceId={}, integrity={}",
                     deviceId, validation.get("integrity"));
 
             return ResponseEntity.ok(ResponseDTO.ok(validation));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 验证离线访问数据完整性异常，deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("VALIDATE_DATA_INTEGRITY_ERROR", "验证离线访问数据完整性异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 楠岃瘉绂荤嚎璁块棶鏁版嵁瀹屾暣鎬у紓甯革紝deviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("VALIDATE_DATA_INTEGRITY_ERROR", "楠岃瘉绂荤嚎璁块棶鏁版嵁瀹屾暣鎬у紓甯革細" + e.getMessage()));
         }
     }
 
-    // ==================== 离线记录管理接口 ====================
+    // ==================== 绂荤嚎璁板綍绠＄悊鎺ュ彛 ====================
 
     /**
-     * 缓存离线通行记录
+     * 缂撳瓨绂荤嚎閫氳璁板綍
      * <p>
-     * 在设备离线状态下缓存通行记录
+     * 鍦ㄨ澶囩绾跨姸鎬佷笅缂撳瓨閫氳璁板綍
      * </p>
      *
-     * @param recordRequest 记录缓存请求
-     * @return 缓存结果
+     * @param recordRequest 璁板綍缂撳瓨璇锋眰
+     * @return 缂撳瓨缁撴灉
      */
     @Observed(name = "offline.access.cacheRecord", contextualName = "offline-access-cache-record")
     @PostMapping("/cache-record")
     @Operation(
-            summary = "缓存离线通行记录",
-            description = "在设备离线状态下缓存通行记录"
+            summary = "缂撳瓨绂荤嚎閫氳璁板綍",
+            description = "鍦ㄨ澶囩绾跨姸鎬佷笅缂撳瓨閫氳璁板綍"
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Boolean>> cacheOfflineAccessRecord(
             @Valid @RequestBody Map<String, Object> recordRequest) {
 
-        log.info("[离线门禁] 缓存离线通行记录，deviceId={}, recordId={}",
+        log.info("[绂荤嚎闂ㄧ] 缂撳瓨绂荤嚎閫氳璁板綍锛宒eviceId={}, recordId={}",
                 recordRequest.get("deviceId"), recordRequest.get("recordId"));
 
         try {
@@ -363,112 +363,112 @@ public class OfflineAccessController {
 
             boolean success = offlineAccessService.cacheOfflineAccessRecord(deviceId, accessRecord);
 
-            log.info("[离线门禁] 离线通行记录缓存完成，deviceId={}, success={}", deviceId, success);
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎閫氳璁板綍缂撳瓨瀹屾垚锛宒eviceId={}, success={}", deviceId, success);
 
             return ResponseEntity.ok(ResponseDTO.ok(success));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 缓存离线通行记录异常，error={}", e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("CACHE_OFFLINE_RECORD_ERROR", "缓存离线通行记录异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 缂撳瓨绂荤嚎閫氳璁板綍寮傚父锛宔rror={}", e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("CACHE_OFFLINE_RECORD_ERROR", "缂撳瓨绂荤嚎閫氳璁板綍寮傚父锛? + e.getMessage()));
         }
     }
 
     /**
-     * 批量上传离线通行记录
+     * 鎵归噺涓婁紶绂荤嚎閫氳璁板綍
      * <p>
-     * 将缓存的离线记录批量上传到云端
+     * 灏嗙紦瀛樼殑绂荤嚎璁板綍鎵归噺涓婁紶鍒颁簯绔?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param offlineRecords 离线记录列表
-     * @return 上传结果Future
+     * @param deviceId 璁惧ID
+     * @param offlineRecords 绂荤嚎璁板綍鍒楄〃
+     * @return 涓婁紶缁撴灉Future
      */
     @Observed(name = "offline.access.uploadRecords", contextualName = "offline-access-upload-records")
     @PostMapping("/device/{deviceId}/upload-records")
     @Operation(
-            summary = "批量上传离线通行记录",
-            description = "将缓存的离线记录批量上传到云端",
+            summary = "鎵归噺涓婁紶绂荤嚎閫氳璁板綍",
+            description = "灏嗙紦瀛樼殑绂荤嚎璁板綍鎵归噺涓婁紶鍒颁簯绔?,
             parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true)
+                    @Parameter(name = "deviceId", description = "璁惧ID", required = true)
             }
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<OfflineAccessResultVO>> batchUploadOfflineAccessRecords(
             @PathVariable String deviceId,
             @Valid @RequestBody List<Map<String, Object>> offlineRecords) {
 
-        log.info("[离线门禁] 批量上传离线通行记录，deviceId={}, recordCount={}", deviceId, offlineRecords.size());
+        log.info("[绂荤嚎闂ㄧ] 鎵归噺涓婁紶绂荤嚎閫氳璁板綍锛宒eviceId={}, recordCount={}", deviceId, offlineRecords.size());
 
         try {
             Future<OfflineAccessResultVO> result = offlineAccessService.batchUploadOfflineAccessRecords(deviceId, offlineRecords);
 
-            log.info("[离线门禁] 离线通行记录上传任务提交成功，deviceId={}, recordCount={}", deviceId, offlineRecords.size());
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎閫氳璁板綍涓婁紶浠诲姟鎻愪氦鎴愬姛锛宒eviceId={}, recordCount={}", deviceId, offlineRecords.size());
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 批量上传离线通行记录异常，deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("UPLOAD_OFFLINE_RECORDS_ERROR", "批量上传离线通行记录异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 鎵归噺涓婁紶绂荤嚎閫氳璁板綍寮傚父锛宒eviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("UPLOAD_OFFLINE_RECORDS_ERROR", "鎵归噺涓婁紶绂荤嚎閫氳璁板綍寮傚父锛? + e.getMessage()));
         }
     }
 
     /**
-     * 获取离线记录统计信息
+     * 鑾峰彇绂荤嚎璁板綍缁熻淇℃伅
      * <p>
-     * 获取设备离线记录的统计信息
+     * 鑾峰彇璁惧绂荤嚎璁板綍鐨勭粺璁′俊鎭?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 统计信息Map
+     * @param deviceId 璁惧ID
+     * @return 缁熻淇℃伅Map
      */
     @Observed(name = "offline.access.recordStatistics", contextualName = "offline-access-record-statistics")
     @GetMapping("/device/{deviceId}/record-statistics")
     @Operation(
-            summary = "获取离线记录统计信息",
-            description = "获取设备离线记录的统计信息",
+            summary = "鑾峰彇绂荤嚎璁板綍缁熻淇℃伅",
+            description = "鑾峰彇璁惧绂荤嚎璁板綍鐨勭粺璁′俊鎭?,
             parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true)
+                    @Parameter(name = "deviceId", description = "璁惧ID", required = true)
             }
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> getOfflineAccessRecordStatistics(@PathVariable String deviceId) {
-        log.info("[离线门禁] 获取离线记录统计信息，deviceId={}", deviceId);
+        log.info("[绂荤嚎闂ㄧ] 鑾峰彇绂荤嚎璁板綍缁熻淇℃伅锛宒eviceId={}", deviceId);
 
         try {
             Map<String, Object> statistics = offlineAccessService.getOfflineAccessRecordStatistics(deviceId);
 
-            log.info("[离线门禁] 离线记录统计信息获取成功，deviceId={}", deviceId);
+            log.info("[绂荤嚎闂ㄧ] 绂荤嚎璁板綍缁熻淇℃伅鑾峰彇鎴愬姛锛宒eviceId={}", deviceId);
 
             return ResponseEntity.ok(ResponseDTO.ok(statistics));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 获取离线记录统计信息异常，deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("GET_RECORD_STATISTICS_ERROR", "获取离线记录统计信息异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 鑾峰彇绂荤嚎璁板綍缁熻淇℃伅寮傚父锛宒eviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("GET_RECORD_STATISTICS_ERROR", "鑾峰彇绂荤嚎璁板綍缁熻淇℃伅寮傚父锛? + e.getMessage()));
         }
     }
 
-    // ==================== 应急门禁策略接口 ====================
+    // ==================== 搴旀€ラ棬绂佺瓥鐣ユ帴鍙?====================
 
     /**
-     * 启用应急门禁模式
+     * 鍚敤搴旀€ラ棬绂佹ā寮?
      * <p>
-     * 在特殊情况下启用应急门禁策略
+     * 鍦ㄧ壒娈婃儏鍐典笅鍚敤搴旀€ラ棬绂佺瓥鐣?
      * </p>
      *
-     * @param emergencyRequest 应急模式启用请求
-     * @return 应急模式启用结果
+     * @param emergencyRequest 搴旀€ユā寮忓惎鐢ㄨ姹?
+     * @return 搴旀€ユā寮忓惎鐢ㄧ粨鏋?
      */
     @Observed(name = "offline.access.enableEmergency", contextualName = "offline-access-enable-emergency")
     @PostMapping("/enable-emergency-mode")
     @Operation(
-            summary = "启用应急门禁模式",
-            description = "在特殊情况下启用应急门禁策略"
+            summary = "鍚敤搴旀€ラ棬绂佹ā寮?,
+            description = "鍦ㄧ壒娈婃儏鍐典笅鍚敤搴旀€ラ棬绂佺瓥鐣?
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> enableEmergencyAccessMode(
             @Valid @RequestBody Map<String, Object> emergencyRequest) {
 
-        log.info("[离线门禁] 启用应急门禁模式，deviceId={}, emergencyType={}",
+        log.info("[绂荤嚎闂ㄧ] 鍚敤搴旀€ラ棬绂佹ā寮忥紝deviceId={}, emergencyType={}",
                 emergencyRequest.get("deviceId"), emergencyRequest.get("emergencyType"));
 
         try {
@@ -479,37 +479,37 @@ public class OfflineAccessController {
 
             Map<String, Object> result = offlineAccessService.enableEmergencyAccessMode(deviceId, emergencyType, authorizedRoles);
 
-            log.info("[离线门禁] 应急门禁模式启用完成，deviceId={}, enabled={}",
+            log.info("[绂荤嚎闂ㄧ] 搴旀€ラ棬绂佹ā寮忓惎鐢ㄥ畬鎴愶紝deviceId={}, enabled={}",
                     deviceId, result.get("enabled"));
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 启用应急门禁模式异常，error={}", e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("ENABLE_EMERGENCY_MODE_ERROR", "启用应急门禁模式异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 鍚敤搴旀€ラ棬绂佹ā寮忓紓甯革紝error={}", e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("ENABLE_EMERGENCY_MODE_ERROR", "鍚敤搴旀€ラ棬绂佹ā寮忓紓甯革細" + e.getMessage()));
         }
     }
 
     /**
-     * 执行应急权限验证
+     * 鎵ц搴旀€ユ潈闄愰獙璇?
      * <p>
-     * 在应急模式下执行特殊的权限验证
+     * 鍦ㄥ簲鎬ユā寮忎笅鎵ц鐗规畩鐨勬潈闄愰獙璇?
      * </p>
      *
-     * @param verificationRequest 应急验证请求
-     * @return 应急验证结果
+     * @param verificationRequest 搴旀€ラ獙璇佽姹?
+     * @return 搴旀€ラ獙璇佺粨鏋?
      */
     @Observed(name = "offline.access.emergencyVerification", contextualName = "offline-access-emergency-verification")
     @PostMapping("/emergency-verify")
     @Operation(
-            summary = "执行应急权限验证",
-            description = "在应急模式下执行特殊的权限验证"
+            summary = "鎵ц搴旀€ユ潈闄愰獙璇?,
+            description = "鍦ㄥ簲鎬ユā寮忎笅鎵ц鐗规畩鐨勬潈闄愰獙璇?
     )
-    @PermissionCheck(value = "ACCESS_USER", description = "执行离线门禁验证")
+    @PermissionCheck(value = "ACCESS_USER", description = "鎵ц绂荤嚎闂ㄧ楠岃瘉")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> performEmergencyAccessVerification(
             @Valid @RequestBody Map<String, Object> verificationRequest) {
 
-        log.info("[离线门禁] 执行应急权限验证，deviceId={}, emergencyType={}",
+        log.info("[绂荤嚎闂ㄧ] 鎵ц搴旀€ユ潈闄愰獙璇侊紝deviceId={}, emergencyType={}",
                 verificationRequest.get("deviceId"), verificationRequest.get("emergencyType"));
 
         try {
@@ -518,37 +518,37 @@ public class OfflineAccessController {
 
             Map<String, Object> result = offlineAccessService.performEmergencyAccessVerification(verificationRequest, emergencyContext);
 
-            log.info("[离线门禁] 应急权限验证完成，deviceId={}, verified={}",
+            log.info("[绂荤嚎闂ㄧ] 搴旀€ユ潈闄愰獙璇佸畬鎴愶紝deviceId={}, verified={}",
                     verificationRequest.get("deviceId"), result.get("verified"));
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 应急权限验证异常，error={}", e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("EMERGENCY_VERIFICATION_ERROR", "应急权限验证异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 搴旀€ユ潈闄愰獙璇佸紓甯革紝error={}", e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("EMERGENCY_VERIFICATION_ERROR", "搴旀€ユ潈闄愰獙璇佸紓甯革細" + e.getMessage()));
         }
     }
 
     /**
-     * 退出应急门禁模式
+     * 閫€鍑哄簲鎬ラ棬绂佹ā寮?
      * <p>
-     * 从应急模式恢复正常门禁操作
+     * 浠庡簲鎬ユā寮忔仮澶嶆甯搁棬绂佹搷浣?
      * </p>
      *
-     * @param exitRequest 退出应急模式请求
-     * @return 退出应急模式结果
+     * @param exitRequest 閫€鍑哄簲鎬ユā寮忚姹?
+     * @return 閫€鍑哄簲鎬ユā寮忕粨鏋?
      */
     @Observed(name = "offline.access.exitEmergency", contextualName = "offline-access-exit-emergency")
     @PostMapping("/exit-emergency-mode")
     @Operation(
-            summary = "退出应急门禁模式",
-            description = "从应急模式恢复正常门禁操作"
+            summary = "閫€鍑哄簲鎬ラ棬绂佹ā寮?,
+            description = "浠庡簲鎬ユā寮忔仮澶嶆甯搁棬绂佹搷浣?
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> exitEmergencyAccessMode(
             @Valid @RequestBody Map<String, Object> exitRequest) {
 
-        log.info("[离线门禁] 退出应急门禁模式，deviceId={}, reason={}",
+        log.info("[绂荤嚎闂ㄧ] 閫€鍑哄簲鎬ラ棬绂佹ā寮忥紝deviceId={}, reason={}",
                 exitRequest.get("deviceId"), exitRequest.get("exitReason"));
 
         try {
@@ -557,133 +557,133 @@ public class OfflineAccessController {
 
             Map<String, Object> result = offlineAccessService.exitEmergencyAccessMode(deviceId, exitReason);
 
-            log.info("[离线门禁] 应急门禁模式退出完成，deviceId={}, success={}",
+            log.info("[绂荤嚎闂ㄧ] 搴旀€ラ棬绂佹ā寮忛€€鍑哄畬鎴愶紝deviceId={}, success={}",
                     deviceId, result.get("success"));
 
             return ResponseEntity.ok(ResponseDTO.ok(result));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 退出应急门禁模式异常，error={}", e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("EXIT_EMERGENCY_MODE_ERROR", "退出应急门禁模式异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 閫€鍑哄簲鎬ラ棬绂佹ā寮忓紓甯革紝error={}", e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("EXIT_EMERGENCY_MODE_ERROR", "閫€鍑哄簲鎬ラ棬绂佹ā寮忓紓甯革細" + e.getMessage()));
         }
     }
 
-    // ==================== 设备离线状态监控接口 ====================
+    // ==================== 璁惧绂荤嚎鐘舵€佺洃鎺ф帴鍙?====================
 
     /**
-     * 检查设备离线状态
+     * 妫€鏌ヨ澶囩绾跨姸鎬?
      * <p>
-     * 检查门禁设备的离线状态和能力
+     * 妫€鏌ラ棬绂佽澶囩殑绂荤嚎鐘舵€佸拰鑳藉姏
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 设备离线状态信息
+     * @param deviceId 璁惧ID
+     * @return 璁惧绂荤嚎鐘舵€佷俊鎭?
      */
     @Observed(name = "offline.access.deviceStatus", contextualName = "offline-access-device-status")
     @GetMapping("/device/{deviceId}/offline-status")
     @Operation(
-            summary = "检查设备离线状态",
-            description = "检查门禁设备的离线状态和能力",
+            summary = "妫€鏌ヨ澶囩绾跨姸鎬?,
+            description = "妫€鏌ラ棬绂佽澶囩殑绂荤嚎鐘舵€佸拰鑳藉姏",
             parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true)
+                    @Parameter(name = "deviceId", description = "璁惧ID", required = true)
             }
     )
-    @PermissionCheck(value = "ACCESS_USER", description = "执行离线门禁验证")
+    @PermissionCheck(value = "ACCESS_USER", description = "鎵ц绂荤嚎闂ㄧ楠岃瘉")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> checkDeviceOfflineStatus(@PathVariable String deviceId) {
-        log.info("[离线门禁] 检查设备离线状态，deviceId={}", deviceId);
+        log.info("[绂荤嚎闂ㄧ] 妫€鏌ヨ澶囩绾跨姸鎬侊紝deviceId={}", deviceId);
 
         try {
             Map<String, Object> status = offlineAccessService.checkDeviceOfflineStatus(deviceId);
 
-            log.info("[离线门禁] 设备离线状态检查完成，deviceId={}, offlineMode={}",
+            log.info("[绂荤嚎闂ㄧ] 璁惧绂荤嚎鐘舵€佹鏌ュ畬鎴愶紝deviceId={}, offlineMode={}",
                     deviceId, status.get("offlineMode"));
 
             return ResponseEntity.ok(ResponseDTO.ok(status));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 检查设备离线状态异常，deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("CHECK_DEVICE_STATUS_ERROR", "检查设备离线状态异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 妫€鏌ヨ澶囩绾跨姸鎬佸紓甯革紝deviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("CHECK_DEVICE_STATUS_ERROR", "妫€鏌ヨ澶囩绾跨姸鎬佸紓甯革細" + e.getMessage()));
         }
     }
 
     /**
-     * 预测设备离线风险
+     * 棰勬祴璁惧绂荤嚎椋庨櫓
      * <p>
-     * 预测设备可能出现的离线风险
+     * 棰勬祴璁惧鍙兘鍑虹幇鐨勭绾块闄?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param riskTimeRange 风险预测时间范围（小时）
-     * @return 风险评估报告
+     * @param deviceId 璁惧ID
+     * @param riskTimeRange 椋庨櫓棰勬祴鏃堕棿鑼冨洿锛堝皬鏃讹級
+     * @return 椋庨櫓璇勪及鎶ュ憡
      */
     @Observed(name = "offline.access.predictRisks", contextualName = "offline-access-predict-risks")
     @GetMapping("/device/{deviceId}/predict-risks")
     @Operation(
-            summary = "预测设备离线风险",
-            description = "预测设备可能出现的离线风险",
+            summary = "棰勬祴璁惧绂荤嚎椋庨櫓",
+            description = "棰勬祴璁惧鍙兘鍑虹幇鐨勭绾块闄?,
             parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true),
-                    @Parameter(name = "riskTimeRange", description = "风险预测时间范围（小时）")
+                    @Parameter(name = "deviceId", description = "璁惧ID", required = true),
+                    @Parameter(name = "riskTimeRange", description = "椋庨櫓棰勬祴鏃堕棿鑼冨洿锛堝皬鏃讹級")
             }
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> predictDeviceOfflineRisks(
             @PathVariable String deviceId,
             @RequestParam(defaultValue = "24") Integer riskTimeRange) {
 
-        log.info("[离线门禁] 预测设备离线风险，deviceId={}, riskTimeRange={}h", deviceId, riskTimeRange);
+        log.info("[绂荤嚎闂ㄧ] 棰勬祴璁惧绂荤嚎椋庨櫓锛宒eviceId={}, riskTimeRange={}h", deviceId, riskTimeRange);
 
         try {
             Map<String, Object> riskReport = offlineAccessService.predictDeviceOfflineRisks(deviceId, riskTimeRange);
 
-            log.info("[离线门禁] 设备离线风险预测完成，deviceId={}, riskLevel={}",
+            log.info("[绂荤嚎闂ㄧ] 璁惧绂荤嚎椋庨櫓棰勬祴瀹屾垚锛宒eviceId={}, riskLevel={}",
                     deviceId, riskReport.get("riskLevel"));
 
             return ResponseEntity.ok(ResponseDTO.ok(riskReport));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 预测设备离线风险异常，deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("PREDICT_OFFLINE_RISKS_ERROR", "预测设备离线风险异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 棰勬祴璁惧绂荤嚎椋庨櫓寮傚父锛宒eviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("PREDICT_OFFLINE_RISKS_ERROR", "棰勬祴璁惧绂荤嚎椋庨櫓寮傚父锛? + e.getMessage()));
         }
     }
 
     /**
-     * 获取网络历史状态分析
+     * 鑾峰彇缃戠粶鍘嗗彶鐘舵€佸垎鏋?
      * <p>
-     * 分析设备的历史网络状态模式
+     * 鍒嗘瀽璁惧鐨勫巻鍙茬綉缁滅姸鎬佹ā寮?
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param analysisDays 分析天数
-     * @return 网络状态分析报告
+     * @param deviceId 璁惧ID
+     * @param analysisDays 鍒嗘瀽澶╂暟
+     * @return 缃戠粶鐘舵€佸垎鏋愭姤鍛?
      */
     @Observed(name = "offline.access.networkAnalysis", contextualName = "offline-access-network-analysis")
     @GetMapping("/device/{deviceId}/network-analysis")
     @Operation(
-            summary = "获取网络历史状态分析",
-            description = "分析设备的历史网络状态模式",
+            summary = "鑾峰彇缃戠粶鍘嗗彶鐘舵€佸垎鏋?,
+            description = "鍒嗘瀽璁惧鐨勫巻鍙茬綉缁滅姸鎬佹ā寮?,
             parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true),
-                    @Parameter(name = "analysisDays", description = "分析天数")
+                    @Parameter(name = "deviceId", description = "璁惧ID", required = true),
+                    @Parameter(name = "analysisDays", description = "鍒嗘瀽澶╂暟")
             }
     )
-    @PermissionCheck(value = "ACCESS_MANAGER", description = "离线数据管理")
+    @PermissionCheck(value = "ACCESS_MANAGER", description = "绂荤嚎鏁版嵁绠＄悊")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> getNetworkHistoryAnalysis(
             @PathVariable String deviceId,
             @RequestParam(defaultValue = "7") Integer analysisDays) {
 
-        log.info("[离线门禁] 获取网络历史状态分析，deviceId={}, analysisDays={}d", deviceId, analysisDays);
+        log.info("[绂荤嚎闂ㄧ] 鑾峰彇缃戠粶鍘嗗彶鐘舵€佸垎鏋愶紝deviceId={}, analysisDays={}d", deviceId, analysisDays);
 
         try {
             Map<String, Object> analysis = offlineAccessService.getNetworkHistoryAnalysis(deviceId, analysisDays);
 
-            log.info("[离线门禁] 网络历史状态分析完成，deviceId={}", deviceId);
+            log.info("[绂荤嚎闂ㄧ] 缃戠粶鍘嗗彶鐘舵€佸垎鏋愬畬鎴愶紝deviceId={}", deviceId);
 
             return ResponseEntity.ok(ResponseDTO.ok(analysis));
 
         } catch (Exception e) {
-            log.error("[离线门禁] 获取网络历史状态分析异常，deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return ResponseEntity.ok(ResponseDTO.error("GET_NETWORK_ANALYSIS_ERROR", "获取网络历史状态分析异常：" + e.getMessage()));
+            log.error("[绂荤嚎闂ㄧ] 鑾峰彇缃戠粶鍘嗗彶鐘舵€佸垎鏋愬紓甯革紝deviceId={}, error={}", deviceId, e.getMessage(), e);
+            return ResponseEntity.ok(ResponseDTO.error("GET_NETWORK_ANALYSIS_ERROR", "鑾峰彇缃戠粶鍘嗗彶鐘舵€佸垎鏋愬紓甯革細" + e.getMessage()));
         }
     }
 }

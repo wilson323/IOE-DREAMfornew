@@ -6,8 +6,6 @@ import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.CaseInstanceBuilder;
 import org.flowable.cmmn.api.runtime.CaseInstanceQuery;
 import org.flowable.cmmn.api.runtime.PlanItemInstanceQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -23,8 +21,6 @@ import java.util.Map;
  */
 @Slf4j
 public class FlowableCmmnRuntimeService {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableCmmnRuntimeService.class);
     private final CmmnRuntimeService cmmnRuntimeService;
 
     public FlowableCmmnRuntimeService(CmmnRuntimeService cmmnRuntimeService) {

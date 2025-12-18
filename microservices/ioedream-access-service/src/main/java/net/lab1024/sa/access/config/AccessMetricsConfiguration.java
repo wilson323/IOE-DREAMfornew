@@ -26,17 +26,17 @@ import io.micrometer.prometheus.PrometheusMeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 门禁微服务性能监控配置
+ * 闂ㄧ寰湇鍔℃€ц兘鐩戞帶閰嶇疆
  * <p>
- * 提供完整的Micrometer指标监控配置，包括：
- * - JVM性能指标监控
- * - 业务自定义指标监控
- * - 接口调用统计监控
- * - 数据库连接池监控
- * - 缓存性能监控
- * - 蓝牙设备连接监控
- * - AI分析性能监控
- * - 视频处理性能监控
+ * 鎻愪緵瀹屾暣鐨凪icrometer鎸囨爣鐩戞帶閰嶇疆锛屽寘鎷細
+ * - JVM鎬ц兘鎸囨爣鐩戞帶
+ * - 涓氬姟鑷畾涔夋寚鏍囩洃鎺?
+ * - 鎺ュ彛璋冪敤缁熻鐩戞帶
+ * - 鏁版嵁搴撹繛鎺ユ睜鐩戞帶
+ * - 缂撳瓨鎬ц兘鐩戞帶
+ * - 钃濈墮璁惧杩炴帴鐩戞帶
+ * - AI鍒嗘瀽鎬ц兘鐩戞帶
+ * - 瑙嗛澶勭悊鎬ц兘鐩戞帶
  * </p>
  *
  * @author IOE-DREAM Team
@@ -51,22 +51,22 @@ public class AccessMetricsConfiguration {
     private AccessServiceProperties accessServiceProperties;
 
     /**
-     * 自定义业务指标注册器
+     * 鑷畾涔変笟鍔℃寚鏍囨敞鍐屽櫒
      */
     @Bean
     @Primary
     public PrometheusMeterRegistry prometheusMeterRegistry() {
         PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
 
-        // 添加业务指标
+        // 娣诲姞涓氬姟鎸囨爣
         registerBusinessMetrics(registry);
 
-        log.info("[性能监控] Prometheus指标注册器初始化完成");
+        log.info("[鎬ц兘鐩戞帶] Prometheus鎸囨爣娉ㄥ唽鍣ㄥ垵濮嬪寲瀹屾垚");
         return registry;
     }
 
     /**
-     * JVM指标绑定器
+     * JVM鎸囨爣缁戝畾鍣?
      */
     @Bean
     public List<MeterBinder> jvmMeterBinders() {
@@ -79,7 +79,7 @@ public class AccessMetricsConfiguration {
     }
 
     /**
-     * 业务自定义指标配置
+     * 涓氬姟鑷畾涔夋寚鏍囬厤缃?
      */
     @Bean
     public MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
@@ -94,7 +94,7 @@ public class AccessMetricsConfiguration {
             .meterFilter(MeterFilter.deny(
                 id -> {
                     String name = id.getName();
-                    // 过滤掉不需要的指标
+                    // 杩囨护鎺変笉闇€瑕佺殑鎸囨爣
                     return name.startsWith("jvm.buffer") ||
                            name.startsWith("system.cpu.count") ||
                            name.startsWith("process.files.max");
@@ -103,61 +103,61 @@ public class AccessMetricsConfiguration {
     }
 
     /**
-     * 注册业务自定义指标
+     * 娉ㄥ唽涓氬姟鑷畾涔夋寚鏍?
      */
     private void registerBusinessMetrics(PrometheusMeterRegistry registry) {
-        // 1. 蓝牙设备连接指标
+        // 1. 钃濈墮璁惧杩炴帴鎸囨爣
         registry.gauge("bluetooth.devices.connected", "connected bluetooth devices count");
         registry.gauge("bluetooth.devices.disconnected", "disconnected bluetooth devices count");
         registry.gauge("bluetooth.devices.health.score", "average bluetooth devices health score");
 
-        // 2. 访问控制指标
+        // 2. 璁块棶鎺у埗鎸囨爣
         registry.counter("access.requests.total", "total access requests");
         registry.counter("access.requests.success", "successful access requests");
         registry.counter("access.requests.failed", "failed access requests");
         registry.gauge("access.response.time.avg", "average access response time");
 
-        // 3. AI分析指标
+        // 3. AI鍒嗘瀽鎸囨爣
         registry.counter("ai.analysis.requests.total", "total AI analysis requests");
         registry.counter("ai.analysis.behavior.anomalies", "behavior anomalies detected");
         registry.gauge("ai.model.accuracy", "AI model accuracy score");
         registry.gauge("ai.analysis.duration.avg", "average AI analysis duration");
 
-        // 4. 视频监控指标
+        // 4. 瑙嗛鐩戞帶鎸囨爣
         registry.gauge("video.streams.active", "active video streams count");
         registry.counter("video.face.recognition.total", "total face recognition requests");
         registry.counter("video.abnormal.behavior.detected", "abnormal behavior detected");
         registry.gauge("video.recording.duration.total", "total video recording duration");
 
-        // 5. 监控告警指标
+        // 5. 鐩戞帶鍛婅鎸囨爣
         registry.counter("alerts.generated.total", "total alerts generated");
         registry.counter("alerts.processed.total", "total alerts processed");
         registry.gauge("alerts.response.time.avg", "average alert response time");
         registry.gauge("alerts.self.healing.success.rate", "self healing success rate");
 
-        // 6. 离线模式指标
+        // 6. 绂荤嚎妯″紡鎸囨爣
         registry.counter("offline.sync.requests.total", "total offline sync requests");
         registry.counter("offline.sync.records.success", "successfully synced records");
         registry.gauge("offline.data.size.total", "total offline data size");
         registry.gauge("offline.sync.duration.avg", "average offline sync duration");
 
-        // 7. 数据库性能指标
+        // 7. 鏁版嵁搴撴€ц兘鎸囨爣
         registry.gauge("database.connections.active", "active database connections");
         registry.gauge("database.connections.idle", "idle database connections");
         registry.gauge("database.query.duration.avg", "average database query duration");
         registry.gauge("database.cache.hit.rate", "database cache hit rate");
 
-        // 8. 系统健康指标
+        // 8. 绯荤粺鍋ュ悍鎸囨爣
         registry.gauge("system.health.score", "overall system health score");
         registry.gauge("system.cpu.usage", "system CPU usage");
         registry.gauge("system.memory.usage", "system memory usage");
         registry.gauge("system.disk.usage", "system disk usage");
 
-        log.info("[性能监控] 业务指标注册完成 - 共注册{}个指标", registry.getMeters().size());
+        log.info("[鎬ц兘鐩戞帶] 涓氬姟鎸囨爣娉ㄥ唽瀹屾垚 - 鍏辨敞鍐寋}涓寚鏍?, registry.getMeters().size());
     }
 
     /**
-     * 自定义业务指标收集器
+     * 鑷畾涔変笟鍔℃寚鏍囨敹闆嗗櫒
      */
     @Bean
     public AccessBusinessMetricsCollector businessMetricsCollector(MeterRegistry meterRegistry) {
@@ -165,7 +165,7 @@ public class AccessMetricsConfiguration {
     }
 
     /**
-     * 业务指标收集器
+     * 涓氬姟鎸囨爣鏀堕泦鍣?
      */
     public static class AccessBusinessMetricsCollector {
 
@@ -176,7 +176,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录蓝牙设备连接事件
+         * 璁板綍钃濈墮璁惧杩炴帴浜嬩欢
          */
         public void recordBluetoothDeviceConnection(String deviceId, boolean success) {
             meterRegistry.counter("bluetooth.device.connection.attempts",
@@ -188,7 +188,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录访问请求
+         * 璁板綍璁块棶璇锋眰
          */
         public void recordAccessRequest(String userId, String deviceId, boolean success, long duration) {
             String tags = "user_id=" + userId + ",device_id=" + deviceId + ",success=" + success;
@@ -203,7 +203,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录AI分析请求
+         * 璁板綍AI鍒嗘瀽璇锋眰
          */
         public void recordAIAnalysis(String analysisType, long duration, int anomalyCount) {
             meterRegistry.counter("ai.analysis.requests", "type", analysisType).increment();
@@ -220,7 +220,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录视频监控事件
+         * 璁板綍瑙嗛鐩戞帶浜嬩欢
          */
         public void recordVideoMonitoring(String eventType, String cameraId, long duration) {
             meterRegistry.counter("video.monitoring.events",
@@ -236,7 +236,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录告警处理事件
+         * 璁板綍鍛婅澶勭悊浜嬩欢
          */
         public void recordAlertProcessing(String alertType, String processResult, long duration) {
             meterRegistry.counter("alerts.processed",
@@ -251,7 +251,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录离线数据同步事件
+         * 璁板綍绂荤嚎鏁版嵁鍚屾浜嬩欢
          */
         public void recordOfflineSync(String syncType, int recordCount, boolean success) {
             meterRegistry.counter("offline.sync.requests",
@@ -263,7 +263,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 更新设备健康评分
+         * 鏇存柊璁惧鍋ュ悍璇勫垎
          */
         public void updateDeviceHealthScore(String deviceType, double healthScore) {
             meterRegistry.gauge("device.health.score",
@@ -271,7 +271,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 更新系统资源使用率
+         * 鏇存柊绯荤粺璧勬簮浣跨敤鐜?
          */
         public void updateSystemResourceUsage(String resourceType, double usage) {
             meterRegistry.gauge("system.resource.usage",
@@ -279,7 +279,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录缓存性能
+         * 璁板綍缂撳瓨鎬ц兘
          */
         public void recordCachePerformance(String cacheName, long hits, long misses) {
             meterRegistry.counter("cache.requests",
@@ -293,7 +293,7 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录数据库性能
+         * 璁板綍鏁版嵁搴撴€ц兘
          */
         public void recordDatabasePerformance(String operation, long duration, boolean success) {
             meterRegistry.counter("database.operations",
@@ -308,11 +308,11 @@ public class AccessMetricsConfiguration {
         }
 
         /**
-         * 记录自定义业务指标
+         * 璁板綍鑷畾涔変笟鍔℃寚鏍?
          */
         public void recordCustomMetric(String metricName, double value, String... tags) {
             if (tags.length % 2 != 0) {
-                log.warn("[性能监控] 自定义指标标签数量不匹配: {}", metricName);
+                log.warn("[鎬ц兘鐩戞帶] 鑷畾涔夋寚鏍囨爣绛炬暟閲忎笉鍖归厤: {}", metricName);
                 return;
             }
 
@@ -321,7 +321,7 @@ public class AccessMetricsConfiguration {
     }
 
     /**
-     * 应用服务属性配置类
+     * 搴旂敤鏈嶅姟灞炴€ч厤缃被
      */
     public static class AccessServiceProperties {
         private String environment = "dev";

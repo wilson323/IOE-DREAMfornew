@@ -1,8 +1,6 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -27,8 +25,6 @@ import java.util.Map;
 @Slf4j
 @Service
 public class FlowableRepositoryService {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableRepositoryService.class);
     private final RepositoryService repositoryService;
 
     public FlowableRepositoryService(RepositoryService repositoryService) {

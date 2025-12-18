@@ -12,13 +12,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 设备性能分析视图对象
+ * 璁惧鎬ц兘鍒嗘瀽瑙嗗浘瀵硅薄
  * <p>
- * 设备性能分析结果的数据传输对象
- * 严格遵循CLAUDE.md规范：
- * - 使用@Data注解
- * - 完整的字段文档注解
- * - 构建者模式支持
+ * 璁惧鎬ц兘鍒嗘瀽缁撴灉鐨勬暟鎹紶杈撳璞?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Data娉ㄨВ
+ * - 瀹屾暣鐨勫瓧娈垫枃妗ｆ敞瑙?
+ * - 鏋勫缓鑰呮ā寮忔敮鎸?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -29,224 +29,224 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "设备性能分析信息")
+@Schema(description = "璁惧鎬ц兘鍒嗘瀽淇℃伅")
 public class DevicePerformanceAnalyticsVO {
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
-    @Schema(description = "设备ID", example = "1001")
+    @Schema(description = "璁惧ID", example = "1001")
     private Long deviceId;
 
     /**
-     * 设备名称
+     * 璁惧鍚嶇О
      */
-    @Schema(description = "设备名称", example = "主入口门禁控制器")
+    @Schema(description = "璁惧鍚嶇О", example = "涓诲叆鍙ｉ棬绂佹帶鍒跺櫒")
     private String deviceName;
 
     /**
-     * 分析时间范围
+     * 鍒嗘瀽鏃堕棿鑼冨洿
      */
-    @Schema(description = "分析时间范围", example = "30天")
+    @Schema(description = "鍒嗘瀽鏃堕棿鑼冨洿", example = "30澶?)
     private String analysisPeriod;
 
     /**
-     * 平均响应时间（毫秒）
+     * 骞冲潎鍝嶅簲鏃堕棿锛堟绉掞級
      */
-    @Schema(description = "平均响应时间（毫秒）", example = "156")
+    @Schema(description = "骞冲潎鍝嶅簲鏃堕棿锛堟绉掞級", example = "156")
     private Long averageResponseTime;
 
     /**
-     * 最大响应时间（毫秒）
+     * 鏈€澶у搷搴旀椂闂达紙姣锛?
      */
-    @Schema(description = "最大响应时间（毫秒）", example = "1250")
+    @Schema(description = "鏈€澶у搷搴旀椂闂达紙姣锛?, example = "1250")
     private Long maxResponseTime;
 
     /**
-     * 最小响应时间（毫秒）
+     * 鏈€灏忓搷搴旀椂闂达紙姣锛?
      */
-    @Schema(description = "最小响应时间（毫秒）", example = "45")
+    @Schema(description = "鏈€灏忓搷搴旀椂闂达紙姣锛?, example = "45")
     private Long minResponseTime;
 
     /**
-     * P95响应时间（毫秒）
+     * P95鍝嶅簲鏃堕棿锛堟绉掞級
      */
-    @Schema(description = "P95响应时间（毫秒）", example = "320")
+    @Schema(description = "P95鍝嶅簲鏃堕棿锛堟绉掞級", example = "320")
     private Long p95ResponseTime;
 
     /**
-     * P99响应时间（毫秒）
+     * P99鍝嶅簲鏃堕棿锛堟绉掞級
      */
-    @Schema(description = "P99响应时间（毫秒）", example = "580")
+    @Schema(description = "P99鍝嶅簲鏃堕棿锛堟绉掞級", example = "580")
     private Long p99ResponseTime;
 
     /**
-     * 总请求次数
+     * 鎬昏姹傛鏁?
      */
-    @Schema(description = "总请求次数", example = "125680")
+    @Schema(description = "鎬昏姹傛鏁?, example = "125680")
     private Long totalRequests;
 
     /**
-     * 成功请求数
+     * 鎴愬姛璇锋眰鏁?
      */
-    @Schema(description = "成功请求数", example = "125432")
+    @Schema(description = "鎴愬姛璇锋眰鏁?, example = "125432")
     private Long successfulRequests;
 
     /**
-     * 成功率（%）
+     * 鎴愬姛鐜囷紙%锛?
      */
-    @Schema(description = "成功率（%）", example = "99.81")
+    @Schema(description = "鎴愬姛鐜囷紙%锛?, example = "99.81")
     private BigDecimal successRate;
 
     /**
-     * 平均吞吐量（TPS）
+     * 骞冲潎鍚炲悙閲忥紙TPS锛?
      */
-    @Schema(description = "平均吞吐量（TPS）", example = "45.3")
+    @Schema(description = "骞冲潎鍚炲悙閲忥紙TPS锛?, example = "45.3")
     private BigDecimal averageThroughput;
 
     /**
-     * 峰值吞吐量（TPS）
+     * 宄板€煎悶鍚愰噺锛圱PS锛?
      */
-    @Schema(description = "峰值吞吐量（TPS）", example = "126.8")
+    @Schema(description = "宄板€煎悶鍚愰噺锛圱PS锛?, example = "126.8")
     private BigDecimal peakThroughput;
 
     /**
-     * 错误分布
+     * 閿欒鍒嗗竷
      */
-    @Schema(description = "错误分布")
+    @Schema(description = "閿欒鍒嗗竷")
     private Map<String, Long> errorDistribution;
 
     /**
-     * 性能趋势数据
+     * 鎬ц兘瓒嬪娍鏁版嵁
      */
-    @Schema(description = "性能趋势数据")
+    @Schema(description = "鎬ц兘瓒嬪娍鏁版嵁")
     private List<PerformanceTrendVO> performanceTrends;
 
     /**
-     * 负载分析
+     * 璐熻浇鍒嗘瀽
      */
-    @Schema(description = "负载分析")
+    @Schema(description = "璐熻浇鍒嗘瀽")
     private LoadAnalysisVO loadAnalysis;
 
     /**
-     * 瓶颈分析
+     * 鐡堕鍒嗘瀽
      */
-    @Schema(description = "瓶颈分析")
+    @Schema(description = "鐡堕鍒嗘瀽")
     private List<BottleneckAnalysisVO> bottlenecks;
 
     /**
-     * 优化建议
+     * 浼樺寲寤鸿
      */
-    @Schema(description = "优化建议")
+    @Schema(description = "浼樺寲寤鸿")
     private List<OptimizationRecommendationVO> recommendations;
 
     /**
-     * 分析生成时间
+     * 鍒嗘瀽鐢熸垚鏃堕棿
      */
-    @Schema(description = "分析生成时间", example = "2025-01-30T15:45:00")
+    @Schema(description = "鍒嗘瀽鐢熸垚鏃堕棿", example = "2025-01-30T15:45:00")
     private LocalDateTime analysisTime;
 
     /**
-     * 性能趋势内部类
+     * 鎬ц兘瓒嬪娍鍐呴儴绫?
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "性能趋势")
+    @Schema(description = "鎬ц兘瓒嬪娍")
     public static class PerformanceTrendVO {
 
-        @Schema(description = "时间点", example = "2025-01-30T10:00:00")
+        @Schema(description = "鏃堕棿鐐?, example = "2025-01-30T10:00:00")
         private LocalDateTime timestamp;
 
-        @Schema(description = "响应时间", example = "156")
+        @Schema(description = "鍝嶅簲鏃堕棿", example = "156")
         private Long responseTime;
 
-        @Schema(description = "吞吐量", example = "45.3")
+        @Schema(description = "鍚炲悙閲?, example = "45.3")
         private BigDecimal throughput;
 
-        @Schema(description = "错误率", example = "0.2")
+        @Schema(description = "閿欒鐜?, example = "0.2")
         private BigDecimal errorRate;
     }
 
     /**
-     * 负载分析内部类
+     * 璐熻浇鍒嗘瀽鍐呴儴绫?
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "负载分析")
+    @Schema(description = "璐熻浇鍒嗘瀽")
     public static class LoadAnalysisVO {
 
-        @Schema(description = "平均CPU使用率", example = "35.6")
+        @Schema(description = "骞冲潎CPU浣跨敤鐜?, example = "35.6")
         private BigDecimal averageCpuUsage;
 
-        @Schema(description = "峰值CPU使用率", example = "78.2")
+        @Schema(description = "宄板€糃PU浣跨敤鐜?, example = "78.2")
         private BigDecimal peakCpuUsage;
 
-        @Schema(description = "平均内存使用率", example = "42.3")
+        @Schema(description = "骞冲潎鍐呭瓨浣跨敤鐜?, example = "42.3")
         private BigDecimal averageMemoryUsage;
 
-        @Schema(description = "峰值内存使用率", example = "85.7")
+        @Schema(description = "宄板€煎唴瀛樹娇鐢ㄧ巼", example = "85.7")
         private BigDecimal peakMemoryUsage;
 
-        @Schema(description = "平均网络带宽使用", example = "2.3")
+        @Schema(description = "骞冲潎缃戠粶甯﹀浣跨敤", example = "2.3")
         private BigDecimal averageNetworkUsage;
 
-        @Schema(description = "峰值网络带宽使用", example = "8.9")
+        @Schema(description = "宄板€肩綉缁滃甫瀹戒娇鐢?, example = "8.9")
         private BigDecimal peakNetworkUsage;
     }
 
     /**
-     * 瓶颈分析内部类
+     * 鐡堕鍒嗘瀽鍐呴儴绫?
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "瓶颈分析")
+    @Schema(description = "鐡堕鍒嗘瀽")
     public static class BottleneckAnalysisVO {
 
-        @Schema(description = "瓶颈类型", example = "RESPONSE_TIME")
+        @Schema(description = "鐡堕绫诲瀷", example = "RESPONSE_TIME")
         private String bottleneckType;
 
-        @Schema(description = "影响程度", example = "HIGH")
+        @Schema(description = "褰卞搷绋嬪害", example = "HIGH")
         private String impactLevel;
 
-        @Schema(description = "出现频率", example = "15.3%")
+        @Schema(description = "鍑虹幇棰戠巼", example = "15.3%")
         private BigDecimal frequency;
 
-        @Schema(description = "瓶颈描述", example = "高峰期响应时间超过500ms")
+        @Schema(description = "鐡堕鎻忚堪", example = "楂樺嘲鏈熷搷搴旀椂闂磋秴杩?00ms")
         private String description;
 
-        @Schema(description = "建议解决方案", example = "增加缓存层或优化数据库查询")
+        @Schema(description = "寤鸿瑙ｅ喅鏂规", example = "澧炲姞缂撳瓨灞傛垨浼樺寲鏁版嵁搴撴煡璇?)
         private String solution;
     }
 
     /**
-     * 优化建议内部类
+     * 浼樺寲寤鸿鍐呴儴绫?
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "优化建议")
+    @Schema(description = "浼樺寲寤鸿")
     public static class OptimizationRecommendationVO {
 
-        @Schema(description = "建议类型", example = "PERFORMANCE")
+        @Schema(description = "寤鸿绫诲瀷", example = "PERFORMANCE")
         private String recommendationType;
 
-        @Schema(description = "优先级", example = "HIGH")
+        @Schema(description = "浼樺厛绾?, example = "HIGH")
         private String priority;
 
-        @Schema(description = "预计改善幅度", example = "30%")
+        @Schema(description = "棰勮鏀瑰杽骞呭害", example = "30%")
         private BigDecimal expectedImprovement;
 
-        @Schema(description = "建议描述", example = "优化数据库索引可减少查询时间")
+        @Schema(description = "寤鸿鎻忚堪", example = "浼樺寲鏁版嵁搴撶储寮曞彲鍑忓皯鏌ヨ鏃堕棿")
         private String description;
 
-        @Schema(description = "实施难度", example = "LOW")
+        @Schema(description = "瀹炴柦闅惧害", example = "LOW")
         private String implementationDifficulty;
     }
 }

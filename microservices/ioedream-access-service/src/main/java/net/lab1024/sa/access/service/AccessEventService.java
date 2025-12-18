@@ -11,12 +11,11 @@ import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
- * 门禁事件服务接口
+ * 闂ㄧ浜嬩欢鏈嶅姟鎺ュ彛
  * <p>
- * 提供门禁事件管理相关业务功能
- * 严格遵循CLAUDE.md规范：
- * - Service接口定义在业务服务模块中
- * - 方法返回ResponseDTO统一格式
+ * 鎻愪緵闂ㄧ浜嬩欢绠＄悊鐩稿叧涓氬姟鍔熻兘
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - Service鎺ュ彛瀹氫箟鍦ㄤ笟鍔℃湇鍔℃ā鍧椾腑
+ * - 鏂规硶杩斿洖ResponseDTO缁熶竴鏍煎紡
  * </p>
  *
  * @author IOE-DREAM Team
@@ -26,42 +25,38 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 public interface AccessEventService {
 
     /**
-     * 获取移动端访问记录
-     *
-     * @param userId 用户ID
-     * @param size 记录数量
-     * @return 访问记录列表
+     * 鑾峰彇绉诲姩绔闂褰?     *
+     * @param userId 鐢ㄦ埛ID
+     * @param size 璁板綍鏁伴噺
+     * @return 璁块棶璁板綍鍒楄〃
      */
     ResponseDTO<List<MobileAccessRecord>> getMobileAccessRecords(Long userId, Integer size);
 
     /**
-     * 分页查询门禁记录
+     * 鍒嗛〉鏌ヨ闂ㄧ璁板綍
      *
-     * @param queryForm 查询表单
-     * @return 门禁记录分页结果
+     * @param queryForm 鏌ヨ琛ㄥ崟
+     * @return 闂ㄧ璁板綍鍒嗛〉缁撴灉
      */
     ResponseDTO<PageResult<AccessRecordVO>> queryAccessRecords(AccessRecordQueryForm queryForm);
 
     /**
-     * 获取门禁记录统计
+     * 鑾峰彇闂ㄧ璁板綍缁熻
      *
-     * @param startDate 开始日期
-     * @param endDate 结束日期
-     * @param areaId 区域ID（可选）
-     * @return 统计数据
+     * @param startDate 寮€濮嬫棩鏈?     * @param endDate 缁撴潫鏃ユ湡
+     * @param areaId 鍖哄煙ID锛堝彲閫夛級
+     * @return 缁熻鏁版嵁
      */
     ResponseDTO<AccessRecordStatisticsVO> getAccessRecordStatistics(LocalDate startDate, LocalDate endDate, String areaId);
 
     /**
-     * 创建门禁记录
+     * 鍒涘缓闂ㄧ璁板綍
      * <p>
-     * 用于设备协议推送门禁记录
-     * 通过审计日志记录门禁事件
+     * 鐢ㄤ簬璁惧鍗忚鎺ㄩ€侀棬绂佽褰?     * 閫氳繃瀹¤鏃ュ織璁板綍闂ㄧ浜嬩欢
      * </p>
      *
-     * @param form 门禁记录创建表单
-     * @return 创建的门禁记录ID（审计日志ID）
-     */
+     * @param form 闂ㄧ璁板綍鍒涘缓琛ㄥ崟
+     * @return 鍒涘缓鐨勯棬绂佽褰旾D锛堝璁℃棩蹇桰D锛?     */
     ResponseDTO<Long> createAccessRecord(net.lab1024.sa.access.domain.form.AccessRecordAddForm form);
 }
 

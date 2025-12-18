@@ -18,6 +18,13 @@
     <name>IOE-DREAM Access Service</name>
     <description>门禁管理服务，提供门禁控制、通行记录等业务API</description>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <java.version>17</java.version>
+    </properties>
+
     <dependencies>
         <!-- ==================== 核心基础模块 ==================== -->
         <!-- Common Core (必需) -->
@@ -198,6 +205,25 @@
 
     <build>
         <plugins>
+            <!-- Maven Compiler Plugin - 强制UTF-8编码 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                    <failOnError>true</failOnError>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
             <!-- Spring Boot Maven Plugin配置由父POM统一管理 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>

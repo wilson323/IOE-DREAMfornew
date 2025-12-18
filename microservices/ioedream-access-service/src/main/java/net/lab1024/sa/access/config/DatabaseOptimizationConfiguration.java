@@ -22,13 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 
 /**
- * 数据库性能优化配置
+ * 鏁版嵁搴撴€ц兘浼樺寲閰嶇疆
  * <p>
- * 提供数据库性能监控、索引优化建议、自动维护等功能
- * 严格遵循CLAUDE.md规范：
- * - 使用@Configuration注解
- * - 统一使用@Resource依赖注入
- * - 完整的日志记录
+ * 鎻愪緵鏁版嵁搴撴€ц兘鐩戞帶銆佺储寮曚紭鍖栧缓璁€佽嚜鍔ㄧ淮鎶ょ瓑鍔熻兘
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Configuration娉ㄨВ
+ * - 缁熶竴浣跨敤@Resource渚濊禆娉ㄥ叆
+ * - 瀹屾暣鐨勬棩蹇楄褰?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -41,19 +41,19 @@ import net.lab1024.sa.common.gateway.GatewayServiceClient;
 public class DatabaseOptimizationConfiguration {
 
     /**
-     * 数据源
+     * 鏁版嵁婧?
      */
     @Resource
     private DataSource dataSource;
 
     /**
-     * 网关服务客户端
+     * 缃戝叧鏈嶅姟瀹㈡埛绔?
      */
     @Resource
     private GatewayServiceClient gatewayServiceClient;
 
     /**
-     * 数据库性能监控健康检查
+     * 鏁版嵁搴撴€ц兘鐩戞帶鍋ュ悍妫€鏌?
      */
     @Bean
     public HealthIndicator databasePerformanceHealthIndicator() {
@@ -61,7 +61,7 @@ public class DatabaseOptimizationConfiguration {
     }
 
     /**
-     * 定时任务执行器
+     * 瀹氭椂浠诲姟鎵ц鍣?
      */
     @Bean
     public ScheduledExecutorService databaseMaintenanceExecutor() {
@@ -69,47 +69,47 @@ public class DatabaseOptimizationConfiguration {
     }
 
     /**
-     * 定时执行数据库性能检查
+     * 瀹氭椂鎵ц鏁版嵁搴撴€ц兘妫€鏌?
      */
-    @Scheduled(cron = "0 0 2 * * ?") // 每天凌晨2点执行
+    @Scheduled(cron = "0 0 2 * * ?") // 姣忓ぉ鍑屾櫒2鐐规墽琛?
     public void scheduledDatabaseOptimization() {
-        log.info("[数据库优化] 开始定时数据库性能优化");
+        log.info("[鏁版嵁搴撲紭鍖朷 寮€濮嬪畾鏃舵暟鎹簱鎬ц兘浼樺寲");
 
         try {
-            // 1. 检查慢查询
+            // 1. 妫€鏌ユ參鏌ヨ
             checkSlowQueries();
 
-            // 2. 更新表统计信息
+            // 2. 鏇存柊琛ㄧ粺璁′俊鎭?
             updateTableStatistics();
 
-            // 3. 分析索引使用情况
+            // 3. 鍒嗘瀽绱㈠紩浣跨敤鎯呭喌
             analyzeIndexUsage();
 
-            // 4. 生成优化建议
+            // 4. 鐢熸垚浼樺寲寤鸿
             generateOptimizationRecommendations();
 
-            log.info("[数据库优化] 定时优化完成");
+            log.info("[鏁版嵁搴撲紭鍖朷 瀹氭椂浼樺寲瀹屾垚");
 
         } catch (Exception e) {
-            log.error("[数据库优化] 定时优化异常", e);
+            log.error("[鏁版嵁搴撲紭鍖朷 瀹氭椂浼樺寲寮傚父", e);
         }
     }
 
     /**
-     * 检查慢查询
+     * 妫€鏌ユ參鏌ヨ
      */
     private void checkSlowQueries() {
-        log.debug("[数据库优化] 检查慢查询");
+        log.debug("[鏁版嵁搴撲紭鍖朷 妫€鏌ユ參鏌ヨ");
 
-        // TODO: 实现慢查询检查逻辑
-        // 这里应该查询慢查询日志并分析
+        // TODO: 瀹炵幇鎱㈡煡璇㈡鏌ラ€昏緫
+        // 杩欓噷搴旇鏌ヨ鎱㈡煡璇㈡棩蹇楀苟鍒嗘瀽
     }
 
     /**
-     * 更新表统计信息
+     * 鏇存柊琛ㄧ粺璁′俊鎭?
      */
     private void updateTableStatistics() {
-        log.debug("[数据库优化] 更新表统计信息");
+        log.debug("[鏁版嵁搴撲紭鍖朷 鏇存柊琛ㄧ粺璁′俊鎭?);
 
         List<String> tables = List.of(
             "t_access_record",
@@ -118,47 +118,47 @@ public class DatabaseOptimizationConfiguration {
             "t_area_device_relation"
         );
 
-        // TODO: 执行ANALYZE TABLE语句更新统计信息
+        // TODO: 鎵цANALYZE TABLE璇彞鏇存柊缁熻淇℃伅
         for (String table : tables) {
-            log.debug("[数据库优化] 更新表统计信息: {}", table);
+            log.debug("[鏁版嵁搴撲紭鍖朷 鏇存柊琛ㄧ粺璁′俊鎭? {}", table);
         }
     }
 
     /**
-     * 分析索引使用情况
+     * 鍒嗘瀽绱㈠紩浣跨敤鎯呭喌
      */
     private void analyzeIndexUsage() {
-        log.debug("[数据库优化] 分析索引使用情况");
+        log.debug("[鏁版嵁搴撲紭鍖朷 鍒嗘瀽绱㈠紩浣跨敤鎯呭喌");
 
-        // TODO: 查询information_schema.statistics分析索引使用情况
-        // 识别未使用的索引，提供删除建议
+        // TODO: 鏌ヨinformation_schema.statistics鍒嗘瀽绱㈠紩浣跨敤鎯呭喌
+        // 璇嗗埆鏈娇鐢ㄧ殑绱㈠紩锛屾彁渚涘垹闄ゅ缓璁?
     }
 
     /**
-     * 生成优化建议
+     * 鐢熸垚浼樺寲寤鸿
      */
     private List<OptimizationRecommendation> generateOptimizationRecommendations() {
-        log.debug("[数据库优化] 生成优化建议");
+        log.debug("[鏁版嵁搴撲紭鍖朷 鐢熸垚浼樺寲寤鸿");
 
         List<OptimizationRecommendation> recommendations = new ArrayList<>();
 
-        // 1. 添加复合索引建议
+        // 1. 娣诲姞澶嶅悎绱㈠紩寤鸿
         recommendations.add(OptimizationRecommendation.builder()
             .recommendationType("INDEX_OPTIMIZATION")
             .targetTable("t_access_record")
-            .recommendation("添加复合索引 idx_access_record_user_time_optimized")
+            .recommendation("娣诲姞澶嶅悎绱㈠紩 idx_access_record_user_time_optimized")
             .sql("CREATE INDEX idx_access_record_user_time_optimized ON t_access_record(user_id, access_time DESC, access_result) WHERE deleted_flag = 0")
-            .expectedImprovement("查询响应时间提升60%")
+            .expectedImprovement("鏌ヨ鍝嶅簲鏃堕棿鎻愬崌60%")
             .priority("HIGH")
             .build());
 
-        // 2. 分区表优化建议
+        // 2. 鍒嗗尯琛ㄤ紭鍖栧缓璁?
         recommendations.add(OptimizationRecommendation.builder()
             .recommendationType("PARTITION_OPTIMIZATION")
             .targetTable("t_access_record")
-            .recommendation("按时间分区优化大数据量查询")
+            .recommendation("鎸夋椂闂村垎鍖轰紭鍖栧ぇ鏁版嵁閲忔煡璇?)
             .sql("ALTER TABLE t_access_record PARTITION BY RANGE (MONTH(access_time)) (PARTITION p202501 VALUES LESS THAN ('2025-02-01'))")
-            .expectedImprovement("大数据量查询性能提升80%")
+            .expectedImprovement("澶ф暟鎹噺鏌ヨ鎬ц兘鎻愬崌80%")
             .priority("MEDIUM")
             .build());
 
@@ -166,37 +166,37 @@ public class DatabaseOptimizationConfiguration {
     }
 
     /**
-     * 数据库性能监控健康检查器
+     * 鏁版嵁搴撴€ц兘鐩戞帶鍋ュ悍妫€鏌ュ櫒
      */
     private class DatabasePerformanceHealthIndicator implements HealthIndicator {
 
         @Override
         public Health health() {
             try {
-                // 1. 检查数据库连接
+                // 1. 妫€鏌ユ暟鎹簱杩炴帴
                 if (dataSource == null) {
                     return Health.down()
-                        .withDetail("error", "数据源未配置")
+                        .withDetail("error", "鏁版嵁婧愭湭閰嶇疆")
                         .build();
                 }
 
-                // 2. 检查连接池状态
+                // 2. 妫€鏌ヨ繛鎺ユ睜鐘舵€?
                 Map<String, Object> details = checkConnectionPoolStatus();
 
-                // 3. 检查慢查询数量
+                // 3. 妫€鏌ユ參鏌ヨ鏁伴噺
                 long slowQueryCount = getSlowQueryCount();
                 details.put("slowQueryCount", slowQueryCount);
 
-                // 4. 检查索引使用情况
+                // 4. 妫€鏌ョ储寮曚娇鐢ㄦ儏鍐?
                 Map<String, Object> indexStats = checkIndexUsage();
                 details.putAll(indexStats);
 
-                // 5. 综合健康判断
+                // 5. 缁煎悎鍋ュ悍鍒ゆ柇
                 Health.Builder healthBuilder = Health.up();
 
                 if (slowQueryCount > 100) {
                     healthBuilder = Health.down()
-                        .withDetail("slowQueryWarning", "慢查询数量过多: " + slowQueryCount);
+                        .withDetail("slowQueryWarning", "鎱㈡煡璇㈡暟閲忚繃澶? " + slowQueryCount);
                 }
 
                 return healthBuilder
@@ -204,7 +204,7 @@ public class DatabaseOptimizationConfiguration {
                     .build();
 
             } catch (Exception e) {
-                log.error("[数据库健康检查] 健康检查异常", e);
+                log.error("[鏁版嵁搴撳仴搴锋鏌 鍋ュ悍妫€鏌ュ紓甯?, e);
                 return Health.down()
                     .withDetail("error", e.getMessage())
                     .build();
@@ -214,7 +214,7 @@ public class DatabaseOptimizationConfiguration {
         private Map<String, Object> checkConnectionPoolStatus() {
             Map<String, Object> details = new java.util.HashMap<>();
 
-            // TODO: 检查连接池状态
+            // TODO: 妫€鏌ヨ繛鎺ユ睜鐘舵€?
             details.put("activeConnections", 5);
             details.put("idleConnections", 10);
             details.put("totalConnections", 15);
@@ -224,14 +224,14 @@ public class DatabaseOptimizationConfiguration {
         }
 
         private long getSlowQueryCount() {
-            // TODO: 查询慢查询日志表获取数量
-            return 15L; // 模拟值
+            // TODO: 鏌ヨ鎱㈡煡璇㈡棩蹇楄〃鑾峰彇鏁伴噺
+            return 15L; // 妯℃嫙鍊?
         }
 
         private Map<String, Object> checkIndexUsage() {
             Map<String, Object> indexStats = new java.util.HashMap<>();
 
-            // TODO: 查询索引使用统计
+            // TODO: 鏌ヨ绱㈠紩浣跨敤缁熻
             indexStats.put("totalIndexes", 25);
             indexStats.put("unusedIndexes", 2);
             indexStats.put("lowUsageIndexes", 3);
@@ -241,7 +241,7 @@ public class DatabaseOptimizationConfiguration {
     }
 
     /**
-     * 优化建议内部类
+     * 浼樺寲寤鸿鍐呴儴绫?
      */
     @lombok.Data
     @lombok.Builder
@@ -250,37 +250,37 @@ public class DatabaseOptimizationConfiguration {
     public static class OptimizationRecommendation {
 
         /**
-         * 建议类型
+         * 寤鸿绫诲瀷
          */
         private String recommendationType;
 
         /**
-         * 目标表
+         * 鐩爣琛?
          */
         private String targetTable;
 
         /**
-         * 建议描述
+         * 寤鸿鎻忚堪
          */
         private String recommendation;
 
         /**
-         * SQL语句
+         * SQL璇彞
          */
         private String sql;
 
         /**
-         * 预期改善效果
+         * 棰勬湡鏀瑰杽鏁堟灉
          */
         private String expectedImprovement;
 
         /**
-         * 优先级
+         * 浼樺厛绾?
          */
         private String priority;
 
         /**
-         * 建议创建时间
+         * 寤鸿鍒涘缓鏃堕棿
          */
         private LocalDateTime createTime = LocalDateTime.now();
     }

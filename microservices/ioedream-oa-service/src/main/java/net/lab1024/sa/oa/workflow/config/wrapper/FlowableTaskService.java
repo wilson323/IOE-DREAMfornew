@@ -1,8 +1,6 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
@@ -26,8 +24,6 @@ import java.util.Map;
 @Slf4j
 @Service
 public class FlowableTaskService {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableTaskService.class);
     private final TaskService taskService;
 
     public FlowableTaskService(TaskService taskService) {

@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 @PermissionCheck(value = "OA_WORKFLOW", description = "工作流引擎管理模块权限")
 @Validated
 public class WorkflowStartCompatController {
-    private static final Logger log = LoggerFactory.getLogger(WorkflowStartCompatController.class);
 
     @Resource
     private WorkflowEngineService workflowEngineService;

@@ -24,18 +24,18 @@ import net.lab1024.sa.common.entity.UserEntity;
 import net.lab1024.sa.common.util.SmartStringUtil;
 
 /**
- * 离线模式服务实现
+ * 绂荤嚎妯″紡鏈嶅姟瀹炵幇
  * <p>
- * 提供离线模式下的门禁管理功能：
- * - 离线权限数据管理
- * - 离线访问记录处理
- * - 数据同步和完整性验证
- * - 离线模式状态监控
- * 严格遵循CLAUDE.md规范：
- * - 使用@Service注解
- * - 使用@Transactional事务管理
- * - 完整的日志记录和错误处理
- * - 性能监控和指标收集
+ * 鎻愪緵绂荤嚎妯″紡涓嬬殑闂ㄧ绠＄悊鍔熻兘锛?
+ * - 绂荤嚎鏉冮檺鏁版嵁绠＄悊
+ * - 绂荤嚎璁块棶璁板綍澶勭悊
+ * - 鏁版嵁鍚屾鍜屽畬鏁存€ч獙璇?
+ * - 绂荤嚎妯″紡鐘舵€佺洃鎺?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Service娉ㄨВ
+ * - 浣跨敤@Transactional浜嬪姟绠＄悊
+ * - 瀹屾暣鐨勬棩蹇楄褰曞拰閿欒澶勭悊
+ * - 鎬ц兘鐩戞帶鍜屾寚鏍囨敹闆?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -56,20 +56,20 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     @Resource
     private AreaPersonDao areaPersonDao;
 
-    // 离线权限数据缓存
+    // 绂荤嚎鏉冮檺鏁版嵁缂撳瓨
     private final Map<Long, OfflinePermissionsCache> permissionsCache = new ConcurrentHashMap<>();
 
-    // 离线访问记录缓存
+    // 绂荤嚎璁块棶璁板綍缂撳瓨
     private final Map<Long, List<OfflineAccessRecord>> recordsCache = new ConcurrentHashMap<>();
 
-    // 离线模式状态缓存
+    // 绂荤嚎妯″紡鐘舵€佺紦瀛?
     private final Map<Long, OfflineModeStatus> statusCache = new ConcurrentHashMap<>();
 
     @Override
-    @Timed(value = "offline.sync", description = "离线数据同步耗时")
-    @Counted(value = "offline.sync.count", description = "离线数据同步次数")
+    @Timed(value = "offline.sync", description = "绂荤嚎鏁版嵁鍚屾鑰楁椂")
+    @Counted(value = "offline.sync.count", description = "绂荤嚎鏁版嵁鍚屾娆℃暟")
     public ResponseDTO<OfflineSyncResult> syncOfflineData(OfflineSyncRequest request) {
-        log.info("[离线同步] 开始同步离线数据: userId={}, syncType={}, dataSize={}",
+        log.info("[绂荤嚎鍚屾] 寮€濮嬪悓姝ョ绾挎暟鎹? userId={}, syncType={}, dataSize={}",
                 request.getUserId(), request.getSyncType(), request.getDataSize());
 
         try {
@@ -89,17 +89,17 @@ public class OfflineModeServiceImpl implements OfflineModeService {
                     syncedRecords = syncConfig(request.getUserId(), errors);
                     break;
                 default:
-                    errors.add("不支持的同步类型: " + request.getSyncType());
+                    errors.add("涓嶆敮鎸佺殑鍚屾绫诲瀷: " + request.getSyncType());
             }
 
             failedRecords = errors.size();
             long syncDuration = System.currentTimeMillis() - startTime;
 
-            // 计算下次同步时间
+            // 璁＄畻涓嬫鍚屾鏃堕棿
             String nextSyncTime = LocalDateTime.now().plusHours(1)
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-            // 更新同步状态
+            // 鏇存柊鍚屾鐘舵€?
             updateOfflineStatus(request.getUserId(), "SYNCED", syncedRecords, failedRecords);
 
             OfflineSyncResult result = new OfflineSyncResult();
@@ -111,19 +111,19 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             result.setNextSyncTime(nextSyncTime);
             result.setErrors(errors);
 
-            log.info("[离线同步] 同步完成: userId={}, syncType={}, synced={}, failed={}, duration={}ms",
+            log.info("[绂荤嚎鍚屾] 鍚屾瀹屾垚: userId={}, syncType={}, synced={}, failed={}, duration={}ms",
                     request.getUserId(), request.getSyncType(), syncedRecords, failedRecords, syncDuration);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[离线同步] 同步失败: userId={}, syncType={}, error={}",
+            log.error("[绂荤嚎鍚屾] 鍚屾澶辫触: userId={}, syncType={}, error={}",
                     request.getUserId(), request.getSyncType(), e.getMessage(), e);
 
             OfflineSyncResult result = new OfflineSyncResult();
             result.setSuccess(false);
             result.setSyncType(request.getSyncType());
             result.setSyncDuration(System.currentTimeMillis());
-            result.setErrors(Arrays.asList("同步异常: " + e.getMessage()));
+            result.setErrors(Arrays.asList("鍚屾寮傚父: " + e.getMessage()));
 
             return ResponseDTO.ok(result);
         }
@@ -131,12 +131,12 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
     @Override
     public ResponseDTO<OfflinePermissionsVO> getOfflinePermissions(Long userId, String lastSyncTime) {
-        log.info("[离线权限] 获取离线权限: userId={}, lastSyncTime={}", userId, lastSyncTime);
+        log.info("[绂荤嚎鏉冮檺] 鑾峰彇绂荤嚎鏉冮檺: userId={}, lastSyncTime={}", userId, lastSyncTime);
 
         try {
             OfflinePermissionsCache cache = permissionsCache.get(userId);
             if (cache == null) {
-                // 如果缓存为空，生成新的权限数据
+                // 濡傛灉缂撳瓨涓虹┖锛岀敓鎴愭柊鐨勬潈闄愭暟鎹?
                 cache = generateOfflinePermissions(userId);
                 permissionsCache.put(userId, cache);
             }
@@ -150,21 +150,21 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             permissionsVO.setChecksum(generateChecksum(cache));
             permissionsVO.setVersion(cache.getVersion());
 
-            log.info("[离线权限] 获取完成: userId={}, areaPermissions={}, devicePermissions={}",
+            log.info("[绂荤嚎鏉冮檺] 鑾峰彇瀹屾垚: userId={}, areaPermissions={}, devicePermissions={}",
                     userId, cache.getAreaPermissions().size(), cache.getDevicePermissions().size());
             return ResponseDTO.ok(permissionsVO);
 
         } catch (Exception e) {
-            log.error("[离线权限] 获取失败: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("PERMISSIONS_LOAD_FAILED", "离线权限获取失败");
+            log.error("[绂荤嚎鏉冮檺] 鑾峰彇澶辫触: userId={}, error={}", userId, e.getMessage(), e);
+            return ResponseDTO.error("PERMISSIONS_LOAD_FAILED", "绂荤嚎鏉冮檺鑾峰彇澶辫触");
         }
     }
 
     @Override
-    @Timed(value = "offline.report", description = "离线记录上报耗时")
-    @Counted(value = "offline.report.count", description = "离线记录上报次数")
+    @Timed(value = "offline.report", description = "绂荤嚎璁板綍涓婃姤鑰楁椂")
+    @Counted(value = "offline.report.count", description = "绂荤嚎璁板綍涓婃姤娆℃暟")
     public ResponseDTO<OfflineReportResult> reportOfflineRecords(OfflineRecordsReportRequest request) {
-        log.info("[离线上报] 开始上报离线记录: userId={}, recordCount={}",
+        log.info("[绂荤嚎涓婃姤] 寮€濮嬩笂鎶ョ绾胯褰? userId={}, recordCount={}",
                 request.getUserId(), request.getRecords().size());
 
         try {
@@ -174,24 +174,24 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             List<String> rejectedReasons = new ArrayList<>();
             String reportId = generateReportId();
 
-            // 验证和处理每条记录
+            // 楠岃瘉鍜屽鐞嗘瘡鏉¤褰?
             for (OfflineAccessRecord record : request.getRecords()) {
                 try {
                     if (validateOfflineRecord(record)) {
-                        // 保存到数据库
+                        // 淇濆瓨鍒版暟鎹簱
                         saveOfflineRecordToDatabase(record);
                         acceptedRecords++;
                     } else {
                         rejectedRecords++;
-                        rejectedReasons.add("记录" + record.getRecordId() + ": 验证失败");
+                        rejectedReasons.add("璁板綍" + record.getRecordId() + ": 楠岃瘉澶辫触");
                     }
                 } catch (Exception e) {
                     rejectedRecords++;
-                    rejectedReasons.add("记录" + record.getRecordId() + ": " + e.getMessage());
+                    rejectedReasons.add("璁板綍" + record.getRecordId() + ": " + e.getMessage());
                 }
             }
 
-            // 清理缓存的离线记录
+            // 娓呯悊缂撳瓨鐨勭绾胯褰?
             recordsCache.remove(request.getUserId());
 
             OfflineReportResult result = new OfflineReportResult();
@@ -202,17 +202,17 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             result.setRejectedReasons(rejectedReasons);
             result.setReportId(reportId);
 
-            log.info("[离线上报] 上报完成: userId={}, reported={}, accepted={}, rejected={}",
+            log.info("[绂荤嚎涓婃姤] 涓婃姤瀹屾垚: userId={}, reported={}, accepted={}, rejected={}",
                     request.getUserId(), reportedRecords, acceptedRecords, rejectedRecords);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[离线上报] 上报失败: userId={}, error={}", request.getUserId(), e.getMessage(), e);
+            log.error("[绂荤嚎涓婃姤] 涓婃姤澶辫触: userId={}, error={}", request.getUserId(), e.getMessage(), e);
 
             OfflineReportResult result = new OfflineReportResult();
             result.setSuccess(false);
             result.setReportId(generateReportId());
-            result.setRejectedReasons(Arrays.asList("上报异常: " + e.getMessage()));
+            result.setRejectedReasons(Arrays.asList("涓婃姤寮傚父: " + e.getMessage()));
 
             return ResponseDTO.ok(result);
         }
@@ -221,63 +221,63 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     @Override
     public ResponseDTO<OfflineAccessValidationResult> validateOfflineAccess(
             Long userId, Long deviceId, String accessType, String verificationData) {
-        log.info("[离线验证] 验证离线访问权限: userId={}, deviceId={}, accessType={}",
+        log.info("[绂荤嚎楠岃瘉] 楠岃瘉绂荤嚎璁块棶鏉冮檺: userId={}, deviceId={}, accessType={}",
                 userId, deviceId, accessType);
 
         try {
-            // 获取离线权限数据
+            // 鑾峰彇绂荤嚎鏉冮檺鏁版嵁
             OfflinePermissionsCache permissions = permissionsCache.get(userId);
             if (permissions == null) {
-                return createValidationResult(false, "无离线权限数据", null, 0L);
+                return createValidationResult(false, "鏃犵绾挎潈闄愭暟鎹?, null, 0L);
             }
 
-            // 验证设备权限
+            // 楠岃瘉璁惧鏉冮檺
             boolean hasDevicePermission = validateDevicePermission(permissions, deviceId);
             if (!hasDevicePermission) {
-                return createValidationResult(false, "无设备访问权限", null, 0L);
+                return createValidationResult(false, "鏃犺澶囪闂潈闄?, null, 0L);
             }
 
-            // 验证访问次数限制
+            // 楠岃瘉璁块棶娆℃暟闄愬埗
             long remainingQuota = validateAccessQuota(permissions, deviceId);
             if (remainingQuota < 0) {
-                return createValidationResult(false, "访问次数超限", null, remainingQuota);
+                return createValidationResult(false, "璁块棶娆℃暟瓒呴檺", null, remainingQuota);
             }
 
-            // 验证时间有效性
+            // 楠岃瘉鏃堕棿鏈夋晥鎬?
             if (!validateTimeValidity(permissions)) {
-                return createValidationResult(false, "权限已过期", null, remainingQuota);
+                return createValidationResult(false, "鏉冮檺宸茶繃鏈?, null, remainingQuota);
             }
 
-            // 验证访问类型
+            // 楠岃瘉璁块棶绫诲瀷
             if (!validateAccessType(permissions, accessType)) {
-                return createValidationResult(false, "不支持的访问类型", null, remainingQuota);
+                return createValidationResult(false, "涓嶆敮鎸佺殑璁块棶绫诲瀷", null, remainingQuota);
             }
 
-            // 更新访问计数
+            // 鏇存柊璁块棶璁℃暟
             updateAccessCount(permissions, deviceId);
 
             OfflineAccessValidationResult result = new OfflineAccessValidationResult();
             result.setAllowed(true);
-            result.setValidationReason("验证通过");
+            result.setValidationReason("楠岃瘉閫氳繃");
             result.setPermissionLevel(permissions.getPermissionLevel());
             result.setRemainingQuota(remainingQuota - 1);
             result.setValidUntil(permissions.getExpiryTime());
             result.setValidationMode("OFFLINE");
 
-            log.info("[离线验证] 验证成功: userId={}, deviceId={}, remainingQuota={}",
+            log.info("[绂荤嚎楠岃瘉] 楠岃瘉鎴愬姛: userId={}, deviceId={}, remainingQuota={}",
                     userId, deviceId, remainingQuota - 1);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[离线验证] 验证失败: userId={}, deviceId={}, error={}",
+            log.error("[绂荤嚎楠岃瘉] 楠岃瘉澶辫触: userId={}, deviceId={}, error={}",
                     userId, deviceId, e.getMessage(), e);
-            return createValidationResult(false, "验证异常: " + e.getMessage(), null, 0L);
+            return createValidationResult(false, "楠岃瘉寮傚父: " + e.getMessage(), null, 0L);
         }
     }
 
     @Override
     public ResponseDTO<OfflineModeStatusVO> getOfflineModeStatus(Long userId) {
-        log.info("[离线状态] 查询离线模式状态: userId={}", userId);
+        log.info("[绂荤嚎鐘舵€乚 鏌ヨ绂荤嚎妯″紡鐘舵€? userId={}", userId);
 
         try {
             OfflineModeStatus status = statusCache.get(userId);
@@ -297,20 +297,20 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             statusVO.setStorageUsage(status.getStorageUsage());
             statusVO.setActiveDevices(status.getActiveDevices());
 
-            log.info("[离线状态] 查询完成: userId={}, isOfflineMode={}, pendingRecords={}",
+            log.info("[绂荤嚎鐘舵€乚 鏌ヨ瀹屾垚: userId={}, isOfflineMode={}, pendingRecords={}",
                     userId, status.isOfflineMode(), status.getPendingRecords());
             return ResponseDTO.ok(statusVO);
 
         } catch (Exception e) {
-            log.error("[离线状态] 查询失败: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("STATUS_QUERY_FAILED", "离线状态查询失败");
+            log.error("[绂荤嚎鐘舵€乚 鏌ヨ澶辫触: userId={}, error={}", userId, e.getMessage(), e);
+            return ResponseDTO.error("STATUS_QUERY_FAILED", "绂荤嚎鐘舵€佹煡璇㈠け璐?);
         }
     }
 
     @Override
-    @Timed(value = "offline.cleanup", description = "离线数据清理耗时")
+    @Timed(value = "offline.cleanup", description = "绂荤嚎鏁版嵁娓呯悊鑰楁椂")
     public ResponseDTO<OfflineDataCleanupResult> cleanupExpiredOfflineData(Long userId) {
-        log.info("[离线清理] 开始清理过期数据: userId={}", userId);
+        log.info("[绂荤嚎娓呯悊] 寮€濮嬫竻鐞嗚繃鏈熸暟鎹? userId={}", userId);
 
         try {
             long startTime = System.currentTimeMillis();
@@ -319,7 +319,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             int cleanedDevices = 0;
             long freedStorage = 0L;
 
-            // 清理过期权限数据
+            // 娓呯悊杩囨湡鏉冮檺鏁版嵁
             OfflinePermissionsCache permissions = permissionsCache.get(userId);
             if (permissions != null && isExpired(permissions.getExpiryTime())) {
                 permissionsCache.remove(userId);
@@ -327,7 +327,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
                 freedStorage += estimatePermissionStorage(permissions);
             }
 
-            // 清理历史访问记录
+            // 娓呯悊鍘嗗彶璁块棶璁板綍
             List<OfflineAccessRecord> records = recordsCache.get(userId);
             if (records != null) {
                 List<OfflineAccessRecord> validRecords = records.stream()
@@ -336,10 +336,10 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
                 cleanedRecords = records.size() - validRecords.size();
                 recordsCache.put(userId, validRecords);
-                freedStorage += cleanedRecords * 200; // 估算每条记录200字节
+                freedStorage += cleanedRecords * 200; // 浼扮畻姣忔潯璁板綍200瀛楄妭
             }
 
-            // 清理设备连接信息
+            // 娓呯悊璁惧杩炴帴淇℃伅
             cleanedDevices = cleanupDeviceConnections(userId);
 
             long cleanupDuration = System.currentTimeMillis() - startTime;
@@ -354,18 +354,18 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             result.setCleanupDuration(cleanupDuration);
             result.setErrors(new ArrayList<>());
 
-            log.info("[离线清理] 清理完成: userId={}, permissions={}, records={}, devices={}, freed={}bytes",
+            log.info("[绂荤嚎娓呯悊] 娓呯悊瀹屾垚: userId={}, permissions={}, records={}, devices={}, freed={}bytes",
                     userId, cleanedPermissions, cleanedRecords, cleanedDevices, freedStorage);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[离线清理] 清理失败: userId={}, error={}", userId, e.getMessage(), e);
+            log.error("[绂荤嚎娓呯悊] 娓呯悊澶辫触: userId={}, error={}", userId, e.getMessage(), e);
 
             OfflineDataCleanupResult result = new OfflineDataCleanupResult();
             result.setSuccess(false);
             result.setUserId(userId);
             result.setCleanupDuration(System.currentTimeMillis());
-            result.setErrors(Arrays.asList("清理异常: " + e.getMessage()));
+            result.setErrors(Arrays.asList("娓呯悊寮傚父: " + e.getMessage()));
 
             return ResponseDTO.ok(result);
         }
@@ -373,25 +373,25 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
     @Override
     public ResponseDTO<OfflineDataPackageVO> generateOfflineDataPackage(Long userId, List<Long> deviceIds) {
-        log.info("[离线数据包] 生成离线数据包: userId={}, deviceCount={}", userId, deviceIds.size());
+        log.info("[绂荤嚎鏁版嵁鍖匽 鐢熸垚绂荤嚎鏁版嵁鍖? userId={}, deviceCount={}", userId, deviceIds.size());
 
         try {
-            // 获取用户权限数据
+            // 鑾峰彇鐢ㄦ埛鏉冮檺鏁版嵁
             OfflinePermissionsCache permissions = permissionsCache.get(userId);
             if (permissions == null) {
                 permissions = generateOfflinePermissions(userId);
                 permissionsCache.put(userId, permissions);
             }
 
-            // 过滤设备权限
+            // 杩囨护璁惧鏉冮檺
             List<OfflineDevicePermission> filteredDevices = permissions.getDevicePermissions().stream()
                     .filter(device -> deviceIds.isEmpty() || deviceIds.contains(device.getDeviceId()))
                     .collect(Collectors.toList());
 
-            // 计算数据包大小
+            // 璁＄畻鏁版嵁鍖呭ぇ灏?
             long packageSize = estimatePackageSize(permissions.getAreaPermissions(), filteredDevices);
 
-            // 生成数据包
+            // 鐢熸垚鏁版嵁鍖?
             OfflineDataPackageVO dataPackage = new OfflineDataPackageVO();
             dataPackage.setPackageId(generatePackageId(userId));
             dataPackage.setUserId(userId);
@@ -405,73 +405,73 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             dataPackage.setDeviceCount(filteredDevices.size());
             dataPackage.setPermissionCount(permissions.getAreaPermissions().size());
 
-            log.info("[离线数据包] 生成完成: userId={}, packageSize={}bytes, deviceCount={}",
+            log.info("[绂荤嚎鏁版嵁鍖匽 鐢熸垚瀹屾垚: userId={}, packageSize={}bytes, deviceCount={}",
                     userId, packageSize, filteredDevices.size());
             return ResponseDTO.ok(dataPackage);
 
         } catch (Exception e) {
-            log.error("[离线数据包] 生成失败: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("PACKAGE_GENERATION_FAILED", "离线数据包生成失败");
+            log.error("[绂荤嚎鏁版嵁鍖匽 鐢熸垚澶辫触: userId={}, error={}", userId, e.getMessage(), e);
+            return ResponseDTO.error("PACKAGE_GENERATION_FAILED", "绂荤嚎鏁版嵁鍖呯敓鎴愬け璐?);
         }
     }
 
     @Override
     public ResponseDTO<OfflineDataIntegrityResult> validateOfflineDataIntegrity(Long userId, String dataPackage) {
-        log.info("[离线数据验证] 验证离线数据完整性: userId={}, packageSize={}",
+        log.info("[绂荤嚎鏁版嵁楠岃瘉] 楠岃瘉绂荤嚎鏁版嵁瀹屾暣鎬? userId={}, packageSize={}",
                 userId, SmartStringUtil.isNotEmpty(dataPackage) ? dataPackage.length() : 0);
 
         try {
             OfflineDataIntegrityResult result = new OfflineDataIntegrityResult();
             result.setPackageId("PKG_" + System.currentTimeMillis());
 
-            // 校验和验证
+            // 鏍￠獙鍜岄獙璇?
             String expectedChecksum = generatePackageChecksum(dataPackage);
             String actualChecksum = calculateChecksum(dataPackage);
             result.setChecksumValid(expectedChecksum.equals(actualChecksum));
 
-            // 数字签名验证（模拟）
+            // 鏁板瓧绛惧悕楠岃瘉锛堟ā鎷燂級
             result.setSignatureValid(true);
 
-            // 数据格式验证
+            // 鏁版嵁鏍煎紡楠岃瘉
             result.setFormatValid(validateDataFormat(dataPackage));
 
-            // 时效性验证
+            // 鏃舵晥鎬ч獙璇?
             OfflinePermissionsCache permissions = permissionsCache.get(userId);
             boolean expired = permissions == null || isExpired(permissions.getExpiryTime());
             result.setExpired(expired);
 
-            // 综合验证结果
+            // 缁煎悎楠岃瘉缁撴灉
             result.setValid(result.isChecksumValid() && result.isSignatureValid()
                     && result.isFormatValid() && !result.isExpired());
 
             List<String> validationErrors = new ArrayList<>();
             if (!result.isChecksumValid()) {
-                validationErrors.add("数据校验和不匹配");
+                validationErrors.add("鏁版嵁鏍￠獙鍜屼笉鍖归厤");
             }
             if (!result.isSignatureValid()) {
-                validationErrors.add("数字签名验证失败");
+                validationErrors.add("鏁板瓧绛惧悕楠岃瘉澶辫触");
             }
             if (!result.isFormatValid()) {
-                validationErrors.add("数据格式不正确");
+                validationErrors.add("鏁版嵁鏍煎紡涓嶆纭?);
             }
             if (result.isExpired()) {
-                validationErrors.add("数据已过期");
+                validationErrors.add("鏁版嵁宸茶繃鏈?);
             }
             result.setValidationErrors(validationErrors);
 
             result.setValidationTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-            log.info("[离线数据验证] 验证完成: userId={}, valid={}, errors={}",
+            log.info("[绂荤嚎鏁版嵁楠岃瘉] 楠岃瘉瀹屾垚: userId={}, valid={}, errors={}",
                     userId, result.isValid(), validationErrors.size());
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[离线数据验证] 验证失败: userId={}, error={}", userId, e.getMessage(), e);
+            log.error("[绂荤嚎鏁版嵁楠岃瘉] 楠岃瘉澶辫触: userId={}, error={}", userId, e.getMessage(), e);
 
             OfflineDataIntegrityResult result = new OfflineDataIntegrityResult();
             result.setValid(false);
             result.setValidationTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            result.setValidationErrors(Arrays.asList("验证异常: " + e.getMessage()));
+            result.setValidationErrors(Arrays.asList("楠岃瘉寮傚父: " + e.getMessage()));
 
             return ResponseDTO.ok(result);
         }
@@ -480,36 +480,36 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     @Override
     public ResponseDTO<OfflineModeStatisticsVO> generateOfflineStatisticsReport(
             Long userId, String startTime, String endTime) {
-        log.info("[离线统计] 生成统计报告: userId={}, startTime={}, endTime={}",
+        log.info("[绂荤嚎缁熻] 鐢熸垚缁熻鎶ュ憡: userId={}, startTime={}, endTime={}",
                 userId, startTime, endTime);
 
         try {
-            // 模拟统计数据生成
+            // 妯℃嫙缁熻鏁版嵁鐢熸垚
             OfflineModeStatisticsVO statistics = new OfflineModeStatisticsVO();
             statistics.setUserId(userId);
-            statistics.setReportPeriod(startTime + " 至 " + endTime);
+            statistics.setReportPeriod(startTime + " 鑷?" + endTime);
 
-            // 访问统计数据
+            // 璁块棶缁熻鏁版嵁
             statistics.setTotalAccessAttempts(150L);
             statistics.setSuccessfulAccesses(142L);
             statistics.setFailedAccesses(8L);
             statistics.setSuccessRate(94.67);
 
-            // 交易统计数据
+            // 浜ゆ槗缁熻鏁版嵁
             statistics.setOfflineTransactions(125L);
             statistics.setOnlineTransactions(25L);
 
-            // 响应时间统计
+            // 鍝嶅簲鏃堕棿缁熻
             statistics.setAverageResponseTime(85);
             statistics.setMaxResponseTime(320);
             statistics.setMinResponseTime(15);
 
-            // 设备统计
+            // 璁惧缁熻
             List<DeviceStatistics> deviceStats = new ArrayList<>();
 
             DeviceStatistics deviceStat1 = new DeviceStatistics();
             deviceStat1.setDeviceId(1L);
-            deviceStat1.setDeviceName("主门禁设备");
+            deviceStat1.setDeviceName("涓婚棬绂佽澶?);
             deviceStat1.setAccessCount(75L);
             deviceStat1.setSuccessCount(72L);
             deviceStat1.setFailureCount(3L);
@@ -522,7 +522,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
             DeviceStatistics deviceStat2 = new DeviceStatistics();
             deviceStat2.setDeviceId(2L);
-            deviceStat2.setDeviceName("侧门禁设备");
+            deviceStat2.setDeviceName("渚ч棬绂佽澶?);
             deviceStat2.setAccessCount(75L);
             deviceStat2.setSuccessCount(70L);
             deviceStat2.setFailureCount(5L);
@@ -535,17 +535,17 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
             statistics.setDeviceStats(deviceStats);
 
-            log.info("[离线统计] 统计报告生成完成: userId={}, successRate={}%, deviceCount={}",
+            log.info("[绂荤嚎缁熻] 缁熻鎶ュ憡鐢熸垚瀹屾垚: userId={}, successRate={}%, deviceCount={}",
                     userId, statistics.getSuccessRate(), deviceStats.size());
             return ResponseDTO.ok(statistics);
 
         } catch (Exception e) {
-            log.error("[离线统计] 统计报告生成失败: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("STATISTICS_GENERATION_FAILED", "统计报告生成失败");
+            log.error("[绂荤嚎缁熻] 缁熻鎶ュ憡鐢熸垚澶辫触: userId={}, error={}", userId, e.getMessage(), e);
+            return ResponseDTO.error("STATISTICS_GENERATION_FAILED", "缁熻鎶ュ憡鐢熸垚澶辫触");
         }
     }
 
-    // ==================== 私有辅助方法 ====================
+    // ==================== 绉佹湁杈呭姪鏂规硶 ====================
 
     private ResponseDTO<OfflineAccessValidationResult> createValidationResult(
             boolean allowed, String reason, String permissionLevel, Long remainingQuota) {
@@ -563,12 +563,12 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
     private int syncPermissions(Long userId, List<String> errors) {
         try {
-            // 重新生成权限数据
+            // 閲嶆柊鐢熸垚鏉冮檺鏁版嵁
             OfflinePermissionsCache permissions = generateOfflinePermissions(userId);
             permissionsCache.put(userId, permissions);
             return permissions.getAreaPermissions().size() + permissions.getDevicePermissions().size();
         } catch (Exception e) {
-            errors.add("权限同步失败: " + e.getMessage());
+            errors.add("鏉冮檺鍚屾澶辫触: " + e.getMessage());
             return 0;
         }
     }
@@ -578,7 +578,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             List<OfflineAccessRecord> records = recordsCache.get(userId);
             if (records != null) {
                 int count = records.size();
-                // 保存到数据库后清理缓存
+                // 淇濆瓨鍒版暟鎹簱鍚庢竻鐞嗙紦瀛?
                 for (OfflineAccessRecord record : records) {
                     saveOfflineRecordToDatabase(record);
                 }
@@ -587,17 +587,17 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             }
             return 0;
         } catch (Exception e) {
-            errors.add("记录同步失败: " + e.getMessage());
+            errors.add("璁板綍鍚屾澶辫触: " + e.getMessage());
             return 0;
         }
     }
 
     private int syncConfig(Long userId, List<String> errors) {
         try {
-            // 同步配置信息
-            return 1; // 模拟同步了一个配置项
+            // 鍚屾閰嶇疆淇℃伅
+            return 1; // 妯℃嫙鍚屾浜嗕竴涓厤缃」
         } catch (Exception e) {
-            errors.add("配置同步失败: " + e.getMessage());
+            errors.add("閰嶇疆鍚屾澶辫触: " + e.getMessage());
             return 0;
         }
     }
@@ -611,11 +611,11 @@ public class OfflineModeServiceImpl implements OfflineModeService {
         cache.setPermissionLevel("STANDARD");
         cache.setVersion(1);
 
-        // 生成区域权限
+        // 鐢熸垚鍖哄煙鏉冮檺
         List<OfflineAreaPermission> areaPermissions = new ArrayList<>();
         OfflineAreaPermission areaPermission = new OfflineAreaPermission();
         areaPermission.setAreaId(1L);
-        areaPermission.setAreaName("办公区");
+        areaPermission.setAreaName("鍔炲叕鍖?);
         areaPermission.setPermissionLevel("FULL");
         areaPermission.setValidFrom(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         areaPermission.setValidUntil(cache.getExpiryTime());
@@ -623,7 +623,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
         areaPermissions.add(areaPermission);
         cache.setAreaPermissions(areaPermissions);
 
-        // 生成设备权限
+        // 鐢熸垚璁惧鏉冮檺
         List<OfflineDevicePermission> devicePermissions = new ArrayList<>();
         List<DeviceEntity> devices = accessDeviceDao.selectByUserId(userId);
         for (DeviceEntity device : devices) {
@@ -643,18 +643,18 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     }
 
     private boolean validateOfflineRecord(OfflineAccessRecord record) {
-        // 验证记录的基本信息
+        // 楠岃瘉璁板綍鐨勫熀鏈俊鎭?
         return record.getRecordId() != null && record.getDeviceId() != null
                 && record.getUserId() != null && record.getAccessTime() != null;
     }
 
     private void saveOfflineRecordToDatabase(OfflineAccessRecord record) {
-        // TODO: 实现将离线记录保存到数据库的逻辑
-        log.info("[离线记录] 保存记录到数据库: recordId={}, deviceId={}", record.getRecordId(), record.getDeviceId());
+        // TODO: 瀹炵幇灏嗙绾胯褰曚繚瀛樺埌鏁版嵁搴撶殑閫昏緫
+        log.info("[绂荤嚎璁板綍] 淇濆瓨璁板綍鍒版暟鎹簱: recordId={}, deviceId={}", record.getRecordId(), record.getDeviceId());
     }
 
     private String generateChecksum(Object data) {
-        // 简化的校验和生成
+        // 绠€鍖栫殑鏍￠獙鍜岀敓鎴?
         return String.valueOf(Objects.hash(data));
     }
 
@@ -685,7 +685,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     }
 
     private void updateAccessCount(OfflinePermissionsCache permissions, Long deviceId) {
-        // TODO: 实现访问计数更新逻辑
+        // TODO: 瀹炵幇璁块棶璁℃暟鏇存柊閫昏緫
     }
 
     private OfflineModeStatus createDefaultStatus(Long userId) {
@@ -717,23 +717,23 @@ public class OfflineModeServiceImpl implements OfflineModeService {
             LocalDateTime expiry = LocalDateTime.parse(expiryTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             return LocalDateTime.now().isAfter(expiry);
         } catch (Exception e) {
-            return true; // 解析失败认为已过期
+            return true; // 瑙ｆ瀽澶辫触璁や负宸茶繃鏈?
         }
     }
 
     private boolean isRecordExpired(OfflineAccessRecord record) {
-        // 检查记录是否过期（7天前的记录）
+        // 妫€鏌ヨ褰曟槸鍚﹁繃鏈燂紙7澶╁墠鐨勮褰曪級
         long sevenDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7);
         return record.getAccessTime() < sevenDaysAgo;
     }
 
     private int cleanupDeviceConnections(Long userId) {
-        // TODO: 实现设备连接信息清理
+        // TODO: 瀹炵幇璁惧杩炴帴淇℃伅娓呯悊
         return 0;
     }
 
     private long estimatePermissionStorage(OfflinePermissionsCache permissions) {
-        // 估算权限数据占用的存储空间
+        // 浼扮畻鏉冮檺鏁版嵁鍗犵敤鐨勫瓨鍌ㄧ┖闂?
         return (permissions.getAreaPermissions().size() * 100)
                 + (permissions.getDevicePermissions().size() * 120);
     }
@@ -751,7 +751,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     }
 
     private String calculateChecksum(String data) {
-        // 简化的校验和计算
+        // 绠€鍖栫殑鏍￠獙鍜岃绠?
         return String.valueOf(data.hashCode());
     }
 
@@ -760,11 +760,11 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     }
 
     private boolean validateDataFormat(String dataPackage) {
-        // 简化的数据格式验证
+        // 绠€鍖栫殑鏁版嵁鏍煎紡楠岃瘉
         return dataPackage != null && dataPackage.length() > 0;
     }
 
-    // ==================== 内部数据类 ====================
+    // ==================== 鍐呴儴鏁版嵁绫?====================
 
     private static class OfflinePermissionsCache {
         private Long userId;

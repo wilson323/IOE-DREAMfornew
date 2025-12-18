@@ -9,12 +9,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * 门禁记录查询表单
+ * 闂ㄧ璁板綍鏌ヨ琛ㄥ崟
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用Form后缀命名
- * - 使用Jakarta验证注解
- * - 继承分页参数规范
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤Form鍚庣紑鍛藉悕
+ * - 浣跨敤Jakarta楠岃瘉娉ㄨВ
+ * - 缁ф壙鍒嗛〉鍙傛暟瑙勮寖
  * </p>
  *
  * @author IOE-DREAM Team
@@ -25,53 +24,52 @@ import lombok.Data;
 public class AccessRecordQueryForm {
 
     /**
-     * 页码（从1开始）
+     * 椤电爜锛堜粠1寮€濮嬶級
      */
-    @NotNull(message = "页码不能为空")
-    @Min(value = 1, message = "页码必须大于0")
+    @NotNull(message = "椤电爜涓嶈兘涓虹┖")
+    @Min(value = 1, message = "椤电爜蹇呴』澶т簬0")
     private Integer pageNum = 1;
 
     /**
-     * 每页大小
+     * 姣忛〉澶у皬
      */
-    @NotNull(message = "每页大小不能为空")
-    @Min(value = 1, message = "每页大小必须大于0")
+    @NotNull(message = "姣忛〉澶у皬涓嶈兘涓虹┖")
+    @Min(value = 1, message = "姣忛〉澶у皬蹇呴』澶т簬0")
     private Integer pageSize = 20;
 
     /**
-     * 用户ID
+     * 鐢ㄦ埛ID
      */
     private Long userId;
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
     private Long deviceId;
 
     /**
-     * 区域ID
+     * 鍖哄煙ID
      */
     private String areaId;
 
     /**
-     * 开始日期
-     */
+     * 寮€濮嬫棩鏈?     */
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
 
     /**
-     * 结束日期
+     * 缁撴潫鏃ユ湡
      */
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
 
     /**
-     * 通行结果
+     * 閫氳缁撴灉
      * <p>
-     * 枚举值：
-     * - 1-成功
-     * - 2-失败
-     * - 3-异常
+     * 鏋氫妇鍊硷細
+     * - 1-鎴愬姛
+     * - 2-澶辫触
+     * - 3-寮傚父
      * </p>
      */
     private Integer accessResult;

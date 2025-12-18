@@ -13,20 +13,19 @@ import net.lab1024.sa.access.manager.BiometricTemplateManager;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 
 /**
- * Manager配置类
- * <p>
- * 用于将门禁模块特有的Manager实现类注册为Spring Bean
+ * Manager閰嶇疆绫? * <p>
+ * 鐢ㄤ簬灏嗛棬绂佹ā鍧楃壒鏈夌殑Manager瀹炵幇绫绘敞鍐屼负Spring Bean
  * </p>
  * <p>
- * 注意：公共Manager（NotificationManager、WorkflowApprovalManager等）
- * 已由CommonBeanAutoConfiguration统一装配，无需在此重复定义
+ * 娉ㄦ剰锛氬叕鍏盡anager锛圢otificationManager銆乄orkflowApprovalManager绛夛級
+ * 宸茬敱CommonBeanAutoConfiguration缁熶竴瑁呴厤锛屾棤闇€鍦ㄦ閲嶅瀹氫箟
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 2.0.0
  * @since 2025-01-30
- * @updated 2025-12-14 移除重复的公共Bean定义，改用统一自动装配
- * @updated 2025-12-17 添加BiometricTemplateManager Bean注册，修复Manager注解违规
+ * @updated 2025-12-14 绉婚櫎閲嶅鐨勫叕鍏盉ean瀹氫箟锛屾敼鐢ㄧ粺涓€鑷姩瑁呴厤
+ * @updated 2025-12-17 娣诲姞BiometricTemplateManager Bean娉ㄥ唽锛屼慨澶峂anager娉ㄨВ杩濊
  */
 @Slf4j
 @Configuration("accessManagerConfiguration")
@@ -48,17 +47,15 @@ public class ManagerConfiguration {
     private RedisTemplate<String, Object> redisTemplate;
 
     /**
-     * 注册BiometricTemplateManager为Spring Bean
+     * 娉ㄥ唽BiometricTemplateManager涓篠pring Bean
      * <p>
-     * 生物识别模板管理器，负责复杂的生物识别模板业务流程编排
-     * 包括：模板注册、特征匹配、活体检测、1:N识别等
-     * </p>
+     * 鐢熺墿璇嗗埆妯℃澘绠＄悊鍣紝璐熻矗澶嶆潅鐨勭敓鐗╄瘑鍒ā鏉夸笟鍔℃祦绋嬬紪鎺?     * 鍖呮嫭锛氭ā鏉挎敞鍐屻€佺壒寰佸尮閰嶃€佹椿浣撴娴嬨€?:N璇嗗埆绛?     * </p>
      *
-     * @return BiometricTemplateManager实例
+     * @return BiometricTemplateManager瀹炰緥
      */
     @Bean
     public BiometricTemplateManager biometricTemplateManager() {
-        log.info("[BiometricTemplateManager] 初始化生物识别模板管理器");
+        log.info("[BiometricTemplateManager] 鍒濆鍖栫敓鐗╄瘑鍒ā鏉跨鐞嗗櫒");
         return new BiometricTemplateManager(
                 biometricTemplateDao,
                 biometricConfigDao,
@@ -68,7 +65,7 @@ public class ManagerConfiguration {
         );
     }
 
-    // 公共Bean（NotificationManager、WorkflowApprovalManager）已由CommonBeanAutoConfiguration统一装配
-    // 此处仅保留门禁模块特有的Manager定义
+    // 鍏叡Bean锛圢otificationManager銆乄orkflowApprovalManager锛夊凡鐢盋ommonBeanAutoConfiguration缁熶竴瑁呴厤
+    // 姝ゅ浠呬繚鐣欓棬绂佹ā鍧楃壒鏈夌殑Manager瀹氫箟
 
 }

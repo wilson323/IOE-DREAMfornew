@@ -1,21 +1,67 @@
 # 门禁模块API接口契约文档
 
-**生成时间**: 2025-01-30  
-**文档版本**: v1.0.0  
+**生成时间**: 2025-12-18  
+**文档版本**: v1.1.0 - 边缘自主验证模式  
 **模块**: 门禁管理模块 (ioedream-access-service)  
+**设备交互模式**: 边缘自主验证模式（Mode 1）  
+**核心理念**: ⭐ **设备端识别，软件端管理** - 生物识别在设备端完成，软件端接收记录  
 **状态**: ✅ **已完成**
 
 ---
 
 ## 📋 文档说明
 
-本文档定义了门禁模块的所有API接口契约，包括：
+本文档定义了门禁模块的所有API接口契约，基于**边缘自主验证模式**设计，包括：
 - 移动端API接口
 - PC端API接口（待补充）
 - 权限申请API接口
 - 紧急权限API接口
 
 **API基础路径**: `/api/v1/access` 或 `/api/v1/mobile/access`
+
+---
+
+## ⭐ 设备交互模式说明
+
+### 核心设计原则
+
+门禁系统采用**边缘自主验证模式**，设备端完全自主完成身份识别和权限验证，无需实时连接服务器。
+
+### 数据流向说明
+
+```mermaid
+sequenceDiagram
+    participant Device as 门禁设备
+    participant Access as access-service
+    participant Biometric as biometric-service
+    participant DeviceComm as device-comm-service
+
+    Note over Biometric,DeviceComm: 【数据下发阶段】软件端 → 设备端
+    Biometric->>DeviceComm: 生物模板数据
+    DeviceComm->>Device: 模板下发 (POST /device/template/sync)
+    Access->>DeviceComm: 权限数据
+    DeviceComm->>Device: 权限下发 (POST /device/permission/sync)
+
+    Note over Device: 【实时验证阶段】设备端完全自主 ⚠️ 无需联网
+    Device->>Device: 本地识别 (1:N比对)
+    Device->>Device: 本地验证 (检查权限表)
+    Device->>Device: 直接开门 (< 1秒)
+
+    Note over Device,Access: 【事后上传阶段】设备端 → 软件端
+    Device->>Access: 批量上传通行记录 (POST /api/v1/access/record/upload)
+    Access->>Access: 存储记录 + 统计分析
+```
+
+### 关键接口说明
+
+❗ **重要**: 以下接口反映了真实的数据流向
+
+| 接口类型 | API路径 | 调用方 | 职责 | 数据流向 |
+|---------|---------|---------|------|----------|
+| **模板下发** | `/device/template/sync` | device-comm-service | 将生物模板下发到设备 | 软件 → 设备 |
+| **权限下发** | `/device/permission/sync` | device-comm-service | 将权限数据下发到设备 | 软件 → 设备 |
+| **记录上传** | `/api/v1/access/record/upload` | 设备端 | 设备批量上传通行记录 | 设备 → 软件 |
+| **记录查询** | `/api/v1/access/records` | Web/Mobile | 查询已存储的通行记录 | 软件内部 |
 
 ---
 

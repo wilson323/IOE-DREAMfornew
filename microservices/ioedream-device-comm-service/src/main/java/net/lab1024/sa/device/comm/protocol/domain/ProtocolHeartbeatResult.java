@@ -53,4 +53,13 @@ public class ProtocolHeartbeatResult {
                 .heartbeatTime(LocalDateTime.now())
                 .build();
     }
+
+    public static ProtocolHeartbeatResult failure(String message) {
+        return ProtocolHeartbeatResult.builder()
+                .success(false)
+                .online(false)
+                .responseMessage(message)
+                .heartbeatTime(LocalDateTime.now())
+                .build();
+    }
 }

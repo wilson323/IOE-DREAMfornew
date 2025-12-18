@@ -85,4 +85,28 @@ public class ProtocolDeviceStatus {
      * 扩展属性
      */
     private Map<String, Object> extendedProperties;
+
+    /**
+     * 创建在线设备状态
+     */
+    public static ProtocolDeviceStatus online(Long deviceId, String deviceCode, String connectionStatus) {
+        return ProtocolDeviceStatus.builder()
+                .deviceId(deviceId)
+                .deviceCode(deviceCode)
+                .connectionStatus(connectionStatus)
+                .online(true)
+                .lastHeartbeatTime(LocalDateTime.now())
+                .build();
+    }
+
+    /**
+     * 创建离线设备状态
+     */
+    public static ProtocolDeviceStatus offline(Long deviceId) {
+        return ProtocolDeviceStatus.builder()
+                .deviceId(deviceId)
+                .online(false)
+                .connectionStatus("DISCONNECTED")
+                .build();
+    }
 }

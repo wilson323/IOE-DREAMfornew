@@ -29,9 +29,8 @@ import net.lab1024.sa.access.controller.AccessMobileController.QRCodeVerifyReque
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
- * 移动端门禁集成测试
- * <p>
- * 测试移动端门禁功能的完整业务流程，包括门禁检查、二维码验证、NFC验证、生物识别验证等
+ * 绉诲姩绔棬绂侀泦鎴愭祴璇? * <p>
+ * 娴嬭瘯绉诲姩绔棬绂佸姛鑳界殑瀹屾暣涓氬姟娴佺▼锛屽寘鎷棬绂佹鏌ャ€佷簩缁寸爜楠岃瘉銆丯FC楠岃瘉銆佺敓鐗╄瘑鍒獙璇佺瓑
  * </p>
  *
  * @author IOE-DREAM Team
@@ -41,7 +40,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 @AutoConfigureWebMvc
 @ActiveProfiles("test")
 @Transactional
-@DisplayName("移动端门禁集成测试")
+@DisplayName("绉诲姩绔棬绂侀泦鎴愭祴璇?)
 @SuppressWarnings("null")
 class AccessMobileIntegrationTest {
 
@@ -62,15 +61,14 @@ class AccessMobileIntegrationTest {
     }
 
     @Test
-    @DisplayName("测试完整移动端门禁流程：门禁检查->二维码验证->获取权限->查询记录")
+    @DisplayName("娴嬭瘯瀹屾暣绉诲姩绔棬绂佹祦绋嬶細闂ㄧ妫€鏌?>浜岀淮鐮侀獙璇?>鑾峰彇鏉冮檺->鏌ヨ璁板綍")
     void testCompleteMobileAccessWorkflow() throws Exception {
-        // 1. 移动端门禁检查
-        MobileAccessCheckRequest checkRequest = new MobileAccessCheckRequest();
+        // 1. 绉诲姩绔棬绂佹鏌?        MobileAccessCheckRequest checkRequest = new MobileAccessCheckRequest();
         checkRequest.setUserId(testUserId);
         checkRequest.setDeviceId(testDeviceId);
         checkRequest.setAreaId(testAreaId);
         checkRequest.setVerificationType("QR_CODE");
-        checkRequest.setLocation("北京市朝阳区");
+        checkRequest.setLocation("鍖椾含甯傛湞闃冲尯");
 
         String checkResult = mockMvc.perform(post("/api/v1/mobile/access/check")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -81,10 +79,9 @@ class AccessMobileIntegrationTest {
 
         ResponseDTO<?> checkResponse = objectMapper.readValue(checkResult,
                 objectMapper.getTypeFactory().constructParametricType(ResponseDTO.class, Object.class));
-        assertNotNull(checkResponse, "门禁检查响应不应为空");
+        assertNotNull(checkResponse, "闂ㄧ妫€鏌ュ搷搴斾笉搴斾负绌?);
 
-        // 2. 二维码验证
-        QRCodeVerifyRequest qrRequest = new QRCodeVerifyRequest();
+        // 2. 浜岀淮鐮侀獙璇?        QRCodeVerifyRequest qrRequest = new QRCodeVerifyRequest();
         qrRequest.setQrCode("QR_CODE_123456");
         qrRequest.setDeviceId(testDeviceId);
 
@@ -97,9 +94,9 @@ class AccessMobileIntegrationTest {
 
         ResponseDTO<?> qrResponse = objectMapper.readValue(qrResult,
                 objectMapper.getTypeFactory().constructParametricType(ResponseDTO.class, Object.class));
-        assertNotNull(qrResponse, "二维码验证响应不应为空");
+        assertNotNull(qrResponse, "浜岀淮鐮侀獙璇佸搷搴斾笉搴斾负绌?);
 
-        // 3. 获取用户门禁权限
+        // 3. 鑾峰彇鐢ㄦ埛闂ㄧ鏉冮檺
         String permissionsResult = mockMvc.perform(get("/api/v1/mobile/access/permissions/{userId}", testUserId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -108,9 +105,9 @@ class AccessMobileIntegrationTest {
 
         ResponseDTO<?> permissionsResponse = objectMapper.readValue(permissionsResult,
                 objectMapper.getTypeFactory().constructParametricType(ResponseDTO.class, Object.class));
-        assertTrue(permissionsResponse.isSuccess(), "获取用户权限应该成功");
+        assertTrue(permissionsResponse.isSuccess(), "鑾峰彇鐢ㄦ埛鏉冮檺搴旇鎴愬姛");
 
-        // 4. 获取用户访问记录
+        // 4. 鑾峰彇鐢ㄦ埛璁块棶璁板綍
         String recordsResult = mockMvc.perform(get("/api/v1/mobile/access/records/{userId}", testUserId)
                 .param("size", "20")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -120,13 +117,13 @@ class AccessMobileIntegrationTest {
 
         ResponseDTO<?> recordsResponse = objectMapper.readValue(recordsResult,
                 objectMapper.getTypeFactory().constructParametricType(ResponseDTO.class, Object.class));
-        assertTrue(recordsResponse.isSuccess(), "获取访问记录应该成功");
+        assertTrue(recordsResponse.isSuccess(), "鑾峰彇璁块棶璁板綍搴旇鎴愬姛");
     }
 
     @Test
-    @DisplayName("测试多种验证方式")
+    @DisplayName("娴嬭瘯澶氱楠岃瘉鏂瑰紡")
     void testMultipleVerificationMethods() throws Exception {
-        // 1. NFC验证
+        // 1. NFC楠岃瘉
         NFCVerifyRequest nfcRequest = new NFCVerifyRequest();
         nfcRequest.setNfcCardId("NFC_123456");
         nfcRequest.setDeviceId(testDeviceId);
@@ -140,9 +137,9 @@ class AccessMobileIntegrationTest {
 
         ResponseDTO<?> nfcResponse = objectMapper.readValue(nfcResult,
                 objectMapper.getTypeFactory().constructParametricType(ResponseDTO.class, Object.class));
-        assertNotNull(nfcResponse, "NFC验证响应不应为空");
+        assertNotNull(nfcResponse, "NFC楠岃瘉鍝嶅簲涓嶅簲涓虹┖");
 
-        // 2. 生物识别验证
+        // 2. 鐢熺墿璇嗗埆楠岃瘉
         BiometricVerifyRequest biometricRequest = new BiometricVerifyRequest();
         biometricRequest.setUserId(testUserId);
         biometricRequest.setBiometricType("FACE");
@@ -158,11 +155,11 @@ class AccessMobileIntegrationTest {
 
         ResponseDTO<?> biometricResponse = objectMapper.readValue(biometricResult,
                 objectMapper.getTypeFactory().constructParametricType(ResponseDTO.class, Object.class));
-        assertNotNull(biometricResponse, "生物识别验证响应不应为空");
+        assertNotNull(biometricResponse, "鐢熺墿璇嗗埆楠岃瘉鍝嶅簲涓嶅簲涓虹┖");
     }
 
     @Test
-    @DisplayName("测试附近设备查询")
+    @DisplayName("娴嬭瘯闄勮繎璁惧鏌ヨ")
     void testNearbyDevices() throws Exception {
         String devicesResult = mockMvc.perform(get("/api/v1/mobile/access/devices/nearby")
                 .param("userId", testUserId.toString())
@@ -176,11 +173,11 @@ class AccessMobileIntegrationTest {
 
         ResponseDTO<?> devicesResponse = objectMapper.readValue(devicesResult,
                 objectMapper.getTypeFactory().constructParametricType(ResponseDTO.class, Object.class));
-        assertTrue(devicesResponse.isSuccess(), "获取附近设备应该成功");
+        assertTrue(devicesResponse.isSuccess(), "鑾峰彇闄勮繎璁惧搴旇鎴愬姛");
     }
 
     @Test
-    @DisplayName("测试实时状态查询")
+    @DisplayName("娴嬭瘯瀹炴椂鐘舵€佹煡璇?)
     void testRealTimeStatus() throws Exception {
         String statusResult = mockMvc.perform(get("/api/v1/mobile/access/status/realtime")
                 .param("deviceId", testDeviceId.toString())
@@ -191,7 +188,7 @@ class AccessMobileIntegrationTest {
 
         ResponseDTO<?> statusResponse = objectMapper.readValue(statusResult,
                 objectMapper.getTypeFactory().constructParametricType(ResponseDTO.class, Object.class));
-        assertTrue(statusResponse.isSuccess(), "获取实时状态应该成功");
+        assertTrue(statusResponse.isSuccess(), "鑾峰彇瀹炴椂鐘舵€佸簲璇ユ垚鍔?);
     }
 }
 

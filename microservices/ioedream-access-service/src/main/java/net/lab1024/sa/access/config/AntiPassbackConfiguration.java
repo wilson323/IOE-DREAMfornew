@@ -11,8 +11,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import net.lab1024.sa.access.dao.AccessRecordDao;
 import net.lab1024.sa.access.manager.AntiPassbackManager;
-import net.lab1024.sa.common.organization.service.AreaService;
-import net.lab1024.sa.common.organization.service.DeviceService;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -24,13 +23,13 @@ import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 
 /**
- * 门禁反潜回配置
+ * 闂ㄧ鍙嶆綔鍥為厤锟?
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用@Configuration注解标识配置类
- * - 配置Resilience4j容错机制
- * - 配置Redis连接和序列化
- * - 设置合理的超时和重试参数
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锟?
+ * - 浣跨敤@Configuration娉ㄨВ鏍囪瘑閰嶇疆锟?
+ * - 閰嶇疆Resilience4j瀹归敊鏈哄埗
+ * - 閰嶇疆Redis杩炴帴鍜屽簭鍒楀寲
+ * - 璁剧疆鍚堢悊鐨勮秴鏃跺拰閲嶈瘯鍙傛暟
  * </p>
  *
  * @author IOE-DREAM Team
@@ -41,19 +40,19 @@ import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 public class AntiPassbackConfiguration {
 
     /**
-     * 配置Redis模板
+     * 閰嶇疆Redis妯℃澘
      */
     @Bean
     public RedisTemplate<String, Object> antiPassbackRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        // 使用String序列化器
+        // 浣跨敤String搴忓垪鍖栧櫒
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         template.setKeySerializer(stringRedisSerializer);
         template.setHashKeySerializer(stringRedisSerializer);
 
-        // 使用JSON序列化器
+        // 浣跨敤JSON搴忓垪鍖栧櫒
         GenericJackson2JsonRedisSerializer jsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
         template.setValueSerializer(jsonRedisSerializer);
         template.setHashValueSerializer(jsonRedisSerializer);
@@ -63,70 +62,72 @@ public class AntiPassbackConfiguration {
     }
 
     /**
-     * 配置反潜回服务熔断器
+     * 閰嶇疆鍙嶆綔鍥炴湇鍔＄啍鏂櫒
      */
     @Bean("antiPassbackService")
     public CircuitBreaker antiPassbackCircuitBreaker() {
         return CircuitBreaker.of("antiPassbackService", CircuitBreakerConfig.custom()
-                .failureRateThreshold(50)           // 失败率阈值50%
-                .waitDurationInOpenState(Duration.ofSeconds(30))  // 熔断开启时间30秒
-                .slidingWindowSize(20)              // 滑动窗口大小20
-                .minimumNumberOfCalls(10)           // 最少调用次数10
-                .slowCallDurationThreshold(Duration.ofSeconds(3))  // 慢调用阈值3秒
-                .slowCallRateThreshold(50)          // 慢调用率阈值50%
+                .failureRateThreshold(50)           // 澶辫触鐜囬槇锟?0%
+                .waitDurationInOpenState(Duration.ofSeconds(30))  // 鐔旀柇寮€鍚椂锟?0锟?
+                .slidingWindowSize(20)              // 婊戝姩绐楀彛澶у皬20
+                .minimumNumberOfCalls(10)           // 鏈€灏戣皟鐢ㄦ锟?0
+                .slowCallDurationThreshold(Duration.ofSeconds(3))  // 鎱㈣皟鐢ㄩ槇锟?锟?
+                .slowCallRateThreshold(50)          // 鎱㈣皟鐢ㄧ巼闃堬拷?0%
                 .build());
     }
 
     /**
-     * 配置反潜回服务限流器
+     * 閰嶇疆鍙嶆綔鍥炴湇鍔￠檺娴佸櫒
      */
     @Bean("antiPassbackService")
     public RateLimiter antiPassbackRateLimiter() {
         return RateLimiter.of("antiPassbackService", RateLimiterConfig.custom()
-                .limitForPeriod(100)               // 每个周期允许100个请求
-                .limitRefreshPeriod(Duration.ofSeconds(1))  // 刷新周期1秒
-                .timeoutDuration(Duration.ofSeconds(5))      // 等待超时5秒
+                .limitForPeriod(100)               // 姣忎釜鍛ㄦ湡鍏佽100涓锟?
+                .limitRefreshPeriod(Duration.ofSeconds(1))  // 鍒锋柊鍛ㄦ湡1锟?
+                .timeoutDuration(Duration.ofSeconds(5))      // 绛夊緟瓒呮椂5锟?
                 .build());
     }
 
     /**
-     * 配置反潜回服务重试器
+     * 閰嶇疆鍙嶆綔鍥炴湇鍔￠噸璇曞櫒
      */
     @Bean("antiPassbackService")
     public Retry antiPassbackRetry() {
         return Retry.of("antiPassbackService", RetryConfig.custom()
-                .maxAttempts(3)                     // 最大重试次数3
-                .waitDuration(Duration.ofMillis(500)) // 重试间隔500毫秒
-                .retryExceptions(Exception.class)   // 重试异常类型
+                .maxAttempts(3)                     // 鏈€澶ч噸璇曟锟?
+                .waitDuration(Duration.ofMillis(500)) // 閲嶈瘯闂撮殧500姣
+                .retryExceptions(Exception.class)   // 閲嶈瘯寮傚父绫诲瀷
                 .build());
     }
 
     /**
-     * 配置反潜回服务时间限制器
+     * 閰嶇疆鍙嶆綔鍥炴湇鍔℃椂闂撮檺鍒跺櫒
      */
     @Bean("antiPassbackService")
     public TimeLimiter antiPassbackTimeLimiter() {
         return TimeLimiter.of("antiPassbackService", TimeLimiterConfig.custom()
-                .timeoutDuration(Duration.ofSeconds(10))  // 超时时间10秒
-                .cancelRunningFuture(true)         // 取消运行中的Future
+                .timeoutDuration(Duration.ofSeconds(10))  // 瓒呮椂鏃堕棿10锟?
+                .cancelRunningFuture(true)         // 鍙栨秷杩愯涓殑Future
                 .build());
     }
 
     /**
-     * 注册反潜回管理器为Spring Bean
+     * 娉ㄥ唽鍙嶆綔鍥炵鐞嗗櫒涓篠pring Bean
+     * <p>
+     * 閲囩敤閫傞厤鍣ㄦā寮忥細閫氳繃GatewayServiceClient璋冪敤common-service鐨勬湇鍔?
+     * 閬靛惊CLAUDE.md瑙勮寖锛歁anager绫婚€氳繃鏋勯€犲嚱鏁版敞鍏ヤ緷璧栵紝涓嶄娇鐢⊿pring娉ㄨВ
+     * </p>
      *
-     * @param accessRecordDao 访问记录DAO
-     * @param redisTemplate Redis模板
-     * @param deviceService 设备服务
-     * @param areaService 区域服务
-     * @return 反潜回管理器实例
+     * @param accessRecordDao 璁块棶璁板綍DAO
+     * @param redisTemplate Redis妯℃澘
+     * @param gatewayServiceClient 缃戝叧鏈嶅姟瀹㈡埛绔紙鐢ㄤ簬璋冪敤common-service锛?
+     * @return 鍙嶆綔鍥炵鐞嗗櫒瀹炰緥
      */
     @Bean
     public AntiPassbackManager antiPassbackManager(
             AccessRecordDao accessRecordDao,
             RedisTemplate<String, Object> redisTemplate,
-            DeviceService deviceService,
-            AreaService areaService) {
-        return new AntiPassbackManager(accessRecordDao, redisTemplate, deviceService, areaService);
+            GatewayServiceClient gatewayServiceClient) {
+        return new AntiPassbackManager(accessRecordDao, redisTemplate, gatewayServiceClient);
     }
 }

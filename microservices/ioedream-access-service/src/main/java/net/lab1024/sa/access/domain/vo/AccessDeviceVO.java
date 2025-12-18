@@ -5,13 +5,11 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
- * 门禁设备视图对象
+ * 闂ㄧ璁惧瑙嗗浘瀵硅薄
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用VO后缀命名
- * - 用于Controller返回给前端的数据
- * - 不包含敏感信息
- * </p>
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤VO鍚庣紑鍛藉悕
+ * - 鐢ㄤ簬Controller杩斿洖缁欏墠绔殑鏁版嵁
+ * - 涓嶅寘鍚晱鎰熶俊鎭? * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -21,67 +19,64 @@ import lombok.Data;
 public class AccessDeviceVO {
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
     private Long deviceId;
 
     /**
-     * 设备名称
+     * 璁惧鍚嶇О
      */
     private String deviceName;
 
     /**
-     * 设备编号
+     * 璁惧缂栧彿
      */
     private String deviceCode;
 
     /**
-     * 设备类型
+     * 璁惧绫诲瀷
      */
     private String deviceType;
 
     /**
-     * 区域ID
+     * 鍖哄煙ID
      */
     private Long areaId;
 
     /**
-     * 区域名称
+     * 鍖哄煙鍚嶇О
      */
     private String areaName;
 
     /**
-     * IP地址
+     * IP鍦板潃
      */
     private String ipAddress;
 
     /**
-     * 端口号
-     */
+     * 绔彛鍙?     */
     private Integer port;
 
     /**
-     * 设备状态
-     */
+     * 璁惧鐘舵€?     */
     private String deviceStatus;
 
     /**
-     * 启用标志
+     * 鍚敤鏍囧織
      */
     private Integer enabledFlag;
 
     /**
-     * 最后在线时间
-     */
+     * 鏈€鍚庡湪绾挎椂闂?     */
     private LocalDateTime lastOnlineTime;
 
     /**
-     * 创建时间
+     * 鍒涘缓鏃堕棿
      */
     private LocalDateTime createTime;
 
     /**
-     * 更新时间
+     * 鏇存柊鏃堕棿
      */
     private LocalDateTime updateTime;
 }

@@ -6,8 +6,8 @@ import net.lab1024.sa.access.openapi.domain.response.*;
 import java.util.List;
 
 /**
- * 门禁管理开放API服务接口
- * 提供门禁控制、通行记录查询、门禁设备管理等开放服务
+ * 闂ㄧ绠＄悊寮€鏀続PI鏈嶅姟鎺ュ彛
+ * 鎻愪緵闂ㄧ鎺у埗銆侀€氳璁板綍鏌ヨ銆侀棬绂佽澶囩鐞嗙瓑寮€鏀炬湇鍔?
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -16,122 +16,122 @@ import java.util.List;
 public interface AccessOpenApiService {
 
     /**
-     * 门禁通行验证
+     * 闂ㄧ閫氳楠岃瘉
      *
-     * @param request 验证请求
-     * @param token 访问令牌
-     * @param clientIp 客户端IP
-     * @return 验证响应
+     * @param request 楠岃瘉璇锋眰
+     * @param token 璁块棶浠ょ墝
+     * @param clientIp 瀹㈡埛绔疘P
+     * @return 楠岃瘉鍝嶅簲
      */
     AccessVerifyResponse verifyAccess(AccessVerifyRequest request, String token, String clientIp);
 
     /**
-     * 远程控制门禁设备
+     * 杩滅▼鎺у埗闂ㄧ璁惧
      *
-     * @param deviceId 设备ID
-     * @param action 操作类型
-     * @param reason 操作原因
-     * @param token 访问令牌
-     * @param clientIp 客户端IP
-     * @return 控制响应
+     * @param deviceId 璁惧ID
+     * @param action 鎿嶄綔绫诲瀷
+     * @param reason 鎿嶄綔鍘熷洜
+     * @param token 璁块棶浠ょ墝
+     * @param clientIp 瀹㈡埛绔疘P
+     * @return 鎺у埗鍝嶅簲
      */
     AccessControlResponse remoteControl(String deviceId, String action, String reason, String token, String clientIp);
 
     /**
-     * 获取通行记录列表
+     * 鑾峰彇閫氳璁板綍鍒楄〃
      *
-     * @param request 查询请求
-     * @param token 访问令牌
-     * @return 分页通行记录
+     * @param request 鏌ヨ璇锋眰
+     * @param token 璁块棶浠ょ墝
+     * @return 鍒嗛〉閫氳璁板綍
      */
     net.lab1024.sa.common.openapi.domain.response.PageResult<AccessRecordResponse> getAccessRecords(
             AccessRecordQueryRequest request, String token);
 
     /**
-     * 获取通行记录详情
+     * 鑾峰彇閫氳璁板綍璇︽儏
      *
-     * @param recordId 记录ID
-     * @param token 访问令牌
-     * @return 通行记录详情
+     * @param recordId 璁板綍ID
+     * @param token 璁块棶浠ょ墝
+     * @return 閫氳璁板綍璇︽儏
      */
     AccessRecordDetailResponse getAccessRecordDetail(Long recordId, String token);
 
     /**
-     * 获取门禁设备列表
+     * 鑾峰彇闂ㄧ璁惧鍒楄〃
      *
-     * @param areaId 区域ID
-     * @param deviceStatus 设备状态
-     * @param token 访问令牌
-     * @return 设备列表
+     * @param areaId 鍖哄煙ID
+     * @param deviceStatus 璁惧鐘舵€?
+     * @param token 璁块棶浠ょ墝
+     * @return 璁惧鍒楄〃
      */
     List<AccessDeviceResponse> getAccessDevices(Long areaId, Integer deviceStatus, String token);
 
     /**
-     * 获取门禁设备详情
+     * 鑾峰彇闂ㄧ璁惧璇︽儏
      *
-     * @param deviceId 设备ID
-     * @param token 访问令牌
-     * @return 设备详情
+     * @param deviceId 璁惧ID
+     * @param token 璁块棶浠ょ墝
+     * @return 璁惧璇︽儏
      */
     AccessDeviceDetailResponse getAccessDeviceDetail(String deviceId, String token);
 
     /**
-     * 控制门禁设备
+     * 鎺у埗闂ㄧ璁惧
      *
-     * @param deviceId 设备ID
-     * @param action 操作类型
-     * @param parameters 操作参数
-     * @param token 访问令牌
-     * @param clientIp 客户端IP
-     * @return 控制响应
+     * @param deviceId 璁惧ID
+     * @param action 鎿嶄綔绫诲瀷
+     * @param parameters 鎿嶄綔鍙傛暟
+     * @param token 璁块棶浠ょ墝
+     * @param clientIp 瀹㈡埛绔疘P
+     * @return 鎺у埗鍝嶅簲
      */
     AccessControlResponse controlDevice(String deviceId, String action, String parameters, String token, String clientIp);
 
     /**
-     * 获取用户门禁权限
+     * 鑾峰彇鐢ㄦ埛闂ㄧ鏉冮檺
      *
-     * @param userId 用户ID
-     * @param token 访问令牌
-     * @return 用户门禁权限
+     * @param userId 鐢ㄦ埛ID
+     * @param token 璁块棶浠ょ墝
+     * @return 鐢ㄦ埛闂ㄧ鏉冮檺
      */
     UserAccessPermissionResponse getUserAccessPermissions(Long userId, String token);
 
     /**
-     * 授予用户门禁权限
+     * 鎺堜簣鐢ㄦ埛闂ㄧ鏉冮檺
      *
-     * @param request 授权请求
-     * @param token 访问令牌
-     * @param clientIp 客户端IP
+     * @param request 鎺堟潈璇锋眰
+     * @param token 璁块棶浠ょ墝
+     * @param clientIp 瀹㈡埛绔疘P
      */
     void grantAccessPermission(GrantAccessPermissionRequest request, String token, String clientIp);
 
     /**
-     * 撤销用户门禁权限
+     * 鎾ら攢鐢ㄦ埛闂ㄧ鏉冮檺
      *
-     * @param request 撤销请求
-     * @param token 访问令牌
-     * @param clientIp 客户端IP
+     * @param request 鎾ら攢璇锋眰
+     * @param token 璁块棶浠ょ墝
+     * @param clientIp 瀹㈡埛绔疘P
      */
     void revokeAccessPermission(RevokeAccessPermissionRequest request, String token, String clientIp);
 
     /**
-     * 获取实时通行状态
+     * 鑾峰彇瀹炴椂閫氳鐘舵€?
      *
-     * @param areaId 区域ID
-     * @param token 访问令牌
-     * @return 实时状态
+     * @param areaId 鍖哄煙ID
+     * @param token 璁块棶浠ょ墝
+     * @return 瀹炴椂鐘舵€?
      */
     AccessRealtimeStatusResponse getRealtimeAccessStatus(Long areaId, String token);
 
     /**
-     * 获取门禁统计信息
+     * 鑾峰彇闂ㄧ缁熻淇℃伅
      *
-     * @param statisticsType 统计类型
-     * @param startDate 开始日期
-     * @param endDate 结束日期
-     * @param areaId 区域ID
-     * @param token 访问令牌
-     * @return 统计信息
+     * @param statisticsType 缁熻绫诲瀷
+     * @param startDate 寮€濮嬫棩鏈?
+     * @param endDate 缁撴潫鏃ユ湡
+     * @param areaId 鍖哄煙ID
+     * @param token 璁块棶浠ょ墝
+     * @return 缁熻淇℃伅
      */
     AccessStatisticsResponse getAccessStatistics(String statisticsType, String startDate, String endDate, Long areaId, String token);
 }

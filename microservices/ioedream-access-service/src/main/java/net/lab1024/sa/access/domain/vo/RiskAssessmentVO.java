@@ -12,13 +12,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 风险评估视图对象
+ * 椋庨櫓璇勪及瑙嗗浘瀵硅薄
  * <p>
- * 访问风险评估结果的数据传输对象
- * 严格遵循CLAUDE.md规范：
- * - 使用@Data注解
- * - 完整的字段文档注解
- * - 构建者模式支持
+ * 璁块棶椋庨櫓璇勪及缁撴灉鐨勬暟鎹紶杈撳璞?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Data娉ㄨВ
+ * - 瀹屾暣鐨勫瓧娈垫枃妗ｆ敞瑙?
+ * - 鏋勫缓鑰呮ā寮忔敮鎸?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -29,57 +29,57 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "风险评估信息")
+@Schema(description = "椋庨櫓璇勪及淇℃伅")
 public class RiskAssessmentVO {
 
     /**
-     * 用户ID
+     * 鐢ㄦ埛ID
      */
-    @Schema(description = "用户ID", example = "1001")
+    @Schema(description = "鐢ㄦ埛ID", example = "1001")
     private Long userId;
 
     /**
-     * 区域ID
+     * 鍖哄煙ID
      */
-    @Schema(description = "区域ID", example = "2001")
+    @Schema(description = "鍖哄煙ID", example = "2001")
     private Long areaId;
 
     /**
-     * 访问类型
+     * 璁块棶绫诲瀷
      */
-    @Schema(description = "访问类型", example = "CARD_ACCESS")
+    @Schema(description = "璁块棶绫诲瀷", example = "CARD_ACCESS")
     private String accessType;
 
     /**
-     * 风险评分（0-100）
+     * 椋庨櫓璇勫垎锛?-100锛?
      */
-    @Schema(description = "风险评分（0-100）", example = "35.5")
+    @Schema(description = "椋庨櫓璇勫垎锛?-100锛?, example = "35.5")
     private BigDecimal riskScore;
 
     /**
-     * 风险等级
-     * LOW - 低风险
-     * MEDIUM - 中等风险
-     * HIGH - 高风险
-     * CRITICAL - 严重风险
+     * 椋庨櫓绛夌骇
+     * LOW - 浣庨闄?
+     * MEDIUM - 涓瓑椋庨櫓
+     * HIGH - 楂橀闄?
+     * CRITICAL - 涓ラ噸椋庨櫓
      */
-    @Schema(description = "风险等级", example = "MEDIUM")
+    @Schema(description = "椋庨櫓绛夌骇", example = "MEDIUM")
     private String riskLevel;
 
     /**
-     * 风险因子
+     * 椋庨櫓鍥犲瓙
      */
-    @Schema(description = "风险因子")
+    @Schema(description = "椋庨櫓鍥犲瓙")
     private Map<String, Integer> riskFactors;
 
     /**
-     * 评估时间
+     * 璇勪及鏃堕棿
      */
-    @Schema(description = "评估时间", example = "2025-01-30T15:45:00")
+    @Schema(description = "璇勪及鏃堕棿", example = "2025-01-30T15:45:00")
     private LocalDateTime assessmentTime;
 
     /**
-     * 添加风险因子
+     * 娣诲姞椋庨櫓鍥犲瓙
      */
     public void addRiskFactor(String factorType, Integer score) {
         if (riskFactors == null) {

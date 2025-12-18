@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
 import net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter;
 import net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter;
-import net.lab1024.sa.device.comm.protocol.uniview.VideoUniviewV20Adapter;
-import net.lab1024.sa.device.comm.protocol.ezviz.VideoEzvizV20Adapter;
 import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,29 +61,8 @@ public class VendorProtocolConfiguration {
         return adapter;
     }
 
-    /**
-     * 注册宇视科技视频协议适配器
-     *
-     * @return 宇视科技视频协议适配器
-     */
-    @Bean(name = "videoUniviewV20Adapter")
-    public VideoUniviewV20Adapter videoUniviewV20Adapter() {
-        VideoUniviewV20Adapter adapter = new VideoUniviewV20Adapter();
-        log.info("[厂商协议配置] 注册宇视科技视频协议适配器成功");
-        return adapter;
-    }
-
-    /**
-     * 注册萤石科技视频协议适配器
-     *
-     * @return 萤石科技视频协议适配器
-     */
-    @Bean(name = "videoEzvizV20Adapter")
-    public VideoEzvizV20Adapter videoEzvizV20Adapter() {
-        VideoEzvizV20Adapter adapter = new VideoEzvizV20Adapter();
-        log.info("[厂商协议配置] 注册萤石科技视频协议适配器成功");
-        return adapter;
-    }
+    // 宇视科技和萤石科技视频协议适配器暂时移除（待重构）
+    // TODO: 重新实现VideoUniviewV20Adapter和VideoEzvizV20Adapter
 
     /**
      * 配置厂商支持管理器
@@ -156,20 +133,16 @@ public class VendorProtocolConfiguration {
     private void registerVendorAdapters(DeviceVendorSupportManager manager) {
         try {
             // 注册海康威视适配器到工厂
-            protocolAdapterFactory.registerAdapter("HIKVISION_VIDEO_V2_0", videoHikvisionV20Adapter());
+            protocolAdapterFactory.registerAdapter(videoHikvisionV20Adapter());
             log.info("[厂商协议配置] 注册海康威视适配器到工厂");
 
             // 注册大华技术适配器到工厂
-            protocolAdapterFactory.registerAdapter("DAHUA_VIDEO_V2_0", videoDahuaV20Adapter());
+            protocolAdapterFactory.registerAdapter(videoDahuaV20Adapter());
             log.info("[厂商协议配置] 注册大华技术适配器到工厂");
 
-            // 注册宇视科技适配器到工厂
-            protocolAdapterFactory.registerAdapter("UNIVIEW_VIDEO_V2_0", videoUniviewV20Adapter());
-            log.info("[厂商协议配置] 注册宇视科技适配器到工厂");
-
-            // 注册萤石科技适配器到工厂
-            protocolAdapterFactory.registerAdapter("EZVIZ_VIDEO_V2_0", videoEzvizV20Adapter());
-            log.info("[厂商协议配置] 注册萤石科技适配器到工厂");
+            // TODO: 宇视科技和萤石科技适配器待实现
+            // protocolAdapterFactory.registerAdapter(videoUniviewV20Adapter());
+            // protocolAdapterFactory.registerAdapter(videoEzvizV20Adapter());
 
             // 打印支持统计
             log.info("[厂商协议配置] 厂商适配器注册完成");

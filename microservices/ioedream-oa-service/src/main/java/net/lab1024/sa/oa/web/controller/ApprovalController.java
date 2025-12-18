@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
@@ -56,8 +54,6 @@ import java.util.Map;
 @Tag(name = "审批管理", description = "企业级审批流管理相关接口")
 @PermissionCheck(value = "OA_APPROVAL", description = "审批管理模块权限")
 public class ApprovalController {
-
-    private static final Logger log = LoggerFactory.getLogger(ApprovalController.class);
 
     @Resource
     private ApprovalService approvalService;

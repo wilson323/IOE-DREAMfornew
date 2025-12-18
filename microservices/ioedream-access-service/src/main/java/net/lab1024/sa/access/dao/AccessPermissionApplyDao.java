@@ -12,12 +12,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import net.lab1024.sa.common.access.entity.AccessPermissionApplyEntity;
 
 /**
- * 门禁权限申请DAO
+ * 闂ㄧ鏉冮檺鐢宠DAO
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用@Mapper注解
- * - 继承BaseMapper
- * - 使用Dao后缀命名
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤@Mapper娉ㄨВ
+ * - 缁ф壙BaseMapper
+ * - 浣跨敤Dao鍚庣紑鍛藉悕
  * </p>
  *
  * @author IOE-DREAM Team
@@ -28,13 +27,13 @@ import net.lab1024.sa.common.access.entity.AccessPermissionApplyEntity;
 public interface AccessPermissionApplyDao extends BaseMapper<AccessPermissionApplyEntity> {
 
     /**
-     * 根据申请编号查询
+     * 鏍规嵁鐢宠缂栧彿鏌ヨ
      * <p>
-     * 使用MyBatis-Plus的LambdaQueryWrapper实现
+     * 浣跨敤MyBatis-Plus鐨凩ambdaQueryWrapper瀹炵幇
      * </p>
      *
-     * @param applyNo 申请编号
-     * @return 权限申请实体
+     * @param applyNo 鐢宠缂栧彿
+     * @return 鏉冮檺鐢宠瀹炰綋
      */
     default AccessPermissionApplyEntity selectByApplyNo(String applyNo) {
         LambdaQueryWrapper<AccessPermissionApplyEntity> wrapper = Wrappers.lambdaQuery(AccessPermissionApplyEntity.class)
@@ -45,18 +44,12 @@ public interface AccessPermissionApplyDao extends BaseMapper<AccessPermissionApp
     }
 
     /**
-     * 查询所有已过期的紧急权限申请
-     * <p>
-     * 查询条件：
-     * - 申请类型为EMERGENCY
-     * - 状态为APPROVED（已审批通过）
-     * - 结束时间小于当前时间（已过期）
-     * - 未删除（deleted_flag = 0）
-     * </p>
+     * 鏌ヨ鎵€鏈夊凡杩囨湡鐨勭揣鎬ユ潈闄愮敵璇?     * <p>
+     * 鏌ヨ鏉′欢锛?     * - 鐢宠绫诲瀷涓篍MERGENCY
+     * - 鐘舵€佷负APPROVED锛堝凡瀹℃壒閫氳繃锛?     * - 缁撴潫鏃堕棿灏忎簬褰撳墠鏃堕棿锛堝凡杩囨湡锛?     * - 鏈垹闄わ紙deleted_flag = 0锛?     * </p>
      *
-     * @param currentTime 当前时间
-     * @return 已过期的紧急权限申请列表
-     */
+     * @param currentTime 褰撳墠鏃堕棿
+     * @return 宸茶繃鏈熺殑绱ф€ユ潈闄愮敵璇峰垪琛?     */
     default List<AccessPermissionApplyEntity> selectExpiredEmergencyPermissions(LocalDateTime currentTime) {
         LambdaQueryWrapper<AccessPermissionApplyEntity> wrapper = Wrappers.lambdaQuery(AccessPermissionApplyEntity.class)
                 .eq(AccessPermissionApplyEntity::getApplyType, "EMERGENCY")

@@ -7,13 +7,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * 维护预测请求表单
+ * 缁存姢棰勬祴璇锋眰琛ㄥ崟
  * <p>
- * 用于设备预测性维护的请求参数
- * 严格遵循CLAUDE.md规范：
- * - 使用@Data注解
- * - 完整的字段验证注解
- * - Swagger文档注解
+ * 鐢ㄤ簬璁惧棰勬祴鎬х淮鎶ょ殑璇锋眰鍙傛暟
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Data娉ㄨВ
+ * - 瀹屾暣鐨勫瓧娈甸獙璇佹敞瑙?
+ * - Swagger鏂囨。娉ㄨВ
  * </p>
  *
  * @author IOE-DREAM Team
@@ -21,50 +21,50 @@ import lombok.Data;
  * @since 2025-01-30
  */
 @Data
-@Schema(description = "维护预测请求")
+@Schema(description = "缁存姢棰勬祴璇锋眰")
 public class MaintenancePredictRequest {
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
-    @NotNull(message = "设备ID不能为空")
-    @Schema(description = "设备ID", example = "1001")
+    @NotNull(message = "璁惧ID涓嶈兘涓虹┖")
+    @Schema(description = "璁惧ID", example = "1001")
     private Long deviceId;
 
     /**
-     * 预测天数
+     * 棰勬祴澶╂暟
      */
-    @Min(value = 1, message = "预测天数不能小于1")
-    @Max(value = 365, message = "预测天数不能大于365")
-    @Schema(description = "预测天数", example = "30")
+    @Min(value = 1, message = "棰勬祴澶╂暟涓嶈兘灏忎簬1")
+    @Max(value = 365, message = "棰勬祴澶╂暟涓嶈兘澶т簬365")
+    @Schema(description = "棰勬祴澶╂暟", example = "30")
     private Integer predictionDays = 30;
 
     /**
-     * 预测模型类型
-     * ML - 机器学习模型
-     * STATISTICAL - 统计模型
-     * HYBRID - 混合模型
+     * 棰勬祴妯″瀷绫诲瀷
+     * ML - 鏈哄櫒瀛︿範妯″瀷
+     * STATISTICAL - 缁熻妯″瀷
+     * HYBRID - 娣峰悎妯″瀷
      */
-    @Schema(description = "预测模型类型", example = "HYBRID", allowableValues = {"ML", "STATISTICAL", "HYBRID"})
+    @Schema(description = "棰勬祴妯″瀷绫诲瀷", example = "HYBRID", allowableValues = {"ML", "STATISTICAL", "HYBRID"})
     private String modelType = "HYBRID";
 
     /**
-     * 风险阈值
+     * 椋庨櫓闃堝€?
      */
-    @Min(value = 0, message = "风险阈值不能小于0")
-    @Max(value = 100, message = "风险阈值不能大于100")
-    @Schema(description = "风险阈值（%）", example = "75")
+    @Min(value = 0, message = "椋庨櫓闃堝€间笉鑳藉皬浜?")
+    @Max(value = 100, message = "椋庨櫓闃堝€间笉鑳藉ぇ浜?00")
+    @Schema(description = "椋庨櫓闃堝€硷紙%锛?, example = "75")
     private Integer riskThreshold = 75;
 
     /**
-     * 是否包含成本预估
+     * 鏄惁鍖呭惈鎴愭湰棰勪及
      */
-    @Schema(description = "是否包含成本预估", example = "true")
+    @Schema(description = "鏄惁鍖呭惈鎴愭湰棰勪及", example = "true")
     private Boolean includeCostEstimation = true;
 
     /**
-     * 是否推荐维护方案
+     * 鏄惁鎺ㄨ崘缁存姢鏂规
      */
-    @Schema(description = "是否推荐维护方案", example = "true")
+    @Schema(description = "鏄惁鎺ㄨ崘缁存姢鏂规", example = "true")
     private Boolean includeMaintenancePlan = true;
 }

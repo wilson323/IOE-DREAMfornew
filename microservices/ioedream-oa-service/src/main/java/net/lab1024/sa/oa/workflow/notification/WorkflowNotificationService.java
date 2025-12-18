@@ -4,8 +4,6 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +38,6 @@ import net.lab1024.sa.oa.workflow.websocket.WorkflowWebSocketController;
 @Slf4j
 @Service
 public class WorkflowNotificationService {
-    private static final Logger log = LoggerFactory.getLogger(WorkflowNotificationService.class);
 
     @Resource
     private WorkflowWebSocketController webSocketController;

@@ -7,19 +7,19 @@ import java.util.Map;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
- * 监控告警服务接口
+ * 鐩戞帶鍛婅鏈嶅姟鎺ュ彛
  * <p>
- * 提供统一智能的监控告警体系：
- * - 多维度异常检测与预警
- * - 智能告警分级与推送
- * - 告警处理流程跟踪
- * - 监控指标统计分析
- * - 告警规则动态配置
- * - 故障自愈与恢复机制
- * 严格遵循CLAUDE.md规范：
- * - Service接口定义在业务服务模块中
- * - 清晰的方法注释
- * - 统一的数据传输对象
+ * 鎻愪緵缁熶竴鏅鸿兘鐨勭洃鎺у憡璀︿綋绯伙細
+ * - 澶氱淮搴﹀紓甯告娴嬩笌棰勮
+ * - 鏅鸿兘鍛婅鍒嗙骇涓庢帹閫?
+ * - 鍛婅澶勭悊娴佺▼璺熻釜
+ * - 鐩戞帶鎸囨爣缁熻鍒嗘瀽
+ * - 鍛婅瑙勫垯鍔ㄦ€侀厤缃?
+ * - 鏁呴殰鑷剤涓庢仮澶嶆満鍒?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - Service鎺ュ彛瀹氫箟鍦ㄤ笟鍔℃湇鍔℃ā鍧椾腑
+ * - 娓呮櫚鐨勬柟娉曟敞閲?
+ * - 缁熶竴鐨勬暟鎹紶杈撳璞?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -29,636 +29,636 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 public interface MonitorAlertService {
 
     /**
-     * 创建监控告警
+     * 鍒涘缓鐩戞帶鍛婅
      * <p>
-     * 创建一个新的监控告警事件：
-     * - 告警信息完整性验证
-     * - 告警级别智能评估
-     * - 告警去重与聚合
-     * - 告警路由策略确定
+     * 鍒涘缓涓€涓柊鐨勭洃鎺у憡璀︿簨浠讹細
+     * - 鍛婅淇℃伅瀹屾暣鎬ч獙璇?
+     * - 鍛婅绾у埆鏅鸿兘璇勪及
+     * - 鍛婅鍘婚噸涓庤仛鍚?
+     * - 鍛婅璺敱绛栫暐纭畾
      * </p>
      *
-     * @param request 告警创建请求
-     * @return 告警创建结果
+     * @param request 鍛婅鍒涘缓璇锋眰
+     * @return 鍛婅鍒涘缓缁撴灉
      */
     ResponseDTO<MonitorAlertResult> createMonitorAlert(CreateMonitorAlertRequest request);
 
     /**
-     * 智能告警分级
+     * 鏅鸿兘鍛婅鍒嗙骇
      * <p>
-     * 基于多维度指标进行智能告警分级：
-     * - 影响范围评估
-     * - 紧急程度分析
-     * - 业务影响评估
-     * - 风险等级计算
+     * 鍩轰簬澶氱淮搴︽寚鏍囪繘琛屾櫤鑳藉憡璀﹀垎绾э細
+     * - 褰卞搷鑼冨洿璇勪及
+     * - 绱ф€ョ▼搴﹀垎鏋?
+     * - 涓氬姟褰卞搷璇勪及
+     * - 椋庨櫓绛夌骇璁＄畻
      * </p>
      *
-     * @param request 分级请求
-     * @return 分级结果
+     * @param request 鍒嗙骇璇锋眰
+     * @return 鍒嗙骇缁撴灉
      */
     ResponseDTO<AlertLevelAssessmentResult> assessAlertLevel(AlertLevelAssessmentRequest request);
 
     /**
-     * 告警通知推送
+     * 鍛婅閫氱煡鎺ㄩ€?
      * <p>
-     * 根据告警级别和配置规则推送告警通知：
-     * - 多渠道通知支持（邮件、短信、微信、钉钉）
-     * - 通知模板动态渲染
-     * - 通知发送状态跟踪
-     * - 通知频率控制
+     * 鏍规嵁鍛婅绾у埆鍜岄厤缃鍒欐帹閫佸憡璀﹂€氱煡锛?
+     * - 澶氭笭閬撻€氱煡鏀寔锛堥偖浠躲€佺煭淇°€佸井淇°€侀拤閽夛級
+     * - 閫氱煡妯℃澘鍔ㄦ€佹覆鏌?
+     * - 閫氱煡鍙戦€佺姸鎬佽窡韪?
+     * - 閫氱煡棰戠巼鎺у埗
      * </p>
      *
-     * @param request 通知推送请求
-     * @return 推送结果
+     * @param request 閫氱煡鎺ㄩ€佽姹?
+     * @return 鎺ㄩ€佺粨鏋?
      */
     ResponseDTO<AlertNotificationResult> sendAlertNotification(AlertNotificationRequest request);
 
     /**
-     * 获取告警列表
+     * 鑾峰彇鍛婅鍒楄〃
      * <p>
-     * 查询监控系统告警列表：
-     * - 多维度条件筛选
-     * - 告警状态跟踪
-     * - 处理历史记录
-     * - 统计分析支持
+     * 鏌ヨ鐩戞帶绯荤粺鍛婅鍒楄〃锛?
+     * - 澶氱淮搴︽潯浠剁瓫閫?
+     * - 鍛婅鐘舵€佽窡韪?
+     * - 澶勭悊鍘嗗彶璁板綍
+     * - 缁熻鍒嗘瀽鏀寔
      * </p>
      *
-     * @param request 查询请求
-     * @return 告警列表
+     * @param request 鏌ヨ璇锋眰
+     * @return 鍛婅鍒楄〃
      */
     ResponseDTO<List<MonitorAlertVO>> getMonitorAlertList(MonitorAlertQueryRequest request);
 
     /**
-     * 处理告警事件
+     * 澶勭悊鍛婅浜嬩欢
      * <p>
-     * 处理监控告警事件：
-     * - 告警确认操作
-     * - 处理方案执行
-     * - 处理结果记录
-     * - 关联事件更新
+     * 澶勭悊鐩戞帶鍛婅浜嬩欢锛?
+     * - 鍛婅纭鎿嶄綔
+     * - 澶勭悊鏂规鎵ц
+     * - 澶勭悊缁撴灉璁板綍
+     * - 鍏宠仈浜嬩欢鏇存柊
      * </p>
      *
-     * @param request 处理请求
-     * @return 处理结果
+     * @param request 澶勭悊璇锋眰
+     * @return 澶勭悊缁撴灉
      */
     ResponseDTO<AlertHandleResult> handleAlert(AlertHandleRequest request);
 
     /**
-     * 告警统计分析
+     * 鍛婅缁熻鍒嗘瀽
      * <p>
-     * 生成监控告警的统计分析报告：
-     * - 告警趋势分析
-     * - 处理效率统计
-     * - 问题根源分析
-     * - 改进建议生成
+     * 鐢熸垚鐩戞帶鍛婅鐨勭粺璁″垎鏋愭姤鍛婏細
+     * - 鍛婅瓒嬪娍鍒嗘瀽
+     * - 澶勭悊鏁堢巼缁熻
+     * - 闂鏍规簮鍒嗘瀽
+     * - 鏀硅繘寤鸿鐢熸垚
      * </p>
      *
-     * @param request 统计请求
-     * @return 统计报告
+     * @param request 缁熻璇锋眰
+     * @return 缁熻鎶ュ憡
      */
     ResponseDTO<AlertStatisticsReport> generateAlertStatistics(AlertStatisticsRequest request);
 
     /**
-     * 配置告警规则
+     * 閰嶇疆鍛婅瑙勫垯
      * <p>
-     * 管理监控告警的规则配置：
-     * - 规则创建与更新
-     * - 条件表达式定义
-     * - 动作策略配置
-     * - 规则有效性验证
+     * 绠＄悊鐩戞帶鍛婅鐨勮鍒欓厤缃細
+     * - 瑙勫垯鍒涘缓涓庢洿鏂?
+     * - 鏉′欢琛ㄨ揪寮忓畾涔?
+     * - 鍔ㄤ綔绛栫暐閰嶇疆
+     * - 瑙勫垯鏈夋晥鎬ч獙璇?
      * </p>
      *
-     * @param request 配置请求
-     * @return 配置结果
+     * @param request 閰嶇疆璇锋眰
+     * @return 閰嶇疆缁撴灉
      */
     ResponseDTO<AlertRuleResult> configureAlertRule(AlertRuleConfigureRequest request);
 
     /**
-     * 获取告警规则列表
+     * 鑾峰彇鍛婅瑙勫垯鍒楄〃
      * <p>
-     * 查询系统配置的告警规则列表：
-     * - 规则状态管理
-     * - 规则优先级排序
-     * - 规则使用统计
-     * - 规则效果评估
+     * 鏌ヨ绯荤粺閰嶇疆鐨勫憡璀﹁鍒欏垪琛細
+     * - 瑙勫垯鐘舵€佺鐞?
+     * - 瑙勫垯浼樺厛绾ф帓搴?
+     * - 瑙勫垯浣跨敤缁熻
+     * - 瑙勫垯鏁堟灉璇勪及
      * </p>
      *
-     * @param request 查询请求
-     * @return 规则列表
+     * @param request 鏌ヨ璇锋眰
+     * @return 瑙勫垯鍒楄〃
      */
     ResponseDTO<List<AlertRuleVO>> getAlertRuleList(AlertRuleQueryRequest request);
 
     /**
-     * 系统健康检查
+     * 绯荤粺鍋ュ悍妫€鏌?
      * <p>
-     * 执行系统全面的健康检查：
-     * - 服务可用性检查
-     * - 性能指标监控
-     * - 资源使用评估
-     * - 潜在风险识别
+     * 鎵ц绯荤粺鍏ㄩ潰鐨勫仴搴锋鏌ワ細
+     * - 鏈嶅姟鍙敤鎬ф鏌?
+     * - 鎬ц兘鎸囨爣鐩戞帶
+     * - 璧勬簮浣跨敤璇勪及
+     * - 娼滃湪椋庨櫓璇嗗埆
      * </p>
      *
-     * @param request 检查请求
-     * @return 健康检查结果
+     * @param request 妫€鏌ヨ姹?
+     * @return 鍋ュ悍妫€鏌ョ粨鏋?
      */
     ResponseDTO<SystemHealthCheckResult> performSystemHealthCheck(SystemHealthCheckRequest request);
 
     /**
-     * 故障自愈处理
+     * 鏁呴殰鑷剤澶勭悊
      * <p>
-     * 执行系统故障的自动恢复处理：
-     * - 故障类型识别
-     * - 自愈策略执行
-     * - 恢复结果验证
-     * - 人工介入判断
+     * 鎵ц绯荤粺鏁呴殰鐨勮嚜鍔ㄦ仮澶嶅鐞嗭細
+     * - 鏁呴殰绫诲瀷璇嗗埆
+     * - 鑷剤绛栫暐鎵ц
+     * - 鎭㈠缁撴灉楠岃瘉
+     * - 浜哄伐浠嬪叆鍒ゆ柇
      * </p>
      *
-     * @param request 自愈请求
-     * @return 自愈结果
+     * @param request 鑷剤璇锋眰
+     * @return 鑷剤缁撴灉
      */
     ResponseDTO<SelfHealingResult> performSelfHealing(SelfHealingRequest request);
 
     /**
-     * 告警趋势预测
+     * 鍛婅瓒嬪娍棰勬祴
      * <p>
-     * 基于历史数据预测告警趋势：
-     * - 时间序列分析
-     * - 季节性模式识别
-     * - 异常趋势预警
-     * - 容量规划建议
+     * 鍩轰簬鍘嗗彶鏁版嵁棰勬祴鍛婅瓒嬪娍锛?
+     * - 鏃堕棿搴忓垪鍒嗘瀽
+     * - 瀛ｈ妭鎬фā寮忚瘑鍒?
+     * - 寮傚父瓒嬪娍棰勮
+     * - 瀹归噺瑙勫垝寤鸿
      * </p>
      *
-     * @param request 预测请求
-     * @return 预测结果
+     * @param request 棰勬祴璇锋眰
+     * @return 棰勬祴缁撴灉
      */
     ResponseDTO<AlertTrendPredictionResult> predictAlertTrend(AlertTrendPredictionRequest request);
 
-    // ==================== 内部数据传输对象 ====================
+    // ==================== 鍐呴儴鏁版嵁浼犺緭瀵硅薄 ====================
 
     /**
-     * 创建监控告警请求
+     * 鍒涘缓鐩戞帶鍛婅璇锋眰
      */
     class CreateMonitorAlertRequest {
-        private String alertTitle;           // 告警标题
-        private String alertDescription;      // 告警描述
-        private String alertType;             // 告警类型
-        private String sourceSystem;          // 来源系统
-        private String sourceComponent;       // 来源组件
-        private String sourceInstanceId;      // 来源实例ID
-        private LocalDateTime occurTime;       // 发生时间
-        private String severityLevel;         // 严重等级（LOW/MEDIUM/HIGH/CRITICAL）
-        private Map<String, Object> alertData; // 告警数据
-        private List<String> affectedServices; // 影响的服务
-        private List<String> tags;           // 标签列表
-        private Boolean needNotification;     // 是否需要通知
-        private String alertCategory;        // 告警分类
-        private Integer priority;            // 优先级（1-10）
-        private String assignedTo;            // 分配给
-        private String escalationRule;        // 升级规则
+        private String alertTitle;           // 鍛婅鏍囬
+        private String alertDescription;      // 鍛婅鎻忚堪
+        private String alertType;             // 鍛婅绫诲瀷
+        private String sourceSystem;          // 鏉ユ簮绯荤粺
+        private String sourceComponent;       // 鏉ユ簮缁勪欢
+        private String sourceInstanceId;      // 鏉ユ簮瀹炰緥ID
+        private LocalDateTime occurTime;       // 鍙戠敓鏃堕棿
+        private String severityLevel;         // 涓ラ噸绛夌骇锛圠OW/MEDIUM/HIGH/CRITICAL锛?
+        private Map<String, Object> alertData; // 鍛婅鏁版嵁
+        private List<String> affectedServices; // 褰卞搷鐨勬湇鍔?
+        private List<String> tags;           // 鏍囩鍒楄〃
+        private Boolean needNotification;     // 鏄惁闇€瑕侀€氱煡
+        private String alertCategory;        // 鍛婅鍒嗙被
+        private Integer priority;            // 浼樺厛绾э紙1-10锛?
+        private String assignedTo;            // 鍒嗛厤缁?
+        private String escalationRule;        // 鍗囩骇瑙勫垯
     }
 
     /**
-     * 监控告警结果
+     * 鐩戞帶鍛婅缁撴灉
      */
     class MonitorAlertResult {
-        private String alertId;              // 告警ID
-        private String alertTitle;           // 告警标题
-        private String alertDescription;      // 告警描述
-        private LocalDateTime createTime;     // 创建时间
-        private String severityLevel;         // 严重等级
-        private String status;               // 状态（NEW/ACKNOWLEDGED/RESOLVED/CLOSED）
-        private List<String> notificationIds; // 通知ID列表
-        private List<String> relatedAlertIds;  // 关联告警ID
-        private String assignedTo;            // 分配给
-        private LocalDateTime estimatedResolveTime; // 预计解决时间
-        private Map<String, Object> metadata;  // 元数据
+        private String alertId;              // 鍛婅ID
+        private String alertTitle;           // 鍛婅鏍囬
+        private String alertDescription;      // 鍛婅鎻忚堪
+        private LocalDateTime createTime;     // 鍒涘缓鏃堕棿
+        private String severityLevel;         // 涓ラ噸绛夌骇
+        private String status;               // 鐘舵€侊紙NEW/ACKNOWLEDGED/RESOLVED/CLOSED锛?
+        private List<String> notificationIds; // 閫氱煡ID鍒楄〃
+        private List<String> relatedAlertIds;  // 鍏宠仈鍛婅ID
+        private String assignedTo;            // 鍒嗛厤缁?
+        private LocalDateTime estimatedResolveTime; // 棰勮瑙ｅ喅鏃堕棿
+        private Map<String, Object> metadata;  // 鍏冩暟鎹?
     }
 
     /**
-     * 告警分级评估请求
+     * 鍛婅鍒嗙骇璇勪及璇锋眰
      */
     class AlertLevelAssessmentRequest {
-        private String alertType;             // 告警类型
-        private String sourceSystem;          // 来源系统
-        private Map<String, Object> alertMetrics; // 告警指标
-        private String businessImpact;        // 业务影响
-        private String affectedScope;         // 影响范围
-        private LocalDateTime occurTime;       // 发生时间
-        private Integer affectedUsers;        // 影响用户数
-        private List<String> affectedServices; // 影响的服务
-        private Boolean isRecurring;          // 是否重复发生
-        private Integer recurrenceCount;      // 重复次数
+        private String alertType;             // 鍛婅绫诲瀷
+        private String sourceSystem;          // 鏉ユ簮绯荤粺
+        private Map<String, Object> alertMetrics; // 鍛婅鎸囨爣
+        private String businessImpact;        // 涓氬姟褰卞搷
+        private String affectedScope;         // 褰卞搷鑼冨洿
+        private LocalDateTime occurTime;       // 鍙戠敓鏃堕棿
+        private Integer affectedUsers;        // 褰卞搷鐢ㄦ埛鏁?
+        private List<String> affectedServices; // 褰卞搷鐨勬湇鍔?
+        private Boolean isRecurring;          // 鏄惁閲嶅鍙戠敓
+        private Integer recurrenceCount;      // 閲嶅娆℃暟
     }
 
     /**
-     * 告警级别评估结果
+     * 鍛婅绾у埆璇勪及缁撴灉
      */
     class AlertLevelAssessmentResult {
-        private String assessedLevel;         // 评估的级别
-        private Double confidenceScore;       // 置信度评分
-        private String assessmentReason;      // 评估原因
-        private List<String> assessmentFactors; // 评估因素
-        private String businessImpactLevel;   // 业务影响级别
-        private String urgencyLevel;          // 紧急程度
-        private String recommendedAction;     // 建议措施
-        private Integer recommendedPriority; // 推荐优先级
-        private LocalDateTime escalateTime;   // 升级时间
-        private Map<String, Object> detailedMetrics; // 详细指标
+        private String assessedLevel;         // 璇勪及鐨勭骇鍒?
+        private Double confidenceScore;       // 缃俊搴﹁瘎鍒?
+        private String assessmentReason;      // 璇勪及鍘熷洜
+        private List<String> assessmentFactors; // 璇勪及鍥犵礌
+        private String businessImpactLevel;   // 涓氬姟褰卞搷绾у埆
+        private String urgencyLevel;          // 绱ф€ョ▼搴?
+        private String recommendedAction;     // 寤鸿鎺柦
+        private Integer recommendedPriority; // 鎺ㄨ崘浼樺厛绾?
+        private LocalDateTime escalateTime;   // 鍗囩骇鏃堕棿
+        private Map<String, Object> detailedMetrics; // 璇︾粏鎸囨爣
     }
 
     /**
-     * 告警通知推送请求
+     * 鍛婅閫氱煡鎺ㄩ€佽姹?
      */
     class AlertNotificationRequest {
-        private String alertId;              // 告警ID
-        private List<String> notificationChannels; // 通知渠道
-        private List<String> recipients;      // 接收人列表
-        private Map<String, Object> notificationData; // 通知数据
-        private String notificationTemplate;  // 通知模板
-        private Boolean needEscalation;       // 是否需要升级
-        private Integer maxRetries;           // 最大重试次数
-        private Integer retryInterval;        // 重试间隔（秒）
-        private Map<String, String> customHeaders; // 自定义头部
+        private String alertId;              // 鍛婅ID
+        private List<String> notificationChannels; // 閫氱煡娓犻亾
+        private List<String> recipients;      // 鎺ユ敹浜哄垪琛?
+        private Map<String, Object> notificationData; // 閫氱煡鏁版嵁
+        private String notificationTemplate;  // 閫氱煡妯℃澘
+        private Boolean needEscalation;       // 鏄惁闇€瑕佸崌绾?
+        private Integer maxRetries;           // 鏈€澶ч噸璇曟鏁?
+        private Integer retryInterval;        // 閲嶈瘯闂撮殧锛堢锛?
+        private Map<String, String> customHeaders; // 鑷畾涔夊ご閮?
     }
 
     /**
-     * 告警通知结果
+     * 鍛婅閫氱煡缁撴灉
      */
     class AlertNotificationResult {
-        private String notificationId;       // 通知ID
-        private String alertId;              // 告警ID
-        private List<NotificationChannelResult> channelResults; // 渠道结果
-        private LocalDateTime sendTime;      // 发送时间
-        private Integer totalRecipients;      // 总接收人数
-        private Integer successCount;         // 成功发送数
-        private Integer failureCount;         // 失败发送数
-        private String overallStatus;         // 整体状态
-        private List<String> failedRecipients; // 失败接收人
-        private Map<String, Object> responseMetadata; // 响应元数据
+        private String notificationId;       // 閫氱煡ID
+        private String alertId;              // 鍛婅ID
+        private List<NotificationChannelResult> channelResults; // 娓犻亾缁撴灉
+        private LocalDateTime sendTime;      // 鍙戦€佹椂闂?
+        private Integer totalRecipients;      // 鎬绘帴鏀朵汉鏁?
+        private Integer successCount;         // 鎴愬姛鍙戦€佹暟
+        private Integer failureCount;         // 澶辫触鍙戦€佹暟
+        private String overallStatus;         // 鏁翠綋鐘舵€?
+        private List<String> failedRecipients; // 澶辫触鎺ユ敹浜?
+        private Map<String, Object> responseMetadata; // 鍝嶅簲鍏冩暟鎹?
     }
 
     /**
-     * 通知渠道结果
+     * 閫氱煡娓犻亾缁撴灉
      */
     class NotificationChannelResult {
-        private String channel;              // 渠道（EMAIL/SMS/WECHAT/DINGTALK）
-        private Integer sentCount;           // 发送数量
-        private Integer successCount;         // 成功数量
-        private Integer failureCount;         // 失败数量
-        private String status;               // 渠道状态
-        private String errorMessage;         // 错误信息
-        private LocalDateTime completedTime;  // 完成时间
+        private String channel;              // 娓犻亾锛圗MAIL/SMS/WECHAT/DINGTALK锛?
+        private Integer sentCount;           // 鍙戦€佹暟閲?
+        private Integer successCount;         // 鎴愬姛鏁伴噺
+        private Integer failureCount;         // 澶辫触鏁伴噺
+        private String status;               // 娓犻亾鐘舵€?
+        private String errorMessage;         // 閿欒淇℃伅
+        private LocalDateTime completedTime;  // 瀹屾垚鏃堕棿
     }
 
     /**
-     * 监控告警查询请求
+     * 鐩戞帶鍛婅鏌ヨ璇锋眰
      */
     class MonitorAlertQueryRequest {
-        private String alertId;              // 告警ID
-        private String alertType;             // 告警类型
-        private String severityLevel;         // 严重等级
-        private String status;               // 状态
-        private String sourceSystem;          // 来源系统
-        private String assignedTo;            // 分配给
-        private LocalDateTime startTime;      // 开始时间
-        private LocalDateTime endTime;        // 结束时间
-        private List<String> tags;           // 标签
-        private Integer pageNum;             // 页码
-        private Integer pageSize;            // 每页大小
-        private String sortBy;               // 排序字段
-        private String sortOrder;            // 排序方向
+        private String alertId;              // 鍛婅ID
+        private String alertType;             // 鍛婅绫诲瀷
+        private String severityLevel;         // 涓ラ噸绛夌骇
+        private String status;               // 鐘舵€?
+        private String sourceSystem;          // 鏉ユ簮绯荤粺
+        private String assignedTo;            // 鍒嗛厤缁?
+        private LocalDateTime startTime;      // 寮€濮嬫椂闂?
+        private LocalDateTime endTime;        // 缁撴潫鏃堕棿
+        private List<String> tags;           // 鏍囩
+        private Integer pageNum;             // 椤电爜
+        private Integer pageSize;            // 姣忛〉澶у皬
+        private String sortBy;               // 鎺掑簭瀛楁
+        private String sortOrder;            // 鎺掑簭鏂瑰悜
     }
 
     /**
-     * 监控告警视图对象
+     * 鐩戞帶鍛婅瑙嗗浘瀵硅薄
      */
     class MonitorAlertVO {
-        private String alertId;              // 告警ID
-        private String alertTitle;           // 告警标题
-        private String alertDescription;      // 告警描述
-        private String alertType;             // 告警类型
-        private String sourceSystem;          // 来源系统
-        private LocalDateTime occurTime;       // 发生时间
-        private LocalDateTime createTime;     // 创建时间
-        private LocalDateTime updateTime;     // 更新时间
-        private String severityLevel;         // 严重等级
-        private String status;               // 状态
-        private String assignedTo;            // 分配给
-        private String assignedToName;        // 分配人姓名
-        private Integer duration;             // 持续时长（分钟）
-        private List<String> affectedServices; // 影响的服务
-        private List<String> tags;           // 标签
-        private Boolean isRecurring;          // 是否重复
-        private Integer recurrenceCount;      // 重复次数
-        private String businessImpact;        // 业务影响
-        private String resolution;            // 解决方案
-        private LocalDateTime resolvedTime;   // 解决时间
-        private Integer resolutionDuration;   // 解决时长（分钟）
+        private String alertId;              // 鍛婅ID
+        private String alertTitle;           // 鍛婅鏍囬
+        private String alertDescription;      // 鍛婅鎻忚堪
+        private String alertType;             // 鍛婅绫诲瀷
+        private String sourceSystem;          // 鏉ユ簮绯荤粺
+        private LocalDateTime occurTime;       // 鍙戠敓鏃堕棿
+        private LocalDateTime createTime;     // 鍒涘缓鏃堕棿
+        private LocalDateTime updateTime;     // 鏇存柊鏃堕棿
+        private String severityLevel;         // 涓ラ噸绛夌骇
+        private String status;               // 鐘舵€?
+        private String assignedTo;            // 鍒嗛厤缁?
+        private String assignedToName;        // 鍒嗛厤浜哄鍚?
+        private Integer duration;             // 鎸佺画鏃堕暱锛堝垎閽燂級
+        private List<String> affectedServices; // 褰卞搷鐨勬湇鍔?
+        private List<String> tags;           // 鏍囩
+        private Boolean isRecurring;          // 鏄惁閲嶅
+        private Integer recurrenceCount;      // 閲嶅娆℃暟
+        private String businessImpact;        // 涓氬姟褰卞搷
+        private String resolution;            // 瑙ｅ喅鏂规
+        private LocalDateTime resolvedTime;   // 瑙ｅ喅鏃堕棿
+        private Integer resolutionDuration;   // 瑙ｅ喅鏃堕暱锛堝垎閽燂級
     }
 
     /**
-     * 告警处理请求
+     * 鍛婅澶勭悊璇锋眰
      */
     class AlertHandleRequest {
-        private String alertId;              // 告警ID
-        private String handleAction;          // 处理动作（ACKNOWLEDGE/ASSIGN/RESOLVE/CLOSE/ESCALATE）
-        private String handleComment;         // 处理说明
-        private String assignedTo;            // 分配给
-        private String resolutionMethod;      // 解决方法
-        private List<String> attachments;      // 附件
-        private Boolean markAsResolved;       // 标记为已解决
-        private LocalDateTime estimatedResolveTime; // 预计解决时间
-        private Map<String, Object> handleData; // 处理数据
-        private Boolean sendNotification;     // 是否发送通知
+        private String alertId;              // 鍛婅ID
+        private String handleAction;          // 澶勭悊鍔ㄤ綔锛圓CKNOWLEDGE/ASSIGN/RESOLVE/CLOSE/ESCALATE锛?
+        private String handleComment;         // 澶勭悊璇存槑
+        private String assignedTo;            // 鍒嗛厤缁?
+        private String resolutionMethod;      // 瑙ｅ喅鏂规硶
+        private List<String> attachments;      // 闄勪欢
+        private Boolean markAsResolved;       // 鏍囪涓哄凡瑙ｅ喅
+        private LocalDateTime estimatedResolveTime; // 棰勮瑙ｅ喅鏃堕棿
+        private Map<String, Object> handleData; // 澶勭悊鏁版嵁
+        private Boolean sendNotification;     // 鏄惁鍙戦€侀€氱煡
     }
 
     /**
-     * 告警处理结果
+     * 鍛婅澶勭悊缁撴灉
      */
     class AlertHandleResult {
-        private String alertId;              // 告警ID
-        private String handleAction;          // 处理动作
-        private String previousStatus;        // 处理前状态
-        private String currentStatus;         // 处理后状态
-        private LocalDateTime handleTime;     // 处理时间
-        private String handledBy;             // 处理人
-        private String handleComment;         // 处理说明
-        private Boolean autoGenerated;        // 是否自动生成
-        private List<String> affectedAlerts;  // 影响的告警
-        private Map<String, Object> handleMetadata; // 处理元数据
+        private String alertId;              // 鍛婅ID
+        private String handleAction;          // 澶勭悊鍔ㄤ綔
+        private String previousStatus;        // 澶勭悊鍓嶇姸鎬?
+        private String currentStatus;         // 澶勭悊鍚庣姸鎬?
+        private LocalDateTime handleTime;     // 澶勭悊鏃堕棿
+        private String handledBy;             // 澶勭悊浜?
+        private String handleComment;         // 澶勭悊璇存槑
+        private Boolean autoGenerated;        // 鏄惁鑷姩鐢熸垚
+        private List<String> affectedAlerts;  // 褰卞搷鐨勫憡璀?
+        private Map<String, Object> handleMetadata; // 澶勭悊鍏冩暟鎹?
     }
 
     /**
-     * 告警统计请求
+     * 鍛婅缁熻璇锋眰
      */
     class AlertStatisticsRequest {
-        private String statisticsType;       // 统计类型（DAILY/WEEKLY/MONTHLY/CUSTOM）
-        private LocalDateTime startTime;      // 开始时间
-        private LocalDateTime endTime;        // 结束时间
-        private List<String> alertTypes;      // 告警类型筛选
-        private List<String> severityLevels;  // 严重等级筛选
-        private List<String> sourceSystems;   // 来源系统筛选
-        private String groupBy;               // 分组方式（TYPE/SEVERITY/SOURCE/STATUS）
-        private List<String> metrics;          // 统计指标
-        private Boolean includeTrends;        // 是否包含趋势
-        private Integer topCount;             // Top数量
+        private String statisticsType;       // 缁熻绫诲瀷锛圖AILY/WEEKLY/MONTHLY/CUSTOM锛?
+        private LocalDateTime startTime;      // 寮€濮嬫椂闂?
+        private LocalDateTime endTime;        // 缁撴潫鏃堕棿
+        private List<String> alertTypes;      // 鍛婅绫诲瀷绛涢€?
+        private List<String> severityLevels;  // 涓ラ噸绛夌骇绛涢€?
+        private List<String> sourceSystems;   // 鏉ユ簮绯荤粺绛涢€?
+        private String groupBy;               // 鍒嗙粍鏂瑰紡锛圱YPE/SEVERITY/SOURCE/STATUS锛?
+        private List<String> metrics;          // 缁熻鎸囨爣
+        private Boolean includeTrends;        // 鏄惁鍖呭惈瓒嬪娍
+        private Integer topCount;             // Top鏁伴噺
     }
 
     /**
-     * 告警统计报告
+     * 鍛婅缁熻鎶ュ憡
      */
     class AlertStatisticsReport {
-        private String statisticsPeriod;     // 统计周期
-        private LocalDateTime reportTime;     // 报告时间
-        private Long totalAlerts;            // 总告警数
-        private Map<String, Long> alertsByType; // 按类型分组的告警数
-        private Map<String, Long> alertsBySeverity; // 按严重等级分组的告警数
-        private Map<String, Long> alertsBySource; // 按来源系统分组的告警数
-        private Map<String, Long> alertsByStatus; // 按状态分组的告警数
-        private Double averageResolutionTime; // 平均解决时间
-        private Double resolutionRate;        // 解决率
-        private List<AlertTrendData> trendData; // 趋势数据
-        private List<AlertTopItem> topAlertTypes; // 主要告警类型
-        private List<AlertTopItem> topSources; // 主要来源系统
-        private Map<String, Object> insights; // 洞察分析
+        private String statisticsPeriod;     // 缁熻鍛ㄦ湡
+        private LocalDateTime reportTime;     // 鎶ュ憡鏃堕棿
+        private Long totalAlerts;            // 鎬诲憡璀︽暟
+        private Map<String, Long> alertsByType; // 鎸夌被鍨嬪垎缁勭殑鍛婅鏁?
+        private Map<String, Long> alertsBySeverity; // 鎸変弗閲嶇瓑绾у垎缁勭殑鍛婅鏁?
+        private Map<String, Long> alertsBySource; // 鎸夋潵婧愮郴缁熷垎缁勭殑鍛婅鏁?
+        private Map<String, Long> alertsByStatus; // 鎸夌姸鎬佸垎缁勭殑鍛婅鏁?
+        private Double averageResolutionTime; // 骞冲潎瑙ｅ喅鏃堕棿
+        private Double resolutionRate;        // 瑙ｅ喅鐜?
+        private List<AlertTrendData> trendData; // 瓒嬪娍鏁版嵁
+        private List<AlertTopItem> topAlertTypes; // 涓昏鍛婅绫诲瀷
+        private List<AlertTopItem> topSources; // 涓昏鏉ユ簮绯荤粺
+        private Map<String, Object> insights; // 娲炲療鍒嗘瀽
     }
 
     /**
-     * 告警趋势数据
+     * 鍛婅瓒嬪娍鏁版嵁
      */
     class AlertTrendData {
-        private String timeSlot;             // 时间段
-        private Long alertCount;             // 告警数量
-        private Double resolutionTime;        // 平均解决时间
-        private Double resolutionRate;        // 解决率
-        private List<String> topAlertTypes;   // 主要告警类型
+        private String timeSlot;             // 鏃堕棿娈?
+        private Long alertCount;             // 鍛婅鏁伴噺
+        private Double resolutionTime;        // 骞冲潎瑙ｅ喅鏃堕棿
+        private Double resolutionRate;        // 瑙ｅ喅鐜?
+        private List<String> topAlertTypes;   // 涓昏鍛婅绫诲瀷
     }
 
     /**
-     * 告警Top项目
+     * 鍛婅Top椤圭洰
      */
     class AlertTopItem {
-        private String itemName;             // 项目名称
-        private Long count;                  // 数量
-        private Double percentage;            // 百分比
-        private String trend;                // 趋势（UP/DOWN/STABLE）
+        private String itemName;             // 椤圭洰鍚嶇О
+        private Long count;                  // 鏁伴噺
+        private Double percentage;            // 鐧惧垎姣?
+        private String trend;                // 瓒嬪娍锛圲P/DOWN/STABLE锛?
     }
 
     /**
-     * 告警规则配置请求
+     * 鍛婅瑙勫垯閰嶇疆璇锋眰
      */
     class AlertRuleConfigureRequest {
-        private String ruleId;               // 规则ID（新增时为空）
-        private String ruleName;             // 规则名称
-        private String ruleDescription;      // 规则描述
-        private String ruleType;             // 规则类型（THRESHOLD/PATTERN/ANOMALY/COMPOSITE）
-        private Boolean enabled;             // 是否启用
-        private Integer priority;            // 优先级
-        private String conditionExpression;  // 条件表达式
-        private List<AlertRuleAction> actions; // 动作列表
-        private String evaluationInterval;   // 评估间隔
-        private Integer consecutiveFailures; // 连续失败次数
-        private String severityLevel;         // 默认严重等级
-        private List<String> tags;           // 标签
-        private Map<String, Object> ruleParameters; // 规则参数
+        private String ruleId;               // 瑙勫垯ID锛堟柊澧炴椂涓虹┖锛?
+        private String ruleName;             // 瑙勫垯鍚嶇О
+        private String ruleDescription;      // 瑙勫垯鎻忚堪
+        private String ruleType;             // 瑙勫垯绫诲瀷锛圱HRESHOLD/PATTERN/ANOMALY/COMPOSITE锛?
+        private Boolean enabled;             // 鏄惁鍚敤
+        private Integer priority;            // 浼樺厛绾?
+        private String conditionExpression;  // 鏉′欢琛ㄨ揪寮?
+        private List<AlertRuleAction> actions; // 鍔ㄤ綔鍒楄〃
+        private String evaluationInterval;   // 璇勪及闂撮殧
+        private Integer consecutiveFailures; // 杩炵画澶辫触娆℃暟
+        private String severityLevel;         // 榛樿涓ラ噸绛夌骇
+        private List<String> tags;           // 鏍囩
+        private Map<String, Object> ruleParameters; // 瑙勫垯鍙傛暟
     }
 
     /**
-     * 告警规则动作
+     * 鍛婅瑙勫垯鍔ㄤ綔
      */
     class AlertRuleAction {
-        private String actionType;           // 动作类型（NOTIFICATION/ESCALATION/AUTO_REMEDY/WEBHOOK）
-        private String actionName;           // 动作名称
-        private Map<String, Object> actionParameters; // 动作参数
-        private Boolean enabled;             // 是否启用
-        private Integer order;                // 执行顺序
-        private String condition;            // 执行条件
+        private String actionType;           // 鍔ㄤ綔绫诲瀷锛圢OTIFICATION/ESCALATION/AUTO_REMEDY/WEBHOOK锛?
+        private String actionName;           // 鍔ㄤ綔鍚嶇О
+        private Map<String, Object> actionParameters; // 鍔ㄤ綔鍙傛暟
+        private Boolean enabled;             // 鏄惁鍚敤
+        private Integer order;                // 鎵ц椤哄簭
+        private String condition;            // 鎵ц鏉′欢
     }
 
     /**
-     * 告警规则结果
+     * 鍛婅瑙勫垯缁撴灉
      */
     class AlertRuleResult {
-        private String ruleId;               // 规则ID
-        private String ruleName;             // 规则名称
-        private Boolean enabled;             // 是否启用
-        private String status;               // 状态（ACTIVE/INACTIVE/ERROR）
-        private LocalDateTime lastEvaluated;  // 最后评估时间
-        private Integer evaluationCount;     // 评估次数
-        private Integer triggerCount;         // 触发次数
-        private String validationMessage;    // 验证消息
-        private List<String> warnings;       // 警告信息
+        private String ruleId;               // 瑙勫垯ID
+        private String ruleName;             // 瑙勫垯鍚嶇О
+        private Boolean enabled;             // 鏄惁鍚敤
+        private String status;               // 鐘舵€侊紙ACTIVE/INACTIVE/ERROR锛?
+        private LocalDateTime lastEvaluated;  // 鏈€鍚庤瘎浼版椂闂?
+        private Integer evaluationCount;     // 璇勪及娆℃暟
+        private Integer triggerCount;         // 瑙﹀彂娆℃暟
+        private String validationMessage;    // 楠岃瘉娑堟伅
+        private List<String> warnings;       // 璀﹀憡淇℃伅
     }
 
     /**
-     * 告警规则查询请求
+     * 鍛婅瑙勫垯鏌ヨ璇锋眰
      */
     class AlertRuleQueryRequest {
-        private String ruleId;               // 规则ID
-        private String ruleName;             // 规则名称
-        private String ruleType;             // 规则类型
-        private Boolean enabled;             // 是否启用
-        private String status;               // 状态
-        private List<String> tags;           // 标签
-        private Integer pageNum;             // 页码
-        private Integer pageSize;            // 每页大小
+        private String ruleId;               // 瑙勫垯ID
+        private String ruleName;             // 瑙勫垯鍚嶇О
+        private String ruleType;             // 瑙勫垯绫诲瀷
+        private Boolean enabled;             // 鏄惁鍚敤
+        private String status;               // 鐘舵€?
+        private List<String> tags;           // 鏍囩
+        private Integer pageNum;             // 椤电爜
+        private Integer pageSize;            // 姣忛〉澶у皬
     }
 
     /**
-     * 告警规则视图对象
+     * 鍛婅瑙勫垯瑙嗗浘瀵硅薄
      */
     class AlertRuleVO {
-        private String ruleId;               // 规则ID
-        private String ruleName;             // 规则名称
-        private String ruleDescription;      // 规则描述
-        private String ruleType;             // 规则类型
-        private Boolean enabled;             // 是否启用
-        private Integer priority;            // 优先级
-        private String conditionExpression;  // 条件表达式
-        private List<AlertRuleAction> actions; // 动作列表
-        private String evaluationInterval;   // 评估间隔
-        private String severityLevel;         // 默认严重等级
-        private LocalDateTime createTime;     // 创建时间
-        private LocalDateTime updateTime;     // 更新时间
-        private LocalDateTime lastEvaluated;  // 最后评估时间
-        private Integer triggerCount;         // 触发次数
-        private String status;               // 状态
-        private List<String> tags;           // 标签
+        private String ruleId;               // 瑙勫垯ID
+        private String ruleName;             // 瑙勫垯鍚嶇О
+        private String ruleDescription;      // 瑙勫垯鎻忚堪
+        private String ruleType;             // 瑙勫垯绫诲瀷
+        private Boolean enabled;             // 鏄惁鍚敤
+        private Integer priority;            // 浼樺厛绾?
+        private String conditionExpression;  // 鏉′欢琛ㄨ揪寮?
+        private List<AlertRuleAction> actions; // 鍔ㄤ綔鍒楄〃
+        private String evaluationInterval;   // 璇勪及闂撮殧
+        private String severityLevel;         // 榛樿涓ラ噸绛夌骇
+        private LocalDateTime createTime;     // 鍒涘缓鏃堕棿
+        private LocalDateTime updateTime;     // 鏇存柊鏃堕棿
+        private LocalDateTime lastEvaluated;  // 鏈€鍚庤瘎浼版椂闂?
+        private Integer triggerCount;         // 瑙﹀彂娆℃暟
+        private String status;               // 鐘舵€?
+        private List<String> tags;           // 鏍囩
     }
 
     /**
-     * 系统健康检查请求
+     * 绯荤粺鍋ュ悍妫€鏌ヨ姹?
      */
     class SystemHealthCheckRequest {
-        private List<String> checkCategories; // 检查类别
-        private List<String> checkItems;       // 检查项目
-        private Boolean includeDetails;       // 是否包含详细信息
-        private Boolean generateReport;       // 是否生成报告
-        private String reportFormat;          // 报告格式（JSON/HTML/PDF）
-        private Map<String, Object> checkParameters; // 检查参数
+        private List<String> checkCategories; // 妫€鏌ョ被鍒?
+        private List<String> checkItems;       // 妫€鏌ラ」鐩?
+        private Boolean includeDetails;       // 鏄惁鍖呭惈璇︾粏淇℃伅
+        private Boolean generateReport;       // 鏄惁鐢熸垚鎶ュ憡
+        private String reportFormat;          // 鎶ュ憡鏍煎紡锛圝SON/HTML/PDF锛?
+        private Map<String, Object> checkParameters; // 妫€鏌ュ弬鏁?
     }
 
     /**
-     * 系统健康检查结果
+     * 绯荤粺鍋ュ悍妫€鏌ョ粨鏋?
      */
     class SystemHealthCheckResult {
-        private String checkId;              // 检查ID
-        private LocalDateTime checkTime;     // 检查时间
-        private String overallHealth;        // 整体健康状态（HEALTHY/WARNING/CRITICAL）
-        private Double overallScore;          // 整体评分（0-100）
-        private List<HealthCheckItem> checkItems; // 检查项目列表
-        private Map<String, Object> systemMetrics; // 系统指标
-        private List<String> recommendations; // 建议
-        private String reportUrl;            // 报告URL
-        private Integer totalChecks;         // 总检查数
-        private Integer passedChecks;        // 通过检查数
-        private Integer failedChecks;        // 失败检查数
-        private Integer warningChecks;       // 警告检查数
+        private String checkId;              // 妫€鏌D
+        private LocalDateTime checkTime;     // 妫€鏌ユ椂闂?
+        private String overallHealth;        // 鏁翠綋鍋ュ悍鐘舵€侊紙HEALTHY/WARNING/CRITICAL锛?
+        private Double overallScore;          // 鏁翠綋璇勫垎锛?-100锛?
+        private List<HealthCheckItem> checkItems; // 妫€鏌ラ」鐩垪琛?
+        private Map<String, Object> systemMetrics; // 绯荤粺鎸囨爣
+        private List<String> recommendations; // 寤鸿
+        private String reportUrl;            // 鎶ュ憡URL
+        private Integer totalChecks;         // 鎬绘鏌ユ暟
+        private Integer passedChecks;        // 閫氳繃妫€鏌ユ暟
+        private Integer failedChecks;        // 澶辫触妫€鏌ユ暟
+        private Integer warningChecks;       // 璀﹀憡妫€鏌ユ暟
     }
 
     /**
-     * 健康检查项目
+     * 鍋ュ悍妫€鏌ラ」鐩?
      */
     class HealthCheckItem {
-        private String itemName;             // 项目名称
-        private String category;             // 类别
-        private String status;               // 状态（PASS/WARN/FAIL/SKIP）
-        private Double score;                // 评分
-        private String message;              // 消息
-        private Map<String, Object> details;  // 详细信息
-        private String recommendation;       // 建议
-        private LocalDateTime checkTime;     // 检查时间
+        private String itemName;             // 椤圭洰鍚嶇О
+        private String category;             // 绫诲埆
+        private String status;               // 鐘舵€侊紙PASS/WARN/FAIL/SKIP锛?
+        private Double score;                // 璇勫垎
+        private String message;              // 娑堟伅
+        private Map<String, Object> details;  // 璇︾粏淇℃伅
+        private String recommendation;       // 寤鸿
+        private LocalDateTime checkTime;     // 妫€鏌ユ椂闂?
     }
 
     /**
-     * 故障自愈请求
+     * 鏁呴殰鑷剤璇锋眰
      */
     class SelfHealingRequest {
-        private String incidentId;           // 事件ID
-        private String failureType;          // 故障类型
-        private String failureDescription;   // 故障描述
-        private String affectedComponent;    // 受影响组件
-        private Map<String, Object> failureData; // 故障数据
-        private Boolean requireApproval;     // 是否需要审批
-        private String selfHealingStrategy;  // 自愈策略
-        private Integer maxRetries;           // 最大重试次数
-        private Integer timeoutSeconds;       // 超时时间
-        private Map<String, Object> healingParameters; // 自愈参数
+        private String incidentId;           // 浜嬩欢ID
+        private String failureType;          // 鏁呴殰绫诲瀷
+        private String failureDescription;   // 鏁呴殰鎻忚堪
+        private String affectedComponent;    // 鍙楀奖鍝嶇粍浠?
+        private Map<String, Object> failureData; // 鏁呴殰鏁版嵁
+        private Boolean requireApproval;     // 鏄惁闇€瑕佸鎵?
+        private String selfHealingStrategy;  // 鑷剤绛栫暐
+        private Integer maxRetries;           // 鏈€澶ч噸璇曟鏁?
+        private Integer timeoutSeconds;       // 瓒呮椂鏃堕棿
+        private Map<String, Object> healingParameters; // 鑷剤鍙傛暟
     }
 
     /**
-     * 故障自愈结果
+     * 鏁呴殰鑷剤缁撴灉
      */
     class SelfHealingResult {
-        private String healingId;            // 自愈ID
-        private String incidentId;           // 事件ID
-        private Boolean healingSuccess;       // 自愈是否成功
-        private String healingStrategy;      // 自愈策略
-        private LocalDateTime startTime;      // 开始时间
-        private LocalDateTime endTime;        // 结束时间
-        private Integer duration;            // 持续时间（秒）
-        private Integer attemptCount;         // 尝试次数
-        private String finalStatus;          // 最终状态
-        private String failureReason;        // 失败原因
-        private List<String> actionsTaken;   // 已执行动作
-        private Boolean requireManualIntervention; // 是否需要人工干预
-        private Map<String, Object> healingMetrics; // 自愈指标
+        private String healingId;            // 鑷剤ID
+        private String incidentId;           // 浜嬩欢ID
+        private Boolean healingSuccess;       // 鑷剤鏄惁鎴愬姛
+        private String healingStrategy;      // 鑷剤绛栫暐
+        private LocalDateTime startTime;      // 寮€濮嬫椂闂?
+        private LocalDateTime endTime;        // 缁撴潫鏃堕棿
+        private Integer duration;            // 鎸佺画鏃堕棿锛堢锛?
+        private Integer attemptCount;         // 灏濊瘯娆℃暟
+        private String finalStatus;          // 鏈€缁堢姸鎬?
+        private String failureReason;        // 澶辫触鍘熷洜
+        private List<String> actionsTaken;   // 宸叉墽琛屽姩浣?
+        private Boolean requireManualIntervention; // 鏄惁闇€瑕佷汉宸ュ共棰?
+        private Map<String, Object> healingMetrics; // 鑷剤鎸囨爣
     }
 
     /**
-     * 告警趋势预测请求
+     * 鍛婅瓒嬪娍棰勬祴璇锋眰
      */
     class AlertTrendPredictionRequest {
-        private String predictionModel;      // 预测模型（LINEAR/SEASONAL/ARIMA/ML）
-        private LocalDateTime startTime;      // 开始时间
-        private LocalDateTime endTime;        // 结束时间
-        private String predictionPeriod;     // 预测周期（HOURLY/DAILY/WEEKLY/MONTHLY）
-        private List<String> alertTypes;      // 告警类型
-        private List<String> sourceSystems;   // 来源系统
-        private Integer predictionDays;      // 预测天数
-        private Double confidenceThreshold;   // 置信度阈值
-        private Boolean includeSeasonalFactors; // 是否包含季节性因素
-        private Map<String, Object> modelParameters; // 模型参数
+        private String predictionModel;      // 棰勬祴妯″瀷锛圠INEAR/SEASONAL/ARIMA/ML锛?
+        private LocalDateTime startTime;      // 寮€濮嬫椂闂?
+        private LocalDateTime endTime;        // 缁撴潫鏃堕棿
+        private String predictionPeriod;     // 棰勬祴鍛ㄦ湡锛圚OURLY/DAILY/WEEKLY/MONTHLY锛?
+        private List<String> alertTypes;      // 鍛婅绫诲瀷
+        private List<String> sourceSystems;   // 鏉ユ簮绯荤粺
+        private Integer predictionDays;      // 棰勬祴澶╂暟
+        private Double confidenceThreshold;   // 缃俊搴﹂槇鍊?
+        private Boolean includeSeasonalFactors; // 鏄惁鍖呭惈瀛ｈ妭鎬у洜绱?
+        private Map<String, Object> modelParameters; // 妯″瀷鍙傛暟
     }
 
     /**
-     * 告警趋势预测结果
+     * 鍛婅瓒嬪娍棰勬祴缁撴灉
      */
     class AlertTrendPredictionResult {
-        private String predictionId;         // 预测ID
-        private String predictionModel;      // 预测模型
-        private LocalDateTime predictionTime; // 预测时间
-        private List<AlertPredictionData> predictions; // 预测数据
-        private Double modelAccuracy;        // 模型准确度
-        private Double confidenceScore;      // 置信度评分
-        private List<String> identifiedPatterns; // 识别的模式
-        private List<AlertAnomaly> anomalies; // 异常点
-        private Map<String, Object> modelMetrics; // 模型指标
-        private List<String> recommendations; // 建议
+        private String predictionId;         // 棰勬祴ID
+        private String predictionModel;      // 棰勬祴妯″瀷
+        private LocalDateTime predictionTime; // 棰勬祴鏃堕棿
+        private List<AlertPredictionData> predictions; // 棰勬祴鏁版嵁
+        private Double modelAccuracy;        // 妯″瀷鍑嗙‘搴?
+        private Double confidenceScore;      // 缃俊搴﹁瘎鍒?
+        private List<String> identifiedPatterns; // 璇嗗埆鐨勬ā寮?
+        private List<AlertAnomaly> anomalies; // 寮傚父鐐?
+        private Map<String, Object> modelMetrics; // 妯″瀷鎸囨爣
+        private List<String> recommendations; // 寤鸿
     }
 
     /**
-     * 告警预测数据
+     * 鍛婅棰勬祴鏁版嵁
      */
     class AlertPredictionData {
-        private String timeSlot;             // 时间段
-        private Long predictedCount;         // 预测数量
-        private Double confidenceIntervalLower; // 置信区间下限
-        private Double confidenceIntervalUpper; // 置信区间上限
-        private String trendDirection;       // 趋势方向（UP/DOWN/STABLE）
-        private List<String> influencingFactors; // 影响因素
+        private String timeSlot;             // 鏃堕棿娈?
+        private Long predictedCount;         // 棰勬祴鏁伴噺
+        private Double confidenceIntervalLower; // 缃俊鍖洪棿涓嬮檺
+        private Double confidenceIntervalUpper; // 缃俊鍖洪棿涓婇檺
+        private String trendDirection;       // 瓒嬪娍鏂瑰悜锛圲P/DOWN/STABLE锛?
+        private List<String> influencingFactors; // 褰卞搷鍥犵礌
     }
 
     /**
-     * 告警异常点
+     * 鍛婅寮傚父鐐?
      */
     class AlertAnomaly {
-        private String timeSlot;             // 时间段
-        private Long actualCount;            // 实际数量
-        private Long predictedCount;         // 预测数量
-        private Double deviationScore;        // 偏差评分
-        private String anomalyType;          // 异常类型（SPIKE/DROP/OUTLIER）
-        private String description;          // 描述
-        private Boolean needAttention;       // 是否需要关注
+        private String timeSlot;             // 鏃堕棿娈?
+        private Long actualCount;            // 瀹為檯鏁伴噺
+        private Long predictedCount;         // 棰勬祴鏁伴噺
+        private Double deviationScore;        // 鍋忓樊璇勫垎
+        private String anomalyType;          // 寮傚父绫诲瀷锛圫PIKE/DROP/OUTLIER锛?
+        private String description;          // 鎻忚堪
+        private Boolean needAttention;       // 鏄惁闇€瑕佸叧娉?
     }
 }

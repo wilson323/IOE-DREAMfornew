@@ -3,8 +3,6 @@ package net.lab1024.sa.oa.workflow.cache;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +32,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class WorkflowCacheManager {
-
-    private static final Logger log = LoggerFactory.getLogger(WorkflowCacheManager.class);
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;

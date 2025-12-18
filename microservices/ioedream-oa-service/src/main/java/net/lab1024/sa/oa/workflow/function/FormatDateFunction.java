@@ -4,8 +4,6 @@ import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.type.AviatorString;
 import com.googlecode.aviator.runtime.type.AviatorObject;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +22,6 @@ import java.util.Map;
  */
 @Slf4j
 public class FormatDateFunction extends AbstractFunction {
-    private static final Logger log = LoggerFactory.getLogger(FormatDateFunction.class);
 
     @Override
     public String getName() {

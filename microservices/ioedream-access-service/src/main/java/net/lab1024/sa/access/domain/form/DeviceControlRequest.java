@@ -13,8 +13,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 
 /**
- * 设备控制请求表单
- * 用于移动端设备控制操作
+ * 璁惧鎺у埗璇锋眰琛ㄥ崟
+ * 鐢ㄤ簬绉诲姩绔澶囨帶鍒舵搷浣?
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -24,70 +24,70 @@ import jakarta.validation.constraints.Max;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "设备控制请求表单")
+@Schema(description = "璁惧鎺у埗璇锋眰琛ㄥ崟")
 public class DeviceControlRequest {
 
-    @NotNull(message = "设备ID不能为空")
-    @Schema(description = "设备ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1001")
+    @NotNull(message = "璁惧ID涓嶈兘涓虹┖")
+    @Schema(description = "璁惧ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1001")
     private Long deviceId;
 
-    @NotBlank(message = "控制命令不能为空")
-    @Schema(description = "控制命令", requiredMode = Schema.RequiredMode.REQUIRED,
+    @NotBlank(message = "鎺у埗鍛戒护涓嶈兘涓虹┖")
+    @Schema(description = "鎺у埗鍛戒护", requiredMode = Schema.RequiredMode.REQUIRED,
            example = "restart", allowableValues = {"restart", "shutdown", "maintenance", "calibrate", "unlock", "lock", "reset"})
     private String command;
 
-    @Schema(description = "控制参数(JSON格式)",
-           example = "{\"duration\":5,\"reason\":\"定期重启\"}")
+    @Schema(description = "鎺у埗鍙傛暟(JSON鏍煎紡)",
+           example = "{\"duration\":5,\"reason\":\"瀹氭湡閲嶅惎\"}")
     private String parameters;
 
-    @Schema(description = "操作原因", example = "定期维护重启")
+    @Schema(description = "鎿嶄綔鍘熷洜", example = "瀹氭湡缁存姢閲嶅惎")
     private String reason;
 
-    @Schema(description = "是否强制执行", example = "false")
+    @Schema(description = "鏄惁寮哄埗鎵ц", example = "false")
     private Boolean forceExecute;
 
-    @Schema(description = "执行超时时间(秒)", example = "30")
-    @Min(value = 5, message = "超时时间不能少于5秒")
-    @Max(value = 300, message = "超时时间不能超过300秒")
+    @Schema(description = "鎵ц瓒呮椂鏃堕棿(绉?", example = "30")
+    @Min(value = 5, message = "瓒呮椂鏃堕棿涓嶈兘灏戜簬5绉?)
+    @Max(value = 300, message = "瓒呮椂鏃堕棿涓嶈兘瓒呰繃300绉?)
     private Integer timeoutSeconds;
 
-    @Schema(description = "预期执行时间", example = "2025-12-16T15:00:00")
+    @Schema(description = "棰勬湡鎵ц鏃堕棿", example = "2025-12-16T15:00:00")
     private String scheduledTime;
 
-    // 设备特定控制参数
+    // 璁惧鐗瑰畾鎺у埗鍙傛暟
 
-    @Schema(description = "重启方式", example = "soft", allowableValues = {"soft", "hard"})
+    @Schema(description = "閲嶅惎鏂瑰紡", example = "soft", allowableValues = {"soft", "hard"})
     private String restartType;
 
-    @Schema(description = "维护模式持续时间(小时)", example = "24")
-    @Min(value = 1, message = "维护时间不能少于1小时")
-    @Max(value = 168, message = "维护时间不能超过168小时")
+    @Schema(description = "缁存姢妯″紡鎸佺画鏃堕棿(灏忔椂)", example = "24")
+    @Min(value = 1, message = "缁存姢鏃堕棿涓嶈兘灏戜簬1灏忔椂")
+    @Max(value = 168, message = "缁存姢鏃堕棿涓嶈兘瓒呰繃168灏忔椂")
     private Integer maintenanceDuration;
 
-    @Schema(description = "校准类型", example = "face", allowableValues = {"face", "fingerprint", "card", "all"})
+    @Schema(description = "鏍″噯绫诲瀷", example = "face", allowableValues = {"face", "fingerprint", "card", "all"})
     private String calibrationType;
 
-    @Schema(description = "校准精度", example = "high", allowableValues = {"low", "medium", "high"})
+    @Schema(description = "鏍″噯绮惧害", example = "high", allowableValues = {"low", "medium", "high"})
     private String calibrationPrecision;
 
-    // 门禁设备特有参数
+    // 闂ㄧ璁惧鐗规湁鍙傛暟
 
-    @Schema(description = "门锁保持时间(毫秒)", example = "3000")
-    @Min(value = 1000, message = "门锁保持时间不能少于1秒")
-    @Max(value = 30000, message = "门锁保持时间不能超过30秒")
+    @Schema(description = "闂ㄩ攣淇濇寔鏃堕棿(姣)", example = "3000")
+    @Min(value = 1000, message = "闂ㄩ攣淇濇寔鏃堕棿涓嶈兘灏戜簬1绉?)
+    @Max(value = 30000, message = "闂ㄩ攣淇濇寔鏃堕棿涓嶈兘瓒呰繃30绉?)
     private Integer doorOpenDuration;
 
-    @Schema(description = "是否反锁", example = "false")
+    @Schema(description = "鏄惁鍙嶉攣", example = "false")
     private Boolean antiLock;
 
-    // 验证参数
+    // 楠岃瘉鍙傛暟
 
-    @Schema(description = "操作员用户名", example = "admin")
+    @Schema(description = "鎿嶄綔鍛樼敤鎴峰悕", example = "admin")
     private String operatorUsername;
 
-    @Schema(description = "操作员密码(用于敏感操作验证)", example = "")
+    @Schema(description = "鎿嶄綔鍛樺瘑鐮?鐢ㄤ簬鏁忔劅鎿嶄綔楠岃瘉)", example = "")
     private String operatorPassword;
 
-    @Schema(description = "验证码", example = "123456")
+    @Schema(description = "楠岃瘉鐮?, example = "123456")
     private String verificationCode;
 }

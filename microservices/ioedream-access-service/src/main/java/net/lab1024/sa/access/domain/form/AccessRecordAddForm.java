@@ -5,13 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * 门禁记录创建表单
+ * 闂ㄧ璁板綍鍒涘缓琛ㄥ崟
  * <p>
- * 用于设备协议推送门禁记录
- * 严格遵循CLAUDE.md规范：
- * - 使用Form后缀命名
- * - 使用Jakarta验证注解
- * - 使用@Schema注解描述字段
+ * 鐢ㄤ簬璁惧鍗忚鎺ㄩ€侀棬绂佽褰? * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤Form鍚庣紑鍛藉悕
+ * - 浣跨敤Jakarta楠岃瘉娉ㄨВ
+ * - 浣跨敤@Schema娉ㄨВ鎻忚堪瀛楁
  * </p>
  *
  * @author IOE-DREAM Team
@@ -19,81 +17,80 @@ import lombok.Data;
  * @since 2025-01-30
  */
 @Data
-@Schema(description = "门禁记录创建表单")
+@Schema(description = "闂ㄧ璁板綍鍒涘缓琛ㄥ崟")
 public class AccessRecordAddForm {
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
-    @Schema(description = "设备ID", example = "1")
+    @Schema(description = "璁惧ID", example = "1")
     private Long deviceId;
 
     /**
-     * 设备编号
+     * 璁惧缂栧彿
      */
-    @Schema(description = "设备编号", example = "DEV001")
+    @Schema(description = "璁惧缂栧彿", example = "DEV001")
     private String deviceCode;
 
     /**
-     * 用户ID
+     * 鐢ㄦ埛ID
      */
-    @NotNull(message = "用户ID不能为空")
-    @Schema(description = "用户ID", example = "1001")
+    @NotNull(message = "鐢ㄦ埛ID涓嶈兘涓虹┖")
+    @Schema(description = "鐢ㄦ埛ID", example = "1001")
     private Long userId;
 
     /**
-     * 通行时间（时间戳或LocalDateTime）
-     */
-    @Schema(description = "通行时间（时间戳或LocalDateTime）", example = "2025-01-30T08:00:00")
+     * 閫氳鏃堕棿锛堟椂闂存埑鎴朙ocalDateTime锛?     */
+    @Schema(description = "閫氳鏃堕棿锛堟椂闂存埑鎴朙ocalDateTime锛?, example = "2025-01-30T08:00:00")
     private Object passTime;
 
     /**
-     * 通行类型
+     * 閫氳绫诲瀷
      * <p>
-     * 0-进入
-     * 1-离开
+     * 0-杩涘叆
+     * 1-绂诲紑
      * </p>
      */
-    @Schema(description = "通行类型：0-进入，1-离开", example = "0")
+    @Schema(description = "閫氳绫诲瀷锛?-杩涘叆锛?-绂诲紑", example = "0")
     private Integer passType;
 
     /**
-     * 门号
+     * 闂ㄥ彿
      */
-    @Schema(description = "门号", example = "1")
+    @Schema(description = "闂ㄥ彿", example = "1")
     private Integer doorNo;
 
     /**
-     * 通行方式
+     * 閫氳鏂瑰紡
      * <p>
-     * 0-卡片
-     * 1-人脸
-     * 2-指纹
+     * 0-鍗＄墖
+     * 1-浜鸿劯
+     * 2-鎸囩汗
      * </p>
      */
-    @Schema(description = "通行方式：0-卡片，1-人脸，2-指纹", example = "1")
+    @Schema(description = "閫氳鏂瑰紡锛?-鍗＄墖锛?-浜鸿劯锛?-鎸囩汗", example = "1")
     private Integer passMethod;
 
     /**
-     * 通行结果
+     * 閫氳缁撴灉
      * <p>
-     * 1-成功
-     * 0-失败
+     * 1-鎴愬姛
+     * 0-澶辫触
      * </p>
      */
-    @Schema(description = "通行结果：1-成功，0-失败", example = "1")
+    @Schema(description = "閫氳缁撴灉锛?-鎴愬姛锛?-澶辫触", example = "1")
     private Integer accessResult;
 
     /**
-     * 区域ID
+     * 鍖哄煙ID
      */
-    @Schema(description = "区域ID", example = "1")
+    @Schema(description = "鍖哄煙ID", example = "1")
     private Long areaId;
 
     /**
-     * 备注
+     * 澶囨敞
      */
-    @Schema(description = "备注", example = "设备自动推送")
+    @Schema(description = "澶囨敞", example = "璁惧鑷姩鎺ㄩ€?)
     private String remark;
 }
 

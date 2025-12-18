@@ -25,18 +25,18 @@ import net.lab1024.sa.common.entity.UserEntity;
 import net.lab1024.sa.common.util.SmartStringUtil;
 
 /**
- * 蓝牙门禁服务实现
+ * 钃濈墮闂ㄧ鏈嶅姟瀹炵幇
  * <p>
- * 提供蓝牙门禁的核心业务逻辑：
- * - 蓝牙设备管理和连接
- * - 安全的蓝牙门禁验证
- * - 设备配对和状态监控
- * - 蓝牙门禁卡管理
- * 严格遵循CLAUDE.md规范：
- * - 使用@Service注解
- * - 使用@Transactional事务管理
- * - 完整的日志记录和错误处理
- * - 性能监控和指标收集
+ * 鎻愪緵钃濈墮闂ㄧ鐨勬牳蹇冧笟鍔￠€昏緫锛?
+ * - 钃濈墮璁惧绠＄悊鍜岃繛鎺?
+ * - 瀹夊叏鐨勮摑鐗欓棬绂侀獙璇?
+ * - 璁惧閰嶅鍜岀姸鎬佺洃鎺?
+ * - 钃濈墮闂ㄧ鍗＄鐞?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Service娉ㄨВ
+ * - 浣跨敤@Transactional浜嬪姟绠＄悊
+ * - 瀹屾暣鐨勬棩蹇楄褰曞拰閿欒澶勭悊
+ * - 鎬ц兘鐩戞帶鍜屾寚鏍囨敹闆?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -60,23 +60,23 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
     @Resource
     private AccessRecordDao accessRecordDao;
 
-    // 蓝牙设备连接状态缓存
+    // 钃濈墮璁惧杩炴帴鐘舵€佺紦瀛?
     private final Map<String, BluetoothConnection> connectionCache = new ConcurrentHashMap<>();
 
-    // 蓝牙设备配对信息缓存
+    // 钃濈墮璁惧閰嶅淇℃伅缂撳瓨
     private final Map<String, BluetoothPairingInfo> pairingCache = new ConcurrentHashMap<>();
 
     @Override
-    @Timed(value = "bluetooth.scan", description = "蓝牙设备扫描耗时")
-    @Counted(value = "bluetooth.scan.count", description = "蓝牙设备扫描次数")
+    @Timed(value = "bluetooth.scan", description = "钃濈墮璁惧鎵弿鑰楁椂")
+    @Counted(value = "bluetooth.scan.count", description = "钃濈墮璁惧鎵弿娆℃暟")
     public ResponseDTO<List<BluetoothDeviceVO>> scanNearbyDevices(BluetoothScanRequest request) {
-        log.info("[蓝牙扫描] 开始扫描附近设备: userId={}, location={}, duration={}ms",
+        log.info("[钃濈墮鎵弿] 寮€濮嬫壂鎻忛檮杩戣澶? userId={}, location={}, duration={}ms",
                 request.getUserId(), request.getLocation(), request.getScanDuration());
 
         try {
             List<BluetoothDeviceVO> devices = new ArrayList<>();
 
-            // 模拟蓝牙设备扫描（实际实现需要调用蓝牙API）
+            // 妯℃嫙钃濈墮璁惧鎵弿锛堝疄闄呭疄鐜伴渶瑕佽皟鐢ㄨ摑鐗橝PI锛?
             List<DeviceEntity> bluetoothDevices = accessDeviceDao.selectByDeviceType("BLUETOOTH");
 
             for (DeviceEntity device : bluetoothDevices) {
@@ -95,40 +95,40 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
                 devices.add(deviceVO);
             }
 
-            // 按信号强度排序
+            // 鎸変俊鍙峰己搴︽帓搴?
             devices.sort((a, b) -> b.getSignalStrength() - a.getSignalStrength());
 
-            // 限制最大设备数量
+            // 闄愬埗鏈€澶ц澶囨暟閲?
             if (request.getMaxDevices() != null && devices.size() > request.getMaxDevices()) {
                 devices = devices.subList(0, request.getMaxDevices());
             }
 
-            log.info("[蓝牙扫描] 扫描完成: 发现{}个设备", devices.size());
+            log.info("[钃濈墮鎵弿] 鎵弿瀹屾垚: 鍙戠幇{}涓澶?, devices.size());
             return ResponseDTO.ok(devices);
 
         } catch (Exception e) {
-            log.error("[蓝牙扫描] 扫描失败: userId={}, error={}", request.getUserId(), e.getMessage(), e);
-            return ResponseDTO.error("BLUETOOTH_SCAN_FAILED", "蓝牙设备扫描失败");
+            log.error("[钃濈墮鎵弿] 鎵弿澶辫触: userId={}, error={}", request.getUserId(), e.getMessage(), e);
+            return ResponseDTO.error("BLUETOOTH_SCAN_FAILED", "钃濈墮璁惧鎵弿澶辫触");
         }
     }
 
     @Override
-    @Timed(value = "bluetooth.connect", description = "蓝牙设备连接耗时")
-    @Counted(value = "bluetooth.connect.count", description = "蓝牙设备连接次数")
+    @Timed(value = "bluetooth.connect", description = "钃濈墮璁惧杩炴帴鑰楁椂")
+    @Counted(value = "bluetooth.connect.count", description = "钃濈墮璁惧杩炴帴娆℃暟")
     public ResponseDTO<BluetoothConnectionResult> connectDevice(BluetoothConnectRequest request) {
-        log.info("[蓝牙连接] 开始连接设备: userId={}, deviceAddress={}, timeout={}ms",
+        log.info("[钃濈墮杩炴帴] 寮€濮嬭繛鎺ヨ澶? userId={}, deviceAddress={}, timeout={}ms",
                 request.getUserId(), request.getDeviceAddress(), request.getTimeout());
 
         try {
             String deviceAddress = request.getDeviceAddress();
 
-            // 检查设备是否存在
+            // 妫€鏌ヨ澶囨槸鍚﹀瓨鍦?
             DeviceEntity device = accessDeviceDao.selectByDeviceCode(deviceAddress);
             if (device == null || !"BLUETOOTH".equals(device.getDeviceType())) {
-                return ResponseDTO.error("DEVICE_NOT_FOUND", "蓝牙设备不存在");
+                return ResponseDTO.error("DEVICE_NOT_FOUND", "钃濈墮璁惧涓嶅瓨鍦?);
             }
 
-            // 检查是否已连接
+            // 妫€鏌ユ槸鍚﹀凡杩炴帴
             if (checkIfConnected(deviceAddress)) {
                 BluetoothConnectionResult result = new BluetoothConnectionResult();
                 result.setSuccess(true);
@@ -141,15 +141,15 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
                 return ResponseDTO.ok(result);
             }
 
-            // 模拟设备连接过程
+            // 妯℃嫙璁惧杩炴帴杩囩▼
             long startTime = System.currentTimeMillis();
 
-            // 验证设备配对状态
+            // 楠岃瘉璁惧閰嶅鐘舵€?
             if (!checkIfPaired(request.getUserId(), deviceAddress)) {
-                return ResponseDTO.error("DEVICE_NOT_PAIRED", "设备未配对");
+                return ResponseDTO.error("DEVICE_NOT_PAIRED", "璁惧鏈厤瀵?);
             }
 
-            // 建立连接
+            // 寤虹珛杩炴帴
             BluetoothConnection connection = new BluetoothConnection();
             connection.setUserId(request.getUserId());
             connection.setDeviceAddress(deviceAddress);
@@ -172,12 +172,12 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
             result.setSignalStrength(connection.getSignalStrength());
             result.setProtocolVersion(connection.getProtocolVersion());
 
-            log.info("[蓝牙连接] 连接成功: userId={}, deviceAddress={}, responseTime={}ms",
+            log.info("[钃濈墮杩炴帴] 杩炴帴鎴愬姛: userId={}, deviceAddress={}, responseTime={}ms",
                     request.getUserId(), deviceAddress, responseTime);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[蓝牙连接] 连接失败: userId={}, deviceAddress={}, error={}",
+            log.error("[钃濈墮杩炴帴] 杩炴帴澶辫触: userId={}, deviceAddress={}, error={}",
                     request.getUserId(), request.getDeviceAddress(), e.getMessage(), e);
 
             BluetoothConnectionResult result = new BluetoothConnectionResult();
@@ -190,28 +190,28 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
     }
 
     @Override
-    @Timed(value = "bluetooth.access", description = "蓝牙门禁验证耗时")
-    @Counted(value = "bluetooth.access.count", description = "蓝牙门禁验证次数")
+    @Timed(value = "bluetooth.access", description = "钃濈墮闂ㄧ楠岃瘉鑰楁椂")
+    @Counted(value = "bluetooth.access.count", description = "钃濈墮闂ㄧ楠岃瘉娆℃暟")
     public ResponseDTO<BluetoothAccessResult> performBluetoothAccess(BluetoothAccessRequest request) {
-        log.info("[蓝牙门禁] 开始验证: userId={}, deviceAddress={}, accessType={}",
+        log.info("[钃濈墮闂ㄧ] 寮€濮嬮獙璇? userId={}, deviceAddress={}, accessType={}",
                 request.getUserId(), request.getDeviceAddress(), request.getAccessType());
 
         try {
-            // 验证蓝牙连接状态
+            // 楠岃瘉钃濈墮杩炴帴鐘舵€?
             BluetoothConnection connection = connectionCache.get(request.getDeviceAddress());
             if (connection == null) {
-                return createBluetoothAccessResult(false, "设备未连接", "MEDIUM");
+                return createBluetoothAccessResult(false, "璁惧鏈繛鎺?, "MEDIUM");
             }
 
-            // 查询设备信息
+            // 鏌ヨ璁惧淇℃伅
             DeviceEntity device = accessDeviceDao.selectByDeviceCode(request.getDeviceAddress());
             if (device == null) {
-                return createBluetoothAccessResult(false, "设备不存在", "HIGH");
+                return createBluetoothAccessResult(false, "璁惧涓嶅瓨鍦?, "HIGH");
             }
 
             long startTime = System.currentTimeMillis();
 
-            // 执行标准门禁验证
+            // 鎵ц鏍囧噯闂ㄧ楠岃瘉
             AdvancedAccessControlService.AccessControlResult controlResult =
                     advancedAccessControlService.performAccessControlCheck(
                             request.getUserId(),
@@ -222,10 +222,10 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
 
             long responseTime = System.currentTimeMillis() - startTime;
 
-            // 记录蓝牙访问日志
+            // 璁板綍钃濈墮璁块棶鏃ュ織
             recordBluetoothAccessLog(request, controlResult.isAllowed(), responseTime);
 
-            // 更新连接统计
+            // 鏇存柊杩炴帴缁熻
             connection.setLastAccessTime(System.currentTimeMillis());
             connection.setAccessCount(connection.getAccessCount() + 1);
 
@@ -240,20 +240,20 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
             result.setDecisionReason(controlResult.getDecisionReason());
             result.setRiskLevel(assessBluetoothRisk(request, connection));
 
-            log.info("[蓝牙门禁] 验证完成: userId={}, deviceAddress={}, success={}, responseTime={}ms",
+            log.info("[钃濈墮闂ㄧ] 楠岃瘉瀹屾垚: userId={}, deviceAddress={}, success={}, responseTime={}ms",
                     request.getUserId(), request.getDeviceAddress(), result.isSuccess(), responseTime);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[蓝牙门禁] 验证失败: userId={}, deviceAddress={}, error={}",
+            log.error("[钃濈墮闂ㄧ] 楠岃瘉澶辫触: userId={}, deviceAddress={}, error={}",
                     request.getUserId(), request.getDeviceAddress(), e.getMessage(), e);
-            return createBluetoothAccessResult(false, "系统异常: " + e.getMessage(), "HIGH");
+            return createBluetoothAccessResult(false, "绯荤粺寮傚父: " + e.getMessage(), "HIGH");
         }
     }
 
     @Override
     public ResponseDTO<List<BluetoothDeviceStatusVO>> getConnectedDevicesStatus(Long userId) {
-        log.info("[蓝牙状态] 查询已连接设备状态: userId={}", userId);
+        log.info("[钃濈墮鐘舵€乚 鏌ヨ宸茶繛鎺ヨ澶囩姸鎬? userId={}", userId);
 
         try {
             List<BluetoothDeviceStatusVO> deviceStatusList = new ArrayList<>();
@@ -276,27 +276,27 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
                 }
             }
 
-            log.info("[蓝牙状态] 查询完成: userId={}, 设备数量={}", userId, deviceStatusList.size());
+            log.info("[钃濈墮鐘舵€乚 鏌ヨ瀹屾垚: userId={}, 璁惧鏁伴噺={}", userId, deviceStatusList.size());
             return ResponseDTO.ok(deviceStatusList);
 
         } catch (Exception e) {
-            log.error("[蓝牙状态] 查询失败: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("STATUS_QUERY_FAILED", "设备状态查询失败");
+            log.error("[钃濈墮鐘舵€乚 鏌ヨ澶辫触: userId={}, error={}", userId, e.getMessage(), e);
+            return ResponseDTO.error("STATUS_QUERY_FAILED", "璁惧鐘舵€佹煡璇㈠け璐?);
         }
     }
 
     @Override
     public boolean disconnectDevice(Long userId, String deviceAddress) {
-        log.info("[蓝牙断开] 断开设备连接: userId={}, deviceAddress={}", userId, deviceAddress);
+        log.info("[钃濈墮鏂紑] 鏂紑璁惧杩炴帴: userId={}, deviceAddress={}", userId, deviceAddress);
 
         try {
             BluetoothConnection connection = connectionCache.get(deviceAddress);
             if (connection != null && userId.equals(connection.getUserId())) {
-                // 优雅断开连接
+                // 浼橀泤鏂紑杩炴帴
                 connectionCache.remove(deviceAddress);
 
-                // 记录断开事件
-                log.info("[蓝牙断开] 连接已断开: deviceAddress={}, connectionTime={}ms",
+                // 璁板綍鏂紑浜嬩欢
+                log.info("[钃濈墮鏂紑] 杩炴帴宸叉柇寮€: deviceAddress={}, connectionTime={}ms",
                         deviceAddress, System.currentTimeMillis() - connection.getConnectionTime());
 
                 return true;
@@ -305,7 +305,7 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
             return false;
 
         } catch (Exception e) {
-            log.error("[蓝牙断开] 断开失败: userId={}, deviceAddress={}, error={}",
+            log.error("[钃濈墮鏂紑] 鏂紑澶辫触: userId={}, deviceAddress={}, error={}",
                     userId, deviceAddress, e.getMessage(), e);
             return false;
         }
@@ -313,32 +313,32 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
 
     @Override
     public ResponseDTO<BluetoothPairingResult> pairDevice(BluetoothPairingRequest request) {
-        log.info("[蓝牙配对] 开始配对: userId={}, deviceAddress={}, method={}",
+        log.info("[钃濈墮閰嶅] 寮€濮嬮厤瀵? userId={}, deviceAddress={}, method={}",
                 request.getUserId(), request.getDeviceAddress(), request.getPairingMethod());
 
         try {
-            // 查询设备信息
+            // 鏌ヨ璁惧淇℃伅
             DeviceEntity device = accessDeviceDao.selectByDeviceCode(request.getDeviceAddress());
             if (device == null) {
-                return createPairingResult(false, "设备不存在");
+                return createPairingResult(false, "璁惧涓嶅瓨鍦?);
             }
 
             long startTime = System.currentTimeMillis();
 
-            // 模拟配对过程
+            // 妯℃嫙閰嶅杩囩▼
             if ("PIN".equals(request.getPairingMethod()) && SmartStringUtil.isEmpty(request.getPinCode())) {
-                return createPairingResult(false, "PIN码不能为空");
+                return createPairingResult(false, "PIN鐮佷笉鑳戒负绌?);
             }
 
-            // 验证PIN码（模拟）
+            // 楠岃瘉PIN鐮侊紙妯℃嫙锛?
             if ("PIN".equals(request.getPairingMethod()) && !"123456".equals(request.getPinCode())) {
-                return createPairingResult(false, "PIN码错误");
+                return createPairingResult(false, "PIN鐮侀敊璇?);
             }
 
-            // 生成配对密钥
+            // 鐢熸垚閰嶅瀵嗛挜
             String pairingKey = generatePairingKey(request.getUserId(), request.getDeviceAddress());
 
-            // 保存配对信息
+            // 淇濆瓨閰嶅淇℃伅
             BluetoothPairingInfo pairingInfo = new BluetoothPairingInfo();
             pairingInfo.setUserId(request.getUserId());
             pairingInfo.setDeviceAddress(request.getDeviceAddress());
@@ -359,46 +359,46 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
             result.setResponseTime((int) responseTime);
             result.setRequiresConfirmation(false);
 
-            log.info("[蓝牙配对] 配对成功: userId={}, deviceAddress={}, responseTime={}ms",
+            log.info("[钃濈墮閰嶅] 閰嶅鎴愬姛: userId={}, deviceAddress={}, responseTime={}ms",
                     request.getUserId(), request.getDeviceAddress(), responseTime);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[蓝牙配对] 配对失败: userId={}, deviceAddress={}, error={}",
+            log.error("[钃濈墮閰嶅] 閰嶅澶辫触: userId={}, deviceAddress={}, error={}",
                     request.getUserId(), request.getDeviceAddress(), e.getMessage(), e);
-            return createPairingResult(false, "配配失败: " + e.getMessage());
+            return createPairingResult(false, "閰嶉厤澶辫触: " + e.getMessage());
         }
     }
 
     @Override
     public ResponseDTO<List<UserAccessCardVO>> getUserAccessCards(Long userId) {
-        log.info("[门禁卡] 查询用户门禁卡: userId={}", userId);
+        log.info("[闂ㄧ鍗 鏌ヨ鐢ㄦ埛闂ㄧ鍗? userId={}", userId);
 
         try {
             List<UserAccessCardVO> accessCards = new ArrayList<>();
 
-            // 查询用户的物理门禁卡
-            // TODO: 实现物理卡查询逻辑
+            // 鏌ヨ鐢ㄦ埛鐨勭墿鐞嗛棬绂佸崱
+            // TODO: 瀹炵幇鐗╃悊鍗℃煡璇㈤€昏緫
 
-            // 查询用户的虚拟门禁卡
-            // TODO: 实现虚拟卡查询逻辑
+            // 鏌ヨ鐢ㄦ埛鐨勮櫄鎷熼棬绂佸崱
+            // TODO: 瀹炵幇铏氭嫙鍗℃煡璇㈤€昏緫
 
-            // 查询用户的蓝牙门禁卡
+            // 鏌ヨ鐢ㄦ埛鐨勮摑鐗欓棬绂佸崱
             for (Map.Entry<String, BluetoothPairingInfo> entry : pairingCache.entrySet()) {
                 BluetoothPairingInfo pairingInfo = entry.getValue();
                 if (userId.equals(pairingInfo.getUserId())) {
                     DeviceEntity device = accessDeviceDao.selectByDeviceCode(pairingInfo.getDeviceAddress());
                     if (device != null) {
                         UserAccessCardVO card = new UserAccessCardVO();
-                        card.setCardId(System.currentTimeMillis()); // 临时ID
-                        card.setCardName(device.getDeviceName() + "蓝牙卡");
+                        card.setCardId(System.currentTimeMillis()); // 涓存椂ID
+                        card.setCardName(device.getDeviceName() + "钃濈墮鍗?);
                         card.setCardType("BLUETOOTH");
                         card.setCardNumber(device.getDeviceCode());
                         card.setDeviceAddress(pairingInfo.getDeviceAddress());
                         card.setStatus("ACTIVE");
                         card.setIssueTime(formatTimestamp(pairingInfo.getPairingTime()));
-                        card.setExpireTime("2025-12-31 23:59:59"); // 临时过期时间
-                        card.setAllowedAreas(Arrays.asList("办公区", "会议室"));
+                        card.setExpireTime("2025-12-31 23:59:59"); // 涓存椂杩囨湡鏃堕棿
+                        card.setAllowedAreas(Arrays.asList("鍔炲叕鍖?, "浼氳瀹?));
                         card.setDailyUsageLimit(100);
                         card.setCurrentUsage(0);
                         card.setIsPrimary(false);
@@ -408,93 +408,93 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
                 }
             }
 
-            log.info("[门禁卡] 查询完成: userId={}, 卡片数量={}", userId, accessCards.size());
+            log.info("[闂ㄧ鍗 鏌ヨ瀹屾垚: userId={}, 鍗＄墖鏁伴噺={}", userId, accessCards.size());
             return ResponseDTO.ok(accessCards);
 
         } catch (Exception e) {
-            log.error("[门禁卡] 查询失败: userId={}, error={}", userId, e.getMessage(), e);
-            return ResponseDTO.error("CARD_QUERY_FAILED", "门禁卡查询失败");
+            log.error("[闂ㄧ鍗 鏌ヨ澶辫触: userId={}, error={}", userId, e.getMessage(), e);
+            return ResponseDTO.error("CARD_QUERY_FAILED", "闂ㄧ鍗℃煡璇㈠け璐?);
         }
     }
 
     @Override
     public ResponseDTO<String> addBluetoothAccessCard(AddBluetoothCardRequest request) {
-        log.info("[门禁卡] 添加蓝牙门禁卡: userId={}, cardName={}, deviceAddress={}",
+        log.info("[闂ㄧ鍗 娣诲姞钃濈墮闂ㄧ鍗? userId={}, cardName={}, deviceAddress={}",
                 request.getUserId(), request.getCardName(), request.getDeviceAddress());
 
         try {
-            // 检查设备是否已配对
+            // 妫€鏌ヨ澶囨槸鍚﹀凡閰嶅
             BluetoothPairingInfo pairingInfo = pairingCache.get(request.getDeviceAddress());
             if (pairingInfo == null || !request.getUserId().equals(pairingInfo.getUserId())) {
-                return ResponseDTO.error("DEVICE_NOT_PAIRED", "设备未配对");
+                return ResponseDTO.error("DEVICE_NOT_PAIRED", "璁惧鏈厤瀵?);
             }
 
-            // 检查设备是否存在
+            // 妫€鏌ヨ澶囨槸鍚﹀瓨鍦?
             DeviceEntity device = accessDeviceDao.selectByDeviceCode(request.getDeviceAddress());
             if (device == null) {
-                return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
+                return ResponseDTO.error("DEVICE_NOT_FOUND", "璁惧涓嶅瓨鍦?);
             }
 
-            // TODO: 保存门禁卡信息到数据库
-            // 这里应该调用门禁卡服务保存门禁卡信息
+            // TODO: 淇濆瓨闂ㄧ鍗′俊鎭埌鏁版嵁搴?
+            // 杩欓噷搴旇璋冪敤闂ㄧ鍗℃湇鍔′繚瀛橀棬绂佸崱淇℃伅
 
-            log.info("[门禁卡] 添加成功: userId={}, cardName={}, deviceAddress={}",
+            log.info("[闂ㄧ鍗 娣诲姞鎴愬姛: userId={}, cardName={}, deviceAddress={}",
                     request.getUserId(), request.getCardName(), request.getDeviceAddress());
-            return ResponseDTO.ok("蓝牙门禁卡添加成功");
+            return ResponseDTO.ok("钃濈墮闂ㄧ鍗℃坊鍔犳垚鍔?);
 
         } catch (Exception e) {
-            log.error("[门禁卡] 添加失败: userId={}, deviceAddress={}, error={}",
+            log.error("[闂ㄧ鍗 娣诲姞澶辫触: userId={}, deviceAddress={}, error={}",
                     request.getUserId(), request.getDeviceAddress(), e.getMessage(), e);
-            return ResponseDTO.error("CARD_ADD_FAILED", "门禁卡添加失败");
+            return ResponseDTO.error("CARD_ADD_FAILED", "闂ㄧ鍗℃坊鍔犲け璐?);
         }
     }
 
     @Override
     public ResponseDTO<BluetoothDeviceHealthVO> checkDeviceHealth(String deviceAddress) {
-        log.info("[设备健康] 检查蓝牙设备健康状态: deviceAddress={}", deviceAddress);
+        log.info("[璁惧鍋ュ悍] 妫€鏌ヨ摑鐗欒澶囧仴搴风姸鎬? deviceAddress={}", deviceAddress);
 
         try {
             BluetoothConnection connection = connectionCache.get(deviceAddress);
 
             BluetoothDeviceHealthVO healthVO = new BluetoothDeviceHealthVO();
             healthVO.setDeviceAddress(deviceAddress);
-            healthVO.setDeviceName(connection != null ? connection.getDeviceName() : "未知设备");
+            healthVO.setDeviceName(connection != null ? connection.getDeviceName() : "鏈煡璁惧");
 
-            // 健康状态评估
+            // 鍋ュ悍鐘舵€佽瘎浼?
             int overallScore = 100;
             List<String> issues = new ArrayList<>();
             List<String> recommendations = new ArrayList<>();
 
             if (connection == null) {
                 overallScore -= 50;
-                issues.add("设备未连接");
-                recommendations.add("检查设备连接状态");
+                issues.add("璁惧鏈繛鎺?);
+                recommendations.add("妫€鏌ヨ澶囪繛鎺ョ姸鎬?);
             } else {
-                // 信号强度检查
+                // 淇″彿寮哄害妫€鏌?
                 if (connection.getSignalStrength() < 30) {
                     overallScore -= 20;
-                    issues.add("信号强度弱");
-                    recommendations.add("移近设备或检查信号干扰");
+                    issues.add("淇″彿寮哄害寮?);
+                    recommendations.add("绉昏繎璁惧鎴栨鏌ヤ俊鍙峰共鎵?);
                 }
 
-                // 连接稳定性检查
+                // 杩炴帴绋冲畾鎬ф鏌?
                 long connectionDuration = System.currentTimeMillis() - connection.getConnectionTime();
                 if (connectionDuration < TimeUnit.MINUTES.toMillis(5)) {
                     overallScore -= 10;
-                    issues.add("连接时间过短");
-                    recommendations.add("检查设备连接稳定性");
+                    issues.add("杩炴帴鏃堕棿杩囩煭");
+                    recommendations.add("妫€鏌ヨ澶囪繛鎺ョǔ瀹氭€?);
                 }
             }
 
-            // 电池状态检查
+            // 鐢垫睜鐘舵€佹鏌?
             Integer batteryLevel = generateBatteryLevel();
             if (batteryLevel < 20) {
                 overallScore -= 30;
-                issues.add("电池电量低");
-                recommendations.add("及时充电");
+                issues.add("鐢垫睜鐢甸噺浣?);
+                recommendations.add("鍙婃椂鍏呯數");
             }
 
-            // 设置健康状态
+            // 璁剧疆鍋ュ悍鐘舵€?
             String healthStatus;
             if (overallScore >= 90) {
                 healthStatus = "EXCELLENT";
@@ -514,33 +514,33 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
             healthVO.setIssues(issues);
             healthVO.setRecommendations(recommendations);
 
-            log.info("[设备健康] 检查完成: deviceAddress={}, healthStatus={}, score={}",
+            log.info("[璁惧鍋ュ悍] 妫€鏌ュ畬鎴? deviceAddress={}, healthStatus={}, score={}",
                     deviceAddress, healthStatus, overallScore);
             return ResponseDTO.ok(healthVO);
 
         } catch (Exception e) {
-            log.error("[设备健康] 检查失败: deviceAddress={}, error={}", deviceAddress, e.getMessage(), e);
-            return ResponseDTO.error("HEALTH_CHECK_FAILED", "设备健康检查失败");
+            log.error("[璁惧鍋ュ悍] 妫€鏌ュけ璐? deviceAddress={}, error={}", deviceAddress, e.getMessage(), e);
+            return ResponseDTO.error("HEALTH_CHECK_FAILED", "璁惧鍋ュ悍妫€鏌ュけ璐?);
         }
     }
 
     @Override
     public ResponseDTO<BluetoothFirmwareUpdateResult> updateDeviceFirmware(String deviceAddress, String firmwareVersion) {
-        log.info("[固件升级] 开始升级蓝牙设备固件: deviceAddress={}, targetVersion={}",
+        log.info("[鍥轰欢鍗囩骇] 寮€濮嬪崌绾ц摑鐗欒澶囧浐浠? deviceAddress={}, targetVersion={}",
                 deviceAddress, firmwareVersion);
 
         try {
             BluetoothConnection connection = connectionCache.get(deviceAddress);
             if (connection == null) {
-                return createFirmwareUpdateResult(false, "设备未连接", null, firmwareVersion);
+                return createFirmwareUpdateResult(false, "璁惧鏈繛鎺?, null, firmwareVersion);
             }
 
             String currentVersion = connection.getFirmwareVersion();
 
-            // 模拟固件升级过程
-            long updateDuration = 5000 + (long)(Math.random() * 10000); // 5-15秒
+            // 妯℃嫙鍥轰欢鍗囩骇杩囩▼
+            long updateDuration = 5000 + (long)(Math.random() * 10000); // 5-15绉?
 
-            // 模拟升级结果（90%成功率）
+            // 妯℃嫙鍗囩骇缁撴灉锛?0%鎴愬姛鐜囷級
             boolean success = Math.random() > 0.1;
 
             BluetoothFirmwareUpdateResult result = new BluetoothFirmwareUpdateResult();
@@ -553,94 +553,94 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
             result.setRequiresReboot(success);
 
             if (!success) {
-                result.setErrorMessage("固件下载失败");
+                result.setErrorMessage("鍥轰欢涓嬭浇澶辫触");
             }
 
-            // 更新设备固件版本
+            // 鏇存柊璁惧鍥轰欢鐗堟湰
             if (success) {
                 connection.setFirmwareVersion(firmwareVersion);
             }
 
-            log.info("[固件升级] 升级完成: deviceAddress={}, success={}, duration={}ms",
+            log.info("[鍥轰欢鍗囩骇] 鍗囩骇瀹屾垚: deviceAddress={}, success={}, duration={}ms",
                     deviceAddress, success, updateDuration);
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[固件升级] 升级失败: deviceAddress={}, error={}", deviceAddress, e.getMessage(), e);
-            return createFirmwareUpdateResult(false, "升级异常", null, firmwareVersion);
+            log.error("[鍥轰欢鍗囩骇] 鍗囩骇澶辫触: deviceAddress={}, error={}", deviceAddress, e.getMessage(), e);
+            return createFirmwareUpdateResult(false, "鍗囩骇寮傚父", null, firmwareVersion);
         }
     }
 
     @Override
     public ResponseDTO<BluetoothDeviceDiagnosticVO> diagnoseDevice(String deviceAddress) {
-        log.info("[设备诊断] 开始诊断蓝牙设备: deviceAddress={}", deviceAddress);
+        log.info("[璁惧璇婃柇] 寮€濮嬭瘖鏂摑鐗欒澶? deviceAddress={}", deviceAddress);
 
         try {
             BluetoothConnection connection = connectionCache.get(deviceAddress);
 
             BluetoothDeviceDiagnosticVO diagnosticVO = new BluetoothDeviceDiagnosticVO();
             diagnosticVO.setDeviceAddress(deviceAddress);
-            diagnosticVO.setDeviceName(connection != null ? connection.getDeviceName() : "未知设备");
+            diagnosticVO.setDeviceName(connection != null ? connection.getDeviceName() : "鏈煡璁惧");
             diagnosticVO.setDiagnosticTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-            // 连接测试
+            // 杩炴帴娴嬭瘯
             DiagnosticResult connectionTest = new DiagnosticResult();
-            connectionTest.setTestName("连接稳定性测试");
+            connectionTest.setTestName("杩炴帴绋冲畾鎬ф祴璇?);
             connectionTest.setPassed(connection != null);
             connectionTest.setScore(connection != null ? 85 : 0);
-            connectionTest.setDetails(connection != null ? "连接稳定，信号良好" : "设备未连接");
+            connectionTest.setDetails(connection != null ? "杩炴帴绋冲畾锛屼俊鍙疯壇濂? : "璁惧鏈繛鎺?);
             connectionTest.setStatus(connection != null ? "PASS" : "FAIL");
             diagnosticVO.setConnectionTest(connectionTest);
 
-            // 功能测试
+            // 鍔熻兘娴嬭瘯
             DiagnosticResult functionalityTest = new DiagnosticResult();
-            functionalityTest.setTestName("功能模块测试");
-            functionalityTest.setPassed(true); // 模拟通过
+            functionalityTest.setTestName("鍔熻兘妯″潡娴嬭瘯");
+            functionalityTest.setPassed(true); // 妯℃嫙閫氳繃
             functionalityTest.setScore(92);
-            functionalityTest.setDetails("所有功能模块正常");
+            functionalityTest.setDetails("鎵€鏈夊姛鑳芥ā鍧楁甯?);
             functionalityTest.setStatus("PASS");
             diagnosticVO.setFunctionalityTest(functionalityTest);
 
-            // 性能测试
+            // 鎬ц兘娴嬭瘯
             DiagnosticResult performanceTest = new DiagnosticResult();
-            performanceTest.setTestName("性能基准测试");
-            performanceTest.setPassed(true); // 模拟通过
+            performanceTest.setTestName("鎬ц兘鍩哄噯娴嬭瘯");
+            performanceTest.setPassed(true); // 妯℃嫙閫氳繃
             performanceTest.setScore(78);
-            performanceTest.setDetails("响应时间在可接受范围内");
+            performanceTest.setDetails("鍝嶅簲鏃堕棿鍦ㄥ彲鎺ュ彈鑼冨洿鍐?);
             performanceTest.setStatus("PASS");
             diagnosticVO.setPerformanceTest(performanceTest);
 
-            // 综合评分
+            // 缁煎悎璇勫垎
             int overallScore = (connectionTest.getScore() + functionalityTest.getScore() + performanceTest.getScore()) / 3;
             diagnosticVO.setOverallScore(overallScore);
 
-            // 识别的问题和建议
+            // 璇嗗埆鐨勯棶棰樺拰寤鸿
             List<String> issues = new ArrayList<>();
             List<String> suggestedActions = new ArrayList<>();
 
             if (connection == null) {
-                issues.add("设备未连接");
-                suggestedActions.add("检查设备电源和蓝牙连接");
+                issues.add("璁惧鏈繛鎺?);
+                suggestedActions.add("妫€鏌ヨ澶囩數婧愬拰钃濈墮杩炴帴");
             }
 
             if (connection != null && connection.getSignalStrength() < 50) {
-                issues.add("信号强度较弱");
-                suggestedActions.add("移近设备或减少信号干扰");
+                issues.add("淇″彿寮哄害杈冨急");
+                suggestedActions.add("绉昏繎璁惧鎴栧噺灏戜俊鍙峰共鎵?);
             }
 
             diagnosticVO.setIdentifiedIssues(issues);
             diagnosticVO.setSuggestedActions(suggestedActions);
 
-            log.info("[设备诊断] 诊断完成: deviceAddress={}, overallScore={}", deviceAddress, overallScore);
+            log.info("[璁惧璇婃柇] 璇婃柇瀹屾垚: deviceAddress={}, overallScore={}", deviceAddress, overallScore);
             return ResponseDTO.ok(diagnosticVO);
 
         } catch (Exception e) {
-            log.error("[设备诊断] 诊断失败: deviceAddress={}, error={}", deviceAddress, e.getMessage(), e);
-            return ResponseDTO.error("DIAGNOSTIC_FAILED", "设备诊断失败");
+            log.error("[璁惧璇婃柇] 璇婃柇澶辫触: deviceAddress={}, error={}", deviceAddress, e.getMessage(), e);
+            return ResponseDTO.error("DIAGNOSTIC_FAILED", "璁惧璇婃柇澶辫触");
         }
     }
 
-    // ==================== 私有辅助方法 ====================
+    // ==================== 绉佹湁杈呭姪鏂规硶 ====================
 
     private ResponseDTO<BluetoothAccessResult> createBluetoothAccessResult(
             boolean success, String reason, String riskLevel) {
@@ -703,7 +703,7 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
 
     private Double calculateDistance(Integer rssi) {
         if (rssi == null) return null;
-        // 简化的距离计算公式
+        // 绠€鍖栫殑璺濈璁＄畻鍏紡
         return Math.pow(10, (-69.0 - rssi) / 20.0);
     }
 
@@ -720,29 +720,29 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
     }
 
     private RiskLevel assessBluetoothRisk(BluetoothAccessRequest request, BluetoothConnection connection) {
-        // 基于多个因素评估风险等级
+        // 鍩轰簬澶氫釜鍥犵礌璇勪及椋庨櫓绛夌骇
         int riskScore = 0;
 
-        // 连接时长因素
+        // 杩炴帴鏃堕暱鍥犵礌
         long connectionDuration = System.currentTimeMillis() - connection.getConnectionTime();
         if (connectionDuration < TimeUnit.MINUTES.toMillis(1)) {
-            riskScore += 20; // 新连接风险较高
+            riskScore += 20; // 鏂拌繛鎺ラ闄╄緝楂?
         }
 
-        // 访问时间因素
+        // 璁块棶鏃堕棿鍥犵礌
         int hour = LocalDateTime.now().getHour();
         if (hour < 6 || hour > 22) {
-            riskScore += 15; // 非正常时间访问
+            riskScore += 15; // 闈炴甯告椂闂磋闂?
         }
 
-        // 信号强度因素
+        // 淇″彿寮哄害鍥犵礌
         if (connection.getSignalStrength() < 40) {
-            riskScore += 10; // 信号弱可能有风险
+            riskScore += 10; // 淇″彿寮卞彲鑳芥湁椋庨櫓
         }
 
-        // 访问频率因素
+        // 璁块棶棰戠巼鍥犵礌
         if (connection.getAccessCount() > 10 && connection.getAccessCount() < 20) {
-            riskScore += 5; // 高频访问
+            riskScore += 5; // 楂橀璁块棶
         }
 
         if (riskScore >= 30) {
@@ -755,8 +755,8 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
     }
 
     private void recordBluetoothAccessLog(BluetoothAccessRequest request, boolean success, long responseTime) {
-        // TODO: 实现蓝牙访问日志记录
-        log.info("[蓝牙日志] 记录访问日志: userId={}, deviceAddress={}, success={}, responseTime={}ms",
+        // TODO: 瀹炵幇钃濈墮璁块棶鏃ュ織璁板綍
+        log.info("[钃濈墮鏃ュ織] 璁板綍璁块棶鏃ュ織: userId={}, deviceAddress={}, success={}, responseTime={}ms",
                 request.getUserId(), request.getDeviceAddress(), success, responseTime);
     }
 
@@ -765,7 +765,7 @@ public class BluetoothAccessServiceImpl implements BluetoothAccessService {
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
-    // ==================== 内部数据类 ====================
+    // ==================== 鍐呴儴鏁版嵁绫?====================
 
     private static class BluetoothConnection {
         private Long userId;

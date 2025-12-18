@@ -9,8 +9,8 @@ import net.lab1024.sa.access.domain.form.BiometricAuthForm;
 import net.lab1024.sa.access.domain.vo.BiometricTemplateVO;
 import net.lab1024.sa.access.domain.vo.BiometricAuthResultVO;
 import net.lab1024.sa.access.service.BiometricAuthService;
-import net.lab1024.sa.common.core.domain.ResponseDTO;
-import net.lab1024.sa.common.core.util.SmartRequestUtil;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.util.SmartRequestUtil;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.annotation.Resource;
@@ -19,8 +19,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 /**
- * 生物识别认证控制器
- * 严格遵循门禁设备通讯协议设计
+ * 鐢熺墿璇嗗埆璁よ瘉鎺у埗锟?
+ * 涓ユ牸閬靛惊闂ㄧ璁惧閫氳鍗忚璁捐
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -29,225 +29,225 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/biometric")
-@Tag(name = "生物识别认证", description = "生物识别认证相关接口")
+@Tag(name = "鐢熺墿璇嗗埆璁よ瘉", description = "鐢熺墿璇嗗埆璁よ瘉鐩稿叧鎺ュ彛")
 public class BiometricAuthController {
 
     @Resource
     private BiometricAuthService biometricAuthService;
 
     /**
-     * 注册生物识别模板
-     * 设备协议：REGISTER_TEMPLATE
+     * 娉ㄥ唽鐢熺墿璇嗗埆妯℃澘
+     * 璁惧鍗忚锛歊EGISTER_TEMPLATE
      */
-    @Operation(summary = "注册生物识别模板", description = "用户注册生物识别特征模板")
+    @Operation(summary = "娉ㄥ唽鐢熺墿璇嗗埆妯℃澘", description = "鐢ㄦ埛娉ㄥ唽鐢熺墿璇嗗埆鐗瑰緛妯℃澘")
     @PostMapping("/template/register")
     public ResponseDTO<BiometricTemplateVO> registerTemplate(
             @Valid @RequestBody BiometricRegisterForm registerForm,
             HttpServletRequest request) {
 
-        // 记录客户端信息
+        // 璁板綍瀹㈡埛绔俊锟?
         String clientIp = SmartRequestUtil.getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
 
-        log.info("[生物识别API] 注册模板请求 userId={}, biometricType={}, deviceId={}, clientIp={}",
+        log.info("[鐢熺墿璇嗗埆API] 娉ㄥ唽妯℃澘璇锋眰 userId={}, biometricType={}, deviceId={}, clientIp={}",
                 registerForm.getUserId(), registerForm.getBiometricType(), registerForm.getDeviceId(), clientIp);
 
         return biometricAuthService.registerTemplate(registerForm);
     }
 
     /**
-     * 1:1生物识别验证
-     * 设备协议：AUTHENTICATE
+     * 1:1鐢熺墿璇嗗埆楠岃瘉
+     * 璁惧鍗忚锛欰UTHENTICATE
      */
-    @Operation(summary = "1:1生物识别验证", description = "验证用户生物识别特征")
+    @Operation(summary = "1:1鐢熺墿璇嗗埆楠岃瘉", description = "楠岃瘉鐢ㄦ埛鐢熺墿璇嗗埆鐗瑰緛")
     @PostMapping("/authenticate")
     public ResponseDTO<BiometricAuthResultVO> authenticate(
             @Valid @RequestBody BiometricAuthForm authForm,
             HttpServletRequest request) {
 
-        // 补充客户端信息
+        // 琛ュ厖瀹㈡埛绔俊锟?
         String clientIp = SmartRequestUtil.getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
         authForm.setClientIp(clientIp);
         authForm.setClientInfo(userAgent);
 
-        log.info("[生物识别API] 1:1验证请求 userId={}, biometricType={}, deviceId={}, clientIp={}",
+        log.info("[鐢熺墿璇嗗埆API] 1:1楠岃瘉璇锋眰 userId={}, biometricType={}, deviceId={}, clientIp={}",
                 authForm.getUserId(), authForm.getBiometricType(), authForm.getDeviceId(), clientIp);
 
         return biometricAuthService.authenticate(authForm);
     }
 
     /**
-     * 1:N生物识别识别
-     * 设备协议：IDENTIFY
+     * 1:N鐢熺墿璇嗗埆璇嗗埆
+     * 璁惧鍗忚锛欼DENTIFY
      */
-    @Operation(summary = "1:N生物识别识别", description = "在所有用户中识别生物识别特征")
+    @Operation(summary = "1:N鐢熺墿璇嗗埆璇嗗埆", description = "鍦ㄦ墍鏈夌敤鎴蜂腑璇嗗埆鐢熺墿璇嗗埆鐗瑰緛")
     @PostMapping("/identify")
     public ResponseDTO<List<BiometricAuthResultVO>> identify(
             @Valid @RequestBody BiometricAuthForm authForm,
             HttpServletRequest request) {
 
-        // 补充客户端信息
+        // 琛ュ厖瀹㈡埛绔俊锟?
         String clientIp = SmartRequestUtil.getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
         authForm.setClientIp(clientIp);
         authForm.setClientInfo(userAgent);
 
-        log.info("[生物识别API] 1:N识别请求 biometricType={}, deviceId={}, limit={}, clientIp={}",
+        log.info("[鐢熺墿璇嗗埆API] 1:N璇嗗埆璇锋眰 biometricType={}, deviceId={}, limit={}, clientIp={}",
                 authForm.getBiometricType(), authForm.getDeviceId(), authForm.getLimit(), clientIp);
 
         return biometricAuthService.identify(authForm);
     }
 
     /**
-     * 获取用户生物识别模板列表
-     * 设备协议：GET_USER_TEMPLATES
+     * 鑾峰彇鐢ㄦ埛鐢熺墿璇嗗埆妯℃澘鍒楄〃
+     * 璁惧鍗忚锛欸ET_USER_TEMPLATES
      */
-    @Operation(summary = "获取用户模板列表", description = "查询用户的所有生物识别模板")
+    @Operation(summary = "鑾峰彇鐢ㄦ埛妯℃澘鍒楄〃", description = "鏌ヨ鐢ㄦ埛鐨勬墍鏈夌敓鐗╄瘑鍒ā锟?)
     @GetMapping("/template/user/{userId}")
     public ResponseDTO<List<BiometricTemplateVO>> getUserTemplates(
-            @Parameter(description = "用户ID", example = "1001")
+            @Parameter(description = "鐢ㄦ埛ID", example = "1001")
             @PathVariable Long userId,
             HttpServletRequest request) {
 
         String clientIp = SmartRequestUtil.getClientIp(request);
 
-        log.info("[生物识别API] 查询用户模板 userId={}, clientIp={}", userId, clientIp);
+        log.info("[鐢熺墿璇嗗埆API] 鏌ヨ鐢ㄦ埛妯℃澘 userId={}, clientIp={}", userId, clientIp);
 
         return biometricAuthService.getUserTemplates(userId);
     }
 
     /**
-     * 更新模板状态
-     * 设备协议：UPDATE_TEMPLATE_STATUS
+     * 鏇存柊妯℃澘鐘讹拷?
+     * 璁惧鍗忚锛歎PDATE_TEMPLATE_STATUS
      */
-    @Operation(summary = "更新模板状态", description = "更新生物识别模板状态")
+    @Operation(summary = "鏇存柊妯℃澘鐘讹拷?, description = "鏇存柊鐢熺墿璇嗗埆妯℃澘鐘讹拷?)
     @PutMapping("/template/{templateId}/status")
     public ResponseDTO<Void> updateTemplateStatus(
-            @Parameter(description = "模板ID", example = "1001")
+            @Parameter(description = "妯℃澘ID", example = "1001")
             @PathVariable Long templateId,
-            @Parameter(description = "状态", example = "1")
+            @Parameter(description = "鐘讹拷?, example = "1")
             @RequestParam Integer status,
             HttpServletRequest request) {
 
         String clientIp = SmartRequestUtil.getClientIp(request);
 
-        log.info("[生物识别API] 更新模板状态 templateId={}, status={}, clientIp={}",
+        log.info("[鐢熺墿璇嗗埆API] 鏇存柊妯℃澘鐘讹拷?templateId={}, status={}, clientIp={}",
                 templateId, status, clientIp);
 
         return biometricAuthService.updateTemplateStatus(templateId, status);
     }
 
     /**
-     * 删除用户模板
-     * 设备协议：DELETE_USER_TEMPLATE
+     * 鍒犻櫎鐢ㄦ埛妯℃澘
+     * 璁惧鍗忚锛欴ELETE_USER_TEMPLATE
      */
-    @Operation(summary = "删除用户模板", description = "删除用户指定类型的生物识别模板")
+    @Operation(summary = "鍒犻櫎鐢ㄦ埛妯℃澘", description = "鍒犻櫎鐢ㄦ埛鎸囧畾绫诲瀷鐨勭敓鐗╄瘑鍒ā锟?)
     @DeleteMapping("/template/user/{userId}/type/{biometricType}")
     public ResponseDTO<Void> deleteUserTemplate(
-            @Parameter(description = "用户ID", example = "1001")
+            @Parameter(description = "鐢ㄦ埛ID", example = "1001")
             @PathVariable Long userId,
-            @Parameter(description = "生物识别类型", example = "1")
+            @Parameter(description = "鐢熺墿璇嗗埆绫诲瀷", example = "1")
             @PathVariable Integer biometricType,
             HttpServletRequest request) {
 
         String clientIp = SmartRequestUtil.getClientIp(request);
 
-        log.info("[生物识别API] 删除用户模板 userId={}, biometricType={}, clientIp={}",
+        log.info("[鐢熺墿璇嗗埆API] 鍒犻櫎鐢ㄦ埛妯℃澘 userId={}, biometricType={}, clientIp={}",
                 userId, biometricType, clientIp);
 
         return biometricAuthService.deleteUserTemplate(userId, biometricType);
     }
 
     /**
-     * 获取用户生物识别统计信息
-     * 设备协议：GET_USER_STATS
+     * 鑾峰彇鐢ㄦ埛鐢熺墿璇嗗埆缁熻淇℃伅
+     * 璁惧鍗忚锛欸ET_USER_STATS
      */
-    @Operation(summary = "获取用户生物识别统计", description = "查询用户的生物识别使用统计信息")
+    @Operation(summary = "鑾峰彇鐢ㄦ埛鐢熺墿璇嗗埆缁熻", description = "鏌ヨ鐢ㄦ埛鐨勭敓鐗╄瘑鍒娇鐢ㄧ粺璁′俊锟?)
     @GetMapping("/stats/user/{userId}")
     public ResponseDTO<BiometricTemplateVO> getUserBiometricStats(
-            @Parameter(description = "用户ID", example = "1001")
+            @Parameter(description = "鐢ㄦ埛ID", example = "1001")
             @PathVariable Long userId,
             HttpServletRequest request) {
 
         String clientIp = SmartRequestUtil.getClientIp(request);
 
-        log.info("[生物识别API] 查询用户统计 userId={}, clientIp={}", userId, clientIp);
+        log.info("[鐢熺墿璇嗗埆API] 鏌ヨ鐢ㄦ埛缁熻 userId={}, clientIp={}", userId, clientIp);
 
         return biometricAuthService.getUserBiometricStats(userId);
     }
 
-    // ========== 设备协议专用接口 ==========
+    // ========== 璁惧鍗忚涓撶敤鎺ュ彛 ==========
 
     /**
-     * 门禁设备专用生物识别验证
-     * 设备协议：ACCESS_AUTHENTICATE
-     * 严格遵循门禁设备通讯协议
+     * 闂ㄧ璁惧涓撶敤鐢熺墿璇嗗埆楠岃瘉
+     * 璁惧鍗忚锛欰CCESS_AUTHENTICATE
+     * 涓ユ牸閬靛惊闂ㄧ璁惧閫氳鍗忚
      */
-    @Operation(summary = "门禁设备验证", description = "门禁设备专用生物识别验证接口")
+    @Operation(summary = "闂ㄧ璁惧楠岃瘉", description = "闂ㄧ璁惧涓撶敤鐢熺墿璇嗗埆楠岃瘉鎺ュ彛")
     @PostMapping("/access/authenticate")
     public ResponseDTO<BiometricAuthResultVO> accessAuthenticate(
             @Valid @RequestBody BiometricAuthForm authForm,
             HttpServletRequest request) {
 
-        // 设置验证类型为门禁验证
-        authForm.setAuthType(2); // 门禁验证
+        // 璁剧疆楠岃瘉绫诲瀷涓洪棬绂侀獙锟?
+        authForm.setAuthType(2); // 闂ㄧ楠岃瘉
 
-        // 门禁验证强制活体检测
+        // 闂ㄧ楠岃瘉寮哄埗娲讳綋妫€锟?
         authForm.setForceLiveness(true);
 
         String clientIp = SmartRequestUtil.getClientIp(request);
         authForm.setClientIp(clientIp);
         authForm.setClientInfo("Access Device");
 
-        log.info("[门禁设备协议] 门禁生物识别验证 deviceId={}, userId={}, clientIp={}",
+        log.info("[闂ㄧ璁惧鍗忚] 闂ㄧ鐢熺墿璇嗗埆楠岃瘉 deviceId={}, userId={}, clientIp={}",
                 authForm.getDeviceId(), authForm.getUserId(), clientIp);
 
         return biometricAuthService.authenticate(authForm);
     }
 
     /**
-     * 考勤设备专用生物识别验证
-     * 设备协议：ATTENDANCE_AUTHENTICATE
-     * 严格遵循考勤设备通讯协议
+     * 鑰冨嫟璁惧涓撶敤鐢熺墿璇嗗埆楠岃瘉
+     * 璁惧鍗忚锛欰TTENDANCE_AUTHENTICATE
+     * 涓ユ牸閬靛惊鑰冨嫟璁惧閫氳鍗忚
      */
-    @Operation(summary = "考勤设备验证", description = "考勤设备专用生物识别验证接口")
+    @Operation(summary = "鑰冨嫟璁惧楠岃瘉", description = "鑰冨嫟璁惧涓撶敤鐢熺墿璇嗗埆楠岃瘉鎺ュ彛")
     @PostMapping("/attendance/authenticate")
     public ResponseDTO<BiometricAuthResultVO> attendanceAuthenticate(
             @Valid @RequestBody BiometricAuthForm authForm,
             HttpServletRequest request) {
 
-        // 设置验证类型为考勤验证
-        authForm.setAuthType(3); // 考勤验证
+        // 璁剧疆楠岃瘉绫诲瀷涓鸿€冨嫟楠岃瘉
+        authForm.setAuthType(3); // 鑰冨嫟楠岃瘉
 
-        // 考勤验证强制活体检测，防止代打卡
+        // 鑰冨嫟楠岃瘉寮哄埗娲讳綋妫€娴嬶紝闃叉浠ｆ墦锟?
         authForm.setForceLiveness(true);
 
         String clientIp = SmartRequestUtil.getClientIp(request);
         authForm.setClientIp(clientIp);
         authForm.setClientInfo("Attendance Device");
 
-        log.info("[考勤设备协议] 考勤生物识别验证 deviceId={}, userId={}, clientIp={}",
+        log.info("[鑰冨嫟璁惧鍗忚] 鑰冨嫟鐢熺墿璇嗗埆楠岃瘉 deviceId={}, userId={}, clientIp={}",
                 authForm.getDeviceId(), authForm.getUserId(), clientIp);
 
         return biometricAuthService.authenticate(authForm);
     }
 
     /**
-     * 消费设备专用生物识别验证
-     * 设备协议：CONSUME_AUTHENTICATE
-     * 严格遵循消费设备通讯协议
+     * 娑堣垂璁惧涓撶敤鐢熺墿璇嗗埆楠岃瘉
+     * 璁惧鍗忚锛欳ONSUME_AUTHENTICATE
+     * 涓ユ牸閬靛惊娑堣垂璁惧閫氳鍗忚
      */
-    @Operation(summary = "消费设备验证", description = "消费设备专用生物识别验证接口")
+    @Operation(summary = "娑堣垂璁惧楠岃瘉", description = "娑堣垂璁惧涓撶敤鐢熺墿璇嗗埆楠岃瘉鎺ュ彛")
     @PostMapping("/consume/authenticate")
     public ResponseDTO<BiometricAuthResultVO> consumeAuthenticate(
             @Valid @RequestBody BiometricAuthForm authForm,
             HttpServletRequest request) {
 
-        // 设置验证类型为消费验证
-        authForm.setAuthType(4); // 消费验证
+        // 璁剧疆楠岃瘉绫诲瀷涓烘秷璐归獙锟?
+        authForm.setAuthType(4); // 娑堣垂楠岃瘉
 
-        // 消费验证要求快速响应，可适当降低活体检测要求
+        // 娑堣垂楠岃瘉瑕佹眰蹇€熷搷搴旓紝鍙€傚綋闄嶄綆娲讳綋妫€娴嬭锟?
         if (authForm.getForceLiveness() == null) {
             authForm.setForceLiveness(false);
         }
@@ -256,52 +256,52 @@ public class BiometricAuthController {
         authForm.setClientIp(clientIp);
         authForm.setClientInfo("Consume Device");
 
-        log.info("[消费设备协议] 消费生物识别验证 deviceId={}, userId={}, clientIp={}",
+        log.info("[娑堣垂璁惧鍗忚] 娑堣垂鐢熺墿璇嗗埆楠岃瘉 deviceId={}, userId={}, clientIp={}",
                 authForm.getDeviceId(), authForm.getUserId(), clientIp);
 
         return biometricAuthService.authenticate(authForm);
     }
 
     /**
-     * 设备心跳检测
-     * 设备协议：HEARTBEAT
+     * 璁惧蹇冭烦妫€锟?
+     * 璁惧鍗忚锛欻EARTBEAT
      */
-    @Operation(summary = "设备心跳", description = "设备心跳检测接口")
+    @Operation(summary = "璁惧蹇冭烦", description = "璁惧蹇冭烦妫€娴嬫帴锟?)
     @PostMapping("/device/heartbeat")
     public ResponseDTO<String> heartbeat(
-            @Parameter(description = "设备ID", example = "DEVICE_001")
+            @Parameter(description = "璁惧ID", example = "DEVICE_001")
             @RequestParam String deviceId,
             HttpServletRequest request) {
 
         String clientIp = SmartRequestUtil.getClientIp(request);
 
-        log.info("[设备协议] 设备心跳 deviceId={}, clientIp={}, timestamp={}",
+        log.info("[璁惧鍗忚] 璁惧蹇冭烦 deviceId={}, clientIp={}, timestamp={}",
                 deviceId, clientIp, System.currentTimeMillis());
 
         return ResponseDTO.ok("heartbeat_received");
     }
 
     /**
-     * 设备状态上报
-     * 设备协议：DEVICE_STATUS_REPORT
+     * 璁惧鐘舵€佷笂锟?
+     * 璁惧鍗忚锛欴EVICE_STATUS_REPORT
      */
-    @Operation(summary = "设备状态上报", description = "设备状态信息上报")
+    @Operation(summary = "璁惧鐘舵€佷笂锟?, description = "璁惧鐘舵€佷俊鎭笂锟?)
     @PostMapping("/device/status")
     public ResponseDTO<String> deviceStatusReport(
-            @Parameter(description = "设备ID", example = "DEVICE_001")
+            @Parameter(description = "璁惧ID", example = "DEVICE_001")
             @RequestParam String deviceId,
-            @Parameter(description = "设备状态", example = "online")
+            @Parameter(description = "璁惧鐘讹拷?, example = "online")
             @RequestParam String status,
-            @Parameter(description = "设备详情", example = "正常工作")
+            @Parameter(description = "璁惧璇︽儏", example = "姝ｅ父宸ヤ綔")
             @RequestParam(required = false) String details,
             HttpServletRequest request) {
 
         String clientIp = SmartRequestUtil.getClientIp(request);
 
-        log.info("[设备协议] 设备状态上报 deviceId={}, status={}, details={}, clientIp={}",
+        log.info("[璁惧鍗忚] 璁惧鐘舵€佷笂锟?deviceId={}, status={}, details={}, clientIp={}",
                 deviceId, status, details, clientIp);
 
-        // 这里可以记录设备状态到数据库
+        // 杩欓噷鍙互璁板綍璁惧鐘舵€佸埌鏁版嵁锟?
         // deviceStatusService.reportDeviceStatus(deviceId, status, details, clientIp);
 
         return ResponseDTO.ok("status_received");

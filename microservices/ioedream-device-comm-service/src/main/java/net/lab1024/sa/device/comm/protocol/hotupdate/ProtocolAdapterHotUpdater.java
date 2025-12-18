@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.ProtocolAdapterFactory;
+import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
 import net.lab1024.sa.device.comm.dao.ProtocolConfigDao;
 import org.springframework.stereotype.Component;
 import org.springframework.scheduling.annotation.Async;
@@ -232,7 +232,7 @@ public class ProtocolAdapterHotUpdater {
                 }
 
                 if (targetRecord == null) {
-                    return HotUpdateFailure("未找到指定版本的更新记录: " + version);
+                    return CompletableFuture.completedFuture(HotUpdateResult.failure("未找到指定版本的更新记录: " + version));
                 }
 
                 // 恢复指定版本
@@ -698,7 +698,7 @@ public class ProtocolAdapterHotUpdater {
 
             String jarFilePath = record.getJarFilePath();
             String className = record.getClassName();
-            Map<String, Object> config = record.getConfig();
+            Map<String, Object> config = record.getNewConfig();
 
             // 重新加载适配器
             ProtocolAdapter adapter = loadNewAdapter(jarFilePath, className);
@@ -915,7 +915,7 @@ public class ProtocolAdapterHotUpdater {
         private Class<?> loadClassFromJar(String name) throws ClassNotFoundException {
             try {
                 Path jarPath = Paths.get(jarFilePath);
-                try (JarFile jarFile = new JarFile(jarPath)) {
+                try (JarFile jarFile = new JarFile(jarPath.toFile())) {
                     String classFileName = name.replace('.', '/') + ".class";
                     JarEntry entry = jarFile.getJarEntry(classFileName);
                     if (entry != null) {

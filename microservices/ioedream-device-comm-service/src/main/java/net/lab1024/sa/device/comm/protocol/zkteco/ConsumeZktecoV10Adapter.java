@@ -318,58 +318,41 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
 
     @Override
     public ProtocolValidationResult validateMessage(ProtocolMessage message) {
-        ProtocolValidationResult result = new ProtocolValidationResult();
-
         try {
             // 1. 基础验证
             if (message == null) {
-                result.setValid(false);
-                result.setErrorCode("MSG_NULL");
-                result.setErrorMessage("协议消息为空");
-                return result;
+                return ProtocolValidationResult.failure("MSG_NULL", "协议消息为空");
             }
 
             ConsumeZktecoV10Message zktecoMessage = (ConsumeZktecoV10Message) message;
 
             // 2. 必填字段验证
             if (zktecoMessage.getDeviceId() == null || zktecoMessage.getDeviceId().trim().isEmpty()) {
-                result.setValid(false);
-                result.setErrorCode("DEVICE_ID_EMPTY");
-                result.setErrorMessage("设备ID为空");
-                return result;
+                return ProtocolValidationResult.failure("DEVICE_ID_EMPTY", "设备ID为空");
             }
 
             if (zktecoMessage.getMessageTypeCode() == null) {
-                result.setValid(false);
-                result.setErrorCode("MSG_TYPE_EMPTY");
-                result.setErrorMessage("消息类型为空");
-                return result;
+                return ProtocolValidationResult.failure("MSG_TYPE_EMPTY", "消息类型为空");
             }
 
             // 3. 消息类型验证
             if (!isValidMessageType(zktecoMessage.getMessageTypeCode())) {
-                result.setValid(false);
-                result.setErrorCode("MSG_TYPE_INVALID");
-                result.setErrorMessage("无效的消息类型: " + zktecoMessage.getMessageTypeCode());
-                return result;
+                return ProtocolValidationResult.failure("MSG_TYPE_INVALID", 
+                        "无效的消息类型: " + zktecoMessage.getMessageTypeCode());
             }
 
             // 4. 设备型号验证
             if (zktecoMessage.getDeviceModel() != null &&
                 !isDeviceModelSupported(zktecoMessage.getDeviceModel())) {
-                result.setValid(false);
-                result.setErrorCode("DEVICE_MODEL_UNSUPPORTED");
-                result.setErrorMessage("不支持的设备型号: " + zktecoMessage.getDeviceModel());
-                return result;
+                return ProtocolValidationResult.failure("DEVICE_MODEL_UNSUPPORTED", 
+                        "不支持的设备型号: " + zktecoMessage.getDeviceModel());
             }
 
             // 5. 消费金额验证
             if (zktecoMessage.getConsumeAmount() != null) {
                 if (zktecoMessage.getConsumeAmount().compareTo(BigDecimal.ZERO) <= 0) {
-                    result.setValid(false);
-                    result.setErrorCode("INVALID_CONSUME_AMOUNT");
-                    result.setErrorMessage("消费金额必须大于0");
-                    return result;
+                    return ProtocolValidationResult.failure("INVALID_CONSUME_AMOUNT", 
+                            "消费金额必须大于0");
                 }
             }
 
@@ -378,24 +361,18 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
                 long currentTime = System.currentTimeMillis();
                 long messageTime = zktecoMessage.getTimestamp();
                 if (Math.abs(currentTime - messageTime) > 300000) { // 5分钟
-                    result.setValid(false);
-                    result.setErrorCode("TIMESTAMP_OUT_OF_RANGE");
-                    result.setErrorMessage("消息时间戳超出允许范围");
-                    return result;
+                    return ProtocolValidationResult.failure("TIMESTAMP_OUT_OF_RANGE", 
+                            "消息时间戳超出允许范围");
                 }
             }
 
-            result.setValid(true);
-            result.setValidationDetails("消息验证通过");
+            return ProtocolValidationResult.success();
 
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 消息验证异常", e);
-            result.setValid(false);
-            result.setErrorCode("VALIDATION_EXCEPTION");
-            result.setErrorMessage("消息验证异常: " + e.getMessage());
+            return ProtocolValidationResult.failure("VALIDATION_EXCEPTION", 
+                    "消息验证异常: " + e.getMessage());
         }
-
-        return result;
     }
 
     @Override
@@ -418,8 +395,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 设备权限验证异常, deviceId={}, operation={}", deviceId, operation, e);
             result.setHasPermission(false);
-            result.setErrorCode("PERMISSION_CHECK_FAILED");
-            result.setErrorMessage("权限验证失败: " + e.getMessage());
+            result.setDenyReason("权限验证失败: " + e.getMessage());
         }
 
         return result;
@@ -863,7 +839,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             // TODO: 触发补贴使用、库存管理等
 
             result.setSuccess(true);
-            result.setProcessDetails("消费记录处理完成");
+            result.setMessage("消费记录处理完成");
 
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 消费记录处理失败", e);
@@ -885,7 +861,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             // TODO: 实现充值记录处理逻辑
 
             result.setSuccess(true);
-            result.setProcessDetails("充值记录处理完成");
+            result.setMessage("充值记录处理完成");
 
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 充值记录处理失败", e);
@@ -907,7 +883,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             // TODO: 实现补贴记录处理逻辑
 
             result.setSuccess(true);
-            result.setProcessDetails("补贴记录处理完成");
+            result.setMessage("补贴记录处理完成");
 
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 补贴记录处理失败", e);
@@ -929,7 +905,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             // TODO: 实现账户查询处理逻辑
 
             result.setSuccess(true);
-            result.setProcessDetails("账户查询处理完成");
+            result.setMessage("账户查询处理完成");
 
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 账户查询处理失败", e);
@@ -951,7 +927,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             // TODO: 实现离线同步处理逻辑
 
             result.setSuccess(true);
-            result.setProcessDetails("离线同步处理完成");
+            result.setMessage("离线同步处理完成");
 
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 离线同步处理失败", e);

@@ -1,9 +1,11 @@
 # IOE-DREAM 文档导航中心
 
-**文档版本**: v2.0.0
-**最后更新**: 2025-12-16
-**文档总数**: 已优化整理
+**文档版本**: v3.1.0-DEVICE-INTERACTION-ARCHITECTURE
+**最后更新**: 2025-12-18
+**文档总数**: 全量更新（基于边缘计算架构和设备交互模式）
 **维护团队**: IOE-DREAM架构委员会
+**重构版本**: 完整11微服务 + 5种设备交互模式 + 边缘计算架构
+**核心理念**: 设备端识别，软件端管理 - 生物识别在设备端完成，软件端负责模板管理和数据分析
 
 ---
 
@@ -38,7 +40,9 @@ documentation/
 ```
 
 **核心架构文档**:
-- [微服务架构设计](./architecture/MICROSERVICES_ARCHITECTURE.md) - 7微服务架构详细设计
+- [企业级架构重构方案](./architecture/ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md) - ⭐ 完整11微服务架构 + 5种设备交互模式
+- [系统架构设计文档](./architecture/01-系统架构设计文档.md) - ⭐ 边缘计算架构 + 设备交互模式详解
+- [微服务架构总览](./microservices/MICROSERVICES_ARCHITECTURE_OVERVIEW.md) - 11个微服务详细说明
 - [数据库架构设计](./architecture/DATABASE_ARCHITECTURE.md) - 分库分表和数据治理
 - [安全架构设计](./architecture/SECURITY_ARCHITECTURE.md) - 三级等保安全架构
 - [部署架构设计](./architecture/DEPLOYMENT_ARCHITECTURE.md) - Docker+K8s部署方案

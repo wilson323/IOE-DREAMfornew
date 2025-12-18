@@ -34,10 +34,10 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 
 /**
- * 门禁移动端控制器单元测试
+ * 闂ㄧ绉诲姩绔帶鍒跺櫒鍗曞厓娴嬭瘯
  * <p>
- * 注意：MediaType.APPLICATION_JSON的Null Type Safety警告是IDE检查器的误报，
- * org.springframework.http.MediaType.APPLICATION_JSON是常量，不会为null
+ * 娉ㄦ剰锛歁ediaType.APPLICATION_JSON鐨凬ull Type Safety璀﹀憡鏄疘DE妫€鏌ュ櫒鐨勮鎶ワ紝
+ * org.springframework.http.MediaType.APPLICATION_JSON鏄父閲忥紝涓嶄細涓簄ull
  * </p>
  *
  * @author IOE-DREAM Team
@@ -45,7 +45,7 @@ import net.lab1024.sa.common.gateway.GatewayServiceClient;
  */
 @SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
-@DisplayName("门禁移动端控制器单元测试")
+@DisplayName("闂ㄧ绉诲姩绔帶鍒跺櫒鍗曞厓娴嬭瘯")
 class AccessMobileControllerTest {
 
     @Mock
@@ -67,10 +67,8 @@ class AccessMobileControllerTest {
     private ObjectMapper objectMapper;
 
     /**
-     * 使用JsonUtil统一ObjectMapper实例（性能优化）
-     * <p>
-     * ObjectMapper是线程安全的，设计用于复用
-     * JsonUtil已配置JavaTimeModule，无需重复配置
+     * 浣跨敤JsonUtil缁熶竴ObjectMapper瀹炰緥锛堟€ц兘浼樺寲锛?     * <p>
+     * ObjectMapper鏄嚎绋嬪畨鍏ㄧ殑锛岃璁＄敤浜庡鐢?     * JsonUtil宸查厤缃甁avaTimeModule锛屾棤闇€閲嶅閰嶇疆
      * </p>
      */
     private static final ObjectMapper OBJECT_MAPPER = net.lab1024.sa.common.util.JsonUtil.getObjectMapper();
@@ -78,19 +76,18 @@ class AccessMobileControllerTest {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(accessMobileController).build();
-        // 性能优化：使用JsonUtil统一ObjectMapper实例，避免重复创建
-        objectMapper = OBJECT_MAPPER;
+        // 鎬ц兘浼樺寲锛氫娇鐢↗sonUtil缁熶竴ObjectMapper瀹炰緥锛岄伩鍏嶉噸澶嶅垱寤?        objectMapper = OBJECT_MAPPER;
     }
 
     @Test
-    @DisplayName("测试移动端门禁检查")
+    @DisplayName("娴嬭瘯绉诲姩绔棬绂佹鏌?)
     void testMobileAccessCheck() throws Exception {
         MobileAccessCheckRequest request = new MobileAccessCheckRequest();
         request.setUserId(1001L);
         request.setDeviceId(2001L);
         request.setAreaId(3001L);
         request.setVerificationType("QR_CODE");
-        request.setLocation("北京市朝阳区");
+        request.setLocation("鍖椾含甯傛湞闃冲尯");
 
         AdvancedAccessControlService.AccessControlResult controlResult = new AdvancedAccessControlService.AccessControlResult();
         controlResult.setAllowed(true);
@@ -108,7 +105,7 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试二维码验证")
+    @DisplayName("娴嬭瘯浜岀淮鐮侀獙璇?)
     void testVerifyQRCode() throws Exception {
         QRCodeVerifyRequest request = new QRCodeVerifyRequest();
         request.setQrCode("QR_CODE_123456");
@@ -129,7 +126,7 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试NFC验证")
+    @DisplayName("娴嬭瘯NFC楠岃瘉")
     void testVerifyNFC() throws Exception {
         NFCVerifyRequest request = new NFCVerifyRequest();
         request.setNfcCardId("NFC_123456");
@@ -150,7 +147,7 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试生物识别验证")
+    @DisplayName("娴嬭瘯鐢熺墿璇嗗埆楠岃瘉")
     void testVerifyBiometric() throws Exception {
         BiometricVerifyRequest request = new BiometricVerifyRequest();
         request.setUserId(1001L);
@@ -173,7 +170,7 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试获取附近设备")
+    @DisplayName("娴嬭瘯鑾峰彇闄勮繎璁惧")
     void testGetNearbyDevices() throws Exception {
         List<AccessMobileController.MobileDeviceItem> devices = new ArrayList<>();
         when(accessDeviceService.getNearbyDevices(eq(1001L), eq(39.9042), eq(116.4074), eq(500)))
@@ -190,7 +187,7 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试获取用户门禁权限")
+    @DisplayName("娴嬭瘯鑾峰彇鐢ㄦ埛闂ㄧ鏉冮檺")
     void testGetUserPermissions() throws Exception {
         AccessMobileController.MobileUserPermissions permissions = new AccessMobileController.MobileUserPermissions();
         when(accessDeviceService.getMobileUserPermissions(eq(1001L)))
@@ -203,7 +200,7 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试获取用户访问记录")
+    @DisplayName("娴嬭瘯鑾峰彇鐢ㄦ埛璁块棶璁板綍")
     void testGetUserAccessRecords() throws Exception {
         List<AccessMobileController.MobileAccessRecord> records = new ArrayList<>();
         when(accessEventService.getMobileAccessRecords(eq(1001L), eq(20)))
@@ -217,12 +214,12 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试临时开门申请")
+    @DisplayName("娴嬭瘯涓存椂寮€闂ㄧ敵璇?)
     void testRequestTemporaryAccess() throws Exception {
         AccessMobileController.TemporaryAccessRequest request = new AccessMobileController.TemporaryAccessRequest();
         request.setUserId(1001L);
         request.setDeviceId(2001L);
-        request.setReason("临时访问");
+        request.setReason("涓存椂璁块棶");
 
         mockMvc.perform(post("/api/v1/mobile/access/temporary-access")
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
@@ -232,7 +229,7 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试获取实时门禁状态")
+    @DisplayName("娴嬭瘯鑾峰彇瀹炴椂闂ㄧ鐘舵€?)
     void testGetRealTimeStatus() throws Exception {
         AccessMobileController.MobileRealTimeStatus status = new AccessMobileController.MobileRealTimeStatus();
         when(accessDeviceService.getMobileRealTimeStatus(eq(2001L)))
@@ -246,7 +243,7 @@ class AccessMobileControllerTest {
     }
 
     @Test
-    @DisplayName("测试发送推送通知")
+    @DisplayName("娴嬭瘯鍙戦€佹帹閫侀€氱煡")
     void testSendPushNotification() throws Exception {
         AccessMobileController.PushNotificationRequest request = new AccessMobileController.PushNotificationRequest();
         request.setUserId(1001L);

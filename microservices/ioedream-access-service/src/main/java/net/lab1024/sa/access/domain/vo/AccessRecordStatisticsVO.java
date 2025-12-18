@@ -6,11 +6,10 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * 门禁记录统计视图对象
+ * 闂ㄧ璁板綍缁熻瑙嗗浘瀵硅薄
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用VO后缀命名
- * - 用于Controller返回统计数据
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤VO鍚庣紑鍛藉悕
+ * - 鐢ㄤ簬Controller杩斿洖缁熻鏁版嵁
  * </p>
  *
  * @author IOE-DREAM Team
@@ -21,43 +20,36 @@ import lombok.Data;
 public class AccessRecordStatisticsVO {
 
     /**
-     * 总记录数
+     * 鎬昏褰曟暟
      */
     private Long totalCount;
 
     /**
-     * 成功记录数
-     */
+     * 鎴愬姛璁板綍鏁?     */
     private Long successCount;
 
     /**
-     * 失败记录数
-     */
+     * 澶辫触璁板綍鏁?     */
     private Long failedCount;
 
     /**
-     * 异常记录数
-     */
+     * 寮傚父璁板綍鏁?     */
     private Long abnormalCount;
 
     /**
-     * 按操作类型统计
-     */
+     * 鎸夋搷浣滅被鍨嬬粺璁?     */
     private List<Map<String, Object>> statisticsByOperation;
 
     /**
-     * 按区域统计
-     */
+     * 鎸夊尯鍩熺粺璁?     */
     private List<Map<String, Object>> statisticsByArea;
 
     /**
-     * 按设备统计
-     */
+     * 鎸夎澶囩粺璁?     */
     private List<Map<String, Object>> statisticsByDevice;
 
     /**
-     * 按时间统计（按日）
-     */
+     * 鎸夋椂闂寸粺璁★紙鎸夋棩锛?     */
     private List<Map<String, Object>> statisticsByDate;
 }
 

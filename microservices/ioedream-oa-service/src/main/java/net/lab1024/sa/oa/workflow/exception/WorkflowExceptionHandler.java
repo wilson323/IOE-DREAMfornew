@@ -3,8 +3,6 @@ package net.lab1024.sa.oa.workflow.exception;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.common.engine.api.FlowableIllegalArgumentException;
@@ -39,7 +37,6 @@ import java.util.UUID;
 @RestControllerAdvice(basePackages = "net.lab1024.sa.oa.workflow")
 @Order(1)
 public class WorkflowExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(WorkflowExceptionHandler.class);
 
     @Resource
     private MeterRegistry meterRegistry;

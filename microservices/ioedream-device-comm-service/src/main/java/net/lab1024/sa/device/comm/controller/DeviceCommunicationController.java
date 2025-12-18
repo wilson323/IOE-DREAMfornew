@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
-import net.lab1024.sa.device.comm.protocol.*;
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.domain.*;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
 import org.springframework.web.bind.annotation.*;
 
@@ -158,7 +161,7 @@ public class DeviceCommunicationController {
             ProtocolProcessResult result = future.get();
 
             log.info("[设备通讯] 门禁业务处理完成, protocolType={}, businessType={}, success={}",
-                protocolType, businessType, result != null ? result.getSuccess() : false);
+                protocolType, businessType, result != null ? result.isSuccess() : false);
 
             return ResponseDTO.ok(result);
 
@@ -201,7 +204,7 @@ public class DeviceCommunicationController {
             ProtocolProcessResult result = future.get();
 
             log.info("[设备通讯] 消费业务处理完成, protocolType={}, businessType={}, success={}",
-                protocolType, businessType, result != null ? result.getSuccess() : false);
+                protocolType, businessType, result != null ? result.isSuccess() : false);
 
             return ResponseDTO.ok(result);
 
@@ -244,7 +247,7 @@ public class DeviceCommunicationController {
             ProtocolProcessResult result = future.get();
 
             log.info("[设备通讯] 考勤业务处理完成, protocolType={}, businessType={}, success={}",
-                protocolType, businessType, result != null ? result.getSuccess() : false);
+                protocolType, businessType, result != null ? result.isSuccess() : false);
 
             return ResponseDTO.ok(result);
 

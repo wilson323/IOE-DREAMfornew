@@ -103,7 +103,7 @@ class WorkflowEngineServiceImplTest {
         String description = "测试描述";
         String category = "测试分类";
 
-        when(workflowDefinitionDao.countByProcessKey(eq(processKey), isNull())).thenReturn(0);
+        when(workflowDefinitionDao.countByProcessKey(eq(processKey), (Long) isNull())).thenReturn(0);
         when(workflowDefinitionDao.insert(any(WorkflowDefinitionEntity.class))).thenReturn(1);
 
         // When
@@ -214,8 +214,8 @@ class WorkflowEngineServiceImplTest {
         page.setTotal(1);
 
         @SuppressWarnings("unchecked")
-        Page<WorkflowTaskEntity> typedPage = page;
-        when(workflowTaskDao.selectMyTasksPage(any(Page.class), eq(userId), eq(category), eq(priority), eq(dueStatus))).thenReturn(typedPage);
+        Page<WorkflowTaskEntity> typedPage = (Page<WorkflowTaskEntity>) page;
+        when(workflowTaskDao.selectMyTasksPage(any(), eq(userId), eq(category), eq(priority), eq(dueStatus))).thenReturn(typedPage);
 
         // When
         ResponseDTO<PageResult<WorkflowTaskEntity>> result = workflowEngineServiceImpl.pageMyTasks(

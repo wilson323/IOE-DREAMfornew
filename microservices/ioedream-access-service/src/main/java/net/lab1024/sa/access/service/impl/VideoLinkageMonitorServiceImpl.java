@@ -25,14 +25,14 @@ import net.lab1024.sa.common.redis.RedisTemplate;
 import net.lab1024.sa.common.util.SmartStringUtil;
 
 /**
- * 视频联动监控服务实现
+ * 瑙嗛鑱斿姩鐩戞帶鏈嶅姟瀹炵幇
  * <p>
- * 实现门禁系统与视频监控的智能联动功能：
- * - 门禁事件触发视频监控联动
- * - 实时人脸识别与身份验证
- * - 异常行为智能检测与告警
- * - 视频流管理与多画面监控
- * - PTZ云台控制与录像管理
+ * 瀹炵幇闂ㄧ绯荤粺涓庤棰戠洃鎺х殑鏅鸿兘鑱斿姩鍔熻兘锛?
+ * - 闂ㄧ浜嬩欢瑙﹀彂瑙嗛鐩戞帶鑱斿姩
+ * - 瀹炴椂浜鸿劯璇嗗埆涓庤韩浠介獙璇?
+ * - 寮傚父琛屼负鏅鸿兘妫€娴嬩笌鍛婅
+ * - 瑙嗛娴佺鐞嗕笌澶氱敾闈㈢洃鎺?
+ * - PTZ浜戝彴鎺у埗涓庡綍鍍忕鐞?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -44,7 +44,7 @@ import net.lab1024.sa.common.util.SmartStringUtil;
 @Transactional(rollbackFor = Exception.class)
 public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorService {
 
-    // 模拟依赖注入（实际应通过@Resource注入真实的DAO和Service）
+    // 妯℃嫙渚濊禆娉ㄥ叆锛堝疄闄呭簲閫氳繃@Resource娉ㄥ叆鐪熷疄鐨凞AO鍜孲ervice锛?
     // @Resource private VideoStreamManager videoStreamManager;
     // @Resource private FaceRecognitionEngine faceRecognitionEngine;
     // @Resource private BehaviorAnalysisEngine behaviorAnalysisEngine;
@@ -53,348 +53,348 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     // @Resource private GatewayServiceClient gatewayServiceClient;
     // @Resource private RedisTemplate<String, Object> redisTemplate;
 
-    // 模拟数据存储
+    // 妯℃嫙鏁版嵁瀛樺偍
     private final Map<String, VideoLinkageResult> linkageStore = new ConcurrentHashMap<>();
     private final Map<String, String> activeStreams = new ConcurrentHashMap<>();
     
-    // 线程池 - 使用统一配置的异步线程池
+    // 绾跨▼姹?- 浣跨敤缁熶竴閰嶇疆鐨勫紓姝ョ嚎绋嬫睜
     @Resource(name = "asyncExecutor")
     private ThreadPoolTaskExecutor asyncExecutor;
 
     @Override
-    @Timed(value = "video.linkage.trigger", description = "视频联动触发耗时")
-    @Counted(value = "video.linkage.trigger.count", description = "视频联动触发次数")
+    @Timed(value = "video.linkage.trigger", description = "瑙嗛鑱斿姩瑙﹀彂鑰楁椂")
+    @Counted(value = "video.linkage.trigger.count", description = "瑙嗛鑱斿姩瑙﹀彂娆℃暟")
     public ResponseDTO<VideoLinkageResult> triggerVideoLinkage(VideoLinkageRequest request) {
-        log.info("[视频联动] 开始触发视频联动, accessEventId={}, deviceId={}, userId={}",
+        log.info("[瑙嗛鑱斿姩] 寮€濮嬭Е鍙戣棰戣仈鍔? accessEventId={}, deviceId={}, userId={}",
                 request.getAccessEventId(), request.getDeviceId(), request.getUserId());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateLinkageRequest(request);
 
-            // 2. 生成联动ID
+            // 2. 鐢熸垚鑱斿姩ID
             String linkageId = generateLinkageId();
 
-            // 3. 异步执行联动逻辑
+            // 3. 寮傛鎵ц鑱斿姩閫昏緫
             CompletableFuture<VideoLinkageResult> linkageFuture = CompletableFuture
                     .supplyAsync(() -> performVideoLinkage(linkageId, request), asyncExecutor);
 
-            // 4. 设置超时和异常处理
+            // 4. 璁剧疆瓒呮椂鍜屽紓甯稿鐞?
             VideoLinkageResult result = linkageFuture
                     .orTimeout(30, TimeUnit.SECONDS)
                     .exceptionally(throwable -> {
-                        log.error("[视频联动] 执行异常, linkageId={}", linkageId, throwable);
+                        log.error("[瑙嗛鑱斿姩] 鎵ц寮傚父, linkageId={}", linkageId, throwable);
                         return createFailedLinkageResult(linkageId, request, throwable);
                     })
                     .join();
 
-            // 5. 存储联动结果
+            // 5. 瀛樺偍鑱斿姩缁撴灉
             linkageStore.put(linkageId, result);
 
-            log.info("[视频联动] 触发完成, linkageId={}, success={}, cameraCount={}",
+            log.info("[瑙嗛鑱斿姩] 瑙﹀彂瀹屾垚, linkageId={}, success={}, cameraCount={}",
                     linkageId, result.getLinkageStatus(), result.getCameraLinkages().size());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[视频联动] 触发失败, accessEventId={}", request.getAccessEventId(), e);
-            return ResponseDTO.error("VIDEO_LINKAGE_FAILED", "视频联动触发失败: " + e.getMessage());
+            log.error("[瑙嗛鑱斿姩] 瑙﹀彂澶辫触, accessEventId={}", request.getAccessEventId(), e);
+            return ResponseDTO.error("VIDEO_LINKAGE_FAILED", "瑙嗛鑱斿姩瑙﹀彂澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.stream.get", description = "获取视频流耗时")
+    @Timed(value = "video.stream.get", description = "鑾峰彇瑙嗛娴佽€楁椂")
     public ResponseDTO<VideoStreamResult> getRealTimeStream(VideoStreamRequest request) {
-        log.info("[视频流] 获取实时视频流, cameraId={}, streamType={}, protocol={}",
+        log.info("[瑙嗛娴乚 鑾峰彇瀹炴椂瑙嗛娴? cameraId={}, streamType={}, protocol={}",
                 request.getCameraId(), request.getStreamType(), request.getProtocol());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateStreamRequest(request);
 
-            // 2. 生成流ID
+            // 2. 鐢熸垚娴両D
             String streamId = generateStreamId(request);
 
-            // 3. 获取摄像头信息
+            // 3. 鑾峰彇鎽勫儚澶翠俊鎭?
             // CameraInfo cameraInfo = getCameraInfo(request.getCameraId());
 
-            // 4. 建立视频流连接
+            // 4. 寤虹珛瑙嗛娴佽繛鎺?
             VideoStreamResult streamResult = establishVideoStream(streamId, request);
 
-            // 5. 缓存流信息
+            // 5. 缂撳瓨娴佷俊鎭?
             activeStreams.put(streamId, request.getCameraId().toString());
 
-            log.info("[视频流] 视频流建立成功, streamId={}, streamUrl={}",
+            log.info("[瑙嗛娴乚 瑙嗛娴佸缓绔嬫垚鍔? streamId={}, streamUrl={}",
                     streamId, streamResult.getStreamUrl());
 
             return ResponseDTO.ok(streamResult);
 
         } catch (Exception e) {
-            log.error("[视频流] 获取视频流失败, cameraId={}", request.getCameraId(), e);
-            return ResponseDTO.error("VIDEO_STREAM_FAILED", "获取视频流失败: " + e.getMessage());
+            log.error("[瑙嗛娴乚 鑾峰彇瑙嗛娴佸け璐? cameraId={}", request.getCameraId(), e);
+            return ResponseDTO.error("VIDEO_STREAM_FAILED", "鑾峰彇瑙嗛娴佸け璐? " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.face.recognition", description = "人脸识别耗时")
-    @Counted(value = "video.face.recognition.count", description = "人脸识别次数")
+    @Timed(value = "video.face.recognition", description = "浜鸿劯璇嗗埆鑰楁椂")
+    @Counted(value = "video.face.recognition.count", description = "浜鸿劯璇嗗埆娆℃暟")
     public ResponseDTO<FaceRecognitionResult> performFaceRecognition(FaceRecognitionRequest request) {
-        log.info("[人脸识别] 开始执行人脸识别, streamId={}, userId={}, confidenceThreshold={}",
+        log.info("[浜鸿劯璇嗗埆] 寮€濮嬫墽琛屼汉鑴歌瘑鍒? streamId={}, userId={}, confidenceThreshold={}",
                 request.getStreamId(), request.getUserId(), request.getConfidenceThreshold());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateFaceRecognitionRequest(request);
 
-            // 2. 获取视频流
+            // 2. 鑾峰彇瑙嗛娴?
             String streamId = request.getStreamId();
             if (!activeStreams.containsKey(streamId)) {
-                return ResponseDTO.error("STREAM_NOT_FOUND", "视频流不存在或已断开");
+                return ResponseDTO.error("STREAM_NOT_FOUND", "瑙嗛娴佷笉瀛樺湪鎴栧凡鏂紑");
             }
 
-            // 3. 执行人脸识别
+            // 3. 鎵ц浜鸿劯璇嗗埆
             FaceRecognitionResult result = performFaceRecognitionInternal(request);
 
-            // 4. 记录识别结果
+            // 4. 璁板綍璇嗗埆缁撴灉
             logFaceRecognitionResult(result);
 
-            log.info("[人脸识别] 识别完成, success={}, confidence={}, matchedUser={}",
+            log.info("[浜鸿劯璇嗗埆] 璇嗗埆瀹屾垚, success={}, confidence={}, matchedUser={}",
                     result.getRecognitionSuccess(), result.getConfidenceScore(), result.getMatchedUserName());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[人脸识别] 识别失败, streamId={}", request.getStreamId(), e);
-            return ResponseDTO.error("FACE_RECOGNITION_FAILED", "人脸识别失败: " + e.getMessage());
+            log.error("[浜鸿劯璇嗗埆] 璇嗗埆澶辫触, streamId={}", request.getStreamId(), e);
+            return ResponseDTO.error("FACE_RECOGNITION_FAILED", "浜鸿劯璇嗗埆澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.behavior.detect", description = "异常行为检测耗时")
+    @Timed(value = "video.behavior.detect", description = "寮傚父琛屼负妫€娴嬭€楁椂")
     public ResponseDTO<AbnormalBehaviorResult> detectAbnormalBehavior(AbnormalBehaviorRequest request) {
-        log.info("[异常行为检测] 开始检测, streamId={}, areaId={}, behaviorTypes={}",
+        log.info("[寮傚父琛屼负妫€娴媇 寮€濮嬫娴? streamId={}, areaId={}, behaviorTypes={}",
                 request.getStreamId(), request.getAreaId(), request.getBehaviorTypes());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateBehaviorDetectionRequest(request);
 
-            // 2. 获取视频流
+            // 2. 鑾峰彇瑙嗛娴?
             String streamId = request.getStreamId();
             if (!activeStreams.containsKey(streamId)) {
-                return ResponseDTO.error("STREAM_NOT_FOUND", "视频流不存在或已断开");
+                return ResponseDTO.error("STREAM_NOT_FOUND", "瑙嗛娴佷笉瀛樺湪鎴栧凡鏂紑");
             }
 
-            // 3. 执行行为检测
+            // 3. 鎵ц琛屼负妫€娴?
             AbnormalBehaviorResult result = performBehaviorDetectionInternal(request);
 
-            // 4. 如果检测到异常行为且启用告警，触发告警流程
+            // 4. 濡傛灉妫€娴嬪埌寮傚父琛屼负涓斿惎鐢ㄥ憡璀︼紝瑙﹀彂鍛婅娴佺▼
             if (result.getHasAbnormalBehavior() && request.getEnableAlert()) {
                 triggerAbnormalBehaviorAlert(result);
             }
 
-            log.info("[异常行为检测] 检测完成, hasAbnormal={}, behaviorCount={}, riskScore={}",
+            log.info("[寮傚父琛屼负妫€娴媇 妫€娴嬪畬鎴? hasAbnormal={}, behaviorCount={}, riskScore={}",
                     result.getHasAbnormalBehavior(), result.getBehaviorCount(), result.getRiskScore());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[异常行为检测] 检测失败, streamId={}", request.getStreamId(), e);
-            return ResponseDTO.error("BEHAVIOR_DETECTION_FAILED", "异常行为检测失败: " + e.getMessage());
+            log.error("[寮傚父琛屼负妫€娴媇 妫€娴嬪け璐? streamId={}", request.getStreamId(), e);
+            return ResponseDTO.error("BEHAVIOR_DETECTION_FAILED", "寮傚父琛屼负妫€娴嬪け璐? " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.recording.manage", description = "视频录制管理耗时")
+    @Timed(value = "video.recording.manage", description = "瑙嗛褰曞埗绠＄悊鑰楁椂")
     public ResponseDTO<VideoRecordingResult> manageVideoRecording(VideoRecordingRequest request) {
-        log.info("[视频录制] 开始管理视频录制, linkageId={}, cameraCount={}",
+        log.info("[瑙嗛褰曞埗] 寮€濮嬬鐞嗚棰戝綍鍒? linkageId={}, cameraCount={}",
                 request.getLinkageId(), request.getCameraIds().size());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateRecordingRequest(request);
 
-            // 2. 生成录制任务ID
+            // 2. 鐢熸垚褰曞埗浠诲姟ID
             String recordingTaskId = generateRecordingTaskId();
 
-            // 3. 开始录制任务
+            // 3. 寮€濮嬪綍鍒朵换鍔?
             VideoRecordingResult result = performVideoRecording(recordingTaskId, request);
 
-            log.info("[视频录制] 录制任务启动成功, taskId={}, fileCount={}, totalDuration={}",
+            log.info("[瑙嗛褰曞埗] 褰曞埗浠诲姟鍚姩鎴愬姛, taskId={}, fileCount={}, totalDuration={}",
                     recordingTaskId, result.getRecordingFiles().size(), result.getTotalDuration());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[视频录制] 录制管理失败, linkageId={}", request.getLinkageId(), e);
-            return ResponseDTO.error("VIDEO_RECORDING_FAILED", "视频录制管理失败: " + e.getMessage());
+            log.error("[瑙嗛褰曞埗] 褰曞埗绠＄悊澶辫触, linkageId={}", request.getLinkageId(), e);
+            return ResponseDTO.error("VIDEO_RECORDING_FAILED", "瑙嗛褰曞埗绠＄悊澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.multiscreen.get", description = "获取多画面监控耗时")
+    @Timed(value = "video.multiscreen.get", description = "鑾峰彇澶氱敾闈㈢洃鎺ц€楁椂")
     public ResponseDTO<MultiScreenResult> getMultiScreenView(MultiScreenRequest request) {
-        log.info("[多画面监控] 获取多画面视图, cameraCount={}, layout={}, quality={}",
+        log.info("[澶氱敾闈㈢洃鎺 鑾峰彇澶氱敾闈㈣鍥? cameraCount={}, layout={}, quality={}",
                 request.getCameraIds().size(), request.getLayoutType(), request.getQuality());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateMultiScreenRequest(request);
 
-            // 2. 生成监控会话ID
+            // 2. 鐢熸垚鐩戞帶浼氳瘽ID
             String sessionId = generateMonitorSessionId();
 
-            // 3. 构建多画面结果
+            // 3. 鏋勫缓澶氱敾闈㈢粨鏋?
             MultiScreenResult result = buildMultiScreenResult(sessionId, request);
 
-            log.info("[多画面监控] 多画面视图构建成功, sessionId={}, activeCameras={}",
+            log.info("[澶氱敾闈㈢洃鎺 澶氱敾闈㈣鍥炬瀯寤烘垚鍔? sessionId={}, activeCameras={}",
                     sessionId, result.getActiveCameras());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[多画面监控] 获取多画面视图失败", e);
-            return ResponseDTO.error("MULTISCREEN_FAILED", "获取多画面视图失败: " + e.getMessage());
+            log.error("[澶氱敾闈㈢洃鎺 鑾峰彇澶氱敾闈㈣鍥惧け璐?, e);
+            return ResponseDTO.error("MULTISCREEN_FAILED", "鑾峰彇澶氱敾闈㈣鍥惧け璐? " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.ptz.control", description = "PTZ控制耗时")
-    @Counted(value = "video.ptz.control.count", description = "PTZ控制次数")
+    @Timed(value = "video.ptz.control", description = "PTZ鎺у埗鑰楁椂")
+    @Counted(value = "video.ptz.control.count", description = "PTZ鎺у埗娆℃暟")
     public ResponseDTO<PTZControlResult> controlPTZCamera(PTZControlRequest request) {
-        log.info("[PTZ控制] 开始控制摄像头, cameraId={}, action={}, speed={}",
+        log.info("[PTZ鎺у埗] 寮€濮嬫帶鍒舵憚鍍忓ご, cameraId={}, action={}, speed={}",
                 request.getCameraId(), request.getAction(), request.getSpeed());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validatePTZControlRequest(request);
 
-            // 2. 执行PTZ控制
+            // 2. 鎵цPTZ鎺у埗
             PTZControlResult result = performPTZControl(request);
 
-            log.info("[PTZ控制] 控制完成, success={}, responseTime={}ms",
+            log.info("[PTZ鎺у埗] 鎺у埗瀹屾垚, success={}, responseTime={}ms",
                     result.getControlSuccess(), result.getResponseTime());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[PTZ控制] 控制失败, cameraId={}, action={}", request.getCameraId(), request.getAction(), e);
-            return ResponseDTO.error("PTZ_CONTROL_FAILED", "PTZ控制失败: " + e.getMessage());
+            log.error("[PTZ鎺у埗] 鎺у埗澶辫触, cameraId={}, action={}", request.getCameraId(), request.getAction(), e);
+            return ResponseDTO.error("PTZ_CONTROL_FAILED", "PTZ鎺у埗澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.playback.historical", description = "历史视频回放耗时")
+    @Timed(value = "video.playback.historical", description = "鍘嗗彶瑙嗛鍥炴斁鑰楁椂")
     public ResponseDTO<VideoPlaybackResult> playbackHistoricalVideo(VideoPlaybackRequest request) {
-        log.info("[视频回放] 开始历史视频回放, cameraId={}, startTime={}, endTime={}",
+        log.info("[瑙嗛鍥炴斁] 寮€濮嬪巻鍙茶棰戝洖鏀? cameraId={}, startTime={}, endTime={}",
                 request.getCameraId(), request.getStartTime(), request.getEndTime());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validatePlaybackRequest(request);
 
-            // 2. 生成回放ID
+            // 2. 鐢熸垚鍥炴斁ID
             String playbackId = generatePlaybackId();
 
-            // 3. 构建回放结果
+            // 3. 鏋勫缓鍥炴斁缁撴灉
             VideoPlaybackResult result = buildPlaybackResult(playbackId, request);
 
-            log.info("[视频回放] 回放构建成功, playbackId={}, duration={}",
+            log.info("[瑙嗛鍥炴斁] 鍥炴斁鏋勫缓鎴愬姛, playbackId={}, duration={}",
                     playbackId, result.getTotalDuration());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[视频回放] 回放失败, cameraId={}", request.getCameraId(), e);
-            return ResponseDTO.error("VIDEO_PLAYBACK_FAILED", "历史视频回放失败: " + e.getMessage());
+            log.error("[瑙嗛鍥炴斁] 鍥炴斁澶辫触, cameraId={}", request.getCameraId(), e);
+            return ResponseDTO.error("VIDEO_PLAYBACK_FAILED", "鍘嗗彶瑙嗛鍥炴斁澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.linkage.events.get", description = "获取联动事件列表耗时")
+    @Timed(value = "video.linkage.events.get", description = "鑾峰彇鑱斿姩浜嬩欢鍒楄〃鑰楁椂")
     public ResponseDTO<List<VideoLinkageEventVO>> getLinkageEvents(VideoLinkageEventQueryRequest request) {
-        log.info("[联动事件] 查询视频联动事件, userId={}, deviceId={}, startTime={}, endTime={}",
+        log.info("[鑱斿姩浜嬩欢] 鏌ヨ瑙嗛鑱斿姩浜嬩欢, userId={}, deviceId={}, startTime={}, endTime={}",
                 request.getUserId(), request.getDeviceId(), request.getStartTime(), request.getEndTime());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateEventQueryRequest(request);
 
-            // 2. 查询联动事件
+            // 2. 鏌ヨ鑱斿姩浜嬩欢
             List<VideoLinkageEventVO> events = queryVideoLinkageEvents(request);
 
-            log.info("[联动事件] 查询完成, 事件数量={}", events.size());
+            log.info("[鑱斿姩浜嬩欢] 鏌ヨ瀹屾垚, 浜嬩欢鏁伴噺={}", events.size());
 
             return ResponseDTO.ok(events);
 
         } catch (Exception e) {
-            log.error("[联动事件] 查询失败", e);
-            return ResponseDTO.error("EVENT_QUERY_FAILED", "查询联动事件失败: " + e.getMessage());
+            log.error("[鑱斿姩浜嬩欢] 鏌ヨ澶辫触", e);
+            return ResponseDTO.error("EVENT_QUERY_FAILED", "鏌ヨ鑱斿姩浜嬩欢澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "video.monitor.statistics", description = "监控统计耗时")
+    @Timed(value = "video.monitor.statistics", description = "鐩戞帶缁熻鑰楁椂")
     public ResponseDTO<MonitorStatisticsVO> getMonitorStatistics(MonitorStatisticsRequest request) {
-        log.info("[监控统计] 生成监控统计报告, cameraCount={}, statisticsType={}",
+        log.info("[鐩戞帶缁熻] 鐢熸垚鐩戞帶缁熻鎶ュ憡, cameraCount={}, statisticsType={}",
                 request.getCameraIds().size(), request.getStatisticsType());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateStatisticsRequest(request);
 
-            // 2. 生成统计报告
+            // 2. 鐢熸垚缁熻鎶ュ憡
             MonitorStatisticsVO statistics = generateMonitorStatistics(request);
 
-            log.info("[监控统计] 统计报告生成完成, totalEvents={}, successRate={}%",
+            log.info("[鐩戞帶缁熻] 缁熻鎶ュ憡鐢熸垚瀹屾垚, totalEvents={}, successRate={}%",
                     statistics.getTotalLinkageEvents(), statistics.getFaceVerificationSuccessRate() * 100);
 
             return ResponseDTO.ok(statistics);
 
         } catch (Exception e) {
-            log.error("[监控统计] 统计报告生成失败", e);
-            return ResponseDTO.error("STATISTICS_FAILED", "生成监控统计报告失败: " + e.getMessage());
+            log.error("[鐩戞帶缁熻] 缁熻鎶ュ憡鐢熸垚澶辫触", e);
+            return ResponseDTO.error("STATISTICS_FAILED", "鐢熸垚鐩戞帶缁熻鎶ュ憡澶辫触: " + e.getMessage());
         }
     }
 
-    // ==================== 私有辅助方法 ====================
+    // ==================== 绉佹湁杈呭姪鏂规硶 ====================
 
     /**
-     * 验证联动请求参数
+     * 楠岃瘉鑱斿姩璇锋眰鍙傛暟
      */
     private void validateLinkageRequest(VideoLinkageRequest request) {
         if (SmartStringUtil.isEmpty(request.getAccessEventId())) {
-            throw new IllegalArgumentException("门禁事件ID不能为空");
+            throw new IllegalArgumentException("闂ㄧ浜嬩欢ID涓嶈兘涓虹┖");
         }
         if (request.getDeviceId() == null) {
-            throw new IllegalArgumentException("设备ID不能为空");
+            throw new IllegalArgumentException("璁惧ID涓嶈兘涓虹┖");
         }
         if (SmartStringUtil.isEmpty(request.getUserId())) {
-            throw new IllegalArgumentException("用户ID不能为空");
+            throw new IllegalArgumentException("鐢ㄦ埛ID涓嶈兘涓虹┖");
         }
         if (request.getCameraIds() == null || request.getCameraIds().isEmpty()) {
-            throw new IllegalArgumentException("关联摄像头ID列表不能为空");
+            throw new IllegalArgumentException("鍏宠仈鎽勫儚澶碔D鍒楄〃涓嶈兘涓虹┖");
         }
     }
 
     /**
-     * 生成联动ID
+     * 鐢熸垚鑱斿姩ID
      */
     private String generateLinkageId() {
         return "VL-" + UUID.randomUUID().toString().replace("-", "");
     }
 
     /**
-     * 执行视频联动
+     * 鎵ц瑙嗛鑱斿姩
      */
     private VideoLinkageResult performVideoLinkage(String linkageId, VideoLinkageRequest request) {
-        log.info("[视频联动] 执行联动逻辑, linkageId={}", linkageId);
+        log.info("[瑙嗛鑱斿姩] 鎵ц鑱斿姩閫昏緫, linkageId={}", linkageId);
 
         LocalDateTime triggerTime = LocalDateTime.now();
         List<CameraLinkageInfo> cameraLinkages = new ArrayList<>();
         List<String> recordingIds = new ArrayList<>();
 
-        // 1. 处理每个摄像头的联动
+        // 1. 澶勭悊姣忎釜鎽勫儚澶寸殑鑱斿姩
         for (Long cameraId : request.getCameraIds()) {
             CameraLinkageInfo cameraLinkage = processCameraLinkage(linkageId, cameraId, request);
             cameraLinkages.add(cameraLinkage);
@@ -404,20 +404,20 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
             }
         }
 
-        // 2. 执行人脸识别（如果启用）
+        // 2. 鎵ц浜鸿劯璇嗗埆锛堝鏋滃惎鐢級
         FaceVerificationResult faceVerification = null;
         if (request.getEnableFaceRecognition() && !cameraLinkages.isEmpty()) {
             faceVerification = performFaceVerification(linkageId, request);
         }
 
-        // 3. 执行异常行为检测
+        // 3. 鎵ц寮傚父琛屼负妫€娴?
         List<AbnormalEvent> detectedEvents = detectAbnormalEvents(linkageId, request);
 
-        // 4. 评估联动状态
+        // 4. 璇勪及鑱斿姩鐘舵€?
         Integer linkageStatus = evaluateLinkageStatus(cameraLinkages, faceVerification, detectedEvents);
         String statusDescription = generateStatusDescription(linkageStatus, cameraLinkages.size());
 
-        // 5. 计算处理时长
+        // 5. 璁＄畻澶勭悊鏃堕暱
         Integer processingDuration = (int) Duration.between(triggerTime, LocalDateTime.now()).toMillis();
 
         return VideoLinkageResult.builder()
@@ -435,23 +435,23 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     }
 
     /**
-     * 处理单个摄像头联动
+     * 澶勭悊鍗曚釜鎽勫儚澶磋仈鍔?
      */
     private CameraLinkageInfo processCameraLinkage(String linkageId, Long cameraId, VideoLinkageRequest request) {
-        log.debug("[视频联动] 处理摄像头联动, linkageId={}, cameraId={}", linkageId, cameraId);
+        log.debug("[瑙嗛鑱斿姩] 澶勭悊鎽勫儚澶磋仈鍔? linkageId={}, cameraId={}", linkageId, cameraId);
 
-        // 模拟摄像头信息获取
-        String cameraName = "摄像头-" + cameraId;
-        String cameraLocation = "区域-" + request.getAreaId();
+        // 妯℃嫙鎽勫儚澶翠俊鎭幏鍙?
+        String cameraName = "鎽勫儚澶?" + cameraId;
+        String cameraLocation = "鍖哄煙-" + request.getAreaId();
         String streamUrl = "rtsp://192.168.1.100:554/camera/" + cameraId + "/stream";
 
-        // 启动录制（如果需要）
+        // 鍚姩褰曞埗锛堝鏋滈渶瑕侊級
         String recordingId = null;
         if (request.getEnableRecording()) {
             recordingId = startCameraRecording(cameraId, request.getRecordDuration());
         }
 
-        // 确定联动优先级（基于摄像头位置和用户类型）
+        // 纭畾鑱斿姩浼樺厛绾э紙鍩轰簬鎽勫儚澶翠綅缃拰鐢ㄦ埛绫诲瀷锛?
         Integer priority = calculateLinkagePriority(cameraId, request);
 
         return CameraLinkageInfo.builder()
@@ -468,17 +468,17 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     }
 
     /**
-     * 执行人脸验证
+     * 鎵ц浜鸿劯楠岃瘉
      */
     private FaceVerificationResult performFaceVerification(String linkageId, VideoLinkageRequest request) {
-        log.debug("[视频联动] 执行人脸验证, linkageId={}, userId={}", linkageId, request.getUserId());
+        log.debug("[瑙嗛鑱斿姩] 鎵ц浜鸿劯楠岃瘉, linkageId={}, userId={}", linkageId, request.getUserId());
 
-        // 模拟人脸识别过程
+        // 妯℃嫙浜鸿劯璇嗗埆杩囩▼
         try {
-            // 模拟识别延迟
+            // 妯℃嫙璇嗗埆寤惰繜
             Thread.sleep(500 + (long)(Math.random() * 1000));
 
-            // 模拟识别结果（80%成功率）
+            // 妯℃嫙璇嗗埆缁撴灉锛?0%鎴愬姛鐜囷級
             boolean success = Math.random() < 0.8;
             double confidence = success ? 0.85 + Math.random() * 0.14 : 0.6 + Math.random() * 0.2;
 
@@ -490,27 +490,27 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .faceImageUrl("/api/v1/video/capture/face/" + linkageId + ".jpg")
                     .verifyTime(LocalDateTime.now())
                     .verifyMethod("REAL_TIME_RECOGNITION")
-                    .failureReasons(success ? null : List.of("人脸匹配度过低"))
+                    .failureReasons(success ? null : List.of("浜鸿劯鍖归厤搴﹁繃浣?))
                     .build();
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("人脸验证过程被中断", e);
+            throw new RuntimeException("浜鸿劯楠岃瘉杩囩▼琚腑鏂?, e);
         }
     }
 
     /**
-     * 检测异常事件
+     * 妫€娴嬪紓甯镐簨浠?
      */
     private List<AbnormalEvent> detectAbnormalEvents(String linkageId, VideoLinkageRequest request) {
-        log.debug("[视频联动] 检测异常事件, linkageId={}", linkageId);
+        log.debug("[瑙嗛鑱斿姩] 妫€娴嬪紓甯镐簨浠? linkageId={}", linkageId);
 
         List<AbnormalEvent> events = new ArrayList<>();
 
-        // 模拟异常事件检测（20%概率检测到异常）
+        // 妯℃嫙寮傚父浜嬩欢妫€娴嬶紙20%姒傜巼妫€娴嬪埌寮傚父锛?
         if (Math.random() < 0.2) {
             String[] eventTypes = {"LOITERING", "TAILGATING", "FORCED_ENTRY", "SUSPICIOUS_OBJECT"};
-            String[] descriptions = {"可疑人员徘徊", "尾随进入", "强行闯入", "可疑物品检测"};
+            String[] descriptions = {"鍙枒浜哄憳寰樺緤", "灏鹃殢杩涘叆", "寮鸿闂叆", "鍙枒鐗╁搧妫€娴?};
 
             int eventIndex = (int)(Math.random() * eventTypes.length);
 
@@ -532,56 +532,56 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     }
 
     /**
-     * 评估联动状态
+     * 璇勪及鑱斿姩鐘舵€?
      */
     private Integer evaluateLinkageStatus(List<CameraLinkageInfo> cameraLinkages,
                                           FaceVerificationResult faceVerification,
                                           List<AbnormalEvent> detectedEvents) {
-        // 计算成功率
+        // 璁＄畻鎴愬姛鐜?
         int successCount = (int) cameraLinkages.stream().filter(c -> "ONLINE".equals(c.getCameraStatus())).count();
         double successRate = (double) successCount / cameraLinkages.size();
 
-        // 人脸验证成功加分
+        // 浜鸿劯楠岃瘉鎴愬姛鍔犲垎
         if (faceVerification != null && faceVerification.getVerificationSuccess()) {
             successRate += 0.1;
         }
 
-        // 检测到异常事件需要特殊处理
+        // 妫€娴嬪埌寮傚父浜嬩欢闇€瑕佺壒娈婂鐞?
         if (!detectedEvents.isEmpty()) {
-            // 如果有严重异常事件，即使技术成功也标记为部分成功
+            // 濡傛灉鏈変弗閲嶅紓甯镐簨浠讹紝鍗充娇鎶€鏈垚鍔熶篃鏍囪涓洪儴鍒嗘垚鍔?
             boolean hasSevereEvent = detectedEvents.stream().anyMatch(e -> e.getSeverityLevel() >= 3);
             if (hasSevereEvent) {
-                return 2; // 部分成功
+                return 2; // 閮ㄥ垎鎴愬姛
             }
         }
 
         if (successRate >= 0.9) {
-            return 1; // 成功
+            return 1; // 鎴愬姛
         } else if (successRate >= 0.5) {
-            return 2; // 部分成功
+            return 2; // 閮ㄥ垎鎴愬姛
         } else {
-            return 3; // 失败
+            return 3; // 澶辫触
         }
     }
 
     /**
-     * 生成状态描述
+     * 鐢熸垚鐘舵€佹弿杩?
      */
     private String generateStatusDescription(Integer status, int cameraCount) {
         switch (status) {
             case 1:
-                return String.format("联动成功，成功处理%d个摄像头", cameraCount);
+                return String.format("鑱斿姩鎴愬姛锛屾垚鍔熷鐞?d涓憚鍍忓ご", cameraCount);
             case 2:
-                return String.format("部分成功，处理了%d个摄像头，但存在异常情况", cameraCount);
+                return String.format("閮ㄥ垎鎴愬姛锛屽鐞嗕簡%d涓憚鍍忓ご锛屼絾瀛樺湪寮傚父鎯呭喌", cameraCount);
             case 3:
-                return String.format("联动失败，无法正常处理%d个摄像头", cameraCount);
+                return String.format("鑱斿姩澶辫触锛屾棤娉曟甯稿鐞?d涓憚鍍忓ご", cameraCount);
             default:
-                return "状态未知";
+                return "鐘舵€佹湭鐭?;
         }
     }
 
     /**
-     * 创建失败的联动结果
+     * 鍒涘缓澶辫触鐨勮仈鍔ㄧ粨鏋?
      */
     private VideoLinkageResult createFailedLinkageResult(String linkageId, VideoLinkageRequest request, Throwable throwable) {
         return VideoLinkageResult.builder()
@@ -591,35 +591,35 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                 .cameraLinkages(new ArrayList<>())
                 .recordingIds(new ArrayList<>())
                 .linkageStatus(3)
-                .statusDescription("联动执行失败: " + throwable.getMessage())
+                .statusDescription("鑱斿姩鎵ц澶辫触: " + throwable.getMessage())
                 .processingDuration(0)
                 .build();
     }
 
     /**
-     * 验证视频流请求
+     * 楠岃瘉瑙嗛娴佽姹?
      */
     private void validateStreamRequest(VideoStreamRequest request) {
         if (request.getCameraId() == null) {
-            throw new IllegalArgumentException("摄像头ID不能为空");
+            throw new IllegalArgumentException("鎽勫儚澶碔D涓嶈兘涓虹┖");
         }
         if (SmartStringUtil.isEmpty(request.getProtocol())) {
-            throw new IllegalArgumentException("协议类型不能为空");
+            throw new IllegalArgumentException("鍗忚绫诲瀷涓嶈兘涓虹┖");
         }
     }
 
     /**
-     * 生成视频流ID
+     * 鐢熸垚瑙嗛娴両D
      */
     private String generateStreamId(VideoStreamRequest request) {
         return "STREAM-" + request.getCameraId() + "-" + System.currentTimeMillis();
     }
 
     /**
-     * 建立视频流
+     * 寤虹珛瑙嗛娴?
      */
     private VideoStreamResult establishVideoStream(String streamId, VideoStreamRequest request) {
-        // 模拟视频流建立
+        // 妯℃嫙瑙嗛娴佸缓绔?
         String baseUrl = "rtsp://192.168.1.100:554";
         String streamUrl = String.format("%s/camera/%d/%s", baseUrl, request.getCameraId(), request.getStreamType().toLowerCase());
 
@@ -640,28 +640,28 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     }
 
     /**
-     * 验证人脸识别请求
+     * 楠岃瘉浜鸿劯璇嗗埆璇锋眰
      */
     private void validateFaceRecognitionRequest(FaceRecognitionRequest request) {
         if (SmartStringUtil.isEmpty(request.getStreamId())) {
-            throw new IllegalArgumentException("视频流ID不能为空");
+            throw new IllegalArgumentException("瑙嗛娴両D涓嶈兘涓虹┖");
         }
         if (request.getUserId() == null) {
-            throw new IllegalArgumentException("用户ID不能为空");
+            throw new IllegalArgumentException("鐢ㄦ埛ID涓嶈兘涓虹┖");
         }
     }
 
     /**
-     * 执行内部人脸识别
+     * 鎵ц鍐呴儴浜鸿劯璇嗗埆
      */
     private FaceRecognitionResult performFaceRecognitionInternal(FaceRecognitionRequest request) {
-        log.debug("[人脸识别] 执行内部人脸识别, streamId={}", request.getStreamId());
+        log.debug("[浜鸿劯璇嗗埆] 鎵ц鍐呴儴浜鸿劯璇嗗埆, streamId={}", request.getStreamId());
 
         try {
-            // 模拟人脸识别处理时间
+            // 妯℃嫙浜鸿劯璇嗗埆澶勭悊鏃堕棿
             Thread.sleep(800 + (long)(Math.random() * 1200));
 
-            // 模拟识别结果
+            // 妯℃嫙璇嗗埆缁撴灉
             boolean success = Math.random() < 0.85;
             double confidence = success ? 0.88 + Math.random() * 0.12 : 0.65 + Math.random() * 0.2;
 
@@ -669,7 +669,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .recognitionSuccess(success)
                     .confidenceScore(confidence)
                     .matchedUserId(success ? request.getUserId() : null)
-                    .matchedUserName(success ? "用户" + request.getUserId() : null)
+                    .matchedUserName(success ? "鐢ㄦ埛" + request.getUserId() : null)
                     .capturedFaceUrl("/api/v1/video/face/capture/" + request.getStreamId() + ".jpg")
                     .recognitionTime(LocalDateTime.now())
                     .faceCount(1)
@@ -680,56 +680,56 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                             .detectionMethod("MULTI_MODAL")
                             .spoofingIndicators(new ArrayList<>())
                             .build())
-                    .failureReasons(success ? null : List.of("人脸匹配度过低", "图片质量不佳"))
+                    .failureReasons(success ? null : List.of("浜鸿劯鍖归厤搴﹁繃浣?, "鍥剧墖璐ㄩ噺涓嶄匠"))
                     .build();
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("人脸识别过程被中断", e);
+            throw new RuntimeException("浜鸿劯璇嗗埆杩囩▼琚腑鏂?, e);
         }
     }
 
     /**
-     * 记录人脸识别结果
+     * 璁板綍浜鸿劯璇嗗埆缁撴灉
      */
     private void logFaceRecognitionResult(FaceRecognitionResult result) {
         if (result.getRecognitionSuccess()) {
-            log.info("[人脸识别] 识别成功, 置信度={}, 用户={}",
+            log.info("[浜鸿劯璇嗗埆] 璇嗗埆鎴愬姛, 缃俊搴?{}, 鐢ㄦ埛={}",
                     result.getConfidenceScore(), result.getMatchedUserName());
         } else {
-            log.warn("[人脸识别] 识别失败, 失败原因={}", result.getFailureReasons());
+            log.warn("[浜鸿劯璇嗗埆] 璇嗗埆澶辫触, 澶辫触鍘熷洜={}", result.getFailureReasons());
         }
     }
 
     /**
-     * 验证行为检测请求
+     * 楠岃瘉琛屼负妫€娴嬭姹?
      */
     private void validateBehaviorDetectionRequest(AbnormalBehaviorRequest request) {
         if (SmartStringUtil.isEmpty(request.getStreamId())) {
-            throw new IllegalArgumentException("视频流ID不能为空");
+            throw new IllegalArgumentException("瑙嗛娴両D涓嶈兘涓虹┖");
         }
         if (request.getBehaviorTypes() == null || request.getBehaviorTypes().isEmpty()) {
-            throw new IllegalArgumentException("检测行为类型不能为空");
+            throw new IllegalArgumentException("妫€娴嬭涓虹被鍨嬩笉鑳戒负绌?);
         }
     }
 
     /**
-     * 执行内部行为检测
+     * 鎵ц鍐呴儴琛屼负妫€娴?
      */
     private AbnormalBehaviorResult performBehaviorDetectionInternal(AbnormalBehaviorRequest request) {
-        log.debug("[异常行为检测] 执行内部行为检测, streamId={}", request.getStreamId());
+        log.debug("[寮傚父琛屼负妫€娴媇 鎵ц鍐呴儴琛屼负妫€娴? streamId={}", request.getStreamId());
 
         try {
-            // 模拟行为检测处理时间
+            // 妯℃嫙琛屼负妫€娴嬪鐞嗘椂闂?
             Thread.sleep(1000 + (long)(Math.random() * 2000));
 
-            // 模拟检测结果（30%概率检测到异常）
+            // 妯℃嫙妫€娴嬬粨鏋滐紙30%姒傜巼妫€娴嬪埌寮傚父锛?
             boolean hasAbnormal = Math.random() < 0.3;
             List<DetectedBehavior> behaviors = new ArrayList<>();
 
             if (hasAbnormal) {
                 String[] behaviorTypes = {"LOITERING", "TAILGATING", "CROWDING", "UNAUTHORIZED_ACCESS"};
-                String[] descriptions = {"可疑徘徊", "尾随进入", "人员聚集", "未授权访问"};
+                String[] descriptions = {"鍙枒寰樺緤", "灏鹃殢杩涘叆", "浜哄憳鑱氶泦", "鏈巿鏉冭闂?};
 
                 int behaviorCount = (int)(Math.random() * 3) + 1;
                 for (int i = 0; i < behaviorCount; i++) {
@@ -747,7 +747,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                 }
             }
 
-            // 计算风险评分
+            // 璁＄畻椋庨櫓璇勫垎
             double riskScore = hasAbnormal ? 0.5 + Math.random() * 0.5 : Math.random() * 0.3;
             String alertLevel = riskScore > 0.8 ? "HIGH" : riskScore > 0.6 ? "MEDIUM" : riskScore > 0.4 ? "LOW" : "NORMAL";
 
@@ -759,36 +759,36 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .behaviorCount(behaviors.size())
                     .riskScore(riskScore)
                     .alertLevel(alertLevel)
-                    .recommendedActions(hasAbnormal ? List.of("通知安保人员", "保存证据", "继续监控") : new ArrayList<>())
+                    .recommendedActions(hasAbnormal ? List.of("閫氱煡瀹変繚浜哄憳", "淇濆瓨璇佹嵁", "缁х画鐩戞帶") : new ArrayList<>())
                     .build();
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("异常行为检测过程被中断", e);
+            throw new RuntimeException("寮傚父琛屼负妫€娴嬭繃绋嬭涓柇", e);
         }
     }
 
     /**
-     * 触发异常行为告警
+     * 瑙﹀彂寮傚父琛屼负鍛婅
      */
     private void triggerAbnormalBehaviorAlert(AbnormalBehaviorResult result) {
-        log.warn("[异常行为告警] 触发告警, detectionId={}, alertLevel={}, behaviorCount={}",
+        log.warn("[寮傚父琛屼负鍛婅] 瑙﹀彂鍛婅, detectionId={}, alertLevel={}, behaviorCount={}",
                 result.getDetectionId(), result.getAlertLevel(), result.getBehaviorCount());
 
-        // 这里应该调用告警系统发送通知
+        // 杩欓噷搴旇璋冪敤鍛婅绯荤粺鍙戦€侀€氱煡
         // alertService.sendAbnormalBehaviorAlert(result);
     }
 
-    // 其他私有方法继续实现...
-    // 为了代码长度考虑，这里省略部分方法的实现，实际开发中需要完整实现
+    // 鍏朵粬绉佹湁鏂规硶缁х画瀹炵幇...
+    // 涓轰簡浠ｇ爜闀垮害鑰冭檻锛岃繖閲岀渷鐣ラ儴鍒嗘柟娉曠殑瀹炵幇锛屽疄闄呭紑鍙戜腑闇€瑕佸畬鏁村疄鐜?
 
     private void validateRecordingRequest(VideoRecordingRequest request) {
-        // 验证录制请求参数
+        // 楠岃瘉褰曞埗璇锋眰鍙傛暟
         if (SmartStringUtil.isEmpty(request.getLinkageId())) {
-            throw new IllegalArgumentException("联动ID不能为空");
+            throw new IllegalArgumentException("鑱斿姩ID涓嶈兘涓虹┖");
         }
         if (request.getCameraIds() == null || request.getCameraIds().isEmpty()) {
-            throw new IllegalArgumentException("摄像头ID列表不能为空");
+            throw new IllegalArgumentException("鎽勫儚澶碔D鍒楄〃涓嶈兘涓虹┖");
         }
     }
 
@@ -797,7 +797,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     }
 
     private VideoRecordingResult performVideoRecording(String recordingTaskId, VideoRecordingRequest request) {
-        // 模拟视频录制实现
+        // 妯℃嫙瑙嗛褰曞埗瀹炵幇
         List<RecordingFileInfo> files = new ArrayList<>();
 
         for (Long cameraId : request.getCameraIds()) {
@@ -806,7 +806,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .cameraId(cameraId)
                     .fileName("recording_" + cameraId + "_" + System.currentTimeMillis() + ".mp4")
                     .filePath("/storage/recordings/" + recordingTaskId + "/")
-                    .fileSize((long)(Math.random() * 100000000)) // 随机文件大小
+                    .fileSize((long)(Math.random() * 100000000)) // 闅忔満鏂囦欢澶у皬
                     .startTime(LocalDateTime.now().minusSeconds(request.getPreRecordSeconds()))
                     .endTime(LocalDateTime.now().plusSeconds(request.getPostRecordSeconds()))
                     .duration(request.getPreRecordSeconds() + request.getPostRecordSeconds())
@@ -824,7 +824,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                 .endTime(LocalDateTime.now().plusSeconds(request.getPostRecordSeconds()))
                 .totalDuration((long) (request.getPreRecordSeconds() + request.getPostRecordSeconds()))
                 .totalSize(files.stream().mapToLong(RecordingFileInfo::getFileSize).sum())
-                .recordingStatus(1) // 录制中
+                .recordingStatus(1) // 褰曞埗涓?
                 .tags(List.of("EVENT_LINKED", "AUTO_RECORDING"))
                 .build();
     }
@@ -834,13 +834,13 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     }
 
     private Integer calculateLinkagePriority(Long cameraId, VideoLinkageRequest request) {
-        // 模拟优先级计算逻辑
+        // 妯℃嫙浼樺厛绾ц绠楅€昏緫
         return (int)(Math.random() * 10) + 1;
     }
 
     private void validateMultiScreenRequest(MultiScreenRequest request) {
         if (request.getCameraIds() == null || request.getCameraIds().isEmpty()) {
-            throw new IllegalArgumentException("摄像头ID列表不能为空");
+            throw new IllegalArgumentException("鎽勫儚澶碔D鍒楄〃涓嶈兘涓虹┖");
         }
     }
 
@@ -854,9 +854,9 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
         for (Long cameraId : request.getCameraIds()) {
             CameraStreamInfo stream = CameraStreamInfo.builder()
                     .cameraId(cameraId)
-                    .cameraName("摄像头-" + cameraId)
+                    .cameraName("鎽勫儚澶?" + cameraId)
                     .streamUrl("rtsp://192.168.1.100:554/camera/" + cameraId + "/stream")
-                    .position("位置-" + (streams.size() + 1))
+                    .position("浣嶇疆-" + (streams.size() + 1))
                     .width(1920)
                     .height(1080)
                     .status("ONLINE")
@@ -879,17 +879,17 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
 
     private void validatePTZControlRequest(PTZControlRequest request) {
         if (request.getCameraId() == null) {
-            throw new IllegalArgumentException("摄像头ID不能为空");
+            throw new IllegalArgumentException("鎽勫儚澶碔D涓嶈兘涓虹┖");
         }
         if (SmartStringUtil.isEmpty(request.getAction())) {
-            throw new IllegalArgumentException("控制动作不能为空");
+            throw new IllegalArgumentException("鎺у埗鍔ㄤ綔涓嶈兘涓虹┖");
         }
     }
 
     private PTZControlResult performPTZControl(PTZControlRequest request) {
-        // 模拟PTZ控制实现
+        // 妯℃嫙PTZ鎺у埗瀹炵幇
         try {
-            Thread.sleep(200 + (long)(Math.random() * 300)); // 模拟控制延迟
+            Thread.sleep(200 + (long)(Math.random() * 300)); // 妯℃嫙鎺у埗寤惰繜
 
             return PTZControlResult.builder()
                     .controlSuccess(true)
@@ -903,19 +903,19 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("PTZ控制过程被中断", e);
+            throw new RuntimeException("PTZ鎺у埗杩囩▼琚腑鏂?, e);
         }
     }
 
     private List<PTZPresetInfo> generateMockPresets() {
         List<PTZPresetInfo> presets = new ArrayList<>();
-        String[] presetNames = {"主入口", "侧门", "大厅中央", "前台", "出口"};
+        String[] presetNames = {"涓诲叆鍙?, "渚ч棬", "澶у巺涓ぎ", "鍓嶅彴", "鍑哄彛"};
 
         for (int i = 0; i < presetNames.length; i++) {
             PTZPresetInfo preset = PTZPresetInfo.builder()
                     .presetId(i + 1)
                     .presetName(presetNames[i])
-                    .description("预设位" + (i + 1))
+                    .description("棰勮浣? + (i + 1))
                     .position("Pos:" + (i * 10) + "," + (i * 5))
                     .build();
             presets.add(preset);
@@ -926,10 +926,10 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
 
     private void validatePlaybackRequest(VideoPlaybackRequest request) {
         if (request.getCameraId() == null) {
-            throw new IllegalArgumentException("摄像头ID不能为空");
+            throw new IllegalArgumentException("鎽勫儚澶碔D涓嶈兘涓虹┖");
         }
         if (request.getStartTime() == null || request.getEndTime() == null) {
-            throw new IllegalArgumentException("开始时间和结束时间不能为空");
+            throw new IllegalArgumentException("寮€濮嬫椂闂村拰缁撴潫鏃堕棿涓嶈兘涓虹┖");
         }
     }
 
@@ -955,13 +955,13 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     private List<VideoEventMarker> generateMockEventMarkers(VideoPlaybackRequest request) {
         List<VideoEventMarker> markers = new ArrayList<>();
 
-        // 模拟生成事件标记点
+        // 妯℃嫙鐢熸垚浜嬩欢鏍囪鐐?
         for (int i = 0; i < 3; i++) {
             VideoEventMarker marker = VideoEventMarker.builder()
                     .eventId("EVENT-" + i)
                     .eventTime(request.getStartTime().plusMinutes(i * 30))
                     .eventType(i % 2 == 0 ? "ACCESS" : "ALERT")
-                    .description(i % 2 == 0 ? "门禁事件" : "告警事件")
+                    .description(i % 2 == 0 ? "闂ㄧ浜嬩欢" : "鍛婅浜嬩欢")
                     .offsetSeconds(i * 1800)
                     .thumbnailUrl("/api/v1/video/thumbnail/" + i + ".jpg")
                     .build();
@@ -972,14 +972,14 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     }
 
     private void validateEventQueryRequest(VideoLinkageEventQueryRequest request) {
-        // 验证事件查询请求参数
+        // 楠岃瘉浜嬩欢鏌ヨ璇锋眰鍙傛暟
         if (request.getPageNum() == null || request.getPageSize() == null) {
-            throw new IllegalArgumentException("分页参数不能为空");
+            throw new IllegalArgumentException("鍒嗛〉鍙傛暟涓嶈兘涓虹┖");
         }
     }
 
     private List<VideoLinkageEventVO> queryVideoLinkageEvents(VideoLinkageEventQueryRequest request) {
-        // 模拟查询事件列表
+        // 妯℃嫙鏌ヨ浜嬩欢鍒楄〃
         List<VideoLinkageEventVO> events = new ArrayList<>();
 
         for (int i = 0; i < 20; i++) {
@@ -987,11 +987,11 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .linkageId("VL-" + i)
                     .accessEventId("AE-" + i)
                     .userId("USER-" + (i % 10 + 1))
-                    .userName("用户" + (i % 10 + 1))
+                    .userName("鐢ㄦ埛" + (i % 10 + 1))
                     .deviceId((long)(i % 5 + 1))
-                    .deviceName("门禁设备-" + (i % 5 + 1))
+                    .deviceName("闂ㄧ璁惧-" + (i % 5 + 1))
                     .areaId("AREA-" + (i % 3 + 1))
-                    .areaName("区域-" + (i % 3 + 1))
+                    .areaName("鍖哄煙-" + (i % 3 + 1))
                     .eventType(i % 2 == 0 ? "NORMAL_ACCESS" : "ALERT_ACCESS")
                     .accessTime(LocalDateTime.now().minusHours(i))
                     .linkageStatus(i % 10 == 0 ? 3 : i % 5 == 0 ? 2 : 1)
@@ -999,7 +999,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
                     .cameraCount(3)
                     .faceVerificationSuccess(Math.random() > 0.2)
                     .abnormalEventCount(i % 8 == 0 ? 1 : 0)
-                    .description(i % 2 == 0 ? "正常门禁事件" : "异常门禁事件")
+                    .description(i % 2 == 0 ? "姝ｅ父闂ㄧ浜嬩欢" : "寮傚父闂ㄧ浜嬩欢")
                     .build();
             events.add(event);
         }
@@ -1008,14 +1008,14 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
     }
 
     private void validateStatisticsRequest(MonitorStatisticsRequest request) {
-        // 验证统计请求参数
+        // 楠岃瘉缁熻璇锋眰鍙傛暟
         if (request.getStartTime() == null || request.getEndTime() == null) {
-            throw new IllegalArgumentException("统计时间范围不能为空");
+            throw new IllegalArgumentException("缁熻鏃堕棿鑼冨洿涓嶈兘涓虹┖");
         }
     }
 
     private MonitorStatisticsVO generateMonitorStatistics(MonitorStatisticsRequest request) {
-        // 模拟生成统计数据
+        // 妯℃嫙鐢熸垚缁熻鏁版嵁
         return MonitorStatisticsVO.builder()
                 .statisticsPeriod(request.getStatisticsType())
                 .totalLinkageEvents(1250L)
@@ -1039,7 +1039,7 @@ public class VideoLinkageMonitorServiceImpl implements VideoLinkageMonitorServic
         for (Long cameraId : cameraIds != null ? cameraIds : List.of(1L, 2L, 3L)) {
             CameraStatistics stat = CameraStatistics.builder()
                     .cameraId(cameraId)
-                    .cameraName("摄像头-" + cameraId)
+                    .cameraName("鎽勫儚澶?" + cameraId)
                     .linkageEventCount(25 + (long)(Math.random() * 50))
                     .recordingDuration((long)(Math.random() * 100))
                     .storageUsed((long)(Math.random() * 20))

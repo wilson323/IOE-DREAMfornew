@@ -23,10 +23,10 @@ import net.lab1024.sa.video.edge.communication.EdgeCommunicationManager;
 import net.lab1024.sa.video.edge.EdgeConfig;
 
 /**
- * 边缘安全服务实现
+ * 杈圭紭瀹夊叏鏈嶅姟瀹炵幇
  * <p>
- * 基于边缘计算架构的门禁安全增强服务实现
- * 提供边缘设备安全推理、模型管理、状态监控等功能
+ * 鍩轰簬杈圭紭璁＄畻鏋舵瀯鐨勯棬绂佸畨鍏ㄥ寮烘湇鍔″疄鐜?
+ * 鎻愪緵杈圭紭璁惧瀹夊叏鎺ㄧ悊銆佹ā鍨嬬鐞嗐€佺姸鎬佺洃鎺х瓑鍔熻兘
  * </p>
  *
  * @author IOE-DREAM Team
@@ -38,57 +38,57 @@ import net.lab1024.sa.video.edge.EdgeConfig;
 @Transactional(rollbackFor = Exception.class)
 public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
-    // 边缘安全设备管理
+    // 杈圭紭瀹夊叏璁惧绠＄悊
     private final Map<String, EdgeDevice> securityDevices = new ConcurrentHashMap<>();
 
-    // 线程池 - 使用统一配置的异步线程池
+    // 绾跨▼姹?- 浣跨敤缁熶竴閰嶇疆鐨勫紓姝ョ嚎绋嬫睜
     @Resource(name = "asyncExecutor")
     private ThreadPoolTaskExecutor securityTaskExecutor;
 
-    // 边缘视频处理器（复用）
+    // 杈圭紭瑙嗛澶勭悊鍣紙澶嶇敤锛?
     private final EdgeVideoProcessor edgeVideoProcessor;
 
-    // 边缘配置
+    // 杈圭紭閰嶇疆
     private final EdgeConfig edgeConfig;
 
     /**
-     * 构造函数
+     * 鏋勯€犲嚱鏁?
      */
     public EdgeSecurityServiceImpl() {
-        // 初始化边缘配置
+        // 鍒濆鍖栬竟缂橀厤缃?
         this.edgeConfig = createEdgeSecurityConfig();
 
-        // 初始化边缘视频处理器
+        // 鍒濆鍖栬竟缂樿棰戝鐞嗗櫒
         this.edgeVideoProcessor = new EdgeVideoProcessor(
             edgeConfig,
             new EdgeCommunicationManager(edgeConfig)
         );
 
-        log.info("[边缘安全服务] 初始化完成，使用统一异步线程池");
+        log.info("[杈圭紭瀹夊叏鏈嶅姟] 鍒濆鍖栧畬鎴愶紝浣跨敤缁熶竴寮傛绾跨▼姹?);
     }
 
-    // ==================== 核心推理接口实现 ====================
+    // ==================== 鏍稿績鎺ㄧ悊鎺ュ彛瀹炵幇 ====================
 
     @Override
     public Future<InferenceResult> performSecurityInference(InferenceRequest inferenceRequest) {
-        log.debug("[边缘安全服务] 执行安全推理，taskId={}, taskType={}, deviceId={}",
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鎵ц瀹夊叏鎺ㄧ悊锛宼askId={}, taskType={}, deviceId={}",
                 inferenceRequest.getTaskId(), inferenceRequest.getTaskType(), inferenceRequest.getDeviceId());
 
         return securityTaskExecutor.submit(() -> {
             try {
-                // 验证设备是否已注册
+                // 楠岃瘉璁惧鏄惁宸叉敞鍐?
                 EdgeDevice device = securityDevices.get(inferenceRequest.getDeviceId());
                 if (device == null) {
-                    log.warn("[边缘安全服务] 设备未注册，deviceId={}", inferenceRequest.getDeviceId());
-                    return createErrorResult(inferenceRequest, "设备未注册");
+                    log.warn("[杈圭紭瀹夊叏鏈嶅姟] 璁惧鏈敞鍐岋紝deviceId={}", inferenceRequest.getDeviceId());
+                    return createErrorResult(inferenceRequest, "璁惧鏈敞鍐?);
                 }
 
-                // 执行推理
+                // 鎵ц鎺ㄧ悊
                 Future<InferenceResult> result = edgeVideoProcessor.performInference(inferenceRequest);
                 return result.get(10, TimeUnit.SECONDS);
 
             } catch (Exception e) {
-                log.error("[边缘安全服务] 安全推理异常，taskId={}, error={}",
+                log.error("[杈圭紭瀹夊叏鏈嶅姟] 瀹夊叏鎺ㄧ悊寮傚父锛宼askId={}, error={}",
                         inferenceRequest.getTaskId(), e.getMessage(), e);
                 return createErrorResult(inferenceRequest, e.getMessage());
             }
@@ -97,24 +97,24 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public Future<InferenceResult> performCollaborativeSecurityInference(InferenceRequest inferenceRequest) {
-        log.debug("[边缘安全服务] 执行协同安全推理，taskId={}, taskType={}, deviceId={}",
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鎵ц鍗忓悓瀹夊叏鎺ㄧ悊锛宼askId={}, taskType={}, deviceId={}",
                 inferenceRequest.getTaskId(), inferenceRequest.getTaskType(), inferenceRequest.getDeviceId());
 
         return securityTaskExecutor.submit(() -> {
             try {
-                // 验证设备是否已注册
+                // 楠岃瘉璁惧鏄惁宸叉敞鍐?
                 EdgeDevice device = securityDevices.get(inferenceRequest.getDeviceId());
                 if (device == null) {
-                    log.warn("[边缘安全服务] 设备未注册，deviceId={}", inferenceRequest.getDeviceId());
-                    return createErrorResult(inferenceRequest, "设备未注册");
+                    log.warn("[杈圭紭瀹夊叏鏈嶅姟] 璁惧鏈敞鍐岋紝deviceId={}", inferenceRequest.getDeviceId());
+                    return createErrorResult(inferenceRequest, "璁惧鏈敞鍐?);
                 }
 
-                // 执行云边协同推理
+                // 鎵ц浜戣竟鍗忓悓鎺ㄧ悊
                 Future<InferenceResult> result = edgeVideoProcessor.performCloudCollaborativeInference(inferenceRequest);
                 return result.get(15, TimeUnit.SECONDS);
 
             } catch (Exception e) {
-                log.error("[边缘安全服务] 协同安全推理异常，taskId={}, error={}",
+                log.error("[杈圭紭瀹夊叏鏈嶅姟] 鍗忓悓瀹夊叏鎺ㄧ悊寮傚父锛宼askId={}, error={}",
                         inferenceRequest.getTaskId(), e.getMessage(), e);
                 return createErrorResult(inferenceRequest, e.getMessage());
             }
@@ -123,7 +123,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public Map<String, Future<InferenceResult>> performBatchSecurityInference(Map<String, InferenceRequest> inferenceRequests) {
-        log.info("[边缘安全服务] 执行批量安全推理，任务数量={}", inferenceRequests.size());
+        log.info("[杈圭紭瀹夊叏鏈嶅姟] 鎵ц鎵归噺瀹夊叏鎺ㄧ悊锛屼换鍔℃暟閲?{}", inferenceRequests.size());
 
         Map<String, Future<InferenceResult>> results = new ConcurrentHashMap<>();
 
@@ -133,37 +133,37 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
             results.put(taskId, performSecurityInference(request));
         }
 
-        log.info("[边缘安全服务] 批量安全推理任务提交完成，数量={}", results.size());
+        log.info("[杈圭紭瀹夊叏鏈嶅姟] 鎵归噺瀹夊叏鎺ㄧ悊浠诲姟鎻愪氦瀹屾垚锛屾暟閲?{}", results.size());
         return results;
     }
 
-    // ==================== 设备管理接口实现 ====================
+    // ==================== 璁惧绠＄悊鎺ュ彛瀹炵幇 ====================
 
     @Override
     public boolean registerEdgeSecurityDevice(EdgeDevice edgeDevice) {
-        log.info("[边缘安全服务] 注册边缘安全设备，deviceId={}, deviceType={}, location={}",
+        log.info("[杈圭紭瀹夊叏鏈嶅姟] 娉ㄥ唽杈圭紭瀹夊叏璁惧锛宒eviceId={}, deviceType={}, location={}",
                 edgeDevice.getDeviceId(), edgeDevice.getDeviceType(), edgeDevice.getLocation());
 
         try {
-            // 检查设备能力
+            // 妫€鏌ヨ澶囪兘鍔?
             if (!validateSecurityDeviceCapability(edgeDevice)) {
-                log.error("[边缘安全服务] 设备能力验证失败，deviceId={}", edgeDevice.getDeviceId());
+                log.error("[杈圭紭瀹夊叏鏈嶅姟] 璁惧鑳藉姏楠岃瘉澶辫触锛宒eviceId={}", edgeDevice.getDeviceId());
                 return false;
             }
 
-            // 注册到边缘视频处理器
+            // 娉ㄥ唽鍒拌竟缂樿棰戝鐞嗗櫒
             boolean success = edgeVideoProcessor.registerEdgeDevice(edgeDevice);
             if (success) {
                 securityDevices.put(edgeDevice.getDeviceId(), edgeDevice);
-                log.info("[边缘安全服务] 边缘安全设备注册成功，deviceId={}", edgeDevice.getDeviceId());
+                log.info("[杈圭紭瀹夊叏鏈嶅姟] 杈圭紭瀹夊叏璁惧娉ㄥ唽鎴愬姛锛宒eviceId={}", edgeDevice.getDeviceId());
                 return true;
             } else {
-                log.error("[边缘安全服务] 边缘安全设备注册失败，deviceId={}", edgeDevice.getDeviceId());
+                log.error("[杈圭紭瀹夊叏鏈嶅姟] 杈圭紭瀹夊叏璁惧娉ㄥ唽澶辫触锛宒eviceId={}", edgeDevice.getDeviceId());
                 return false;
             }
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 注册边缘安全设备异常，deviceId={}, error={}",
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 娉ㄥ唽杈圭紭瀹夊叏璁惧寮傚父锛宒eviceId={}, error={}",
                     edgeDevice.getDeviceId(), e.getMessage(), e);
             return false;
         }
@@ -171,26 +171,26 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public boolean unregisterEdgeSecurityDevice(String deviceId) {
-        log.info("[边缘安全服务] 注销边缘安全设备，deviceId={}", deviceId);
+        log.info("[杈圭紭瀹夊叏鏈嶅姟] 娉ㄩ攢杈圭紭瀹夊叏璁惧锛宒eviceId={}", deviceId);
 
         try {
             EdgeDevice device = securityDevices.remove(deviceId);
             if (device == null) {
-                log.warn("[边缘安全服务] 设备未找到，deviceId={}", deviceId);
+                log.warn("[杈圭紭瀹夊叏鏈嶅姟] 璁惧鏈壘鍒帮紝deviceId={}", deviceId);
                 return false;
             }
 
             boolean success = edgeVideoProcessor.unregisterEdgeDevice(deviceId);
             if (success) {
-                log.info("[边缘安全服务] 边缘安全设备注销成功，deviceId={}", deviceId);
+                log.info("[杈圭紭瀹夊叏鏈嶅姟] 杈圭紭瀹夊叏璁惧娉ㄩ攢鎴愬姛锛宒eviceId={}", deviceId);
                 return true;
             } else {
-                log.error("[边缘安全服务] 边缘安全设备注销失败，deviceId={}", deviceId);
+                log.error("[杈圭紭瀹夊叏鏈嶅姟] 杈圭紭瀹夊叏璁惧娉ㄩ攢澶辫触锛宒eviceId={}", deviceId);
                 return false;
             }
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 注销边缘安全设备异常，deviceId={}, error={}",
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 娉ㄩ攢杈圭紭瀹夊叏璁惧寮傚父锛宒eviceId={}, error={}",
                     deviceId, e.getMessage(), e);
             return false;
         }
@@ -198,7 +198,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public Map<String, Object> getEdgeDeviceSecurityStatus(String deviceId) {
-        log.debug("[边缘安全服务] 查询边缘设备安全状态，deviceId={}", deviceId);
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鏌ヨ杈圭紭璁惧瀹夊叏鐘舵€侊紝deviceId={}", deviceId);
 
         try {
             EdgeDevice device = securityDevices.get(deviceId);
@@ -206,10 +206,10 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
                 return createDeviceNotFoundStatus(deviceId);
             }
 
-            // 获取设备状态
+            // 鑾峰彇璁惧鐘舵€?
             var deviceStatus = edgeVideoProcessor.getEdgeDeviceStatus(deviceId);
 
-            // 构建状态信息
+            // 鏋勫缓鐘舵€佷俊鎭?
             Map<String, Object> status = Map.of(
                 "deviceId", deviceId,
                 "deviceType", device.getDeviceType(),
@@ -224,7 +224,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
             return status;
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 查询边缘设备状态异常，deviceId={}, error={}",
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 鏌ヨ杈圭紭璁惧鐘舵€佸紓甯革紝deviceId={}, error={}",
                     deviceId, e.getMessage(), e);
             return createErrorStatus(deviceId, e.getMessage());
         }
@@ -232,18 +232,18 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public List<Map<String, Object>> getAllEdgeSecurityDeviceStatus() {
-        log.debug("[边缘安全服务] 查询所有边缘安全设备状态");
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鏌ヨ鎵€鏈夎竟缂樺畨鍏ㄨ澶囩姸鎬?);
 
         try {
-            // 获取边缘统计信息
+            // 鑾峰彇杈圭紭缁熻淇℃伅
             var edgeStatistics = edgeVideoProcessor.getEdgeStatistics();
 
-            // 模拟设备状态列表
+            // 妯℃嫙璁惧鐘舵€佸垪琛?
             return List.of(
                 Map.of(
                     "deviceId", "EDGE_CAM_001",
                     "deviceType", "AI_CAMERA",
-                    "location", "园区主入口",
+                    "location", "鍥尯涓诲叆鍙?,
                     "status", "READY",
                     "onlineTime", 7200,
                     "lastInference", LocalDateTime.now().minusMinutes(1)
@@ -251,7 +251,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
                 Map.of(
                     "deviceId", "EDGE_CAM_002",
                     "deviceType", "AI_CAMERA",
-                    "location", "办公楼大厅",
+                    "location", "鍔炲叕妤煎ぇ鍘?,
                     "status", "READY",
                     "onlineTime", 6500,
                     "lastInference", LocalDateTime.now().minusMinutes(3)
@@ -259,31 +259,31 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
             );
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 查询所有边缘设备状态异常，error={}", e.getMessage(), e);
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 鏌ヨ鎵€鏈夎竟缂樿澶囩姸鎬佸紓甯革紝error={}", e.getMessage(), e);
             return List.of();
         }
     }
 
-    // ==================== 模型管理接口实现 ====================
+    // ==================== 妯″瀷绠＄悊鎺ュ彛瀹炵幇 ====================
 
     @Override
     public boolean updateEdgeSecurityModel(String deviceId, String modelType, byte[] modelData) {
-        log.info("[边缘安全服务] 更新边缘设备安全模型，deviceId={}, modelType={}, size={}MB",
+        log.info("[杈圭紭瀹夊叏鏈嶅姟] 鏇存柊杈圭紭璁惧瀹夊叏妯″瀷锛宒eviceId={}, modelType={}, size={}MB",
                 deviceId, modelType, modelData.length / (1024 * 1024));
 
         try {
             boolean success = edgeVideoProcessor.updateEdgeModel(deviceId, modelType, modelData);
 
             if (success) {
-                log.info("[边缘安全服务] 边缘设备安全模型更新成功，deviceId={}, modelType={}", deviceId, modelType);
+                log.info("[杈圭紭瀹夊叏鏈嶅姟] 杈圭紭璁惧瀹夊叏妯″瀷鏇存柊鎴愬姛锛宒eviceId={}, modelType={}", deviceId, modelType);
             } else {
-                log.error("[边缘安全服务] 边缘设备安全模型更新失败，deviceId={}, modelType={}", deviceId, modelType);
+                log.error("[杈圭紭瀹夊叏鏈嶅姟] 杈圭紭璁惧瀹夊叏妯″瀷鏇存柊澶辫触锛宒eviceId={}, modelType={}", deviceId, modelType);
             }
 
             return success;
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 更新边缘设备安全模型异常，deviceId={}, modelType={}, error={}",
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 鏇存柊杈圭紭璁惧瀹夊叏妯″瀷寮傚父锛宒eviceId={}, modelType={}, error={}",
                     deviceId, modelType, e.getMessage(), e);
             return false;
         }
@@ -291,7 +291,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public Map<String, Object> getEdgeDeviceModels(String deviceId) {
-        log.debug("[边缘安全服务] 查询边缘设备模型，deviceId={}", deviceId);
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鏌ヨ杈圭紭璁惧妯″瀷锛宒eviceId={}", deviceId);
 
         try {
             EdgeDevice device = securityDevices.get(deviceId);
@@ -299,7 +299,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
                 return createDeviceNotFoundStatus(deviceId);
             }
 
-            // 返回模拟的模型信息
+            // 杩斿洖妯℃嫙鐨勬ā鍨嬩俊鎭?
             return Map.of(
                 "deviceId", deviceId,
                 "models", List.of(
@@ -323,7 +323,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
             );
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 查询边缘设备模型异常，deviceId={}, error={}",
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 鏌ヨ杈圭紭璁惧妯″瀷寮傚父锛宒eviceId={}, error={}",
                     deviceId, e.getMessage(), e);
             return createErrorStatus(deviceId, e.getMessage());
         }
@@ -331,42 +331,42 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public boolean syncSecurityModelsToDevice(String deviceId, List<String> modelTypes) {
-        log.info("[边缘安全服务] 同步安全模型到边缘设备，deviceId={}, models={}",
+        log.info("[杈圭紭瀹夊叏鏈嶅姟] 鍚屾瀹夊叏妯″瀷鍒拌竟缂樿澶囷紝deviceId={}, models={}",
                 deviceId, modelTypes);
 
         try {
             for (String modelType : modelTypes) {
-                // 模拟模型数据
+                // 妯℃嫙妯″瀷鏁版嵁
                 byte[] modelData = generateMockModelData(modelType);
 
                 boolean success = updateEdgeSecurityModel(deviceId, modelType, modelData);
                 if (!success) {
-                    log.warn("[边缘安全服务] 模型同步失败，deviceId={}, modelType={}", deviceId, modelType);
+                    log.warn("[杈圭紭瀹夊叏鏈嶅姟] 妯″瀷鍚屾澶辫触锛宒eviceId={}, modelType={}", deviceId, modelType);
                     return false;
                 }
             }
 
-            log.info("[边缘安全服务] 安全模型同步完成，deviceId={}, modelsCount={}", deviceId, modelTypes.size());
+            log.info("[杈圭紭瀹夊叏鏈嶅姟] 瀹夊叏妯″瀷鍚屾瀹屾垚锛宒eviceId={}, modelsCount={}", deviceId, modelTypes.size());
             return true;
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 同步安全模型异常，deviceId={}, error={}",
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 鍚屾瀹夊叏妯″瀷寮傚父锛宒eviceId={}, error={}",
                     deviceId, e.getMessage(), e);
             return false;
         }
     }
 
-    // ==================== 统计信息接口实现 ====================
+    // ==================== 缁熻淇℃伅鎺ュ彛瀹炵幇 ====================
 
     @Override
     public Map<String, Object> getEdgeSecurityStatistics() {
-        log.debug("[边缘安全服务] 获取边缘安全统计信息");
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鑾峰彇杈圭紭瀹夊叏缁熻淇℃伅");
 
         try {
-            // 获取边缘统计信息
+            // 鑾峰彇杈圭紭缁熻淇℃伅
             var edgeStatistics = edgeVideoProcessor.getEdgeStatistics();
 
-            // 构建统计信息
+            // 鏋勫缓缁熻淇℃伅
             return Map.of(
                 "totalDevices", securityDevices.size(),
                 "readyDevices", edgeStatistics.getReadyDevices(),
@@ -383,7 +383,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
             );
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 获取统计信息异常，error={}", e.getMessage(), e);
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 鑾峰彇缁熻淇℃伅寮傚父锛宔rror={}", e.getMessage(), e);
             return Map.of(
                 "error", e.getMessage(),
                 "lastUpdateTime", LocalDateTime.now()
@@ -393,7 +393,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public Map<String, Object> getEdgeDevicePerformanceMetrics(String deviceId) {
-        log.debug("[边缘安全服务] 获取边缘设备性能指标，deviceId={}", deviceId);
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鑾峰彇杈圭紭璁惧鎬ц兘鎸囨爣锛宒eviceId={}", deviceId);
 
         try {
             EdgeDevice device = securityDevices.get(deviceId);
@@ -401,7 +401,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
                 return createDeviceNotFoundStatus(deviceId);
             }
 
-            // 返回模拟的性能指标
+            // 杩斿洖妯℃嫙鐨勬€ц兘鎸囨爣
             return Map.of(
                 "deviceId", deviceId,
                 "deviceType", device.getDeviceType(),
@@ -416,7 +416,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
             );
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 获取设备性能指标异常，deviceId={}, error={}",
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 鑾峰彇璁惧鎬ц兘鎸囨爣寮傚父锛宒eviceId={}, error={}",
                     deviceId, e.getMessage(), e);
             return createErrorStatus(deviceId, e.getMessage());
         }
@@ -426,11 +426,11 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
     public Map<String, Object> getInferenceTaskStatistics(LocalDateTime startTime,
                                                          LocalDateTime endTime,
                                                          String deviceId) {
-        log.debug("[边缘安全服务] 获取推理任务统计，startTime={}, endTime={}, deviceId={}",
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鑾峰彇鎺ㄧ悊浠诲姟缁熻锛宻tartTime={}, endTime={}, deviceId={}",
                 startTime, endTime, deviceId);
 
         try {
-            // 返回模拟的统计信息
+            // 杩斿洖妯℃嫙鐨勭粺璁′俊鎭?
             return Map.of(
                 "startTime", startTime,
                 "endTime", endTime,
@@ -449,23 +449,23 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
             );
 
         } catch (Exception e) {
-            log.error("[边缘安全服务] 获取推理任务统计异常，error={}", e.getMessage(), e);
+            log.error("[杈圭紭瀹夊叏鏈嶅姟] 鑾峰彇鎺ㄧ悊浠诲姟缁熻寮傚父锛宔rror={}", e.getMessage(), e);
             return Map.of("error", e.getMessage());
         }
     }
 
-    // ==================== 其他接口的简单实现 ====================
+    // ==================== 鍏朵粬鎺ュ彛鐨勭畝鍗曞疄鐜?====================
 
     @Override
     public boolean configureEdgeSecurityPolicies(String deviceId, Map<String, Object> securityPolicies) {
-        log.info("[边缘安全服务] 配置边缘设备安全策略，deviceId={}, policies={}", deviceId, securityPolicies.size());
-        // 简单实现，直接返回成功
+        log.info("[杈圭紭瀹夊叏鏈嶅姟] 閰嶇疆杈圭紭璁惧瀹夊叏绛栫暐锛宒eviceId={}, policies={}", deviceId, securityPolicies.size());
+        // 绠€鍗曞疄鐜帮紝鐩存帴杩斿洖鎴愬姛
         return true;
     }
 
     @Override
     public Map<String, Object> getEdgeSecurityPolicies(String deviceId) {
-        log.debug("[边缘安全服务] 获取边缘设备安全策略，deviceId={}", deviceId);
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 鑾峰彇杈圭紭璁惧瀹夊叏绛栫暐锛宒eviceId={}", deviceId);
         return Map.of(
             "deviceId", deviceId,
             "policies", Map.of(
@@ -478,7 +478,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
 
     @Override
     public Map<String, Object> assessEdgeSecurityRisk(String deviceId) {
-        log.debug("[边缘安全服务] 评估边缘设备安全风险，deviceId={}", deviceId);
+        log.debug("[杈圭紭瀹夊叏鏈嶅姟] 璇勪及杈圭紭璁惧瀹夊叏椋庨櫓锛宒eviceId={}", deviceId);
         return Map.of(
             "deviceId", deviceId,
             "riskLevel", "LOW",
@@ -488,7 +488,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
         );
     }
 
-    // 以下为简单实现的接口
+    // 浠ヤ笅涓虹畝鍗曞疄鐜扮殑鎺ュ彛
     @Override public boolean configureEdgeSecurityAlerts(String deviceId, List<Map<String, Object>> alertRules) { return true; }
     @Override public boolean sendSecurityAlertNotification(Map<String, Object> alertData) { return true; }
     @Override public List<Map<String, Object>> getEdgeSecurityAlertHistory(String deviceId, LocalDateTime startTime, LocalDateTime endTime) { return List.of(); }
@@ -499,10 +499,10 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
     @Override public Map<String, Object> getEdgeDeviceDiagnosticInfo(String deviceId) { return Map.of("diagnostic", "NORMAL"); }
     @Override public Map<String, Object> repairEdgeDeviceIssues(String deviceId, List<String> issueTypes) { return Map.of("repaired", issueTypes); }
 
-    // ==================== 私有辅助方法 ====================
+    // ==================== 绉佹湁杈呭姪鏂规硶 ====================
 
     private boolean validateSecurityDeviceCapability(EdgeDevice device) {
-        // 简单的能力验证
+        // 绠€鍗曠殑鑳藉姏楠岃瘉
         return device.getCapabilities() != null && !device.getCapabilities().isEmpty();
     }
 
@@ -541,7 +541,7 @@ public class EdgeSecurityServiceImpl implements EdgeSecurityService {
     }
 
     private byte[] generateMockModelData(String modelType) {
-        // 生成模拟的模型数据
+        // 鐢熸垚妯℃嫙鐨勬ā鍨嬫暟鎹?
         return ("Mock model data for " + modelType + " at " + System.currentTimeMillis()).getBytes();
     }
 }

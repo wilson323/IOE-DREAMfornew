@@ -62,7 +62,7 @@ graph TB
 |------|-----------|------|----------|-----------|-------------|
 | 1 | **ioedream-gateway-service** | 8080 | API网关 | 3 | 路由转发、认证授权、限流熔断 |
 | 2 | **ioedream-common-service** | 8088 | 公共业务 | 8 | 用户管理、权限管理、字典管理 |
-| 3 | **ioedream-device-comm-service** | 8087 | 设备通讯 | 4 | 设备协议、生物识别、连接管理 |
+| 3 | **ioedream-device-comm-service** | 8087 | 设备通讯 | 4 | 设备协议、连接管理、数据采集 ⭐ 不做识别 |
 | 4 | **ioedream-oa-service** | 8089 | OA办公 | 6 | 组织架构、审批流程、工作流 |
 | 5 | **ioedream-access-service** | 8090 | 门禁管理 | 7 | 门禁控制、通行记录、权限申请 |
 | 6 | **ioedream-attendance-service** | 8091 | 考勤管理 | 5 | 考勤打卡、排班管理、统计报表 |
@@ -162,11 +162,10 @@ ioedream-device-comm-service/
 │   ├── HTTPProtocolHandler.java
 │   ├── WebSocketHandler.java
 │   └── MQTTHandler.java
-├── biometric/                 # 生物识别模块
-│   ├── BiometricIntegrationController.java
-│   ├── FaceRecognitionService.java
-│   ├── FingerprintService.java
-│   └── IrisRecognitionService.java
+├── template/                  # ⭐ 模板下发模块（仅下发，不识别）
+│   ├── BiometricTemplateSyncController.java
+│   ├── TemplateSyncService.java
+│   └── TemplateTransferManager.java
 ├── connection/                # 连接管理模块
 │   ├── DeviceConnectionManager.java
 │   ├── ConnectionPool.java
@@ -230,7 +229,7 @@ ioedream-oa-service/
 ```
 ioedream-access-service/
 ├── access/                    # 门禁控制模块
-│   ├── AccessRecordController.java
+│   ├── AccessRecordController.java   # ⭐ 接收设备上传的记录
 │   ├── AccessControlService.java
 │   └── PassValidationManager.java
 ├── device/                    # 设备管理模块
@@ -241,10 +240,6 @@ ioedream-access-service/
 │   ├── AccessPermissionApplyController.java
 │   ├── PermissionService.java
 │   └── AccessLevelManager.java
-├── biometric/                 # 生物识别模块
-│   ├── BiometricAuthController.java
-│   ├── FaceAuthService.java
-│   └── BiometricTemplateManager.java
 ├── emergency/                 # 应急权限模块
 │   ├── AccessEmergencyPermissionController.java
 │   ├── EmergencyService.java
@@ -416,7 +411,60 @@ ioedream-visitor-service/
 - Spring Boot 3.5.8
 - MyBatis-Plus 3.5.15
 - OCR SDK
-- Face Recognition SDK
+
+### 10. ioedream-biometric-service (生物模板管理服务) 🆕
+
+**定位**: 生物模板存储与设备下发 ⭐ 仅管理数据，不做识别
+
+**⚠️ 重要说明**:
+```
+❓ 该服务负责生物识别吗？
+✖️ 不！生物识别由设备端完成
+
+❓ 那该服务做什么？
+✅ 只管理模板数据，并下发给设备
+
+【正确的架构流程】
+1. 人员入职时：
+   用户上传照片 → biometric-service提取特征 → 存入数据库
+   → 查询用户有权限的区域 → 找出所有相关门禁设备
+   → 下发模板到这些设备 ⭐
+
+2. 实时通行时：
+   设备采集 → 设备内嵌算法提取特征 → 设备本地1:N比对 ⭐
+   → 设备本地权限验证 → 设备开门
+   → 批量上传记录到软件
+
+3. 人员离职时：
+   biometric-service从数据库删除 → 从所有设备删除 ⭐
+```
+
+**核心子模块**:
+```
+ioedream-biometric-service/
+├── template/                  # 模板管理模块
+│   ├── BiometricTemplateController.java
+│   ├── TemplateManagementService.java
+│   └── FeatureExtractionService.java  # 提取用户上传照片的特征
+├── sync/                      # 设备同步模块
+│   ├── BiometricTemplateSyncController.java
+│   ├── TemplateSyncService.java
+│   └── DeviceTemplateSyncManager.java  # 智能同步到相关设备
+├── permission/                # 权限联动模块
+│   ├── PermissionChangeListener.java
+│   ├── PermissionSyncService.java
+│   └── AreaDeviceMappingManager.java
+└── version/                   # 版本管理模块
+    ├── TemplateVersionController.java
+    ├── VersionHistoryService.java
+    └── TemplateUpgradeManager.java
+```
+
+**技术栈**:
+- Spring Boot 3.5.8
+- MyBatis-Plus 3.5.15
+- OpenCV 4.x (特征提取)
+- FaceNet Model (512维向量)
 
 ---
 
@@ -555,6 +603,7 @@ graph TB
 | **视频监控** | 8092 | 视频流处理 |
 | **消费管理** | 8094 | 支付结算 |
 | **访客管理** | 8095 | 访客预约 |
+| **生物模板管理** | 8096 | 模板存储+下发 ⭐ |
 | **配置中心** | 8888 | Nacos配置 |
 
 ---

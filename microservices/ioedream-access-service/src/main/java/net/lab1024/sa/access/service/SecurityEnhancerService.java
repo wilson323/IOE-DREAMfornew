@@ -9,17 +9,17 @@ import net.lab1024.sa.access.domain.vo.BiometricAntiSpoofResultVO;
 import net.lab1024.sa.access.domain.vo.TrajectoryAnomalyResultVO;
 
 /**
- * 安全增强服务接口
+ * 瀹夊叏澧炲己鏈嶅姟鎺ュ彛
  * <p>
- * 提供门禁系统安全增强功能，包括：
- * - 生物识别防伪检测
- * - 访问轨迹异常检测
- * - 安全威胁识别
- * - 异常行为分析
- * 严格遵循CLAUDE.md规范：
- * - Service接口定义在业务服务模块中
- * - 清晰的方法注释
- * - 统一的数据传输对象
+ * 鎻愪緵闂ㄧ绯荤粺瀹夊叏澧炲己鍔熻兘锛屽寘鎷細
+ * - 鐢熺墿璇嗗埆闃蹭吉妫€娴?
+ * - 璁块棶杞ㄨ抗寮傚父妫€娴?
+ * - 瀹夊叏濞佽儊璇嗗埆
+ * - 寮傚父琛屼负鍒嗘瀽
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - Service鎺ュ彛瀹氫箟鍦ㄤ笟鍔℃湇鍔℃ā鍧椾腑
+ * - 娓呮櫚鐨勬柟娉曟敞閲?
+ * - 缁熶竴鐨勬暟鎹紶杈撳璞?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -29,104 +29,104 @@ import net.lab1024.sa.access.domain.vo.TrajectoryAnomalyResultVO;
 public interface SecurityEnhancerService {
 
     /**
-     * 生物识别防伪检测
+     * 鐢熺墿璇嗗埆闃蹭吉妫€娴?
      * <p>
-     * 对生物识别数据进行深度分析，防止照片、视频、硅胶面具等攻击：
-     * - 活体检测
-     * - 深度伪造检测
-     * - 质量评估
-     * 3D结构分析
+     * 瀵圭敓鐗╄瘑鍒暟鎹繘琛屾繁搴﹀垎鏋愶紝闃叉鐓х墖銆佽棰戙€佺鑳堕潰鍏风瓑鏀诲嚮锛?
+     * - 娲讳綋妫€娴?
+     * - 娣卞害浼€犳娴?
+     * - 璐ㄩ噺璇勪及
+     * 3D缁撴瀯鍒嗘瀽
      * </p>
      *
-     * @param biometricData 生物识别数据
-     * @return 防伪检测结果
+     * @param biometricData 鐢熺墿璇嗗埆鏁版嵁
+     * @return 闃蹭吉妫€娴嬬粨鏋?
      */
     BiometricAntiSpoofResultVO performBiometricAntiSpoofing(BiometricDataForm biometricData);
 
     /**
-     * 访问轨迹异常检测
+     * 璁块棶杞ㄨ抗寮傚父妫€娴?
      * <p>
-     * 分析用户访问轨迹，识别异常模式：
-     * - 时间模式异常
-     * - 空间模式异常
-     * - 频率异常
-     * - 行为序列异常
+     * 鍒嗘瀽鐢ㄦ埛璁块棶杞ㄨ抗锛岃瘑鍒紓甯告ā寮忥細
+     * - 鏃堕棿妯″紡寮傚父
+     * - 绌洪棿妯″紡寮傚父
+     * - 棰戠巼寮傚父
+     * - 琛屼负搴忓垪寮傚父
      * </p>
      *
-     * @param userId 用户ID
-     * @param trajectory 访问轨迹数据
-     * @return 轨迹异常检测结果
+     * @param userId 鐢ㄦ埛ID
+     * @param trajectory 璁块棶杞ㄨ抗鏁版嵁
+     * @return 杞ㄨ抗寮傚父妫€娴嬬粨鏋?
      */
     TrajectoryAnomalyResultVO detectTrajectoryAnomaly(Long userId, AccessTrajectory trajectory);
 
     /**
-     * 安全威胁实时识别
+     * 瀹夊叏濞佽儊瀹炴椂璇嗗埆
      * <p>
-     * 实时监控和识别各种安全威胁：
-     * - 暴力破解尝试
-     * 异常访问模式
-     * 系统漏洞利用
-     * 社会工程攻击
+     * 瀹炴椂鐩戞帶鍜岃瘑鍒悇绉嶅畨鍏ㄥ▉鑳侊細
+     * - 鏆村姏鐮磋В灏濊瘯
+     * 寮傚父璁块棶妯″紡
+     * 绯荤粺婕忔礊鍒╃敤
+     * 绀句細宸ョ▼鏀诲嚮
      * </p>
      *
-     * @param accessEvent 访问事件数据
-     * @return 威胁识别结果
+     * @param accessEvent 璁块棶浜嬩欢鏁版嵁
+     * @return 濞佽儊璇嗗埆缁撴灉
      */
     SecurityThreatResult identifySecurityThreat(AccessEvent accessEvent);
 
     /**
-     * 异常行为模式分析
+     * 寮傚父琛屼负妯″紡鍒嗘瀽
      * <p>
-     * 基于机器学习分析用户行为模式：
-     * - 行为基线建立
-     * - 异常模式识别
-     * - 风险等级评估
-     * - 预警触发
+     * 鍩轰簬鏈哄櫒瀛︿範鍒嗘瀽鐢ㄦ埛琛屼负妯″紡锛?
+     * - 琛屼负鍩虹嚎寤虹珛
+     * - 寮傚父妯″紡璇嗗埆
+     * - 椋庨櫓绛夌骇璇勪及
+     * - 棰勮瑙﹀彂
      * </p>
      *
-     * @param userId 用户ID
-     * @param timeWindow 分析时间窗口（天）
-     * @return 行为分析结果
+     * @param userId 鐢ㄦ埛ID
+     * @param timeWindow 鍒嗘瀽鏃堕棿绐楀彛锛堝ぉ锛?
+     * @return 琛屼负鍒嗘瀽缁撴灉
      */
     BehaviorAnalysisResult analyzeBehaviorPatterns(Long userId, Integer timeWindow);
 
     /**
-     * 安全事件风险评估
+     * 瀹夊叏浜嬩欢椋庨櫓璇勪及
      * <p>
-     * 对安全事件进行综合风险评估：
-     * - 威胁等级评估
-     * - 影响范围分析
-     * - 处置优先级
-     * - 补救建议
+     * 瀵瑰畨鍏ㄤ簨浠惰繘琛岀患鍚堥闄╄瘎浼帮細
+     * - 濞佽儊绛夌骇璇勪及
+     * - 褰卞搷鑼冨洿鍒嗘瀽
+     * - 澶勭疆浼樺厛绾?
+     * - 琛ユ晳寤鸿
      * </p>
      *
-     * @param securityEvent 安全事件
-     * @return 风险评估结果
+     * @param securityEvent 瀹夊叏浜嬩欢
+     * @return 椋庨櫓璇勪及缁撴灉
      */
     SecurityRiskAssessmentVO assessSecurityRisk(SecurityEvent securityEvent);
 
     /**
-     * 实时安全监控
+     * 瀹炴椂瀹夊叏鐩戞帶
      * <p>
-     * 提供实时的安全状态监控：
-     * - 系统安全状态
-     * - 活跃威胁统计
-     * - 异常事件计数
-     * - 安全指标监控
+     * 鎻愪緵瀹炴椂鐨勫畨鍏ㄧ姸鎬佺洃鎺э細
+     * - 绯荤粺瀹夊叏鐘舵€?
+     * - 娲昏穬濞佽儊缁熻
+     * - 寮傚父浜嬩欢璁℃暟
+     * - 瀹夊叏鎸囨爣鐩戞帶
      * </p>
      *
-     * @return 安全监控数据
+     * @return 瀹夊叏鐩戞帶鏁版嵁
      */
     SecurityMonitoringData getRealtimeSecurityMonitoring();
 
-    // 内部数据传输对象定义
+    // 鍐呴儴鏁版嵁浼犺緭瀵硅薄瀹氫箟
     class AccessTrajectory {
         private Long userId;
         private List<AccessPoint> accessPoints;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
 
-        // 访问点内部类
+        // 璁块棶鐐瑰唴閮ㄧ被
         class AccessPoint {
             private Long deviceId;
             private Long areaId;

@@ -6,17 +6,17 @@ import net.lab1024.sa.access.controller.AccessMobileController.*;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
- * 离线模式服务接口
+ * 绂荤嚎妯″紡鏈嶅姟鎺ュ彛
  * <p>
- * 提供离线模式下的门禁管理功能：
- * - 离线权限数据同步
- * - 离线访问记录管理
- * - 数据完整性验证
- * - 离线模式状态监控
- * 严格遵循CLAUDE.md规范：
- * - Service接口定义在业务服务模块中
- * - 清晰的方法注释
- * - 统一的数据传输对象
+ * 鎻愪緵绂荤嚎妯″紡涓嬬殑闂ㄧ绠＄悊鍔熻兘锛?
+ * - 绂荤嚎鏉冮檺鏁版嵁鍚屾
+ * - 绂荤嚎璁块棶璁板綍绠＄悊
+ * - 鏁版嵁瀹屾暣鎬ч獙璇?
+ * - 绂荤嚎妯″紡鐘舵€佺洃鎺?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - Service鎺ュ彛瀹氫箟鍦ㄤ笟鍔℃湇鍔℃ā鍧椾腑
+ * - 娓呮櫚鐨勬柟娉曟敞閲?
+ * - 缁熶竴鐨勬暟鎹紶杈撳璞?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -26,255 +26,255 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 public interface OfflineModeService {
 
     /**
-     * 同步离线数据
+     * 鍚屾绂荤嚎鏁版嵁
      * <p>
-     * 同步离线模式所需的门禁数据：
-     * - 用户权限数据
-     * - 设备信息数据
-     * - 配置参数数据
-     * - 支持增量同步
+     * 鍚屾绂荤嚎妯″紡鎵€闇€鐨勯棬绂佹暟鎹細
+     * - 鐢ㄦ埛鏉冮檺鏁版嵁
+     * - 璁惧淇℃伅鏁版嵁
+     * - 閰嶇疆鍙傛暟鏁版嵁
+     * - 鏀寔澧為噺鍚屾
      * </p>
      *
-     * @param request 同步请求
-     * @return 同步结果
+     * @param request 鍚屾璇锋眰
+     * @return 鍚屾缁撴灉
      */
     ResponseDTO<OfflineSyncResult> syncOfflineData(OfflineSyncRequest request);
 
     /**
-     * 获取离线访问权限
+     * 鑾峰彇绂荤嚎璁块棶鏉冮檺
      * <p>
-     * 获取用户在离线模式下的访问权限：
-     * - 区域访问权限
-     * - 设备访问权限
-     * - 时间范围限制
-     * - 访问方式限制
+     * 鑾峰彇鐢ㄦ埛鍦ㄧ绾挎ā寮忎笅鐨勮闂潈闄愶細
+     * - 鍖哄煙璁块棶鏉冮檺
+     * - 璁惧璁块棶鏉冮檺
+     * - 鏃堕棿鑼冨洿闄愬埗
+     * - 璁块棶鏂瑰紡闄愬埗
      * </p>
      *
-     * @param userId 用户ID
-     * @param lastSyncTime 上次同步时间
-     * @return 离线权限数据
+     * @param userId 鐢ㄦ埛ID
+     * @param lastSyncTime 涓婃鍚屾鏃堕棿
+     * @return 绂荤嚎鏉冮檺鏁版嵁
      */
     ResponseDTO<OfflinePermissionsVO> getOfflinePermissions(Long userId, String lastSyncTime);
 
     /**
-     * 上报离线访问记录
+     * 涓婃姤绂荤嚎璁块棶璁板綍
      * <p>
-     * 处理离线模式下产生的访问记录：
-     * - 记录验证和校验
-     * - 数据完整性检查
-     * - 异常记录标记
-     * - 批量数据处理
+     * 澶勭悊绂荤嚎妯″紡涓嬩骇鐢熺殑璁块棶璁板綍锛?
+     * - 璁板綍楠岃瘉鍜屾牎楠?
+     * - 鏁版嵁瀹屾暣鎬ф鏌?
+     * - 寮傚父璁板綍鏍囪
+     * - 鎵归噺鏁版嵁澶勭悊
      * </p>
      *
-     * @param request 上报请求
-     * @return 上报结果
+     * @param request 涓婃姤璇锋眰
+     * @return 涓婃姤缁撴灉
      */
     ResponseDTO<OfflineReportResult> reportOfflineRecords(OfflineRecordsReportRequest request);
 
     /**
-     * 验证离线访问权限
+     * 楠岃瘉绂荤嚎璁块棶鏉冮檺
      * <p>
-     * 在离线模式下验证用户访问权限：
-     * - 本地权限数据验证
-     * - 时间有效性检查
-     * - 访问次数限制
-     * - 安全规则验证
+     * 鍦ㄧ绾挎ā寮忎笅楠岃瘉鐢ㄦ埛璁块棶鏉冮檺锛?
+     * - 鏈湴鏉冮檺鏁版嵁楠岃瘉
+     * - 鏃堕棿鏈夋晥鎬ф鏌?
+     * - 璁块棶娆℃暟闄愬埗
+     * - 瀹夊叏瑙勫垯楠岃瘉
      * </p>
      *
-     * @param userId 用户ID
-     * @param deviceId 设备ID
-     * @param accessType 访问类型
-     * @param verificationData 验证数据
-     * @return 验证结果
+     * @param userId 鐢ㄦ埛ID
+     * @param deviceId 璁惧ID
+     * @param accessType 璁块棶绫诲瀷
+     * @param verificationData 楠岃瘉鏁版嵁
+     * @return 楠岃瘉缁撴灉
      */
     ResponseDTO<OfflineAccessValidationResult> validateOfflineAccess(
             Long userId, Long deviceId, String accessType, String verificationData);
 
     /**
-     * 获取离线模式状态
+     * 鑾峰彇绂荤嚎妯″紡鐘舵€?
      * <p>
-     * 查询离线模式的运行状态：
-     * - 数据同步状态
-     * - 设备离线状态
-     * - 网络连接状态
-     * - 异常事件统计
+     * 鏌ヨ绂荤嚎妯″紡鐨勮繍琛岀姸鎬侊細
+     * - 鏁版嵁鍚屾鐘舵€?
+     * - 璁惧绂荤嚎鐘舵€?
+     * - 缃戠粶杩炴帴鐘舵€?
+     * - 寮傚父浜嬩欢缁熻
      * </p>
      *
-     * @param userId 用户ID
-     * @return 离线模式状态
+     * @param userId 鐢ㄦ埛ID
+     * @return 绂荤嚎妯″紡鐘舵€?
      */
     ResponseDTO<OfflineModeStatusVO> getOfflineModeStatus(Long userId);
 
     /**
-     * 清理过期离线数据
+     * 娓呯悊杩囨湡绂荤嚎鏁版嵁
      * <p>
-     * 清理过期的离线数据：
-     * - 过期权限数据
-     * - 历史访问记录
-     * - 临时缓存数据
-     * - 无效设备信息
+     * 娓呯悊杩囨湡鐨勭绾挎暟鎹細
+     * - 杩囨湡鏉冮檺鏁版嵁
+     * - 鍘嗗彶璁块棶璁板綍
+     * - 涓存椂缂撳瓨鏁版嵁
+     * - 鏃犳晥璁惧淇℃伅
      * </p>
      *
-     * @param userId 用户ID
-     * @return 清理结果
+     * @param userId 鐢ㄦ埛ID
+     * @return 娓呯悊缁撴灉
      */
     ResponseDTO<OfflineDataCleanupResult> cleanupExpiredOfflineData(Long userId);
 
     /**
-     * 生成离线数据包
+     * 鐢熸垚绂荤嚎鏁版嵁鍖?
      * <p>
-     * 为指定用户生成完整的离线数据包：
-     * - 权限数据打包
-     * - 设备信息打包
-     * - 配置参数打包
-     * - 加密和压缩
+     * 涓烘寚瀹氱敤鎴风敓鎴愬畬鏁寸殑绂荤嚎鏁版嵁鍖咃細
+     * - 鏉冮檺鏁版嵁鎵撳寘
+     * - 璁惧淇℃伅鎵撳寘
+     * - 閰嶇疆鍙傛暟鎵撳寘
+     * - 鍔犲瘑鍜屽帇缂?
      * </p>
      *
-     * @param userId 用户ID
-     * @param deviceIds 设备ID列表
-     * @return 离线数据包
+     * @param userId 鐢ㄦ埛ID
+     * @param deviceIds 璁惧ID鍒楄〃
+     * @return 绂荤嚎鏁版嵁鍖?
      */
     ResponseDTO<OfflineDataPackageVO> generateOfflineDataPackage(Long userId, List<Long> deviceIds);
 
     /**
-     * 验证离线数据完整性
+     * 楠岃瘉绂荤嚎鏁版嵁瀹屾暣鎬?
      * <p>
-     * 验证离线数据的完整性和有效性：
-     * - 数据校验和验证
-     * - 数字签名验证
-     * - 数据格式验证
-     * - 时效性验证
+     * 楠岃瘉绂荤嚎鏁版嵁鐨勫畬鏁存€у拰鏈夋晥鎬э細
+     * - 鏁版嵁鏍￠獙鍜岄獙璇?
+     * - 鏁板瓧绛惧悕楠岃瘉
+     * - 鏁版嵁鏍煎紡楠岃瘉
+     * - 鏃舵晥鎬ч獙璇?
      * </p>
      *
-     * @param userId 用户ID
-     * @param dataPackage 数据包
-     * @return 验证结果
+     * @param userId 鐢ㄦ埛ID
+     * @param dataPackage 鏁版嵁鍖?
+     * @return 楠岃瘉缁撴灉
      */
     ResponseDTO<OfflineDataIntegrityResult> validateOfflineDataIntegrity(Long userId, String dataPackage);
 
     /**
-     * 离线模式统计报告
+     * 绂荤嚎妯″紡缁熻鎶ュ憡
      * <p>
-     * 生成离线模式的统计报告：
-     * - 访问次数统计
-     * - 成功率统计
-     * - 异常事件统计
-     * - 性能指标统计
+     * 鐢熸垚绂荤嚎妯″紡鐨勭粺璁℃姤鍛婏細
+     * - 璁块棶娆℃暟缁熻
+     * - 鎴愬姛鐜囩粺璁?
+     * - 寮傚父浜嬩欢缁熻
+     * - 鎬ц兘鎸囨爣缁熻
      * </p>
      *
-     * @param userId 用户ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @return 统计报告
+     * @param userId 鐢ㄦ埛ID
+     * @param startTime 寮€濮嬫椂闂?
+     * @param endTime 缁撴潫鏃堕棿
+     * @return 缁熻鎶ュ憡
      */
     ResponseDTO<OfflineModeStatisticsVO> generateOfflineStatisticsReport(
             Long userId, String startTime, String endTime);
 
-    // ==================== 内部数据传输对象 ====================
+    // ==================== 鍐呴儴鏁版嵁浼犺緭瀵硅薄 ====================
 
     /**
-     * 离线访问验证结果
+     * 绂荤嚎璁块棶楠岃瘉缁撴灉
      */
     class OfflineAccessValidationResult {
-        private Boolean allowed;              // 是否允许访问
-        private String validationReason;     // 验证原因
-        private String permissionLevel;      // 权限等级
-        private Long remainingQuota;         // 剩余配额
-        private String validUntil;           // 权限有效期
-        private String validationMode;       // 验证模式
-        private List<String> warnings;       // 警告信息
+        private Boolean allowed;              // 鏄惁鍏佽璁块棶
+        private String validationReason;     // 楠岃瘉鍘熷洜
+        private String permissionLevel;      // 鏉冮檺绛夌骇
+        private Long remainingQuota;         // 鍓╀綑閰嶉
+        private String validUntil;           // 鏉冮檺鏈夋晥鏈?
+        private String validationMode;       // 楠岃瘉妯″紡
+        private List<String> warnings;       // 璀﹀憡淇℃伅
     }
 
     /**
-     * 离线模式状态
+     * 绂荤嚎妯″紡鐘舵€?
      */
     class OfflineModeStatusVO {
         private Long userId;
-        private Boolean isOfflineMode;       // 是否离线模式
-        private String lastSyncTime;         // 最后同步时间
-        private Integer syncedDevices;       // 已同步设备数
-        private Integer pendingRecords;      // 待上报记录数
-        private Integer failedRecords;       // 失败记录数
-        private String networkStatus;        // 网络状态
-        private String storageUsage;         // 存储使用情况
-        private List<String> activeDevices;  // 活跃设备列表
+        private Boolean isOfflineMode;       // 鏄惁绂荤嚎妯″紡
+        private String lastSyncTime;         // 鏈€鍚庡悓姝ユ椂闂?
+        private Integer syncedDevices;       // 宸插悓姝ヨ澶囨暟
+        private Integer pendingRecords;      // 寰呬笂鎶ヨ褰曟暟
+        private Integer failedRecords;       // 澶辫触璁板綍鏁?
+        private String networkStatus;        // 缃戠粶鐘舵€?
+        private String storageUsage;         // 瀛樺偍浣跨敤鎯呭喌
+        private List<String> activeDevices;  // 娲昏穬璁惧鍒楄〃
     }
 
     /**
-     * 离线数据清理结果
+     * 绂荤嚎鏁版嵁娓呯悊缁撴灉
      */
     class OfflineDataCleanupResult {
         private Boolean success;
         private Long userId;
-        private Integer cleanedPermissions;  // 清理的权限数量
-        private Integer cleanedRecords;      // 清理的记录数量
-        private Integer cleanedDevices;      // 清理的设备数量
-        private Long freedStorage;           // 释放的存储空间（字节）
-        private Long cleanupDuration;        // 清理耗时（毫秒）
-        private List<String> errors;         // 错误信息
+        private Integer cleanedPermissions;  // 娓呯悊鐨勬潈闄愭暟閲?
+        private Integer cleanedRecords;      // 娓呯悊鐨勮褰曟暟閲?
+        private Integer cleanedDevices;      // 娓呯悊鐨勮澶囨暟閲?
+        private Long freedStorage;           // 閲婃斁鐨勫瓨鍌ㄧ┖闂达紙瀛楄妭锛?
+        private Long cleanupDuration;        // 娓呯悊鑰楁椂锛堟绉掞級
+        private List<String> errors;         // 閿欒淇℃伅
     }
 
     /**
-     * 离线数据包
+     * 绂荤嚎鏁版嵁鍖?
      */
     class OfflineDataPackageVO {
-        private String packageId;            // 数据包ID
+        private String packageId;            // 鏁版嵁鍖匢D
         private Long userId;
-        private String packageVersion;      // 数据包版本
-        private Long packageSize;            // 数据包大小（字节）
-        private String checksum;             // 校验和
-        private String encryptionMethod;     // 加密方式
-        private String compressionMethod;   // 压缩方式
-        private String generatedTime;        // 生成时间
-        private String expiryTime;           // 过期时间
-        private Integer deviceCount;         // 设备数量
-        private Integer permissionCount;     // 权限数量
+        private String packageVersion;      // 鏁版嵁鍖呯増鏈?
+        private Long packageSize;            // 鏁版嵁鍖呭ぇ灏忥紙瀛楄妭锛?
+        private String checksum;             // 鏍￠獙鍜?
+        private String encryptionMethod;     // 鍔犲瘑鏂瑰紡
+        private String compressionMethod;   // 鍘嬬缉鏂瑰紡
+        private String generatedTime;        // 鐢熸垚鏃堕棿
+        private String expiryTime;           // 杩囨湡鏃堕棿
+        private Integer deviceCount;         // 璁惧鏁伴噺
+        private Integer permissionCount;     // 鏉冮檺鏁伴噺
     }
 
     /**
-     * 离线数据完整性验证结果
+     * 绂荤嚎鏁版嵁瀹屾暣鎬ч獙璇佺粨鏋?
      */
     class OfflineDataIntegrityResult {
-        private Boolean valid;               // 数据是否有效
-        private String packageId;            // 数据包ID
-        private Boolean checksumValid;       // 校验和是否有效
-        private Boolean signatureValid;      // 签名是否有效
-        private Boolean formatValid;         // 格式是否有效
-        private Boolean expired;             // 是否过期
-        private List<String> validationErrors; // 验证错误
-        private String validationTime;       // 验证时间
+        private Boolean valid;               // 鏁版嵁鏄惁鏈夋晥
+        private String packageId;            // 鏁版嵁鍖匢D
+        private Boolean checksumValid;       // 鏍￠獙鍜屾槸鍚︽湁鏁?
+        private Boolean signatureValid;      // 绛惧悕鏄惁鏈夋晥
+        private Boolean formatValid;         // 鏍煎紡鏄惁鏈夋晥
+        private Boolean expired;             // 鏄惁杩囨湡
+        private List<String> validationErrors; // 楠岃瘉閿欒
+        private String validationTime;       // 楠岃瘉鏃堕棿
     }
 
     /**
-     * 离线模式统计报告
+     * 绂荤嚎妯″紡缁熻鎶ュ憡
      */
     class OfflineModeStatisticsVO {
         private Long userId;
-        private String reportPeriod;         // 统计周期
-        private Long totalAccessAttempts;    // 总访问尝试次数
-        private Long successfulAccesses;     // 成功访问次数
-        private Long failedAccesses;         // 失败访问次数
-        private Double successRate;          // 成功率
-        private Long offlineTransactions;    // 离线交易数
-        private Long onlineTransactions;     // 在线交易数
-        private Integer averageResponseTime; // 平均响应时间（毫秒）
-        private Integer maxResponseTime;     // 最大响应时间（毫秒）
-        private Integer minResponseTime;     // 最小响应时间（毫秒）
-        private List<DeviceStatistics> deviceStats; // 设备统计
+        private String reportPeriod;         // 缁熻鍛ㄦ湡
+        private Long totalAccessAttempts;    // 鎬昏闂皾璇曟鏁?
+        private Long successfulAccesses;     // 鎴愬姛璁块棶娆℃暟
+        private Long failedAccesses;         // 澶辫触璁块棶娆℃暟
+        private Double successRate;          // 鎴愬姛鐜?
+        private Long offlineTransactions;    // 绂荤嚎浜ゆ槗鏁?
+        private Long onlineTransactions;     // 鍦ㄧ嚎浜ゆ槗鏁?
+        private Integer averageResponseTime; // 骞冲潎鍝嶅簲鏃堕棿锛堟绉掞級
+        private Integer maxResponseTime;     // 鏈€澶у搷搴旀椂闂达紙姣锛?
+        private Integer minResponseTime;     // 鏈€灏忓搷搴旀椂闂达紙姣锛?
+        private List<DeviceStatistics> deviceStats; // 璁惧缁熻
     }
 
     /**
-     * 设备统计信息
+     * 璁惧缁熻淇℃伅
      */
     class DeviceStatistics {
         private Long deviceId;
         private String deviceName;
-        private Long accessCount;            // 访问次数
-        private Long successCount;           // 成功次数
-        private Long failureCount;           // 失败次数
-        private Double successRate;          // 成功率
-        private Integer averageResponseTime; // 平均响应时间
-        private String lastAccessTime;       // 最后访问时间
-        private String status;               // 设备状态
+        private Long accessCount;            // 璁块棶娆℃暟
+        private Long successCount;           // 鎴愬姛娆℃暟
+        private Long failureCount;           // 澶辫触娆℃暟
+        private Double successRate;          // 鎴愬姛鐜?
+        private Integer averageResponseTime; // 骞冲潎鍝嶅簲鏃堕棿
+        private String lastAccessTime;       // 鏈€鍚庤闂椂闂?
+        private String status;               // 璁惧鐘舵€?
     }
 }

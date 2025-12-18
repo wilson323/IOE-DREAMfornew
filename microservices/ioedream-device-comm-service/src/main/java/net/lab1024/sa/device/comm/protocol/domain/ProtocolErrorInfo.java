@@ -52,4 +52,16 @@ public class ProtocolErrorInfo {
      * 详细说明
      */
     private String details;
+
+    /**
+     * 创建错误信息
+     */
+    public static ProtocolErrorInfo of(String errorCode, String description, String errorType, String severity) {
+        return ProtocolErrorInfo.builder()
+                .errorCode(errorCode)
+                .errorDescription(description)
+                .errorType(errorType)
+                .severity(severity)
+                .build();
+    }
 }

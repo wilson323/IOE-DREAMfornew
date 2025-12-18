@@ -11,13 +11,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 门禁反潜回统计VO
+ * 闂ㄧ鍙嶆綔鍥炵粺璁O
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用VO后缀标识视图对象
- * - 使用@Data注解简化getter/setter
- * - 包含Swagger注解便于API文档生成
- * - 提供详细的反潜回统计数据
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤VO鍚庣紑鏍囪瘑瑙嗗浘瀵硅薄
+ * - 浣跨敤@Data娉ㄨВ绠€鍖杇etter/setter
+ * - 鍖呭惈Swagger娉ㄨВ渚夸簬API鏂囨。鐢熸垚
+ * - 鎻愪緵璇︾粏鐨勫弽娼滃洖缁熻鏁版嵁
  * </p>
  *
  * @author IOE-DREAM Team
@@ -28,83 +28,83 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "门禁反潜回统计VO")
+@Schema(description = "闂ㄧ鍙嶆綔鍥炵粺璁O")
 public class AntiPassbackStatisticsVO {
 
     /**
-     * 统计时间
+     * 缁熻鏃堕棿
      */
-    @Schema(description = "统计时间", example = "2025-01-30T10:30:00")
+    @Schema(description = "缁熻鏃堕棿", example = "2025-01-30T10:30:00")
     private LocalDateTime statisticsTime;
 
     /**
-     * 总检查次数
+     * 鎬绘鏌ユ鏁?
      */
-    @Schema(description = "总检查次数", example = "1500")
+    @Schema(description = "鎬绘鏌ユ鏁?, example = "1500")
     private Long totalCheckCount;
 
     /**
-     * 成功通过次数
+     * 鎴愬姛閫氳繃娆℃暟
      */
-    @Schema(description = "成功通过次数", example = "1200")
+    @Schema(description = "鎴愬姛閫氳繃娆℃暟", example = "1200")
     private Long successCount;
 
     /**
-     * 失败次数
+     * 澶辫触娆℃暟
      */
-    @Schema(description = "失败次数", example = "300")
+    @Schema(description = "澶辫触娆℃暟", example = "300")
     private Long failureCount;
 
     /**
-     * 成功率
+     * 鎴愬姛鐜?
      */
-    @Schema(description = "成功率", example = "80.0")
+    @Schema(description = "鎴愬姛鐜?, example = "80.0")
     private Double successRate;
 
     /**
-     * 硬反潜回违规次数
+     * 纭弽娼滃洖杩濊娆℃暟
      */
-    @Schema(description = "硬反潜回违规次数", example = "50")
+    @Schema(description = "纭弽娼滃洖杩濊娆℃暟", example = "50")
     private Long hardAntiPassbackViolations;
 
     /**
-     * 软反潜回异常次数
+     * 杞弽娼滃洖寮傚父娆℃暟
      */
-    @Schema(description = "软反潜回异常次数", example = "100")
+    @Schema(description = "杞弽娼滃洖寮傚父娆℃暟", example = "100")
     private Long softAntiPassbackExceptions;
 
     /**
-     * 区域反潜回违规次数
+     * 鍖哄煙鍙嶆綔鍥炶繚瑙勬鏁?
      */
-    @Schema(description = "区域反潜回违规次数", example = "30")
+    @Schema(description = "鍖哄煙鍙嶆綔鍥炶繚瑙勬鏁?, example = "30")
     private Long areaAntiPassbackViolations;
 
     /**
-     * 全局反潜回违规次数
+     * 鍏ㄥ眬鍙嶆綔鍥炶繚瑙勬鏁?
      */
-    @Schema(description = "全局反潜回违规次数", example = "20")
+    @Schema(description = "鍏ㄥ眬鍙嶆綔鍥炶繚瑙勬鏁?, example = "20")
     private Long globalAntiPassbackViolations;
 
     /**
-     * 各区域统计
+     * 鍚勫尯鍩熺粺璁?
      */
-    @Schema(description = "各区域统计")
+    @Schema(description = "鍚勫尯鍩熺粺璁?)
     private List<AreaStatistics> areaStatisticsList;
 
     /**
-     * 各设备统计
+     * 鍚勮澶囩粺璁?
      */
-    @Schema(description = "各设备统计")
+    @Schema(description = "鍚勮澶囩粺璁?)
     private List<DeviceStatistics> deviceStatisticsList;
 
     /**
-     * 时间分布统计
+     * 鏃堕棿鍒嗗竷缁熻
      */
-    @Schema(description = "时间分布统计")
+    @Schema(description = "鏃堕棿鍒嗗竷缁熻")
     private Map<String, Long> timeDistribution;
 
     /**
-     * 区域统计内部类
+     * 鍖哄煙缁熻鍐呴儴绫?
      */
     @Data
     @Builder
@@ -112,24 +112,24 @@ public class AntiPassbackStatisticsVO {
     @AllArgsConstructor
     public static class AreaStatistics {
 
-        @Schema(description = "区域ID")
+        @Schema(description = "鍖哄煙ID")
         private Long areaId;
 
-        @Schema(description = "区域名称")
+        @Schema(description = "鍖哄煙鍚嶇О")
         private String areaName;
 
-        @Schema(description = "检查次数")
+        @Schema(description = "妫€鏌ユ鏁?)
         private Long checkCount;
 
-        @Schema(description = "违规次数")
+        @Schema(description = "杩濊娆℃暟")
         private Long violationCount;
 
-        @Schema(description = "违规率")
+        @Schema(description = "杩濊鐜?)
         private Double violationRate;
     }
 
     /**
-     * 设备统计内部类
+     * 璁惧缁熻鍐呴儴绫?
      */
     @Data
     @Builder
@@ -137,22 +137,22 @@ public class AntiPassbackStatisticsVO {
     @AllArgsConstructor
     public static class DeviceStatistics {
 
-        @Schema(description = "设备ID")
+        @Schema(description = "璁惧ID")
         private Long deviceId;
 
-        @Schema(description = "设备名称")
+        @Schema(description = "璁惧鍚嶇О")
         private String deviceName;
 
-        @Schema(description = "设备位置")
+        @Schema(description = "璁惧浣嶇疆")
         private String deviceLocation;
 
-        @Schema(description = "检查次数")
+        @Schema(description = "妫€鏌ユ鏁?)
         private Long checkCount;
 
-        @Schema(description = "违规次数")
+        @Schema(description = "杩濊娆℃暟")
         private Long violationCount;
 
-        @Schema(description = "设备状态")
+        @Schema(description = "璁惧鐘舵€?)
         private String deviceStatus;
     }
 }

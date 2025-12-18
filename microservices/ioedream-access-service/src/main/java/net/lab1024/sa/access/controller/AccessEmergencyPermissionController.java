@@ -21,17 +21,14 @@ import net.lab1024.sa.access.domain.form.AccessPermissionApplyForm;
 import net.lab1024.sa.access.service.AccessEmergencyPermissionService;
 
 /**
- * 紧急权限申请控制器
+ * 绱ф€ユ潈闄愮敵璇锋帶鍒跺櫒
  * <p>
- * 提供紧急权限申请相关API接口
- * 特点：
- * - 简化审批流程（快速审批）
- * - 临时权限生效
- * - 自动过期机制（24小时后自动失效）
- * 严格遵循CLAUDE.md规范：
- * - Controller层负责接收请求、参数验证、返回响应
- * - 使用@Resource注入Service
- * - 使用@Valid进行参数验证
+ * 鎻愪緵绱ф€ユ潈闄愮敵璇风浉鍏矨PI鎺ュ彛
+ * 鐗圭偣锛? * - 绠€鍖栧鎵规祦绋嬶紙蹇€熷鎵癸級
+ * - 涓存椂鏉冮檺鐢熸晥
+ * - 鑷姩杩囨湡鏈哄埗锛?4灏忔椂鍚庤嚜鍔ㄥけ鏁堬級
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - Controller灞傝礋璐ｆ帴鏀惰姹傘€佸弬鏁伴獙璇併€佽繑鍥炲搷搴? * - 浣跨敤@Resource娉ㄥ叆Service
+ * - 浣跨敤@Valid杩涜鍙傛暟楠岃瘉
  * </p>
  *
  * @author IOE-DREAM Team
@@ -41,58 +38,51 @@ import net.lab1024.sa.access.service.AccessEmergencyPermissionService;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/access/emergency-permission")
-@Tag(name = "紧急权限申请管理")
+@Tag(name = "绱ф€ユ潈闄愮敵璇风鐞?)
 public class AccessEmergencyPermissionController {
 
     @Resource
     private AccessEmergencyPermissionService accessEmergencyPermissionService;
 
     /**
-     * 提交紧急权限申请
-     * <p>
-     * 紧急权限申请特点：
-     * - 简化审批流程，只需部门经理快速审批
-     * - 审批通过后立即生效
-     * - 权限有效期24小时（自动过期）
+     * 鎻愪氦绱ф€ユ潈闄愮敵璇?     * <p>
+     * 绱ф€ユ潈闄愮敵璇风壒鐐癸細
+     * - 绠€鍖栧鎵规祦绋嬶紝鍙渶閮ㄩ棬缁忕悊蹇€熷鎵?     * - 瀹℃壒閫氳繃鍚庣珛鍗崇敓鏁?     * - 鏉冮檺鏈夋晥鏈?4灏忔椂锛堣嚜鍔ㄨ繃鏈燂級
      * </p>
      *
-     * @param form 紧急权限申请表单
-     * @return 权限申请实体
+     * @param form 绱ф€ユ潈闄愮敵璇疯〃鍗?     * @return 鏉冮檺鐢宠瀹炰綋
      */
     @Observed(name = "accessEmergencyPermission.submitEmergencyPermissionApply", contextualName = "access-emergency-permission-submit")
     @PostMapping("/submit")
-    @Operation(summary = "提交紧急权限申请", description = "提交紧急权限申请并启动快速审批流程，权限有效期24小时")
+    @Operation(summary = "鎻愪氦绱ф€ユ潈闄愮敵璇?, description = "鎻愪氦绱ф€ユ潈闄愮敵璇峰苟鍚姩蹇€熷鎵规祦绋嬶紝鏉冮檺鏈夋晥鏈?4灏忔椂")
     public ResponseDTO<AccessPermissionApplyEntity> submitEmergencyPermissionApply(
             @Valid @RequestBody AccessPermissionApplyForm form) {
-        log.info("[紧急权限申请] 接收紧急权限申请请求，applicantId={}, areaId={}, reason={}",
+        log.info("[绱ф€ユ潈闄愮敵璇穄 鎺ユ敹绱ф€ユ潈闄愮敵璇疯姹傦紝applicantId={}, areaId={}, reason={}",
                 form.getApplicantId(), form.getAreaId(), form.getApplyReason());
 
-        // 验证申请类型
+        // 楠岃瘉鐢宠绫诲瀷
         if (form.getApplyType() != null && !"EMERGENCY".equals(form.getApplyType())) {
-            return ResponseDTO.error("申请类型必须是EMERGENCY");
+            return ResponseDTO.error("鐢宠绫诲瀷蹇呴』鏄疎MERGENCY");
         }
 
-        // 强制设置为紧急权限类型
-        form.setApplyType("EMERGENCY");
+        // 寮哄埗璁剧疆涓虹揣鎬ユ潈闄愮被鍨?        form.setApplyType("EMERGENCY");
 
         AccessPermissionApplyEntity entity = accessEmergencyPermissionService.submitEmergencyPermissionApply(form);
         return ResponseDTO.ok(entity);
     }
 
     /**
-     * 更新紧急权限申请状态（供审批结果监听器调用）
-     *
-     * @param applyNo 申请编号
-     * @param requestParams 请求参数（包含status和approvalComment）
-     * @return 操作结果
+     * 鏇存柊绱ф€ユ潈闄愮敵璇风姸鎬侊紙渚涘鎵圭粨鏋滅洃鍚櫒璋冪敤锛?     *
+     * @param applyNo 鐢宠缂栧彿
+     * @param requestParams 璇锋眰鍙傛暟锛堝寘鍚玸tatus鍜宎pprovalComment锛?     * @return 鎿嶄綔缁撴灉
      */
     @Observed(name = "accessEmergencyPermission.updateEmergencyPermissionStatus", contextualName = "access-emergency-permission-update-status")
     @PutMapping("/{applyNo}/status")
-    @Operation(summary = "更新紧急权限申请状态", description = "由审批结果监听器调用，更新紧急权限申请状态")
+    @Operation(summary = "鏇存柊绱ф€ユ潈闄愮敵璇风姸鎬?, description = "鐢卞鎵圭粨鏋滅洃鍚櫒璋冪敤锛屾洿鏂扮揣鎬ユ潈闄愮敵璇风姸鎬?)
     public ResponseDTO<Void> updateEmergencyPermissionStatus(
             @PathVariable String applyNo,
             @RequestBody Map<String, Object> requestParams) {
-        log.info("[紧急权限申请] 接收状态更新请求，applyNo={}", applyNo);
+        log.info("[绱ф€ユ潈闄愮敵璇穄 鎺ユ敹鐘舵€佹洿鏂拌姹傦紝applyNo={}", applyNo);
         String status = (String) requestParams.get("status");
         String approvalComment = (String) requestParams.get("approvalComment");
         accessEmergencyPermissionService.updateEmergencyPermissionStatus(applyNo, status, approvalComment);
@@ -100,19 +90,19 @@ public class AccessEmergencyPermissionController {
     }
 
     /**
-     * 检查并回收过期权限
+     * 妫€鏌ュ苟鍥炴敹杩囨湡鏉冮檺
      * <p>
-     * 紧急权限有效期24小时，过期后自动回收
+     * 绱ф€ユ潈闄愭湁鏁堟湡24灏忔椂锛岃繃鏈熷悗鑷姩鍥炴敹
      * </p>
      *
-     * @param applyNo 申请编号
-     * @return 是否已过期并回收
+     * @param applyNo 鐢宠缂栧彿
+     * @return 鏄惁宸茶繃鏈熷苟鍥炴敹
      */
     @Observed(name = "accessEmergencyPermission.checkAndRevokeExpiredPermission", contextualName = "access-emergency-permission-revoke-expired")
     @PostMapping("/{applyNo}/revoke-expired")
-    @Operation(summary = "检查并回收过期权限", description = "检查紧急权限是否已过期，如果过期则自动回收")
+    @Operation(summary = "妫€鏌ュ苟鍥炴敹杩囨湡鏉冮檺", description = "妫€鏌ョ揣鎬ユ潈闄愭槸鍚﹀凡杩囨湡锛屽鏋滆繃鏈熷垯鑷姩鍥炴敹")
     public ResponseDTO<Boolean> checkAndRevokeExpiredPermission(@PathVariable String applyNo) {
-        log.info("[紧急权限申请] 检查过期权限请求，applyNo={}", applyNo);
+        log.info("[绱ф€ユ潈闄愮敵璇穄 妫€鏌ヨ繃鏈熸潈闄愯姹傦紝applyNo={}", applyNo);
         boolean revoked = accessEmergencyPermissionService.checkAndRevokeExpiredPermission(applyNo);
         return ResponseDTO.ok(revoked);
     }

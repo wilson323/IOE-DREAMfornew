@@ -2,8 +2,6 @@ package net.lab1024.sa.oa.workflow.approval;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -28,8 +26,6 @@ import java.util.*;
 @Slf4j
 @Service
 public class ApprovalFeatureService {
-
-    private static final Logger log = LoggerFactory.getLogger(ApprovalFeatureService.class);
 
     @Resource
     private RuntimeService runtimeService;

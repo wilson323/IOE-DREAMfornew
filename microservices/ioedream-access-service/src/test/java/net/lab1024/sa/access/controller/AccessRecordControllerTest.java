@@ -21,17 +21,17 @@ import net.lab1024.sa.access.domain.vo.AccessRecordVO;
 import net.lab1024.sa.access.service.AccessEventService;
 
 /**
- * AccessRecordController单元测试
+ * AccessRecordController鍗曞厓娴嬭瘯
  * <p>
- * 目标覆盖率：>= 80%
- * 测试范围：AccessRecordController核心API方法
+ * 鐩爣瑕嗙洊鐜囷細>= 80%
+ * 娴嬭瘯鑼冨洿锛欰ccessRecordController鏍稿績API鏂规硶
  * </p>
  *
  * @author IOE-DREAM Team
  * @since 2025-12-11
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("AccessRecordController单元测试")
+@DisplayName("AccessRecordController鍗曞厓娴嬭瘯")
 class AccessRecordControllerTest {
     @Mock
     private AccessEventService accessEventService;
@@ -41,11 +41,11 @@ class AccessRecordControllerTest {
 
     @BeforeEach
     void setUp() {
-        // 准备测试数据
+        // 鍑嗗娴嬭瘯鏁版嵁
     }
 
     @Test
-    @DisplayName("queryAccessRecords-成功场景-返回分页结果")
+    @DisplayName("queryAccessRecords-鎴愬姛鍦烘櫙-杩斿洖鍒嗛〉缁撴灉")
     void test_queryAccessRecords_Success_ReturnsPageResult() {
         // Given
         Integer pageNum = 1;
@@ -68,7 +68,7 @@ class AccessRecordControllerTest {
     }
 
     @Test
-    @DisplayName("createAccessRecord-成功场景-返回成功")
+    @DisplayName("createAccessRecord-鎴愬姛鍦烘櫙-杩斿洖鎴愬姛")
     void test_createAccessRecord_Success_ReturnsSuccess() {
         // Given
         AccessRecordAddForm form = new AccessRecordAddForm();

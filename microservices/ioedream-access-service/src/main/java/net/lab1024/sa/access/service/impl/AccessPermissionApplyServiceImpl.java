@@ -17,12 +17,9 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 
 /**
- * 门禁权限申请服务实现类
- * <p>
- * 实现门禁权限申请相关业务功能
- * 严格遵循CLAUDE.md规范：
- * - 使用@Service注解标识服务类
- * - 使用@Transactional管理事务
+ * 闂ㄧ鏉冮檺鐢宠鏈嶅姟瀹炵幇绫? * <p>
+ * 瀹炵幇闂ㄧ鏉冮檺鐢宠鐩稿叧涓氬姟鍔熻兘
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤@Service娉ㄨВ鏍囪瘑鏈嶅姟绫? * - 浣跨敤@Transactional绠＄悊浜嬪姟
  * </p>
  *
  * @author IOE-DREAM Team
@@ -41,22 +38,18 @@ public class AccessPermissionApplyServiceImpl implements AccessPermissionApplySe
     private WorkflowApprovalManager workflowApprovalManager;
 
     /**
-     * 提交权限申请（启动审批流程）
+     * 鎻愪氦鏉冮檺鐢宠锛堝惎鍔ㄥ鎵规祦绋嬶級
      * <p>
-     * 实现步骤：
-     * 1. 创建申请实体并保存到数据库
-     * 2. 启动工作流审批流程
-     * 3. 更新申请实体的工作流实例ID
+     * 瀹炵幇姝ラ锛?     * 1. 鍒涘缓鐢宠瀹炰綋骞朵繚瀛樺埌鏁版嵁搴?     * 2. 鍚姩宸ヤ綔娴佸鎵规祦绋?     * 3. 鏇存柊鐢宠瀹炰綋鐨勫伐浣滄祦瀹炰緥ID
      * </p>
      *
-     * @param form 权限申请表单
-     * @return 权限申请实体（包含workflowInstanceId）
-     */
+     * @param form 鏉冮檺鐢宠琛ㄥ崟
+     * @return 鏉冮檺鐢宠瀹炰綋锛堝寘鍚玾orkflowInstanceId锛?     */
     @Override
     public AccessPermissionApplyEntity submitPermissionApply(AccessPermissionApplyForm form) {
-        log.info("[权限申请] 提交权限申请，applicantId={}", form.getApplicantId());
+        log.info("[鏉冮檺鐢宠] 鎻愪氦鏉冮檺鐢宠锛宎pplicantId={}", form.getApplicantId());
 
-        // 1. 创建申请实体
+        // 1. 鍒涘缓鐢宠瀹炰綋
         AccessPermissionApplyEntity entity = new AccessPermissionApplyEntity();
         entity.setApplyNo("AP" + System.currentTimeMillis());
         entity.setApplicantId(form.getApplicantId());
@@ -68,11 +61,11 @@ public class AccessPermissionApplyServiceImpl implements AccessPermissionApplySe
         entity.setStatus("PENDING");
         entity.setCreateTime(LocalDateTime.now());
 
-        // 2. 保存到数据库
+        // 2. 淇濆瓨鍒版暟鎹簱
         accessPermissionApplyDao.insert(entity);
-        log.info("[权限申请] 申请已保存到数据库，applyNo={}, id={}", entity.getApplyNo(), entity.getId());
+        log.info("[鏉冮檺鐢宠] 鐢宠宸蹭繚瀛樺埌鏁版嵁搴擄紝applyNo={}, id={}", entity.getApplyNo(), entity.getId());
 
-        // 3. 启动审批流程
+        // 3. 鍚姩瀹℃壒娴佺▼
         String businessType = "NORMAL".equals(entity.getApplyType())
             ? "ACCESS_PERMISSION_APPLY"
             : "ACCESS_EMERGENCY_PERMISSION_APPLY";
@@ -87,9 +80,8 @@ public class AccessPermissionApplyServiceImpl implements AccessPermissionApplySe
         formData.put("endTime", entity.getEndTime());
 
         ResponseDTO<Long> workflowResult = workflowApprovalManager.startApprovalProcess(
-            null, // definitionId为null，从审批配置中获取
-            entity.getApplyNo(), // businessKey使用申请编号
-            "门禁权限申请-" + entity.getApplyNo(), // instanceName
+            null, // definitionId涓簄ull锛屼粠瀹℃壒閰嶇疆涓幏鍙?            entity.getApplyNo(), // businessKey浣跨敤鐢宠缂栧彿
+            "闂ㄧ鏉冮檺鐢宠-" + entity.getApplyNo(), // instanceName
             entity.getApplicantId(), // initiatorId
             businessType, // businessType
             formData, // formData
@@ -97,52 +89,46 @@ public class AccessPermissionApplyServiceImpl implements AccessPermissionApplySe
         );
 
         if (workflowResult.getCode() == 200 && workflowResult.getData() != null) {
-            // 4. 更新工作流实例ID
+            // 4. 鏇存柊宸ヤ綔娴佸疄渚婭D
             entity.setWorkflowInstanceId(workflowResult.getData());
             accessPermissionApplyDao.updateById(entity);
-            log.info("[权限申请] 审批流程已启动，applyNo={}, workflowInstanceId={}",
+            log.info("[鏉冮檺鐢宠] 瀹℃壒娴佺▼宸插惎鍔紝applyNo={}, workflowInstanceId={}",
                 entity.getApplyNo(), entity.getWorkflowInstanceId());
         } else {
-            log.error("[权限申请] 启动审批流程失败，applyNo={}, error={}",
+            log.error("[鏉冮檺鐢宠] 鍚姩瀹℃壒娴佺▼澶辫触锛宎pplyNo={}, error={}",
                 entity.getApplyNo(), workflowResult.getMessage());
-            // 审批流程启动失败不影响申请记录保存，但需要记录错误
-        }
+            // 瀹℃壒娴佺▼鍚姩澶辫触涓嶅奖鍝嶇敵璇疯褰曚繚瀛橈紝浣嗛渶瑕佽褰曢敊璇?        }
 
-        log.info("[权限申请] 申请提交成功，applyNo={}", entity.getApplyNo());
+        log.info("[鏉冮檺鐢宠] 鐢宠鎻愪氦鎴愬姛锛宎pplyNo={}", entity.getApplyNo());
         return entity;
     }
 
     /**
-     * 更新权限申请状态（由审批结果监听器调用）
-     * <p>
-     * 实现步骤：
-     * 1. 根据申请编号查询申请记录
-     * 2. 更新申请状态、审批意见、审批时间
-     * 3. 保存到数据库
+     * 鏇存柊鏉冮檺鐢宠鐘舵€侊紙鐢卞鎵圭粨鏋滅洃鍚櫒璋冪敤锛?     * <p>
+     * 瀹炵幇姝ラ锛?     * 1. 鏍规嵁鐢宠缂栧彿鏌ヨ鐢宠璁板綍
+     * 2. 鏇存柊鐢宠鐘舵€併€佸鎵规剰瑙併€佸鎵规椂闂?     * 3. 淇濆瓨鍒版暟鎹簱
      * </p>
      *
-     * @param applyNo 申请编号
-     * @param status 审批状态（APPROVED/REJECTED）
-     * @param approvalComment 审批意见
+     * @param applyNo 鐢宠缂栧彿
+     * @param status 瀹℃壒鐘舵€侊紙APPROVED/REJECTED锛?     * @param approvalComment 瀹℃壒鎰忚
      */
     @Override
     public void updatePermissionApplyStatus(String applyNo, String status, String approvalComment) {
-        log.info("[权限申请] 更新申请状态，applyNo={}, status={}", applyNo, status);
+        log.info("[鏉冮檺鐢宠] 鏇存柊鐢宠鐘舵€侊紝applyNo={}, status={}", applyNo, status);
 
-        // 1. 根据申请编号查询申请记录
+        // 1. 鏍规嵁鐢宠缂栧彿鏌ヨ鐢宠璁板綍
         AccessPermissionApplyEntity entity = accessPermissionApplyDao.selectByApplyNo(applyNo);
         if (entity == null) {
-            log.warn("[权限申请] 申请记录不存在，applyNo={}", applyNo);
+            log.warn("[鏉冮檺鐢宠] 鐢宠璁板綍涓嶅瓨鍦紝applyNo={}", applyNo);
             return;
         }
 
-        // 2. 更新申请状态
-        entity.setStatus(status);
+        // 2. 鏇存柊鐢宠鐘舵€?        entity.setStatus(status);
         entity.setApprovalComment(approvalComment);
         entity.setApprovalTime(LocalDateTime.now());
 
-        // 3. 保存到数据库
+        // 3. 淇濆瓨鍒版暟鎹簱
         accessPermissionApplyDao.updateById(entity);
-        log.info("[权限申请] 申请状态已更新，applyNo={}, status={}", applyNo, status);
+        log.info("[鏉冮檺鐢宠] 鐢宠鐘舵€佸凡鏇存柊锛宎pplyNo={}, status={}", applyNo, status);
     }
 }

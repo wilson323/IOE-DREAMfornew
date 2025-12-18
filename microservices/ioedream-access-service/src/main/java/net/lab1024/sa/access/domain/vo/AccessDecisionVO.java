@@ -11,13 +11,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 访问决策视图对象
+ * 璁块棶鍐崇瓥瑙嗗浘瀵硅薄
  * <p>
- * 智能访问控制决策结果的数据传输对象
- * 严格遵循CLAUDE.md规范：
- * - 使用@Data注解
- * - 完整的字段文档注解
- * - 构建者模式支持
+ * 鏅鸿兘璁块棶鎺у埗鍐崇瓥缁撴灉鐨勬暟鎹紶杈撳璞?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Data娉ㄨВ
+ * - 瀹屾暣鐨勫瓧娈垫枃妗ｆ敞瑙?
+ * - 鏋勫缓鑰呮ā寮忔敮鎸?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -28,64 +28,64 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "访问决策信息")
+@Schema(description = "璁块棶鍐崇瓥淇℃伅")
 public class AccessDecisionVO {
 
     /**
-     * 用户ID
+     * 鐢ㄦ埛ID
      */
-    @Schema(description = "用户ID", example = "1001")
+    @Schema(description = "鐢ㄦ埛ID", example = "1001")
     private Long userId;
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
-    @Schema(description = "设备ID", example = "3001")
+    @Schema(description = "璁惧ID", example = "3001")
     private Long deviceId;
 
     /**
-     * 区域ID
+     * 鍖哄煙ID
      */
-    @Schema(description = "区域ID", example = "2001")
+    @Schema(description = "鍖哄煙ID", example = "2001")
     private Long areaId;
 
     /**
-     * 风险等级
+     * 椋庨櫓绛夌骇
      */
-    @Schema(description = "风险等级", example = "MEDIUM")
+    @Schema(description = "椋庨櫓绛夌骇", example = "MEDIUM")
     private String riskLevel;
 
     /**
-     * 风险评分
+     * 椋庨櫓璇勫垎
      */
-    @Schema(description = "风险评分", example = "35.5")
+    @Schema(description = "椋庨櫓璇勫垎", example = "35.5")
     private BigDecimal riskScore;
 
     /**
-     * 访问级别
-     * DENIED - 拒绝
-     * RESTRICTED - 受限
-     * NORMAL - 正常
-     * ENHANCED - 增强
+     * 璁块棶绾у埆
+     * DENIED - 鎷掔粷
+     * RESTRICTED - 鍙楅檺
+     * NORMAL - 姝ｅ父
+     * ENHANCED - 澧炲己
      */
-    @Schema(description = "访问级别", example = "NORMAL")
+    @Schema(description = "璁块棶绾у埆", example = "NORMAL")
     private String accessLevel;
 
     /**
-     * 是否需要二次验证
+     * 鏄惁闇€瑕佷簩娆￠獙璇?
      */
-    @Schema(description = "是否需要二次验证", example = "false")
+    @Schema(description = "鏄惁闇€瑕佷簩娆￠獙璇?, example = "false")
     private Boolean requireSecondaryVerification;
 
     /**
-     * 额外安全措施
+     * 棰濆瀹夊叏鎺柦
      */
-    @Schema(description = "额外安全措施")
+    @Schema(description = "棰濆瀹夊叏鎺柦")
     private List<String> additionalSecurityMeasures;
 
     /**
-     * 决策时间
+     * 鍐崇瓥鏃堕棿
      */
-    @Schema(description = "决策时间", example = "2025-01-30T15:45:00")
+    @Schema(description = "鍐崇瓥鏃堕棿", example = "2025-01-30T15:45:00")
     private LocalDateTime decisionTime;
 }

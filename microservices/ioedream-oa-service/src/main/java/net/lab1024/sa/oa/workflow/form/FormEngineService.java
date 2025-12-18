@@ -3,8 +3,6 @@ package net.lab1024.sa.oa.workflow.form;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -29,7 +27,6 @@ import java.time.LocalDateTime;
 @Slf4j
 @Service
 public class FormEngineService {
-    private static final Logger log = LoggerFactory.getLogger(FormEngineService.class);
 
     @Resource
     private ObjectMapper objectMapper;
@@ -158,6 +155,7 @@ public class FormEngineService {
             }
 
             // 合并表单数据
+            @SuppressWarnings("unchecked")
             Map<String, Object> existingData = objectMapper.readValue(
                     formInstance.getFormData(), Map.class);
             if (formVariables != null && !formVariables.isEmpty()) {

@@ -14,11 +14,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.access.entity.ApprovalProcessEntity;
 
 /**
- * 审批流程DAO
- * 严格遵循repowiki规范:
- * - 使用MyBatis-Plus BaseMapper
- * - 接口以Dao结尾
- * - 只负责数据访问，不包含业务逻辑
+ * 瀹℃壒娴佺▼DAO
+ * 涓ユ牸閬靛惊repowiki瑙勮寖:
+ * - 浣跨敤MyBatis-Plus BaseMapper
+ * - 鎺ュ彛浠ao缁撳熬
+ * - 鍙礋璐ｆ暟鎹闂紝涓嶅寘鍚笟鍔￠€昏緫
  *
  * @author SmartAdmin Team
  * @since 2025-12-01
@@ -27,22 +27,21 @@ import net.lab1024.sa.access.entity.ApprovalProcessEntity;
 public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
 
     /**
-     * 根据流程编号查询流程
+     * 鏍规嵁娴佺▼缂栧彿鏌ヨ娴佺▼
      *
-     * @param processNo 流程编号
-     * @return 流程实体
+     * @param processNo 娴佺▼缂栧彿
+     * @return 娴佺▼瀹炰綋
      */
     @Select("SELECT * FROM access_approval_process WHERE process_no = #{processNo} AND deleted_flag = 0")
     ApprovalProcessEntity selectByProcessNo(@Param("processNo") String processNo);
 
     /**
-     * 根据申请人查询流程列表
-     *
-     * @param applicantId 申请人ID
-     * @param status      状态(可选)
-     * @param startTime   开始时间(可选)
-     * @param endTime     结束时间(可选)
-     * @return 流程列表
+     * 鏍规嵁鐢宠浜烘煡璇㈡祦绋嬪垪琛?     *
+     * @param applicantId 鐢宠浜篒D
+     * @param status      鐘舵€?鍙€?
+     * @param startTime   寮€濮嬫椂闂?鍙€?
+     * @param endTime     缁撴潫鏃堕棿(鍙€?
+     * @return 娴佺▼鍒楄〃
      */
     @Select("<script>" +
             "SELECT * FROM access_approval_process WHERE applicant_id = #{applicantId} AND deleted_flag = 0" +
@@ -57,11 +56,10 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
             @Param("endTime") LocalDateTime endTime);
 
     /**
-     * 根据审批人查询待审批流程
+     * 鏍规嵁瀹℃壒浜烘煡璇㈠緟瀹℃壒娴佺▼
      *
-     * @param approverId 审批人ID
-     * @return 待审批流程列表
-     */
+     * @param approverId 瀹℃壒浜篒D
+     * @return 寰呭鎵规祦绋嬪垪琛?     */
     @Select("SELECT p.* FROM access_approval_process p " +
             "INNER JOIN access_approval_step s ON p.process_id = s.process_id " +
             "WHERE s.approver_id = #{approverId} AND s.step_status = 'PENDING' " +
@@ -70,20 +68,18 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
     List<ApprovalProcessEntity> selectPendingByApproverId(@Param("approverId") Long approverId);
 
     /**
-     * 根据状态查询流程数量
-     *
-     * @param status 状态
-     * @return 数量
+     * 鏍规嵁鐘舵€佹煡璇㈡祦绋嬫暟閲?     *
+     * @param status 鐘舵€?     * @return 鏁伴噺
      */
     @Select("SELECT COUNT(*) FROM access_approval_process WHERE status = #{status} AND deleted_flag = 0")
     Integer countByStatus(@Param("status") String status);
 
     /**
-     * 根据区域查询流程数量
+     * 鏍规嵁鍖哄煙鏌ヨ娴佺▼鏁伴噺
      *
-     * @param areaId 区域ID
-     * @param status 状态(可选)
-     * @return 数量
+     * @param areaId 鍖哄煙ID
+     * @param status 鐘舵€?鍙€?
+     * @return 鏁伴噺
      */
     @Select("<script>" +
             "SELECT COUNT(*) FROM access_approval_process WHERE area_id = #{areaId} AND deleted_flag = 0" +
@@ -93,12 +89,9 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
             @Param("status") String status);
 
     /**
-     * 更新流程状态
-     *
-     * @param processId 流程ID
-     * @param status    新状态
-     * @param version   版本号
-     * @return 影响行数
+     * 鏇存柊娴佺▼鐘舵€?     *
+     * @param processId 娴佺▼ID
+     * @param status    鏂扮姸鎬?     * @param version   鐗堟湰鍙?     * @return 褰卞搷琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE access_approval_process SET status = #{status}, updated_time = NOW(), version = version + 1 " +
@@ -108,12 +101,11 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
             @Param("version") Integer version);
 
     /**
-     * 更新流程当前步骤
+     * 鏇存柊娴佺▼褰撳墠姝ラ
      *
-     * @param processId   流程ID
-     * @param currentStep 当前步骤
-     * @param version     版本号
-     * @return 影响行数
+     * @param processId   娴佺▼ID
+     * @param currentStep 褰撳墠姝ラ
+     * @param version     鐗堟湰鍙?     * @return 褰卞搷琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE access_approval_process SET current_step = #{currentStep}, updated_time = NOW(), version = version + 1 "
@@ -124,16 +116,14 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
             @Param("version") Integer version);
 
     /**
-     * 完成审批流程
+     * 瀹屾垚瀹℃壒娴佺▼
      *
-     * @param processId         流程ID
-     * @param status            最终状态
-     * @param approvalComment   审批意见
-     * @param finalApproverId   最终审批人ID
-     * @param finalApproverName 最终审批人姓名
-     * @param approvalTime      审批时间
-     * @param version           版本号
-     * @return 影响行数
+     * @param processId         娴佺▼ID
+     * @param status            鏈€缁堢姸鎬?     * @param approvalComment   瀹℃壒鎰忚
+     * @param finalApproverId   鏈€缁堝鎵逛汉ID
+     * @param finalApproverName 鏈€缁堝鎵逛汉濮撳悕
+     * @param approvalTime      瀹℃壒鏃堕棿
+     * @param version           鐗堟湰鍙?     * @return 褰卞搷琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE access_approval_process SET " +
@@ -154,11 +144,10 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
             @Param("version") Integer version);
 
     /**
-     * 软删除流程
-     *
-     * @param processId 流程ID
-     * @param updatedBy 更新人ID
-     * @return 影响行数
+     * 杞垹闄ゆ祦绋?     *
+     * @param processId 娴佺▼ID
+     * @param updatedBy 鏇存柊浜篒D
+     * @return 褰卞搷琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE access_approval_process SET deleted_flag = 1, updated_by = #{updatedBy}, updated_time = NOW() " +
@@ -167,10 +156,9 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
             @Param("updatedBy") Long updatedBy);
 
     /**
-     * 查询超时的流程
-     *
-     * @param currentTime 当前时间
-     * @return 超时流程列表
+     * 鏌ヨ瓒呮椂鐨勬祦绋?     *
+     * @param currentTime 褰撳墠鏃堕棿
+     * @return 瓒呮椂娴佺▼鍒楄〃
      */
     @Select("SELECT p.* FROM access_approval_process p " +
             "INNER JOIN access_approval_step s ON p.process_id = s.process_id " +
@@ -181,19 +169,17 @@ public interface ApprovalProcessDao extends BaseMapper<ApprovalProcessEntity> {
     List<ApprovalProcessEntity> selectTimeoutProcesses(@Param("currentTime") LocalDateTime currentTime);
 
     /**
-     * 统计各状态的流程数量
+     * 缁熻鍚勭姸鎬佺殑娴佺▼鏁伴噺
      *
-     * @return 统计结果
+     * @return 缁熻缁撴灉
      */
     @Select("SELECT status, COUNT(*) as count FROM access_approval_process WHERE deleted_flag = 0 GROUP BY status")
     List<java.util.Map<String, Object>> countByStatusGroup();
 
     /**
-     * 查询即将过期的流程
-     *
-     * @param currentTime 当前时间
-     * @param hours       小时数
-     * @return 即将过期流程列表
+     * 鏌ヨ鍗冲皢杩囨湡鐨勬祦绋?     *
+     * @param currentTime 褰撳墠鏃堕棿
+     * @param hours       灏忔椂鏁?     * @return 鍗冲皢杩囨湡娴佺▼鍒楄〃
      */
     @Select("SELECT * FROM access_approval_process WHERE " +
             "status IN ('PENDING', 'IN_PROGRESS') " +

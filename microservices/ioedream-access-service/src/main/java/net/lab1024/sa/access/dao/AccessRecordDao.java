@@ -14,12 +14,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.common.access.entity.AccessRecordEntity;
 
 /**
- * 门禁记录DAO
+ * 闂ㄧ璁板綍DAO
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用@Mapper注解
- * - 继承BaseMapper
- * - 使用Dao后缀命名
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤@Mapper娉ㄨВ
+ * - 缁ф壙BaseMapper
+ * - 浣跨敤Dao鍚庣紑鍛藉悕
  * </p>
  *
  * @author IOE-DREAM Team
@@ -30,13 +29,11 @@ import net.lab1024.sa.common.access.entity.AccessRecordEntity;
 public interface AccessRecordDao extends BaseMapper<AccessRecordEntity> {
 
     /**
-     * 根据用户ID和时间范围查询记录
-     *
-     * @param userId 用户ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @param size 记录数量
-     * @return 门禁记录列表
+     * 鏍规嵁鐢ㄦ埛ID鍜屾椂闂磋寖鍥存煡璇㈣褰?     *
+     * @param userId 鐢ㄦ埛ID
+     * @param startTime 寮€濮嬫椂闂?     * @param endTime 缁撴潫鏃堕棿
+     * @param size 璁板綍鏁伴噺
+     * @return 闂ㄧ璁板綍鍒楄〃
      */
     default List<AccessRecordEntity> selectByUserIdAndTimeRange(Long userId, LocalDateTime startTime, LocalDateTime endTime, Integer size) {
         LambdaQueryWrapper<AccessRecordEntity> wrapper = Wrappers.lambdaQuery(AccessRecordEntity.class)
@@ -49,16 +46,16 @@ public interface AccessRecordDao extends BaseMapper<AccessRecordEntity> {
     }
 
     /**
-     * 分页查询门禁记录
+     * 鍒嗛〉鏌ヨ闂ㄧ璁板綍
      *
-     * @param page 分页对象
-     * @param userId 用户ID（可选）
-     * @param deviceId 设备ID（可选）
-     * @param areaId 区域ID（可选）
-     * @param startDate 开始日期（可选）
-     * @param endDate 结束日期（可选）
-     * @param accessResult 通行结果（可选）
-     * @return 分页结果
+     * @param page 鍒嗛〉瀵硅薄
+     * @param userId 鐢ㄦ埛ID锛堝彲閫夛級
+     * @param deviceId 璁惧ID锛堝彲閫夛級
+     * @param areaId 鍖哄煙ID锛堝彲閫夛級
+     * @param startDate 寮€濮嬫棩鏈燂紙鍙€夛級
+     * @param endDate 缁撴潫鏃ユ湡锛堝彲閫夛級
+     * @param accessResult 閫氳缁撴灉锛堝彲閫夛級
+     * @return 鍒嗛〉缁撴灉
      */
     default Page<AccessRecordEntity> selectPage(Page<AccessRecordEntity> page, Long userId, Long deviceId,
             String areaId, LocalDate startDate, LocalDate endDate, Integer accessResult) {
@@ -74,15 +71,14 @@ public interface AccessRecordDao extends BaseMapper<AccessRecordEntity> {
     }
 
     /**
-     * 统计门禁记录
+     * 缁熻闂ㄧ璁板綍
      * <p>
-     * 使用MyBatis-Plus的LambdaQueryWrapper进行统计查询
+     * 浣跨敤MyBatis-Plus鐨凩ambdaQueryWrapper杩涜缁熻鏌ヨ
      * </p>
      *
-     * @param startDate 开始日期
-     * @param endDate 结束日期
-     * @param areaId 区域ID（可选）
-     * @return 统计结果
+     * @param startDate 寮€濮嬫棩鏈?     * @param endDate 缁撴潫鏃ユ湡
+     * @param areaId 鍖哄煙ID锛堝彲閫夛級
+     * @return 缁熻缁撴灉
      */
     default AccessRecordStatistics selectStatistics(LocalDate startDate, LocalDate endDate, String areaId) {
         LambdaQueryWrapper<AccessRecordEntity> wrapper = Wrappers.lambdaQuery(AccessRecordEntity.class)
@@ -90,16 +86,14 @@ public interface AccessRecordDao extends BaseMapper<AccessRecordEntity> {
                 .le(endDate != null, AccessRecordEntity::getAccessTime, endDate.atTime(23, 59, 59))
                 .eq(areaId != null, AccessRecordEntity::getAreaId, Long.parseLong(areaId));
 
-        // 查询总记录数
+        // 鏌ヨ鎬昏褰曟暟
         Long totalCount = selectCount(wrapper);
 
-        // 查询成功数
-        LambdaQueryWrapper<AccessRecordEntity> successWrapper = wrapper.clone();
+        // 鏌ヨ鎴愬姛鏁?        LambdaQueryWrapper<AccessRecordEntity> successWrapper = wrapper.clone();
         successWrapper.eq(AccessRecordEntity::getAccessResult, 1);
         Long successCount = selectCount(successWrapper);
 
-        // 查询失败数
-        LambdaQueryWrapper<AccessRecordEntity> failedWrapper = wrapper.clone();
+        // 鏌ヨ澶辫触鏁?        LambdaQueryWrapper<AccessRecordEntity> failedWrapper = wrapper.clone();
         failedWrapper.eq(AccessRecordEntity::getAccessResult, 2);
         Long failedCount = selectCount(failedWrapper);
 
@@ -112,8 +106,7 @@ public interface AccessRecordDao extends BaseMapper<AccessRecordEntity> {
     }
 
     /**
-     * 统计结果内部类
-     */
+     * 缁熻缁撴灉鍐呴儴绫?     */
     class AccessRecordStatistics {
         private Long totalCount;
         private Long successCount;

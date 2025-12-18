@@ -8,9 +8,11 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.device.comm.protocol.rs485.*;
 import net.lab1024.sa.device.comm.service.RS485ProtocolService;
-import net.lab1024.sa.device.comm.service.impl.RS485ProtocolServiceImpl;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 import java.util.Map;
 
@@ -47,7 +49,7 @@ public class RS485ProtocolController {
 
     @Operation(summary = "初始化RS485设备", description = "初始化RS485工业设备连接和配置")
     @PostMapping("/device/{deviceId}/initialize")
-    public ResponseDTO<RS485ProtocolServiceImpl.RS485InitResultVO> initializeDevice(
+    public ResponseDTO<RS485InitResultVO> initializeDevice(
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId,
             @Parameter(description = "设备信息", required = true) @RequestBody Map<String, Object> deviceInfo,
             @Parameter(description = "配置参数", required = true) @RequestBody Map<String, Object> config) {
@@ -56,7 +58,7 @@ public class RS485ProtocolController {
 
     @Operation(summary = "处理RS485设备消息", description = "处理来自RS485设备的原始协议消息")
     @PostMapping("/device/{deviceId}/message")
-    public ResponseDTO<RS485ProtocolServiceImpl.RS485ProcessResultVO> processDeviceMessage(
+    public ResponseDTO<RS485ProcessResultVO> processDeviceMessage(
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId,
             @Parameter(description = "协议类型", required = true) @RequestParam String protocolType,
             @Parameter(description = "原始消息数据", required = true) @RequestBody byte[] rawData) {
@@ -65,7 +67,7 @@ public class RS485ProtocolController {
 
     @Operation(summary = "处理RS485设备心跳", description = "处理RS485设备心跳消息")
     @PostMapping("/device/{deviceId}/heartbeat")
-    public ResponseDTO<RS485ProtocolServiceImpl.RS485HeartbeatResultVO> processDeviceHeartbeat(
+    public ResponseDTO<RS485HeartbeatResultVO> processDeviceHeartbeat(
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId,
             @Parameter(description = "心跳数据", required = true) @RequestBody Map<String, Object> heartbeatData) {
         return rs485ProtocolService.processDeviceHeartbeat(deviceId, heartbeatData);
@@ -82,14 +84,14 @@ public class RS485ProtocolController {
 
     @Operation(summary = "获取设备状态", description = "获取RS485设备的当前状态信息")
     @GetMapping("/device/{deviceId}/status")
-    public ResponseDTO<RS485ProtocolServiceImpl.RS485DeviceStatusVO> getDeviceStatus(
+    public ResponseDTO<RS485DeviceStatusVO> getDeviceStatus(
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId) {
         return rs485ProtocolService.getDeviceStatus(deviceId);
     }
 
     @Operation(summary = "断开设备连接", description = "断开与RS485设备的连接")
     @PostMapping("/device/{deviceId}/disconnect")
-    public ResponseDTO<Boolean> disconnectDevice(
+    public ResponseDTO<Void> disconnectDevice(
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId) {
         return rs485ProtocolService.disconnectDevice(deviceId);
     }
@@ -115,13 +117,13 @@ public class RS485ProtocolController {
 
     @Operation(summary = "批量初始化设备", description = "批量初始化多个RS485设备")
     @PostMapping("/devices/batch-initialize")
-    public ResponseDTO<Map<String, RS485ProtocolServiceImpl.RS485InitResultVO>> batchInitializeDevices(
+    public ResponseDTO<Map<String, RS485InitResultVO>> batchInitializeDevices(
             @Parameter(description = "批量设备配置", required = true) @RequestBody BatchDeviceConfig config) {
-        Map<String, RS485ProtocolServiceImpl.RS485InitResultVO> results = new HashMap<>();
+        Map<String, RS485InitResultVO> results = new HashMap<>();
 
         for (BatchDeviceConfig.DeviceConfig deviceConfig : config.getDevices()) {
             try {
-                ResponseDTO<RS485ProtocolServiceImpl.RS485InitResultVO> result = rs485ProtocolService.initializeDevice(
+                ResponseDTO<RS485InitResultVO> result = rs485ProtocolService.initializeDevice(
                         deviceConfig.getDeviceId(),
                         deviceConfig.getDeviceInfo(),
                         deviceConfig.getConfig()
@@ -129,9 +131,8 @@ public class RS485ProtocolController {
                 results.put(deviceConfig.getDeviceId().toString(), result.getData());
             } catch (Exception e) {
                 log.error("[RS485控制器] 批量初始化设备失败, deviceId={}", deviceConfig.getDeviceId(), e);
-                RS485ProtocolServiceImpl.RS485InitResultVO errorResult = new RS485ProtocolServiceImpl.RS485InitResultVO();
-                errorResult.setSuccess(false);
-                errorResult.setMessage("初始化失败: " + e.getMessage());
+                RS485InitResultVO errorResult = new RS485InitResultVO();
+                errorResult.setStatus("初始化失败: " + e.getMessage());
                 results.put(deviceConfig.getDeviceId().toString(), errorResult);
             }
         }
@@ -147,8 +148,8 @@ public class RS485ProtocolController {
 
         for (Long deviceId : request.getDeviceIds()) {
             try {
-                ResponseDTO<Boolean> result = rs485ProtocolService.disconnectDevice(deviceId);
-                results.put(deviceId.toString(), result.getData());
+                ResponseDTO<Void> result = rs485ProtocolService.disconnectDevice(deviceId);
+                results.put(deviceId.toString(), result.getCode() == 200);
             } catch (Exception e) {
                 log.error("[RS485控制器] 批量断开设备失败, deviceId={}", deviceId, e);
                 results.put(deviceId.toString(), false);
@@ -182,9 +183,9 @@ public class RS485ProtocolController {
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId) {
         try {
             // 先断开连接
-            ResponseDTO<Boolean> disconnectResult = rs485ProtocolService.disconnectDevice(deviceId);
+            ResponseDTO<Void> disconnectResult = rs485ProtocolService.disconnectDevice(deviceId);
 
-            if (disconnectResult.getData() != null && disconnectResult.getData()) {
+            if (disconnectResult.getCode() == 200) {
                 log.info("[RS485控制器] 设备重置成功, deviceId={}", deviceId);
                 return ResponseDTO.ok(true);
             } else {

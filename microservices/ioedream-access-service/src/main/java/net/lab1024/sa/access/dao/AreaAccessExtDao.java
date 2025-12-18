@@ -13,30 +13,27 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.access.entity.AreaAccessExtEntity;
 
 /**
- * 区域门禁扩展Repository
+ * 鍖哄煙闂ㄧ鎵╁睍Repository
  * <p>
- * 严格遵循Repository架构规范：
- * - 统一Repository模式，禁用Dao命名
- * - 使用@Mapper注解替代@Mapper
- * - 查询方法使用@Transactional(readOnly = true)
- * - 继承BaseMapper使用MyBatis-Plus
- * - 基于AreaAccessExtEntity提供数据访问方法
- * - 命名规范统一：符合{BaseDomain}{Module}ExtRepository标准模式
- * - 严格遵循项目现有代码风格和架构规范
- * - 提供扩展查询和性能优化功能
+ * 涓ユ牸閬靛惊Repository鏋舵瀯瑙勮寖锛? * - 缁熶竴Repository妯″紡锛岀鐢―ao鍛藉悕
+ * - 浣跨敤@Mapper娉ㄨВ鏇夸唬@Mapper
+ * - 鏌ヨ鏂规硶浣跨敤@Transactional(readOnly = true)
+ * - 缁ф壙BaseMapper浣跨敤MyBatis-Plus
+ * - 鍩轰簬AreaAccessExtEntity鎻愪緵鏁版嵁璁块棶鏂规硶
+ * - 鍛藉悕瑙勮寖缁熶竴锛氱鍚坽BaseDomain}{Module}ExtRepository鏍囧噯妯″紡
+ * - 涓ユ牸閬靛惊椤圭洰鐜版湁浠ｇ爜椋庢牸鍜屾灦鏋勮鑼? * - 鎻愪緵鎵╁睍鏌ヨ鍜屾€ц兘浼樺寲鍔熻兘
  * </p>
  *
  * @author SmartAdmin Team
  * @since 2025-11-25
- * @updated 2025-12-01 遵循Repository架构规范重构
+ * @updated 2025-12-01 閬靛惊Repository鏋舵瀯瑙勮寖閲嶆瀯
  */
 @Mapper
 public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
 
     /**
-     * 根据区域ID查询扩展信息
-     * 关联查询基础区域信息，确保数据一致性
-     */
+     * 鏍规嵁鍖哄煙ID鏌ヨ鎵╁睍淇℃伅
+     * 鍏宠仈鏌ヨ鍩虹鍖哄煙淇℃伅锛岀‘淇濇暟鎹竴鑷存€?     */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
             "FROM t_access_area_ext e " +
@@ -45,9 +42,8 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     AreaAccessExtEntity selectByAreaIdWithBaseInfo(@Param("areaId") Long areaId);
 
     /**
-     * 根据门禁级别查询区域扩展信息
-     * 关联基础区域表，支持按门禁级别过滤
-     */
+     * 鏍规嵁闂ㄧ绾у埆鏌ヨ鍖哄煙鎵╁睍淇℃伅
+     * 鍏宠仈鍩虹鍖哄煙琛紝鏀寔鎸夐棬绂佺骇鍒繃婊?     */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
             "FROM t_access_area_ext e " +
@@ -57,9 +53,8 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectByAccessLevel(@Param("accessLevel") Integer accessLevel);
 
     /**
-     * 根据门禁模式查询区域扩展信息
-     * 支持模糊匹配，关联基础区域表
-     */
+     * 鏍规嵁闂ㄧ妯″紡鏌ヨ鍖哄煙鎵╁睍淇℃伅
+     * 鏀寔妯＄硦鍖归厤锛屽叧鑱斿熀纭€鍖哄煙琛?     */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
             "FROM t_access_area_ext e " +
@@ -69,8 +64,7 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectByAccessModeLike(@Param("accessMode") String accessMode);
 
     /**
-     * 查询包含指定验证方式的区域
-     * 关联基础区域表，支持验证方式过滤
+     * 鏌ヨ鍖呭惈鎸囧畾楠岃瘉鏂瑰紡鐨勫尯鍩?     * 鍏宠仈鍩虹鍖哄煙琛紝鏀寔楠岃瘉鏂瑰紡杩囨护
      */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
@@ -81,9 +75,7 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectByVerificationMode(@Param("verificationMode") String verificationMode);
 
     /**
-     * 查询高门禁级别的区域（access_level >= 2）
-     * 关联基础区域表，按门禁级别降序排列
-     */
+     * 鏌ヨ楂橀棬绂佺骇鍒殑鍖哄煙锛坅ccess_level >= 2锛?     * 鍏宠仈鍩虹鍖哄煙琛紝鎸夐棬绂佺骇鍒檷搴忔帓鍒?     */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
             "FROM t_access_area_ext e " +
@@ -93,8 +85,8 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectByMinAccessLevel(@Param("minLevel") Integer minLevel);
 
     /**
-     * 批量查询区域扩展信息
-     * 关联基础区域表，支持多个区域ID
+     * 鎵归噺鏌ヨ鍖哄煙鎵╁睍淇℃伅
+     * 鍏宠仈鍩虹鍖哄煙琛紝鏀寔澶氫釜鍖哄煙ID
      */
     @Transactional(readOnly = true)
     @Select("<script>" +
@@ -111,9 +103,7 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectByAreaIdsWithBaseInfo(@Param("areaIds") List<Long> areaIds);
 
     /**
-     * 查询设备数量大于指定数量的区域
-     * 关联基础区域表，按设备数量降序排列
-     */
+     * 鏌ヨ璁惧鏁伴噺澶т簬鎸囧畾鏁伴噺鐨勫尯鍩?     * 鍏宠仈鍩虹鍖哄煙琛紝鎸夎澶囨暟閲忛檷搴忔帓鍒?     */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
             "FROM t_access_area_ext e " +
@@ -123,12 +113,12 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectByMinDeviceCount(@Param("minDeviceCount") Integer minDeviceCount);
 
     /**
-     * 更新区域门禁级别
+     * 鏇存柊鍖哄煙闂ㄧ绾у埆
      *
-     * @param areaId       区域ID
-     * @param accessLevel  门禁级别
-     * @param updateUserId 更新用户ID
-     * @return 更新行数
+     * @param areaId       鍖哄煙ID
+     * @param accessLevel  闂ㄧ绾у埆
+     * @param updateUserId 鏇存柊鐢ㄦ埛ID
+     * @return 鏇存柊琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_access_area_ext SET " +
@@ -140,12 +130,12 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
             @Param("updateUserId") Long updateUserId);
 
     /**
-     * 更新门禁模式配置
+     * 鏇存柊闂ㄧ妯″紡閰嶇疆
      *
-     * @param areaId       区域ID
-     * @param accessMode   门禁模式
-     * @param updateUserId 更新用户ID
-     * @return 更新行数
+     * @param areaId       鍖哄煙ID
+     * @param accessMode   闂ㄧ妯″紡
+     * @param updateUserId 鏇存柊鐢ㄦ埛ID
+     * @return 鏇存柊琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_access_area_ext SET " +
@@ -157,12 +147,12 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
             @Param("updateUserId") Long updateUserId);
 
     /**
-     * 更新关联设备数量
+     * 鏇存柊鍏宠仈璁惧鏁伴噺
      *
-     * @param areaId       区域ID
-     * @param deviceCount  设备数量
-     * @param updateUserId 更新用户ID
-     * @return 更新行数
+     * @param areaId       鍖哄煙ID
+     * @param deviceCount  璁惧鏁伴噺
+     * @param updateUserId 鏇存柊鐢ㄦ埛ID
+     * @return 鏇存柊琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_access_area_ext SET " +
@@ -174,11 +164,10 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
             @Param("updateUserId") Long updateUserId);
 
     /**
-     * 软删除区域扩展信息
-     *
-     * @param areaId       区域ID
-     * @param updateUserId 更新用户ID
-     * @return 删除行数
+     * 杞垹闄ゅ尯鍩熸墿灞曚俊鎭?     *
+     * @param areaId       鍖哄煙ID
+     * @param updateUserId 鏇存柊鐢ㄦ埛ID
+     * @return 鍒犻櫎琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("UPDATE t_access_area_ext SET " +
@@ -189,11 +178,10 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     int softDeleteByAreaId(@Param("areaId") Long areaId, @Param("updateUserId") Long updateUserId);
 
     /**
-     * 批量软删除区域扩展信息
-     *
-     * @param areaIds      区域ID列表
-     * @param updateUserId 更新用户ID
-     * @return 删除行数
+     * 鎵归噺杞垹闄ゅ尯鍩熸墿灞曚俊鎭?     *
+     * @param areaIds      鍖哄煙ID鍒楄〃
+     * @param updateUserId 鏇存柊鐢ㄦ埛ID
+     * @return 鍒犻櫎琛屾暟
      */
     @Transactional(rollbackFor = Exception.class)
     @Update("<script>" +
@@ -209,18 +197,17 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     int batchSoftDeleteByAreaIds(@Param("areaIds") List<Long> areaIds, @Param("updateUserId") Long updateUserId);
 
     /**
-     * 统计区域扩展信息数量
+     * 缁熻鍖哄煙鎵╁睍淇℃伅鏁伴噺
      *
-     * @return 总数量
-     */
+     * @return 鎬绘暟閲?     */
     @Transactional(readOnly = true)
     @Select("SELECT COUNT(*) FROM t_access_area_ext WHERE deleted_flag = 0")
     long countTotal();
 
     /**
-     * 根据门禁级别统计数量
+     * 鏍规嵁闂ㄧ绾у埆缁熻鏁伴噺
      *
-     * @return 级别统计信息
+     * @return 绾у埆缁熻淇℃伅
      */
     @Transactional(readOnly = true)
     @Select("SELECT " +
@@ -233,9 +220,9 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<java.util.Map<String, Object>> countByAccessLevel();
 
     /**
-     * 统计各门禁模式的区域数量
+     * 缁熻鍚勯棬绂佹ā寮忕殑鍖哄煙鏁伴噺
      *
-     * @return 模式统计信息
+     * @return 妯″紡缁熻淇℃伅
      */
     @Transactional(readOnly = true)
     @Select("SELECT " +
@@ -248,39 +235,36 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<java.util.Map<String, Object>> countByAccessMode();
 
     /**
-     * 统计设备数量分布情况
+     * 缁熻璁惧鏁伴噺鍒嗗竷鎯呭喌
      *
-     * @return 设备数量统计信息
+     * @return 璁惧鏁伴噺缁熻淇℃伅
      */
     @Transactional(readOnly = true)
     @Select("SELECT " +
             "CASE " +
-            "WHEN device_count = 0 THEN '无设备' " +
-            "WHEN device_count BETWEEN 1 AND 5 THEN '1-5台' " +
-            "WHEN device_count BETWEEN 6 AND 10 THEN '6-10台' " +
-            "WHEN device_count BETWEEN 11 AND 20 THEN '11-20台' " +
-            "ELSE '20台以上' " +
+            "WHEN device_count = 0 THEN '鏃犺澶? " +
+            "WHEN device_count BETWEEN 1 AND 5 THEN '1-5鍙? " +
+            "WHEN device_count BETWEEN 6 AND 10 THEN '6-10鍙? " +
+            "WHEN device_count BETWEEN 11 AND 20 THEN '11-20鍙? " +
+            "ELSE '20鍙颁互涓? " +
             "END as device_range, " +
             "COUNT(*) as count " +
             "FROM t_access_area_ext " +
             "WHERE deleted_flag = 0 " +
             "GROUP BY " +
             "CASE " +
-            "WHEN device_count = 0 THEN '无设备' " +
-            "WHEN device_count BETWEEN 1 AND 5 THEN '1-5台' " +
-            "WHEN device_count BETWEEN 6 AND 10 THEN '6-10台' " +
-            "WHEN device_count BETWEEN 11 AND 20 THEN '11-20台' " +
-            "ELSE '20台以上' " +
+            "WHEN device_count = 0 THEN '鏃犺澶? " +
+            "WHEN device_count BETWEEN 1 AND 5 THEN '1-5鍙? " +
+            "WHEN device_count BETWEEN 6 AND 10 THEN '6-10鍙? " +
+            "WHEN device_count BETWEEN 11 AND 20 THEN '11-20鍙? " +
+            "ELSE '20鍙颁互涓? " +
             "END " +
             "ORDER BY MIN(device_count)")
     List<java.util.Map<String, Object>> countByDeviceRange();
 
     /**
-     * 查询高门禁级别的区域（access_level >= 2）
-     * 关联基础区域表
-     *
-     * @return 高级别区域列表
-     */
+     * 鏌ヨ楂橀棬绂佺骇鍒殑鍖哄煙锛坅ccess_level >= 2锛?     * 鍏宠仈鍩虹鍖哄煙琛?     *
+     * @return 楂樼骇鍒尯鍩熷垪琛?     */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
             "FROM t_access_area_ext e " +
@@ -290,11 +274,8 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectHighAccessLevelAreas();
 
     /**
-     * 查询多验证方式的区域（access_mode包含多个验证方式）
-     * 关联基础区域表
-     *
-     * @return 多验证方式区域列表
-     */
+     * 鏌ヨ澶氶獙璇佹柟寮忕殑鍖哄煙锛坅ccess_mode鍖呭惈澶氫釜楠岃瘉鏂瑰紡锛?     * 鍏宠仈鍩虹鍖哄煙琛?     *
+     * @return 澶氶獙璇佹柟寮忓尯鍩熷垪琛?     */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
             "FROM t_access_area_ext e " +
@@ -306,12 +287,10 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectMultiVerificationAreas();
 
     /**
-     * 查询指定父区域下的所有子区域扩展信息
-     * 关联基础区域表，支持层级查询
+     * 鏌ヨ鎸囧畾鐖跺尯鍩熶笅鐨勬墍鏈夊瓙鍖哄煙鎵╁睍淇℃伅
+     * 鍏宠仈鍩虹鍖哄煙琛紝鏀寔灞傜骇鏌ヨ
      *
-     * @param parentPath 父区域路径
-     * @return 子区域扩展信息列表
-     */
+     * @param parentPath 鐖跺尯鍩熻矾寰?     * @return 瀛愬尯鍩熸墿灞曚俊鎭垪琛?     */
     @Transactional(readOnly = true)
     @Select("SELECT e.*, a.area_name, a.area_code, a.area_type, a.parent_id, a.path " +
             "FROM t_access_area_ext e " +
@@ -321,10 +300,8 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     List<AreaAccessExtEntity> selectByParentPath(@Param("parentPath") String parentPath);
 
     /**
-     * 统计启用扩展功能的区域数量
-     * 基于现有字段判断是否有扩展配置
-     *
-     * @return 启用数量
+     * 缁熻鍚敤鎵╁睍鍔熻兘鐨勫尯鍩熸暟閲?     * 鍩轰簬鐜版湁瀛楁鍒ゆ柇鏄惁鏈夋墿灞曢厤缃?     *
+     * @return 鍚敤鏁伴噺
      */
     @Transactional(readOnly = true)
     @Select("SELECT COUNT(*) FROM t_access_area_ext " +
@@ -332,11 +309,8 @@ public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
     long countEnabled();
 
     /**
-     * 查询区域扩展配置信息汇总统计
-     * 提供综合的统计视图
-     *
-     * @return 统计汇总信息
-     */
+     * 鏌ヨ鍖哄煙鎵╁睍閰嶇疆淇℃伅姹囨€荤粺璁?     * 鎻愪緵缁煎悎鐨勭粺璁¤鍥?     *
+     * @return 缁熻姹囨€讳俊鎭?     */
     @Transactional(readOnly = true)
     @Select("SELECT " +
             "COUNT(*) as total_areas, " +

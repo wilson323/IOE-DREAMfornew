@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.oa.workflow.designer.domain.ProcessDefinitionDTO;
 import net.lab1024.sa.oa.workflow.designer.service.ProcessDesignerService;
@@ -30,7 +28,6 @@ import java.util.Map;
 @RequestMapping("/api/v1/workflow/process-designer")
 @Tag(name = "流程设计器", description = "低代码流程设计器API")
 public class ProcessDesignerController {
-    private static final Logger log = LoggerFactory.getLogger(ProcessDesignerController.class);
 
     @Resource
     private ProcessDesignerService processDesignerService;

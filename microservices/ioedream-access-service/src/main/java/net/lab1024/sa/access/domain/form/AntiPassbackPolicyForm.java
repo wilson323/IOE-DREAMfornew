@@ -11,13 +11,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 门禁反潜回策略配置表单
+ * 闂ㄧ鍙嶆綔鍥炵瓥鐣ラ厤缃〃鍗?
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用Form后缀标识表单对象
- * - 使用验证注解确保数据完整性
- * - 包含Swagger注解便于API文档生成
- * - 支持四种反潜回策略配置
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤Form鍚庣紑鏍囪瘑琛ㄥ崟瀵硅薄
+ * - 浣跨敤楠岃瘉娉ㄨВ纭繚鏁版嵁瀹屾暣鎬?
+ * - 鍖呭惈Swagger娉ㄨВ渚夸簬API鏂囨。鐢熸垚
+ * - 鏀寔鍥涚鍙嶆綔鍥炵瓥鐣ラ厤缃?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -28,94 +28,94 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "门禁反潜回策略配置表单")
+@Schema(description = "闂ㄧ鍙嶆綔鍥炵瓥鐣ラ厤缃〃鍗?)
 public class AntiPassbackPolicyForm {
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
-    @NotNull(message = "设备ID不能为空")
-    @Schema(description = "设备ID", example = "1001")
+    @NotNull(message = "璁惧ID涓嶈兘涓虹┖")
+    @Schema(description = "璁惧ID", example = "1001")
     private Long deviceId;
 
     /**
-     * 反潜回类型
+     * 鍙嶆綔鍥炵被鍨?
      */
-    @NotBlank(message = "反潜回类型不能为空")
-    @Pattern(regexp = "^(NONE|HARD|SOFT|AREA|GLOBAL)$", message = "反潜回类型必须是NONE、HARD、SOFT、AREA、GLOBAL之一")
-    @Schema(description = "反潜回类型", example = "HARD", allowableValues = {"NONE", "HARD", "SOFT", "AREA", "GLOBAL"})
+    @NotBlank(message = "鍙嶆綔鍥炵被鍨嬩笉鑳戒负绌?)
+    @Pattern(regexp = "^(NONE|HARD|SOFT|AREA|GLOBAL)$", message = "鍙嶆綔鍥炵被鍨嬪繀椤绘槸NONE銆丠ARD銆丼OFT銆丄REA銆丟LOBAL涔嬩竴")
+    @Schema(description = "鍙嶆綔鍥炵被鍨?, example = "HARD", allowableValues = {"NONE", "HARD", "SOFT", "AREA", "GLOBAL"})
     private String antiPassbackType;
 
     /**
-     * 时间窗口（分钟）
+     * 鏃堕棿绐楀彛锛堝垎閽燂級
      */
-    @NotNull(message = "时间窗口不能为空")
-    @Schema(description = "时间窗口（分钟）", example = "5")
+    @NotNull(message = "鏃堕棿绐楀彛涓嶈兘涓虹┖")
+    @Schema(description = "鏃堕棿绐楀彛锛堝垎閽燂級", example = "5")
     private Integer timeWindowMinutes;
 
     /**
-     * 是否启用区域人数限制
+     * 鏄惁鍚敤鍖哄煙浜烘暟闄愬埗
      */
-    @Schema(description = "是否启用区域人数限制", example = "true")
+    @Schema(description = "鏄惁鍚敤鍖哄煙浜烘暟闄愬埗", example = "true")
     private Boolean areaCapacityLimitEnabled;
 
     /**
-     * 区域最大人数
+     * 鍖哄煙鏈€澶т汉鏁?
      */
-    @Schema(description = "区域最大人数", example = "50")
+    @Schema(description = "鍖哄煙鏈€澶т汉鏁?, example = "50")
     private Integer maxAreaCapacity;
 
     /**
-     * 是否启用双向通行
+     * 鏄惁鍚敤鍙屽悜閫氳
      */
-    @Schema(description = "是否启用双向通行", example = "true")
+    @Schema(description = "鏄惁鍚敤鍙屽悜閫氳", example = "true")
     private Boolean bidirectionalAccessEnabled;
 
     /**
-     * 是否记录软反潜回异常
+     * 鏄惁璁板綍杞弽娼滃洖寮傚父
      */
-    @Schema(description = "是否记录软反潜回异常", example = "true")
+    @Schema(description = "鏄惁璁板綍杞弽娼滃洖寮傚父", example = "true")
     private Boolean recordSoftExceptionsEnabled;
 
     /**
-     * 是否发送实时告警
+     * 鏄惁鍙戦€佸疄鏃跺憡璀?
      */
-    @Schema(description = "是否发送实时告警", example = "true")
+    @Schema(description = "鏄惁鍙戦€佸疄鏃跺憡璀?, example = "true")
     private Boolean realTimeAlertEnabled;
 
     /**
-     * 告警阈值（违规次数）
+     * 鍛婅闃堝€硷紙杩濊娆℃暟锛?
      */
-    @Schema(description = "告警阈值（违规次数）", example = "5")
+    @Schema(description = "鍛婅闃堝€硷紙杩濊娆℃暟锛?, example = "5")
     private Integer alertThreshold;
 
     /**
-     * 策略描述
+     * 绛栫暐鎻忚堪
      */
-    @Schema(description = "策略描述", example = "高风险区域硬反潜回策略")
+    @Schema(description = "绛栫暐鎻忚堪", example = "楂橀闄╁尯鍩熺‖鍙嶆綔鍥炵瓥鐣?)
     private String description;
 
     /**
-     * 生效时间
+     * 鐢熸晥鏃堕棿
      */
-    @Schema(description = "生效时间", example = "2025-01-30T08:00:00")
+    @Schema(description = "鐢熸晥鏃堕棿", example = "2025-01-30T08:00:00")
     private String effectiveTime;
 
     /**
-     * 失效时间
+     * 澶辨晥鏃堕棿
      */
-    @Schema(description = "失效时间", example = "2025-12-31T23:59:59")
+    @Schema(description = "澶辨晥鏃堕棿", example = "2025-12-31T23:59:59")
     private String expireTime;
 
     /**
-     * 策略优先级
+     * 绛栫暐浼樺厛绾?
      */
-    @Schema(description = "策略优先级", example = "1")
+    @Schema(description = "绛栫暐浼樺厛绾?, example = "1")
     private Integer priority;
 
     /**
-     * 扩展配置（JSON格式）
+     * 鎵╁睍閰嶇疆锛圝SON鏍煎紡锛?
      */
-    @Schema(description = "扩展配置（JSON格式）", example = "{\"customRules\": {\"specialHours\": true}}")
+    @Schema(description = "鎵╁睍閰嶇疆锛圝SON鏍煎紡锛?, example = "{\"customRules\": {\"specialHours\": true}}")
     private String extendedConfig;
 }

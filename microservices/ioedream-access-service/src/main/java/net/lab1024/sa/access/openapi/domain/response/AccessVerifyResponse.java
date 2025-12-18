@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 门禁通行验证响应
+ * 闂ㄧ閫氳楠岃瘉鍝嶅簲
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -20,113 +20,113 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "门禁通行验证响应")
+@Schema(description = "闂ㄧ閫氳楠岃瘉鍝嶅簲")
 public class AccessVerifyResponse {
 
-    @Schema(description = "是否允许通行", example = "true")
+    @Schema(description = "鏄惁鍏佽閫氳", example = "true")
     private Boolean allowAccess;
 
-    @Schema(description = "通行状态码", example = "200")
+    @Schema(description = "閫氳鐘舵€佺爜", example = "200")
     private String statusCode;
 
-    @Schema(description = "通行状态消息", example = "验证成功，允许通行")
+    @Schema(description = "閫氳鐘舵€佹秷鎭?, example = "楠岃瘉鎴愬姛锛屽厑璁搁€氳")
     private String statusMessage;
 
-    @Schema(description = "通行记录ID", example = "100001")
+    @Schema(description = "閫氳璁板綍ID", example = "100001")
     private Long recordId;
 
-    @Schema(description = "用户ID", example = "1001")
+    @Schema(description = "鐢ㄦ埛ID", example = "1001")
     private Long userId;
 
-    @Schema(description = "用户名", example = "admin")
+    @Schema(description = "鐢ㄦ埛鍚?, example = "admin")
     private String username;
 
-    @Schema(description = "真实姓名", example = "系统管理员")
+    @Schema(description = "鐪熷疄濮撳悕", example = "绯荤粺绠＄悊鍛?)
     private String realName;
 
-    @Schema(description = "设备ID", example = "ACCESS_001")
+    @Schema(description = "璁惧ID", example = "ACCESS_001")
     private String deviceId;
 
-    @Schema(description = "设备名称", example = "主门禁")
+    @Schema(description = "璁惧鍚嶇О", example = "涓婚棬绂?)
     private String deviceName;
 
-    @Schema(description = "区域ID", example = "1")
+    @Schema(description = "鍖哄煙ID", example = "1")
     private Long areaId;
 
-    @Schema(description = "区域名称", example = "一楼大厅")
+    @Schema(description = "鍖哄煙鍚嶇О", example = "涓€妤煎ぇ鍘?)
     private String areaName;
 
-    @Schema(description = "通行时间", example = "2025-12-16T15:30:00")
+    @Schema(description = "閫氳鏃堕棿", example = "2025-12-16T15:30:00")
     private LocalDateTime accessTime;
 
-    @Schema(description = "通行方向", example = "in")
+    @Schema(description = "閫氳鏂瑰悜", example = "in")
     private String direction;
 
-    @Schema(description = "验证方式", example = "face")
+    @Schema(description = "楠岃瘉鏂瑰紡", example = "face")
     private String verifyMethod;
 
-    @Schema(description = "验证结果详情", example = "人脸识别匹配度：98.5%")
+    @Schema(description = "楠岃瘉缁撴灉璇︽儏", example = "浜鸿劯璇嗗埆鍖归厤搴︼細98.5%")
     private String verifyResultDetail;
 
-    @Schema(description = "体温数据", example = "36.5")
+    @Schema(description = "浣撴俯鏁版嵁", example = "36.5")
     private Double temperature;
 
-    @Schema(description = "体温状态", example = "normal", allowableValues = {"normal", "fever", "low"})
+    @Schema(description = "浣撴俯鐘舵€?, example = "normal", allowableValues = {"normal", "fever", "low"})
     private String temperatureStatus;
 
-    @Schema(description = "是否佩戴口罩", example = "true")
+    @Schema(description = "鏄惁浣╂埓鍙ｇ僵", example = "true")
     private Boolean wearingMask;
 
-    @Schema(description = "活体检测结果", example = "true")
+    @Schema(description = "娲讳綋妫€娴嬬粨鏋?, example = "true")
     private Boolean livenessCheckResult;
 
-    @Schema(description = "通行权限级别", example = "normal")
+    @Schema(description = "閫氳鏉冮檺绾у埆", example = "normal")
     private String permissionLevel;
 
-    @Schema(description = "剩余通行次数", example = "95")
+    @Schema(description = "鍓╀綑閫氳娆℃暟", example = "95")
     private Integer remainingAccessCount;
 
-    @Schema(description = "权限过期时间", example = "2025-12-31T23:59:59")
+    @Schema(description = "鏉冮檺杩囨湡鏃堕棿", example = "2025-12-31T23:59:59")
     private LocalDateTime permissionExpireTime;
 
-    @Schema(description = "图片URL", example = "https://example.com/access_photo.jpg")
+    @Schema(description = "鍥剧墖URL", example = "https://example.com/access_photo.jpg")
     private String photoUrl;
 
-    @Schema(description = "语音提示", example = "欢迎进入")
+    @Schema(description = "璇煶鎻愮ず", example = "娆㈣繋杩涘叆")
     private String voicePrompt;
 
-    @Schema(description = "警告信息", example = "")
+    @Schema(description = "璀﹀憡淇℃伅", example = "")
     private String warningMessage;
 
-    @Schema(description = "扩展信息", example = "{\"key1\":\"value1\"}")
+    @Schema(description = "鎵╁睍淇℃伅", example = "{\"key1\":\"value1\"}")
     private String extendedInfo;
 
-    @Schema(description = "用户权限列表")
+    @Schema(description = "鐢ㄦ埛鏉冮檺鍒楄〃")
     private List<PermissionInfo> permissions;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "权限信息")
+    @Schema(description = "鏉冮檺淇℃伅")
     public static class PermissionInfo {
 
-        @Schema(description = "设备ID", example = "ACCESS_001")
+        @Schema(description = "璁惧ID", example = "ACCESS_001")
         private String deviceId;
 
-        @Schema(description = "设备名称", example = "主门禁")
+        @Schema(description = "璁惧鍚嶇О", example = "涓婚棬绂?)
         private String deviceName;
 
-        @Schema(description = "权限类型", example = "permanent")
+        @Schema(description = "鏉冮檺绫诲瀷", example = "permanent")
         private String permissionType;
 
-        @Schema(description = "权限级别", example = "normal")
+        @Schema(description = "鏉冮檺绾у埆", example = "normal")
         private String permissionLevel;
 
-        @Schema(description = "允许通行时间", example = "全天")
+        @Schema(description = "鍏佽閫氳鏃堕棿", example = "鍏ㄥぉ")
         private String allowedTime;
 
-        @Schema(description = "是否在有效期内", example = "true")
+        @Schema(description = "鏄惁鍦ㄦ湁鏁堟湡鍐?, example = "true")
         private Boolean isValid;
     }
 }

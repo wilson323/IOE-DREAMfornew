@@ -1,8 +1,6 @@
 package net.lab1024.sa.oa.workflow.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 工作流高级功能控制器
@@ -29,7 +27,6 @@ import org.slf4j.LoggerFactory;
 // @Tag(name = "工作流高级功能", description = "提供流程仿真、批量操作等企业级高级功能")
 // @Validated
 public class WorkflowAdvancedController {
-    private static final Logger log = LoggerFactory.getLogger(WorkflowAdvancedController.class);
 
     // TODO: 待Lombok问题解决后恢复以下内容:
     // - 流程仿真API

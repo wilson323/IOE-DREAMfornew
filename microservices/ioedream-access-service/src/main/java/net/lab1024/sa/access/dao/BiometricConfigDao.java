@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
- * 生物识别配置数据访问层
+ * 鐢熺墿璇嗗埆閰嶇疆鏁版嵁璁块棶灞?
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -19,7 +19,7 @@ import java.util.List;
 public interface BiometricConfigDao extends BaseMapper<BiometricConfigEntity> {
 
     /**
-     * 根据生物识别类型查询激活配置
+     * 鏍规嵁鐢熺墿璇嗗埆绫诲瀷鏌ヨ婵€娲婚厤缃?
      */
     @Select("SELECT * FROM t_access_biometric_config WHERE biometric_type = #{biometricType} " +
             "AND config_status = #{configStatus} AND deleted_flag = 0 ORDER BY config_id DESC LIMIT 1")
@@ -27,13 +27,13 @@ public interface BiometricConfigDao extends BaseMapper<BiometricConfigEntity> {
                                               @Param("configStatus") Integer configStatus);
 
     /**
-     * 查询所有激活配置
+     * 鏌ヨ鎵€鏈夋縺娲婚厤缃?
      */
     @Select("SELECT * FROM t_access_biometric_config WHERE config_status = 2 AND deleted_flag = 0 ORDER BY biometric_type")
     List<BiometricConfigEntity> selectActiveConfigs();
 
     /**
-     * 根据算法提供商查询配置
+     * 鏍规嵁绠楁硶鎻愪緵鍟嗘煡璇㈤厤缃?
      */
     @Select("SELECT * FROM t_access_biometric_config WHERE algorithm_provider = #{provider} " +
             "AND config_status = 2 AND deleted_flag = 0")

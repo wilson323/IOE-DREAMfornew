@@ -71,21 +71,18 @@ class AccessDeviceServiceImplTest {
     void setUp() {
         // Prepare test data
         mockDevice = new DeviceEntity();
-        mockDevice.setId(1L);  // 修复：DeviceEntity的id是Long类型
+        mockDevice.setId(1L);  // 淇锛欴eviceEntity鐨刬d鏄疞ong绫诲瀷
         mockDevice.setDeviceName("Test Device");
         mockDevice.setDeviceCode("DEV001");
         mockDevice.setDeviceType("ACCESS");
         mockDevice.setAreaId(1L);
-        mockDevice.setDeviceStatus("ONLINE");  // 修复：DeviceEntity使用deviceStatus字段（String类型）
-        mockDevice.setEnabledFlag(1);  // 修复：DeviceEntity使用enabledFlag字段（Integer类型）
-        mockDevice.setDeletedFlag(0);
+        mockDevice.setDeviceStatus("ONLINE");  // 淇锛欴eviceEntity浣跨敤deviceStatus瀛楁锛圫tring绫诲瀷锛?        mockDevice.setEnabledFlag(1);  // 淇锛欴eviceEntity浣跨敤enabledFlag瀛楁锛圛nteger绫诲瀷锛?        mockDevice.setDeletedFlag(0);
 
         mockDeviceVO = new AccessDeviceVO();
-        mockDeviceVO.setDeviceId(1L);  // 修复：AccessDeviceVO的deviceId是Long类型
+        mockDeviceVO.setDeviceId(1L);  // 淇锛欰ccessDeviceVO鐨刣eviceId鏄疞ong绫诲瀷
         mockDeviceVO.setDeviceName("Test Device");
         mockDeviceVO.setDeviceCode("DEV001");
-        mockDeviceVO.setDeviceStatus("ONLINE");  // 修复：AccessDeviceVO使用deviceStatus字段（String类型）
-
+        mockDeviceVO.setDeviceStatus("ONLINE");  // 淇锛欰ccessDeviceVO浣跨敤deviceStatus瀛楁锛圫tring绫诲瀷锛?
         mockArea = new AreaEntity();
         mockArea.setId(1L);
         mockArea.setAreaName("Test Area");
@@ -168,7 +165,7 @@ class AccessDeviceServiceImplTest {
         ResponseDTO<AccessDeviceVO> result = accessDeviceServiceImpl.getDeviceDetail(deviceId);
         assertFalse(result.getOk());
         assertEquals(ResponseDTO.error("DEVICE_NOT_FOUND", "x").getCode(), result.getCode());
-        assertTrue(result.getMessage().contains("设备不存在"));
+        assertTrue(result.getMessage().contains("璁惧涓嶅瓨鍦?));
         verify(accessDeviceDao, times(1)).selectById(anyLong());
     }
 
@@ -186,7 +183,7 @@ class AccessDeviceServiceImplTest {
                 .thenReturn(ResponseDTO.ok(mockArea));
         doAnswer(invocation -> {
             DeviceEntity entity = invocation.getArgument(0);
-            entity.setId(1L);  // 修复：DeviceEntity的id是Long类型
+            entity.setId(1L);  // 淇锛欴eviceEntity鐨刬d鏄疞ong绫诲瀷
             return 1;
         }).when(accessDeviceDao).insert(any(DeviceEntity.class));
 
@@ -213,7 +210,7 @@ class AccessDeviceServiceImplTest {
         // Then
         assertFalse(result.getOk());
         assertEquals(ResponseDTO.error("DEVICE_CODE_EXISTS", "x").getCode(), result.getCode());
-        assertTrue(result.getMessage().contains("设备编号已存在"));
+        assertTrue(result.getMessage().contains("璁惧缂栧彿宸插瓨鍦?));
         verify(accessDeviceDao, never()).insert(any(DeviceEntity.class));
     }
 
@@ -256,7 +253,7 @@ class AccessDeviceServiceImplTest {
         // Then
         assertFalse(result.getOk());
         assertEquals(ResponseDTO.error("DEVICE_NOT_FOUND", "x").getCode(), result.getCode());
-        assertTrue(result.getMessage().contains("设备不存在"));
+        assertTrue(result.getMessage().contains("璁惧涓嶅瓨鍦?));
         verify(accessDeviceDao, never()).updateById(any(DeviceEntity.class));
     }
 
@@ -291,7 +288,7 @@ class AccessDeviceServiceImplTest {
         // Then
         assertFalse(result.getOk());
         assertEquals(ResponseDTO.error("DEVICE_NOT_FOUND", "x").getCode(), result.getCode());
-        assertTrue(result.getMessage().contains("设备不存在"));
+        assertTrue(result.getMessage().contains("璁惧涓嶅瓨鍦?));
         verify(accessDeviceDao, never()).updateById(any(DeviceEntity.class));
     }
 
@@ -328,7 +325,7 @@ class AccessDeviceServiceImplTest {
         // Then
         assertFalse(result.getOk());
         assertEquals(ResponseDTO.error("DEVICE_NOT_FOUND", "x").getCode(), result.getCode());
-        assertTrue(result.getMessage().contains("设备不存在"));
+        assertTrue(result.getMessage().contains("璁惧涓嶅瓨鍦?));
         verify(accessDeviceDao, never()).updateById(any(DeviceEntity.class));
     }
 

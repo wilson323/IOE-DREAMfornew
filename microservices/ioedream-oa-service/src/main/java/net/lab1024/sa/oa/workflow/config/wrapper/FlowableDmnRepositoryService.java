@@ -6,8 +6,6 @@ import org.flowable.dmn.api.DmnDecision;
 import org.flowable.dmn.api.DmnDecisionQuery;
 import org.flowable.dmn.api.DmnDeployment;
 import org.flowable.dmn.api.DmnDeploymentBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
@@ -23,8 +21,6 @@ import java.io.InputStream;
  */
 @Slf4j
 public class FlowableDmnRepositoryService {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableDmnRepositoryService.class);
     private final DmnRepositoryService dmnRepositoryService;
 
     public FlowableDmnRepositoryService(DmnRepositoryService dmnRepositoryService) {

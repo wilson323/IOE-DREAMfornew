@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.device.comm.monitor.HighPrecisionDeviceMonitor.DeviceStatusSnapshot;
 import org.springframework.http.HttpMethod;
 
 import java.time.LocalDateTime;

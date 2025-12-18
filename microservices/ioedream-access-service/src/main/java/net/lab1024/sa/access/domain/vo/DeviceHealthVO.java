@@ -12,13 +12,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 设备健康状态视图对象
+ * 璁惧鍋ュ悍鐘舵€佽鍥惧璞?
  * <p>
- * 设备健康监控结果的数据传输对象
- * 严格遵循CLAUDE.md规范：
- * - 使用@Data注解
- * - 完整的字段文档注解
- * - 构建者模式支持
+ * 璁惧鍋ュ悍鐩戞帶缁撴灉鐨勬暟鎹紶杈撳璞?
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
+ * - 浣跨敤@Data娉ㄨВ
+ * - 瀹屾暣鐨勫瓧娈垫枃妗ｆ敞瑙?
+ * - 鏋勫缓鑰呮ā寮忔敮鎸?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -29,182 +29,182 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "设备健康状态信息")
+@Schema(description = "璁惧鍋ュ悍鐘舵€佷俊鎭?)
 public class DeviceHealthVO {
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
-    @Schema(description = "设备ID", example = "1001")
+    @Schema(description = "璁惧ID", example = "1001")
     private Long deviceId;
 
     /**
-     * 设备名称
+     * 璁惧鍚嶇О
      */
-    @Schema(description = "设备名称", example = "主入口门禁控制器")
+    @Schema(description = "璁惧鍚嶇О", example = "涓诲叆鍙ｉ棬绂佹帶鍒跺櫒")
     private String deviceName;
 
     /**
-     * 设备编码
+     * 璁惧缂栫爜
      */
-    @Schema(description = "设备编码", example = "ACC-CTRL-001")
+    @Schema(description = "璁惧缂栫爜", example = "ACC-CTRL-001")
     private String deviceCode;
 
     /**
-     * 设备类型
+     * 璁惧绫诲瀷
      */
-    @Schema(description = "设备类型", example = "ACCESS_CONTROLLER")
+    @Schema(description = "璁惧绫诲瀷", example = "ACCESS_CONTROLLER")
     private String deviceType;
 
     /**
-     * 健康评分（0-100）
+     * 鍋ュ悍璇勫垎锛?-100锛?
      */
-    @Schema(description = "健康评分（0-100）", example = "92.5")
+    @Schema(description = "鍋ュ悍璇勫垎锛?-100锛?, example = "92.5")
     private BigDecimal healthScore;
 
     /**
-     * 健康状态
-     * HEALTHY - 健康
-     * WARNING - 亚健康
-     * CRITICAL - 危险
-     * OFFLINE - 离线
+     * 鍋ュ悍鐘舵€?
+     * HEALTHY - 鍋ュ悍
+     * WARNING - 浜氬仴搴?
+     * CRITICAL - 鍗遍櫓
+     * OFFLINE - 绂荤嚎
      */
-    @Schema(description = "健康状态", example = "HEALTHY")
+    @Schema(description = "鍋ュ悍鐘舵€?, example = "HEALTHY")
     private String healthStatus;
 
     /**
-     * 在线状态
+     * 鍦ㄧ嚎鐘舵€?
      */
-    @Schema(description = "在线状态", example = "true")
+    @Schema(description = "鍦ㄧ嚎鐘舵€?, example = "true")
     private Boolean onlineStatus;
 
     /**
-     * 响应时间（毫秒）
+     * 鍝嶅簲鏃堕棿锛堟绉掞級
      */
-    @Schema(description = "响应时间（毫秒）", example = "156")
+    @Schema(description = "鍝嶅簲鏃堕棿锛堟绉掞級", example = "156")
     private Long responseTime;
 
     /**
-     * CPU使用率（%）
+     * CPU浣跨敤鐜囷紙%锛?
      */
-    @Schema(description = "CPU使用率（%）", example = "35.6")
+    @Schema(description = "CPU浣跨敤鐜囷紙%锛?, example = "35.6")
     private BigDecimal cpuUsage;
 
     /**
-     * 内存使用率（%）
+     * 鍐呭瓨浣跨敤鐜囷紙%锛?
      */
-    @Schema(description = "内存使用率（%）", example = "42.3")
+    @Schema(description = "鍐呭瓨浣跨敤鐜囷紙%锛?, example = "42.3")
     private BigDecimal memoryUsage;
 
     /**
-     * 磁盘使用率（%）
+     * 纾佺洏浣跨敤鐜囷紙%锛?
      */
-    @Schema(description = "磁盘使用率（%）", example = "28.7")
+    @Schema(description = "纾佺洏浣跨敤鐜囷紙%锛?, example = "28.7")
     private BigDecimal diskUsage;
 
     /**
-     * 网络连接质量
+     * 缃戠粶杩炴帴璐ㄩ噺
      */
-    @Schema(description = "网络连接质量", example = "EXCELLENT")
+    @Schema(description = "缃戠粶杩炴帴璐ㄩ噺", example = "EXCELLENT")
     private String networkQuality;
 
     /**
-     * 24小时内错误次数
+     * 24灏忔椂鍐呴敊璇鏁?
      */
-    @Schema(description = "24小时内错误次数", example = "2")
+    @Schema(description = "24灏忔椂鍐呴敊璇鏁?, example = "2")
     private Integer errorCount24h;
 
     /**
-     * 24小时内成功率（%）
+     * 24灏忔椂鍐呮垚鍔熺巼锛?锛?
      */
-    @Schema(description = "24小时内成功率（%）", example = "99.8")
+    @Schema(description = "24灏忔椂鍐呮垚鍔熺巼锛?锛?, example = "99.8")
     private BigDecimal successRate24h;
 
     /**
-     * 最后在线时间
+     * 鏈€鍚庡湪绾挎椂闂?
      */
-    @Schema(description = "最后在线时间", example = "2025-01-30T10:30:00")
+    @Schema(description = "鏈€鍚庡湪绾挎椂闂?, example = "2025-01-30T10:30:00")
     private LocalDateTime lastOnlineTime;
 
     /**
-     * 连续运行时长（小时）
+     * 杩炵画杩愯鏃堕暱锛堝皬鏃讹級
      */
-    @Schema(description = "连续运行时长（小时）", example = "720")
+    @Schema(description = "杩炵画杩愯鏃堕暱锛堝皬鏃讹級", example = "720")
     private Long uptimeHours;
 
     /**
-     * 异常指标列表
+     * 寮傚父鎸囨爣鍒楄〃
      */
-    @Schema(description = "异常指标列表")
+    @Schema(description = "寮傚父鎸囨爣鍒楄〃")
     private List<AnomalousMetricVO> anomalousMetrics;
 
     /**
-     * 性能指标详情
+     * 鎬ц兘鎸囨爣璇︽儏
      */
-    @Schema(description = "性能指标详情")
+    @Schema(description = "鎬ц兘鎸囨爣璇︽儏")
     private Map<String, Object> performanceMetrics;
 
     /**
-     * 健康趋势（最近7天）
+     * 鍋ュ悍瓒嬪娍锛堟渶杩?澶╋級
      */
-    @Schema(description = "健康趋势（最近7天）")
+    @Schema(description = "鍋ュ悍瓒嬪娍锛堟渶杩?澶╋級")
     private List<HealthTrendVO> healthTrends;
 
     /**
-     * 建议操作
+     * 寤鸿鎿嶄綔
      */
-    @Schema(description = "建议操作", example = "建议在下次维护时检查网络连接稳定性")
+    @Schema(description = "寤鸿鎿嶄綔", example = "寤鸿鍦ㄤ笅娆＄淮鎶ゆ椂妫€鏌ョ綉缁滆繛鎺ョǔ瀹氭€?)
     private String recommendation;
 
     /**
-     * 监控时间
+     * 鐩戞帶鏃堕棿
      */
-    @Schema(description = "监控时间", example = "2025-01-30T15:45:00")
+    @Schema(description = "鐩戞帶鏃堕棿", example = "2025-01-30T15:45:00")
     private LocalDateTime monitorTime;
 
     /**
-     * 异常指标内部类
+     * 寮傚父鎸囨爣鍐呴儴绫?
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "异常指标")
+    @Schema(description = "寮傚父鎸囨爣")
     public static class AnomalousMetricVO {
 
-        @Schema(description = "指标名称", example = "CPU使用率")
+        @Schema(description = "鎸囨爣鍚嶇О", example = "CPU浣跨敤鐜?)
         private String metricName;
 
-        @Schema(description = "当前值", example = "85.6")
+        @Schema(description = "褰撳墠鍊?, example = "85.6")
         private BigDecimal currentValue;
 
-        @Schema(description = "正常范围", example = "0-70")
+        @Schema(description = "姝ｅ父鑼冨洿", example = "0-70")
         private String normalRange;
 
-        @Schema(description = "异常级别", example = "WARNING")
+        @Schema(description = "寮傚父绾у埆", example = "WARNING")
         private String anomalyLevel;
 
-        @Schema(description = "异常描述", example = "CPU使用率超过正常阈值")
+        @Schema(description = "寮傚父鎻忚堪", example = "CPU浣跨敤鐜囪秴杩囨甯搁槇鍊?)
         private String description;
     }
 
     /**
-     * 健康趋势内部类
+     * 鍋ュ悍瓒嬪娍鍐呴儴绫?
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "健康趋势")
+    @Schema(description = "鍋ュ悍瓒嬪娍")
     public static class HealthTrendVO {
 
-        @Schema(description = "日期", example = "2025-01-30")
+        @Schema(description = "鏃ユ湡", example = "2025-01-30")
         private String date;
 
-        @Schema(description = "健康评分", example = "92.5")
+        @Schema(description = "鍋ュ悍璇勫垎", example = "92.5")
         private BigDecimal healthScore;
 
-        @Schema(description = "状态", example = "HEALTHY")
+        @Schema(description = "鐘舵€?, example = "HEALTHY")
         private String status;
     }
 }

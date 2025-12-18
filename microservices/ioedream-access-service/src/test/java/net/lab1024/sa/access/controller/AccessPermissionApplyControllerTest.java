@@ -18,17 +18,17 @@ import net.lab1024.sa.access.domain.form.AccessPermissionApplyForm;
 import net.lab1024.sa.access.service.AccessPermissionApplyService;
 
 /**
- * AccessPermissionApplyController单元测试
+ * AccessPermissionApplyController鍗曞厓娴嬭瘯
  * <p>
- * 目标覆盖率：>= 80%
- * 测试范围：AccessPermissionApplyController核心API方法
+ * 鐩爣瑕嗙洊鐜囷細>= 80%
+ * 娴嬭瘯鑼冨洿锛欰ccessPermissionApplyController鏍稿績API鏂规硶
  * </p>
  *
  * @author IOE-DREAM Team
  * @since 2025-12-11
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("AccessPermissionApplyController单元测试")
+@DisplayName("AccessPermissionApplyController鍗曞厓娴嬭瘯")
 class AccessPermissionApplyControllerTest {
     @Mock
     private AccessPermissionApplyService accessPermissionApplyService;
@@ -38,16 +38,16 @@ class AccessPermissionApplyControllerTest {
 
     @BeforeEach
     void setUp() {
-        // 准备测试数据
+        // 鍑嗗娴嬭瘯鏁版嵁
     }
 
     @Test
-    @DisplayName("submitPermissionApply-成功场景-返回权限申请实体")
+    @DisplayName("submitPermissionApply-鎴愬姛鍦烘櫙-杩斿洖鏉冮檺鐢宠瀹炰綋")
     void test_submitPermissionApply_Success_ReturnsPermissionApplyEntity() {
         // Given
         AccessPermissionApplyForm form = new AccessPermissionApplyForm();
         form.setApplicantId(1L);
-        form.setAreaId(1L);  // 修复：areaId是Long类型
+        form.setAreaId(1L);  // 淇锛歛reaId鏄疞ong绫诲瀷
 
         AccessPermissionApplyEntity entity = new AccessPermissionApplyEntity();
         entity.setApplyNo("APPLY001");

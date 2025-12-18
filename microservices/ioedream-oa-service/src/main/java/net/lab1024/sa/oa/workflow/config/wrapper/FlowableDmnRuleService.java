@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flowable.dmn.api.DmnDecisionService;
 import org.flowable.dmn.api.DecisionExecutionAuditContainer;
 import org.flowable.dmn.api.ExecuteDecisionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -21,9 +19,8 @@ import java.util.Map;
  * @since 2025-01-16
  */
 @Slf4j
+@SuppressWarnings("deprecation")
 public class FlowableDmnRuleService {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableDmnRuleService.class);
     private final DmnDecisionService dmnDecisionService;
 
     public FlowableDmnRuleService(DmnDecisionService dmnDecisionService) {

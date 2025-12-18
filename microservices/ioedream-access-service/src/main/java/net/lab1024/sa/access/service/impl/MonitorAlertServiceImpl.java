@@ -27,14 +27,14 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.util.SmartStringUtil;
 
 /**
- * 监控告警服务实现
+ * 鐩戞帶鍛婅鏈嶅姟瀹炵幇
  * <p>
- * 实现统一智能的监控告警体系：
- * - 多维度异常检测与智能分级
- * - 多渠道告警通知与推送
- * - 告警处理流程跟踪与自动化
- * - 系统健康检查与故障自愈
- * - 告警趋势预测与分析
+ * 瀹炵幇缁熶竴鏅鸿兘鐨勭洃鎺у憡璀︿綋绯伙細
+ * - 澶氱淮搴﹀紓甯告娴嬩笌鏅鸿兘鍒嗙骇
+ * - 澶氭笭閬撳憡璀﹂€氱煡涓庢帹閫?
+ * - 鍛婅澶勭悊娴佺▼璺熻釜涓庤嚜鍔ㄥ寲
+ * - 绯荤粺鍋ュ悍妫€鏌ヤ笌鏁呴殰鑷剤
+ * - 鍛婅瓒嬪娍棰勬祴涓庡垎鏋?
  * </p>
  *
  * @author IOE-DREAM Team
@@ -46,7 +46,7 @@ import net.lab1024.sa.common.util.SmartStringUtil;
 @Transactional(rollbackFor = Exception.class)
 public class MonitorAlertServiceImpl implements MonitorAlertService {
 
-    // 模拟依赖注入
+    // 妯℃嫙渚濊禆娉ㄥ叆
     // @Resource private AlertDao alertDao;
     // @Resource private AlertRuleDao alertRuleDao;
     // @Resource private NotificationService notificationService;
@@ -55,107 +55,107 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     // @Resource private PredictiveAnalyticsEngine predictiveAnalyticsEngine;
     // @Resource private GatewayServiceClient gatewayServiceClient;
 
-    // 内存存储模拟
+    // 鍐呭瓨瀛樺偍妯℃嫙
     private final Map<String, MonitorAlertResult> alertStore = new ConcurrentHashMap<>();
     private final Map<String, AlertRuleVO> ruleStore = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
 
-    // 告警统计缓存
+    // 鍛婅缁熻缂撳瓨
     private final Map<String, AlertStatisticsReport> statisticsCache = new ConcurrentHashMap<>();
 
     public MonitorAlertServiceImpl() {
-        // 初始化一些默认告警规则
+        // 鍒濆鍖栦竴浜涢粯璁ゅ憡璀﹁鍒?
         initializeDefaultAlertRules();
-        // 启动后台任务
+        // 鍚姩鍚庡彴浠诲姟
         startBackgroundTasks();
     }
 
     @Override
-    @Timed(value = "monitor.alert.create", description = "创建监控告警耗时")
-    @Counted(value = "monitor.alert.create.count", description = "创建监控告警次数")
+    @Timed(value = "monitor.alert.create", description = "鍒涘缓鐩戞帶鍛婅鑰楁椂")
+    @Counted(value = "monitor.alert.create.count", description = "鍒涘缓鐩戞帶鍛婅娆℃暟")
     public ResponseDTO<MonitorAlertResult> createMonitorAlert(CreateMonitorAlertRequest request) {
-        log.info("[监控告警] 创建告警, title={}, type={}, severity={}",
+        log.info("[鐩戞帶鍛婅] 鍒涘缓鍛婅, title={}, type={}, severity={}",
                 request.getAlertTitle(), request.getAlertType(), request.getSeverityLevel());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateCreateAlertRequest(request);
 
-            // 2. 生成告警ID
+            // 2. 鐢熸垚鍛婅ID
             String alertId = generateAlertId();
 
-            // 3. 智能分级评估
+            // 3. 鏅鸿兘鍒嗙骇璇勪及
             AlertLevelAssessmentResult assessment = performIntelligentLevelAssessment(request);
 
-            // 4. 告警去重和聚合
+            // 4. 鍛婅鍘婚噸鍜岃仛鍚?
             MonitorAlertResult existingAlert = checkAlertDuplication(request);
             if (existingAlert != null) {
                 return handleDuplicateAlert(existingAlert, request);
             }
 
-            // 5. 创建告警记录
+            // 5. 鍒涘缓鍛婅璁板綍
             MonitorAlertResult alertResult = createAlertRecord(alertId, request, assessment);
 
-            // 6. 存储告警
+            // 6. 瀛樺偍鍛婅
             alertStore.put(alertId, alertResult);
 
-            // 7. 异步处理通知
+            // 7. 寮傛澶勭悊閫氱煡
             if (request.getNeedNotification()) {
                 CompletableFuture.runAsync(() -> processAlertNotification(alertId, request), scheduler);
             }
 
-            // 8. 触发自动处理规则
+            // 8. 瑙﹀彂鑷姩澶勭悊瑙勫垯
             CompletableFuture.runAsync(() -> processAutoHandling(alertId, alertResult), scheduler);
 
-            log.info("[监控告警] 创建成功, alertId={}, level={}", alertId, assessment.getAssessedLevel());
+            log.info("[鐩戞帶鍛婅] 鍒涘缓鎴愬姛, alertId={}, level={}", alertId, assessment.getAssessedLevel());
 
             return ResponseDTO.ok(alertResult);
 
         } catch (Exception e) {
-            log.error("[监控告警] 创建失败, title={}", request.getAlertTitle(), e);
-            return ResponseDTO.error("ALERT_CREATE_FAILED", "创建监控告警失败: " + e.getMessage());
+            log.error("[鐩戞帶鍛婅] 鍒涘缓澶辫触, title={}", request.getAlertTitle(), e);
+            return ResponseDTO.error("ALERT_CREATE_FAILED", "鍒涘缓鐩戞帶鍛婅澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.alert.assess", description = "告警分级评估耗时")
+    @Timed(value = "monitor.alert.assess", description = "鍛婅鍒嗙骇璇勪及鑰楁椂")
     public ResponseDTO<AlertLevelAssessmentResult> assessAlertLevel(AlertLevelAssessmentRequest request) {
-        log.info("[告警分级] 开始评估级别, type={}, source={}, impact={}",
+        log.info("[鍛婅鍒嗙骇] 寮€濮嬭瘎浼扮骇鍒? type={}, source={}, impact={}",
                 request.getAlertType(), request.getSourceSystem(), request.getBusinessImpact());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateLevelAssessmentRequest(request);
 
-            // 2. 执行多维度评估
+            // 2. 鎵ц澶氱淮搴﹁瘎浼?
             AlertLevelAssessmentResult result = performIntelligentLevelAssessment(request);
 
-            log.info("[告警分级] 评估完成, level={}, confidence={}, factors={}",
+            log.info("[鍛婅鍒嗙骇] 璇勪及瀹屾垚, level={}, confidence={}, factors={}",
                     result.getAssessedLevel(), result.getConfidenceScore(), result.getAssessmentFactors());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[告警分级] 评估失败", e);
-            return ResponseDTO.error("LEVEL_ASSESSMENT_FAILED", "告警分级评估失败: " + e.getMessage());
+            log.error("[鍛婅鍒嗙骇] 璇勪及澶辫触", e);
+            return ResponseDTO.error("LEVEL_ASSESSMENT_FAILED", "鍛婅鍒嗙骇璇勪及澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.alert.notify", description = "告警通知推送耗时")
-    @Counted(value = "monitor.alert.notify.count", description = "告警通知推送次数")
+    @Timed(value = "monitor.alert.notify", description = "鍛婅閫氱煡鎺ㄩ€佽€楁椂")
+    @Counted(value = "monitor.alert.notify.count", description = "鍛婅閫氱煡鎺ㄩ€佹鏁?)
     public ResponseDTO<AlertNotificationResult> sendAlertNotification(AlertNotificationRequest request) {
-        log.info("[告警通知] 开始推送通知, alertId={}, channels={}, recipients={}",
+        log.info("[鍛婅閫氱煡] 寮€濮嬫帹閫侀€氱煡, alertId={}, channels={}, recipients={}",
                 request.getAlertId(), request.getNotificationChannels(), request.getRecipients().size());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateNotificationRequest(request);
 
-            // 2. 生成通知ID
+            // 2. 鐢熸垚閫氱煡ID
             String notificationId = generateNotificationId();
 
-            // 3. 处理多渠道通知
+            // 3. 澶勭悊澶氭笭閬撻€氱煡
             List<NotificationChannelResult> channelResults = new ArrayList<>();
 
             for (String channel : request.getNotificationChannels()) {
@@ -164,13 +164,13 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                 channelResults.add(channelResult);
             }
 
-            // 4. 统计结果
+            // 4. 缁熻缁撴灉
             int totalRecipients = request.getRecipients().size();
             int successCount = channelResults.stream().mapToInt(NotificationChannelResult::getSuccessCount).sum();
             int failureCount = totalRecipients - successCount;
             String overallStatus = failureCount == 0 ? "SUCCESS" : successCount > 0 ? "PARTIAL" : "FAILED";
 
-            // 5. 构建结果
+            // 5. 鏋勫缓缁撴灉
             AlertNotificationResult result = AlertNotificationResult.builder()
                     .notificationId(notificationId)
                     .alertId(request.getAlertId())
@@ -184,155 +184,155 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                     .responseMetadata(buildNotificationMetadata(channelResults))
                     .build();
 
-            log.info("[告警通知] 推送完成, status={}, success={}, failure={}",
+            log.info("[鍛婅閫氱煡] 鎺ㄩ€佸畬鎴? status={}, success={}, failure={}",
                     overallStatus, successCount, failureCount);
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[告警通知] 推送失败, alertId={}", request.getAlertId(), e);
-            return ResponseDTO.error("NOTIFICATION_SEND_FAILED", "告警通知推送失败: " + e.getMessage());
+            log.error("[鍛婅閫氱煡] 鎺ㄩ€佸け璐? alertId={}", request.getAlertId(), e);
+            return ResponseDTO.error("NOTIFICATION_SEND_FAILED", "鍛婅閫氱煡鎺ㄩ€佸け璐? " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.alert.query", description = "查询告警列表耗时")
+    @Timed(value = "monitor.alert.query", description = "鏌ヨ鍛婅鍒楄〃鑰楁椂")
     public ResponseDTO<List<MonitorAlertVO>> getMonitorAlertList(MonitorAlertQueryRequest request) {
-        log.info("[告警查询] 查询告警列表, type={}, severity={}, status={}",
+        log.info("[鍛婅鏌ヨ] 鏌ヨ鍛婅鍒楄〃, type={}, severity={}, status={}",
                 request.getAlertType(), request.getSeverityLevel(), request.getStatus());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateQueryRequest(request);
 
-            // 2. 执行查询
+            // 2. 鎵ц鏌ヨ
             List<MonitorAlertVO> alerts = queryAlertsFromStore(request);
 
-            // 3. 应用过滤和排序
+            // 3. 搴旂敤杩囨护鍜屾帓搴?
             alerts = applyFiltersAndSorting(alerts, request);
 
-            // 4. 分页处理
+            // 4. 鍒嗛〉澶勭悊
             alerts = applyPagination(alerts, request);
 
-            log.info("[告警查询] 查询完成, 返回{}条记录", alerts.size());
+            log.info("[鍛婅鏌ヨ] 鏌ヨ瀹屾垚, 杩斿洖{}鏉¤褰?, alerts.size());
 
             return ResponseDTO.ok(alerts);
 
         } catch (Exception e) {
-            log.error("[告警查询] 查询失败", e);
-            return ResponseDTO.error("ALERT_QUERY_FAILED", "查询告警列表失败: " + e.getMessage());
+            log.error("[鍛婅鏌ヨ] 鏌ヨ澶辫触", e);
+            return ResponseDTO.error("ALERT_QUERY_FAILED", "鏌ヨ鍛婅鍒楄〃澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.alert.handle", description = "处理告警事件耗时")
-    @Counted(value = "monitor.alert.handle.count", description = "处理告警事件次数")
+    @Timed(value = "monitor.alert.handle", description = "澶勭悊鍛婅浜嬩欢鑰楁椂")
+    @Counted(value = "monitor.alert.handle.count", description = "澶勭悊鍛婅浜嬩欢娆℃暟")
     public ResponseDTO<AlertHandleResult> handleAlert(AlertHandleRequest request) {
-        log.info("[告警处理] 开始处理告警, alertId={}, action={}, assignedTo={}",
+        log.info("[鍛婅澶勭悊] 寮€濮嬪鐞嗗憡璀? alertId={}, action={}, assignedTo={}",
                 request.getAlertId(), request.getHandleAction(), request.getAssignedTo());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateHandleRequest(request);
 
-            // 2. 获取告警信息
+            // 2. 鑾峰彇鍛婅淇℃伅
             MonitorAlertResult alert = alertStore.get(request.getAlertId());
             if (alert == null) {
-                return ResponseDTO.error("ALERT_NOT_FOUND", "告警不存在");
+                return ResponseDTO.error("ALERT_NOT_FOUND", "鍛婅涓嶅瓨鍦?);
             }
 
-            // 3. 执行处理动作
+            // 3. 鎵ц澶勭悊鍔ㄤ綔
             AlertHandleResult result = performAlertHandleAction(alert, request);
 
-            // 4. 更新告警状态
+            // 4. 鏇存柊鍛婅鐘舵€?
             updateAlertStatus(request.getAlertId(), request.getHandleAction(), result);
 
-            // 5. 发送处理通知
+            // 5. 鍙戦€佸鐞嗛€氱煡
             if (request.getSendNotification()) {
                 sendHandleNotification(result);
             }
 
-            log.info("[告警处理] 处理完成, alertId={}, action={}, newStatus={}",
+            log.info("[鍛婅澶勭悊] 澶勭悊瀹屾垚, alertId={}, action={}, newStatus={}",
                     request.getAlertId(), request.getHandleAction(), result.getCurrentStatus());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[告警处理] 处理失败, alertId={}", request.getAlertId(), e);
-            return ResponseDTO.error("ALERT_HANDLE_FAILED", "处理告警事件失败: " + e.getMessage());
+            log.error("[鍛婅澶勭悊] 澶勭悊澶辫触, alertId={}", request.getAlertId(), e);
+            return ResponseDTO.error("ALERT_HANDLE_FAILED", "澶勭悊鍛婅浜嬩欢澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.alert.statistics", description = "生成告警统计耗时")
+    @Timed(value = "monitor.alert.statistics", description = "鐢熸垚鍛婅缁熻鑰楁椂")
     public ResponseDTO<AlertStatisticsReport> generateAlertStatistics(AlertStatisticsRequest request) {
-        log.info("[告警统计] 生成统计报告, type={}, period={}, startTime={}, endTime={}",
+        log.info("[鍛婅缁熻] 鐢熸垚缁熻鎶ュ憡, type={}, period={}, startTime={}, endTime={}",
                 request.getStatisticsType(), request.getStatisticsPeriod(),
                 request.getStartTime(), request.getEndTime());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateStatisticsRequest(request);
 
-            // 2. 生成缓存key
+            // 2. 鐢熸垚缂撳瓨key
             String cacheKey = generateStatisticsCacheKey(request);
 
-            // 3. 尝试从缓存获取
+            // 3. 灏濊瘯浠庣紦瀛樿幏鍙?
             AlertStatisticsReport cachedReport = statisticsCache.get(cacheKey);
             if (cachedReport != null && !isReportExpired(cachedReport)) {
-                log.debug("[告警统计] 使用缓存报告");
+                log.debug("[鍛婅缁熻] 浣跨敤缂撳瓨鎶ュ憡");
                 return ResponseDTO.ok(cachedReport);
             }
 
-            // 4. 生成新的统计报告
+            // 4. 鐢熸垚鏂扮殑缁熻鎶ュ憡
             AlertStatisticsReport report = generateNewStatisticsReport(request);
 
-            // 5. 缓存报告
+            // 5. 缂撳瓨鎶ュ憡
             statisticsCache.put(cacheKey, report);
 
-            log.info("[告警统计] 报告生成完成, totalAlerts={}, resolutionRate={}%",
+            log.info("[鍛婅缁熻] 鎶ュ憡鐢熸垚瀹屾垚, totalAlerts={}, resolutionRate={}%",
                     report.getTotalAlerts(), report.getResolutionRate() * 100);
 
             return ResponseDTO.ok(report);
 
         } catch (Exception e) {
-            log.error("[告警统计] 生成统计报告失败", e);
-            return ResponseDTO.error("STATISTICS_GENERATION_FAILED", "生成告警统计报告失败: " + e.getMessage());
+            log.error("[鍛婅缁熻] 鐢熸垚缁熻鎶ュ憡澶辫触", e);
+            return ResponseDTO.error("STATISTICS_GENERATION_FAILED", "鐢熸垚鍛婅缁熻鎶ュ憡澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.alert.rule.configure", description = "配置告警规则耗时")
-    @Counted(value = "monitor.alert.rule.configure.count", description = "配置告警规则次数")
+    @Timed(value = "monitor.alert.rule.configure", description = "閰嶇疆鍛婅瑙勫垯鑰楁椂")
+    @Counted(value = "monitor.alert.rule.configure.count", description = "閰嶇疆鍛婅瑙勫垯娆℃暟")
     public ResponseDTO<AlertRuleResult> configureAlertRule(AlertRuleConfigureRequest request) {
-        log.info("[告警规则] 配置告警规则, ruleId={}, ruleName={}, enabled={}",
+        log.info("[鍛婅瑙勫垯] 閰嶇疆鍛婅瑙勫垯, ruleId={}, ruleName={}, enabled={}",
                 request.getRuleId(), request.getRuleName(), request.getEnabled());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateRuleConfigureRequest(request);
 
-            // 2. 验证规则表达式
+            // 2. 楠岃瘉瑙勫垯琛ㄨ揪寮?
             String validationMessage = validateRuleExpression(request);
             if (validationMessage != null) {
-                return ResponseDTO.error("RULE_VALIDATION_FAILED", "规则验证失败: " + validationMessage);
+                return ResponseDTO.error("RULE_VALIDATION_FAILED", "瑙勫垯楠岃瘉澶辫触: " + validationMessage);
             }
 
-            // 3. 生成或更新规则ID
+            // 3. 鐢熸垚鎴栨洿鏂拌鍒橧D
             String ruleId = SmartStringUtil.isEmpty(request.getRuleId()) ?
                     generateRuleId() : request.getRuleId();
 
-            // 4. 创建规则记录
+            // 4. 鍒涘缓瑙勫垯璁板綍
             AlertRuleVO rule = createRuleRecord(ruleId, request);
             rule.setStatus("ACTIVE");
             rule.setLastEvaluated(LocalDateTime.now());
             rule.setEvaluationCount(0);
             rule.setTriggerCount(0);
 
-            // 5. 存储规则
+            // 5. 瀛樺偍瑙勫垯
             ruleStore.put(ruleId, rule);
 
-            // 6. 构建结果
+            // 6. 鏋勫缓缁撴灉
             AlertRuleResult result = AlertRuleResult.builder()
                     .ruleId(ruleId)
                     .ruleName(rule.getRuleName())
@@ -341,86 +341,86 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                     .lastEvaluated(rule.getLastEvaluated())
                     .evaluationCount(rule.getEvaluationCount())
                     .triggerCount(rule.getTriggerCount())
-                    .validationMessage("规则验证通过")
+                    .validationMessage("瑙勫垯楠岃瘉閫氳繃")
                     .warnings(new ArrayList<>())
                     .build();
 
-            log.info("[告警规则] 配置成功, ruleId={}, enabled={}", ruleId, rule.getEnabled());
+            log.info("[鍛婅瑙勫垯] 閰嶇疆鎴愬姛, ruleId={}, enabled={}", ruleId, rule.getEnabled());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[告警规则] 配置失败, ruleName={}", request.getRuleName(), e);
-            return ResponseDTO.error("RULE_CONFIGURE_FAILED", "配置告警规则失败: " + e.getMessage());
+            log.error("[鍛婅瑙勫垯] 閰嶇疆澶辫触, ruleName={}", request.getRuleName(), e);
+            return ResponseDTO.error("RULE_CONFIGURE_FAILED", "閰嶇疆鍛婅瑙勫垯澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.alert.rule.query", description = "查询告警规则列表耗时")
+    @Timed(value = "monitor.alert.rule.query", description = "鏌ヨ鍛婅瑙勫垯鍒楄〃鑰楁椂")
     public ResponseDTO<List<AlertRuleVO>> getAlertRuleList(AlertRuleQueryRequest request) {
-        log.info("[告警规则] 查询规则列表, type={}, enabled={}",
+        log.info("[鍛婅瑙勫垯] 鏌ヨ瑙勫垯鍒楄〃, type={}, enabled={}",
                 request.getRuleType(), request.getEnabled());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateRuleQueryRequest(request);
 
-            // 2. 从存储中查询规则
+            // 2. 浠庡瓨鍌ㄤ腑鏌ヨ瑙勫垯
             List<AlertRuleVO> allRules = new ArrayList<>(ruleStore.values());
 
-            // 3. 应用过滤条件
+            // 3. 搴旂敤杩囨护鏉′欢
             List<AlertRuleVO> filteredRules = allRules.stream()
                     .filter(rule -> matchesQueryConditions(rule, request))
                     .sorted((r1, r2) -> {
-                        // 按优先级降序排序
+                        // 鎸変紭鍏堢骇闄嶅簭鎺掑簭
                         int priorityCompare = r2.getPriority().compareTo(r1.getPriority());
                         if (priorityCompare != 0) return priorityCompare;
-                        // 按创建时间降序排序
+                        // 鎸夊垱寤烘椂闂撮檷搴忔帓搴?
                         return r2.getCreateTime().compareTo(r1.getCreateTime());
                     })
                     .collect(Collectors.toList());
 
-            // 4. 分页处理
+            // 4. 鍒嗛〉澶勭悊
             int start = (request.getPageNum() - 1) * request.getPageSize();
             int end = Math.min(start + request.getPageSize(), filteredRules.size());
             List<AlertRuleVO> pagedRules = filteredRules.subList(start, end);
 
-            log.info("[告警规则] 查询完成, 返回{}条规则", pagedRules.size());
+            log.info("[鍛婅瑙勫垯] 鏌ヨ瀹屾垚, 杩斿洖{}鏉¤鍒?, pagedRules.size());
 
             return ResponseDTO.ok(pagedRules);
 
         } catch (Exception e) {
-            log.error("[告警规则] 查询失败", e);
-            return ResponseDTO.error("RULE_QUERY_FAILED", "查询告警规则失败: " + e.getMessage());
+            log.error("[鍛婅瑙勫垯] 鏌ヨ澶辫触", e);
+            return ResponseDTO.error("RULE_QUERY_FAILED", "鏌ヨ鍛婅瑙勫垯澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.health.check", description = "系统健康检查耗时")
+    @Timed(value = "monitor.health.check", description = "绯荤粺鍋ュ悍妫€鏌ヨ€楁椂")
     public ResponseDTO<SystemHealthCheckResult> performSystemHealthCheck(SystemHealthCheckRequest request) {
-        log.info("[健康检查] 开始系统健康检查, categories={}", request.getCheckCategories());
+        log.info("[鍋ュ悍妫€鏌 寮€濮嬬郴缁熷仴搴锋鏌? categories={}", request.getCheckCategories());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateHealthCheckRequest(request);
 
-            // 2. 生成检查ID
+            // 2. 鐢熸垚妫€鏌D
             String checkId = generateHealthCheckId();
 
-            // 3. 执行健康检查
+            // 3. 鎵ц鍋ュ悍妫€鏌?
             List<HealthCheckItem> checkItems = performHealthChecks(request);
 
-            // 4. 计算整体健康状态
+            // 4. 璁＄畻鏁翠綋鍋ュ悍鐘舵€?
             String overallHealth = calculateOverallHealth(checkItems);
             double overallScore = calculateOverallScore(checkItems);
 
-            // 5. 生成建议
+            // 5. 鐢熸垚寤鸿
             List<String> recommendations = generateHealthRecommendations(checkItems);
 
-            // 6. 收集系统指标
+            // 6. 鏀堕泦绯荤粺鎸囨爣
             Map<String, Object> systemMetrics = collectSystemMetrics();
 
-            // 7. 构建结果
+            // 7. 鏋勫缓缁撴灉
             SystemHealthCheckResult result = SystemHealthCheckResult.builder()
                     .checkId(checkId)
                     .checkTime(LocalDateTime.now())
@@ -435,110 +435,110 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                     .warningChecks((int) checkItems.stream().filter(item -> "WARN".equals(item.getStatus())).count())
                     .build();
 
-            // 8. 生成报告
+            // 8. 鐢熸垚鎶ュ憡
             if (request.getGenerateReport()) {
                 String reportUrl = generateHealthReport(checkId, result, request.getReportFormat());
                 result.setReportUrl(reportUrl);
             }
 
-            log.info("[健康检查] 检查完成, health={}, score={}, passed={}, failed={}, warned={}",
+            log.info("[鍋ュ悍妫€鏌 妫€鏌ュ畬鎴? health={}, score={}, passed={}, failed={}, warned={}",
                     overallHealth, overallScore, result.getPassedChecks(), result.getFailedChecks(), result.getWarningChecks());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[健康检查] 系统健康检查失败", e);
-            return ResponseDTO.error("HEALTH_CHECK_FAILED", "系统健康检查失败: " + e.getMessage());
+            log.error("[鍋ュ悍妫€鏌 绯荤粺鍋ュ悍妫€鏌ュけ璐?, e);
+            return ResponseDTO.error("HEALTH_CHECK_FAILED", "绯荤粺鍋ュ悍妫€鏌ュけ璐? " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.self.healing", description = "故障自愈处理耗时")
-    @Counted(value = "monitor.self.healing.count", description = "故障自愈处理次数")
+    @Timed(value = "monitor.self.healing", description = "鏁呴殰鑷剤澶勭悊鑰楁椂")
+    @Counted(value = "monitor.self.healing.count", description = "鏁呴殰鑷剤澶勭悊娆℃暟")
     public ResponseDTO<SelfHealingResult> performSelfHealing(SelfHealingRequest request) {
-        log.info("[故障自愈] 开始自愈处理, incidentId={}, failureType={}, strategy={}",
+        log.info("[鏁呴殰鑷剤] 寮€濮嬭嚜鎰堝鐞? incidentId={}, failureType={}, strategy={}",
                 request.getIncidentId(), request.getFailureType(), request.getSelfHealingStrategy());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateSelfHealingRequest(request);
 
-            // 2. 生成自愈ID
+            // 2. 鐢熸垚鑷剤ID
             String healingId = generateHealingId();
 
-            // 3. 执行自愈处理
+            // 3. 鎵ц鑷剤澶勭悊
             SelfHealingResult result = performSelfHealingInternal(healingId, request);
 
-            // 4. 记录自愈结果
+            // 4. 璁板綍鑷剤缁撴灉
             logSelfHealingResult(result);
 
-            log.info("[故障自愈] 自愈处理完成, healingId={}, success={}, attempts={}",
+            log.info("[鏁呴殰鑷剤] 鑷剤澶勭悊瀹屾垚, healingId={}, success={}, attempts={}",
                     healingId, result.getHealingSuccess(), result.getAttemptCount());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[故障自愈] 自愈处理失败, incidentId={}", request.getIncidentId(), e);
-            return ResponseDTO.error("SELF_HEALING_FAILED", "故障自愈处理失败: " + e.getMessage());
+            log.error("[鏁呴殰鑷剤] 鑷剤澶勭悊澶辫触, incidentId={}", request.getIncidentId(), e);
+            return ResponseDTO.error("SELF_HEALING_FAILED", "鏁呴殰鑷剤澶勭悊澶辫触: " + e.getMessage());
         }
     }
 
     @Override
-    @Timed(value = "monitor.alert.trend.predict", description = "告警趋势预测耗时")
+    @Timed(value = "monitor.alert.trend.predict", description = "鍛婅瓒嬪娍棰勬祴鑰楁椂")
     public ResponseDTO<AlertTrendPredictionResult> predictAlertTrend(AlertTrendPredictionRequest request) {
-        log.info("[趋势预测] 开始告警趋势预测, model={}, period={}, days={}",
+        log.info("[瓒嬪娍棰勬祴] 寮€濮嬪憡璀﹁秼鍔块娴? model={}, period={}, days={}",
                 request.getPredictionModel(), request.getPredictionPeriod(), request.getPredictionDays());
 
         try {
-            // 1. 参数验证
+            // 1. 鍙傛暟楠岃瘉
             validateTrendPredictionRequest(request);
 
-            // 2. 生成预测ID
+            // 2. 鐢熸垚棰勬祴ID
             String predictionId = generatePredictionId();
 
-            // 3. 执行趋势预测
+            // 3. 鎵ц瓒嬪娍棰勬祴
             AlertTrendPredictionResult result = performTrendPredictionInternal(predictionId, request);
 
-            log.info("[趋势预测] 预测完成, predictionId={}, accuracy={}, confidence={}",
+            log.info("[瓒嬪娍棰勬祴] 棰勬祴瀹屾垚, predictionId={}, accuracy={}, confidence={}",
                     predictionId, result.getModelAccuracy(), result.getConfidenceScore());
 
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
-            log.error("[趋势预测] 告警趋势预测失败", e);
-            return ResponseDTO.error("TREND_PREDICTION_FAILED", "告警趋势预测失败: " + e.getMessage());
+            log.error("[瓒嬪娍棰勬祴] 鍛婅瓒嬪娍棰勬祴澶辫触", e);
+            return ResponseDTO.error("TREND_PREDICTION_FAILED", "鍛婅瓒嬪娍棰勬祴澶辫触: " + e.getMessage());
         }
     }
 
-    // ==================== 私有辅助方法 ====================
+    // ==================== 绉佹湁杈呭姪鏂规硶 ====================
 
     /**
-     * 验证创建告警请求
+     * 楠岃瘉鍒涘缓鍛婅璇锋眰
      */
     private void validateCreateAlertRequest(CreateMonitorAlertRequest request) {
         if (SmartStringUtil.isEmpty(request.getAlertTitle())) {
-            throw new IllegalArgumentException("告警标题不能为空");
+            throw new IllegalArgumentException("鍛婅鏍囬涓嶈兘涓虹┖");
         }
         if (SmartStringUtil.isEmpty(request.getAlertType())) {
-            throw new IllegalArgumentException("告警类型不能为空");
+            throw new IllegalArgumentException("鍛婅绫诲瀷涓嶈兘涓虹┖");
         }
         if (SmartStringUtil.isEmpty(request.getSeverityLevel())) {
-            throw new IllegalArgumentException("严重等级不能为空");
+            throw new IllegalArgumentException("涓ラ噸绛夌骇涓嶈兘涓虹┖");
         }
     }
 
     /**
-     * 生成告警ID
+     * 鐢熸垚鍛婅ID
      */
     private String generateAlertId() {
         return "ALERT-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 8);
     }
 
     /**
-     * 执行智能级别评估
+     * 鎵ц鏅鸿兘绾у埆璇勪及
      */
     private AlertLevelAssessmentResult performIntelligentLevelAssessment(CreateMonitorAlertRequest request) {
-        // 转换为评估请求格式
+        // 杞崲涓鸿瘎浼拌姹傛牸寮?
         AlertLevelAssessmentRequest assessmentRequest = AlertLevelAssessmentRequest.builder()
                 .alertType(request.getAlertType())
                 .sourceSystem(request.getSourceSystem())
@@ -554,35 +554,35 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 执行内部级别评估
+     * 鎵ц鍐呴儴绾у埆璇勪及
      */
     private AlertLevelAssessmentResult performInternalLevelAssessment(AlertLevelAssessmentRequest request) {
-        // 计算各维度评分
+        // 璁＄畻鍚勭淮搴﹁瘎鍒?
         double typeScore = calculateTypeScore(request.getAlertType());
         double impactScore = calculateImpactScore(request.getBusinessImpact(), request.getAffectedScope());
         double scopeScore = calculateScopeScore(request.getAffectedServices().size(), request.getAffectedUsers());
         double urgencyScore = calculateUrgencyScore(request.getOccurTime());
 
-        // 综合评分
+        // 缁煎悎璇勫垎
         double totalScore = (typeScore * 0.3 + impactScore * 0.4 + scopeScore * 0.2 + urgencyScore * 0.1);
 
-        // 确定级别
+        // 纭畾绾у埆
         String assessedLevel = determineLevelFromScore(totalScore);
         String businessImpactLevel = determineBusinessImpactLevel(request.getBusinessImpact());
         String urgencyLevel = determineUrgencyLevel(request.getOccurTime());
 
-        // 生成评估因素
+        // 鐢熸垚璇勪及鍥犵礌
         List<String> factors = Arrays.asList(
-                "告警类型评分: " + typeScore,
-                "业务影响评分: " + impactScore,
-                "影响范围评分: " + scopeScore,
-                "紧急程度评分: " + urgencyScore
+                "鍛婅绫诲瀷璇勫垎: " + typeScore,
+                "涓氬姟褰卞搷璇勫垎: " + impactScore,
+                "褰卞搷鑼冨洿璇勫垎: " + scopeScore,
+                "绱ф€ョ▼搴﹁瘎鍒? " + urgencyScore
         );
 
         return AlertLevelAssessmentResult.builder()
                 .assessedLevel(assessedLevel)
                 .confidenceScore(0.85 + Math.random() * 0.15)
-                .assessmentReason("基于多维度智能评估")
+                .assessmentReason("鍩轰簬澶氱淮搴︽櫤鑳借瘎浼?)
                 .assessmentFactors(factors)
                 .businessImpactLevel(businessImpactLevel)
                 .urgencyLevel(urgencyLevel)
@@ -594,7 +594,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 计算类型评分
+     * 璁＄畻绫诲瀷璇勫垎
      */
     private double calculateTypeScore(String alertType) {
         Map<String, Double> typeScores = Map.of(
@@ -611,7 +611,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 计算影响评分
+     * 璁＄畻褰卞搷璇勫垎
      */
     private double calculateImpactScore(String businessImpact, String affectedScope) {
         double impactScore = Map.of(
@@ -632,7 +632,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 计算范围评分
+     * 璁＄畻鑼冨洿璇勫垎
      */
     private double calculateScopeScore(int serviceCount, int userCount) {
         double serviceScore = Math.min(serviceCount / 10.0, 1.0);
@@ -641,15 +641,15 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 计算紧急程度评分
+     * 璁＄畻绱ф€ョ▼搴﹁瘎鍒?
      */
     private double calculateUrgencyScore(LocalDateTime occurTime) {
         long minutesSinceOccurrence = ChronoUnit.MINUTES.between(occurTime, LocalDateTime.now());
-        return Math.max(0, 1.0 - minutesSinceOccurrence / 60.0); // 1小时内紧急程度递减
+        return Math.max(0, 1.0 - minutesSinceOccurrence / 60.0); // 1灏忔椂鍐呯揣鎬ョ▼搴﹂€掑噺
     }
 
     /**
-     * 根据评分确定级别
+     * 鏍规嵁璇勫垎纭畾绾у埆
      */
     private String determineLevelFromScore(double score) {
         if (score >= 0.9) return "CRITICAL";
@@ -659,10 +659,10 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 检查告警重复
+     * 妫€鏌ュ憡璀﹂噸澶?
      */
     private MonitorAlertResult checkAlertDuplication(CreateMonitorAlertRequest request) {
-        // 简化的重复检查逻辑
+        // 绠€鍖栫殑閲嶅妫€鏌ラ€昏緫
         return alertStore.values().stream()
                 .filter(alert -> alert.getAlertTitle().equals(request.getAlertTitle())
                         && alert.getSeverityLevel().equals(request.getSeverityLevel())
@@ -672,10 +672,10 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 处理重复告警
+     * 澶勭悊閲嶅鍛婅
      */
     private MonitorAlertResult handleDuplicateAlert(MonitorAlertResult existingAlert, CreateMonitorAlertRequest request) {
-        // 更新重复次数和时间戳
+        // 鏇存柊閲嶅娆℃暟鍜屾椂闂存埑
         existingAlert.setMetadata(Map.of(
                 "duplicateCount", existingAlert.getMetadata().getOrDefault("duplicateCount", 0) + 1,
                 "lastDuplicateTime", LocalDateTime.now()
@@ -685,7 +685,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 创建告警记录
+     * 鍒涘缓鍛婅璁板綍
      */
     private MonitorAlertResult createAlertRecord(String alertId, CreateMonitorAlertRequest request, AlertLevelAssessmentResult assessment) {
         return MonitorAlertResult.builder()
@@ -709,7 +709,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     /**
-     * 计算解决小时数
+     * 璁＄畻瑙ｅ喅灏忔椂鏁?
      */
     private int calculateResolveHours(String severityLevel) {
         return Map.of(
@@ -720,15 +720,15 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
         ).getOrDefault(severityLevel, 8);
     }
 
-    // 继续实现其他私有方法...
+    // 缁х画瀹炵幇鍏朵粬绉佹湁鏂规硶...
     private void validateLevelAssessmentRequest(AlertLevelAssessmentRequest request) {
         if (SmartStringUtil.isEmpty(request.getAlertType())) {
-            throw new IllegalArgumentException("告警类型不能为空");
+            throw new IllegalArgumentException("鍛婅绫诲瀷涓嶈兘涓虹┖");
         }
     }
 
     private String determineBusinessImpact(CreateMonitorAlertRequest request) {
-        // 基于告警类型和受影响服务确定业务影响
+        // 鍩轰簬鍛婅绫诲瀷鍜屽彈褰卞搷鏈嶅姟纭畾涓氬姟褰卞搷
         if (request.getAffectedServices() != null && request.getAffectedServices().size() > 3) {
             return "HIGH";
         }
@@ -744,11 +744,11 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
 
     private String generateRecommendedAction(String assessedLevel) {
         return Map.of(
-                "CRITICAL", "立即处理，通知所有相关人员",
-                "HIGH", "优先处理，通知技术团队",
-                "MEDIUM", "安排处理，通知相关人员",
-                "LOW", "计划处理，记录日志"
-        ).getOrDefault(assessedLevel, "计划处理");
+                "CRITICAL", "绔嬪嵆澶勭悊锛岄€氱煡鎵€鏈夌浉鍏充汉鍛?,
+                "HIGH", "浼樺厛澶勭悊锛岄€氱煡鎶€鏈洟闃?,
+                "MEDIUM", "瀹夋帓澶勭悊锛岄€氱煡鐩稿叧浜哄憳",
+                "LOW", "璁″垝澶勭悊锛岃褰曟棩蹇?
+        ).getOrDefault(assessedLevel, "璁″垝澶勭悊");
     }
 
     private Integer calculateRecommendedPriority(String assessedLevel) {
@@ -793,21 +793,21 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
         return "NORMAL";
     }
 
-    // 其他方法的实现继续...
+    // 鍏朵粬鏂规硶鐨勫疄鐜扮户缁?..
     private void processAlertNotification(String alertId, CreateMonitorAlertRequest request) {
-        // 异步处理告警通知
+        // 寮傛澶勭悊鍛婅閫氱煡
     }
 
     private void processAutoHandling(String alertId, MonitorAlertResult alertResult) {
-        // 异步处理自动处理规则
+        // 寮傛澶勭悊鑷姩澶勭悊瑙勫垯
     }
 
     private void validateNotificationRequest(AlertNotificationRequest request) {
         if (SmartStringUtil.isEmpty(request.getAlertId())) {
-            throw new IllegalArgumentException("告警ID不能为空");
+            throw new IllegalArgumentException("鍛婅ID涓嶈兘涓虹┖");
         }
         if (request.getNotificationChannels() == null || request.getNotificationChannels().isEmpty()) {
-            throw new IllegalArgumentException("通知渠道不能为空");
+            throw new IllegalArgumentException("閫氱煡娓犻亾涓嶈兘涓虹┖");
         }
     }
 
@@ -816,9 +816,9 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     private NotificationChannelResult processNotificationChannel(String notificationId, String channel, AlertNotificationRequest request) {
-        // 模拟处理不同通知渠道
+        // 妯℃嫙澶勭悊涓嶅悓閫氱煡娓犻亾
         try {
-            // 模拟处理延迟
+            // 妯℃嫙澶勭悊寤惰繜
             Thread.sleep(200 + (long)(Math.random() * 800));
 
             int successCount = (int)(request.getRecipients().size() * (0.8 + Math.random() * 0.2));
@@ -830,13 +830,13 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                     .successCount(successCount)
                     .failureCount(failureCount)
                     .status(failureCount == 0 ? "SUCCESS" : "PARTIAL")
-                    .errorMessage(failureCount > 0 ? "部分通知发送失败" : null)
+                    .errorMessage(failureCount > 0 ? "閮ㄥ垎閫氱煡鍙戦€佸け璐? : null)
                     .completedTime(LocalDateTime.now())
                     .build();
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("通知处理被中断", e);
+            throw new RuntimeException("閫氱煡澶勭悊琚腑鏂?, e);
         }
     }
 
@@ -844,7 +844,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
         List<String> failed = new ArrayList<>();
         for (NotificationChannelResult result : channelResults) {
             if ("FAILED".equals(result.getStatus()) || "PARTIAL".equals(result.getStatus())) {
-                failed.add(result.getChannel() + "渠道失败");
+                failed.add(result.getChannel() + "娓犻亾澶辫触");
             }
         }
         return failed;
@@ -860,26 +860,26 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
         return metadata;
     }
 
-    // 其他验证和辅助方法
+    // 鍏朵粬楠岃瘉鍜岃緟鍔╂柟娉?
     private void validateQueryRequest(MonitorAlertQueryRequest request) {
         if (request.getPageNum() == null || request.getPageSize() == null) {
-            throw new IllegalArgumentException("分页参数不能为空");
+            throw new IllegalArgumentException("鍒嗛〉鍙傛暟涓嶈兘涓虹┖");
         }
         if (request.getPageNum() < 1 || request.getPageSize() < 1 || request.getPageSize() > 1000) {
-            throw new IllegalArgumentException("分页参数无效");
+            throw new IllegalArgumentException("鍒嗛〉鍙傛暟鏃犳晥");
         }
     }
 
     private List<MonitorAlertVO> queryAlertsFromStore(MonitorAlertQueryRequest request) {
-        // 模拟查询逻辑
+        // 妯℃嫙鏌ヨ閫昏緫
         List<MonitorAlertVO> alerts = new ArrayList<>();
 
-        // 生成模拟数据
+        // 鐢熸垚妯℃嫙鏁版嵁
         for (int i = 0; i < 50; i++) {
             MonitorAlertVO alert = MonitorAlertVO.builder()
                     .alertId("ALERT-" + i)
-                    .alertTitle("告警标题-" + i)
-                    .alertDescription("这是告警描述内容")
+                    .alertTitle("鍛婅鏍囬-" + i)
+                    .alertDescription("杩欐槸鍛婅鎻忚堪鍐呭")
                     .alertType(i % 3 == 0 ? "SYSTEM_DOWN" : i % 3 == 1 ? "PERFORMANCE_DEGRADATION" : "SECURITY_BREACH")
                     .sourceSystem(i % 2 == 0 ? "ACCESS_SERVICE" : "DEVICE_SERVICE")
                     .occurTime(LocalDateTime.now().minusHours(i))
@@ -888,14 +888,14 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                     .severityLevel(i % 4 == 0 ? "CRITICAL" : i % 4 == 1 ? "HIGH" : i % 4 == 2 ? "MEDIUM" : "LOW")
                     .status(i % 5 == 0 ? "NEW" : i % 5 == 1 ? "ACKNOWLEDGED" : i % 5 == 2 ? "RESOLVED" : "CLOSED")
                     .assignedTo("user" + (i % 10 + 1))
-                    .assignedToName("用户" + (i % 10 + 1))
+                    .assignedToName("鐢ㄦ埛" + (i % 10 + 1))
                     .duration(i * 30)
-                    .affectedServices(Arrays.asList("服务" + (i % 5 + 1), "服务" + ((i + 1) % 5 + 1)))
-                    .tags(Arrays.asList("标签" + (i % 3 + 1)))
+                    .affectedServices(Arrays.asList("鏈嶅姟" + (i % 5 + 1), "鏈嶅姟" + ((i + 1) % 5 + 1)))
+                    .tags(Arrays.asList("鏍囩" + (i % 3 + 1)))
                     .isRecurring(i % 10 == 0)
                     .recurrenceCount(i % 10 == 0 ? (i / 10 + 1) : 0)
                     .businessImpact("MEDIUM")
-                    .resolution("已解决")
+                    .resolution("宸茶В鍐?)
                     .resolvedTime(i % 5 == 2 ? LocalDateTime.now().minusHours(1) : null)
                     .resolutionDuration(i % 5 == 2 ? 60 : null)
                     .build();
@@ -909,7 +909,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
         return alerts.stream()
                 .filter(alert -> matchesFilters(alert, request))
                 .sorted((a1, a2) -> {
-                    // 排序逻辑
+                    // 鎺掑簭閫昏緫
                     int severityCompare = getSeverityPriority(a2.getSeverityLevel()) - getSeverityPriority(a1.getSeverityLevel());
                     if (severityCompare != 0) return severityCompare;
 
@@ -962,13 +962,13 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
         return alerts.subList(start, end);
     }
 
-    // 继续实现其他方法...
+    // 缁х画瀹炵幇鍏朵粬鏂规硶...
     private void initializeDefaultAlertRules() {
-        // 初始化默认告警规则
+        // 鍒濆鍖栭粯璁ゅ憡璀﹁鍒?
         AlertRuleVO defaultRule = AlertRuleVO.builder()
                 .ruleId("RULE-DEFAULT-1")
-                .ruleName("系统可用性检查")
-                .ruleDescription("检查系统核心服务的可用性")
+                .ruleName("绯荤粺鍙敤鎬ф鏌?)
+                .ruleDescription("妫€鏌ョ郴缁熸牳蹇冩湇鍔＄殑鍙敤鎬?)
                 .ruleType("THRESHOLD")
                 .enabled(true)
                 .priority(1)
@@ -988,30 +988,30 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     private void startBackgroundTasks() {
-        // 启动后台定时任务
+        // 鍚姩鍚庡彴瀹氭椂浠诲姟
         scheduler.scheduleAtFixedRate(this::evaluateAlertRules, 1, 1, TimeUnit.MINUTES);
         scheduler.scheduleAtFixedRate(this::cleanupExpiredData, 1, 1, TimeUnit.HOURS);
     }
 
     private void evaluateAlertRules() {
-        // 评估告警规则
-        log.debug("[后台任务] 评估告警规则");
+        // 璇勪及鍛婅瑙勫垯
+        log.debug("[鍚庡彴浠诲姟] 璇勪及鍛婅瑙勫垯");
     }
 
     private void cleanupExpiredData() {
-        // 清理过期数据
-        log.debug("[后台任务] 清理过期数据");
-        // 清理过期的统计缓存
+        // 娓呯悊杩囨湡鏁版嵁
+        log.debug("[鍚庡彴浠诲姟] 娓呯悊杩囨湡鏁版嵁");
+        // 娓呯悊杩囨湡鐨勭粺璁＄紦瀛?
         statisticsCache.entrySet().removeIf(entry -> isReportExpired(entry.getValue()));
     }
 
-    // 其他方法的实现省略，实际开发中需要完整实现
+    // 鍏朵粬鏂规硶鐨勫疄鐜扮渷鐣ワ紝瀹為檯寮€鍙戜腑闇€瑕佸畬鏁村疄鐜?
     private void validateHandleRequest(AlertHandleRequest request) {
         if (SmartStringUtil.isEmpty(request.getAlertId())) {
-            throw new IllegalArgumentException("告警ID不能为空");
+            throw new IllegalArgumentException("鍛婅ID涓嶈兘涓虹┖");
         }
         if (SmartStringUtil.isEmpty(request.getHandleAction())) {
-            throw new IllegalArgumentException("处理动作不能为空");
+            throw new IllegalArgumentException("澶勭悊鍔ㄤ綔涓嶈兘涓虹┖");
         }
     }
 
@@ -1022,7 +1022,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                 .previousStatus(alert.getStatus())
                 .currentStatus(getStatusAfterAction(alert.getStatus(), request.getHandleAction()))
                 .handleTime(LocalDateTime.now())
-                .handledBy("当前用户")
+                .handledBy("褰撳墠鐢ㄦ埛")
                 .handleComment(request.getHandleComment())
                 .autoGenerated(false)
                 .affectedAlerts(Arrays.asList(alert.getAlertId()))
@@ -1054,16 +1054,16 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     private void sendHandleNotification(AlertHandleResult result) {
-        // 发送处理通知
-        log.info("[告警处理] 发送处理通知, alertId={}, action={}", result.getAlertId(), result.getHandleAction());
+        // 鍙戦€佸鐞嗛€氱煡
+        log.info("[鍛婅澶勭悊] 鍙戦€佸鐞嗛€氱煡, alertId={}, action={}", result.getAlertId(), result.getHandleAction());
     }
 
     private void validateStatisticsRequest(AlertStatisticsRequest request) {
         if (request.getStartTime() == null || request.getEndTime() == null) {
-            throw new IllegalArgumentException("统计时间范围不能为空");
+            throw new IllegalArgumentException("缁熻鏃堕棿鑼冨洿涓嶈兘涓虹┖");
         }
         if (request.getStartTime().isAfter(request.getEndTime())) {
-            throw new IllegalArgumentException("开始时间不能晚于结束时间");
+            throw new IllegalArgumentException("寮€濮嬫椂闂翠笉鑳芥櫄浜庣粨鏉熸椂闂?);
         }
     }
 
@@ -1079,7 +1079,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     private AlertStatisticsReport generateNewStatisticsReport(AlertStatisticsRequest request) {
-        // 生成新的统计报告
+        // 鐢熸垚鏂扮殑缁熻鎶ュ憡
         return AlertStatisticsReport.builder()
                 .statisticsPeriod(request.getStatisticsType())
                 .reportTime(LocalDateTime.now())
@@ -1127,9 +1127,9 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                         AlertTopItem.builder().itemName("DEVICE_SERVICE").count(300L).percentage(24.0).trend("UP").build()
                 ))
                 .insights(Map.of(
-                        "insight1", "系统告警数量呈下降趋势",
-                        "insight2", "资源告警需要重点关注",
-                        "insight3", "安全告警占比合理"
+                        "insight1", "绯荤粺鍛婅鏁伴噺鍛堜笅闄嶈秼鍔?,
+                        "insight2", "璧勬簮鍛婅闇€瑕侀噸鐐瑰叧娉?,
+                        "insight3", "瀹夊叏鍛婅鍗犳瘮鍚堢悊"
                 ))
                 .build();
     }
@@ -1152,19 +1152,19 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
 
     private void validateRuleConfigureRequest(AlertRuleConfigureRequest request) {
         if (SmartStringUtil.isEmpty(request.getRuleName())) {
-            throw new IllegalArgumentException("规则名称不能为空");
+            throw new IllegalArgumentException("瑙勫垯鍚嶇О涓嶈兘涓虹┖");
         }
         if (SmartStringUtil.isEmpty(request.getRuleType())) {
-            throw new IllegalArgumentException("规则类型不能为空");
+            throw new IllegalArgumentException("瑙勫垯绫诲瀷涓嶈兘涓虹┖");
         }
     }
 
     private String validateRuleExpression(AlertRuleConfigureRequest request) {
-        // 简化的规则表达式验证
+        // 绠€鍖栫殑瑙勫垯琛ㄨ揪寮忛獙璇?
         if (SmartStringUtil.isEmpty(request.getConditionExpression())) {
-            return "条件表达式不能为空";
+            return "鏉′欢琛ㄨ揪寮忎笉鑳戒负绌?;
         }
-        return null; // 验证通过
+        return null; // 楠岃瘉閫氳繃
     }
 
     private String generateRuleId() {
@@ -1191,7 +1191,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
 
     private void validateRuleQueryRequest(AlertRuleQueryRequest request) {
         if (request.getPageNum() == null || request.getPageSize() == null) {
-            throw new IllegalArgumentException("分页参数不能为空");
+            throw new IllegalArgumentException("鍒嗛〉鍙傛暟涓嶈兘涓虹┖");
         }
     }
 
@@ -1212,7 +1212,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     private void validateHealthCheckRequest(SystemHealthCheckRequest request) {
-        // 验证健康检查请求
+        // 楠岃瘉鍋ュ悍妫€鏌ヨ姹?
     }
 
     private String generateHealthCheckId() {
@@ -1222,13 +1222,13 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     private List<HealthCheckItem> performHealthChecks(SystemHealthCheckRequest request) {
         List<HealthCheckItem> items = new ArrayList<>();
 
-        // 模拟执行各种健康检查
-        items.add(createHealthItem("CPU使用率", "PERFORMANCE", checkCpuUsage()));
-        items.add(createHealthItem("内存使用率", "PERFORMANCE", checkMemoryUsage()));
-        items.add(createHealthItem("磁盘空间", "STORAGE", checkDiskSpace()));
-        items.add(createHealthItem("网络连接", "NETWORK", checkNetworkConnectivity()));
-        items.add(createHealthItem("数据库连接", "DATABASE", checkDatabaseConnection()));
-        items.add(createHealthItem("服务可用性", "SERVICE", checkServiceAvailability()));
+        // 妯℃嫙鎵ц鍚勭鍋ュ悍妫€鏌?
+        items.add(createHealthItem("CPU浣跨敤鐜?, "PERFORMANCE", checkCpuUsage()));
+        items.add(createHealthItem("鍐呭瓨浣跨敤鐜?, "PERFORMANCE", checkMemoryUsage()));
+        items.add(createHealthItem("纾佺洏绌洪棿", "STORAGE", checkDiskSpace()));
+        items.add(createHealthItem("缃戠粶杩炴帴", "NETWORK", checkNetworkConnectivity()));
+        items.add(createHealthItem("鏁版嵁搴撹繛鎺?, "DATABASE", checkDatabaseConnection()));
+        items.add(createHealthItem("鏈嶅姟鍙敤鎬?, "SERVICE", checkServiceAvailability()));
 
         return items;
     }
@@ -1242,23 +1242,23 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                 .category(category)
                 .status(status)
                 .score(score)
-                .message(String.format("%s使用率: %.1f%%", name, usage))
+                .message(String.format("%s浣跨敤鐜? %.1f%%", name, usage))
                 .details(Map.of("usage", usage))
-                .recommendation(status.equals("FAIL") ? "立即处理" : status.equals("WARN") ? "建议优化" : "正常")
+                .recommendation(status.equals("FAIL") ? "绔嬪嵆澶勭悊" : status.equals("WARN") ? "寤鸿浼樺寲" : "姝ｅ父")
                 .checkTime(LocalDateTime.now())
                 .build();
     }
 
     private double checkCpuUsage() {
-        return 60 + Math.random() * 30; // 模拟CPU使用率
+        return 60 + Math.random() * 30; // 妯℃嫙CPU浣跨敤鐜?
     }
 
     private double checkMemoryUsage() {
-        return 50 + Math.random() * 40; // 模拟内存使用率
+        return 50 + Math.random() * 40; // 妯℃嫙鍐呭瓨浣跨敤鐜?
     }
 
     private double checkDiskSpace() {
-        return 30 + Math.random() * 50; // 模拟磁盘使用率
+        return 30 + Math.random() * 50; // 妯℃嫙纾佺洏浣跨敤鐜?
     }
 
     private String checkNetworkConnectivity() {
@@ -1301,7 +1301,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
         }
 
         if (recommendations.isEmpty()) {
-            recommendations.add("系统运行正常，继续保持");
+            recommendations.add("绯荤粺杩愯姝ｅ父锛岀户缁繚鎸?);
         }
 
         return recommendations;
@@ -1323,13 +1323,13 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
         return "/api/v1/monitor/health/report/" + checkId + "." + format.toLowerCase();
     }
 
-    // 继续实现剩余方法...
+    // 缁х画瀹炵幇鍓╀綑鏂规硶...
     private void validateSelfHealingRequest(SelfHealingRequest request) {
         if (SmartStringUtil.isEmpty(request.getIncidentId())) {
-            throw new IllegalArgumentException("事件ID不能为空");
+            throw new IllegalArgumentException("浜嬩欢ID涓嶈兘涓虹┖");
         }
         if (SmartStringUtil.isEmpty(request.getFailureType())) {
-            throw new IllegalArgumentException("故障类型不能为空");
+            throw new IllegalArgumentException("鏁呴殰绫诲瀷涓嶈兘涓虹┖");
         }
     }
 
@@ -1339,20 +1339,20 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
 
     private SelfHealingResult performSelfHealingInternal(String healingId, SelfHealingRequest request) {
         LocalDateTime startTime = LocalDateTime.now();
-        boolean success = Math.random() > 0.3; // 70%成功率
+        boolean success = Math.random() > 0.3; // 70%鎴愬姛鐜?
         int attemptCount = 1;
 
-        // 模拟重试逻辑
+        // 妯℃嫙閲嶈瘯閫昏緫
         while (!success && attemptCount <= request.getMaxRetries()) {
             try {
-                Thread.sleep(1000 + attemptCount * 500); // 模拟处理时间
-                success = Math.random() > 0.3; // 每次重试都有70%成功率
+                Thread.sleep(1000 + attemptCount * 500); // 妯℃嫙澶勭悊鏃堕棿
+                success = Math.random() > 0.3; // 姣忔閲嶈瘯閮芥湁70%鎴愬姛鐜?
                 if (!success) {
                     attemptCount++;
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException("自愈处理被中断", e);
+                throw new RuntimeException("鑷剤澶勭悊琚腑鏂?, e);
             }
         }
 
@@ -1366,8 +1366,8 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                 .duration((int) Duration.between(startTime, LocalDateTime.now()).getSeconds())
                 .attemptCount(attemptCount)
                 .finalStatus(success ? "SUCCESS" : "FAILED")
-                .failureReason(success ? null : "自愈处理失败")
-                .actionsTaken(Arrays.asList("重启服务", "清理缓存", "检查配置"))
+                .failureReason(success ? null : "鑷剤澶勭悊澶辫触")
+                .actionsTaken(Arrays.asList("閲嶅惎鏈嶅姟", "娓呯悊缂撳瓨", "妫€鏌ラ厤缃?))
                 .requireManualIntervention(!success)
                 .healingMetrics(Map.of(
                         "successRate", success ? 1.0 : 0.0,
@@ -1379,20 +1379,20 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
 
     private void logSelfHealingResult(SelfHealingResult result) {
         if (result.getHealingSuccess()) {
-            log.info("[故障自愈] 自愈成功, healingId={}, incidentId={}, attempts={}",
+            log.info("[鏁呴殰鑷剤] 鑷剤鎴愬姛, healingId={}, incidentId={}, attempts={}",
                     result.getHealingId(), result.getIncidentId(), result.getAttemptCount());
         } else {
-            log.warn("[故障自愈] 自愈失败, healingId={}, incidentId={}, attempts={}, reason={}",
+            log.warn("[鏁呴殰鑷剤] 鑷剤澶辫触, healingId={}, incidentId={}, attempts={}, reason={}",
                     result.getHealingId(), result.getIncidentId(), result.getAttemptCount(), result.getFailureReason());
         }
     }
 
     private void validateTrendPredictionRequest(AlertTrendPredictionRequest request) {
         if (SmartStringUtil.isEmpty(request.getPredictionModel())) {
-            throw new IllegalArgumentException("预测模型不能为空");
+            throw new IllegalArgumentException("棰勬祴妯″瀷涓嶈兘涓虹┖");
         }
         if (request.getStartTime() == null || request.getEndTime() == null) {
-            throw new IllegalArgumentException("预测时间范围不能为空");
+            throw new IllegalArgumentException("棰勬祴鏃堕棿鑼冨洿涓嶈兘涓虹┖");
         }
     }
 
@@ -1401,7 +1401,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     }
 
     private AlertTrendPredictionResult performTrendPredictionInternal(String predictionId, AlertTrendPredictionRequest request) {
-        // 模拟趋势预测
+        // 妯℃嫙瓒嬪娍棰勬祴
         List<AlertPredictionData> predictions = new ArrayList<>();
         LocalDateTime currentTime = request.getStartTime();
 
@@ -1417,7 +1417,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                     .confidenceIntervalLower(confidenceIntervalLower)
                     .confidenceIntervalUpper(confidenceIntervalUpper)
                     .trendDirection(Math.random() > 0.5 ? "UP" : "DOWN")
-                    .influencingFactors(Arrays.asList("季节性因素", "业务增长", "系统负载"))
+                    .influencingFactors(Arrays.asList("瀛ｈ妭鎬у洜绱?, "涓氬姟澧為暱", "绯荤粺璐熻浇"))
                     .build();
             predictions.add(prediction);
         }
@@ -1429,7 +1429,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                 .predictions(predictions)
                 .modelAccuracy(0.85 + Math.random() * 0.1)
                 .confidenceScore(0.82 + Math.random() * 0.15)
-                .identifiedPatterns(Arrays.asList("每周高峰模式", "季节性增长"))
+                .identifiedPatterns(Arrays.asList("姣忓懆楂樺嘲妯″紡", "瀛ｈ妭鎬у闀?))
                 .anomalies(generateMockAnomalies())
                 .modelMetrics(Map.of(
                         "trainingDataPoints", 365,
@@ -1437,9 +1437,9 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                         "features", Arrays.asList("historical_counts", "time_features", "external_factors")
                 ))
                 .recommendations(Arrays.asList(
-                        "建议在高峰时段增加资源",
-                        "监控异常趋势变化",
-                        "定期更新预测模型"
+                        "寤鸿鍦ㄩ珮宄版椂娈靛鍔犺祫婧?,
+                        "鐩戞帶寮傚父瓒嬪娍鍙樺寲",
+                        "瀹氭湡鏇存柊棰勬祴妯″瀷"
                 ))
                 .build();
     }
@@ -1447,7 +1447,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
     private List<AlertAnomaly> generateMockAnomalies() {
         List<AlertAnomaly> anomalies = new ArrayList<>();
 
-        // 模拟生成一些异常点
+        // 妯℃嫙鐢熸垚涓€浜涘紓甯哥偣
         for (int i = 0; i < 3; i++) {
             AlertAnomaly anomaly = AlertAnomaly.builder()
                     .timeSlot(LocalDateTime.now().plusDays(i + 1).toString())
@@ -1455,7 +1455,7 @@ public class MonitorAlertServiceImpl implements MonitorAlertService {
                     .predictedCount(80L + (long)(Math.random() * 20))
                     .deviationScore(Math.abs(150 - 80) / 80.0)
                     .anomalyType(Math.random() > 0.5 ? "SPIKE" : "OUTLIER")
-                    .description("检测到异常告警数量")
+                    .description("妫€娴嬪埌寮傚父鍛婅鏁伴噺")
                     .needAttention(true)
                     .build();
             anomalies.add(anomaly);

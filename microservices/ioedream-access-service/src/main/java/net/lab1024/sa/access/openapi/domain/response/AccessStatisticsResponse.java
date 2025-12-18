@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 门禁统计信息响应
+ * 闂ㄧ缁熻淇℃伅鍝嶅簲
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -22,119 +22,119 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "门禁统计信息响应")
+@Schema(description = "闂ㄧ缁熻淇℃伅鍝嶅簲")
 public class AccessStatisticsResponse {
 
-    @Schema(description = "统计类型", example = "daily", allowableValues = {"daily", "weekly", "monthly", "yearly", "custom"})
+    @Schema(description = "缁熻绫诲瀷", example = "daily", allowableValues = {"daily", "weekly", "monthly", "yearly", "custom"})
     private String statisticsType;
 
-    @Schema(description = "统计类型名称", example = "日统计")
+    @Schema(description = "缁熻绫诲瀷鍚嶇О", example = "鏃ョ粺璁?)
     private String statisticsTypeName;
 
-    @Schema(description = "开始日期", example = "2025-12-16")
+    @Schema(description = "寮€濮嬫棩鏈?, example = "2025-12-16")
     private String startDate;
 
-    @Schema(description = "结束日期", example = "2025-12-16")
+    @Schema(description = "缁撴潫鏃ユ湡", example = "2025-12-16")
     private String endDate;
 
-    @Schema(description = "统计时间", example = "2025-12-16T15:30:00")
+    @Schema(description = "缁熻鏃堕棿", example = "2025-12-16T15:30:00")
     private LocalDateTime statisticsTime;
 
-    @Schema(description = "总通行次数", example = "1523")
+    @Schema(description = "鎬婚€氳娆℃暟", example = "1523")
     private Long totalAccessCount;
 
-    @Schema(description = "成功通行次数", example = "1498")
+    @Schema(description = "鎴愬姛閫氳娆℃暟", example = "1498")
     private Long successAccessCount;
 
-    @Schema(description = "失败通行次数", example = "25")
+    @Schema(description = "澶辫触閫氳娆℃暟", example = "25")
     private Long failAccessCount;
 
-    @Schema(description = "通行成功率", example = "98.36")
+    @Schema(description = "閫氳鎴愬姛鐜?, example = "98.36")
     private BigDecimal successRate;
 
-    @Schema(description = "进入次数", example = "789")
+    @Schema(description = "杩涘叆娆℃暟", example = "789")
     private Long enterCount;
 
-    @Schema(description = "离开次数", example = "734")
+    @Schema(description = "绂诲紑娆℃暟", example = "734")
     private Long exitCount;
 
-    @Schema(description = "平均每次通行耗时（毫秒）", example = "450")
+    @Schema(description = "骞冲潎姣忔閫氳鑰楁椂锛堟绉掞級", example = "450")
     private Long averageProcessTime;
 
-    @Schema(description = "最大通行耗时（毫秒）", example = "2000")
+    @Schema(description = "鏈€澶ч€氳鑰楁椂锛堟绉掞級", example = "2000")
     private Long maxProcessTime;
 
-    @Schema(description = "最小通行耗时（毫秒）", example = "120")
+    @Schema(description = "鏈€灏忛€氳鑰楁椂锛堟绉掞級", example = "120")
     private Long minProcessTime;
 
-    @Schema(description = "活跃用户数", example = "234")
+    @Schema(description = "娲昏穬鐢ㄦ埛鏁?, example = "234")
     private Integer activeUserCount;
 
-    @Schema(description = "活跃设备数", example = "14")
+    @Schema(description = "娲昏穬璁惧鏁?, example = "14")
     private Integer activeDeviceCount;
 
-    @Schema(description = "异常记录数", example = "12")
+    @Schema(description = "寮傚父璁板綍鏁?, example = "12")
     private Integer abnormalRecordCount;
 
-    @Schema(description = "体温异常人数", example = "3")
+    @Schema(description = "浣撴俯寮傚父浜烘暟", example = "3")
     private Integer temperatureAbnormalCount;
 
-    @Schema(description = "佩戴口罩人数", example = "1156")
+    @Schema(description = "浣╂埓鍙ｇ僵浜烘暟", example = "1156")
     private Integer maskWearingCount;
 
-    @Schema(description = "口罩佩戴率", example = "75.92")
+    @Schema(description = "鍙ｇ僵浣╂埓鐜?, example = "75.92")
     private BigDecimal maskWearingRate;
 
-    @Schema(description = "时段统计")
+    @Schema(description = "鏃舵缁熻")
     private List<TimeSlotStatistics> timeSlotStatistics;
 
-    @Schema(description = "验证方式统计")
+    @Schema(description = "楠岃瘉鏂瑰紡缁熻")
     private List<VerifyMethodStatistics> verifyMethodStatistics;
 
-    @Schema(description = "设备统计")
+    @Schema(description = "璁惧缁熻")
     private List<DeviceStatistics> deviceStatistics;
 
-    @Schema(description = "区域统计")
+    @Schema(description = "鍖哄煙缁熻")
     private List<AreaStatistics> areaStatistics;
 
-    @Schema(description = "用户统计")
+    @Schema(description = "鐢ㄦ埛缁熻")
     private List<UserStatistics> userStatistics;
 
-    @Schema(description = "部门统计")
+    @Schema(description = "閮ㄩ棬缁熻")
     private List<DepartmentStatistics> departmentStatistics;
 
-    @Schema(description = "趋势数据")
+    @Schema(description = "瓒嬪娍鏁版嵁")
     private Map<String, Object> trendData;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "时段统计")
+    @Schema(description = "鏃舵缁熻")
     public static class TimeSlotStatistics {
 
-        @Schema(description = "时间段", example = "08:00-09:00")
+        @Schema(description = "鏃堕棿娈?, example = "08:00-09:00")
         private String timeSlot;
 
-        @Schema(description = "通行次数", example = "156")
+        @Schema(description = "閫氳娆℃暟", example = "156")
         private Long accessCount;
 
-        @Schema(description = "成功次数", example = "152")
+        @Schema(description = "鎴愬姛娆℃暟", example = "152")
         private Long successCount;
 
-        @Schema(description = "失败次数", example = "4")
+        @Schema(description = "澶辫触娆℃暟", example = "4")
         private Long failCount;
 
-        @Schema(description = "成功率", example = "97.44")
+        @Schema(description = "鎴愬姛鐜?, example = "97.44")
         private BigDecimal successRate;
 
-        @Schema(description = "进入次数", example = "89")
+        @Schema(description = "杩涘叆娆℃暟", example = "89")
         private Long enterCount;
 
-        @Schema(description = "离开次数", example = "67")
+        @Schema(description = "绂诲紑娆℃暟", example = "67")
         private Long exitCount;
 
-        @Schema(description = "平均耗时（毫秒）", example = "420")
+        @Schema(description = "骞冲潎鑰楁椂锛堟绉掞級", example = "420")
         private Long averageProcessTime;
     }
 
@@ -142,31 +142,31 @@ public class AccessStatisticsResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "验证方式统计")
+    @Schema(description = "楠岃瘉鏂瑰紡缁熻")
     public static class VerifyMethodStatistics {
 
-        @Schema(description = "验证方式", example = "face")
+        @Schema(description = "楠岃瘉鏂瑰紡", example = "face")
         private String verifyMethod;
 
-        @Schema(description = "验证方式名称", example = "人脸识别")
+        @Schema(description = "楠岃瘉鏂瑰紡鍚嶇О", example = "浜鸿劯璇嗗埆")
         private String verifyMethodName;
 
-        @Schema(description = "使用次数", example = "856")
+        @Schema(description = "浣跨敤娆℃暟", example = "856")
         private Long usageCount;
 
-        @Schema(description = "使用率", example = "56.20")
+        @Schema(description = "浣跨敤鐜?, example = "56.20")
         private BigDecimal usageRate;
 
-        @Schema(description = "成功次数", example = "845")
+        @Schema(description = "鎴愬姛娆℃暟", example = "845")
         private Long successCount;
 
-        @Schema(description = "失败次数", example = "11")
+        @Schema(description = "澶辫触娆℃暟", example = "11")
         private Long failCount;
 
-        @Schema(description = "成功率", example = "98.71")
+        @Schema(description = "鎴愬姛鐜?, example = "98.71")
         private BigDecimal successRate;
 
-        @Schema(description = "平均耗时（毫秒）", example = "380")
+        @Schema(description = "骞冲潎鑰楁椂锛堟绉掞級", example = "380")
         private Long averageProcessTime;
     }
 
@@ -174,37 +174,37 @@ public class AccessStatisticsResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "设备统计")
+    @Schema(description = "璁惧缁熻")
     public static class DeviceStatistics {
 
-        @Schema(description = "设备ID", example = "ACCESS_001")
+        @Schema(description = "璁惧ID", example = "ACCESS_001")
         private String deviceId;
 
-        @Schema(description = "设备名称", example = "主门禁")
+        @Schema(description = "璁惧鍚嶇О", example = "涓婚棬绂?)
         private String deviceName;
 
-        @Schema(description = "设备类型", example = "access")
+        @Schema(description = "璁惧绫诲瀷", example = "access")
         private String deviceType;
 
-        @Schema(description = "通行次数", example = "234")
+        @Schema(description = "閫氳娆℃暟", example = "234")
         private Long accessCount;
 
-        @Schema(description = "成功次数", example = "230")
+        @Schema(description = "鎴愬姛娆℃暟", example = "230")
         private Long successCount;
 
-        @Schema(description = "失败次数", example = "4")
+        @Schema(description = "澶辫触娆℃暟", example = "4")
         private Long failCount;
 
-        @Schema(description = "成功率", example = "98.29")
+        @Schema(description = "鎴愬姛鐜?, example = "98.29")
         private BigDecimal successRate;
 
-        @Schema(description = "平均耗时（毫秒）", example = "410")
+        @Schema(description = "骞冲潎鑰楁椂锛堟绉掞級", example = "410")
         private Long averageProcessTime;
 
-        @Schema(description = "在线时长（小时）", example = "24.0")
+        @Schema(description = "鍦ㄧ嚎鏃堕暱锛堝皬鏃讹級", example = "24.0")
         private Double onlineDuration;
 
-        @Schema(description = "故障次数", example = "0")
+        @Schema(description = "鏁呴殰娆℃暟", example = "0")
         private Integer faultCount;
     }
 
@@ -212,40 +212,40 @@ public class AccessStatisticsResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "区域统计")
+    @Schema(description = "鍖哄煙缁熻")
     public static class AreaStatistics {
 
-        @Schema(description = "区域ID", example = "1")
+        @Schema(description = "鍖哄煙ID", example = "1")
         private Long areaId;
 
-        @Schema(description = "区域名称", example = "一楼大厅")
+        @Schema(description = "鍖哄煙鍚嶇О", example = "涓€妤煎ぇ鍘?)
         private String areaName;
 
-        @Schema(description = "区域类型", example = "entrance")
+        @Schema(description = "鍖哄煙绫诲瀷", example = "entrance")
         private String areaType;
 
-        @Schema(description = "通行次数", example = "567")
+        @Schema(description = "閫氳娆℃暟", example = "567")
         private Long accessCount;
 
-        @Schema(description = "成功次数", example = "558")
+        @Schema(description = "鎴愬姛娆℃暟", example = "558")
         private Long successCount;
 
-        @Schema(description = "失败次数", example = "9")
+        @Schema(description = "澶辫触娆℃暟", example = "9")
         private Long failCount;
 
-        @Schema(description = "成功率", example = "98.41")
+        @Schema(description = "鎴愬姛鐜?, example = "98.41")
         private BigDecimal successRate;
 
-        @Schema(description = "进入次数", example = "298")
+        @Schema(description = "杩涘叆娆℃暟", example = "298")
         private Long enterCount;
 
-        @Schema(description = "离开次数", example = "269")
+        @Schema(description = "绂诲紑娆℃暟", example = "269")
         private Long exitCount;
 
-        @Schema(description = "峰值时段", example = "09:00-10:00")
+        @Schema(description = "宄板€兼椂娈?, example = "09:00-10:00")
         private String peakTimeSlot;
 
-        @Schema(description = "峰值通行次数", example = "89")
+        @Schema(description = "宄板€奸€氳娆℃暟", example = "89")
         private Long peakAccessCount;
     }
 
@@ -253,40 +253,40 @@ public class AccessStatisticsResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "用户统计")
+    @Schema(description = "鐢ㄦ埛缁熻")
     public static class UserStatistics {
 
-        @Schema(description = "用户ID", example = "1001")
+        @Schema(description = "鐢ㄦ埛ID", example = "1001")
         private Long userId;
 
-        @Schema(description = "用户名", example = "admin")
+        @Schema(description = "鐢ㄦ埛鍚?, example = "admin")
         private String username;
 
-        @Schema(description = "真实姓名", example = "系统管理员")
+        @Schema(description = "鐪熷疄濮撳悕", example = "绯荤粺绠＄悊鍛?)
         private String realName;
 
-        @Schema(description = "部门名称", example = "技术部")
+        @Schema(description = "閮ㄩ棬鍚嶇О", example = "鎶€鏈儴")
         private String departmentName;
 
-        @Schema(description = "通行次数", example = "12")
+        @Schema(description = "閫氳娆℃暟", example = "12")
         private Long accessCount;
 
-        @Schema(description = "成功次数", example = "12")
+        @Schema(description = "鎴愬姛娆℃暟", example = "12")
         private Long successCount;
 
-        @Schema(description = "失败次数", example = "0")
+        @Schema(description = "澶辫触娆℃暟", example = "0")
         private Long failCount;
 
-        @Schema(description = "首次通行时间", example = "2025-12-16T08:30:00")
+        @Schema(description = "棣栨閫氳鏃堕棿", example = "2025-12-16T08:30:00")
         private LocalDateTime firstAccessTime;
 
-        @Schema(description = "最后通行时间", example = "2025-12-16T18:45:00")
+        @Schema(description = "鏈€鍚庨€氳鏃堕棿", example = "2025-12-16T18:45:00")
         private LocalDateTime lastAccessTime;
 
-        @Schema(description = "常用验证方式", example = "face")
+        @Schema(description = "甯哥敤楠岃瘉鏂瑰紡", example = "face")
         private String primaryVerifyMethod;
 
-        @Schema(description = "常用设备", example = "ACCESS_001")
+        @Schema(description = "甯哥敤璁惧", example = "ACCESS_001")
         private String primaryDevice;
     }
 
@@ -294,37 +294,37 @@ public class AccessStatisticsResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "部门统计")
+    @Schema(description = "閮ㄩ棬缁熻")
     public static class DepartmentStatistics {
 
-        @Schema(description = "部门ID", example = "1")
+        @Schema(description = "閮ㄩ棬ID", example = "1")
         private Long departmentId;
 
-        @Schema(description = "部门名称", example = "技术部")
+        @Schema(description = "閮ㄩ棬鍚嶇О", example = "鎶€鏈儴")
         private String departmentName;
 
-        @Schema(description = "部门人数", example = "25")
+        @Schema(description = "閮ㄩ棬浜烘暟", example = "25")
         private Integer employeeCount;
 
-        @Schema(description = "活跃人数", example = "23")
+        @Schema(description = "娲昏穬浜烘暟", example = "23")
         private Integer activeCount;
 
-        @Schema(description = "通行次数", example = "234")
+        @Schema(description = "閫氳娆℃暟", example = "234")
         private Long accessCount;
 
-        @Schema(description = "人均通行次数", example = "9.36")
+        @Schema(description = "浜哄潎閫氳娆℃暟", example = "9.36")
         private BigDecimal averageAccessCount;
 
-        @Schema(description = "成功次数", example = "230")
+        @Schema(description = "鎴愬姛娆℃暟", example = "230")
         private Long successCount;
 
-        @Schema(description = "成功率", example = "98.29")
+        @Schema(description = "鎴愬姛鐜?, example = "98.29")
         private BigDecimal successRate;
 
-        @Schema(description = "最早通行时间", example = "2025-12-16T08:15:00")
+        @Schema(description = "鏈€鏃╅€氳鏃堕棿", example = "2025-12-16T08:15:00")
         private LocalDateTime earliestAccessTime;
 
-        @Schema(description = "最晚通行时间", example = "2025-12-16T20:30:00")
+        @Schema(description = "鏈€鏅氶€氳鏃堕棿", example = "2025-12-16T20:30:00")
         private LocalDateTime latestAccessTime;
     }
 }

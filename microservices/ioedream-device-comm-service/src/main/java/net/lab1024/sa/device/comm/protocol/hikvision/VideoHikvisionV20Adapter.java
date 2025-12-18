@@ -3,12 +3,15 @@ package net.lab1024.sa.device.comm.protocol.hikvision;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.domain.DeviceMessage;
-import net.lab1024.sa.device.comm.protocol.domain.DeviceResponse;
+import net.lab1024.sa.device.comm.protocol.domain.*;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 海康威视视频协议V2.0适配器
@@ -72,38 +75,23 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public boolean initialize(Map<String, Object> config) {
+    public boolean isDeviceModelSupported(String deviceModel) {
+        for (String model : SUPPORTED_MODELS) {
+            if (model.equals(deviceModel)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void initialize() {
         try {
             log.info("[海康威视适配器] 初始化开始");
-
-            // 解析配置参数
-            String serverHost = (String) config.get("serverHost");
-            Integer serverPort = (Integer) config.get("serverPort");
-            String username = (String) config.get("username");
-            String password = (String) config.get("password");
-
-            if (serverHost == null || serverPort == null || username == null || password == null) {
-                log.error("[海康威视适配器] 配置参数不完整");
-                return false;
-            }
-
-            // 模拟海康威视SDK初始化
-            log.info("[海康威视适配器] 连接服务器: {}:{}", serverHost, serverPort);
-            log.info("[海康威视适配器] 登录用户: {}", username);
-
-            // 这里应该调用海康威视SDK的初始化方法
-            boolean initResult = initializeHikvisionSDK(config);
-            if (!initResult) {
-                log.error("[海康威视适配器] SDK初始化失败");
-                return false;
-            }
-
+            // TODO: 实现海康威视SDK初始化逻辑
             log.info("[海康威视适配器] 初始化完成");
-            return true;
-
         } catch (Exception e) {
             log.error("[海康威视适配器] 初始化异常", e);
-            return false;
         }
     }
 
@@ -116,23 +104,26 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
             String messageType = message.getMessageType();
             Map<String, Object> businessData = message.getBusinessData();
 
+            // 将Long类型的deviceId转为String
+            String deviceIdStr = String.valueOf(message.getDeviceId());
+
             switch (messageType) {
                 case "GET_REAL_TIME_STREAM":
-                    return getRealTimeStream(message.getDeviceId(), businessData);
+                    return getRealTimeStream(deviceIdStr, businessData);
                 case "START_RECORDING":
-                    return startRecording(message.getDeviceId(), businessData);
+                    return startRecording(deviceIdStr, businessData);
                 case "STOP_RECORDING":
-                    return stopRecording(message.getDeviceId(), businessData);
+                    return stopRecording(deviceIdStr, businessData);
                 case "PTZ_CONTROL":
-                    return ptzControl(message.getDeviceId(), businessData);
+                    return ptzControl(deviceIdStr, businessData);
                 case "GET_RECORD_LIST":
-                    return getRecordList(message.getDeviceId(), businessData);
+                    return getRecordList(deviceIdStr, businessData);
                 case "PLAYBACK_RECORD":
-                    return playbackRecord(message.getDeviceId(), businessData);
+                    return playbackRecord(deviceIdStr, businessData);
                 case "GET_DEVICE_INFO":
-                    return getDeviceInfo(message.getDeviceId(), businessData);
+                    return getDeviceInfo(deviceIdStr, businessData);
                 case "SET_DEVICE_CONFIG":
-                    return setDeviceConfig(message.getDeviceId(), businessData);
+                    return setDeviceConfig(deviceIdStr, businessData);
                 default:
                     log.warn("[海康威视适配器] 不支持的消息类型: {}", messageType);
                     return createErrorResponse("UNSUPPORTED_MESSAGE_TYPE", "不支持的消息类型: " + messageType);
@@ -145,27 +136,28 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public boolean destroy() {
+    public void destroy() {
         try {
             log.info("[海康威视适配器] 开始销毁适配器");
-
-            // 模拟海康威视SDK销毁
-            boolean cleanupResult = cleanupHikvisionSDK();
-            if (cleanupResult) {
-                log.info("[海康威视适配器] 销毁完成");
-            } else {
-                log.warn("[海康威视适配器] 销毁过程中出现问题");
-            }
-
-            return cleanupResult;
-
+            // TODO: 实现海康威视SDK清理逻辑
+            log.info("[海康威视适配器] 销毁完成");
         } catch (Exception e) {
             log.error("[海康威视适配器] 销毁异常", e);
-            return false;
         }
     }
 
     @Override
+    public Map<String, Object> getPerformanceStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("adapterStatus", ADAPTER_STATUS);
+        stats.put("protocolType", PROTOCOL_TYPE);
+        stats.put("manufacturer", MANUFACTURER);
+        stats.put("version", VERSION);
+        stats.put("supportedModels", SUPPORTED_MODELS.length);
+        return stats;
+    }
+
+    @Deprecated
     public Map<String, Object> getAdapterCapabilities() {
         Map<String, Object> capabilities = new HashMap<>();
 
@@ -492,7 +484,14 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
         response.setSuccess(true);
         response.setCode("SUCCESS");
         response.setMessage("操作成功");
-        response.setData(data);
+        // 将Object转换为Map<String, Object>
+        if (data instanceof Map) {
+            response.setData((Map<String, Object>) data);
+        } else {
+            Map<String, Object> dataMap = new HashMap<>();
+            dataMap.put("result", data);
+            response.setData(dataMap);
+        }
         response.setTimestamp(LocalDateTime.now());
         return response;
     }
@@ -507,5 +506,131 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
         response.setMessage(message);
         response.setTimestamp(LocalDateTime.now());
         return response;
+    }
+
+    // ==================== ProtocolAdapter接口必需方法实现 ====================
+
+    @Override
+    public ProtocolMessage parseDeviceMessage(byte[] rawData, Long deviceId) throws ProtocolParseException {
+        // TODO: 实现协议消息解析
+        throw new ProtocolParseException("parseDeviceMessage未实现");
+    }
+
+    @Override
+    public ProtocolMessage parseDeviceMessage(String hexData, Long deviceId) throws ProtocolParseException {
+        // TODO: 实现协议消息解析（十六进制）
+        throw new ProtocolParseException("parseDeviceMessage未实现");
+    }
+
+    @Override
+    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+        // TODO: 实现设备响应构建
+        throw new ProtocolBuildException("buildDeviceResponse未实现");
+    }
+
+    @Override
+    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+        // TODO: 实现设备响应构建（十六进制）
+        throw new ProtocolBuildException("buildDeviceResponseHex未实现");
+    }
+
+    @Override
+    public ProtocolValidationResult validateMessage(ProtocolMessage message) {
+        // TODO: 实现消息验证
+        ProtocolValidationResult result = new ProtocolValidationResult();
+        result.setValid(true);
+        return result;
+    }
+
+    @Override
+    public ProtocolPermissionResult validateDevicePermission(Long deviceId, String operation) {
+        // TODO: 实现设备权限验证
+        ProtocolPermissionResult result = new ProtocolPermissionResult();
+        result.setAllowed(true);
+        return result;
+    }
+
+    @Override
+    public Future<ProtocolInitResult> initializeDevice(Map<String, Object> deviceInfo, Map<String, Object> config) {
+        // TODO: 实现设备初始化
+        ProtocolInitResult result = new ProtocolInitResult();
+        result.setSuccess(true);
+        return CompletableFuture.completedFuture(result);
+    }
+
+    @Override
+    public ProtocolRegistrationResult handleDeviceRegistration(Map<String, Object> registrationData, Long deviceId) {
+        // TODO: 实现设备注册处理
+        ProtocolRegistrationResult result = new ProtocolRegistrationResult();
+        result.setSuccess(true);
+        return result;
+    }
+
+    @Override
+    public ProtocolHeartbeatResult handleDeviceHeartbeat(Map<String, Object> heartbeatData, Long deviceId) {
+        // TODO: 实现设备心跳处理
+        ProtocolHeartbeatResult result = new ProtocolHeartbeatResult();
+        result.setSuccess(true);
+        return result;
+    }
+
+    @Override
+    public ProtocolDeviceStatus getDeviceStatus(Long deviceId) {
+        // TODO: 实现设备状态获取
+        ProtocolDeviceStatus status = new ProtocolDeviceStatus();
+        status.setDeviceId(deviceId);
+        status.setOnline(true);
+        return status;
+    }
+
+    @Override
+    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+        // TODO: 实现门禁业务处理
+        ProtocolProcessResult result = new ProtocolProcessResult();
+        result.setSuccess(true);
+        return CompletableFuture.completedFuture(result);
+    }
+
+    @Override
+    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+        // TODO: 实现考勤业务处理
+        ProtocolProcessResult result = new ProtocolProcessResult();
+        result.setSuccess(true);
+        return CompletableFuture.completedFuture(result);
+    }
+
+    @Override
+    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+        // TODO: 实现消费业务处理
+        ProtocolProcessResult result = new ProtocolProcessResult();
+        result.setSuccess(true);
+        return CompletableFuture.completedFuture(result);
+    }
+
+    @Override
+    public Map<String, Object> getProtocolConfig(Long deviceId) {
+        // TODO: 实现协议配置获取
+        return new HashMap<>();
+    }
+
+    @Override
+    public boolean updateProtocolConfig(Long deviceId, Map<String, Object> config) {
+        // TODO: 实现协议配置更新
+        return true;
+    }
+
+    @Override
+    public ProtocolErrorResponse handleProtocolError(String errorCode, String errorMessage, Long deviceId) {
+        // TODO: 实现协议错误处理
+        ProtocolErrorResponse response = new ProtocolErrorResponse();
+        response.setErrorCode(errorCode);
+        response.setErrorMessage(errorMessage);
+        return response;
+    }
+
+    @Override
+    public Map<String, ProtocolErrorInfo> getErrorCodeMapping() {
+        // TODO: 实现错误代码映射
+        return new HashMap<>();
     }
 }

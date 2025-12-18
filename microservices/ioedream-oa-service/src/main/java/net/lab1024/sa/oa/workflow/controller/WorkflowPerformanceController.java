@@ -2,8 +2,6 @@ package net.lab1024.sa.oa.workflow.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -26,8 +24,6 @@ import org.springframework.validation.annotation.Validated;
 // @Tag(name = "工作流性能优化", description = "提供工作流性能监控和优化功能")
 // @Validated
 public class WorkflowPerformanceController {
-
-    private static final Logger log = LoggerFactory.getLogger(WorkflowPerformanceController.class);
 
     // TODO: 待WorkflowPerformanceOptimizer类实现后启用此控制器
     // 当前所有方法已注释，避免编译错误

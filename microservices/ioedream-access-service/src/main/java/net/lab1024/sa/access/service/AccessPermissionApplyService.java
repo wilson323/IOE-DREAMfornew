@@ -4,12 +4,11 @@ import net.lab1024.sa.common.access.entity.AccessPermissionApplyEntity;
 import net.lab1024.sa.access.domain.form.AccessPermissionApplyForm;
 
 /**
- * 门禁权限申请服务接口
+ * 闂ㄧ鏉冮檺鐢宠鏈嶅姟鎺ュ彛
  * <p>
- * 提供门禁权限申请相关业务功能
- * 严格遵循CLAUDE.md规范：
- * - Service接口定义在业务服务模块中
- * - 方法返回业务对象，不返回ResponseDTO
+ * 鎻愪緵闂ㄧ鏉冮檺鐢宠鐩稿叧涓氬姟鍔熻兘
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - Service鎺ュ彛瀹氫箟鍦ㄤ笟鍔℃湇鍔℃ā鍧椾腑
+ * - 鏂规硶杩斿洖涓氬姟瀵硅薄锛屼笉杩斿洖ResponseDTO
  * </p>
  *
  * @author IOE-DREAM Team
@@ -19,19 +18,16 @@ import net.lab1024.sa.access.domain.form.AccessPermissionApplyForm;
 public interface AccessPermissionApplyService {
 
     /**
-     * 提交权限申请（启动审批流程）
+     * 鎻愪氦鏉冮檺鐢宠锛堝惎鍔ㄥ鎵规祦绋嬶級
      *
-     * @param form 权限申请表单
-     * @return 权限申请实体（包含workflowInstanceId）
-     */
+     * @param form 鏉冮檺鐢宠琛ㄥ崟
+     * @return 鏉冮檺鐢宠瀹炰綋锛堝寘鍚玾orkflowInstanceId锛?     */
     AccessPermissionApplyEntity submitPermissionApply(AccessPermissionApplyForm form);
 
     /**
-     * 更新权限申请状态（由审批结果监听器调用）
-     *
-     * @param applyNo 申请编号
-     * @param status 审批状态
-     * @param approvalComment 审批意见
+     * 鏇存柊鏉冮檺鐢宠鐘舵€侊紙鐢卞鎵圭粨鏋滅洃鍚櫒璋冪敤锛?     *
+     * @param applyNo 鐢宠缂栧彿
+     * @param status 瀹℃壒鐘舵€?     * @param approvalComment 瀹℃壒鎰忚
      */
     void updatePermissionApplyStatus(String applyNo, String status, String approvalComment);
 }

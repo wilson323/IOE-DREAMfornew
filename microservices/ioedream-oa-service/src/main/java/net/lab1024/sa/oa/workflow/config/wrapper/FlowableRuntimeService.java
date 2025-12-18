@@ -1,8 +1,6 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -27,8 +25,6 @@ import java.util.Map;
 @Slf4j
 @Service
 public class FlowableRuntimeService {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableRuntimeService.class);
     private final RuntimeService runtimeService;
 
     public FlowableRuntimeService(RuntimeService runtimeService) {

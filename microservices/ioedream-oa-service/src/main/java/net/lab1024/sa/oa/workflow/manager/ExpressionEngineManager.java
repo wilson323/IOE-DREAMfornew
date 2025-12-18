@@ -5,8 +5,6 @@ import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Expression;
 import com.googlecode.aviator.Options;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
 
@@ -23,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class ExpressionEngineManager {
-    private static final Logger log = LoggerFactory.getLogger(ExpressionEngineManager.class);
 
     private final AviatorEvaluatorInstance aviatorEvaluator;
     private final Map<String, Object> globalVariables;

@@ -8,29 +8,23 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * IOE-DREAM 门禁管理服务启动类
+ * IOE-DREAM 闂ㄧ绠＄悊鏈嶅姟鍚姩绫? * <p>
+ * 绔彛: 8090
+ * 鑱岃矗: 鎻愪緵闂ㄧ鎺у埗銆侀€氳璁板綍銆佹潈闄愮鐞嗐€佸尯鍩熺鐞嗙瓑涓氬姟API
  * <p>
- * 端口: 8090
- * 职责: 提供门禁控制、通行记录、权限管理、区域管理等业务API
- * <p>
- * 严格遵循CLAUDE.md规范:
- * - 使用@SpringBootApplication注解
- * - 启用Nacos服务发现(@EnableDiscoveryClient)
- * - 精确配置扫描路径（只扫描需要的公共包和access包）
- * - 正确配置MapperScan路径
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖:
+ * - 浣跨敤@SpringBootApplication娉ㄨВ
+ * - 鍚敤Nacos鏈嶅姟鍙戠幇(@EnableDiscoveryClient)
+ * - 绮剧‘閰嶇疆鎵弿璺緞(鍙壂鎻忛渶瑕佺殑鍏叡鍖呭拰access鍖?
+ * - 姝ｇ‘閰嶇疆MapperScan璺緞
  * </p>
  * <p>
- * 核心功能模块:
- * - 门禁控制：门禁设备管理、通行控制、多模态验证
- * - 通行记录：通行记录查询、统计分析、异常告警
- * - 权限管理：区域权限、时间权限、人员权限
- * - 区域管理：区域配置、区域关联、权限继承
- * </p>
+ * 鏍稿績鍔熻兘妯″潡:
+ * - 闂ㄧ鎺у埗:闂ㄧ璁惧绠＄悊銆侀€氳鎺у埗銆佸妯℃€侀獙璇? * - 閫氳璁板綍:閫氳璁板綍鏌ヨ銆佺粺璁″垎鏋愩€佸紓甯稿憡璀? * - 鏉冮檺绠＄悊:鍖哄煙鏉冮檺銆佹椂闂存潈闄愩€佷汉鍛樻潈闄? * - 鍖哄煙绠＄悊:鍖哄煙閰嶇疆銆佸尯鍩熷叧鑱斻€佹潈闄愮户鎵? * </p>
  * <p>
- * <b>内存优化说明</b>:
- * scanBasePackages精确配置，只扫描门禁服务需要的公共包，
- * 减少不必要的类加载，优化内存使用。
- * </p>
+ * <b>鍐呭瓨浼樺寲璇存槑</b>:
+ * scanBasePackages绮剧‘閰嶇疆,鍙壂鎻忛棬绂佹湇鍔￠渶瑕佺殑鍏叡鍖?
+ * 鍑忓皯涓嶅繀瑕佺殑绫诲姞杞?浼樺寲鍐呭瓨浣跨敤銆? * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -38,22 +32,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication(
     scanBasePackages = {
-        // 门禁服务自身包
-        "net.lab1024.sa.access",
-        // 核心配置（必需）
+        // 闂ㄧ鏈嶅姟鑷韩鍖?        "net.lab1024.sa.access",
+        // 鏍稿績閰嶇疆(蹇呴渶)
         "net.lab1024.sa.common.config",
-        // 响应和异常处理
-        "net.lab1024.sa.common.response",
+        // 鍝嶅簲鍜屽紓甯稿鐞?        "net.lab1024.sa.common.response",
         "net.lab1024.sa.common.exception",
-        // 工具类
-        "net.lab1024.sa.common.util",
-        // 安全认证
+        // 宸ュ叿绫?        "net.lab1024.sa.common.util",
+        // 瀹夊叏璁よ瘉
         "net.lab1024.sa.common.security",
-        // 门禁相关公共模块
+        // 闂ㄧ鐩稿叧鍏叡妯″潡
         "net.lab1024.sa.common.access",
-        // 组织机构
+        // 缁勭粐鏈烘瀯
         "net.lab1024.sa.common.organization",
-        // RBAC权限
+        // RBAC鏉冮檺
         "net.lab1024.sa.common.rbac"
     },
     exclude = {
@@ -63,7 +54,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableDiscoveryClient
 @EnableScheduling
 @MapperScan(basePackages = {
-    // Common模块DAO
+    // Common妯″潡DAO
     "net.lab1024.sa.common.auth.dao",
     "net.lab1024.sa.common.rbac.dao",
     "net.lab1024.sa.common.system.employee.dao",
@@ -73,20 +64,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     "net.lab1024.sa.common.audit.dao",
     "net.lab1024.sa.common.dict.dao",
     "net.lab1024.sa.common.menu.dao",
-    // Workflow模块DAO（支持审批流程）
+    // Workflow妯″潡DAO(鏀寔瀹℃壒娴佺▼)
     "net.lab1024.sa.common.workflow.dao",
-    // Access模块DAO
+    // Access妯″潡DAO
     "net.lab1024.sa.access.dao"
 })
 public class AccessServiceApplication {
 
     /**
-     * 主启动方法
-     * <p>
-     * 启动IOE-DREAM门禁管理服务，端口8090
+     * 涓诲惎鍔ㄦ柟娉?     * <p>
+     * 鍚姩IOE-DREAM闂ㄧ绠＄悊鏈嶅姟,绔彛8090
      * </p>
      *
-     * @param args 启动参数
+     * @param args 鍚姩鍙傛暟
      */
     public static void main(String[] args) {
         SpringApplication.run(AccessServiceApplication.class, args);

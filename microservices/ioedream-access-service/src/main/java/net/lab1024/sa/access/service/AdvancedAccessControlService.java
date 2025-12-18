@@ -5,18 +5,13 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * 高级门禁控制服务接口
+ * 楂樼骇闂ㄧ鎺у埗鏈嶅姟鎺ュ彛
  * <p>
- * 提供高级门禁控制相关业务功能，包括：
- * - 智能风险评估
- * - 动态权限调整
- * - 异常行为检测
- * - 访问模式分析
- * 严格遵循CLAUDE.md规范：
- * - Service接口定义在业务服务模块中
- * - 清晰的方法注释
- * - 统一的数据传输对象
- * </p>
+ * 鎻愪緵楂樼骇闂ㄧ鎺у埗鐩稿叧涓氬姟鍔熻兘锛屽寘鎷細
+ * - 鏅鸿兘椋庨櫓璇勪及
+ * - 鍔ㄦ€佹潈闄愯皟鏁? * - 寮傚父琛屼负妫€娴? * - 璁块棶妯″紡鍒嗘瀽
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - Service鎺ュ彛瀹氫箟鍦ㄤ笟鍔℃湇鍔℃ā鍧椾腑
+ * - 娓呮櫚鐨勬柟娉曟敞閲? * - 缁熶竴鐨勬暟鎹紶杈撳璞? * </p>
  *
  * @author IOE-DREAM Team
  * @version 2.0.0
@@ -25,17 +20,15 @@ import lombok.Data;
 public interface AdvancedAccessControlService {
 
     /**
-     * 执行门禁控制检查
-     * <p>
-     * 基础的访问控制检查，包括权限验证和风险评估
-     * </p>
+     * 鎵ц闂ㄧ鎺у埗妫€鏌?     * <p>
+     * 鍩虹鐨勮闂帶鍒舵鏌ワ紝鍖呮嫭鏉冮檺楠岃瘉鍜岄闄╄瘎浼?     * </p>
      *
-     * @param userId 用户ID
-     * @param deviceId 设备ID
-     * @param areaId 区域ID
-     * @param verificationData 验证数据
-     * @param accessType 访问类型
-     * @return 控制结果
+     * @param userId 鐢ㄦ埛ID
+     * @param deviceId 璁惧ID
+     * @param areaId 鍖哄煙ID
+     * @param verificationData 楠岃瘉鏁版嵁
+     * @param accessType 璁块棶绫诲瀷
+     * @return 鎺у埗缁撴灉
      */
     AccessControlResult performAccessControlCheck(
             Long userId,
@@ -45,17 +38,16 @@ public interface AdvancedAccessControlService {
             String accessType);
 
     /**
-     * 执行高级智能访问控制
+     * 鎵ц楂樼骇鏅鸿兘璁块棶鎺у埗
      * <p>
-     * 增强的访问控制，包括模式分析、动态权限调整和异常检测
-     * </p>
+     * 澧炲己鐨勮闂帶鍒讹紝鍖呮嫭妯″紡鍒嗘瀽銆佸姩鎬佹潈闄愯皟鏁村拰寮傚父妫€娴?     * </p>
      *
-     * @param userId 用户ID
-     * @param deviceId 设备ID
-     * @param areaId 区域ID
-     * @param verificationData 验证数据
-     * @param accessType 访问类型
-     * @return 控制结果
+     * @param userId 鐢ㄦ埛ID
+     * @param deviceId 璁惧ID
+     * @param areaId 鍖哄煙ID
+     * @param verificationData 楠岃瘉鏁版嵁
+     * @param accessType 璁块棶绫诲瀷
+     * @return 鎺у埗缁撴灉
      */
     AccessControlResult performIntelligentAccessControl(
             Long userId,
@@ -65,63 +57,62 @@ public interface AdvancedAccessControlService {
             String accessType);
 
     /**
-     * 门禁控制结果
+     * 闂ㄧ鎺у埗缁撴灉
      */
     @Data
     class AccessControlResult {
         /**
-         * 是否允许访问
+         * 鏄惁鍏佽璁块棶
          */
         private Boolean allowed;
 
         /**
-         * 拒绝原因
+         * 鎷掔粷鍘熷洜
          */
         private String denyReason;
 
         /**
-         * 是否需要二次验证
-         */
+         * 鏄惁闇€瑕佷簩娆￠獙璇?         */
         private Boolean requireSecondaryVerification;
 
         /**
-         * 访问级别
-         * DENIED - 拒绝
-         * RESTRICTED - 受限
-         * NORMAL - 正常
-         * ENHANCED - 增强
+         * 璁块棶绾у埆
+         * DENIED - 鎷掔粷
+         * RESTRICTED - 鍙楅檺
+         * NORMAL - 姝ｅ父
+         * ENHANCED - 澧炲己
          */
         private String accessLevel;
 
         /**
-         * 额外安全措施
+         * 棰濆瀹夊叏鎺柦
          */
         private List<String> additionalSecurityMeasures;
 
         /**
-         * 是否检测到异常行为
+         * 鏄惁妫€娴嬪埌寮傚父琛屼负
          */
         private Boolean anomalousBehavior;
 
         /**
-         * 异常行为描述
+         * 寮傚父琛屼负鎻忚堪
          */
         private String anomalyDescription;
 
         /**
-         * 风险评分
+         * 椋庨櫓璇勫垎
          */
         private Integer riskScore;
 
         /**
-         * 风险等级
+         * 椋庨櫓绛夌骇
          */
         private String riskLevel;
 
         /**
-         * 判断是否允许访问
+         * 鍒ゆ柇鏄惁鍏佽璁块棶
          *
-         * @return 是否允许访问
+         * @return 鏄惁鍏佽璁块棶
          */
         public boolean isAllowed() {
             return allowed != null && allowed;

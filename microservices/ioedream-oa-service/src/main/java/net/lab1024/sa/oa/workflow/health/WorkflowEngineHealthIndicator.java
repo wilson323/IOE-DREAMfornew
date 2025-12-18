@@ -1,8 +1,6 @@
 package net.lab1024.sa.oa.workflow.health;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 工作流引擎健康检查 - 占位符
@@ -23,7 +21,6 @@ import org.slf4j.LoggerFactory;
 @Slf4j
 // @Component - 待实现后启用
 public class WorkflowEngineHealthIndicator {
-    private static final Logger log = LoggerFactory.getLogger(WorkflowEngineHealthIndicator.class);
 
     // TODO: 完整实现需要：
     // 1. 实现 HealthIndicator 接口

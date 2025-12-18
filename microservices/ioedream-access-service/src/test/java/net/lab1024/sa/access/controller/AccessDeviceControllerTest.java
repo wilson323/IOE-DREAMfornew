@@ -18,17 +18,17 @@ import net.lab1024.sa.access.domain.vo.AccessDeviceVO;
 import net.lab1024.sa.access.service.AccessDeviceService;
 
 /**
- * AccessDeviceController单元测试
+ * AccessDeviceController鍗曞厓娴嬭瘯
  * <p>
- * 目标覆盖率：>= 80%
- * 测试范围：AccessDeviceController核心API方法
+ * 鐩爣瑕嗙洊鐜囷細>= 80%
+ * 娴嬭瘯鑼冨洿锛欰ccessDeviceController鏍稿績API鏂规硶
  * </p>
  *
  * @author IOE-DREAM Team
  * @since 2025-12-11
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("AccessDeviceController单元测试")
+@DisplayName("AccessDeviceController鍗曞厓娴嬭瘯")
 class AccessDeviceControllerTest {
     @Mock
     private AccessDeviceService accessDeviceService;
@@ -38,16 +38,16 @@ class AccessDeviceControllerTest {
 
     @BeforeEach
     void setUp() {
-        // 准备测试数据
+        // 鍑嗗娴嬭瘯鏁版嵁
     }
 
     @Test
-    @DisplayName("queryDevices-成功场景-返回分页结果")
+    @DisplayName("queryDevices-鎴愬姛鍦烘櫙-杩斿洖鍒嗛〉缁撴灉")
     void test_queryDevices_Success_ReturnsPageResult() {
         // Given
         Integer pageNum = 1;
         Integer pageSize = 10;
-        String keyword = "门禁";
+        String keyword = "闂ㄧ";
         Long areaId = 4001L;
         String deviceStatus = "ONLINE";
         Integer enabledFlag = 1;

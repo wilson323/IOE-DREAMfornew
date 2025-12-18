@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.oa.workflow.designer.domain.FormDefinitionDTO;
 import net.lab1024.sa.oa.workflow.form.FormSchemaEntity;
 import net.lab1024.sa.oa.workflow.form.FormSchemaRepository;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class FormDesignerService {
-    private static final Logger log = LoggerFactory.getLogger(FormDesignerService.class);
 
     @Resource
     private FormSchemaRepository formSchemaRepository;

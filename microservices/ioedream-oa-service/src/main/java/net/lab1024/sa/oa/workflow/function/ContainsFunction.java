@@ -4,8 +4,6 @@ import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.type.AviatorBoolean;
 import com.googlecode.aviator.runtime.type.AviatorObject;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -22,7 +20,6 @@ import java.util.Map;
  */
 @Slf4j
 public class ContainsFunction extends AbstractFunction {
-    private static final Logger log = LoggerFactory.getLogger(ContainsFunction.class);
 
     @Override
     public String getName() {

@@ -27,6 +27,11 @@ public class ProtocolValidationResult {
     private boolean valid;
 
     /**
+     * 验证是否允许（别名）
+     */
+    private boolean allowed;
+
+    /**
      * 错误代码
      */
     private String errorCode;
@@ -46,6 +51,11 @@ public class ProtocolValidationResult {
      * 详细验证信息
      */
     private String details;
+
+    /**
+     * 验证详情（别名）
+     */
+    private String validationDetails;
 
     /**
      * 创建成功的验证结果

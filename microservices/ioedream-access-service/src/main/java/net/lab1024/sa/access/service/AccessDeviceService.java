@@ -18,12 +18,11 @@ import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
- * 门禁设备服务接口
+ * 闂ㄧ璁惧鏈嶅姟鎺ュ彛
  * <p>
- * 提供门禁设备管理相关业务功能
- * 严格遵循CLAUDE.md规范：
- * - Service接口定义在业务服务模块中
- * - 方法返回ResponseDTO统一格式
+ * 鎻愪緵闂ㄧ璁惧绠＄悊鐩稿叧涓氬姟鍔熻兘
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - Service鎺ュ彛瀹氫箟鍦ㄤ笟鍔℃湇鍔℃ā鍧椾腑
+ * - 鏂规硶杩斿洖ResponseDTO缁熶竴鏍煎紡
  * </p>
  *
  * @author IOE-DREAM Team
@@ -33,190 +32,174 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 public interface AccessDeviceService {
 
     /**
-     * 获取附近设备
+     * 鑾峰彇闄勮繎璁惧
      *
-     * @param userId 用户ID
-     * @param latitude 纬度
-     * @param longitude 经度
-     * @param radius 半径（米）
-     * @return 设备列表
+     * @param userId 鐢ㄦ埛ID
+     * @param latitude 绾害
+     * @param longitude 缁忓害
+     * @param radius 鍗婂緞锛堢背锛?     * @return 璁惧鍒楄〃
      */
     ResponseDTO<List<MobileDeviceItem>> getNearbyDevices(Long userId, Double latitude, Double longitude, Integer radius);
 
     /**
-     * 获取移动端用户权限
-     *
-     * @param userId 用户ID
-     * @return 权限信息
+     * 鑾峰彇绉诲姩绔敤鎴锋潈闄?     *
+     * @param userId 鐢ㄦ埛ID
+     * @return 鏉冮檺淇℃伅
      */
     ResponseDTO<MobileUserPermissions> getMobileUserPermissions(Long userId);
 
     /**
-     * 获取移动端实时状态
-     *
-     * @param deviceId 设备ID
-     * @return 状态信息
-     */
+     * 鑾峰彇绉诲姩绔疄鏃剁姸鎬?     *
+     * @param deviceId 璁惧ID
+     * @return 鐘舵€佷俊鎭?     */
     ResponseDTO<MobileRealTimeStatus> getMobileRealTimeStatus(Long deviceId);
 
     /**
-     * 分页查询设备
+     * 鍒嗛〉鏌ヨ璁惧
      *
-     * @param queryForm 查询表单
-     * @return 设备分页结果
+     * @param queryForm 鏌ヨ琛ㄥ崟
+     * @return 璁惧鍒嗛〉缁撴灉
      */
     ResponseDTO<PageResult<AccessDeviceVO>> queryDevices(AccessDeviceQueryForm queryForm);
 
     /**
-     * 查询设备详情
+     * 鏌ヨ璁惧璇︽儏
      *
-     * @param deviceId 设备ID
-     * @return 设备详情
+     * @param deviceId 璁惧ID
+     * @return 璁惧璇︽儏
      */
     ResponseDTO<AccessDeviceVO> getDeviceDetail(Long deviceId);
 
     /**
-     * 添加设备
+     * 娣诲姞璁惧
      *
-     * @param addForm 添加表单
-     * @return 设备ID
+     * @param addForm 娣诲姞琛ㄥ崟
+     * @return 璁惧ID
      */
     ResponseDTO<Long> addDevice(AccessDeviceAddForm addForm);
 
     /**
-     * 更新设备
+     * 鏇存柊璁惧
      *
-     * @param updateForm 更新表单
-     * @return 是否成功
+     * @param updateForm 鏇存柊琛ㄥ崟
+     * @return 鏄惁鎴愬姛
      */
     ResponseDTO<Boolean> updateDevice(AccessDeviceUpdateForm updateForm);
 
     /**
-     * 删除设备
+     * 鍒犻櫎璁惧
      *
-     * @param deviceId 设备ID
-     * @return 是否成功
+     * @param deviceId 璁惧ID
+     * @return 鏄惁鎴愬姛
      */
     ResponseDTO<Boolean> deleteDevice(Long deviceId);
 
     /**
-     * 更新设备状态
-     *
-     * @param deviceId 设备ID
-     * @param status 设备状态
-     * @return 是否成功
+     * 鏇存柊璁惧鐘舵€?     *
+     * @param deviceId 璁惧ID
+     * @param status 璁惧鐘舵€?     * @return 鏄惁鎴愬姛
      */
     ResponseDTO<Boolean> updateDeviceStatus(Long deviceId, Integer status);
 
     /**
-     * 获取移动端区域列表
-     * <p>
-     * 获取用户有权限访问的区域列表，包含区域详情（名称、类型、设备数量等）
-     * </p>
+     * 鑾峰彇绉诲姩绔尯鍩熷垪琛?     * <p>
+     * 鑾峰彇鐢ㄦ埛鏈夋潈闄愯闂殑鍖哄煙鍒楄〃锛屽寘鍚尯鍩熻鎯咃紙鍚嶇О銆佺被鍨嬨€佽澶囨暟閲忕瓑锛?     * </p>
      *
-     * @param userId 用户ID（可选，不传则从Token获取）
-     * @return 区域列表
+     * @param userId 鐢ㄦ埛ID锛堝彲閫夛紝涓嶄紶鍒欎粠Token鑾峰彇锛?     * @return 鍖哄煙鍒楄〃
      */
     ResponseDTO<List<MobileAreaItem>> getMobileAreas(Long userId);
 
-    // ==================== 移动端设备管理功能 ====================
+    // ==================== 绉诲姩绔澶囩鐞嗗姛鑳?====================
 
     /**
-     * 获取移动端设备列表
-     * <p>
-     * 获取用户有权限管理的设备列表，支持按类型、状态、区域、关键词过滤
+     * 鑾峰彇绉诲姩绔澶囧垪琛?     * <p>
+     * 鑾峰彇鐢ㄦ埛鏈夋潈闄愮鐞嗙殑璁惧鍒楄〃锛屾敮鎸佹寜绫诲瀷銆佺姸鎬併€佸尯鍩熴€佸叧閿瘝杩囨护
      * </p>
      *
-     * @param userId 用户ID（可选，不传则从Token获取）
-     * @param deviceType 设备类型（可选）
-     * @param status 设备状态（可选）
-     * @param areaId 所属区域（可选）
-     * @param keyword 关键词搜索（可选）
-     * @return 设备列表
+     * @param userId 鐢ㄦ埛ID锛堝彲閫夛紝涓嶄紶鍒欎粠Token鑾峰彇锛?     * @param deviceType 璁惧绫诲瀷锛堝彲閫夛級
+     * @param status 璁惧鐘舵€侊紙鍙€夛級
+     * @param areaId 鎵€灞炲尯鍩燂紙鍙€夛級
+     * @param keyword 鍏抽敭璇嶆悳绱紙鍙€夛級
+     * @return 璁惧鍒楄〃
      */
     ResponseDTO<List<MobileDeviceVO>> getMobileDeviceList(Long userId, Integer deviceType,
                                                         Integer status, Long areaId, String keyword);
 
     /**
-     * 设备控制操作
+     * 璁惧鎺у埗鎿嶄綔
      * <p>
-     * 对指定设备执行控制操作，如重启、维护、校准等
+     * 瀵规寚瀹氳澶囨墽琛屾帶鍒舵搷浣滐紝濡傞噸鍚€佺淮鎶ゃ€佹牎鍑嗙瓑
      * </p>
      *
-     * @param request 控制请求
-     * @return 控制结果
+     * @param request 鎺у埗璇锋眰
+     * @return 鎺у埗缁撴灉
      */
     ResponseDTO<DeviceControlResultVO> controlDevice(DeviceControlRequest request);
 
     /**
-     * 添加设备
+     * 娣诲姞璁惧
      * <p>
-     * 移动端添加新设备，自动分配设备ID，记录操作日志
-     * </p>
+     * 绉诲姩绔坊鍔犳柊璁惧锛岃嚜鍔ㄥ垎閰嶈澶嘔D锛岃褰曟搷浣滄棩蹇?     * </p>
      *
-     * @param request 添加设备请求
-     * @return 设备ID
+     * @param request 娣诲姞璁惧璇锋眰
+     * @return 璁惧ID
      */
     ResponseDTO<Long> addMobileDevice(AddDeviceRequest request);
 
     /**
-     * 删除设备
+     * 鍒犻櫎璁惧
      * <p>
-     * 软删除设备，保留历史记录，验证权限
-     * </p>
+     * 杞垹闄よ澶囷紝淇濈暀鍘嗗彶璁板綍锛岄獙璇佹潈闄?     * </p>
      *
-     * @param deviceId 设备ID
-     * @return 是否成功
+     * @param deviceId 璁惧ID
+     * @return 鏄惁鎴愬姛
      */
     ResponseDTO<Boolean> deleteMobileDevice(Long deviceId);
 
     /**
-     * 重启设备
+     * 閲嶅惎璁惧
      * <p>
-     * 远程重启设备，支持软重启和硬重启
+     * 杩滅▼閲嶅惎璁惧锛屾敮鎸佽蒋閲嶅惎鍜岀‖閲嶅惎
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param restartType 重启类型（soft/hard）
-     * @param reason 重启原因
-     * @return 重启结果
+     * @param deviceId 璁惧ID
+     * @param restartType 閲嶅惎绫诲瀷锛坰oft/hard锛?     * @param reason 閲嶅惎鍘熷洜
+     * @return 閲嶅惎缁撴灉
      */
     ResponseDTO<DeviceControlResultVO> restartDevice(Long deviceId, String restartType, String reason);
 
     /**
-     * 设备维护模式
+     * 璁惧缁存姢妯″紡
      * <p>
-     * 设置设备维护模式，支持设置维护时长和原因
+     * 璁剧疆璁惧缁存姢妯″紡锛屾敮鎸佽缃淮鎶ゆ椂闀垮拰鍘熷洜
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param maintenanceDuration 维护时长（小时）
-     * @param reason 维护原因
-     * @return 操作结果
+     * @param deviceId 璁惧ID
+     * @param maintenanceDuration 缁存姢鏃堕暱锛堝皬鏃讹級
+     * @param reason 缁存姢鍘熷洜
+     * @return 鎿嶄綔缁撴灉
      */
     ResponseDTO<DeviceControlResultVO> setMaintenanceMode(Long deviceId, Integer maintenanceDuration, String reason);
 
     /**
-     * 校准设备
+     * 鏍″噯璁惧
      * <p>
-     * 校准设备传感器或识别模块，支持多种校准类型
-     * </p>
+     * 鏍″噯璁惧浼犳劅鍣ㄦ垨璇嗗埆妯″潡锛屾敮鎸佸绉嶆牎鍑嗙被鍨?     * </p>
      *
-     * @param deviceId 设备ID
-     * @param calibrationType 校准类型
-     * @param calibrationPrecision 校准精度
-     * @return 校准结果
+     * @param deviceId 璁惧ID
+     * @param calibrationType 鏍″噯绫诲瀷
+     * @param calibrationPrecision 鏍″噯绮惧害
+     * @return 鏍″噯缁撴灉
      */
     ResponseDTO<DeviceControlResultVO> calibrateDevice(Long deviceId, String calibrationType, String calibrationPrecision);
 
     /**
-     * 获取移动端设备详情
-     * <p>
-     * 获取设备详细信息，包括运行状态、统计数据、维护记录等
+     * 鑾峰彇绉诲姩绔澶囪鎯?     * <p>
+     * 鑾峰彇璁惧璇︾粏淇℃伅锛屽寘鎷繍琛岀姸鎬併€佺粺璁℃暟鎹€佺淮鎶よ褰曠瓑
      * </p>
      *
-     * @param deviceId 设备ID
-     * @return 设备详情
+     * @param deviceId 璁惧ID
+     * @return 璁惧璇︽儏
      */
     ResponseDTO<MobileDeviceVO> getMobileDeviceDetail(Long deviceId);
 }

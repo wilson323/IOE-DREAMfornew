@@ -5,13 +5,11 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
- * 门禁记录视图对象
+ * 闂ㄧ璁板綍瑙嗗浘瀵硅薄
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用VO后缀命名
- * - 用于Controller返回给前端的数据
- * - 不包含敏感信息
- * </p>
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤VO鍚庣紑鍛藉悕
+ * - 鐢ㄤ簬Controller杩斿洖缁欏墠绔殑鏁版嵁
+ * - 涓嶅寘鍚晱鎰熶俊鎭? * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -21,67 +19,66 @@ import lombok.Data;
 public class AccessRecordVO {
 
     /**
-     * 记录ID
+     * 璁板綍ID
      */
     private Long logId;
 
     /**
-     * 用户ID
+     * 鐢ㄦ埛ID
      */
     private Long userId;
 
     /**
-     * 用户名
-     */
+     * 鐢ㄦ埛鍚?     */
     private String userName;
 
     /**
-     * 设备ID
+     * 璁惧ID
      */
     private String deviceId;
 
     /**
-     * 设备名称
+     * 璁惧鍚嶇О
      */
     private String deviceName;
 
     /**
-     * 区域ID
+     * 鍖哄煙ID
      */
     private String areaId;
 
     /**
-     * 区域名称
+     * 鍖哄煙鍚嶇О
      */
     private String areaName;
 
     /**
-     * 操作类型（验证方式）
+     * 鎿嶄綔绫诲瀷锛堥獙璇佹柟寮忥級
      */
     private String operation;
 
     /**
-     * 操作结果
+     * 鎿嶄綔缁撴灉
      * <p>
-     * 1-成功
-     * 2-失败
-     * 3-异常
+     * 1-鎴愬姛
+     * 2-澶辫触
+     * 3-寮傚父
      * </p>
      */
     private Integer result;
 
     /**
-     * 操作时间
+     * 鎿嶄綔鏃堕棿
      */
     private LocalDateTime createTime;
 
     /**
-     * IP地址
+     * IP鍦板潃
      */
     private String ipAddress;
 
     /**
-     * 备注
+     * 澶囨敞
      */
     private String remark;
 }

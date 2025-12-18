@@ -5,8 +5,6 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.oa.workflow.domain.form.WorkflowBatchOperationForm;
 import net.lab1024.sa.oa.workflow.domain.vo.WorkflowBatchOperationResultVO;
 import net.lab1024.sa.oa.workflow.service.WorkflowBatchOperationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +27,6 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperationService {
-
-    private static final Logger log = LoggerFactory.getLogger(WorkflowBatchOperationServiceImpl.class);
 
     @Override
     public CompletableFuture<ResponseDTO<WorkflowBatchOperationResultVO>> batchStartProcesses(

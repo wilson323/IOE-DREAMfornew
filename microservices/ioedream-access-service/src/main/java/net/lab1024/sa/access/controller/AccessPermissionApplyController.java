@@ -21,13 +21,10 @@ import net.lab1024.sa.access.domain.form.AccessPermissionApplyForm;
 import net.lab1024.sa.access.service.AccessPermissionApplyService;
 
 /**
- * 门禁权限申请控制器
- * <p>
- * 提供门禁权限申请相关API接口
- * 严格遵循CLAUDE.md规范：
- * - Controller层负责接收请求、参数验证、返回响应
- * - 使用@Resource注入Service
- * - 使用@Valid进行参数验证
+ * 闂ㄧ鏉冮檺鐢宠鎺у埗鍣? * <p>
+ * 鎻愪緵闂ㄧ鏉冮檺鐢宠鐩稿叧API鎺ュ彛
+ * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - Controller灞傝礋璐ｆ帴鏀惰姹傘€佸弬鏁伴獙璇併€佽繑鍥炲搷搴? * - 浣跨敤@Resource娉ㄥ叆Service
+ * - 浣跨敤@Valid杩涜鍙傛暟楠岃瘉
  * </p>
  *
  * @author IOE-DREAM Team
@@ -37,37 +34,34 @@ import net.lab1024.sa.access.service.AccessPermissionApplyService;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/access/permission/apply")
-@Tag(name = "门禁权限申请管理")
+@Tag(name = "闂ㄧ鏉冮檺鐢宠绠＄悊")
 public class AccessPermissionApplyController {
 
     @Resource
     private AccessPermissionApplyService accessPermissionApplyService;
 
     /**
-     * 提交权限申请
+     * 鎻愪氦鏉冮檺鐢宠
      * <p>
-     * 功能说明：
-     * 1. 创建权限申请记录
-     * 2. 启动工作流审批流程
-     * 3. 关联审批流程实例ID
+     * 鍔熻兘璇存槑锛?     * 1. 鍒涘缓鏉冮檺鐢宠璁板綍
+     * 2. 鍚姩宸ヤ綔娴佸鎵规祦绋?     * 3. 鍏宠仈瀹℃壒娴佺▼瀹炰緥ID
      * </p>
      *
-     * @param form 权限申请表单
-     * @return 权限申请实体（包含workflowInstanceId）
-     */
+     * @param form 鏉冮檺鐢宠琛ㄥ崟
+     * @return 鏉冮檺鐢宠瀹炰綋锛堝寘鍚玾orkflowInstanceId锛?     */
     @Observed(name = "accessPermissionApply.submitPermissionApply", contextualName = "access-permission-apply-submit")
     @PostMapping("/submit")
     @Operation(
-            summary = "提交权限申请",
-            description = "提交权限申请并启动审批流程，支持临时权限和永久权限申请",
+            summary = "鎻愪氦鏉冮檺鐢宠",
+            description = "鎻愪氦鏉冮檺鐢宠骞跺惎鍔ㄥ鎵规祦绋嬶紝鏀寔涓存椂鏉冮檺鍜屾案涔呮潈闄愮敵璇?,
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "权限申请表单，包含申请人ID、区域ID、申请类型、申请原因、有效期等",
+                    description = "鏉冮檺鐢宠琛ㄥ崟锛屽寘鍚敵璇蜂汉ID銆佸尯鍩烮D銆佺敵璇风被鍨嬨€佺敵璇峰師鍥犮€佹湁鏁堟湡绛?,
                     required = true
             ),
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "提交成功",
+                            description = "鎻愪氦鎴愬姛",
                             content = @io.swagger.v3.oas.annotations.media.Content(
                                     mediaType = "application/json",
                                     schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = AccessPermissionApplyEntity.class)
@@ -75,67 +69,62 @@ public class AccessPermissionApplyController {
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "400",
-                            description = "参数错误"
+                            description = "鍙傛暟閿欒"
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "500",
-                            description = "工作流启动失败"
+                            description = "宸ヤ綔娴佸惎鍔ㄥけ璐?
                     )
             }
     )
     public ResponseDTO<AccessPermissionApplyEntity> submitPermissionApply(
             @Valid @RequestBody AccessPermissionApplyForm form) {
-        log.info("[权限申请] 接收权限申请请求，applicantId={}, areaId={}, applyType={}",
+        log.info("[鏉冮檺鐢宠] 鎺ユ敹鏉冮檺鐢宠璇锋眰锛宎pplicantId={}, areaId={}, applyType={}",
                 form.getApplicantId(), form.getAreaId(), form.getApplyType());
         AccessPermissionApplyEntity entity = accessPermissionApplyService.submitPermissionApply(form);
         return ResponseDTO.ok(entity);
     }
 
     /**
-     * 更新权限申请状态（供审批结果监听器调用）
-     * <p>
-     * 功能说明：
-     * 1. 更新权限申请状态（PENDING/APPROVED/REJECTED）
-     * 2. 如果审批通过，执行权限授予逻辑
-     * 3. 记录审批意见和审批时间
-     * </p>
+     * 鏇存柊鏉冮檺鐢宠鐘舵€侊紙渚涘鎵圭粨鏋滅洃鍚櫒璋冪敤锛?     * <p>
+     * 鍔熻兘璇存槑锛?     * 1. 鏇存柊鏉冮檺鐢宠鐘舵€侊紙PENDING/APPROVED/REJECTED锛?     * 2. 濡傛灉瀹℃壒閫氳繃锛屾墽琛屾潈闄愭巿浜堥€昏緫
+     * 3. 璁板綍瀹℃壒鎰忚鍜屽鎵规椂闂?     * </p>
      *
-     * @param applyNo 申请编号
-     * @param requestParams 请求参数（包含status和approvalComment）
-     * @return 操作结果
+     * @param applyNo 鐢宠缂栧彿
+     * @param requestParams 璇锋眰鍙傛暟锛堝寘鍚玸tatus鍜宎pprovalComment锛?     * @return 鎿嶄綔缁撴灉
      */
     @Observed(name = "accessPermissionApply.updatePermissionApplyStatus", contextualName = "access-permission-apply-update-status")
     @PutMapping("/{applyNo}/status")
     @Operation(
-            summary = "更新权限申请状态",
-            description = "由审批结果监听器调用，更新权限申请状态，审批通过时自动授予权限",
+            summary = "鏇存柊鏉冮檺鐢宠鐘舵€?,
+            description = "鐢卞鎵圭粨鏋滅洃鍚櫒璋冪敤锛屾洿鏂版潈闄愮敵璇风姸鎬侊紝瀹℃壒閫氳繃鏃惰嚜鍔ㄦ巿浜堟潈闄?,
             parameters = {
                     @io.swagger.v3.oas.annotations.Parameter(
                             name = "applyNo",
-                            description = "申请编号",
+                            description = "鐢宠缂栧彿",
                             required = true,
                             example = "APPLY20250130001"
                     )
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "状态更新参数，包含status（审批状态）和approvalComment（审批意见）",
+                    description = "鐘舵€佹洿鏂板弬鏁帮紝鍖呭惈status锛堝鎵圭姸鎬侊級鍜宎pprovalComment锛堝鎵规剰瑙侊級",
                     required = true
             ),
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "更新成功"
+                            description = "鏇存柊鎴愬姛"
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "404",
-                            description = "申请不存在"
+                            description = "鐢宠涓嶅瓨鍦?
                     )
             }
     )
     public ResponseDTO<Void> updatePermissionApplyStatus(
             @PathVariable String applyNo,
             @RequestBody Map<String, Object> requestParams) {
-        log.info("[权限申请] 接收状态更新请求，applyNo={}", applyNo);
+        log.info("[鏉冮檺鐢宠] 鎺ユ敹鐘舵€佹洿鏂拌姹傦紝applyNo={}", applyNo);
         String status = (String) requestParams.get("status");
         String approvalComment = (String) requestParams.get("approvalComment");
         accessPermissionApplyService.updatePermissionApplyStatus(applyNo, status, approvalComment);

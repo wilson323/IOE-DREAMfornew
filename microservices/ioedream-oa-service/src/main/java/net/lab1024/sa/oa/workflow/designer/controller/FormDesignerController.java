@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.oa.workflow.designer.domain.FormDefinitionDTO;
 import net.lab1024.sa.oa.workflow.designer.service.FormDesignerService;
@@ -30,8 +28,6 @@ import java.util.Map;
 @RequestMapping("/api/v1/workflow/form-designer")
 @Tag(name = "表单设计器", description = "低代码表单设计器API")
 public class FormDesignerController {
-
-    private static final Logger log = LoggerFactory.getLogger(FormDesignerController.class);
 
     @Resource
     private FormDesignerService formDesignerService;

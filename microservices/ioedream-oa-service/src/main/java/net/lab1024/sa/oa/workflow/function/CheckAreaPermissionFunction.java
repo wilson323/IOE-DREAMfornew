@@ -4,8 +4,6 @@ import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.type.AviatorBoolean;
 import com.googlecode.aviator.runtime.type.AviatorObject;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import org.springframework.http.HttpMethod;
@@ -26,7 +24,6 @@ import java.util.Map;
  */
 @Slf4j
 public class CheckAreaPermissionFunction extends AbstractFunction {
-    private static final Logger log = LoggerFactory.getLogger(CheckAreaPermissionFunction.class);
 
     @Override
     public String getName() {

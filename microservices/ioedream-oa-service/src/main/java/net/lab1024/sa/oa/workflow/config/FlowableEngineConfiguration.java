@@ -1,8 +1,6 @@
 package net.lab1024.sa.oa.workflow.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -51,8 +49,6 @@ import java.util.concurrent.Executor;
 @Configuration
 @EnableAsync
 public class FlowableEngineConfiguration {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableEngineConfiguration.class);
 
     // ==================== BPMN 流程引擎服务 ====================
 

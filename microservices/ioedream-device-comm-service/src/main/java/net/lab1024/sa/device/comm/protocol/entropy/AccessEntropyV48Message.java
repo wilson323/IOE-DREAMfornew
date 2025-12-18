@@ -53,22 +53,25 @@ public class AccessEntropyV48Message extends ProtocolMessage {
     private String messageTypeName;
 
     /**
-     * 命令代码
+     * 命令代码（Integer格式，用于业务逻辑）
      * 具体业务操作的命令代码
+     * 注：继承自ProtocolMessage的commandCode是String类型
      */
-    private Integer commandCode;
+    private Integer commandCodeInt;
 
     /**
-     * 消息序号
+     * 消息序号（Long格式）
      * 用于消息去重和排序
+     * 注：继承自ProtocolMessage的sequenceNumber是String类型
      */
-    private Long sequenceNumber;
+    private Long sequenceNumberLong;
 
     /**
-     * 时间戳
+     * 时间戳（Long格式）
      * 设备端时间戳（Unix时间戳）
+     * 注：继承自ProtocolMessage的timestamp是LocalDateTime类型
      */
-    private Long timestamp;
+    private Long timestampLong;
 
     /**
      * 会话ID

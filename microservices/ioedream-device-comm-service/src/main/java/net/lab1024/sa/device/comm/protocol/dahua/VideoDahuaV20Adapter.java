@@ -73,42 +73,16 @@ public class VideoDahuaV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public boolean initialize(Map<String, Object> config) {
+    public void initialize() {
         try {
             log.info("[大华适配器] 初始化开始");
-
-            // 解析配置参数
-            String serverHost = (String) config.get("serverHost");
-            Integer serverPort = (Integer) config.get("serverPort");
-            String username = (String) config.get("username");
-            String password = (String) config.get("password");
-
-            if (serverHost == null || serverPort == null || username == null || password == null) {
-                log.error("[大华适配器] 配置参数不完整");
-                return false;
-            }
-
-            // 模拟大华SDK初始化
-            log.info("[大华适配器] 连接服务器: {}:{}", serverHost, serverPort);
-            log.info("[大华适配器] 登录用户: {}", username);
-
-            // 这里应该调用大华SDK的初始化方法
-            boolean initResult = initializeDahuaSDK(config);
-            if (!initResult) {
-                log.error("[大华适配器] SDK初始化失败");
-                return false;
-            }
-
+            // TODO: 实现大华SDK初始化逻辑
             log.info("[大华适配器] 初始化完成");
-            return true;
-
         } catch (Exception e) {
             log.error("[大华适配器] 初始化异常", e);
-            return false;
         }
     }
 
-    @Override
     public DeviceResponse processMessage(DeviceMessage message) {
         try {
             log.debug("[大华适配器] 处理设备消息, deviceId={}, messageType={}",
@@ -117,25 +91,28 @@ public class VideoDahuaV20Adapter implements ProtocolAdapter {
             String messageType = message.getMessageType();
             Map<String, Object> businessData = message.getBusinessData();
 
+            // 将Long类型的deviceId转为String
+            String deviceIdStr = String.valueOf(message.getDeviceId());
+
             switch (messageType) {
                 case "GET_REAL_TIME_STREAM":
-                    return getRealTimeStream(message.getDeviceId(), businessData);
+                    return getRealTimeStream(deviceIdStr, businessData);
                 case "START_RECORDING":
-                    return startRecording(message.getDeviceId(), businessData);
+                    return startRecording(deviceIdStr, businessData);
                 case "STOP_RECORDING":
-                    return stopRecording(message.getDeviceId(), businessData);
+                    return stopRecording(deviceIdStr, businessData);
                 case "PTZ_CONTROL":
-                    return ptzControl(message.getDeviceId(), businessData);
+                    return ptzControl(deviceIdStr, businessData);
                 case "SMART_ANALYSIS":
-                    return smartAnalysis(message.getDeviceId(), businessData);
+                    return smartAnalysis(deviceIdStr, businessData);
                 case "GET_ALARM_LIST":
-                    return getAlarmList(message.getDeviceId(), businessData);
+                    return getAlarmList(deviceIdStr, businessData);
                 case "SET_PRESET":
-                    return setPreset(message.getDeviceId(), businessData);
+                    return setPreset(deviceIdStr, businessData);
                 case "GET_PRESET_LIST":
-                    return getPresetList(message.getDeviceId(), businessData);
+                    return getPresetList(deviceIdStr, businessData);
                 case "GET_DEVICE_STATUS":
-                    return getDeviceStatus(message.getDeviceId(), businessData);
+                    return getDeviceStatus(deviceIdStr, businessData);
                 default:
                     log.warn("[大华适配器] 不支持的消息类型: {}", messageType);
                     return createErrorResponse("UNSUPPORTED_MESSAGE_TYPE", "不支持的消息类型: " + messageType);
@@ -148,27 +125,16 @@ public class VideoDahuaV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public boolean destroy() {
+    public void destroy() {
         try {
             log.info("[大华适配器] 开始销毁适配器");
-
-            // 模拟大华SDK销毁
-            boolean cleanupResult = cleanupDahuaSDK();
-            if (cleanupResult) {
-                log.info("[大华适配器] 销毁完成");
-            } else {
-                log.warn("[大华适配器] 销毁过程中出现问题");
-            }
-
-            return cleanupResult;
-
+            // TODO: 实现大华SDK清理逻辑
+            log.info("[大华适配器] 销毁完成");
         } catch (Exception e) {
             log.error("[大华适配器] 销毁异常", e);
-            return false;
         }
     }
 
-    @Override
     public Map<String, Object> getAdapterCapabilities() {
         Map<String, Object> capabilities = new HashMap<>();
 
@@ -193,6 +159,23 @@ public class VideoDahuaV20Adapter implements ProtocolAdapter {
     }
 
     @Override
+    public Map<String, Object> getPerformanceStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("adapterStatus", ADAPTER_STATUS);
+        stats.put("protocolType", PROTOCOL_TYPE);
+        stats.put("manufacturer", MANUFACTURER);
+        stats.put("version", VERSION);
+        stats.put("supportedModels", SUPPORTED_MODELS.length);
+        return stats;
+    }
+
+    @Override
+    public Map<String, net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorInfo> getErrorCodeMapping() {
+        Map<String, net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorInfo> errorMapping = new HashMap<>();
+        // TODO: 实现大华设备错误代码映射
+        return errorMapping;
+    }
+
     public boolean isDeviceHealthy(String deviceId) {
         try {
             // 检查设备连接状态

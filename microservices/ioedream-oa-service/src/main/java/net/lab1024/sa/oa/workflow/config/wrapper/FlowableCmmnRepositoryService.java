@@ -6,8 +6,6 @@ import org.flowable.cmmn.api.repository.CaseDefinition;
 import org.flowable.cmmn.api.repository.CaseDefinitionQuery;
 import org.flowable.cmmn.api.repository.CmmnDeployment;
 import org.flowable.cmmn.api.repository.CmmnDeploymentBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.List;
@@ -24,8 +22,6 @@ import java.util.List;
  */
 @Slf4j
 public class FlowableCmmnRepositoryService {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableCmmnRepositoryService.class);
     private final CmmnRepositoryService cmmnRepositoryService;
 
     public FlowableCmmnRepositoryService(CmmnRepositoryService cmmnRepositoryService) {

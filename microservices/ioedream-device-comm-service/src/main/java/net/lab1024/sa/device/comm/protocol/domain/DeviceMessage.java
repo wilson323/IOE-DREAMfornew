@@ -47,6 +47,28 @@ public class DeviceMessage {
     private Map<String, Object> content;
 
     /**
+     * 业务数据（别名，映射到content）
+     */
+    public Map<String, Object> getBusinessData() {
+        return this.content;
+    }
+
+    public void setBusinessData(Map<String, Object> businessData) {
+        this.content = businessData;
+    }
+
+    /**
+     * 设备数据（别名，映射到content）
+     */
+    public Map<String, Object> getDeviceData() {
+        return this.content;
+    }
+
+    public void setDeviceData(Map<String, Object> deviceData) {
+        this.content = deviceData;
+    }
+
+    /**
      * 消息时间
      */
     private LocalDateTime messageTime;
