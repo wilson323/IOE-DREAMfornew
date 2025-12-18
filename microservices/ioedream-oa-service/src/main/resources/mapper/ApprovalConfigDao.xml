@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.lab1024.sa.oa.workflow.dao.ApprovalConfigDao">
+<mapper namespace="net.lab1024.sa.common.workflow.dao.ApprovalConfigDao">
 
     <!-- 根据业务类型查询审批配置 -->
-    <select id="selectByBusinessType" resultType="net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity">
+    <select id="selectByBusinessType" resultType="net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity">
         SELECT *
         FROM t_common_approval_config
         WHERE business_type = #{businessType}
@@ -16,7 +16,7 @@
     </select>
 
     <!-- 根据业务类型和模块查询审批配置 -->
-    <select id="selectByBusinessTypeAndModule" resultType="net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity">
+    <select id="selectByBusinessTypeAndModule" resultType="net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity">
         SELECT *
         FROM t_common_approval_config
         WHERE business_type = #{businessType}

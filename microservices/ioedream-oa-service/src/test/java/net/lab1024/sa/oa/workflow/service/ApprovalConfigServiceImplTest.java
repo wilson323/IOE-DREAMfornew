@@ -20,9 +20,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.oa.workflow.dao.ApprovalConfigDao;
+import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalConfigForm;
-import net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity;
+import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
 import net.lab1024.sa.oa.workflow.service.impl.ApprovalConfigServiceImpl;
 
 /**
