@@ -32,6 +32,25 @@
 
 ---
 
+#### 2. 统一缓存Manager实现 ✅
+
+**标准实现**: `microservices-common-cache/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java`
+
+**修改内容**:
+- ✅ 添加`get(String key)`单参数方法（兼容权限模块）
+- ✅ 添加`put(String key, Object value, int ttlSeconds)`方法（兼容权限模块）
+- ✅ 添加`put(String key, Object value, long expireMs)`方法（兼容权限模块）
+- ✅ 更新权限模块引用，统一使用标准实现
+- ✅ 更新`ManagerConfiguration`中的Bean配置
+
+**影响**: 无功能影响，标准实现功能更完善（包含布隆过滤器和分布式锁）
+
+**待删除文件**:
+- [ ] `microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/cache/UnifiedCacheManager.java`
+- [ ] `microservices/microservices-common/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java`
+
+---
+
 ### ⏳ 进行中（P0级）
 
 #### 2. 删除备份目录 ⏳

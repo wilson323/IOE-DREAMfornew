@@ -196,25 +196,37 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
                     generateRecordUniqueIdFallback(record, deviceId);
             record.setRecordUniqueId(recordUniqueId);
 
-            // 2. 使用统一工具类进行幂等性检查
-            // 注意：需要将deviceId从String转换为Long
-            try {
-                Long deviceIdLong = Long.parseLong(deviceId);
-                if (AccessRecordIdempotencyUtil.isDuplicateRecord(
-                        recordUniqueId, record.getUserId(), deviceIdLong, record.getAccessTime(),
-                        redisTemplate, accessRecordDao)) {
-                    duplicateCount++;
-                    log.debug("[批量上传] 记录重复（幂等性检查）: recordUniqueId={}", recordUniqueId);
-                    continue;
+            // 2. 使用统一工具类进行幂等性检查（复用循环外已转换的deviceIdLong）
+            if (deviceIdLong != null) {
+                try {
+                    if (AccessRecordIdempotencyUtil.isDuplicateRecord(
+                            recordUniqueId, record.getUserId(), deviceIdLong, record.getAccessTime(),
+                            redisTemplate, accessRecordDao)) {
+                        duplicateCount++;
+                        log.debug("[批量上传] 记录重复（幂等性检查）: recordUniqueId={}", recordUniqueId);
+                        continue;
+                    }
+                } catch (Exception e) {
+                    log.warn("[批量上传] 幂等性检查异常，跳过: recordUniqueId={}, error={}", 
+                            recordUniqueId, e.getMessage());
+                    // 继续处理，不因为检查异常而跳过记录
                 }
-            } catch (NumberFormatException e) {
-                log.warn("[批量上传] 设备ID格式错误，跳过幂等性检查: deviceId={}, recordUniqueId={}", 
-                        deviceId, recordUniqueId);
-                // 继续处理，不因为格式错误而跳过记录
-            } catch (Exception e) {
-                log.warn("[批量上传] 幂等性检查异常，跳过: recordUniqueId={}, error={}", 
-                        recordUniqueId, e.getMessage());
-                // 继续处理，不因为检查异常而跳过记录
+            } else {
+                // deviceId无法转换为Long，使用hashCode作为临时deviceId进行幂等性检查
+                Long fallbackDeviceId = (long) deviceId.hashCode();
+                try {
+                    if (AccessRecordIdempotencyUtil.isDuplicateRecord(
+                            recordUniqueId, record.getUserId(), fallbackDeviceId, record.getAccessTime(),
+                            redisTemplate, accessRecordDao)) {
+                        duplicateCount++;
+                        log.debug("[批量上传] 记录重复（幂等性检查，使用fallback deviceId）: recordUniqueId={}", recordUniqueId);
+                        continue;
+                    }
+                } catch (Exception e) {
+                    log.warn("[批量上传] 幂等性检查异常（fallback），跳过: recordUniqueId={}, error={}", 
+                            recordUniqueId, e.getMessage());
+                    // 继续处理，不因为检查异常而跳过记录
+                }
             }
 
             // 记录有效，添加到列表
