@@ -161,9 +161,8 @@ public class StrategyFactory<T> {
             log.debug("[策略工厂] 加载策略: {} -> {}", strategyName, entry.getKey());
         }
 
-        log.info("[策略工厂] 加载策略完成: {}[{}], 数量: {}", 
+        log.info("[策略工厂] 加载策略完成: {}, 数量: {}", 
             strategyClass.getSimpleName(), 
-            strategyName -> strategyName,
             strategies.size());
 
         return strategies;
