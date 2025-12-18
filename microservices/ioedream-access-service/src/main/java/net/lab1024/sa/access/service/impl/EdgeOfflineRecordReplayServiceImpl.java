@@ -2,6 +2,7 @@ package net.lab1024.sa.access.service.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.service.EdgeOfflineRecordReplayService;
 import net.lab1024.sa.access.util.AccessRecordIdempotencyUtil;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
@@ -50,15 +51,8 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
     private RedisTemplate<String, Object> redisTemplate;
 
     /**
-     * 缓存键前缀（与EdgeVerificationStrategy保持一致）
+     * 缓存键前缀和过期时间统一使用AccessCacheConstants
      */
-    private static final String CACHE_KEY_OFFLINE_RECORD = "access:edge:offline:record:";
-    private static final String CACHE_KEY_OFFLINE_QUEUE = "access:edge:offline:queue";
-
-    /**
-     * 缓存过期时间
-     */
-    private static final Duration CACHE_EXPIRE_OFFLINE_RECORD = Duration.ofDays(7); // 离线记录缓存7天
 
     /**
      * 批量补录大小（每次补录的记录数）
@@ -179,15 +173,15 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
             OfflineRecordStatistics statistics = new OfflineRecordStatistics();
             
             // 1. 获取队列长度
-            Long queueSize = redisTemplate.opsForList().size(CACHE_KEY_OFFLINE_QUEUE);
+            Long queueSize = redisTemplate.opsForList().size(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE);
             statistics.setTotalCount(queueSize != null ? queueSize.intValue() : 0);
 
             // 2. 获取最早和最晚记录时间
             if (statistics.getTotalCount() > 0) {
                 // 获取队列中的第一个和最后一个记录唯一标识
-                String firstRecordId = (String) redisTemplate.opsForList().index(CACHE_KEY_OFFLINE_QUEUE, 0);
+                String firstRecordId = (String) redisTemplate.opsForList().index(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, 0);
                 String lastRecordId = (String) redisTemplate.opsForList().index(
-                        CACHE_KEY_OFFLINE_QUEUE, statistics.getTotalCount() - 1);
+                        AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, statistics.getTotalCount() - 1);
 
                 if (firstRecordId != null) {
                     AccessRecordEntity firstRecord = getOfflineRecord(firstRecordId);
@@ -219,14 +213,14 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
      */
     private List<String> getOfflineRecordUniqueIds() {
         try {
-            Long queueSize = redisTemplate.opsForList().size(CACHE_KEY_OFFLINE_QUEUE);
+            Long queueSize = redisTemplate.opsForList().size(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE);
             if (queueSize == null || queueSize == 0) {
                 return new ArrayList<>();
             }
 
             // 获取所有记录唯一标识（限制数量，避免一次性处理过多）
             List<Object> recordIds = redisTemplate.opsForList().range(
-                    CACHE_KEY_OFFLINE_QUEUE, 0, Math.min(queueSize.intValue(), BATCH_REPLAY_SIZE * 10) - 1);
+                    AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, 0, Math.min(queueSize.intValue(), BATCH_REPLAY_SIZE * 10) - 1);
 
             List<String> result = new ArrayList<>();
             if (recordIds != null) {
@@ -252,7 +246,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
      */
     private AccessRecordEntity getOfflineRecord(String recordUniqueId) {
         try {
-            String cacheKey = CACHE_KEY_OFFLINE_RECORD + recordUniqueId;
+            String cacheKey = AccessCacheConstants.buildOfflineRecordKey(recordUniqueId);
             Object cached = redisTemplate.opsForValue().get(cacheKey);
             if (cached instanceof AccessRecordEntity) {
                 return (AccessRecordEntity) cached;
@@ -306,7 +300,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
      */
     private void removeFromOfflineQueue(String recordUniqueId) {
         try {
-            redisTemplate.opsForList().remove(CACHE_KEY_OFFLINE_QUEUE, 1, recordUniqueId);
+            redisTemplate.opsForList().remove(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, 1, recordUniqueId);
         } catch (Exception e) {
             log.warn("[离线记录补录] 从队列移除失败: recordUniqueId={}, error={}", 
                     recordUniqueId, e.getMessage());
@@ -320,7 +314,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
      */
     private void deleteOfflineRecord(String recordUniqueId) {
         try {
-            String cacheKey = CACHE_KEY_OFFLINE_RECORD + recordUniqueId;
+            String cacheKey = AccessCacheConstants.buildOfflineRecordKey(recordUniqueId);
             redisTemplate.delete(cacheKey);
         } catch (Exception e) {
             log.warn("[离线记录补录] 删除离线记录缓存失败: recordUniqueId={}, error={}", 

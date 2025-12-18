@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
-import java.time.Duration;
 import java.util.List;
 
 /**
@@ -57,7 +56,7 @@ public class AccessBackendAuthServiceImpl implements AccessBackendAuthService {
 
         try {
             // 1. 从Redis缓存查询
-            String cacheKey = CACHE_KEY_DEVICE_SN + serialNumber;
+            String cacheKey = AccessCacheConstants.buildDeviceSnKey(serialNumber);
             Object cachedDeviceId = redisTemplate.opsForValue().get(cacheKey);
             if (cachedDeviceId != null) {
                 log.debug("[后台验证服务] 从缓存获取设备ID: SN={}, deviceId={}", serialNumber, cachedDeviceId);
@@ -100,7 +99,7 @@ public class AccessBackendAuthServiceImpl implements AccessBackendAuthService {
 
         try {
             // 1. 从Redis缓存查询
-            String cacheKey = CACHE_KEY_DEVICE_AREA + deviceId;
+            String cacheKey = AccessCacheConstants.buildDeviceAreaKey(deviceId);
             Object cachedAreaId = redisTemplate.opsForValue().get(cacheKey);
             if (cachedAreaId != null) {
                 log.debug("[后台验证服务] 从缓存获取区域ID: deviceId={}, areaId={}", deviceId, cachedAreaId);
@@ -112,7 +111,7 @@ public class AccessBackendAuthServiceImpl implements AccessBackendAuthService {
             if (device != null && device.getAreaId() != null) {
                 Long areaId = device.getAreaId();
                 // 写入缓存
-                redisTemplate.opsForValue().set(cacheKey, areaId, CACHE_EXPIRE);
+                redisTemplate.opsForValue().set(cacheKey, areaId, AccessCacheConstants.CACHE_EXPIRE_DEVICE);
                 log.debug("[后台验证服务] 从DeviceEntity获取区域ID: deviceId={}, areaId={}", deviceId, areaId);
                 return areaId;
             }
@@ -138,7 +137,7 @@ public class AccessBackendAuthServiceImpl implements AccessBackendAuthService {
             }
 
             // 5. 写入缓存（TTL: 1小时）
-            redisTemplate.opsForValue().set(cacheKey, areaId, CACHE_EXPIRE);
+            redisTemplate.opsForValue().set(cacheKey, areaId, AccessCacheConstants.CACHE_EXPIRE_DEVICE);
             log.debug("[后台验证服务] 区域ID已缓存: deviceId={}, areaId={}", deviceId, areaId);
 
             return areaId;

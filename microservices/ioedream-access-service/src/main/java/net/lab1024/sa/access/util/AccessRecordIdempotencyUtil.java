@@ -1,6 +1,7 @@
 package net.lab1024.sa.access.util;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
 import net.lab1024.sa.common.organization.entity.AccessRecordEntity;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,14 +39,14 @@ import java.time.format.DateTimeFormatter;
 public class AccessRecordIdempotencyUtil {
 
     /**
-     * 缓存键前缀（统一使用此前缀，确保全局一致性）
+     * 缓存键前缀和过期时间统一使用AccessCacheConstants
+     * 保持向后兼容，保留常量定义（标记为@Deprecated）
      */
-    public static final String CACHE_KEY_RECORD_UNIQUE = "access:record:unique:";
+    @Deprecated
+    public static final String CACHE_KEY_RECORD_UNIQUE = AccessCacheConstants.CACHE_KEY_RECORD_UNIQUE;
 
-    /**
-     * 缓存过期时间（统一使用此过期时间）
-     */
-    public static final Duration CACHE_EXPIRE_RECORD_UNIQUE = Duration.ofDays(7); // 记录唯一标识缓存7天
+    @Deprecated
+    public static final Duration CACHE_EXPIRE_RECORD_UNIQUE = AccessCacheConstants.CACHE_EXPIRE_RECORD_UNIQUE;
 
     /**
      * 时间格式化器（统一格式）
@@ -103,7 +104,7 @@ public class AccessRecordIdempotencyUtil {
         
         try {
             // 1. 检查Redis缓存（快速检查）
-            String cacheKey = CACHE_KEY_RECORD_UNIQUE + recordUniqueId;
+            String cacheKey = AccessCacheConstants.buildRecordUniqueKey(recordUniqueId);
             Boolean exists = redisTemplate.hasKey(cacheKey);
             if (Boolean.TRUE.equals(exists)) {
                 log.debug("[幂等性检查] 记录重复（Redis缓存）: recordUniqueId={}", recordUniqueId);
@@ -115,7 +116,7 @@ public class AccessRecordIdempotencyUtil {
                 AccessRecordEntity existing = accessRecordDao.selectByCompositeKey(userId, deviceId, accessTime);
                 if (existing != null) {
                     // 更新Redis缓存
-                    redisTemplate.opsForValue().set(cacheKey, "1", CACHE_EXPIRE_RECORD_UNIQUE);
+                    redisTemplate.opsForValue().set(cacheKey, "1", AccessCacheConstants.CACHE_EXPIRE_RECORD_UNIQUE);
                     log.debug("[幂等性检查] 记录重复（数据库）: recordUniqueId={}", recordUniqueId);
                     return true;
                 }
@@ -140,8 +141,8 @@ public class AccessRecordIdempotencyUtil {
      */
     public static void updateRecordUniqueIdCache(String recordUniqueId, RedisTemplate<String, Object> redisTemplate) {
         try {
-            String cacheKey = CACHE_KEY_RECORD_UNIQUE + recordUniqueId;
-            redisTemplate.opsForValue().set(cacheKey, "1", CACHE_EXPIRE_RECORD_UNIQUE);
+            String cacheKey = AccessCacheConstants.buildRecordUniqueKey(recordUniqueId);
+            redisTemplate.opsForValue().set(cacheKey, "1", AccessCacheConstants.CACHE_EXPIRE_RECORD_UNIQUE);
             log.debug("[幂等性检查] 记录唯一标识已缓存: recordUniqueId={}", recordUniqueId);
         } catch (Exception e) {
             log.warn("[幂等性检查] 更新缓存失败: recordUniqueId={}, error={}", recordUniqueId, e.getMessage());

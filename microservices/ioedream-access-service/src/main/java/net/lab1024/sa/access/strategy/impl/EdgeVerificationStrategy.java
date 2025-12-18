@@ -305,14 +305,14 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
             AccessRecordEntity entity = convertToEntity(request, recordUniqueId);
 
             // 2. 缓存记录
-            String cacheKey = CACHE_KEY_OFFLINE_RECORD + recordUniqueId;
-            redisTemplate.opsForValue().set(cacheKey, entity, CACHE_EXPIRE_OFFLINE_RECORD);
+            String cacheKey = AccessCacheConstants.buildOfflineRecordKey(recordUniqueId);
+            redisTemplate.opsForValue().set(cacheKey, entity, AccessCacheConstants.CACHE_EXPIRE_OFFLINE_RECORD);
 
             // 3. 添加到离线队列（用于批量补录）
-            redisTemplate.opsForList().rightPush(CACHE_KEY_OFFLINE_QUEUE, recordUniqueId);
+            redisTemplate.opsForList().rightPush(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, recordUniqueId);
             
             // 设置队列过期时间（7天）
-            redisTemplate.expire(CACHE_KEY_OFFLINE_QUEUE, CACHE_EXPIRE_OFFLINE_RECORD);
+            redisTemplate.expire(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, AccessCacheConstants.CACHE_EXPIRE_OFFLINE_RECORD);
 
             log.info("[设备端验证] 离线记录已缓存: recordUniqueId={}, userId={}, deviceId={}",
                     recordUniqueId, request.getUserId(), request.getDeviceId());

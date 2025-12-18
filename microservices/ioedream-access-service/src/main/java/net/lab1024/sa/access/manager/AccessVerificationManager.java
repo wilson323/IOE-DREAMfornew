@@ -1,6 +1,7 @@
 package net.lab1024.sa.access.manager;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.config.AccessVerificationProperties;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
@@ -1248,7 +1249,7 @@ public class AccessVerificationManager {
      */
     private MultiPersonRecordEntity findOrCreateSessionWithCache(Long areaId, Long deviceId, Integer requiredCount) {
         // 1. 从Redis缓存查询活跃会话
-        String cacheKey = CACHE_KEY_MULTI_PERSON_SESSION + areaId + ":" + deviceId;
+        String cacheKey = AccessCacheConstants.buildMultiPersonSessionKey(areaId, deviceId);
         Object cachedSession = redisTemplate.opsForValue().get(cacheKey);
         if (cachedSession instanceof MultiPersonRecordEntity) {
             MultiPersonRecordEntity session = (MultiPersonRecordEntity) cachedSession;
@@ -1304,8 +1305,8 @@ public class AccessVerificationManager {
      */
     private void updateSessionCache(MultiPersonRecordEntity session) {
         try {
-            String cacheKey = CACHE_KEY_MULTI_PERSON_SESSION + session.getAreaId() + ":" + session.getDeviceId();
-            redisTemplate.opsForValue().set(cacheKey, session, CACHE_EXPIRE_SESSION);
+            String cacheKey = AccessCacheConstants.buildMultiPersonSessionKey(session.getAreaId(), session.getDeviceId());
+            redisTemplate.opsForValue().set(cacheKey, session, AccessCacheConstants.CACHE_EXPIRE_MULTI_PERSON_SESSION);
             log.debug("[多人验证] 会话已缓存: sessionId={}", session.getVerificationSessionId());
         } catch (Exception e) {
             log.warn("[多人验证] 更新会话缓存失败: sessionId={}, error={}",
@@ -1325,7 +1326,7 @@ public class AccessVerificationManager {
             // 或者从数据库查询会话信息
             MultiPersonRecordEntity session = multiPersonRecordDao.selectBySessionId(sessionId);
             if (session != null) {
-                String cacheKey = CACHE_KEY_MULTI_PERSON_SESSION + session.getAreaId() + ":" + session.getDeviceId();
+                String cacheKey = AccessCacheConstants.buildMultiPersonSessionKey(session.getAreaId(), session.getDeviceId());
                 redisTemplate.delete(cacheKey);
                 log.debug("[多人验证] 会话缓存已清除: sessionId={}", sessionId);
             }

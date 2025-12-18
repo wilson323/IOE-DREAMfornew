@@ -321,8 +321,8 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
      */
     private void cacheBatchResult(String batchId, AccessRecordBatchUploadRequest.BatchUploadResult result) {
         try {
-            String cacheKey = CACHE_KEY_BATCH_STATUS + batchId;
-            redisTemplate.opsForValue().set(cacheKey, result, CACHE_EXPIRE_BATCH);
+            String cacheKey = AccessCacheConstants.buildBatchStatusKey(batchId);
+            redisTemplate.opsForValue().set(cacheKey, result, AccessCacheConstants.CACHE_EXPIRE_BATCH_STATUS);
             log.debug("[批量上传] 批次结果已缓存: batchId={}", batchId);
         } catch (Exception e) {
             log.warn("[批量上传] 缓存批次结果失败: batchId={}, error={}", batchId, e.getMessage());
@@ -334,7 +334,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
      */
     private AccessRecordBatchUploadRequest.BatchUploadResult getCachedBatchResult(String batchId) {
         try {
-            String cacheKey = CACHE_KEY_BATCH_STATUS + batchId;
+            String cacheKey = AccessCacheConstants.buildBatchStatusKey(batchId);
             Object cached = redisTemplate.opsForValue().get(cacheKey);
             if (cached instanceof AccessRecordBatchUploadRequest.BatchUploadResult) {
                 return (AccessRecordBatchUploadRequest.BatchUploadResult) cached;
