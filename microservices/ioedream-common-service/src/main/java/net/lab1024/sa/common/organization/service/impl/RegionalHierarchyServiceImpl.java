@@ -7,6 +7,7 @@ import net.lab1024.sa.common.organization.manager.RegionalHierarchyManager;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.dao.AreaDao;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -166,6 +167,7 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = {"area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children", "area:unified:access", "area:unified:devices", "area:unified:business_attrs"}, allEntries = true)
     public ResponseDTO<Long> createArea(AreaEntity areaEntity) {
         try {
             // 验证区域编码唯一性
@@ -206,6 +208,7 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = {"area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children", "area:unified:access", "area:unified:devices", "area:unified:business_attrs"}, allEntries = true)
     public ResponseDTO<Void> updateArea(AreaEntity areaEntity) {
         try {
             // 检查区域是否存在
@@ -239,6 +242,7 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = {"area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children", "area:unified:access", "area:unified:devices", "area:unified:business_attrs"}, allEntries = true)
     public ResponseDTO<Void> deleteArea(Long areaId) {
         try {
             // 检查是否存在子区域
@@ -263,6 +267,7 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = {"area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children", "area:unified:access", "area:unified:devices", "area:unified:business_attrs"}, allEntries = true)
     public ResponseDTO<Void> moveArea(Long areaId, Long newParentId, Integer newLevel) {
         try {
             AreaEntity area = areaDao.selectById(areaId);

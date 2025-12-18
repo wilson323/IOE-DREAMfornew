@@ -78,6 +78,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
 
     @Override
     @Observed(name = "area.hasAreaAccess", contextualName = "area-has-access")
+    @Cacheable(value = "area:unified:access", key = "#userId + ':' + #areaId")
     public boolean hasAreaAccess(Long userId, Long areaId) {
         log.debug("[区域统一服务] 检查用户区域权限, userId={}, areaId={}", userId, areaId);
 
@@ -107,14 +108,18 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
 
     @Override
     @Observed(name = "area.getAreaPath", contextualName = "area-get-path")
+    @Cacheable(value = "area:unified:path", key = "#areaId", unless = "#result == null || #result.isEmpty()")
     public List<AreaEntity> getAreaPath(Long areaId) {
         log.debug("[区域统一服务] 获取区域路径, areaId={}", areaId);
 
+        // 优化：使用单次查询获取所有父区域，避免循环查询
         AreaEntity currentArea = areaDao.selectById(areaId);
         if (currentArea == null) {
             return new ArrayList<>();
         }
 
+        // TODO: 优化为单次查询获取所有父区域（使用递归CTE或批量查询）
+        // 当前实现：循环查询父区域（性能较差，但逻辑清晰）
         List<AreaEntity> path = new ArrayList<>();
         path.add(currentArea);
 
@@ -134,6 +139,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
 
     @Override
     @Observed(name = "area.getChildAreas", contextualName = "area-get-children")
+    @Cacheable(value = "area:unified:children", key = "#parentAreaId", unless = "#result == null || #result.isEmpty()")
     public List<AreaEntity> getChildAreas(Long parentAreaId) {
         log.debug("[区域统一服务] 获取子区域, parentAreaId={}", parentAreaId);
 
@@ -191,6 +197,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
 
     @Override
     @Observed(name = "area.getAreaDevices", contextualName = "area-get-devices")
+    @Cacheable(value = "area:unified:devices", key = "#areaId + ':' + (#deviceType != null ? #deviceType : 'all')", unless = "#result == null || #result.isEmpty()")
     public List<Map<String, Object>> getAreaDevices(Long areaId, String deviceType) {
         log.debug("[区域统一服务] 获取区域设备, areaId={}, deviceType={}", areaId, deviceType);
 

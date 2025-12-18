@@ -431,11 +431,11 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
 
             // 4. 构建分页结果
             PageResult<NotificationConfigVO> result = PageResult.<NotificationConfigVO>builder()
-                    .list(voList)
+                    .records(voList)
                     .total(pageResult.getTotal())
                     .pageNum(form.getPageNum())
                     .pageSize(form.getPageSize())
-                    .pages((int) pageResult.getPages())
+                    .totalPages((int) pageResult.getPages())
                     .build();
 
             log.info("[通知配置] 分页查询通知配置成功，记录数={}", voList.size());

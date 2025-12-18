@@ -95,7 +95,6 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
         }
     }
 
-    @Override
     public DeviceResponse processMessage(DeviceMessage message) {
         try {
             log.debug("[海康威视适配器] 处理设备消息, deviceId={}, messageType={}",
@@ -176,7 +175,6 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
         return capabilities;
     }
 
-    @Override
     public boolean isDeviceHealthy(String deviceId) {
         try {
             // 检查设备连接状态

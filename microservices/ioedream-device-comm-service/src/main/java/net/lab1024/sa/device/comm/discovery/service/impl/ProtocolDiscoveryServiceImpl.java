@@ -56,7 +56,7 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
             // 验证请求参数
             validateDiscoveryRequest(discoveryRequest);
 
-            // 启动发现任务
+            // 启动发现任务（使用scanTimeout作为超时时间）
             String taskId = discoveryManager.startDiscovery(discoveryRequest);
 
             log.info("[协议发现服务] 发现任务启动成功: taskId={}", taskId);
@@ -220,7 +220,7 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
                         DeviceEntity savedDevice = saveDevice(device);
                         registeredDevices.add(savedDevice);
 
-                        log.info("[协议发现服务] 设备注册成功: {} -> {}", ipAddress, savedDevice.getId());
+                        log.info("[协议发现服务] 设备注册成功: {} -> {}", ipAddress, savedDevice.getDeviceId());
                     }
 
                 } catch (Exception e) {
@@ -393,8 +393,8 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
             throw new BusinessException("NETWORK_RANGE_NULL", "网络范围不能为空");
         }
 
-        if (discoveryRequest.getTimeout() <= 0) {
-            throw new BusinessException("TIMEOUT_INVALID", "超时时间必须大于0");
+        if (discoveryRequest.getScanTimeout() == null || discoveryRequest.getScanTimeout() <= 0) {
+            throw new BusinessException("TIMEOUT_INVALID", "扫描超时时间必须大于0");
         }
     }
 
@@ -419,13 +419,17 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
         device.setDeviceType(discoveredDevice.getDeviceType());
         device.setIpAddress(discoveredDevice.getIpAddress());
         device.setMacAddress(discoveredDevice.getMacAddress());
-        device.setStatus(1); // 启用状态
+        device.setDeviceStatus(1); // 启用状态（1-在线）
+        device.setEnabled(1); // 启用
         device.setCreateTime(LocalDateTime.now());
         device.setUpdateTime(LocalDateTime.now());
 
         // 设置其他属性
         if (discoveredDevice.getVendor() != null) {
-            device.setDeviceModel(discoveredDevice.getVendor());
+            device.setBrand(discoveredDevice.getVendor());
+        }
+        if (discoveredDevice.getDeviceModel() != null) {
+            device.setModel(discoveredDevice.getDeviceModel());
         }
 
         return device;
@@ -436,8 +440,7 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
      */
     private DeviceEntity saveDevice(DeviceEntity device) {
         // 这里应该调用DeviceDao来保存设备
-        // 暂时直接返回设备对象，并生成一个模拟ID
-        device.setId(System.currentTimeMillis());
+        // 暂时直接返回设备对象，deviceId由MyBatis-Plus自动生成
         return device;
     }
 

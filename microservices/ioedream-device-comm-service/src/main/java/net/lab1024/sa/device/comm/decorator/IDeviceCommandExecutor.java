@@ -20,5 +20,5 @@ public interface IDeviceCommandExecutor {
      * @param command 设备命令请求
      * @return 执行结果
      */
-    DeviceCommandResult execute(DeviceCommandRequest command);
+    DeviceCommandDecorator.DeviceCommandResult execute(DeviceCommandRequest command);
 }

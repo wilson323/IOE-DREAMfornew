@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
 import net.lab1024.sa.device.comm.protocol.domain.DeviceMessage;
 import net.lab1024.sa.device.comm.protocol.domain.DeviceResponse;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorResponse;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -167,6 +168,12 @@ public class VideoDahuaV20Adapter implements ProtocolAdapter {
         stats.put("version", VERSION);
         stats.put("supportedModels", SUPPORTED_MODELS.length);
         return stats;
+    }
+
+    @Override
+    public ProtocolErrorResponse handleProtocolError(String errorCode, String errorMessage, Long deviceId) {
+        log.error("[大华适配器] 协议错误处理, deviceId={}, errorCode={}, errorMessage={}", deviceId, errorCode, errorMessage);
+        return ProtocolErrorResponse.create(errorCode, errorMessage, deviceId);
     }
 
     @Override
@@ -566,7 +573,7 @@ public class VideoDahuaV20Adapter implements ProtocolAdapter {
         alarms.put("total", 25);
         alarms.put("highPriority", 5);
         alarms.put("mediumPriority", 15);
-        arms.put("lowPriority", 5);
+        alarms.put("lowPriority", 5);
         return alarms;
     }
 

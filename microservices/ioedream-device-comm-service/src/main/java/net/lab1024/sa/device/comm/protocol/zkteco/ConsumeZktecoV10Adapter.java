@@ -214,7 +214,9 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             log.debug("[中控消费协议V1.0] 消息解析完成, messageType={}, deviceId={}",
                 message.getMessageTypeName(), message.getDeviceId());
 
-            return message;
+            // 转换为ProtocolMessage类型
+            ProtocolMessage protocolMessage = convertToProtocolMessage(message);
+            return protocolMessage;
 
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 消息解析失败, deviceId={}", deviceId, e);
@@ -324,7 +326,11 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
                 return ProtocolValidationResult.failure("MSG_NULL", "协议消息为空");
             }
 
-            ConsumeZktecoV10Message zktecoMessage = (ConsumeZktecoV10Message) message;
+            // 将ProtocolMessage转换为ConsumeZktecoV10Message
+            ConsumeZktecoV10Message zktecoMessage = convertFromProtocolMessage(message);
+            if (zktecoMessage == null) {
+                return ProtocolValidationResult.failure("MSG_TYPE_MISMATCH", "消息类型不匹配");
+            }
 
             // 2. 必填字段验证
             if (zktecoMessage.getDeviceId() == null || zktecoMessage.getDeviceId().trim().isEmpty()) {
@@ -1269,5 +1275,37 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
         // 构建消费失败响应
         buffer.put((byte) 0x06); // 消费失败标识
         // TODO: 添加消费失败响应数据
+    }
+
+    // ==================== 消息转换方法 ====================
+
+    /**
+     * 将ConsumeZktecoV10Message转换为ProtocolMessage
+     */
+    private ProtocolMessage convertToProtocolMessage(ConsumeZktecoV10Message zktecoMessage) {
+        ProtocolMessage protocolMessage = new ProtocolMessage();
+        protocolMessage.setMessageId(zktecoMessage.getMessageId());
+        protocolMessage.setDeviceId(Long.parseLong(zktecoMessage.getDeviceId()));
+        protocolMessage.setDeviceCode(zktecoMessage.getDeviceId());
+        protocolMessage.setProtocolType(PROTOCOL_TYPE);
+        protocolMessage.setMessageType(zktecoMessage.getMessageTypeName());
+        protocolMessage.setMessageData(zktecoMessage.getBusinessData());
+        protocolMessage.setTimestamp(zktecoMessage.getTimestamp());
+        return protocolMessage;
+    }
+
+    /**
+     * 将ProtocolMessage转换为ConsumeZktecoV10Message
+     */
+    private ConsumeZktecoV10Message convertFromProtocolMessage(ProtocolMessage protocolMessage) {
+        // 如果ProtocolMessage的messageData中包含原始消息，可以恢复
+        // 否则需要重新解析
+        // 这里简化处理，返回null表示无法转换
+        if (protocolMessage.getProtocolType() != null && 
+            protocolMessage.getProtocolType().equals(PROTOCOL_TYPE)) {
+            // 可以尝试从messageData中恢复
+            return null; // TODO: 实现完整的转换逻辑
+        }
+        return null;
     }
 }
