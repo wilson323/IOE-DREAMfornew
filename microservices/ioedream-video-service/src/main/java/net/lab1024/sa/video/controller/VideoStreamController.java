@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.base.common.domain.ResponseDTO;
-import net.lab1024.sa.base.common.util.SmartResponseUtil;
+import net.lab1024.sa.common.dto.ResponseDTO;
+
 import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
 import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
 import net.lab1024.sa.video.domain.vo.VideoStreamVO;

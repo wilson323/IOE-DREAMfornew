@@ -14,7 +14,7 @@ import net.lab1024.sa.biometric.manager.BiometricTemplateManager;
 import net.lab1024.sa.biometric.service.BiometricTemplateService;
 import net.lab1024.sa.biometric.service.BiometricTemplateSyncService;
 import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.dao.AreaUserDao;

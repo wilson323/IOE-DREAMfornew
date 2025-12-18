@@ -42,6 +42,7 @@ documentation/
 **核心架构文档**:
 - [企业级架构重构方案](./architecture/ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md) - ⭐ 完整11微服务架构 + 5种设备交互模式
 - [系统架构设计文档](./architecture/01-系统架构设计文档.md) - ⭐ 边缘计算架构 + 设备交互模式详解
+- [统一文件存储架构](./architecture/FILE_STORAGE_ARCHITECTURE.md) - ⭐ **新增** 本地存储/MinIO双策略设计
 - [微服务架构总览](./microservices/MICROSERVICES_ARCHITECTURE_OVERVIEW.md) - 11个微服务详细说明
 - [数据库架构设计](./architecture/DATABASE_ARCHITECTURE.md) - 分库分表和数据治理
 - [安全架构设计](./architecture/SECURITY_ARCHITECTURE.md) - 三级等保安全架构

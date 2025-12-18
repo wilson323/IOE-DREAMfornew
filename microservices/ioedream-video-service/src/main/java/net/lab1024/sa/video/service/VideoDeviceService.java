@@ -1,8 +1,8 @@
 package net.lab1024.sa.video.service;
 
 import jakarta.validation.Valid;
-import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.domain.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.form.VideoDeviceAddForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceUpdateForm;

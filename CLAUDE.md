@@ -236,6 +236,89 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 - **ioedream-visitor-service** (8095): 访客管理服务（采用混合验证模式）
 - **ioedream-biometric-service** (8096): 生物模板管理服务（模板存储、特征提取、设备下发 ⚠️ 仅管理数据，不做识别）
 
+**9个公共模块**:
+- **microservices-common-core**: 最小稳定内核（纯Java）
+- **microservices-common**: 公共库聚合（包含Spring组件）
+- **microservices-common-business**: 业务共享组件
+- **microservices-common-cache**: 缓存管理组件
+- **microservices-common-data**: 数据访问组件
+- **microservices-common-security**: 安全认证组件
+- **microservices-common-permission**: 权限控制组件
+- **microservices-common-workflow**: 工作流引擎组件
+- **microservices-common-storage**: ✅ **统一文件存储组件 (新增)**
+
+### 统一文件存储架构 (microservices-common-storage)
+
+> **项目定位**: 中小企业智慧园区 (5000-10000人)  
+> **核心目标**: 低内存占用 + 高可扩展性 + 企业级高质量
+> **详细文档**: [统一文件存储架构](./documentation/architecture/FILE_STORAGE_ARCHITECTURE.md)
+
+#### 存储策略对比
+
+| 方案 | 内存占用 | 成本 | 扩展性 | 适用场景 | 状态 |
+|------|---------|-----|--------|---------|-----|
+| **本地文件系统** | 6.35GB | 最低 | 单机 | 中小企业<10000人 | ✅ **默认** |
+| **MinIO对象存储** | 15.35GB | 中等 | 分布式 | 大型企业>20000人 | ✅ 可选 |
+
+#### 业务场景存储需求
+
+| 业务模块 | 日增量 | 保留期 | 总存储 | API端点 | 状态 |
+|---------|--------|--------|--------|---------|-----|
+| 门禁通行 | 22.7GB | 30天 | 693GB | /access/file/* | ✅ |
+| 考勤打卡 | 12GB | 180天 | 2.16TB | /attendance/file/* | ✅ |
+| 视频监控 | 19.6GB | 30-90天 | 678GB | /video/file/* | ⏳ |
+| OA审批 | 1GB | 5年 | 1.83TB | /oa/file/* | ✅ |
+| 人员管理 | 5MB | 永久 | 25GB | /user/file/* | ✅ |
+| 消费支付 | 1.5GB | 30天 | 45GB | /consume/file/* | ⏳ |
+| 访客登记 | 75MB | 365天 | 27GB | /visitor/file/* | ⏳ |
+| **总计** | **~60GB/天** | - | **~5.5TB** | - | - |
+
+#### 核心特性
+
+1. **智能自动清理** (企业级创新)
+   - ✅ 定时任务: 每天凌晨3点执行
+   - ✅ 多规则配置: 门禁30天,考勤180天,OA 5年
+   - ✅ 自动节省存储空间
+
+2. **设备直传支持** (减轻服务器压力)
+   - ✅ 预签名URL: 设备直接上传到存储
+   - ✅ 节省带宽: 50%+
+   - ✅ 支持并发: 10000+设备
+
+3. **策略模式** (零代码切换)
+   - ✅ 一行配置: `file.storage.type=local` 或 `minio`
+   - ✅ 业务代码无需修改
+   - ✅ 平滑升级到MinIO
+
+#### 配置示例
+
+```yaml
+# 中小企业默认配置 (6.35GB内存)
+file:
+  storage:
+    type: local  # 默认本地存储
+    local:
+      base-path: /data/ioedream/files
+      cleanup:
+        enabled: true
+        schedule: "0 3 * * *"
+        rules:
+          - path: "access/snapshots"
+            retention-days: 30
+          - path: "attendance/photos"
+            retention-days: 180
+
+# 大型企业可选配置 (15.35GB内存)
+file:
+  storage:
+    type: minio  # 切换到MinIO
+    minio:
+      endpoint: http://minio-cluster:9000
+      bucket-name: ioedream-prod
+      access-key: ${MINIO_ACCESS_KEY}
+      secret-key: ${MINIO_SECRET_KEY}
+```
+
 ### 技术栈优势
 
 - **Spring Boot 3.5.8**: 现代化框架，支持虚拟线程，性能优异

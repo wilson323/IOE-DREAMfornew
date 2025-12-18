@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.lab1024.sa.common.entity.BaseEntity;
 
 /**
@@ -14,6 +15,7 @@ import net.lab1024.sa.common.entity.BaseEntity;
  * @since 2025-12-17
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @TableName("database_version")
 public class DatabaseVersionEntity extends BaseEntity {
 

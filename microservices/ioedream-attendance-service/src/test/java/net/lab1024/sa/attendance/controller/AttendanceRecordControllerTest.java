@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordAddForm;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordQueryForm;

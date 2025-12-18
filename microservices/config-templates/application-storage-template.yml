@@ -1,0 +1,175 @@
+# ============================================================
+# IOE-DREAM 文件存储配置
+#
+# 项目定位: 中小企业智慧园区 (5000-10000人)
+# 默认方案: 本地文件存储 (推荐)
+# 可选方案: MinIO对象存储 (未来扩展)
+# ============================================================
+
+# ==================== 存储策略选择 ====================
+file:
+  storage:
+    # 存储类型: local/minio
+    # 中小企业默认: local (节省1GB内存)
+    # 大型企业(>20000人): minio
+    type: ${FILE_STORAGE_TYPE:local}
+
+    # 允许的文件类型
+    allowed-types:
+      - image/jpeg
+      - image/png
+      - video/mp4
+      - application/pdf
+      - application/msword
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document  # .docx
+      - application/vnd.ms-excel
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet        # .xlsx
+
+    # 文件大小限制
+    max-image-size: 5   # MB (中小企业降低至10MB)
+    max-video-size: 100 # MB
+    max-document-size: 20  # MB (OA附件)
+
+    # ==================== 本地文件系统配置 (默认) ====================
+    local:
+      # 文件存储根目录 (挂製8TB磁盘)
+      base-path: ${FILE_LOCAL_BASE_PATH:/data/ioedream/files}
+      # URL访问前缀 (通过网关代理)
+      url-prefix: ${FILE_LOCAL_URL_PREFIX:http://localhost:8080/files}
+
+      # 分区配置 (按业务模块分离)
+      partitions:
+        access: /data/ioedream/files/access         # 门禁 (~700GB)
+        attendance: /data/ioedream/files/attendance # 考勤 (~2.2TB)
+        video: /data/ioedream/files/video           # 视频 (~700GB)
+        oa: /data/ioedream/files/oa                 # OA (~1.8TB)
+        consume: /data/ioedream/files/consume       # 消费 (~50GB)
+        visitor: /data/ioedream/files/visitor       # 访客 (~30GB)
+        common: /data/ioedream/files/common         # 公共 (~30GB)
+
+      # 自动清理策略
+      cleanup:
+        enabled: true
+        schedule: "0 3 * * *"  # 每天3点执行
+        rules:
+          - path: "access/snapshots"
+            retention-days: 30
+          - path: "attendance/photos"
+            retention-days: 180
+          - path: "video/frames"
+            retention-days: 30
+          - path: "video/alerts"
+            retention-days: 90
+          - path: "consume/receipts"
+            retention-days: 30
+          - path: "visitor/photos"
+            retention-days: 365
+
+    # ==================== MinIO配置 (可选,未来扩展) ====================
+    minio:
+      # MinIO服务地址
+      endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+      # 访问密钥
+      access-key: ${MINIO_ACCESS_KEY:minioadmin}
+      # 密钥
+      secret-key: ${MINIO_SECRET_KEY:minioadmin}
+      # 存储桶名称
+      bucket-name: ${MINIO_BUCKET:ioedream}
+      # URL有效期(秒) 7天
+      url-expiry: 604800
+      # 分块上传大小(MB)
+      part-size: 10
+
+      # 对象生命周期管理
+      lifecycle-rules:
+        - bucket: ioedream
+          prefix: access/snapshots/
+          expiration-days: 30
+        - bucket: ioedream
+          prefix: attendance/photos/
+          expiration-days: 180
+        - bucket: ioedream
+          prefix: oa/attachments/
+          transition-days: 365
+          storage-class: GLACIER  # 1年后转冷存储
+
+# ==================== 部署建议 ====================
+#
+# 中小企业(5000-10000人):
+#   file.storage.type=local
+#   服务器配置: 8月8GB内存 + 8TB磁盘
+#   内存占用: 应用2.35GB + 中间件4GB = 6.35GB
+#   总成本: 3-5万元 (一次性投入)
+#
+# 大型企业(>20000人):
+#   file.storage.type=minio
+#   服务器配置: 16有16GB内存 + MinIO集群
+#   内存占用: 应用2.35GB + 中间件4GB + MinIO3GB = 9.35GB
+#
+# ============================================================
+
+    # 允许的文件类型
+    allowed-types:
+      - image/jpeg
+      - image/png
+      - video/mp4
+      - video/avi
+      - application/pdf
+
+    # 文件大小限制
+    max-image-size: 10  # MB
+    max-video-size: 100 # MB
+
+    # ==================== 本地文件系统配置 ====================
+    local:
+      # 文件存储根目录
+      base-path: ${FILE_LOCAL_BASE_PATH:/data/ioedream/files}
+      # URL访问前缀
+      url-prefix: ${FILE_LOCAL_URL_PREFIX:http://localhost:8080/files}
+
+    # ==================== MinIO配置 ====================
+    minio:
+      # MinIO服务地址
+      endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+      # 访问密钥
+      access-key: ${MINIO_ACCESS_KEY:minioadmin}
+      # 密钥
+      secret-key: ${MINIO_SECRET_KEY:minioadmin}
+      # 存储桶名称
+      bucket-name: ${MINIO_BUCKET:ioedream}
+      # URL有效期(秒) 7天
+      url-expiry: 604800
+      # 分块上传大小(MB)
+      part-size: 10
+
+    # ==================== 阿里云OSS配置 ====================
+    aliyun-oss:
+      endpoint: ${ALIYUN_OSS_ENDPOINT:}
+      access-key-id: ${ALIYUN_OSS_ACCESS_KEY_ID:}
+      access-key-secret: ${ALIYUN_OSS_ACCESS_KEY_SECRET:}
+      bucket-name: ${ALIYUN_OSS_BUCKET:}
+      cdn-domain: ${ALIYUN_OSS_CDN_DOMAIN:}
+
+# ==================== 部署建议 ====================
+#
+# 开发环境:
+#   file.storage.type=local
+#   内存占用: ~50MB
+#   适用: 单人开发,<100张照片/天
+#
+# 测试环境:
+#   file.storage.type=local 或 minio
+#   内存占用: ~100MB
+#   适用: 团队测试,<1000张照片/天
+#
+# 生产环境(单机):
+#   file.storage.type=minio
+#   MinIO内存占用: ~200MB (独立部署)
+#   适用: <10000张照片/天
+#
+# 生产环境(集群):
+#   file.storage.type=minio (集群模式)
+#   MinIO内存占用: ~200MB/节点
+#   适用: 任意规模
+#
+# ============================================================

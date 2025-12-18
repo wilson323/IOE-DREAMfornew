@@ -20,7 +20,7 @@ import io.micrometer.core.annotation.Timed;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;

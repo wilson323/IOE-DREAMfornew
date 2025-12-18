@@ -1,7 +1,7 @@
 package net.lab1024.sa.video.service;
 
-import net.lab1024.sa.base.common.domain.PageResult;
-import net.lab1024.sa.base.common.domain.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.form.VideoRecordingQueryForm;
 import net.lab1024.sa.video.domain.form.VideoRecordingSearchForm;
 import net.lab1024.sa.video.domain.vo.VideoRecordingVO;

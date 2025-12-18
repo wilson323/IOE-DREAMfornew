@@ -8,7 +8,7 @@ import net.lab1024.sa.biometric.domain.form.BiometricTemplateQueryForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateUpdateForm;
 import net.lab1024.sa.biometric.domain.vo.BiometricTemplateVO;
 import net.lab1024.sa.biometric.service.BiometricTemplateService;
-import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

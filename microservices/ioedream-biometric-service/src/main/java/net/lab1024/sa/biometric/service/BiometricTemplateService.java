@@ -5,7 +5,7 @@ import net.lab1024.sa.biometric.domain.form.BiometricTemplateAddForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateUpdateForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateQueryForm;
 import net.lab1024.sa.biometric.domain.vo.BiometricTemplateVO;
-import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 import java.util.List;

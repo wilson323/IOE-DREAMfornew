@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.common.attendance.entity.AttendanceRecordEntity;

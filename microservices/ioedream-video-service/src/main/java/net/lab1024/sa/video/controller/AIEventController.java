@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import net.lab1024.sa.common.dto.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.form.AIEventAddForm;
 import net.lab1024.sa.video.domain.form.AIEventQueryForm;

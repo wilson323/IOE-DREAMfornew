@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.lab1024.sa</groupId>
+        <artifactId>ioedream-microservices-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>microservices-common-storage</artifactId>
+    <packaging>jar</packaging>
+    <name>IOE-DREAM Common Storage Module</name>
+    <description>统一文件存储模块,支持MinIO/本地文件系统/阿里云OSS等多种存储策略</description>
+
+    <dependencies>
+        <!-- Spring Boot Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Spring Web (MultipartFile支持) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- MinIO客户端 -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.7</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 阿里云OSS (可选) -->
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>3.17.4</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 文件类型检测 -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>2.9.1</version>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 公共核心模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

@@ -2,7 +2,7 @@ package net.lab1024.sa.common.dataanalysis.openapi.service;
 
 import net.lab1024.sa.common.dataanalysis.openapi.domain.request.*;
 import net.lab1024.sa.common.dataanalysis.openapi.domain.response.*;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 
 /**
  * 数据分析开放API服务接口

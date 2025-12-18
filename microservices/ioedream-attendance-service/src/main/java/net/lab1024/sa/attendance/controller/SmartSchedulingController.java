@@ -1,7 +1,7 @@
 package net.lab1024.sa.attendance.controller;
 
-import io.github.resilience4j.annotation.CircuitBreaker;
-import io.github.resilience4j.annotation.TimeLimiter;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

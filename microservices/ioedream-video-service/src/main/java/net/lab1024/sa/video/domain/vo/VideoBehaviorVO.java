@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * 视频行为检测视图对象

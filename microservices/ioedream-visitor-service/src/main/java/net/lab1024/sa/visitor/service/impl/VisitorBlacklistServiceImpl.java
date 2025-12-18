@@ -6,7 +6,7 @@ import net.lab1024.sa.common.enumeration.ResultCode;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.dto.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.domain.form.BlacklistAddForm;
 import net.lab1024.sa.visitor.domain.form.BlacklistQueryForm;

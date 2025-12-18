@@ -70,6 +70,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Common (整合模块 - 提供ResponseDTO、PageResult等) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Resilience4j Circuit Breaker (断路器) -->
         <dependency>
             <groupId>io.github.resilience4j</groupId>

@@ -1,6 +1,6 @@
 package net.lab1024.sa.attendance.service;
 
-import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordQueryForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordStatisticsVO;

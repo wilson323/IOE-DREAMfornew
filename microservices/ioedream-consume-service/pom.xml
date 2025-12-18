@@ -77,13 +77,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- 依赖公共业务模块（包含统一异常处理器） -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-business</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
         <!-- ZXing二维码库 -->
         <dependency>
             <groupId>com.google.zxing</groupId>

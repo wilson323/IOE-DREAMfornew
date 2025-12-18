@@ -2,7 +2,7 @@ package net.lab1024.sa.video.domain.form;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import net.lab1024.sa.common.page.PageParam;
+import net.lab1024.sa.common.domain.PageParam;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;

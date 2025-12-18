@@ -1,0 +1,533 @@
+/* =============================================
+ * 移动端通用样式
+ * ============================================= */
+
+/* 基础重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+/* 应用容器 */
+#app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 内容区域 */
+.main-content {
+    flex: 1;
+    padding-bottom: 50px; /* 为底部导航栏预留空间 */
+    overflow-y: auto;
+}
+
+/* 页面容器 */
+.page-container {
+    padding: 16px;
+    min-height: calc(100vh - 50px);
+}
+
+/* 卡片样式 */
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+.card-footer {
+    padding: 12px 16px;
+    border-top: 1px solid #f0f0f0;
+    background: #fafafa;
+}
+
+/* 列表项样式 */
+.list-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.list-item:hover {
+    background: #f8f8f8;
+}
+
+.list-item:last-child {
+    border-bottom: none;
+}
+
+.list-item-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+    color: #1989fa;
+}
+
+.list-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.list-item-title {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.list-item-desc {
+    font-size: 12px;
+    color: #999;
+}
+
+.list-item-arrow {
+    width: 16px;
+    height: 16px;
+    color: #ccc;
+}
+
+/* 按钮样式 */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    outline: none;
+    user-select: none;
+}
+
+.btn-primary {
+    background: #1989fa;
+    color: #fff;
+    border-color: #1989fa;
+}
+
+.btn-primary:hover {
+    background: #1677ff;
+    border-color: #1677ff;
+}
+
+.btn-success {
+    background: #07c160;
+    color: #fff;
+    border-color: #07c160;
+}
+
+.btn-success:hover {
+    background: #06ad56;
+    border-color: #06ad56;
+}
+
+.btn-warning {
+    background: #ff976a;
+    color: #fff;
+    border-color: #ff976a;
+}
+
+.btn-warning:hover {
+    background: #ff8a65;
+    border-color: #ff8a65;
+}
+
+.btn-danger {
+    background: #ee0a24;
+    color: #fff;
+    border-color: #ee0a24;
+}
+
+.btn-danger:hover {
+    background: #dc2941;
+    border-color: #dc2941;
+}
+
+.btn-default {
+    background: #fff;
+    color: #333;
+    border-color: #ddd;
+}
+
+.btn-default:hover {
+    background: #f8f8f8;
+    border-color: #ccc;
+}
+
+.btn-large {
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+.btn-small {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* 状态指示器 */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    color: #666;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-online {
+    background: #07c160;
+}
+
+.status-offline {
+    background: #ee0a24;
+}
+
+.status-warning {
+    background: #ff976a;
+}
+
+.status-unknown {
+    background: #ccc;
+}
+
+/* 标签样式 */
+.tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-size: 12px;
+    color: #fff;
+    background: #1989fa;
+}
+
+.tag-success {
+    background: #07c160;
+}
+
+.tag-warning {
+    background: #ff976a;
+}
+
+.tag-danger {
+    background: #ee0a24;
+}
+
+.tag-info {
+    background: #909399;
+}
+
+/* 加载状态 */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.loading-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 空状态 */
+.empty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    color: #999;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
+.empty-text {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.empty-desc {
+    font-size: 14px;
+    color: #bbb;
+}
+
+/* 分割线 */
+.divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 16px 0;
+}
+
+.divider-text {
+    position: relative;
+    text-align: center;
+    margin: 16px 0;
+}
+
+.divider-text::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: #f0f0f0;
+}
+
+.divider-text span {
+    position: relative;
+    padding: 0 12px;
+    background: #f5f5f5;
+    color: #999;
+    font-size: 14px;
+}
+
+/* 工具栏 */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.toolbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #666;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #1989fa;
+}
+
+/* 网格布局 */
+.grid {
+    display: grid;
+    gap: 16px;
+}
+
+.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* 统计卡片 */
+.stats-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stats-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1989fa;
+    margin-bottom: 4px;
+}
+
+.stats-label {
+    font-size: 14px;
+    color: #666;
+}
+
+/* 时间线 */
+.timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #f0f0f0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1989fa;
+}
+
+.timeline-time {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 4px;
+}
+
+.timeline-content {
+    background: #fff;
+    border-radius: 4px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+    .page-container {
+        padding: 12px;
+    }
+
+    .card-header,
+    .card-body,
+    .card-footer {
+        padding: 12px;
+    }
+
+    .list-item {
+        padding: 10px 12px;
+    }
+
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #f0f0f0;
+    }
+
+    .card {
+        background: #2a2a2a;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+        border-bottom-color: #333;
+        color: #f0f0f0;
+    }
+
+    .card-footer {
+        border-top-color: #333;
+        background: #1f1f1f;
+    }
+
+    .list-item {
+        border-bottom-color: #333;
+        background: #2a2a2a;
+    }
+
+    .list-item:hover {
+        background: #333;
+    }
+
+    .btn-default {
+        background: #2a2a2a;
+        color: #f0f0f0;
+        border-color: #444;
+    }
+
+    .btn-default:hover {
+        background: #333;
+        border-color: #555;
+    }
+}

@@ -1,12 +1,12 @@
 package net.lab1024.sa.visitor.controller;
 
-import io.github.resilience4j.annotation.CircuitBreaker;
-import io.github.resilience4j.annotation.TimeLimiter;
+import lombok.extern.slf4j.Slf4j;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.PageResult;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.domain.form.ApprovalDecisionForm;
 import net.lab1024.sa.visitor.domain.vo.ApprovalRecordVO;

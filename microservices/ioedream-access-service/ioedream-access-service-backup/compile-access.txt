@@ -1,0 +1,443 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-access-service >---------------
+[INFO] Building IOE-DREAM Access Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-access-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-access-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-access-service ---
+[INFO] argLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=d:\\IOE-DREAM\\microservices\\ioedream-access-service\\target\\jacoco.exec,excludes=**/entity/**:**/domain/vo/**:**/domain/form/**:**/config/**:**/constant/**:**/enum/**:**/exception/**:**/dto/**:**/*Application.class:**/*Configuration.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-access-service ---
+[INFO] Copying 7 resources from src\main\resources to target\classes
+[INFO] Copying 14 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-access-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 116 source files with javac [debug release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[11,22] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[23,27] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[23,54] 编码 UTF-8 的不可映射字符 (0xE8AD)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[23,79] 编码 UTF-8 的不可映射字符 (0xE999)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[23,104] 编码 UTF-8 的不可映射字符 (0xE689)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[27,20] 编码 UTF-8 的不可映射字符 (0xE380)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[35,18] 编码 UTF-8 的不可映射字符 (0xE58C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[36,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[37,18] 编码 UTF-8 的不可映射字符 (0xE790)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[39,14] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[74,12] 编码 UTF-8 的不可映射字符 (0xE6B3)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[75,27] 编码 UTF-8 的不可映射字符 (0xE58F)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[15,12] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[17,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[18,24] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[18,41] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[18,52] 编码 UTF-8 的不可映射字符 (0xE59C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[18,58] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[36,21] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[45,12] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[61,20] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[61,44] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[71,13] 编码 UTF-8 的不可映射字符 (0xE997)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[80,11] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[81,18] 编码 UTF-8 的不可映射字符 (0xE689)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[82,19] 编码 UTF-8 的不可映射字符 (0xE59B)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[82,40] 编码 UTF-8 的不可映射字符 (0xE6B6)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[15,10] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[18,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[19,24] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[19,41] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[19,52] 编码 UTF-8 的不可映射字符 (0xE59C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[19,58] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[15,10] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[17,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[18,24] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[18,41] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[18,52] 编码 UTF-8 的不可映射字符 (0xE59C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[18,58] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[20,8] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[21,11] 编码 UTF-8 的不可映射字符 (0xE8B8)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[24,45] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[42,34] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[60,12] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[89,10] 编码 UTF-8 的不可映射字符 (0xE7BA)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[118,25] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[13,12] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[15,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[16,24] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[16,41] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[16,52] 编码 UTF-8 的不可映射字符 (0xE59C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[16,58] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[18,8] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[23,39] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[41,34] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[77,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[33,14] 编码 UTF-8 的不可映射字符 (0xE68E)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[69,15] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[82,16] 编码 UTF-8 的不可映射字符 (0xE7BD)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[106,16] 编码 UTF-8 的不可映射字符 (0xE6A0)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[156,44] 编码 UTF-8 的不可映射字符 (0xE6A0)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[168,14] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[274,20] 编码 UTF-8 的不可映射字符 (0xE78E)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[311,20] 编码 UTF-8 的不可映射字符 (0xE6A0)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[40,12] 编码 UTF-8 的不可映射字符 (0xE7BD)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[42,18] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[43,13] 编码 UTF-8 的不可映射字符 (0xE69D)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[44,17] 编码 UTF-8 的不可映射字符 (0xE790)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[77,35] 编码 UTF-8 的不可映射字符 (0xE993)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[103,27] 编码 UTF-8 的不可映射字符 (0xE782)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[111,25] 编码 UTF-8 的不可映射字符 (0xE6BA)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[117,24] 编码 UTF-8 的不可映射字符 (0xE58F)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[121,24] 编码 UTF-8 的不可映射字符 (0xE58F)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[129,29] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[136,43] 编码 UTF-8 的不可映射字符 (0xE7BB)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[143,23] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[147,24] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[151,24] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[160,14] 编码 UTF-8 的不可映射字符 (0xE6BA)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[176,16] 编码 UTF-8 的不可映射字符 (0xE6B3)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[185,16] 编码 UTF-8 的不可映射字符 (0xE983)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[194,16] 编码 UTF-8 的不可映射字符 (0xE983)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[212,12] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[221,12] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[229,15] 编码 UTF-8 的不可映射字符 (0xE880)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[241,12] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[249,18] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[299,19] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[314,19] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[328,52] 编码 UTF-8 的不可映射字符 (0xE5B9)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[350,19] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[374,19] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[34,12] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[36,27] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[38,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[41,12] 编码 UTF-8 的不可映射字符 (0xE5BD)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[60,14] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[66,20] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[93,26] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[97,38] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[156,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[77,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[97,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[258,27] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/DatabaseOptimizationConfiguration.java:[112,19] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/DatabaseOptimizationConfiguration.java:[159,29] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/DatabaseOptimizationConfiguration.java:[163,21] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/DatabaseOptimizationConfiguration.java:[207,27] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[79,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[80,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[80,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[86,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[97,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[98,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[98,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[129,53] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[129,69] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[133,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[139,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[140,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[140,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[150,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[151,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[151,17] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[185,53] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[185,65] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[197,52] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[198,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[198,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[210,53] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[210,68] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[221,54] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[221,68] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[233,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[234,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[234,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[264,52] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[264,64] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[298,52] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[298,64] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[309,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[310,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[310,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[320,51] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[320,61] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[331,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[332,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[332,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[342,52] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[342,62] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[364,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[365,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[365,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[375,52] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[376,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[376,17] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[382,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[383,26] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[383,100] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[384,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[384,69] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[385,94] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[386,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[386,80] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[386,97] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[405,52] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[406,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[406,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[418,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[419,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[419,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[429,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[430,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[430,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[458,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[459,26] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[459,98] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[460,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[460,69] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[461,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[462,14] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[462,35] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[462,100] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[463,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[463,77] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[463,94] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[464,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[464,80] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[464,98] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[465,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[465,77] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[465,92] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[466,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[466,77] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[466,94] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[499,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[500,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[500,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[511,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[512,6] 方法声明无效; 需要返回类型
+[INFO] 200 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.206 s
+[INFO] Finished at: 2025-12-18T03:14:10+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-access-service: Compilation failure: Compilation failure: 
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[11,22] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[23,27] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[23,54] 编码 UTF-8 的不可映射字符 (0xE8AD)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[23,79] 编码 UTF-8 的不可映射字符 (0xE999)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[23,104] 编码 UTF-8 的不可映射字符 (0xE689)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[27,20] 编码 UTF-8 的不可映射字符 (0xE380)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[35,18] 编码 UTF-8 的不可映射字符 (0xE58C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[36,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[37,18] 编码 UTF-8 的不可映射字符 (0xE790)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[39,14] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[74,12] 编码 UTF-8 的不可映射字符 (0xE6B3)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/AccessServiceApplication.java:[75,27] 编码 UTF-8 的不可映射字符 (0xE58F)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[15,12] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[17,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[18,24] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[18,41] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[18,52] 编码 UTF-8 的不可映射字符 (0xE59C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[18,58] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[36,21] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[45,12] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[61,20] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[61,44] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[71,13] 编码 UTF-8 的不可映射字符 (0xE997)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[80,11] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[81,18] 编码 UTF-8 的不可映射字符 (0xE689)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[82,19] 编码 UTF-8 的不可映射字符 (0xE59B)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessPermissionApplyEntity.java:[82,40] 编码 UTF-8 的不可映射字符 (0xE6B6)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[15,10] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[18,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[19,24] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[19,41] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[19,52] 编码 UTF-8 的不可映射字符 (0xE59C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AccessRecordEntity.java:[19,58] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[15,10] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[17,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[18,24] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[18,41] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[18,52] 编码 UTF-8 的不可映射字符 (0xE59C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[18,58] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[20,8] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[21,11] 编码 UTF-8 的不可映射字符 (0xE8B8)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[24,45] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[42,34] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[60,12] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[89,10] 编码 UTF-8 的不可映射字符 (0xE7BA)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/ApprovalProcessEntity.java:[118,25] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[13,12] 编码 UTF-8 的不可映射字符 (0xE7B1)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[15,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[16,24] 编码 UTF-8 的不可映射字符 (0xE590)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[16,41] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[16,52] 编码 UTF-8 的不可映射字符 (0xE59C)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[16,58] 编码 UTF-8 的不可映射字符 (0xE586)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[18,8] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[23,39] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[41,34] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/access/entity/AreaAccessExtEntity.java:[77,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[33,14] 编码 UTF-8 的不可映射字符 (0xE68E)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[69,15] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[82,16] 编码 UTF-8 的不可映射字符 (0xE7BD)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[106,16] 编码 UTF-8 的不可映射字符 (0xE6A0)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[156,44] 编码 UTF-8 的不可映射字符 (0xE6A0)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[168,14] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[274,20] 编码 UTF-8 的不可映射字符 (0xE78E)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[311,20] 编码 UTF-8 的不可映射字符 (0xE6A0)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[40,12] 编码 UTF-8 的不可映射字符 (0xE7BD)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[42,18] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[43,13] 编码 UTF-8 的不可映射字符 (0xE69D)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[44,17] 编码 UTF-8 的不可映射字符 (0xE790)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[77,35] 编码 UTF-8 的不可映射字符 (0xE993)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[103,27] 编码 UTF-8 的不可映射字符 (0xE782)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[111,25] 编码 UTF-8 的不可映射字符 (0xE6BA)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[117,24] 编码 UTF-8 的不可映射字符 (0xE58F)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[121,24] 编码 UTF-8 的不可映射字符 (0xE58F)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[129,29] 编码 UTF-8 的不可映射字符 (0xE8AF)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[136,43] 编码 UTF-8 的不可映射字符 (0xE7BB)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[143,23] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[147,24] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[151,24] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[160,14] 编码 UTF-8 的不可映射字符 (0xE6BA)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[176,16] 编码 UTF-8 的不可映射字符 (0xE6B3)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[185,16] 编码 UTF-8 的不可映射字符 (0xE983)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[194,16] 编码 UTF-8 的不可映射字符 (0xE983)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[212,12] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[221,12] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[229,15] 编码 UTF-8 的不可映射字符 (0xE880)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[241,12] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[249,18] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[299,19] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[314,19] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[328,52] 编码 UTF-8 的不可映射字符 (0xE5B9)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[350,19] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[374,19] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[34,12] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[36,27] 编码 UTF-8 的不可映射字符 (0xE680)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[38,19] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[41,12] 编码 UTF-8 的不可映射字符 (0xE5BD)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[60,14] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[66,20] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[93,26] 编码 UTF-8 的不可映射字符 (0xEFBC)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[97,38] 编码 UTF-8 的不可映射字符 (0xE599)
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessMetricsConfiguration.java:[156,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/AccessSecurityConfiguration.java:[77,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[97,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/CacheOptimizationConfiguration.java:[258,27] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/DatabaseOptimizationConfiguration.java:[112,19] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/DatabaseOptimizationConfiguration.java:[159,29] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/DatabaseOptimizationConfiguration.java:[163,21] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/config/DatabaseOptimizationConfiguration.java:[207,27] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[79,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[80,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[80,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[86,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[97,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[98,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[98,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[129,53] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[129,69] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[133,18] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[139,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[140,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[140,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[150,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[151,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[151,17] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[185,53] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[185,65] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[197,52] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[198,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[198,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[210,53] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[210,68] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[221,54] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[221,68] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[233,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[234,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[234,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[264,52] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[264,64] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[298,52] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[298,64] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[309,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[310,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[310,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[320,51] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[320,61] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[331,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[332,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[332,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[342,52] 需要')'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[342,62] 非法字符: '\ufffd'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[364,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[365,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[365,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[375,52] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[376,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[376,17] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[382,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[383,26] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[383,100] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[384,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[384,69] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[385,94] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[386,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[386,80] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[386,97] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[405,52] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[406,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[406,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[418,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[419,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[419,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[429,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[430,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[430,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[458,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[459,26] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[459,98] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[460,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[460,69] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[461,70] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[462,14] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[462,35] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[462,100] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[463,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[463,77] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[463,94] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[464,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[464,80] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[464,98] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[465,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[465,77] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[465,92] 需要<标识符>
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[466,13] 非法的表达式开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[466,77] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[466,94] 需要';'
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[499,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[500,6] 方法声明无效; 需要返回类型
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[500,18] 非法的类型开始
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[511,50] 未结束的字符串文字
+[ERROR] /d:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/controller/AccessAdvancedController.java:[512,6] 方法声明无效; 需要返回类型
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
