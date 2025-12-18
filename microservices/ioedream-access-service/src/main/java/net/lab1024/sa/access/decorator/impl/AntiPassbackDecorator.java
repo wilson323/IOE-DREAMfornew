@@ -12,6 +12,7 @@ import jakarta.annotation.Resource;
 /**
  * 反潜回装饰器
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 增强通行流程，添加反潜回验证功能
  * </p>
  *
