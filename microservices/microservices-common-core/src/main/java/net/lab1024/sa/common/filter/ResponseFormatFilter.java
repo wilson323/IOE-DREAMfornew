@@ -1,9 +1,9 @@
 package net.lab1024.sa.common.filter;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.response.ResponseDTOAdapter;
+import net.lab1024.sa.common.util.JsonUtil;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -95,9 +95,8 @@ public class ResponseFormatFilter extends OncePerRequestFilter {
                 return originalResponse;
             }
 
-            // 解析原始响应
-            @SuppressWarnings("unchecked")
-            Map<String, Object> originalMap = (Map<String, Object>) JSON.parseObject(originalResponse, Map.class);
+            // 解析原始响应（使用Jackson，符合企业级标准）
+            Map<String, Object> originalMap = JsonUtil.toMap(originalResponse);
 
             // 检查是否为标准IOE-DREAM响应格式
             if (!isValidIOEDreamResponse(originalMap)) {
@@ -113,7 +112,8 @@ public class ResponseFormatFilter extends OncePerRequestFilter {
             // 根据客户端类型转换格式
             Map<String, Object> convertedResponse = ResponseDTOAdapter.autoConvert(ioeResponse, request);
 
-            return JSON.toJSONString(convertedResponse);
+            // 使用Jackson序列化（符合企业级标准）
+            return JsonUtil.toJson(convertedResponse);
 
         } catch (Exception e) {
             log.error("Failed to convert response format: {}", e.getMessage(), e);
