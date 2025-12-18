@@ -10,6 +10,7 @@ import net.lab1024.sa.device.comm.protocol.*;
 import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
 import net.lab1024.sa.device.comm.service.RS485ProtocolService;
 import net.lab1024.sa.device.comm.dao.DeviceCommLogDao;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -257,6 +258,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     }
 
     @Override
+    @Cacheable(value = "device:comm:rs485:status", key = "#deviceId", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<RS485DeviceStatusVO> getDeviceStatus(Long deviceId) {
         try {
             log.debug("[RS485服务] 获取设备状态, deviceId={}", deviceId);
@@ -309,6 +311,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     }
 
     @Override
+    @Cacheable(value = "device:comm:rs485:statistics", key = "'all'", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<Map<String, Object>> getPerformanceStatistics() {
         try {
             log.debug("[RS485服务] 获取性能统计");
@@ -325,6 +328,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     }
 
     @Override
+    @Cacheable(value = "device:comm:rs485:models", key = "'all'", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<String[]> getSupportedDeviceModels() {
         try {
             log.debug("[RS485服务] 获取支持的设备型号");

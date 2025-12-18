@@ -121,7 +121,10 @@
 ### 7. ioedream-device-comm-service (8087) - 设备通讯服务
 
 #### 缓存使用检查
-- ⏳ 待检查
+- ✅ `RS485ProtocolServiceImpl.getDeviceStatus()` - 已使用@Cacheable
+- ✅ `RS485ProtocolServiceImpl.getPerformanceStatistics()` - 已使用@Cacheable
+- ✅ `RS485ProtocolServiceImpl.getSupportedDeviceModels()` - 已使用@Cacheable
+- ⏳ 其他服务类待检查
 
 #### 数据库查询优化
 - ⏳ 待检查
@@ -147,7 +150,15 @@
 ### 9. ioedream-biometric-service (8096) - 生物模板管理服务
 
 #### 缓存使用检查
-- ⏳ 待检查
+- ✅ `BiometricTemplateServiceImpl.getTemplateById()` - 已使用@Cacheable
+- ✅ `BiometricTemplateServiceImpl.getTemplatesByUserId()` - 已使用@Cacheable
+- ✅ `BiometricTemplateServiceImpl.getTemplateByUserAndType()` - 已使用@Cacheable
+- ✅ `BiometricTemplateServiceImpl.addTemplate()` - 已使用@CacheEvict（清除用户相关缓存）
+- ✅ `BiometricTemplateServiceImpl.updateTemplate()` - 已使用@CacheEvict（清除所有相关缓存）
+- ✅ `BiometricTemplateServiceImpl.deleteTemplate()` - 已使用@CacheEvict（清除所有相关缓存）
+- ✅ `BiometricTemplateServiceImpl.deleteTemplateByUserAndType()` - 已使用@CacheEvict（清除用户类型缓存）
+- ✅ `BiometricTemplateServiceImpl.updateTemplateStatus()` - 已使用@CacheEvict（清除所有相关缓存）
+- ⏳ 其他服务类待检查
 
 #### 数据库查询优化
 - ⏳ 待检查

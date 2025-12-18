@@ -24,6 +24,8 @@ import net.lab1024.sa.common.organization.entity.AreaUserEntity;
 import net.lab1024.sa.common.security.entity.UserEntity;
 import net.lab1024.sa.common.util.SmartBeanUtil;
 import org.springframework.http.HttpMethod;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +79,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     private static final Integer DEVICE_TYPE_ACCESS = 1;
 
     @Override
+    @CacheEvict(value = {"biometric:template:user", "biometric:template:user:type"}, key = "#addForm.userId")
     public ResponseDTO<BiometricTemplateVO> addTemplate(BiometricTemplateAddForm addForm) {
         try {
             log.info("[生物模板管理] 添加模板开始 userId={}, biometricType={}",
@@ -110,6 +113,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     }
 
     @Override
+    @CacheEvict(value = {"biometric:template:detail", "biometric:template:user", "biometric:template:user:type"}, allEntries = true)
     public ResponseDTO<Void> updateTemplate(BiometricTemplateUpdateForm updateForm) {
         try {
             log.info("[生物模板管理] 更新模板开始 templateId={}", updateForm.getTemplateId());
@@ -144,6 +148,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     }
 
     @Override
+    @CacheEvict(value = {"biometric:template:detail", "biometric:template:user", "biometric:template:user:type"}, allEntries = true)
     public ResponseDTO<Void> deleteTemplate(Long templateId) {
         try {
             log.info("[生物模板管理] 删除模板开始 templateId={}", templateId);
@@ -167,6 +172,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     }
 
     @Override
+    @CacheEvict(value = {"biometric:template:user", "biometric:template:user:type"}, key = "#userId + ':' + #biometricType")
     public ResponseDTO<Void> deleteTemplateByUserAndType(Long userId, Integer biometricType) {
         try {
             log.info("[生物模板管理] 删除用户模板开始 userId={}, biometricType={}", userId, biometricType);
@@ -185,6 +191,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "biometric:template:detail", key = "#templateId", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<BiometricTemplateVO> getTemplateById(Long templateId) {
         try {
             BiometricTemplateEntity template = biometricTemplateDao.selectById(templateId);
@@ -203,6 +210,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "biometric:template:user", key = "#userId", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<List<BiometricTemplateVO>> getTemplatesByUserId(Long userId) {
         try {
             List<BiometricTemplateEntity> templates = biometricTemplateDao.selectByUserId(userId);
@@ -219,6 +227,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "biometric:template:user:type", key = "#userId + ':' + #biometricType", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<BiometricTemplateVO> getTemplateByUserAndType(Long userId, Integer biometricType) {
         try {
             List<BiometricTemplateEntity> templates = biometricTemplateDao.selectByUserIdAndType(userId, biometricType);
@@ -274,6 +283,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     }
 
     @Override
+    @CacheEvict(value = {"biometric:template:detail", "biometric:template:user", "biometric:template:user:type"}, allEntries = true)
     public ResponseDTO<Void> updateTemplateStatus(Long templateId, Integer templateStatus) {
         try {
             int rows = biometricTemplateDao.updateTemplateStatus(templateId, templateStatus);
