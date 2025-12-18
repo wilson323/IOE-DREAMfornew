@@ -74,7 +74,10 @@
 ### 4. ioedream-consume-service (8094) - 消费管理服务
 
 #### 缓存使用检查
-- ⏳ 待检查
+- ✅ `AccountKindConfigClient.getAccountKindConfig()` - 已使用@Cacheable
+- ✅ `ConsumeServiceImpl.getRealtimeStatistics()` - 已使用@Cacheable
+- ✅ `ConsumeAreaCacheServiceImpl` - 已使用@Cacheable和@CacheEvict
+- ⏳ 其他服务类待检查
 
 #### 数据库查询优化
 - ⏳ 待检查
@@ -87,7 +90,8 @@
 ### 5. ioedream-visitor-service (8095) - 访客管理服务
 
 #### 缓存使用检查
-- ⏳ 待检查
+- ✅ `VisitorAreaServiceImpl` - 已使用@Cacheable和@CacheEvict（区域配置缓存）
+- ⏳ 其他服务类待检查
 
 #### 数据库查询优化
 - ⏳ 待检查
@@ -100,7 +104,11 @@
 ### 6. ioedream-video-service (8092) - 视频监控服务
 
 #### 缓存使用检查
-- ⏳ 待检查
+- ✅ `VideoDeviceServiceImpl.getDeviceDetail()` - 已使用@Cacheable
+- ✅ `VideoDeviceServiceImpl.getDeviceStatistics()` - 已使用@Cacheable
+- ✅ `VideoDeviceServiceImpl.getDevicesByAreaId()` - 已使用@Cacheable
+- ✅ `VideoDeviceServiceImpl.getOnlineDevices()` - 已使用@Cacheable
+- ⏳ 其他服务类待检查
 
 #### 数据库查询优化
 - ⏳ 待检查

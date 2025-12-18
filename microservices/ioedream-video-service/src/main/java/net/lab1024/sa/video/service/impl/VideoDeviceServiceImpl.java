@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -138,6 +139,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "video:device:detail", key = "#deviceId", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<VideoDeviceVO> getDeviceDetail(Long deviceId) {
         log.info("[视频设备] 查询设备详情，deviceId={}", deviceId);
 
@@ -555,6 +557,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "video:device:area", key = "#areaId", unless = "#result == null || !#result.getOk() || (#result.getData() != null && #result.getData().isEmpty())")
     public ResponseDTO<List<VideoDeviceVO>> getDevicesByAreaId(Long areaId) {
         log.info("[视频设备] 根据区域查询设备，areaId={}", areaId);
 
@@ -581,6 +584,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "video:device:online", key = "'all'", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<List<VideoDeviceVO>> getOnlineDevices() {
         log.info("[视频设备] 查询在线设备");
 
@@ -686,6 +690,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
     @Override
     @Transactional(readOnly = true)
     @Observed(name = "video.device.statistics", contextualName = "video-device-statistics")
+    @Cacheable(value = "video:device:statistics", key = "'all'", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<Object> getDeviceStatistics() {
         log.info("[视频设备] 获取设备统计信息");
 
