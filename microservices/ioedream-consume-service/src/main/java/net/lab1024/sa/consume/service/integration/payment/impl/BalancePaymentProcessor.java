@@ -1,11 +1,12 @@
-﻿package net.lab1024.sa.consume.service.integration.payment.impl;
+package net.lab1024.sa.consume.service.integration.payment.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.service.integration.payment.*;
 import net.lab1024.sa.consume.service.ConsumeAccountService;
 import net.lab1024.sa.consume.service.TransactionRecordService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.Resource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

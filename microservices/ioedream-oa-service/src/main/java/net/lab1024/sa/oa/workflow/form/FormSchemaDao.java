@@ -9,13 +9,20 @@ import java.util.List;
 
 /**
  * 表单Schema定义数据访问层
+ * <p>
+ * 严格遵循四层架构规范：
+ * - 使用@Mapper注解，禁止使用@Repository注解
+ * - 使用Dao后缀命名，禁止使用Repository后缀
+ * - 继承BaseMapper提供基础CRUD功能
+ * - 只负责数据访问，不包含业务逻辑
+ * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-16
  */
 @Mapper
-public interface FormSchemaRepository extends BaseMapper<FormSchemaEntity> {
+public interface FormSchemaDao extends BaseMapper<FormSchemaEntity> {
 
     /**
      * 根据表单键查找最新版本

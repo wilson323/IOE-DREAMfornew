@@ -39,7 +39,7 @@ public class RabbitMQConfiguration {
     public MessageConverter messageConverter() {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
         // 设置信任的包名，防止反序列化攻击
-        converter.setClassMapper("net.lab1024.sa.common");
+        converter.setTrustedPackages("net.lab1024.sa.common");
         return converter;
     }
 

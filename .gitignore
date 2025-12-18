@@ -121,3 +121,4 @@ microservices/ioedream-device-comm-service/latest-24-errors.txt
 microservices/ioedream-device-comm-service/latest-compile.txt
 microservices/ioedream-device-comm-service/latest-errors.txt
 scripts/ensure-utf8-encoding.ps1
+garbled-files-list.txt

@@ -65,3 +65,4 @@ public class SmartAESUtil {
         return decrypted != null ? decrypted.getBytes(StandardCharsets.UTF_8) : new byte[0];
     }
 }
+

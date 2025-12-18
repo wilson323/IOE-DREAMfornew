@@ -44,3 +44,4 @@ public class SecurityConst {
      */
     public static final long REFRESH_TOKEN_EXPIRE_TIME = 604800; // 7天
 }
+

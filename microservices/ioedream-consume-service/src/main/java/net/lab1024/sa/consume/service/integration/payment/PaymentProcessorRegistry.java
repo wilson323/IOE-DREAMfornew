@@ -1,10 +1,10 @@
-﻿package net.lab1024.sa.consume.service.integration.payment;
+package net.lab1024.sa.consume.service.integration.payment;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

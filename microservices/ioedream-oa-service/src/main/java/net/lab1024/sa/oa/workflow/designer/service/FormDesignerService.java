@@ -6,7 +6,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.oa.workflow.designer.domain.FormDefinitionDTO;
 import net.lab1024.sa.oa.workflow.form.FormSchemaEntity;
-import net.lab1024.sa.oa.workflow.form.FormSchemaRepository;
+import net.lab1024.sa.oa.workflow.form.FormSchemaDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class FormDesignerService {
 
     @Resource
-    private FormSchemaRepository formSchemaRepository;
+    private FormSchemaDao formSchemaDao;
 
     @Resource
     private ObjectMapper objectMapper;
@@ -43,7 +43,7 @@ public class FormDesignerService {
         }
 
         // 获取最新版本号
-        int latestVersion = formSchemaRepository.findLatestVersionByKey(dto.getFormKey());
+        int latestVersion = formSchemaDao.findLatestVersionByKey(dto.getFormKey());
         int newVersion = latestVersion + 1;
 
         // 创建新版本
@@ -58,7 +58,7 @@ public class FormDesignerService {
         entity.setCreateTime(LocalDateTime.now());
         entity.setUpdateTime(LocalDateTime.now());
 
-        formSchemaRepository.insert(entity);
+        formSchemaDao.insert(entity);
         log.info("[表单设计器] 保存表单定义成功: key={}, version={}", dto.getFormKey(), newVersion);
         return entity.getId();
     }
@@ -80,9 +80,9 @@ public class FormDesignerService {
     public List<FormDefinitionDTO> listFormDefinitions(String category) {
         List<FormSchemaEntity> entities;
         if (category != null && !category.isEmpty()) {
-            entities = formSchemaRepository.findByCategory(category);
+            entities = formSchemaDao.findByCategory(category);
         } else {
-            entities = formSchemaRepository.findLatestVersions();
+            entities = formSchemaDao.findLatestVersions();
         }
         return entities.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
@@ -92,13 +92,13 @@ public class FormDesignerService {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteFormDefinition(String formKey) {
-        FormSchemaEntity entity = formSchemaRepository.findLatestByKey(formKey);
+        FormSchemaEntity entity = formSchemaDao.findLatestByKey(formKey);
         if (entity == null) {
             return false;
         }
         entity.setDeletedFlag(1);
         entity.setUpdateTime(LocalDateTime.now());
-        formSchemaRepository.updateById(entity);
+        formSchemaDao.updateById(entity);
         log.info("[表单设计器] 删除表单定义: key={}", formKey);
         return true;
     }

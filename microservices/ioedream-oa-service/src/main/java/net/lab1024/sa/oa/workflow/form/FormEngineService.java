@@ -32,10 +32,10 @@ public class FormEngineService {
     private ObjectMapper objectMapper;
 
     @Resource
-    private FormSchemaRepository formSchemaRepository;
+    private FormSchemaDao formSchemaDao;
 
     @Resource
-    private FormInstanceRepository formInstanceRepository;
+    private FormInstanceDao formInstanceDao;
 
     /**
      * 部署表单定义
@@ -56,7 +56,7 @@ public class FormEngineService {
             }
 
             // 查找当前最新版本
-            int latestVersion = formSchemaRepository.findLatestVersionByKey(formDefinitionKey);
+            int latestVersion = formSchemaDao.findLatestVersionByKey(formDefinitionKey);
             int newVersion = latestVersion + 1;
 
             // 创建表单定义记录
@@ -69,7 +69,7 @@ public class FormEngineService {
             formSchemaEntity.setCreateTime(LocalDateTime.now());
             formSchemaEntity.setUpdateTime(LocalDateTime.now());
 
-            formSchemaRepository.insert(formSchemaEntity);
+            formSchemaDao.insert(formSchemaEntity);
 
             log.info("[表单引擎] 表单定义部署成功: id={}, key={}, version={}",
                     formSchemaEntity.getId(), formDefinitionKey, newVersion);
@@ -98,7 +98,7 @@ public class FormEngineService {
                     formDefinitionKey, processInstanceId, taskId);
 
             // 查找最新表单定义
-            FormSchemaEntity formSchema = formSchemaRepository.findLatestByKey(formDefinitionKey);
+            FormSchemaEntity formSchema = formSchemaDao.findLatestByKey(formDefinitionKey);
             if (formSchema == null) {
                 throw new RuntimeException("表单定义不存在: " + formDefinitionKey);
             }
@@ -124,7 +124,7 @@ public class FormEngineService {
             formInstance.setCreateTime(LocalDateTime.now());
             formInstance.setUpdateTime(LocalDateTime.now());
 
-            formInstanceRepository.insert(formInstance);
+            formInstanceDao.insert(formInstance);
 
             log.info("[表单引擎] 表单实例启动成功: formInstanceId={}, formSchemaId={}",
                     formInstance.getId(), formSchema.getId());
@@ -149,7 +149,7 @@ public class FormEngineService {
         try {
             log.info("[表单引擎] 开始提交表单实例: formInstanceId={}, userId={}", formInstanceId, userId);
 
-            FormInstanceEntity formInstance = formInstanceRepository.selectById(Long.parseLong(formInstanceId));
+            FormInstanceEntity formInstance = formInstanceDao.selectById(Long.parseLong(formInstanceId));
             if (formInstance == null) {
                 throw new RuntimeException("表单实例不存在: " + formInstanceId);
             }
@@ -165,7 +165,7 @@ public class FormEngineService {
             existingData.put("submitTime", LocalDateTime.now().toString());
 
             // 验证表单数据
-            FormSchemaEntity formSchema = formSchemaRepository.selectById(formInstance.getFormSchemaId());
+            FormSchemaEntity formSchema = formSchemaDao.selectById(formInstance.getFormSchemaId());
             Map<String, Object> validationResult = validateFormData(formSchema.getFormSchema(), existingData);
             if (!(Boolean) validationResult.get("valid")) {
                 throw new RuntimeException("表单验证失败: " + validationResult.get("errors"));
@@ -177,7 +177,7 @@ public class FormEngineService {
             formInstance.setSubmitTime(LocalDateTime.now());
             formInstance.setUpdateTime(LocalDateTime.now());
 
-            formInstanceRepository.updateById(formInstance);
+            formInstanceDao.updateById(formInstance);
 
             log.info("[表单引擎] 表单实例提交成功: formInstanceId={}", formInstanceId);
             return true;
@@ -258,12 +258,12 @@ public class FormEngineService {
 
             Map<String, Object> renderResult = new HashMap<>();
 
-            FormInstanceEntity formInstance = formInstanceRepository.selectById(Long.parseLong(formInstanceId));
+            FormInstanceEntity formInstance = formInstanceDao.selectById(Long.parseLong(formInstanceId));
             if (formInstance == null) {
                 throw new RuntimeException("表单实例不存在: " + formInstanceId);
             }
 
-            FormSchemaEntity formSchema = formSchemaRepository.selectById(formInstance.getFormSchemaId());
+            FormSchemaEntity formSchema = formSchemaDao.selectById(formInstance.getFormSchemaId());
 
             // 构建表单渲染数据
             renderResult.put("formInstanceId", formInstanceId);
@@ -298,7 +298,7 @@ public class FormEngineService {
     public List<FormSchemaEntity> getFormDefinitions() {
         try {
             log.debug("[表单引擎] 获取表单定义列表");
-            List<FormSchemaEntity> formSchemas = formSchemaRepository.findLatestVersions();
+            List<FormSchemaEntity> formSchemas = formSchemaDao.findLatestVersions();
             log.debug("[表单引擎] 获取表单定义列表完成: count={}", formSchemas.size());
             return formSchemas;
         } catch (Exception e) {
@@ -320,7 +320,7 @@ public class FormEngineService {
             log.debug("[表单引擎] 获取表单实例列表: processInstanceId={}, taskId={}, submitterId={}",
                     processInstanceId, taskId, submitterId);
 
-            List<FormInstanceEntity> formInstances = formInstanceRepository.findByConditions(
+            List<FormInstanceEntity> formInstances = formInstanceDao.findByConditions(
                     processInstanceId, taskId, submitterId != null ? Long.parseLong(submitterId) : null);
 
             log.debug("[表单引擎] 获取表单实例列表完成: count={}", formInstances.size());
@@ -341,7 +341,7 @@ public class FormEngineService {
         try {
             log.debug("[表单引擎] 获取表单Schema信息: formDefinitionKey={}", formDefinitionKey);
 
-            FormSchemaEntity formSchema = formSchemaRepository.findLatestByKey(formDefinitionKey);
+            FormSchemaEntity formSchema = formSchemaDao.findLatestByKey(formDefinitionKey);
             if (formSchema == null) {
                 throw new RuntimeException("表单定义不存在: " + formDefinitionKey);
             }
@@ -375,7 +375,7 @@ public class FormEngineService {
         try {
             log.info("[表单引擎] 开始删除表单实例: formInstanceId={}", formInstanceId);
 
-            formInstanceRepository.deleteById(Long.parseLong(formInstanceId));
+            formInstanceDao.deleteById(Long.parseLong(formInstanceId));
 
             log.info("[表单引擎] 表单实例删除成功: formInstanceId={}", formInstanceId);
             return true;
