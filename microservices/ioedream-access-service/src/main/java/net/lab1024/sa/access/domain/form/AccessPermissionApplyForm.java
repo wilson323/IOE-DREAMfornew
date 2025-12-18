@@ -8,10 +8,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * 闂ㄧ鏉冮檺鐢宠琛ㄥ崟
+ * 门禁权限申请表单
  * <p>
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤Form鍚庣紑鍛藉悕
- * - 浣跨敤Jakarta楠岃瘉娉ㄨВ
+ * 严格遵循CLAUDE.md规范：
+ * - 使用Form后缀命名
+ * - 使用Jakarta验证注解
  * </p>
  *
  * @author IOE-DREAM Team
@@ -22,46 +23,47 @@ import lombok.Data;
 public class AccessPermissionApplyForm {
 
     /**
-     * 鐢宠浜篒D
+     * 申请人ID
      */
-    @NotNull(message = "鐢宠浜篒D涓嶈兘涓虹┖")
+    @NotNull(message = "申请人ID不能为空")
     private Long applicantId;
 
     /**
-     * 鍖哄煙ID
+     * 区域ID
      */
-    @NotNull(message = "鍖哄煙ID涓嶈兘涓虹┖")
+    @NotNull(message = "区域ID不能为空")
     private Long areaId;
 
     /**
-     * 鐢宠绫诲瀷
+     * 申请类型
      * <p>
-     * NORMAL-鏅€氭潈闄愮敵璇?     * EMERGENCY-绱ф€ユ潈闄愮敵璇?     * </p>
+     * NORMAL-常规访问申请
+     * EMERGENCY-紧急访问申请
+     * </p>
      */
-    @NotBlank(message = "鐢宠绫诲瀷涓嶈兘涓虹┖")
+    @NotBlank(message = "申请类型不能为空")
     private String applyType;
 
     /**
-     * 鐢宠鍘熷洜
+     * 申请事由
      */
-    @NotBlank(message = "鐢宠鍘熷洜涓嶈兘涓虹┖")
-    @Size(max = 500, message = "鐢宠鍘熷洜闀垮害涓嶈兘瓒呰繃500瀛楃")
+    @NotBlank(message = "申请事由不能为空")
+    @Size(max = 500, message = "申请事由长度不能超过500个字符")
     private String applyReason;
 
     /**
-     * 鐢宠寮€濮嬫椂闂?     */
+     * 申请开始时间
+     */
     private LocalDateTime startTime;
 
     /**
-     * 鐢宠缁撴潫鏃堕棿
+     * 申请结束时间
      */
     private LocalDateTime endTime;
 
     /**
-     * 澶囨敞
+     * 备注
      */
-    @Size(max = 500, message = "澶囨敞闀垮害涓嶈兘瓒呰繃500瀛楃")
+    @Size(max = 500, message = "备注长度不能超过500个字符")
     private String remark;
 }
-
-

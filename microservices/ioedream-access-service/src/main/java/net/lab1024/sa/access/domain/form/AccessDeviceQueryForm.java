@@ -6,11 +6,12 @@ import lombok.Data;
 import org.springframework.lang.Nullable;
 
 /**
- * 闂ㄧ璁惧鏌ヨ琛ㄥ崟
+ * 门禁设备查询表单
  * <p>
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤Form鍚庣紑鍛藉悕
- * - 浣跨敤Jakarta楠岃瘉娉ㄨВ
- * - 缁ф壙鍒嗛〉鍙傛暟瑙勮寖
+ * 严格遵循CLAUDE.md规范：
+ * - 使用Form后缀命名
+ * - 使用Jakarta验证注解
+ * - 支持分页查询参数
  * </p>
  *
  * @author IOE-DREAM Team
@@ -21,48 +22,48 @@ import org.springframework.lang.Nullable;
 public class AccessDeviceQueryForm {
 
     /**
-     * 椤电爜锛堜粠1寮€濮嬶級
+     * 页码（从1开始）
      */
-    @NotNull(message = "椤电爜涓嶈兘涓虹┖")
-    @Min(value = 1, message = "椤电爜蹇呴』澶т簬0")
+    @NotNull(message = "页码不能为空")
+    @Min(value = 1, message = "页码必须大于0")
     private Integer pageNum = 1;
 
     /**
-     * 姣忛〉澶у皬
+     * 每页大小
      */
-    @NotNull(message = "姣忛〉澶у皬涓嶈兘涓虹┖")
-    @Min(value = 1, message = "姣忛〉澶у皬蹇呴』澶т簬0")
+    @NotNull(message = "每页大小不能为空")
+    @Min(value = 1, message = "每页大小必须大于0")
     private Integer pageSize = 20;
 
     /**
-     * 鍏抽敭璇嶏紙璁惧鍚嶇О銆佽澶囩紪鍙凤級
+     * 关键字（设备名称或设备编码）
      */
     @Nullable
     private String keyword;
 
     /**
-     * 鍖哄煙ID
+     * 区域ID
      */
     private Long areaId;
 
     /**
-     * 璁惧鐘舵€?     * <p>
-     * 鏋氫妇鍊硷細
-     * - ONLINE - 鍦ㄧ嚎
-     * - OFFLINE - 绂荤嚎
-     * - MAINTAIN - 缁存姢涓?     * </p>
+     * 设备状态
+     * <p>
+     * 可能的值：
+     * - ONLINE - 在线
+     * - OFFLINE - 离线
+     * - MAINTAIN - 维护中
+     * </p>
      */
     @Nullable
     private String deviceStatus;
 
     /**
-     * 鍚敤鏍囧織
+     * 启用标志
      * <p>
-     * 0-绂佺敤
-     * 1-鍚敤
+     * 0-禁用
+     * 1-启用
      * </p>
      */
     private Integer enabledFlag;
 }
-
-

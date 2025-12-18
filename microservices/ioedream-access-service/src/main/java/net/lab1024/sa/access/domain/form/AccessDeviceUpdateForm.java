@@ -6,11 +6,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * 闂ㄧ璁惧鏇存柊琛ㄥ崟
+ * 门禁设备更新表单
  * <p>
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤Form鍚庣紑鍛藉悕
- * - 浣跨敤Jakarta楠岃瘉娉ㄨВ
- * - 瀹屾暣鐨勫弬鏁伴獙璇? * </p>
+ * 严格遵循CLAUDE.md规范：
+ * - 使用Form后缀命名
+ * - 使用Jakarta验证注解
+ * - 完整的参数验证
+ * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -20,57 +22,56 @@ import lombok.Data;
 public class AccessDeviceUpdateForm {
 
     /**
-     * 璁惧ID锛堜富閿級
+     * 设备ID（必填）
      */
-    @NotNull(message = "璁惧ID涓嶈兘涓虹┖")
+    @NotNull(message = "设备ID不能为空")
     private Long deviceId;
 
     /**
-     * 璁惧鍚嶇О
+     * 设备名称
      */
-    @NotBlank(message = "璁惧鍚嶇О涓嶈兘涓虹┖")
-    @Size(max = 100, message = "璁惧鍚嶇О闀垮害涓嶈兘瓒呰繃100瀛楃")
+    @NotBlank(message = "设备名称不能为空")
+    @Size(max = 100, message = "设备名称长度不能超过100个字符")
     private String deviceName;
 
     /**
-     * 璁惧缂栧彿
+     * 设备编码
      */
-    @NotBlank(message = "璁惧缂栧彿涓嶈兘涓虹┖")
-    @Size(max = 50, message = "璁惧缂栧彿闀垮害涓嶈兘瓒呰繃50瀛楃")
+    @NotBlank(message = "设备编码不能为空")
+    @Size(max = 50, message = "设备编码长度不能超过50个字符")
     private String deviceCode;
 
     /**
-     * 鍖哄煙ID锛堝閿級
+     * 区域ID（必填）
      */
-    @NotNull(message = "鍖哄煙ID涓嶈兘涓虹┖")
+    @NotNull(message = "区域ID不能为空")
     private Long areaId;
 
     /**
-     * IP鍦板潃
+     * IP地址
      */
-    @NotBlank(message = "IP鍦板潃涓嶈兘涓虹┖")
-    @Size(max = 50, message = "IP鍦板潃闀垮害涓嶈兘瓒呰繃50瀛楃")
+    @NotBlank(message = "IP地址不能为空")
+    @Size(max = 50, message = "IP地址长度不能超过50个字符")
     private String ipAddress;
 
     /**
-     * 绔彛鍙?     */
-    @NotNull(message = "绔彛鍙蜂笉鑳戒负绌?)
+     * 端口号
+     */
+    @NotNull(message = "端口号不能为空")
     private Integer port;
 
     /**
-     * 鍚敤鏍囧織
+     * 启用标志
      * <p>
-     * 0-绂佺敤
-     * 1-鍚敤
+     * 0-禁用
+     * 1-启用
      * </p>
      */
     private Integer enabledFlag;
 
     /**
-     * 澶囨敞
+     * 备注
      */
-    @Size(max = 500, message = "澶囨敞闀垮害涓嶈兘瓒呰繃500瀛楃")
+    @Size(max = 500, message = "备注长度不能超过500个字符")
     private String remark;
 }
-
-

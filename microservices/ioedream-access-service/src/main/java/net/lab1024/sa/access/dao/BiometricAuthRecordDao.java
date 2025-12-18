@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 鐢熺墿璇嗗埆楠岃瘉璁板綍鏁版嵁璁块棶灞?
+ * 生物识别认证记录数据访问对象
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -22,49 +22,49 @@ import java.util.List;
 public interface BiometricAuthRecordDao extends BaseMapper<BiometricAuthRecordEntity> {
 
     /**
-     * 鏍规嵁鐢ㄦ埛ID鏌ヨ楠岃瘉璁板綍
+     * 根据用户ID查询认证记录
      */
     @Select("SELECT * FROM t_access_biometric_auth_record WHERE user_id = #{userId} AND deleted_flag = 0 ORDER BY auth_time DESC")
     List<BiometricAuthRecordEntity> selectByUserId(@Param("userId") Long userId);
 
     /**
-     * 鏍规嵁璁惧ID鏌ヨ楠岃瘉璁板綍
+     * 根据设备ID查询认证记录
      */
     @Select("SELECT * FROM t_access_biometric_auth_record WHERE device_id = #{deviceId} AND deleted_flag = 0 ORDER BY auth_time DESC")
     List<BiometricAuthRecordEntity> selectByDeviceId(@Param("deviceId") String deviceId);
 
     /**
-     * 鏍规嵁楠岃瘉缁撴灉鏌ヨ璁板綍
+     * 根据认证结果查询记录
      */
     @Select("SELECT * FROM t_access_biometric_auth_record WHERE auth_result = #{authResult} AND deleted_flag = 0 ORDER BY auth_time DESC")
     List<BiometricAuthRecordEntity> selectByAuthResult(@Param("authResult") Integer authResult);
 
     /**
-     * 鏌ヨ鍙枒鎿嶄綔璁板綍
+     * 查询可疑操作记录
      */
     @Select("SELECT * FROM t_access_biometric_auth_record WHERE suspicious_operation = 1 AND deleted_flag = 0 ORDER BY auth_time DESC")
     List<BiometricAuthRecordEntity> selectSuspiciousOperations();
 
     /**
-     * 鏌ヨ闇€瑕佷汉宸ュ鏍哥殑璁板綍
+     * 查询需要人工复核的记录
      */
     @Select("SELECT * FROM t_access_biometric_auth_record WHERE manual_review_status = #{status} AND deleted_flag = 0 ORDER BY auth_time DESC")
     List<BiometricAuthRecordEntity> selectByManualReviewStatus(@Param("status") Integer status);
 
     /**
-     * 鏍规嵁鏃堕棿鑼冨洿鏌ヨ璁板綍
+     * 根据时间范围查询记录
      */
     @Select("SELECT * FROM t_access_biometric_auth_record WHERE auth_time BETWEEN #{startTime} AND #{endTime} AND deleted_flag = 0 ORDER BY auth_time DESC")
     List<BiometricAuthRecordEntity> selectByTimeRange(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
     /**
-     * 鏍规嵁鐢ㄦ埛ID鍜屾椂闂磋寖鍥存煡璇㈣褰?
+     * 根据用户ID和时间范围查询记录
      */
     @Select("SELECT * FROM t_access_biometric_auth_record WHERE user_id = #{userId} AND auth_time BETWEEN #{startTime} AND #{endTime} AND deleted_flag = 0 ORDER BY auth_time DESC")
     List<BiometricAuthRecordEntity> selectByUserIdAndTimeRange(@Param("userId") Long userId, @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
     /**
-     * 鏌ヨ楠岃瘉鎴愬姛鐜囩粺璁?
+     * 查询认证成功率统计
      */
     @Select("SELECT COUNT(*) as total_count, " +
             "SUM(CASE WHEN auth_result = 1 THEN 1 ELSE 0 END) as success_count, " +
@@ -76,13 +76,13 @@ public interface BiometricAuthRecordDao extends BaseMapper<BiometricAuthRecordEn
     List<java.util.Map<String, Object>> selectAuthStatistics(@Param("userId") Long userId, @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
     /**
-     * 鏌ヨ骞冲潎楠岃瘉鏃堕棿
+     * 查询平均认证时间
      */
     @Select("SELECT AVG(auth_duration) as avg_duration FROM t_access_biometric_auth_record WHERE deleted_flag = 0 AND biometric_type = #{biometricType}")
     BigDecimal selectAverageAuthDuration(@Param("biometricType") Integer biometricType);
 
     /**
-     * 鏌ヨ楂橀澶辫触璁惧
+     * 查询高失败率设备
      */
     @Select("SELECT device_id, COUNT(*) as fail_count " +
             "FROM t_access_biometric_auth_record " +
@@ -93,25 +93,25 @@ public interface BiometricAuthRecordDao extends BaseMapper<BiometricAuthRecordEn
     List<java.util.Map<String, Object>> selectHighFailureDevices(@Param("threshold") Integer threshold);
 
     /**
-     * 鏇存柊浜哄伐澶嶆牳鐘舵€?
+     * 更新人工复核状态
      */
     @Update("UPDATE t_access_biometric_auth_record SET manual_review_status = #{status}, reviewer_id = #{reviewerId}, review_time = NOW(), update_time = NOW() WHERE auth_id = #{authId}")
     int updateManualReviewStatus(@Param("authId") String authId, @Param("status") Integer status, @Param("reviewerId") Long reviewerId);
 
     /**
-     * 鏇存柊澶嶆牳鎰忚
+     * 更新复核意见
      */
     @Update("UPDATE t_access_biometric_auth_record SET review_comment = #{reviewComment}, update_time = NOW() WHERE auth_id = #{authId}")
     int updateReviewComment(@Param("authId") String authId, @Param("reviewComment") String reviewComment);
 
     /**
-     * 娓呯悊杩囨湡璁板綍
+     * 清理过期记录
      */
     @Update("UPDATE t_access_biometric_auth_record SET deleted_flag = 1, update_time = NOW() WHERE auth_time < #{expireTime} AND deleted_flag = 0")
     int cleanExpiredRecords(@Param("expireTime") LocalDateTime expireTime);
 
     /**
-     * 鏌ヨ璁惧楠岃瘉瓒嬪娍
+     * 查询设备认证趋势
      */
     @Select("SELECT DATE(auth_time) as date, " +
             "COUNT(*) as total_count, " +

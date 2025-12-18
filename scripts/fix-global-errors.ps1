@@ -155,3 +155,4 @@ Write-Host "1. 在IDE中刷新Maven项目" -ForegroundColor Gray
 Write-Host "2. 清理并重新构建项目" -ForegroundColor Gray
 Write-Host "3. 检查是否还有编译错误" -ForegroundColor Gray
 Write-Host ""
+

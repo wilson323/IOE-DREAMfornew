@@ -45,4 +45,24 @@ public interface BiometricConfigDao extends BaseMapper<BiometricConfigEntity> {
     @Select("SELECT * FROM t_access_biometric_config WHERE algorithm_provider = #{provider} " +
             "AND config_status = 2 AND deleted_flag = 0")
     List<BiometricConfigEntity> selectByProvider(@Param("provider") Integer provider);
+
+    /**
+     * 查询指定生物识别类型的所有配置
+     */
+    @Select("SELECT * FROM t_access_biometric_config WHERE biometric_type = #{biometricType} AND deleted_flag = 0 ORDER BY config_id DESC")
+    List<BiometricConfigEntity> selectByBiometricType(@Param("biometricType") Integer biometricType);
+
+    /**
+     * 查询需要更新的配置（接近过期时间）
+     */
+    @Select("SELECT * FROM t_access_biometric_config WHERE expire_time <= DATE_ADD(NOW(), INTERVAL #{days} DAY) " +
+            "AND config_status = 2 AND deleted_flag = 0 ORDER BY expire_time ASC")
+    List<BiometricConfigEntity> selectConfigsExpiringSoon(@Param("days") Integer days);
+
+    /**
+     * 查询自动更新启用的配置
+     */
+    @Select("SELECT * FROM t_access_biometric_config WHERE auto_update_enabled = 1 " +
+            "AND config_status = 2 AND deleted_flag = 0")
+    List<BiometricConfigEntity> selectAutoUpdateConfigs();
 }
