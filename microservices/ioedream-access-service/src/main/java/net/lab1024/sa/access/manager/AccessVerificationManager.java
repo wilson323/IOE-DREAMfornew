@@ -85,7 +85,7 @@ public class AccessVerificationManager {
     private static final String CACHE_KEY_AREA_CONFIG = "access:area:config:";
     private static final String CACHE_KEY_BLACKLIST = "access:blacklist:user:";
     private static final String CACHE_KEY_MULTI_PERSON_SESSION = "access:multi-person:session:";
-    
+
     /**
      * 缓存过期时间
      */
@@ -93,7 +93,7 @@ public class AccessVerificationManager {
     private static final Duration CACHE_EXPIRE_CONFIG = Duration.ofHours(1); // 配置缓存1小时
     private static final Duration CACHE_EXPIRE_BLACKLIST = Duration.ofHours(1); // 黑名单缓存1小时
     private static final Duration CACHE_EXPIRE_SESSION = Duration.ofMinutes(5); // 多人验证会话缓存5分钟
-    
+
     /**
      * 时间格式化器
      */
@@ -162,7 +162,7 @@ public class AccessVerificationManager {
      * @return 是否通过验证
      */
     public boolean verifyAntiPassback(Long userId, Long deviceId, Integer inOutStatus, Long areaId) {
-        log.debug("[反潜验证] 开始验证: userId={}, deviceId={}, inOutStatus={}, areaId={}", 
+        log.debug("[反潜验证] 开始验证: userId={}, deviceId={}, inOutStatus={}, areaId={}",
                 userId, deviceId, inOutStatus, areaId);
 
         try {
@@ -271,7 +271,7 @@ public class AccessVerificationManager {
             try {
                 Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), Map.class);
                 AntiPassbackConfig config = new AntiPassbackConfig();
-                
+
                 // 读取反潜配置
                 if (configMap.containsKey("antiPassback")) {
                     Object antiPassbackObj = configMap.get("antiPassback");
@@ -296,13 +296,13 @@ public class AccessVerificationManager {
 
                 // 4. 写入缓存
                 redisTemplate.opsForValue().set(cacheKey, config, CACHE_EXPIRE_CONFIG);
-                log.debug("[反潜验证] 反潜配置已缓存: areaId={}, enabled={}, timeWindow={}", 
+                log.debug("[反潜验证] 反潜配置已缓存: areaId={}, enabled={}, timeWindow={}",
                         areaId, config.enabled, config.timeWindow);
 
                 return config;
 
             } catch (Exception e) {
-                log.warn("[反潜验证] 解析反潜配置失败: areaId={}, extConfig={}, error={}", 
+                log.warn("[反潜验证] 解析反潜配置失败: areaId={}, extConfig={}, error={}",
                         areaId, areaExt.getExtConfig(), e.getMessage());
                 // 解析失败，返回默认配置
                 AntiPassbackConfig defaultConfig = new AntiPassbackConfig();
@@ -1016,7 +1016,7 @@ public class AccessVerificationManager {
             boolean isBlacklisted = false;
             if (response != null && response.isSuccess() && response.getData() != null) {
                 Map<String, Object> userData = response.getData();
-                
+
                 // 检查用户状态
                 Object statusObj = userData.get("status");
                 if (statusObj != null) {
@@ -1185,7 +1185,7 @@ public class AccessVerificationManager {
             userIds.add(request.getUserId());
             session.setUserIds(objectMapper.writeValueAsString(userIds));
             session.setCurrentCount(userIds.size());
-            
+
             // 6. 更新数据库和Redis缓存
             multiPersonRecordDao.updateById(session);
             updateSessionCache(session);
@@ -1301,7 +1301,7 @@ public class AccessVerificationManager {
         multiPersonRecordDao.insert(newSession);
         // 写入Redis缓存
         updateSessionCache(newSession);
-        
+
         log.info("[多人验证] 创建新会话: sessionId={}, areaId={}, deviceId={}, requiredCount={}",
                 newSession.getVerificationSessionId(), areaId, deviceId, requiredCount);
 
@@ -1319,7 +1319,7 @@ public class AccessVerificationManager {
             redisTemplate.opsForValue().set(cacheKey, session, CACHE_EXPIRE_SESSION);
             log.debug("[多人验证] 会话已缓存: sessionId={}", session.getVerificationSessionId());
         } catch (Exception e) {
-            log.warn("[多人验证] 更新会话缓存失败: sessionId={}, error={}", 
+            log.warn("[多人验证] 更新会话缓存失败: sessionId={}, error={}",
                     session.getVerificationSessionId(), e.getMessage());
         }
     }
