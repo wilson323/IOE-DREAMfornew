@@ -10,7 +10,8 @@ import java.util.UUID;
 /**
  * 设备连接工厂
  * <p>
- * 用于创建和销毁设备连接
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
+ * 用于创建和销毁设备连接，支持连接健康检查
  * </p>
  *
  * @author IOE-DREAM Team

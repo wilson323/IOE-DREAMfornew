@@ -10,11 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 设备连接池管理器
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 管理设备连接的复用，提升性能和资源利用率
- * 严格遵循CLAUDE.md规范：
- * - 使用连接池模式实现
- * - 支持连接复用机制
- * - 配置优化
+ * - 设备连接对象池（使用Apache Commons Pool2）
+ * - 连接复用机制
+ * - 连接健康检查（validateObject方法）
  * </p>
  *
  * @author IOE-DREAM Team
