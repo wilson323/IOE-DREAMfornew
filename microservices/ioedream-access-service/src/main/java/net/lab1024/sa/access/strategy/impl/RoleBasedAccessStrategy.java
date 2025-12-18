@@ -3,6 +3,7 @@ package net.lab1024.sa.access.strategy.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.domain.form.AccessRequest;
 import net.lab1024.sa.access.strategy.IAccessPermissionStrategy;
+import net.lab1024.sa.common.factory.StrategyMarker;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.dao.AreaDao;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
@@ -19,6 +20,7 @@ import java.util.Map;
 /**
  * 基于角色的门禁权限策略
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 验证用户角色是否在允许的角色列表中
  * </p>
  *
@@ -28,6 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
+@StrategyMarker(name = "ROLE_BASED", type = "ACCESS_PERMISSION", priority = 80)
 public class RoleBasedAccessStrategy implements IAccessPermissionStrategy {
 
     @Resource

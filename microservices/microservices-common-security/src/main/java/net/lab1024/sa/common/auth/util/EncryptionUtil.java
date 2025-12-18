@@ -9,7 +9,7 @@ import org.springframework.util.DigestUtils;
  * 加密工具类
  * <p>
  * 提供多种加密算法支持
- * 严格遵循CLAUDE.md规范：
+ * 严格遵循CLAUDE.md规范和ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求：
  * - 使用Spring Security标准加密组件
  * - 提供MD5、SHA256、BCrypt等加密方法
  * </p>
@@ -20,18 +20,6 @@ import org.springframework.util.DigestUtils;
  */
 @Component
 public class EncryptionUtil {
-
-    private final PasswordEncoder passwordEncoder;
-
-    /**
-     * 构造函数注入PasswordEncoder
-     * <p>
-     * 使用BCryptPasswordEncoder作为默认密码编码器
-     * </p>
-     */
-    public EncryptionUtil() {
-        this.passwordEncoder = new BCryptPasswordEncoder();
-    }
 
     /**
      * MD5加密
@@ -69,6 +57,8 @@ public class EncryptionUtil {
      * BCrypt密码加密
      * <p>
      * 企业级密码加密标准，每次加密结果不同
+     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求：
+     * - 每次调用时创建新的BCryptPasswordEncoder实例
      * </p>
      *
      * @param rawPassword 原始密码
@@ -78,13 +68,16 @@ public class EncryptionUtil {
         if (rawPassword == null) {
             return null;
         }
-        return passwordEncoder.encode(rawPassword);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(rawPassword);
     }
 
     /**
      * BCrypt密码验证
      * <p>
      * 验证原始密码是否与加密后的密码匹配
+     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求：
+     * - 每次调用时创建新的BCryptPasswordEncoder实例
      * </p>
      *
      * @param rawPassword 原始密码
@@ -95,6 +88,7 @@ public class EncryptionUtil {
         if (rawPassword == null || encodedPassword == null) {
             return false;
         }
-        return passwordEncoder.matches(rawPassword, encodedPassword);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(rawPassword, encodedPassword);
     }
 }

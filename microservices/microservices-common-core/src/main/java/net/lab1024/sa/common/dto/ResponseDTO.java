@@ -83,17 +83,21 @@ public class ResponseDTO<T> implements Serializable {
 
     /**
      * 成功响应（带数据）
+     * <p>
+     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求：
+     * - message统一为"success"
+     * </p>
      *
      * @param data 响应数据
      * @return 成功响应
      */
     public static <T> ResponseDTO<T> ok(T data) {
-        return ResponseDTO.<T>builder()
-                .code(200)
-                .message("操作成功")
-                .data(data)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        ResponseDTO<T> response = new ResponseDTO<>();
+        response.setCode(200);
+        response.setMessage("success");
+        response.setData(data);
+        response.setTimestamp(System.currentTimeMillis());
+        return response;
     }
 
     /**
@@ -189,17 +193,7 @@ public class ResponseDTO<T> implements Serializable {
      * <p>
      * 便捷方法，用于快速返回错误响应
      * 使用默认错误码500（服务器内部错误）
-     * </p>
-     *
-     * @param message 错误消息
-     * @return 错误响应
-     */
-    public static <T> ResponseDTO<T> error(String message) {
-        return ResponseDTO.<T>builder()
-                .code(500)
-                .message(message)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return response;
     }
 
     /**
@@ -285,4 +279,3 @@ public class ResponseDTO<T> implements Serializable {
         return this.code != null && this.code == 200;
     }
 }
-

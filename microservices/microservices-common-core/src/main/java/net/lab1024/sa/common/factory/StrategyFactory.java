@@ -164,8 +164,8 @@ public class StrategyFactory<T> {
             log.debug("[策略工厂] 加载策略: {} -> {}", strategyName, entry.getKey());
         }
 
-        log.info("[策略工厂] 加载策略完成: {}, 数量: {}", 
-            strategyClass.getSimpleName(), 
+        log.info("[策略工厂] 加载策略完成: {}, 数量: {}",
+            strategyClass.getSimpleName(),
             strategies.size());
 
         return strategies;
@@ -174,13 +174,19 @@ public class StrategyFactory<T> {
     /**
      * 提取策略名称
      * <p>
-     * 优先从策略实例的getSupportedType()方法获取名称
-     * 否则使用Bean名称（去除Strategy后缀）
+     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
+     * 优先级：@StrategyMarker注解 > getSupportedType()方法 > Bean名称
      * </p>
      */
     private String extractStrategyName(String beanName, T strategy) {
+        // 1. 优先从@StrategyMarker注解获取名称
+        StrategyMarker marker = strategy.getClass().getAnnotation(StrategyMarker.class);
+        if (marker != null && !marker.name().isEmpty()) {
+            return marker.name();
+        }
+
+        // 2. 尝试调用getSupportedType()方法
         try {
-            // 尝试调用getSupportedType()方法
             java.lang.reflect.Method method = strategy.getClass().getMethod("getSupportedType");
             Object result = method.invoke(strategy);
             if (result != null) {
@@ -192,10 +198,10 @@ public class StrategyFactory<T> {
                 return result.toString();
             }
         } catch (Exception e) {
-            // 忽略异常，使用Bean名称
+            // 忽略异常，继续使用Bean名称
         }
 
-        // 使用Bean名称（去除Strategy后缀）
+        // 3. 使用Bean名称（去除Strategy后缀）
         if (beanName.endsWith("Strategy")) {
             return beanName.substring(0, beanName.length() - "Strategy".length());
         }
@@ -206,11 +212,18 @@ public class StrategyFactory<T> {
     /**
      * 获取策略优先级
      * <p>
-     * 如果策略实现了getPriority()方法，则返回其优先级
-     * 否则返回默认优先级100
+     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
+     * 优先级：@StrategyMarker注解 > getPriority()方法 > 默认优先级100
      * </p>
      */
     private int getPriority(T strategy) {
+        // 1. 优先从@StrategyMarker注解获取优先级
+        StrategyMarker marker = strategy.getClass().getAnnotation(StrategyMarker.class);
+        if (marker != null && marker.priority() != 100) {
+            return marker.priority();
+        }
+
+        // 2. 尝试调用getPriority()方法
         try {
             java.lang.reflect.Method method = strategy.getClass().getMethod("getPriority");
             Object result = method.invoke(strategy);
@@ -219,6 +232,11 @@ public class StrategyFactory<T> {
             }
         } catch (Exception e) {
             // 忽略异常，返回默认优先级
+        }
+
+        // 3. 如果@StrategyMarker注解存在但未设置priority，使用注解的默认值
+        if (marker != null) {
+            return marker.priority();
         }
 
         return 100; // 默认优先级

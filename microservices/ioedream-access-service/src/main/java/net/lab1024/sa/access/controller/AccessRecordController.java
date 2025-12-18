@@ -28,18 +28,20 @@ import net.lab1024.sa.access.service.AccessEventService;
 import java.time.LocalDate;
 
 /**
- * 闂ㄧ璁板綍绠＄悊PC绔帶鍒跺櫒
+ * 门禁记录管理PC端控制器
  * <p>
- * 鎻愪緵PC绔棬绂佽褰曠鐞嗙浉鍏矨PI
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤@RestController娉ㄨВ
- * - 浣跨敤@Resource渚濊禆娉ㄥ叆
- * - 浣跨敤@Valid鍙傛暟鏍￠獙
- * - 杩斿洖缁熶竴ResponseDTO鏍煎紡
+ * 提供PC端门禁记录管理相关API
+ * 严格遵循CLAUDE.md规范：
+ * - 使用@RestController注解
+ * - 使用@Resource依赖注入
+ * - 使用@Valid参数验证
+ * - 返回统一ResponseDTO格式
  * </p>
  * <p>
- * 涓氬姟鍦烘櫙锛? * - 闂ㄧ璁板綍鏌ヨ锛堝垎椤碉級
- * - 闂ㄧ璁板綍缁熻
- * - 闂ㄧ璁板綍瀵煎嚭
+ * 业务场景：
+ * - 门禁记录查询（分页）
+ * - 门禁记录统计
+ * - 门禁记录导出
  * </p>
  *
  * @author IOE-DREAM Team
@@ -49,21 +51,24 @@ import java.time.LocalDate;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/access/record")
-@Tag(name = "闂ㄧ璁板綍绠＄悊PC绔?, description = "闂ㄧ璁板綍鏌ヨ銆佺粺璁°€佸鍑虹瓑API")
-@PermissionCheck(value = "ACCESS_RECORD", description = "闂ㄧ璁板綍绠＄悊妯″潡鏉冮檺")
+@Tag(name = "门禁记录管理PC端", description = "门禁记录查询、统计、导出等API")
+@PermissionCheck(value = "ACCESS_RECORD", description = "门禁记录管理模块权限")
 public class AccessRecordController {
 
     @Resource
     private AccessEventService accessEventService;
 
     /**
-     * 鍒涘缓闂ㄧ璁板綍
+     * 创建门禁记录
      * <p>
-     * 鐢ㄤ簬璁惧鍗忚鎺ㄩ€侀棬绂佽褰?     * 閫氳繃瀹¤鏃ュ織璁板綍闂ㄧ浜嬩欢
+     * 用于设备协议推送门禁记录
+     * 通过定时任务记录门禁事件
      * </p>
      *
-     * @param form 闂ㄧ璁板綍鍒涘缓琛ㄥ崟
-     * @return 鍒涘缓鐨勯棬绂佽褰旾D锛堝璁℃棩蹇桰D锛?     * @apiNote 绀轰緥璇锋眰锛?     * <pre>
+     * @param form 门禁记录创建表单
+     * @return 创建的门禁记录ID（审核日志ID）
+     * @apiNote 示例请求：
+     * <pre>
      * POST /api/v1/access/record/create
      * {
      *   "userId": 1001,
@@ -80,13 +85,13 @@ public class AccessRecordController {
     @Observed(name = "accessRecord.createAccessRecord", contextualName = "access-record-create")
     @PostMapping("/create")
     @Operation(
-        summary = "鍒涘缓闂ㄧ璁板綍",
-        description = "鍒涘缓闂ㄧ璁板綍锛岀敤浜庤澶囧崗璁帹閫侀棬绂佽褰曘€傞€氳繃瀹¤鏃ュ織璁板綍闂ㄧ浜嬩欢銆?,
-        tags = {"闂ㄧ璁板綍绠＄悊PC绔?}
+        summary = "创建门禁记录",
+        description = "创建门禁记录，用于设备协议推送门禁记录。通过定时任务记录门禁事件。",
+        tags = {"门禁记录管理PC端"}
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
-        description = "鍒涘缓鎴愬姛",
+        description = "创建成功",
         content = @io.swagger.v3.oas.annotations.media.Content(
             mediaType = "application/json",
             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Long.class)
@@ -94,52 +99,52 @@ public class AccessRecordController {
     )
     public ResponseDTO<Long> createAccessRecord(
             @Valid @RequestBody AccessRecordAddForm form) {
-        log.info("[闂ㄧ璁板綍] 鍒涘缓闂ㄧ璁板綍锛寀serId={}, deviceId={}, passType={}",
+        log.info("[门禁记录] 创建门禁记录：userId={}, deviceId={}, passType={}",
                 form.getUserId(), form.getDeviceId(), form.getPassType());
         return accessEventService.createAccessRecord(form);
     }
 
     /**
-     * 鍒嗛〉鏌ヨ闂ㄧ璁板綍
+     * 分页查询门禁记录
      * <p>
-     * 涓ユ牸閬靛惊RESTful瑙勮寖锛氭煡璇㈡搷浣滀娇鐢℅ET鏂规硶
+     * 严格遵循RESTful规范：查询操作使用GET方法
      * </p>
      *
-     * @param pageNum 椤电爜
-     * @param pageSize 姣忛〉澶у皬
-     * @param userId 鐢ㄦ埛ID锛堝彲閫夛級
-     * @param deviceId 璁惧ID锛堝彲閫夛級
-     * @param areaId 鍖哄煙ID锛堝彲閫夛級
-     * @param startDate 寮€濮嬫棩鏈燂紙鍙€夛級
-     * @param endDate 缁撴潫鏃ユ湡锛堝彲閫夛級
-     * @param accessResult 閫氳缁撴灉锛堝彲閫夛級
-     * @return 闂ㄧ璁板綍鍒楄〃
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @param userId 用户ID（可选）
+     * @param deviceId 设备ID（可选）
+     * @param areaId 区域ID（可选）
+     * @param startDate 开始日期（可选）
+     * @param endDate 结束日期（可选）
+     * @param accessResult 通行结果（可选）
+     * @return 门禁记录列表
      */
     @Observed(name = "accessRecord.queryAccessRecords", contextualName = "access-record-query")
     @GetMapping("/query")
-    @Operation(summary = "鍒嗛〉鏌ヨ闂ㄧ璁板綍", description = "鏍规嵁鏉′欢鍒嗛〉鏌ヨ闂ㄧ璁板綍")
-    @PermissionCheck(value = "ACCESS_RECORD_VIEW", description = "鏌ヨ闂ㄧ璁板綍")
+    @Operation(summary = "分页查询门禁记录", description = "根据条件分页查询门禁记录")
+    @PermissionCheck(value = "ACCESS_RECORD_VIEW", description = "查询门禁记录")
     public ResponseDTO<PageResult<net.lab1024.sa.access.domain.vo.AccessRecordVO>> queryAccessRecords(
-            @Parameter(description = "椤电爜锛屼粠1寮€濮?)
+            @Parameter(description = "页码，从1开始")
             @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "姣忛〉澶у皬")
+            @Parameter(description = "每页大小")
             @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "鐢ㄦ埛ID锛堝彲閫夛級")
+            @Parameter(description = "用户ID（可选）")
             @RequestParam(required = false) Long userId,
-            @Parameter(description = "璁惧ID锛堝彲閫夛級")
+            @Parameter(description = "设备ID（可选）")
             @RequestParam(required = false) Long deviceId,
-            @Parameter(description = "鍖哄煙ID锛堝彲閫夛級")
+            @Parameter(description = "区域ID（可选）")
             @RequestParam(required = false) String areaId,
-            @Parameter(description = "寮€濮嬫棩鏈燂紝鏍煎紡锛歽yyy-MM-dd")
+            @Parameter(description = "开始日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "缁撴潫鏃ユ湡锛屾牸寮忥細yyyy-MM-dd")
+            @Parameter(description = "结束日期，格式：yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @Parameter(description = "閫氳缁撴灉锛堝彲閫夛級锛?-鎴愬姛锛?-澶辫触锛?-寮傚父")
+            @Parameter(description = "通行结果（可选）：1-成功，2-失败，3-异常")
             @RequestParam(required = false) Integer accessResult) {
-        log.info("[闂ㄧ璁板綍] 鍒嗛〉鏌ヨ闂ㄧ璁板綍锛宲ageNum={}, pageSize={}, userId={}, deviceId={}, areaId={}, startDate={}, endDate={}, accessResult={}",
+        log.info("[门禁记录] 分页查询门禁记录：pageNum={}, pageSize={}, userId={}, deviceId={}, areaId={}, startDate={}, endDate={}, accessResult={}",
                 pageNum, pageSize, userId, deviceId, areaId, startDate, endDate, accessResult);
         try {
-            // 鏋勫缓鏌ヨ琛ㄥ崟
+            // 构建查询表单
             net.lab1024.sa.access.domain.form.AccessRecordQueryForm queryForm = new net.lab1024.sa.access.domain.form.AccessRecordQueryForm();
             queryForm.setPageNum(pageNum);
             queryForm.setPageSize(pageSize);
@@ -150,56 +155,57 @@ public class AccessRecordController {
             queryForm.setEndDate(endDate);
             queryForm.setAccessResult(accessResult);
 
-            // 璋冪敤Service灞傛煡璇?            return accessEventService.queryAccessRecords(queryForm);
+            // 调用Service层查询
+            return accessEventService.queryAccessRecords(queryForm);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[闂ㄧ璁板綍] 鍒嗛〉鏌ヨ闂ㄧ璁板綍鍙傛暟閿欒: pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
-            return ResponseDTO.error("INVALID_PARAMETER", "鍙傛暟閿欒锛? + e.getMessage());
+            log.warn("[门禁记录] 分页查询门禁记录参数错误: pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[闂ㄧ璁板綍] 鍒嗛〉鏌ヨ闂ㄧ璁板綍涓氬姟寮傚父: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
+            log.warn("[门禁记录] 分页查询门禁记录业务异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[闂ㄧ璁板綍] 鍒嗛〉鏌ヨ闂ㄧ璁板綍绯荤粺寮傚父: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
-            return ResponseDTO.error("QUERY_ACCESS_RECORDS_SYSTEM_ERROR", "鏌ヨ闂ㄧ璁板綍澶辫触锛? + e.getMessage());
+            log.error("[门禁记录] 分页查询门禁记录系统异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("QUERY_ACCESS_RECORDS_SYSTEM_ERROR", "查询门禁记录失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[闂ㄧ璁板綍] 鍒嗛〉鏌ヨ闂ㄧ璁板綍鏈煡寮傚父: pageNum={}, pageSize={}", pageNum, pageSize, e);
-            return ResponseDTO.error("QUERY_ACCESS_RECORDS_ERROR", "鏌ヨ闂ㄧ璁板綍澶辫触: " + e.getMessage());
+            log.error("[门禁记录] 分页查询门禁记录未知异常: pageNum={}, pageSize={}", pageNum, pageSize, e);
+            return ResponseDTO.error("QUERY_ACCESS_RECORDS_ERROR", "查询门禁记录失败: " + e.getMessage());
         }
     }
 
     /**
-     * 鑾峰彇闂ㄧ璁板綍缁熻
+     * 获取门禁记录统计
      *
-     * @param startDate 寮€濮嬫棩鏈?     * @param endDate 缁撴潫鏃ユ湡
-     * @param areaId 鍖哄煙ID锛堝彲閫夛級
-     * @return 缁熻鏁版嵁
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @param areaId 区域ID（可选）
+     * @return 统计数据
      */
     @Observed(name = "accessRecord.getAccessRecordStatistics", contextualName = "access-record-statistics")
     @GetMapping("/statistics")
-    @Operation(summary = "鑾峰彇闂ㄧ璁板綍缁熻", description = "鏍规嵁鏃堕棿鑼冨洿鍜屽尯鍩熻幏鍙栭棬绂佽褰曠粺璁℃暟鎹?)
-    @PermissionCheck(value = "ACCESS_RECORD_VIEW", description = "鑾峰彇闂ㄧ璁板綍缁熻")
+    @Operation(summary = "获取门禁记录统计", description = "根据时间范围和区域获取门禁记录统计数据")
+    @PermissionCheck(value = "ACCESS_RECORD_VIEW", description = "获取门禁记录统计")
     public ResponseDTO<net.lab1024.sa.access.domain.vo.AccessRecordStatisticsVO> getAccessRecordStatistics(
-            @Parameter(description = "寮€濮嬫棩鏈燂紝鏍煎紡锛歽yyy-MM-dd")
+            @Parameter(description = "开始日期，格式：yyyy-MM-dd")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "缁撴潫鏃ユ湡锛屾牸寮忥細yyyy-MM-dd")
+            @Parameter(description = "结束日期，格式：yyyy-MM-dd")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) String areaId) {
-        log.info("[闂ㄧ璁板綍] 鑾峰彇闂ㄧ璁板綍缁熻锛宻tartDate={}, endDate={}, areaId={}", startDate, endDate, areaId);
+        log.info("[门禁记录] 获取门禁记录统计：startDate={}, endDate={}, areaId={}", startDate, endDate, areaId);
         try {
-            // 璋冪敤Service灞傜粺璁?            return accessEventService.getAccessRecordStatistics(startDate, endDate, areaId);
+            // 调用Service层统计
+            return accessEventService.getAccessRecordStatistics(startDate, endDate, areaId);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[闂ㄧ璁板綍] 鑾峰彇闂ㄧ璁板綍缁熻鍙傛暟閿欒: startDate={}, endDate={}, areaId={}, error={}", startDate, endDate, areaId, e.getMessage());
-            return ResponseDTO.error("INVALID_PARAMETER", "鍙傛暟閿欒锛? + e.getMessage());
+            log.warn("[门禁记录] 获取门禁记录统计参数错误: startDate={}, endDate={}, areaId={}, error={}", startDate, endDate, areaId, e.getMessage());
+            return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[闂ㄧ璁板綍] 鑾峰彇闂ㄧ璁板綍缁熻涓氬姟寮傚父: startDate={}, endDate={}, areaId={}, code={}, message={}", startDate, endDate, areaId, e.getCode(), e.getMessage());
+            log.warn("[门禁记录] 获取门禁记录统计业务异常: startDate={}, endDate={}, areaId={}, code={}, message={}", startDate, endDate, areaId, e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[闂ㄧ璁板綍] 鑾峰彇闂ㄧ璁板綍缁熻绯荤粺寮傚父: startDate={}, endDate={}, areaId={}, code={}, message={}", startDate, endDate, areaId, e.getCode(), e.getMessage(), e);
-            return ResponseDTO.error("GET_STATISTICS_SYSTEM_ERROR", "鑾峰彇缁熻鏁版嵁澶辫触锛? + e.getMessage());
+            log.error("[门禁记录] 获取门禁记录统计系统异常: startDate={}, endDate={}, areaId={}, code={}, message={}", startDate, endDate, areaId, e.getCode(), e.getMessage(), e);
+            return ResponseDTO.error("GET_STATISTICS_SYSTEM_ERROR", "获取统计数据失败：" + e.getMessage());
         } catch (Exception e) {
-            log.error("[闂ㄧ璁板綍] 鑾峰彇闂ㄧ璁板綍缁熻鏈煡寮傚父: startDate={}, endDate={}, areaId={}", startDate, endDate, areaId, e);
-            return ResponseDTO.error("GET_STATISTICS_ERROR", "鑾峰彇缁熻鏁版嵁澶辫触: " + e.getMessage());
+            log.error("[门禁记录] 获取门禁记录统计未知异常: startDate={}, endDate={}, areaId={}", startDate, endDate, areaId, e);
+            return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计数据失败: " + e.getMessage());
         }
     }
 }
-
-

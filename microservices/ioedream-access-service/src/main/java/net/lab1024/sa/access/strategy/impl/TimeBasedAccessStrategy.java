@@ -3,6 +3,7 @@ package net.lab1024.sa.access.strategy.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.domain.form.AccessRequest;
 import net.lab1024.sa.access.strategy.IAccessPermissionStrategy;
+import net.lab1024.sa.common.factory.StrategyMarker;
 import net.lab1024.sa.common.organization.entity.UserAreaPermissionEntity;
 import net.lab1024.sa.common.organization.dao.UserAreaPermissionDao;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.List;
 /**
  * 基于时间段的门禁权限策略
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 验证用户是否在允许的时间段内通行
  * </p>
  *
@@ -24,6 +26,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@StrategyMarker(name = "TIME_BASED", type = "ACCESS_PERMISSION", priority = 100)
 public class TimeBasedAccessStrategy implements IAccessPermissionStrategy {
 
     @Resource

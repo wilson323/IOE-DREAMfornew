@@ -29,14 +29,14 @@ import net.lab1024.sa.access.domain.vo.DevicePerformanceAnalyticsVO;
 import net.lab1024.sa.access.domain.vo.MaintenancePredictionVO;
 
 /**
- * 璁惧鍋ュ悍鐩戞帶鎺у埗鍣?
+ * 设备健康监控控制器
  * <p>
- * 鎻愪緵璁惧鍋ュ悍鐘舵€佺洃鎺с€佹€ц兘鍒嗘瀽銆侀娴嬫€х淮鎶ょ瓑浼佷笟绾у姛鑳?
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛?
- * - 浣跨敤@RestController娉ㄨВ
- * - 缁熶竴浣跨敤@Resource渚濊禆娉ㄥ叆
- * - 瀹屾暣鐨凙PI鏂囨。娉ㄨВ
- * - 鏉冮檺鎺у埗娉ㄨВ
+ * 提供设备健康状态监控、性能分析、预测性维护等业务功能
+ * 严格遵循CLAUDE.md规范：
+ * - 使用@RestController注解
+ * 统一使用@Resource依赖注入
+ * - 完整的API文档注释
+ * - 权限控制注解
  * </p>
  *
  * @author IOE-DREAM Team
@@ -45,182 +45,182 @@ import net.lab1024.sa.access.domain.vo.MaintenancePredictionVO;
  */
 @Slf4j
 @RestController
-@PermissionCheck(value = "ACCESS_MANAGE", description = "璁惧鍋ュ悍鐩戞帶鏉冮檺")
+@PermissionCheck(value = "ACCESS_MANAGE", description = "设备健康监控权限")
 @RequestMapping("/api/v1/device/health")
-@Tag(name = "璁惧鍋ュ悍鐩戞帶", description = "璁惧鍋ュ悍鐘舵€佺洃鎺с€佹€ц兘鍒嗘瀽鍜岄娴嬫€х淮鎶?)
+@Tag(name = "设备健康监控", description = "设备健康状态监控、性能分析和预测性维护")
 public class DeviceHealthController {
 
     /**
-     * 璁惧鍋ュ悍鏈嶅姟
+     * 设备健康服务
      */
     @Resource
     private DeviceHealthService deviceHealthService;
 
     /**
-     * 缃戝叧鏈嶅姟瀹㈡埛绔?
+     * 网关服务客户端
      */
     @Resource
     private GatewayServiceClient gatewayServiceClient;
 
     /**
-     * 璁惧鍋ュ悍鐩戞帶
+     * 设备健康监控
      * <p>
-     * 瀹炴椂鐩戞帶鎸囧畾璁惧鐨勫仴搴风姸鎬侊紝鍖呮嫭锛?
-     * - 璁惧鍦ㄧ嚎鐘舵€?
-     * - 缃戠粶杩炴帴璐ㄩ噺
-     * - 鍝嶅簲鏃堕棿鐩戞帶
-     * - 閿欒鐜囩粺璁?
+     * 实时监控指定设备的健康状态，包括：
+     * - 设备在线状态
+     * - 网络连接质量
+     * - 响应时间监控
+     * - 错误率统计
      * </p>
      *
-     * @param request 璁惧鐩戞帶璇锋眰
-     * @return 璁惧鍋ュ悍鐘舵€佷俊鎭?
+     * @param request 设备监控请求
+     * @return 设备健康状态信息
      */
     @PostMapping("/monitor")
-    @Operation(summary = "璁惧鍋ュ悍鐩戞帶", description = "瀹炴椂鐩戞帶璁惧鍋ュ悍鐘舵€侊紝鍖呮嫭鍦ㄧ嚎鐘舵€併€佺綉缁滆川閲忋€佸搷搴旀椂闂寸瓑鎸囨爣")
-    @PermissionCheck(value = {"ACCESS_MANAGER", "DEVICE_MONITOR"}, description = "璁惧鍋ュ悍鐩戞帶鎿嶄綔")
+    @Operation(summary = "设备健康监控", description = "实时监控设备健康状态，包括在线状态、网络质量、响应时间等指标")
+    @PermissionCheck(value = {"ACCESS_MANAGER", "DEVICE_MONITOR"}, description = "设备健康监控操作")
     public ResponseDTO<DeviceHealthVO> monitorDeviceHealth(
             @Valid @RequestBody DeviceMonitorRequest request) {
-        log.info("[璁惧鍋ュ悍鐩戞帶] 寮€濮嬬洃鎺ц澶囷紝deviceId={}", request.getDeviceId());
+        log.info("[设备健康监控] 开始监控设备，deviceId={}", request.getDeviceId());
 
         try {
             DeviceHealthVO result = deviceHealthService.monitorDeviceHealth(request);
-            log.info("[璁惧鍋ュ悍鐩戞帶] 鐩戞帶瀹屾垚锛宒eviceId={}, healthScore={}",
+            log.info("[设备健康监控] 监控完成，deviceId={}, healthScore={}",
                 request.getDeviceId(), result.getHealthScore());
             return ResponseDTO.ok(result);
         } catch (Exception e) {
-            log.error("[璁惧鍋ュ悍鐩戞帶] 鐩戞帶寮傚父锛宒eviceId={}, error={}",
+            log.error("[设备健康监控] 监控异常，deviceId={}, error={}",
                 request.getDeviceId(), e.getMessage(), e);
-            return ResponseDTO.error("DEVICE_HEALTH_MONITOR_ERROR", "璁惧鍋ュ悍鐩戞帶澶辫触锛? + e.getMessage());
+            return ResponseDTO.error("DEVICE_HEALTH_MONITOR_ERROR", "设备健康监控失败：" + e.getMessage());
         }
     }
 
     /**
-     * 鑾峰彇璁惧鎬ц兘鍒嗘瀽
+     * 获取设备性能分析
      * <p>
-     * 鍒嗘瀽璁惧鐨勫巻鍙叉€ц兘鏁版嵁鍜岃秼鍔匡紝鍖呮嫭锛?
-     * - 鍝嶅簲鏃堕棿瓒嬪娍
-     * - 鎴愬姛鐜囧垎鏋?
-     * - 璐熻浇鍒嗘瀽
-     * - 鎬ц兘浼樺寲寤鸿
+     * 分析设备的历史性能数据和趋势，包括：
+     * - 响应时间趋势
+     * - 成功率分析
+     * - 负载分析
+     * - 性能优化建议
      * </p>
      *
-     * @param deviceId 璁惧ID
-     * @return 璁惧鎬ц兘鍒嗘瀽缁撴灉
+     * @param deviceId 设备ID
+     * @return 设备性能分析结果
      */
     @GetMapping("/analytics/{deviceId}")
-    @Operation(summary = "璁惧鎬ц兘鍒嗘瀽", description = "鍒嗘瀽璁惧鎬ц兘鎸囨爣鍜岃秼鍔匡紝鎻愪緵浼樺寲寤鸿")
-    @PermissionCheck(value = {"ACCESS_MANAGER", "DEVICE_ANALYTICS"}, description = "璁惧鎬ц兘鍒嗘瀽")
+    @Operation(summary = "设备性能分析", description = "分析设备性能指标和趋势，提供优化建议")
+    @PermissionCheck(value = {"ACCESS_MANAGER", "DEVICE_ANALYTICS"}, description = "设备性能分析")
     public ResponseDTO<DevicePerformanceAnalyticsVO> getDevicePerformanceAnalytics(
-            @Parameter(description = "璁惧ID", required = true)
+            @Parameter(description = "设备ID", required = true)
             @PathVariable Long deviceId) {
-        log.info("[璁惧鎬ц兘鍒嗘瀽] 寮€濮嬪垎鏋愯澶囨€ц兘锛宒eviceId={}", deviceId);
+        log.info("[设备性能分析] 开始分析设备性能，deviceId={}", deviceId);
 
         try {
             DevicePerformanceAnalyticsVO result = deviceHealthService.getDevicePerformanceAnalytics(deviceId);
-            log.info("[璁惧鎬ц兘鍒嗘瀽] 鍒嗘瀽瀹屾垚锛宒eviceId={}, avgResponseTime={}ms",
+            log.info("[设备性能分析] 分析完成，deviceId={}, avgResponseTime={}ms",
                 deviceId, result.getAverageResponseTime());
             return ResponseDTO.ok(result);
         } catch (Exception e) {
-            log.error("[璁惧鎬ц兘鍒嗘瀽] 鍒嗘瀽寮傚父锛宒eviceId={}, error={}",
+            log.error("[设备性能分析] 分析异常，deviceId={}, error={}",
                 deviceId, e.getMessage(), e);
-            return ResponseDTO.error("DEVICE_PERFORMANCE_ANALYTICS_ERROR", "璁惧鎬ц兘鍒嗘瀽澶辫触锛? + e.getMessage());
+            return ResponseDTO.error("DEVICE_PERFORMANCE_ANALYTICS_ERROR", "设备性能分析失败：" + e.getMessage());
         }
     }
 
     /**
-     * 棰勬祴鎬х淮鎶ゅ垎鏋?
+     * 预测性维护分析
      * <p>
-     * 鍩轰簬AI绠楁硶棰勬祴璁惧鐨勭淮鎶ら渶姹傦紝鍖呮嫭锛?
-     * - 鏁呴殰棰勬祴
-     * - 缁存姢鏃堕棿寤鸿
-     * - 缁存姢浼樺厛绾ц瘎浼?
-     * - 鎴愭湰棰勪及
+     * 基于AI算法预测设备的维护需求，包括：
+     * - 故障预测
+     * - 维护时间建议
+     * - 维护优先级建议
+     * - 成本预测
      * </p>
      *
-     * @param request 缁存姢棰勬祴璇锋眰
-     * @return 缁存姢棰勬祴缁撴灉鍒楄〃
+     * @param request 维护预测请求
+     * @return 维护预测结果列表
      */
     @PostMapping("/maintenance/predict")
-    @Operation(summary = "棰勬祴鎬х淮鎶?, description = "鍩轰簬AI绠楁硶棰勬祴璁惧缁存姢闇€姹傦紝浼樺寲缁存姢璁″垝")
-    @PermissionCheck(value = {"ACCESS_MANAGER", "MAINTENANCE_PLAN"}, description = "棰勬祴鎬х淮鎶よ鍒?)
+    @Operation(summary = "预测性维护", description = "基于AI算法预测设备维护需求，优化维护计划")
+    @PermissionCheck(value = {"ACCESS_MANAGER", "MAINTENANCE_PLAN"}, description = "预测性维护操作")
     public ResponseDTO<List<MaintenancePredictionVO>> predictMaintenanceNeeds(
             @Valid @RequestBody MaintenancePredictRequest request) {
-        log.info("[棰勬祴鎬х淮鎶 寮€濮嬪垎鏋愮淮鎶ら渶姹傦紝deviceId={}, predictionDays={}",
+        log.info("[预测性维护] 开始分析维护需求，deviceId={}, predictionDays={}",
             request.getDeviceId(), request.getPredictionDays());
 
         try {
             List<MaintenancePredictionVO> result = deviceHealthService.predictMaintenanceNeeds(request);
-            log.info("[棰勬祴鎬х淮鎶 鍒嗘瀽瀹屾垚锛宒eviceId={}, predictionCount={}",
+            log.info("[预测性维护] 分析完成，deviceId={}, predictionCount={}",
                 request.getDeviceId(), result.size());
             return ResponseDTO.ok(result);
         } catch (Exception e) {
-            log.error("[棰勬祴鎬х淮鎶 鍒嗘瀽寮傚父锛宒eviceId={}, error={}",
+            log.error("[预测性维护] 分析异常，deviceId={}, error={}",
                 request.getDeviceId(), e.getMessage(), e);
-            return ResponseDTO.error("MAINTENANCE_PREDICTION_ERROR", "棰勬祴鎬х淮鎶ゅ垎鏋愬け璐ワ細" + e.getMessage());
+            return ResponseDTO.error("MAINTENANCE_PREDICTION_ERROR", "预测性维护分析失败：" + e.getMessage());
         }
     }
 
     /**
-     * 鑾峰彇璁惧鍋ュ悍缁熻
+     * 获取设备健康统计
      * <p>
-     * 鑾峰彇鎵€鏈夎澶囩殑鍋ュ悍鐘舵€佺粺璁′俊鎭紝鍖呮嫭锛?
-     * - 鍋ュ悍璁惧鏁伴噺
-     * - 浜氬仴搴疯澶囨暟閲?
-     * - 鏁呴殰璁惧鏁伴噺
-     * - 绂荤嚎璁惧鏁伴噺
+     * 获取所有设备的健康状态统计信息，包括：
+     * - 健康设备数量
+     * - 亚健康设备数量
+     * - 故障设备数量
+     * - 离线设备数量
      * </p>
      *
-     * @return 璁惧鍋ュ悍缁熻淇℃伅
+     * @return 设备健康统计信息
      */
     @GetMapping("/statistics")
-    @Operation(summary = "璁惧鍋ュ悍缁熻", description = "鑾峰彇鎵€鏈夎澶囩殑鍋ュ悍鐘舵€佺粺璁′俊鎭?)
-    @PermissionCheck(value = {"ACCESS_MANAGER", "DEVICE_VIEW"}, description = "璁惧鍘嗗彶鏁版嵁鏌ョ湅")
+    @Operation(summary = "设备健康统计", description = "获取所有设备的健康状态统计信息")
+    @PermissionCheck(value = {"ACCESS_MANAGER", "DEVICE_VIEW"}, description = "设备统计数据查看")
     public ResponseDTO<Object> getDeviceHealthStatistics() {
-        log.info("[璁惧鍋ュ悍缁熻] 寮€濮嬭幏鍙栫粺璁′俊鎭?);
+        log.info("[设备健康统计] 开始获取统计信息");
 
         try {
             Object result = deviceHealthService.getDeviceHealthStatistics();
-            log.info("[璁惧鍋ュ悍缁熻] 缁熻瀹屾垚");
+            log.info("[设备健康统计] 统计完成");
             return ResponseDTO.ok(result);
         } catch (Exception e) {
-            log.error("[璁惧鍋ュ悍缁熻] 缁熻寮傚父锛宔rror={}", e.getMessage(), e);
-            return ResponseDTO.error("DEVICE_HEALTH_STATISTICS_ERROR", "璁惧鍋ュ悍缁熻澶辫触锛? + e.getMessage());
+            log.error("[设备健康统计] 统计异常，error={}", e.getMessage(), e);
+            return ResponseDTO.error("DEVICE_HEALTH_STATISTICS_ERROR", "设备健康统计失败：" + e.getMessage());
         }
     }
 
     /**
-     * 鑾峰彇璁惧鍋ュ悍鍘嗗彶鏁版嵁
+     * 获取设备健康历史数据
      * <p>
-     * 鑾峰彇鎸囧畾璁惧鐨勫巻鍙插仴搴锋暟鎹紝鐢ㄤ簬瓒嬪娍鍒嗘瀽
+     * 获取指定设备的历史健康数据，用于趋势分析
      * </p>
      *
-     * @param deviceId 璁惧ID
-     * @param startDate 寮€濮嬫椂闂?
-     * @param endDate 缁撴潫鏃堕棿
-     * @return 鍘嗗彶鍋ュ悍鏁版嵁
+     * @param deviceId 设备ID
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return 历史健康数据
      */
     @GetMapping("/history/{deviceId}")
-    @Operation(summary = "璁惧鍋ュ悍鍘嗗彶", description = "鑾峰彇璁惧鍘嗗彶鍋ュ悍鏁版嵁鐢ㄤ簬瓒嬪娍鍒嗘瀽")
-    @PermissionCheck(value = {"ACCESS_MANAGER", "DEVICE_VIEW"}, description = "璁惧鍘嗗彶鏁版嵁鏌ョ湅")
+    @Operation(summary = "设备健康历史", description = "获取设备历史健康数据用于趋势分析")
+    @PermissionCheck(value = {"ACCESS_MANAGER", "DEVICE_VIEW"}, description = "设备历史数据查看")
     public ResponseDTO<PageResult<Object>> getDeviceHealthHistory(
-            @Parameter(description = "璁惧ID", required = true)
+            @Parameter(description = "设备ID", required = true)
             @PathVariable Long deviceId,
-            @Parameter(description = "寮€濮嬫椂闂?)
+            @Parameter(description = "开始时间")
             LocalDateTime startDate,
-            @Parameter(description = "缁撴潫鏃堕棿")
+            @Parameter(description = "结束时间")
             LocalDateTime endDate) {
-        log.info("[璁惧鍋ュ悍鍘嗗彶] 鑾峰彇鍘嗗彶鏁版嵁锛宒eviceId={}, startDate={}, endDate={}",
+        log.info("[设备健康历史] 获取历史数据，deviceId={}, startDate={}, endDate={}",
             deviceId, startDate, endDate);
 
         try {
             PageResult<Object> result = deviceHealthService.getDeviceHealthHistory(deviceId, startDate, endDate);
-            log.info("[璁惧鍋ュ悍鍘嗗彶] 鑾峰彇瀹屾垚锛宒eviceId={}, recordCount={}",
+            log.info("[设备健康历史] 获取完成，deviceId={}, recordCount={}",
                 deviceId, result.getTotal());
             return ResponseDTO.ok(result);
         } catch (Exception e) {
-            log.error("[璁惧鍋ュ悍鍘嗗彶] 鑾峰彇寮傚父锛宒eviceId={}, error={}",
+            log.error("[设备健康历史] 获取异常，deviceId={}, error={}",
                 deviceId, e.getMessage(), e);
-            return ResponseDTO.error("DEVICE_HEALTH_HISTORY_ERROR", "鑾峰彇璁惧鍋ュ悍鍘嗗彶澶辫触锛? + e.getMessage());
+            return ResponseDTO.error("DEVICE_HEALTH_HISTORY_ERROR", "获取设备健康历史失败：" + e.getMessage());
         }
     }
 }
