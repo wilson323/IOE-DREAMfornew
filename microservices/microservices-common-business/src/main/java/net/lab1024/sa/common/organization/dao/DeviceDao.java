@@ -146,13 +146,26 @@ public interface DeviceDao extends BaseMapper<DeviceEntity> {
     /**
      * 根据设备编码查询设备
      * <p>
-     * 用于根据设备序列号（SN）或设备编码查找设备ID
+     * 用于根据设备编码查找设备ID
      * </p>
      *
-     * @param deviceCode 设备编码（设备序列号SN）
+     * @param deviceCode 设备编码
      * @return 设备实体，如果不存在则返回null
      */
     @Select("SELECT * FROM t_common_device WHERE device_code = #{deviceCode} AND deleted_flag = 0 LIMIT 1")
     @Transactional(readOnly = true)
     DeviceEntity selectByDeviceCode(@Param("deviceCode") String deviceCode);
+
+    /**
+     * 根据设备序列号查询设备
+     * <p>
+     * 用于根据设备序列号（SN）查找设备信息
+     * </p>
+     *
+     * @param serialNumber 设备序列号
+     * @return 设备实体，如果不存在则返回null
+     */
+    @Select("SELECT * FROM t_common_device WHERE serial_number = #{serialNumber} AND deleted_flag = 0 LIMIT 1")
+    @Transactional(readOnly = true)
+    DeviceEntity selectBySerialNumber(@Param("serialNumber") String serialNumber);
 }

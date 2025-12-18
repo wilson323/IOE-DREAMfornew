@@ -1,0 +1,107 @@
+# ============================================================
+# IOE-DREAM Access Service 配置文件
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-01-30
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+#
+# 服务信息:
+# - 服务名称: ioedream-access-service
+# - 服务端口: 8090
+# - 服务职责: 门禁管理微服务，提供门禁控制、通行记录等业务API
+# ============================================================
+
+# ==================== 服务基本信息 ====================
+spring:
+  application:
+    name: ioedream-access-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  # 引入统一配置文件
+  config:
+    import:
+      - "classpath:common-config/cache-application.yml"
+      - "classpath:common-config/database-application.yml"
+
+# ==================== Nacos服务发现配置 ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:nacos}
+        enabled: true
+        register-enabled: true
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: ${NACOS_GROUP:IOE-DREAM}
+        file-extension: yaml
+
+# ==================== 服务器配置 ====================
+server:
+  port: ${ACCESS_SERVICE_PORT:8090}
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# ==================== 门禁验证配置 ====================
+access:
+  verification:
+    # 验证模式配置
+    mode:
+      # 默认验证模式
+      default: ${ACCESS_VERIFICATION_MODE_DEFAULT:edge}
+      # 是否支持后台验证
+      backend-enabled: ${ACCESS_BACKEND_VERIFICATION_ENABLED:true}
+      # 是否支持设备端验证
+      edge-enabled: ${ACCESS_EDGE_VERIFICATION_ENABLED:true}
+    
+    # 后台验证配置
+    backend:
+      # 响应超时时间(毫秒)
+      timeout: ${ACCESS_BACKEND_TIMEOUT:3000}
+      # 是否启用反潜
+      anti-passback-enabled: ${ACCESS_ANTI_PASSBACK_ENABLED:true}
+      # 反潜时间窗口(秒)
+      anti-passback-window: ${ACCESS_ANTI_PASSBACK_WINDOW:300}
+      # 是否启用互锁
+      interlock-enabled: ${ACCESS_INTERLOCK_ENABLED:true}
+      # 互锁超时(秒)
+      interlock-timeout: ${ACCESS_INTERLOCK_TIMEOUT:60}
+      # 是否启用多人验证
+      multi-person-enabled: ${ACCESS_MULTI_PERSON_ENABLED:false}
+      # 多人验证超时(秒)
+      multi-person-timeout: ${ACCESS_MULTI_PERSON_TIMEOUT:120}
+    
+    # 设备端验证配置
+    edge:
+      # 权限数据同步间隔(分钟)
+      sync-interval: ${ACCESS_EDGE_SYNC_INTERVAL:5}
+      # 批量上传记录数量阈值
+      batch-upload-threshold: ${ACCESS_EDGE_BATCH_THRESHOLD:100}
+      # 批量上传时间间隔(秒)
+      batch-upload-interval: ${ACCESS_EDGE_BATCH_INTERVAL:60}
+      # 离线验证支持
+      offline-enabled: ${ACCESS_EDGE_OFFLINE_ENABLED:true}
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    cache-enabled: true
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: net.lab1024.sa.common.entity,net.lab1024.sa.common.organization.entity,net.lab1024.sa.access.entity
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    root: INFO
+    net.lab1024.sa: DEBUG
+    net.lab1024.sa.access: DEBUG

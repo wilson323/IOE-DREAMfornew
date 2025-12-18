@@ -1,10 +1,10 @@
 # 门禁模块API接口契约文档
 
-**生成时间**: 2025-12-18  
-**文档版本**: v1.1.0 - 边缘自主验证模式  
+**生成时间**: 2025-01-30  
+**文档版本**: v2.0.0 - 双模式验证架构  
 **模块**: 门禁管理模块 (ioedream-access-service)  
-**设备交互模式**: 边缘自主验证模式（Mode 1）  
-**核心理念**: ⭐ **设备端识别，软件端管理** - 生物识别在设备端完成，软件端接收记录  
+**设备交互模式**: 双模式验证（设备端验证edge + 后台验证backend）  
+**核心理念**: ⭐ **根据区域配置自动选择验证模式** - 支持设备端验证和后台验证两种模式  
 **状态**: ✅ **已完成**
 
 ---
@@ -25,9 +25,11 @@
 
 ### 核心设计原则
 
-门禁系统采用**边缘自主验证模式**，设备端完全自主完成身份识别和权限验证，无需实时连接服务器。
+门禁系统支持**双模式验证架构**，根据区域配置(`t_access_area_ext.verification_mode`)自动选择验证模式：
+- **设备端验证模式(edge)**: 设备端完全自主完成身份识别和权限验证，支持离线运行
+- **后台验证模式(backend)**: 设备端识别，软件端验证权限逻辑（反潜/互锁/多人验证），必须在线
 
-### 数据流向说明
+### 模式1: 设备端验证模式 (Edge Verification)
 
 ```mermaid
 sequenceDiagram
@@ -52,16 +54,85 @@ sequenceDiagram
     Access->>Access: 存储记录 + 统计分析
 ```
 
+### 模式2: 后台验证模式 (Backend Verification)
+
+```mermaid
+sequenceDiagram
+    participant Device as 门禁设备
+    participant Access as access-service
+
+    Note over Device: 【实时验证阶段】设备端识别 + 软件端验证
+    Device->>Device: 本地识别 (1:N比对) → userId
+    Device->>Access: POST /iclock/cdata?SN=xxx&AuthType=device
+    Note over Device,Access: 请求体: time=xxx{HT}pin=xxx{HT}event=0
+    Access->>Access: 执行权限验证
+    Note over Access: 反潜/互锁/时间段/黑名单/多人验证
+    Access-->>Device: HTTP 200 OK<br/>AUTH=SUCCEED/FAILED<br/>CONTROL DEVICE xxx
+    alt 验证成功
+        Device->>Device: 开门(继电器)
+    else 验证失败
+        Device->>Device: 拒绝通行(语音提示)
+    end
+    Device->>Access: 上传通行记录 (实时)
+```
+
 ### 关键接口说明
 
 ❗ **重要**: 以下接口反映了真实的数据流向
 
-| 接口类型 | API路径 | 调用方 | 职责 | 数据流向 |
-|---------|---------|---------|------|----------|
-| **模板下发** | `/device/template/sync` | device-comm-service | 将生物模板下发到设备 | 软件 → 设备 |
-| **权限下发** | `/device/permission/sync` | device-comm-service | 将权限数据下发到设备 | 软件 → 设备 |
-| **记录上传** | `/api/v1/access/record/upload` | 设备端 | 设备批量上传通行记录 | 设备 → 软件 |
-| **记录查询** | `/api/v1/access/records` | Web/Mobile | 查询已存储的通行记录 | 软件内部 |
+| 接口类型 | API路径 | 调用方 | 职责 | 数据流向 | 验证模式 |
+|---------|---------|---------|------|----------|---------|
+| **模板下发** | `/device/template/sync` | device-comm-service | 将生物模板下发到设备 | 软件 → 设备 | edge/backend |
+| **权限下发** | `/device/permission/sync` | device-comm-service | 将权限数据下发到设备 | 软件 → 设备 | edge |
+| **后台验证** | `/iclock/cdata?SN=xxx&AuthType=device` | 设备端 | 设备后台验证请求 | 设备 → 软件 | backend |
+| **记录上传** | `/api/v1/access/record/upload` | 设备端 | 设备批量上传通行记录 | 设备 → 软件 | edge |
+| **记录查询** | `/api/v1/access/records` | Web/Mobile | 查询已存储的通行记录 | 软件内部 | - |
+
+---
+
+## 🔐 设备端API接口（后台验证）
+
+### 后台验证接口
+
+**接口**: `POST /iclock/cdata?SN={SerialNumber}&AuthType=device`
+
+**功能**: 门禁设备后台验证接口（符合安防PUSH协议V4.8）
+
+**协议规范**: 安防PUSH通讯协议 V4.8 - 13. 后台验证
+
+**请求参数**:
+- `SN`: 设备序列号（必填）
+- `AuthType`: 验证类型，固定值`device`（可选，默认device）
+- 请求体（form-data格式）:
+  - `time`: 验证时间 (YYYY-MM-DD HH:MM:SS)
+  - `pin`: 工号（设备已识别）
+  - `cardno`: 卡号
+  - `event`: 事件类型 (0=正常刷卡开门, 14=正常按指纹开门)
+  - `verifytype`: 验证方式 (0=密码, 1=指纹, 2=卡, 11=面部)
+  - `inoutstatus`: 进出状态 (1=进, 2=出)
+
+**响应格式**:
+```
+AUTH=SUCCEED{CR}{LF}
+time=xxx{HT}pin=xxx{HT}...{CR}{LF}
+CONTROL DEVICE 0101000300{CR}{LF}
+TIPS=验证通过,欢迎进入
+```
+
+**响应字段**:
+- `AUTH`: 验证结果 (SUCCEED/FAILED/TIMEOUT)
+- 第二行: 原始事件记录（回显）
+- 第三行: 控制指令（验证成功时）
+- `TIPS`: 提示信息（UTF-8编码）
+
+**Controller**: `AccessBackendAuthController.backendVerification()`
+
+**验证流程**:
+1. 设备端识别用户身份（1:N比对）
+2. 设备发送验证请求到软件端
+3. 软件端执行权限验证（反潜/互锁/时间段/黑名单/多人验证）
+4. 软件端返回验证结果和控制指令
+5. 设备根据结果开门或拒绝
 
 ---
 

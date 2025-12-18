@@ -228,7 +228,7 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 - **ioedream-common-service** (8088): 公共业务服务（用户、组织、权限）
 - **ioedream-device-comm-service** (8087): 设备通讯服务（协议适配、模板下发 ⚠️ 不做识别）
 - **ioedream-oa-service** (8089): OA办公服务（工作流、审批）
-- **ioedream-access-service** (8090): 门禁管理服务（采用边缘自主验证模式 ⚠️ 接收设备上传记录）
+- **ioedream-access-service** (8090): 门禁管理服务（支持双模式验证：设备端验证edge + 后台验证backend，根据区域配置自动切换）
 - **ioedream-attendance-service** (8091): 考勤管理服务（采用边缘识别+中心计算模式）
 - **ioedream-video-service** (8092): 视频监控服务（采用边缘AI计算模式）
 - **ioedream-database-service** (8093): 数据库管理服务（备份恢复、性能监控）

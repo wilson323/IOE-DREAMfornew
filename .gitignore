@@ -122,3 +122,11 @@ microservices/ioedream-device-comm-service/latest-compile.txt
 microservices/ioedream-device-comm-service/latest-errors.txt
 scripts/ensure-utf8-encoding.ps1
 garbled-files-list.txt
+microservices/access-compile-fix-result.txt
+microservices/access-compile-result.txt
+microservices/clean-services-compile.txt
+microservices/core-services-compile-result.txt
+microservices/video-compile-result.txt
+microservices/ioedream-access-service/ioedream-access-service-backup/err2.txt
+microservices/ioedream-access-service-backup/compile-access.txt
+microservices/ioedream-access-service-backup/err2.txt
