@@ -4,10 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
-
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,16 +21,32 @@ import java.util.stream.Collectors;
  * - L3 应用缓存：进程内持久化，TTL 2小时
  * </p>
  *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
+ *
  * @author IOE-DREAM Team
  * @version 2.0.0
  * @since 2025-12-17
  */
 @Slf4j
-@Component
 public class WorkflowCacheManager {
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    /**
+     * 构造函数注入依赖
+     *
+     * @param redisTemplate Redis模板
+     */
+    public WorkflowCacheManager(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        // 初始化L1缓存
+        init();
+    }
 
     /**
      * L1缓存：Caffeine本地缓存（三级缓存架构）
@@ -50,8 +62,13 @@ public class WorkflowCacheManager {
     private static final Duration DEFAULT_REDIS_TTL = Duration.ofMinutes(30);
     private static final Duration DEFAULT_APP_TTL = Duration.ofHours(2);
 
-    @PostConstruct
-    public void init() {
+    /**
+     * 初始化L1缓存
+     * <p>
+     * 在构造函数中调用，确保缓存在使用前已初始化
+     * </p>
+     */
+    private void init() {
         l1Cache = Caffeine.newBuilder()
                 .maximumSize(MAX_LOCAL_CACHE_SIZE)
                 .expireAfterWrite(DEFAULT_LOCAL_TTL)

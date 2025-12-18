@@ -17,7 +17,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.video.manager.VideoSystemIntegrationManager;
+import net.lab1024.sa.video.service.VideoSystemIntegrationService;
 import net.lab1024.sa.video.manager.VideoSystemIntegrationManager.SystemIntegrationStatus;
 
 import java.util.List;
@@ -47,7 +47,7 @@ import java.util.concurrent.CompletableFuture;
 public class VideoSystemIntegrationController {
 
     @Resource
-    private VideoSystemIntegrationManager videoSystemIntegrationManager;
+    private VideoSystemIntegrationService videoSystemIntegrationService;
 
     /**
      * 获取所有系统集成状态
@@ -57,7 +57,7 @@ public class VideoSystemIntegrationController {
     public ResponseDTO<Map<String, SystemIntegrationStatus>> getIntegrationStatus() {
         log.info("[系统集成API] 获取系统集成状态");
 
-        Map<String, SystemIntegrationStatus> statusMap = videoSystemIntegrationManager.getIntegrationStatus();
+        Map<String, SystemIntegrationStatus> statusMap = videoSystemIntegrationService.getIntegrationStatus();
         return ResponseDTO.ok(statusMap);
     }
 
@@ -72,7 +72,7 @@ public class VideoSystemIntegrationController {
 
         log.info("[系统集成API] 获取系统状态: systemName={}", systemName);
 
-        SystemIntegrationStatus status = videoSystemIntegrationManager.getSystemIntegrationStatus(systemName);
+        SystemIntegrationStatus status = videoSystemIntegrationService.getSystemIntegrationStatus(systemName);
         if (status == null) {
             return ResponseDTO.error("SYSTEM_NOT_FOUND", "系统不存在: " + systemName);
         }
@@ -88,7 +88,7 @@ public class VideoSystemIntegrationController {
     public ResponseDTO<Map<String, Object>> getIntegrationHealthReport() {
         log.info("[系统集成API] 获取集成健康报告");
 
-        Map<String, Object> report = videoSystemIntegrationManager.getIntegrationHealthReport();
+        Map<String, Object> report = videoSystemIntegrationService.getIntegrationHealthReport();
         return ResponseDTO.ok(report);
     }
 
@@ -100,10 +100,10 @@ public class VideoSystemIntegrationController {
     public CompletableFuture<ResponseDTO<String>> triggerHealthCheck() {
         log.info("[系统集成API] 触发系统集成健康检查");
 
-        return videoSystemIntegrationManager.performIntegrationHealthCheck()
-                .thenApply(v -> {
+        return videoSystemIntegrationService.triggerHealthCheck()
+                .thenApply(report -> {
                     log.info("[系统集成API] 健康检查完成");
-                    return ResponseDTO.ok("系统集成健康检查已启动");
+                    return ResponseDTO.ok("系统集成健康检查已启动", report);
                 })
                 .exceptionally(throwable -> {
                     log.error("[系统集成API] 健康检查失败", throwable);
@@ -128,7 +128,7 @@ public class VideoSystemIntegrationController {
 
         Object eventDataObj = eventData != null ? eventData : new Object();
 
-        return videoSystemIntegrationManager.handleIntegrationEvent(eventType, systemName, eventDataObj)
+        return videoSystemIntegrationService.handleIntegrationEvent(eventType, systemName, eventDataObj)
                 .thenApply(v -> {
                     log.info("[系统集成API] 集成事件处理完成: type={}, system={}", eventType, systemName);
                     return ResponseDTO.ok("集成事件处理成功");

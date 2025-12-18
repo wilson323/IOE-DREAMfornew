@@ -32,26 +32,5 @@ public class SchedulingEngineConfiguration {
         return null; // 让Spring自动发现SmartSchedulingEngineImpl
     }
 
-    /**
-     * 注册SmartSchedulingEngine管理器
-     */
-    @Bean
-    @ConditionalOnMissingBean(SmartSchedulingEngine.class)
-    public SmartSchedulingEngine smartSchedulingManager() {
-        // 如果没有实现，返回基础实现
-        // 实际上我们已经有了完整的实现，这里只是作为备用
-        return new SmartSchedulingEngine() {
-            @Override
-            public SchedulingResult generateSmartSchedule(SchedulingRequest request) {
-                // 基础实现
-                return new SchedulingResult();
-            }
-
-            @Override
-            public List<ScheduleRecordEntity> applyTemplate(Long templateId, java.time.LocalDate startDate, java.time.LocalDate endDate) {
-                // 基础实现
-                return new java.util.ArrayList<>();
-            }
-        };
-    }
+    // SmartSchedulingEngine已在ManagerConfiguration中注册，此处不再重复注册
 }

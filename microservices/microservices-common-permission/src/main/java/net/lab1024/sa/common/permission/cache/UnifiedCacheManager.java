@@ -4,11 +4,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 // Caffeine CacheStats renamed to avoid conflict
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -38,24 +35,45 @@ import java.util.concurrent.atomic.AtomicLong;
  *   <li>缓存雪崩防护: 差异化TTL + 预热机制</li>
  * </ul>
  *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
+ *
  * @author IOE-DREAM Team
  * @version 2.0.0
  * @since 2025-12-17
  */
 @Slf4j
-@Component
 public class UnifiedCacheManager {
 
     /**
      * L1 本地缓存 (Caffeine)
      */
-    private Cache<String, Object> l1Cache;
+    private final Cache<String, Object> l1Cache;
 
     /**
      * L2 Redis缓存
      */
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    /**
+     * 构造函数注入依赖
+     *
+     * @param redisTemplate Redis模板
+     */
+    public UnifiedCacheManager(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        // 初始化L1缓存
+        this.l1Cache = Caffeine.newBuilder()
+                .maximumSize(L1_MAX_SIZE)
+                .expireAfterWrite(L1_EXPIRE)
+                .recordStats()
+                .build();
+        log.info("[统一缓存] UnifiedCacheManager初始化完成");
+    }
 
     /**
      * L1缓存默认容量
@@ -84,18 +102,6 @@ public class UnifiedCacheManager {
     private final AtomicLong l2HitCount = new AtomicLong(0);
     private final AtomicLong missCount = new AtomicLong(0);
 
-    /**
-     * 初始化L1 Caffeine缓存
-     */
-    @PostConstruct
-    public void init() {
-        l1Cache = Caffeine.newBuilder()
-                .maximumSize(L1_MAX_SIZE)
-                .expireAfterWrite(L1_EXPIRE)
-                .recordStats()
-                .build();
-        log.info("[三级缓存] L1 Caffeine缓存初始化完成, 容量={}, TTL={}分钟", L1_MAX_SIZE, L1_EXPIRE.toMinutes());
-    }
 
     /**
      * 获取缓存 - 三级缓存查询

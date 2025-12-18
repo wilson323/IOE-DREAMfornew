@@ -8,10 +8,7 @@ import net.lab1024.sa.common.visitor.entity.LogisticsReservationEntity;
 import net.lab1024.sa.common.visitor.dao.LogisticsReservationDao;
 import net.lab1024.sa.common.util.SystemConfigUtil;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import jakarta.annotation.Resource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,7 +42,6 @@ import java.util.Map;
  * @since 2025-12-16
  */
 @Slf4j
-@Component
 public class LogisticsReservationManager {
 
     private final LogisticsReservationDao logisticsReservationDao;

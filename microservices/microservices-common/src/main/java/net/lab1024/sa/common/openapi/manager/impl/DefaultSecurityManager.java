@@ -3,7 +3,6 @@ package net.lab1024.sa.common.openapi.manager.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.openapi.domain.request.UserExtendedInfoRequest;
 import net.lab1024.sa.common.openapi.manager.SecurityManager;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,12 +15,18 @@ import java.util.List;
  * 实际项目中应替换为完整的权限管理实现
  * </p>
  *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
+ *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-17
  */
 @Slf4j
-@Component
 public class DefaultSecurityManager implements SecurityManager {
 
     @Override

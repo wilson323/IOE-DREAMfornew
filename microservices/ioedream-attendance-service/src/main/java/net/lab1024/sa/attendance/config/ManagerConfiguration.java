@@ -96,4 +96,32 @@ public class ManagerConfiguration {
         log.info("[AttendanceCalculationManager] 初始化考勤计算管理器");
         return new AttendanceCalculationManager(attendanceRecordDao, scheduleRecordDao, strategyFactory);
     }
+
+    /**
+     * 注册SmartSchedulingEngine为Spring Bean
+     * <p>
+     * 智能排班引擎，基于优化算法的智能排班生成系统
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     *
+     * @param scheduleRecordDao 排班记录DAO
+     * @param workShiftDao 班次DAO
+     * @param scheduleTemplateDao 排班模板DAO
+     * @param employeeDao 员工DAO
+     * @param redisTemplate Redis模板
+     * @param objectMapper JSON对象映射器
+     * @return SmartSchedulingEngine实例
+     */
+    @Bean
+    public net.lab1024.sa.attendance.manager.SmartSchedulingEngine smartSchedulingEngine(
+            net.lab1024.sa.attendance.dao.ScheduleRecordDao scheduleRecordDao,
+            net.lab1024.sa.attendance.dao.WorkShiftDao workShiftDao,
+            net.lab1024.sa.attendance.dao.ScheduleTemplateDao scheduleTemplateDao,
+            net.lab1024.sa.common.organization.dao.EmployeeDao employeeDao,
+            RedisTemplate<String, Object> redisTemplate,
+            ObjectMapper objectMapper) {
+        log.info("[SmartSchedulingEngine] 初始化智能排班引擎");
+        return new net.lab1024.sa.attendance.manager.SmartSchedulingEngine(
+                scheduleRecordDao, workShiftDao, scheduleTemplateDao, employeeDao, redisTemplate, objectMapper);
+    }
 }

@@ -7,7 +7,6 @@ import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 import java.time.Duration;
@@ -25,12 +24,18 @@ import java.util.function.Supplier;
  * - 分布式锁：防缓存击穿
  * </p>
  *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
+ *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-18
  */
 @Slf4j
-@Component
 public class UnifiedCacheManager {
 
     /**

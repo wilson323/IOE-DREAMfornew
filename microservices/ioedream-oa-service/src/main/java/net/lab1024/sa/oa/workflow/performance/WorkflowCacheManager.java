@@ -2,14 +2,11 @@ package net.lab1024.sa.oa.workflow.performance;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.Counter;
-
-import jakarta.annotation.Resource;
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -28,19 +25,56 @@ import java.util.Set;
  * 集成性能监控和指标收集
  * </p>
  *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
+ *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-16
  */
 @Slf4j
-@Component
 public class WorkflowCacheManager {
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final MeterRegistry meterRegistry;
 
-    @Resource
-    private MeterRegistry meterRegistry;
+    /**
+     * 构造函数注入依赖
+     *
+     * @param redisTemplate Redis模板
+     * @param meterRegistry 指标注册表
+     */
+    public WorkflowCacheManager(RedisTemplate<String, Object> redisTemplate,
+                               MeterRegistry meterRegistry) {
+        this.redisTemplate = redisTemplate;
+        this.meterRegistry = meterRegistry;
+        // 初始化性能指标
+        this.cacheHitTimer = Timer.builder("workflow.cache.hit")
+                .description("工作流缓存命中耗时")
+                .register(meterRegistry);
+        this.cacheMissTimer = Timer.builder("workflow.cache.miss")
+                .description("工作流缓存未命中耗时")
+                .register(meterRegistry);
+        this.cacheHitCounter = Counter.builder("workflow.cache.hit.count")
+                .description("工作流缓存命中次数")
+                .register(meterRegistry);
+        this.cacheMissCounter = Counter.builder("workflow.cache.miss.count")
+                .description("工作流缓存未命中次数")
+                .register(meterRegistry);
+        this.cacheRefreshCounter = Counter.builder("workflow.cache.refresh.count")
+                .description("工作流缓存刷新次数")
+                .register(meterRegistry);
+
+        // 初始化缓存配置和本地缓存池
+        initializeCacheConfigs();
+        initializeLocalCachePool();
+
+        log.info("[工作流缓存管理器] 初始化完成，缓存池大小: {}", localCachePool.size());
+    }
 
     // L1本地缓存池 - 按业务模块分组
     private final Map<String, Cache<String, Object>> localCachePool = new ConcurrentHashMap<>();
@@ -82,37 +116,83 @@ public class WorkflowCacheManager {
         public Boolean getAllowNullValues() { return allowNullValues; }
     }
 
-    public WorkflowCacheManager(MeterRegistry meterRegistry) {
-        this.meterRegistry = meterRegistry;
+    /**
+     * 初始化缓存配置
+     */
+    private void initializeCacheConfigs() {
+        // 流程定义缓存配置
+        cacheConfigs.put("processDefinition", new CacheConfig(
+            Duration.ofMinutes(30),  // 写入后30分钟过期
+            Duration.ofMinutes(15),  // 访问后15分钟过期
+            1000L,                  // 最大1000个条目
+            true,                   // 记录统计
+            false                   // 不允许null值
+        ));
 
-        // 初始化性能指标
-        this.cacheHitTimer = Timer.builder("workflow.cache.hit.duration")
-                .description("缓存命中耗时")
-                .register(meterRegistry);
+        // 流程实例缓存配置
+        cacheConfigs.put("processInstance", new CacheConfig(
+            Duration.ofMinutes(60),
+            Duration.ofMinutes(30),
+            5000L,
+            true,
+            false
+        ));
 
-        this.cacheMissTimer = Timer.builder("workflow.cache.miss.duration")
-                .description("缓存未命中耗时")
-                .register(meterRegistry);
+        // 任务缓存配置
+        cacheConfigs.put("task", new CacheConfig(
+            Duration.ofMinutes(20),
+            Duration.ofMinutes(10),
+            10000L,
+            true,
+            false
+        ));
 
-        this.cacheHitCounter = Counter.builder("workflow.cache.hit.count")
-                .description("缓存命中次数")
-                .register(meterRegistry);
+        // 用户任务缓存配置
+        cacheConfigs.put("userTask", new CacheConfig(
+            Duration.ofMinutes(15),
+            Duration.ofMinutes(8),
+            2000L,
+            true,
+            false
+        ));
 
-        this.cacheMissCounter = Counter.builder("workflow.cache.miss.count")
-                .description("缓存未命中次数")
-                .register(meterRegistry);
+        // 审批记录缓存配置
+        cacheConfigs.put("approvalRecord", new CacheConfig(
+            Duration.ofMinutes(45),
+            Duration.ofMinutes(20),
+            3000L,
+            true,
+            false
+        ));
 
-        this.cacheRefreshCounter = Counter.builder("workflow.cache.refresh.count")
-                .description("缓存刷新次数")
-                .register(meterRegistry);
+        log.info("[工作流缓存管理器] 缓存配置初始化完成，配置数量: {}", cacheConfigs.size());
+    }
 
-        // 初始化缓存配置
-        initializeCacheConfigs();
+    /**
+     * 初始化本地缓存池
+     */
+    private void initializeLocalCachePool() {
+        for (Map.Entry<String, CacheConfig> entry : cacheConfigs.entrySet()) {
+            String cacheName = entry.getKey();
+            CacheConfig config = entry.getValue();
 
-        // 预热本地缓存池
-        initializeLocalCachePool();
+            Caffeine<Object, Object> caffeineBuilder = Caffeine.newBuilder()
+                    .maximumSize(config.getMaximumSize())
+                    .recordStats();
 
-        log.info("[工作流缓存管理器] 初始化完成，缓存池大小: {}", localCachePool.size());
+            if (config.getExpireAfterWrite() != null) {
+                caffeineBuilder.expireAfterWrite(config.getExpireAfterWrite());
+            }
+
+            if (config.getExpireAfterAccess() != null) {
+                caffeineBuilder.expireAfterAccess(config.getExpireAfterAccess());
+            }
+
+            Cache<String, Object> cache = caffeineBuilder.build();
+            localCachePool.put(cacheName, cache);
+
+            log.debug("[工作流缓存管理器] 初始化本地缓存: {} 配置: {}", cacheName, config);
+        }
     }
 
     /**

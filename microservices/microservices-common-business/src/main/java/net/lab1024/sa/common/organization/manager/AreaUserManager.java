@@ -8,10 +8,7 @@ import net.lab1024.sa.common.organization.entity.AreaUserEntity;
 import net.lab1024.sa.common.organization.dao.AreaUserDao;
 import net.lab1024.sa.common.util.SystemConfigUtil;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import jakarta.annotation.Resource;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -43,7 +40,6 @@ import java.util.Map;
  * @since 2025-12-16
  */
 @Slf4j
-@Component
 public class AreaUserManager {
 
     private final AreaUserDao areaUserDao;

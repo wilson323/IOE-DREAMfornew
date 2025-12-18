@@ -2,7 +2,6 @@ package net.lab1024.sa.common.transaction;
 
 // import io.seata.spring.annotation.GlobalTransactional; // 暂时注释，待添加seata依赖
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Supplier;
@@ -15,12 +14,18 @@ import java.util.function.Supplier;
  * 提供企业级分布式事务解决方案
  * </p>
  *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
+ *
  * @author IOE-DREAM架构团队
  * @version 1.0.0
  * @since 2025-12-16
  */
 @Slf4j
-@Component
 public class SeataTransactionManager {
 
     /**

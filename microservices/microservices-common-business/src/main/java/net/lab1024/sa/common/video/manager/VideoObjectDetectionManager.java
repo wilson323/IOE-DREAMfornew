@@ -8,10 +8,7 @@ import net.lab1024.sa.common.video.entity.VideoObjectDetectionEntity;
 import net.lab1024.sa.common.video.dao.VideoObjectDetectionDao;
 import net.lab1024.sa.common.util.SmartBeanUtil;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import jakarta.annotation.Resource;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,7 +40,6 @@ import java.util.Map;
  * @since 2025-12-16
  */
 @Slf4j
-@Component
 public class VideoObjectDetectionManager {
 
     private final VideoObjectDetectionDao videoObjectDetectionDao;

@@ -10,10 +10,8 @@ import net.lab1024.sa.attendance.domain.entity.ScheduleTemplateEntity;
 import net.lab1024.sa.common.organization.dao.EmployeeDao;
 import net.lab1024.sa.common.organization.entity.EmployeeEntity;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.DayOfWeek;
@@ -24,32 +22,52 @@ import java.util.stream.Collectors;
 /**
  * 智能排班引擎
  * 基于优化算法的智能排班生成系统
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-30
+ * @updated 2025-01-30 移除@Component和@Resource注解，改为构造函数注入
  */
 @Slf4j
-@Component
 public class SmartSchedulingEngine {
 
-    @Resource
-    private ScheduleRecordDao scheduleRecordDao;
+    private final ScheduleRecordDao scheduleRecordDao;
+    private final WorkShiftDao workShiftDao;
+    private final ScheduleTemplateDao scheduleTemplateDao;
+    private final EmployeeDao employeeDao;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
-    @Resource
-    private WorkShiftDao workShiftDao;
-
-    @Resource
-    private ScheduleTemplateDao scheduleTemplateDao;
-
-    @Resource
-    private EmployeeDao employeeDao;
-
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
-
-    @Resource
-    private ObjectMapper objectMapper;
+    /**
+     * 构造函数注入依赖
+     *
+     * @param scheduleRecordDao 排班记录DAO
+     * @param workShiftDao 班次DAO
+     * @param scheduleTemplateDao 排班模板DAO
+     * @param employeeDao 员工DAO
+     * @param redisTemplate Redis模板
+     * @param objectMapper JSON对象映射器
+     */
+    public SmartSchedulingEngine(
+            ScheduleRecordDao scheduleRecordDao,
+            WorkShiftDao workShiftDao,
+            ScheduleTemplateDao scheduleTemplateDao,
+            EmployeeDao employeeDao,
+            RedisTemplate<String, Object> redisTemplate,
+            ObjectMapper objectMapper) {
+        this.scheduleRecordDao = scheduleRecordDao;
+        this.workShiftDao = workShiftDao;
+        this.scheduleTemplateDao = scheduleTemplateDao;
+        this.employeeDao = employeeDao;
+        this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
+    }
 
     // 缓存键前缀
     private static final String CACHE_KEY_PREFIX = "scheduling:";

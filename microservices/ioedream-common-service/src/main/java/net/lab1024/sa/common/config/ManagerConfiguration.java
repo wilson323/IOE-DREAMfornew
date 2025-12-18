@@ -36,7 +36,19 @@ import net.lab1024.sa.common.notification.dao.NotificationTemplateDao;
 import net.lab1024.sa.common.workflow.manager.ApprovalConfigManager;
 import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
 import net.lab1024.sa.common.organization.manager.UserAreaPermissionManager;
+import net.lab1024.sa.common.organization.manager.AreaUserManager;
 import net.lab1024.sa.common.organization.dao.UserAreaPermissionDao;
+import net.lab1024.sa.common.organization.dao.AreaUserDao;
+import net.lab1024.sa.common.visitor.manager.LogisticsReservationManager;
+import net.lab1024.sa.common.visitor.dao.LogisticsReservationDao;
+import net.lab1024.sa.common.video.manager.VideoObjectDetectionManager;
+import net.lab1024.sa.common.video.dao.VideoObjectDetectionDao;
+import net.lab1024.sa.common.permission.alert.PermissionAlertManager;
+import net.lab1024.sa.common.permission.audit.PermissionAuditLogger;
+import net.lab1024.sa.common.openapi.manager.impl.DefaultSecurityManager;
+import net.lab1024.sa.common.transaction.SeataTransactionManager;
+import net.lab1024.sa.common.cache.UnifiedCacheManager;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -692,5 +704,150 @@ public class ManagerConfiguration {
         log.info("[UserAreaPermissionManager] 初始化用户区域权限管理器");
         log.info("[UserAreaPermissionManager] UserAreaPermissionDao: {}", userAreaPermissionDao != null ? "已注入" : "未注入");
         return new UserAreaPermissionManager(userAreaPermissionDao);
+    }
+
+    /**
+     * 区域人员关联管理器Bean配置
+     * <p>
+     * 负责区域人员关联的业务逻辑处理
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     *
+     * @param areaUserDao 区域用户DAO
+     * @return 区域人员关联管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(AreaUserManager.class)
+    public AreaUserManager areaUserManager(AreaUserDao areaUserDao) {
+        log.info("[AreaUserManager] 初始化区域人员关联管理器");
+        return new AreaUserManager(areaUserDao);
+    }
+
+    /**
+     * 物流预约管理器Bean配置
+     * <p>
+     * 负责物流预约的业务逻辑处理
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     *
+     * @param logisticsReservationDao 物流预约DAO
+     * @return 物流预约管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(LogisticsReservationManager.class)
+    public LogisticsReservationManager logisticsReservationManager(LogisticsReservationDao logisticsReservationDao) {
+        log.info("[LogisticsReservationManager] 初始化物流预约管理器");
+        return new LogisticsReservationManager(logisticsReservationDao);
+    }
+
+    /**
+     * 视频目标检测管理器Bean配置
+     * <p>
+     * 负责视频目标检测的业务逻辑处理
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     *
+     * @param videoObjectDetectionDao 视频目标检测DAO
+     * @return 视频目标检测管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(VideoObjectDetectionManager.class)
+    public VideoObjectDetectionManager videoObjectDetectionManager(VideoObjectDetectionDao videoObjectDetectionDao) {
+        log.info("[VideoObjectDetectionManager] 初始化视频目标检测管理器");
+        return new VideoObjectDetectionManager(videoObjectDetectionDao);
+    }
+
+    /**
+     * 权限异常访问告警管理器Bean配置
+     * <p>
+     * 负责权限异常访问检测和告警
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     *
+     * @param permissionAuditLogger 权限审计日志记录器
+     * @param redisTemplate Redis模板
+     * @return 权限异常访问告警管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(PermissionAlertManager.class)
+    public PermissionAlertManager permissionAlertManager(
+            PermissionAuditLogger permissionAuditLogger,
+            RedisTemplate<String, Object> redisTemplate) {
+        log.info("[PermissionAlertManager] 初始化权限异常访问告警管理器");
+        return new PermissionAlertManager(permissionAuditLogger, redisTemplate);
+    }
+
+    /**
+     * 默认安全管理器Bean配置
+     * <p>
+     * 提供基础的安全管理功能实现
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     *
+     * @return 默认安全管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(DefaultSecurityManager.class)
+    public DefaultSecurityManager defaultSecurityManager() {
+        log.info("[DefaultSecurityManager] 初始化默认安全管理器");
+        return new DefaultSecurityManager();
+    }
+
+    /**
+     * Seata分布式事务管理器Bean配置
+     * <p>
+     * 统一使用Seata的@GlobalTransactional注解
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     *
+     * @return Seata分布式事务管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(SeataTransactionManager.class)
+    public SeataTransactionManager seataTransactionManager() {
+        log.info("[SeataTransactionManager] 初始化Seata分布式事务管理器");
+        return new SeataTransactionManager();
+    }
+
+    /**
+     * 统一缓存管理器Bean配置（microservices-common-cache）
+     * <p>
+     * 实现三级缓存架构：L1本地缓存 + L2 Redis缓存
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     *
+     * @param redisTemplate Redis模板
+     * @param redissonClient Redisson客户端
+     * @return 统一缓存管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "unifiedCacheManager")
+    public net.lab1024.sa.common.cache.UnifiedCacheManager unifiedCacheManager(
+            RedisTemplate<String, Object> redisTemplate,
+            RedissonClient redissonClient) {
+        log.info("[UnifiedCacheManager] 初始化统一缓存管理器（common-cache）");
+        return new net.lab1024.sa.common.cache.UnifiedCacheManager(redisTemplate, redissonClient);
+    }
+
+    /**
+     * 权限模块统一缓存管理器Bean配置（microservices-common-permission）
+     * <p>
+     * 权限模块专用的统一缓存管理器，实现三级缓存架构
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     * <p>
+     * 使用方：
+     * - PermissionCacheManagerImpl需要此Manager进行权限缓存管理
+     * </p>
+     *
+     * @param redisTemplate Redis模板
+     * @return 权限模块统一缓存管理器实例
+     */
+    @Bean("permissionUnifiedCacheManager")
+    @ConditionalOnMissingBean(name = "permissionUnifiedCacheManager")
+    public net.lab1024.sa.common.permission.cache.UnifiedCacheManager permissionUnifiedCacheManager(
+            RedisTemplate<String, Object> redisTemplate) {
+        log.info("[PermissionUnifiedCacheManager] 初始化权限模块统一缓存管理器");
+        return new net.lab1024.sa.common.permission.cache.UnifiedCacheManager(redisTemplate);
     }
 }

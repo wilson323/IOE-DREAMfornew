@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.manager.VideoDeviceManager;
 import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.manager.VideoSystemIntegrationManager;
+import net.lab1024.sa.video.manager.AIEventManager;
 import net.lab1024.sa.video.manager.FaceRecognitionManager;
 import net.lab1024.sa.video.manager.BehaviorDetectionManager;
 import net.lab1024.sa.video.manager.CrowdAnalysisManager;
@@ -119,5 +120,21 @@ public class ManagerConfiguration {
     public CrowdAnalysisManager crowdAnalysisManager() {
         log.info("[CrowdAnalysisManager] 初始化人群分析管理器");
         return new CrowdAnalysisManager();
+    }
+
+    /**
+     * 注册AIEventManager为Spring Bean
+     * <p>
+     * AI事件管理器，负责AI智能分析事件的统一管理
+     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过配置类注册
+     * </p>
+     *
+     * @return AI事件管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(AIEventManager.class)
+    public AIEventManager aiEventManager() {
+        log.info("[AIEventManager] 初始化AI事件管理器");
+        return new AIEventManager();
     }
 }

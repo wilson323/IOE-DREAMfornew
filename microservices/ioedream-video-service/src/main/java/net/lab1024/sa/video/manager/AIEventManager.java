@@ -1,7 +1,6 @@
 package net.lab1024.sa.video.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.scheduling.annotation.Async;
 
 import java.time.LocalDateTime;
@@ -21,12 +20,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * 5. 事件闭环跟踪
  * </p>
  *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
+ *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-16
  */
 @Slf4j
-@Component
 public class AIEventManager {
 
     // 事件状态枚举

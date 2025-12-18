@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.util.RequestUtils;
+import net.lab1024.sa.device.comm.service.VendorSupportService;
 import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +38,7 @@ import java.util.Map;
 public class VendorSupportController {
 
     @Resource
-    private DeviceVendorSupportManager deviceVendorSupportManager;
+    private VendorSupportService vendorSupportService;
 
     /**
      * 获取所有支持的厂商信息
@@ -75,7 +76,7 @@ public class VendorSupportController {
         try {
             log.info("[厂商支持管理] 查询厂商信息: {}, 操作人: {}", vendorName, RequestUtils.getUserId());
 
-            DeviceVendorSupportManager.VendorInfo vendorInfo = deviceVendorSupportManager.getVendorInfo(vendorName);
+            DeviceVendorSupportManager.VendorInfo vendorInfo = vendorSupportService.getVendorInfo(vendorName);
 
             if (vendorInfo == null) {
                 log.warn("[厂商支持管理] 厂商不存在: {}", vendorName);
@@ -105,7 +106,7 @@ public class VendorSupportController {
         try {
             log.info("[厂商支持管理] 查询厂商设备列表: {}, 操作人: {}", vendorName, RequestUtils.getUserId());
 
-            List<DeviceVendorSupportManager.DeviceInfo> devices = deviceVendorSupportManager.getVendorDevices(vendorName);
+            List<DeviceVendorSupportManager.DeviceInfo> devices = vendorSupportService.getVendorDevices(vendorName);
 
             log.info("[厂商支持管理] 查询厂商设备列表成功: {}, 返回 {} 个设备", vendorName, devices.size());
             return ResponseDTO.ok(devices);
@@ -155,7 +156,7 @@ public class VendorSupportController {
         try {
             log.info("[厂商支持管理] 检查厂商支持: {}, 操作人: {}", vendorName, RequestUtils.getUserId());
 
-            boolean supported = deviceVendorSupportManager.isVendorSupported(vendorName);
+            boolean supported = vendorSupportService.isVendorSupported(vendorName);
 
             log.info("[厂商支持管理] 检查厂商支持完成: {}, 结果: {}", vendorName, supported);
             return ResponseDTO.ok(supported);
@@ -202,7 +203,7 @@ public class VendorSupportController {
         try {
             log.info("[厂商支持管理] 查询厂商支持统计, 操作人: {}", RequestUtils.getUserId());
 
-            DeviceVendorSupportManager.VendorSupportStatistics statistics = deviceVendorSupportManager.getSupportStatistics();
+            DeviceVendorSupportManager.VendorSupportStatistics statistics = vendorSupportService.getSupportStatistics();
 
             log.info("[厂商支持管理] 查询厂商支持统计成功");
             return ResponseDTO.ok(statistics);
@@ -224,7 +225,7 @@ public class VendorSupportController {
         try {
             log.info("[厂商支持管理] 查询兼容性报告, 操作人: {}", RequestUtils.getUserId());
 
-            DeviceVendorSupportManager.CompatibilityReport report = deviceVendorSupportManager.getCompatibilityReport();
+            DeviceVendorSupportManager.CompatibilityReport report = vendorSupportService.getCompatibilityReport();
 
             log.info("[厂商支持管理] 查询兼容性报告成功, 总体评分: {}, 等级: {}",
                     report.getOverallCompatibilityScore(), report.getCompatibilityGrade());
@@ -277,7 +278,7 @@ public class VendorSupportController {
             log.info("[厂商支持管理] 批量注册厂商设备, 厂商数: {}, 操作人: {}",
                     vendorDevices.size(), RequestUtils.getUserId());
 
-            Map<String, Boolean> results = deviceVendorSupportManager.batchRegisterVendorDevices(vendorDevices);
+            Map<String, Boolean> results = vendorSupportService.batchRegisterVendorDevices(vendorDevices);
 
             // 统计成功和失败的数量
             long successCount = results.values().stream().mapToLong(success -> success ? 1 : 0).sum();
@@ -310,7 +311,7 @@ public class VendorSupportController {
             log.info("[厂商支持管理] 移除厂商设备: {} - {}, 操作人: {}",
                     vendorName, deviceModel, RequestUtils.getUserId());
 
-            boolean success = deviceVendorSupportManager.removeVendorDevice(vendorName, deviceModel);
+            boolean success = vendorSupportService.removeVendorDevice(vendorName, deviceModel);
 
             if (success) {
                 log.info("[厂商支持管理] 移除厂商设备成功: {} - {}", vendorName, deviceModel);

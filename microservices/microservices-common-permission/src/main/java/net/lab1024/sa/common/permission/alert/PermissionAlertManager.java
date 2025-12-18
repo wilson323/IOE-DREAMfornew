@@ -3,11 +3,9 @@ package net.lab1024.sa.common.permission.alert;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.permission.domain.dto.PermissionAuditDTO;
 import net.lab1024.sa.common.permission.audit.PermissionAuditLogger;
-import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -39,19 +37,34 @@ import java.util.HashMap;
  * 6. 权限提升请求异常频繁
  * </p>
  *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在微服务中通过配置类注册为Spring Bean
+ * </p>
+ *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-16
  */
 @Slf4j
-@Component
 public class PermissionAlertManager {
 
-    @Resource
-    private PermissionAuditLogger permissionAuditLogger;
+    private final PermissionAuditLogger permissionAuditLogger;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    /**
+     * 构造函数注入依赖
+     *
+     * @param permissionAuditLogger 权限审计日志记录器
+     * @param redisTemplate Redis模板
+     */
+    public PermissionAlertManager(PermissionAuditLogger permissionAuditLogger,
+                                 RedisTemplate<String, Object> redisTemplate) {
+        this.permissionAuditLogger = permissionAuditLogger;
+        this.redisTemplate = redisTemplate;
+    }
 
     // 告警规则配置
     private final Map<String, AlertRule> alertRules = new ConcurrentHashMap<>();
