@@ -40,9 +40,24 @@ import org.springframework.stereotype.Component;
 public class FaceFeatureExtractionStrategy implements IBiometricFeatureExtractionStrategy {
 
     /**
-     * 默认匹配阈值（用于质量评估）
+     * 默认质量阈值（用于质量评估）
+     * <p>
+     * 特征质量分数低于此阈值时，将抛出异常要求重新拍摄
+     * </p>
      */
     private static final double DEFAULT_QUALITY_THRESHOLD = 0.7;
+
+    /**
+     * 获取质量阈值
+     * <p>
+     * 用于质量检测，确保提取的特征向量质量符合要求
+     * </p>
+     *
+     * @return 质量阈值
+     */
+    public static double getQualityThreshold() {
+        return DEFAULT_QUALITY_THRESHOLD;
+    }
 
     // TODO: 集成OpenCV和FaceNet模型
     // @Resource
@@ -87,7 +102,7 @@ public class FaceFeatureExtractionStrategy implements IBiometricFeatureExtractio
 
             // 6. 质量检测（TODO: 实现质量评估算法）
             // double qualityScore = assessFaceQuality(alignedFace);
-            // if (qualityScore < DEFAULT_QUALITY_THRESHOLD) {
+            // if (qualityScore < getQualityThreshold()) {
             //     throw new BusinessException("FEATURE_EXTRACTION_ERROR", 
             //         String.format("照片质量太低(%.2f)，请重新拍摄（光线充足、正面、无遮挡）", qualityScore));
             // }
