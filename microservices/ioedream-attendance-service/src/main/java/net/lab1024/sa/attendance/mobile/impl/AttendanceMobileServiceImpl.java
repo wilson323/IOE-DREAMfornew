@@ -165,10 +165,10 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             }
 
             // 根据employeeId查询员工信息
-            EmployeeEntity employee = session.getEmployeeId() != null 
-                ? employeeDao.selectById(session.getEmployeeId()) 
+            EmployeeEntity employee = session.getEmployeeId() != null
+                ? employeeDao.selectById(session.getEmployeeId())
                 : null;
-            
+
             // 查询用户信息（如果employee存在，通过employee.getUserId()查询；否则通过username查询）
             UserEntity user = null;
             if (employee != null && employee.getUserId() != null) {
@@ -177,7 +177,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             } else if (session.getUsername() != null) {
                 user = userDao.selectByUsername(session.getUsername());
             }
-            
+
             if (user == null) {
                 return ResponseDTO.error("USER_NOT_FOUND", "用户不存在");
             }
@@ -978,8 +978,8 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
      */
     private void recordLoginEvent(UserEntity user, EmployeeEntity employee, MobileLoginRequest request) {
         log.info("[移动端登录] 用户ID={}, 用户名={}, 员工ID={}, 设备={}",
-            user.getUserId(), user.getUsername(), 
-            employee != null ? employee.getId() : null, 
+            user.getUserId(), user.getUsername(),
+            employee != null ? employee.getId() : null,
             request.getDeviceInfo());
     }
 

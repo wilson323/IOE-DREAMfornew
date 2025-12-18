@@ -3,6 +3,7 @@ package net.lab1024.sa.access.strategy.impl;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
 import net.lab1024.sa.access.strategy.VerificationModeStrategy;
@@ -63,15 +64,8 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
     private RedisTemplate<String, Object> redisTemplate;
 
     /**
-     * 缓存键前缀（复用统一工具类）
+     * 缓存键前缀和过期时间统一使用AccessCacheConstants
      */
-    private static final String CACHE_KEY_OFFLINE_RECORD = "access:edge:offline:record:";
-    private static final String CACHE_KEY_OFFLINE_QUEUE = "access:edge:offline:queue";
-
-    /**
-     * 缓存过期时间
-     */
-    private static final Duration CACHE_EXPIRE_OFFLINE_RECORD = Duration.ofDays(7); // 离线记录缓存7天
 
     /**
      * 执行验证（设备端验证模式）

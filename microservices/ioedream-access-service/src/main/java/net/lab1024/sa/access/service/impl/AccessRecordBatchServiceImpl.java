@@ -1,6 +1,7 @@
 package net.lab1024.sa.access.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.domain.dto.AccessRecordBatchUploadRequest;
 import net.lab1024.sa.access.service.AccessRecordBatchService;
 import net.lab1024.sa.access.util.AccessRecordIdempotencyUtil;
@@ -47,12 +48,9 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
     /**
      * 缓存键前缀（复用统一工具类的记录唯一标识缓存键）
      */
-    private static final String CACHE_KEY_BATCH_STATUS = "access:batch:status:";
-    
     /**
-     * 缓存过期时间
+     * 缓存键前缀和过期时间统一使用AccessCacheConstants
      */
-    private static final Duration CACHE_EXPIRE_BATCH = Duration.ofHours(24); // 批次状态缓存24小时
 
     /**
      * 批量上传通行记录

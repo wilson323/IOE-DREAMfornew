@@ -57,22 +57,31 @@ public class AccessVerificationServiceImpl implements AccessVerificationService 
 
     /**
      * 初始化策略映射
+     * <p>
+     * 优化实现：直接通过supports方法判断模式，避免多次调用
+     * </p>
      */
     private void initStrategyMap() {
         if (strategyMap == null) {
             strategyMap = strategyList.stream()
                     .collect(Collectors.toMap(
                             strategy -> {
-                                // 根据策略类名推断模式
+                                // 直接通过supports方法判断模式（更高效）
                                 if (strategy.supports("edge")) {
                                     return "edge";
                                 } else if (strategy.supports("backend")) {
                                     return "backend";
+                                } else if (strategy.supports("hybrid")) {
+                                    return "hybrid";
                                 }
+                                log.warn("[验证服务] 未知策略类型: {}", strategy.getStrategyName());
                                 return "unknown";
                             },
                             Function.identity(),
-                            (existing, replacement) -> existing
+                            (existing, replacement) -> {
+                                log.warn("[验证服务] 策略重复注册，保留现有策略: {}", existing.getStrategyName());
+                                return existing;
+                            }
                     ));
             log.info("[验证服务] 策略映射初始化完成: {}", strategyMap.keySet());
         }

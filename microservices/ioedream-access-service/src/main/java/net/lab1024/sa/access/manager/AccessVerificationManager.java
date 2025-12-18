@@ -79,20 +79,9 @@ public class AccessVerificationManager {
     private static final int DEFAULT_ANTI_PASSBACK_WINDOW_SECONDS = 300;
 
     /**
-     * 缓存键前缀
+     * 缓存键前缀和过期时间统一使用AccessCacheConstants
+     * 提高代码可维护性和一致性
      */
-    private static final String CACHE_KEY_ANTI_PASSBACK_RECORD = "access:anti-passback:record:";
-    private static final String CACHE_KEY_AREA_CONFIG = "access:area:config:";
-    private static final String CACHE_KEY_BLACKLIST = "access:blacklist:user:";
-    private static final String CACHE_KEY_MULTI_PERSON_SESSION = "access:multi-person:session:";
-
-    /**
-     * 缓存过期时间
-     */
-    private static final Duration CACHE_EXPIRE_RECORD = Duration.ofMinutes(10); // 反潜记录缓存10分钟
-    private static final Duration CACHE_EXPIRE_CONFIG = Duration.ofHours(1); // 配置缓存1小时
-    private static final Duration CACHE_EXPIRE_BLACKLIST = Duration.ofHours(1); // 黑名单缓存1小时
-    private static final Duration CACHE_EXPIRE_SESSION = Duration.ofMinutes(5); // 多人验证会话缓存5分钟
 
     /**
      * 时间格式化器
@@ -251,7 +240,7 @@ public class AccessVerificationManager {
 
         try {
             // 1. 从Redis缓存查询配置
-            String cacheKey = CACHE_KEY_AREA_CONFIG + areaId;
+            String cacheKey = AccessCacheConstants.buildAreaConfigKey(areaId);
             Object cachedConfig = redisTemplate.opsForValue().get(cacheKey);
             if (cachedConfig instanceof AntiPassbackConfig) {
                 return (AntiPassbackConfig) cachedConfig;
@@ -295,7 +284,7 @@ public class AccessVerificationManager {
                 }
 
                 // 4. 写入缓存
-                redisTemplate.opsForValue().set(cacheKey, config, CACHE_EXPIRE_CONFIG);
+                redisTemplate.opsForValue().set(cacheKey, config, AccessCacheConstants.CACHE_EXPIRE_AREA_CONFIG);
                 log.debug("[反潜验证] 反潜配置已缓存: areaId={}, enabled={}, timeWindow={}",
                         areaId, config.enabled, config.timeWindow);
 
@@ -330,7 +319,7 @@ public class AccessVerificationManager {
      */
     private AntiPassbackRecordEntity getLastRecordWithCache(Long userId, Long deviceId) {
         // 1. 从Redis缓存查询
-        String cacheKey = CACHE_KEY_ANTI_PASSBACK_RECORD + userId + ":" + deviceId;
+        String cacheKey = AccessCacheConstants.buildAntiPassbackRecordKey(userId, deviceId);
         Object cachedRecord = redisTemplate.opsForValue().get(cacheKey);
         if (cachedRecord instanceof AntiPassbackRecordEntity) {
             log.debug("[反潜验证] 从缓存获取记录: userId={}, deviceId={}", userId, deviceId);
@@ -343,7 +332,7 @@ public class AccessVerificationManager {
 
         // 3. 写入缓存（如果存在记录）
         if (lastRecord != null) {
-            redisTemplate.opsForValue().set(cacheKey, lastRecord, CACHE_EXPIRE_RECORD);
+            redisTemplate.opsForValue().set(cacheKey, lastRecord, AccessCacheConstants.CACHE_EXPIRE_ANTI_PASSBACK_RECORD);
             log.debug("[反潜验证] 记录已缓存: userId={}, deviceId={}", userId, deviceId);
         }
 
@@ -381,8 +370,8 @@ public class AccessVerificationManager {
             log.debug("[反潜验证] 记录已保存: userId={}, deviceId={}, inOutStatus={}", userId, deviceId, inOutStatus);
 
             // 2. 更新Redis缓存
-            String cacheKey = CACHE_KEY_ANTI_PASSBACK_RECORD + userId + ":" + deviceId;
-            redisTemplate.opsForValue().set(cacheKey, record, CACHE_EXPIRE_RECORD);
+            String cacheKey = AccessCacheConstants.buildAntiPassbackRecordKey(userId, deviceId);
+            redisTemplate.opsForValue().set(cacheKey, record, AccessCacheConstants.CACHE_EXPIRE_ANTI_PASSBACK_RECORD);
             log.debug("[反潜验证] 记录已缓存: userId={}, deviceId={}", userId, deviceId);
 
         } catch (Exception e) {
@@ -997,7 +986,7 @@ public class AccessVerificationManager {
 
         try {
             // 1. 从Redis缓存查询黑名单状态
-            String cacheKey = CACHE_KEY_BLACKLIST + userId;
+            String cacheKey = AccessCacheConstants.buildBlacklistKey(userId);
             Object cachedStatus = redisTemplate.opsForValue().get(cacheKey);
             if (cachedStatus instanceof Boolean) {
                 boolean isBlacklisted = (Boolean) cachedStatus;
@@ -1059,7 +1048,7 @@ public class AccessVerificationManager {
                 }
 
                 // 3. 写入Redis缓存
-                redisTemplate.opsForValue().set(cacheKey, isBlacklisted, CACHE_EXPIRE_BLACKLIST);
+                redisTemplate.opsForValue().set(cacheKey, isBlacklisted, AccessCacheConstants.CACHE_EXPIRE_BLACKLIST);
                 log.debug("[黑名单验证] 黑名单状态已缓存: userId={}, isBlacklisted={}", userId, isBlacklisted);
 
                 return isBlacklisted;

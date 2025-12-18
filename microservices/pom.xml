@@ -110,7 +110,7 @@
         <module>ioedream-common-service</module>
         <module>ioedream-device-comm-service</module>
         <module>ioedream-oa-service</module>
-        <!-- <module>ioedream-access-service</module> 临时禁用:中文损坏需修复 -->
+        <module>ioedream-access-service</module>
         <module>ioedream-attendance-service</module>
         <module>ioedream-video-service</module>
         <module>ioedream-consume-service</module>

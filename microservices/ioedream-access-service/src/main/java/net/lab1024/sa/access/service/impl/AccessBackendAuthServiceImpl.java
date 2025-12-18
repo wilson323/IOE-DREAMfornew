@@ -1,6 +1,7 @@
 package net.lab1024.sa.access.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.service.AccessBackendAuthService;
 import net.lab1024.sa.common.organization.dao.AreaDeviceDao;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
@@ -33,9 +34,9 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class AccessBackendAuthServiceImpl implements AccessBackendAuthService {
 
-    private static final String CACHE_KEY_DEVICE_SN = "access:device:sn:";
-    private static final String CACHE_KEY_DEVICE_AREA = "access:device:area:";
-    private static final Duration CACHE_EXPIRE = Duration.ofHours(1);
+    /**
+     * 缓存键前缀和过期时间统一使用AccessCacheConstants
+     */
 
     @Resource
     private DeviceDao deviceDao;
@@ -78,7 +79,7 @@ public class AccessBackendAuthServiceImpl implements AccessBackendAuthService {
             String deviceId = device.getDeviceId();
 
             // 3. 写入缓存（TTL: 1小时）
-            redisTemplate.opsForValue().set(cacheKey, deviceId, CACHE_EXPIRE);
+            redisTemplate.opsForValue().set(cacheKey, deviceId, AccessCacheConstants.CACHE_EXPIRE_DEVICE);
             log.debug("[后台验证服务] 设备ID已缓存: SN={}, deviceId={}", serialNumber, deviceId);
 
             return deviceId;

@@ -218,8 +218,8 @@ public class UnifiedCacheManager {
             return value;
         }
 
-        // 布隆过滤器检查
-        if (!bloomFilter.mightContain(key)) {
+        // 布隆过滤器检查（Redisson使用contains方法）
+        if (!bloomFilter.contains(key)) {
             log.debug("[多级缓存] 布隆过滤器未命中: key={}", key);
             return null;
         }
