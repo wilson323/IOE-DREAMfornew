@@ -26,13 +26,14 @@ import net.lab1024.sa.access.service.OfflineModeService;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
- * 闂ㄧ绉诲姩绔帶鍒跺櫒
+ * 门禁移动端控制器
  * <p>
- * 鎻愪緵绉诲姩绔棬绂佺鐞嗙浉鍏矨PI
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锛? * - 浣跨敤@RestController娉ㄨВ
- * - 浣跨敤@Resource渚濊禆娉ㄥ叆
- * - 浣跨敤@Valid鍙傛暟鏍￠獙
- * - 杩斿洖缁熶竴ResponseDTO鏍煎紡
+ * 提供移动端门禁管理相关API
+ * 严格遵循CLAUDE.md规范：
+ * - 使用@RestController注解
+ * - 使用@Resource依赖注入
+ * - 使用@Valid参数验证
+ * - 返回统一ResponseDTO格式
  * </p>
  *
  * @author IOE-DREAM Team
@@ -42,7 +43,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/mobile/access")
-@Tag(name = "绉诲姩绔棬绂佺鐞?, description = "绉诲姩绔棬绂佹鏌ャ€侀獙璇併€佹煡璇㈢瓑API")
+@Tag(name = "移动端门禁管理", description = "移动端门禁设备查询、验证、查询等API")
 public class AccessMobileController {
 
     @Resource
@@ -60,218 +61,225 @@ public class AccessMobileController {
     @Resource
     private OfflineModeService offlineModeService;
 
-    // ==================== 璁惧绠＄悊鍔熻兘 ====================
+    // ==================== 设备管理功能 ====================
 
     /**
-     * 鑾峰彇璁惧鍒楄〃
+     * 获取设备列表
      * <p>
-     * 鑾峰彇鐢ㄦ埛鏈夋潈闄愮鐞嗙殑璁惧鍒楄〃
+     * 获取用户有权限管理的设备列表
      * </p>
      *
-     * @param userId 鐢ㄦ埛ID锛堝彲閫夛紝涓嶄紶鍒欎粠Token鑾峰彇锛?     * @param deviceType 璁惧绫诲瀷锛堝彲閫夛級
-     * @param status 璁惧鐘舵€侊紙鍙€夛級
-     * @param areaId 鍖哄煙ID锛堝彲閫夛級
-     * @param keyword 鍏抽敭璇嶏紙鍙€夛級
-     * @return 璁惧鍒楄〃
+     * @param userId 用户ID（可选，不传则从Token获取）
+     * @param deviceType 设备类型（可选）
+     * @param status 设备状态（可选）
+     * @param areaId 区域ID（可选）
+     * @param keyword 关键词（可选）
+     * @return 设备列表
      */
     @Observed(name = "accessMobile.getDeviceList", contextualName = "access-mobile-device-list")
     @GetMapping("/device/list")
-    @Operation(summary = "鑾峰彇璁惧鍒楄〃", description = "鑾峰彇鐢ㄦ埛鏈夋潈闄愮鐞嗙殑璁惧鍒楄〃")
+    @Operation(summary = "获取设备列表", description = "获取用户有权限管理的设备列表")
     public ResponseDTO<List<MobileDeviceVO>> getDeviceList(
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Integer deviceType,
             @RequestParam(required = false) Integer status,
             @RequestParam(required = false) Long areaId,
             @RequestParam(required = false) String keyword) {
-        log.info("鑾峰彇璁惧鍒楄〃: userId={}, deviceType={}, status={}, areaId={}, keyword={}",
+        log.info("获取设备列表: userId={}, deviceType={}, status={}, areaId={}, keyword={}",
                 userId, deviceType, status, areaId, keyword);
         return accessDeviceService.getMobileDeviceList(userId, deviceType, status, areaId, keyword);
     }
 
     /**
-     * 鑾峰彇鍖哄煙鍒楄〃
+     * 获取区域列表
      * <p>
-     * 鑾峰彇璁惧绠＄悊闇€瑕佺殑鍖哄煙鍒楄〃
+     * 获取设备管理需要的区域列表
      * </p>
      *
-     * @return 鍖哄煙鍒楄〃
+     * @return 区域列表
      */
     @Observed(name = "accessMobile.getDeviceAreas", contextualName = "access-mobile-device-areas")
     @GetMapping("/area/list")
-    @Operation(summary = "鑾峰彇鍖哄煙鍒楄〃", description = "鑾峰彇璁惧绠＄悊闇€瑕佺殑鍖哄煙鍒楄〃")
+    @Operation(summary = "获取区域列表", description = "获取设备管理需要的区域列表")
     public ResponseDTO<List<MobileAreaVO>> getDeviceAreas() {
-        log.info("鑾峰彇璁惧绠＄悊鍖哄煙鍒楄〃");
+        log.info("获取设备管理区域列表");
         return accessDeviceService.getMobileAreaList();
     }
 
     /**
-     * 璁惧鎺у埗
+     * 设备控制
      * <p>
-     * 鎺у埗璁惧鎵ц鎸囧畾鎿嶄綔
+     * 控制设备执行指定操作
      * </p>
      *
-     * @param request 鎺у埗璇锋眰
-     * @return 鎺у埗缁撴灉
+     * @param request 控制请求
+     * @return 控制结果
      */
     @Observed(name = "accessMobile.controlDevice", contextualName = "access-mobile-device-control")
     @PostMapping("/device/control")
-    @Operation(summary = "璁惧鎺у埗", description = "鎺у埗璁惧鎵ц鎸囧畾鎿嶄綔")
+    @Operation(summary = "设备控制", description = "控制设备执行指定操作")
     public ResponseDTO<String> controlDevice(@Valid @RequestBody DeviceControlRequest request) {
-        log.info("璁惧鎺у埗: userId={}, deviceId={}, action={}",
+        log.info("设备控制: userId={}, deviceId={}, action={}",
                 request.getUserId(), request.getDeviceId(), request.getAction());
 
         try {
             return accessDeviceService.controlDevice(request);
         } catch (Exception e) {
-            log.error("璁惧鎺у埗澶辫触", e);
-            return ResponseDTO.error("DEVICE_CONTROL_FAILED", "璁惧鎺у埗澶辫触: " + e.getMessage());
+            log.error("设备控制失败", e);
+            return ResponseDTO.error("DEVICE_CONTROL_FAILED", "设备控制失败: " + e.getMessage());
         }
     }
 
     /**
-     * 娣诲姞璁惧
+     * 添加设备
      * <p>
-     * 娣诲姞鏂扮殑闂ㄧ璁惧
+     * 添加新的门禁设备
      * </p>
      *
-     * @param request 娣诲姞璇锋眰
-     * @return 娣诲姞缁撴灉
+     * @param request 添加请求
+     * @return 添加结果
      */
     @Observed(name = "accessMobile.addDevice", contextualName = "access-mobile-device-add")
     @PostMapping("/device/add")
-    @Operation(summary = "娣诲姞璁惧", description = "娣诲姞鏂扮殑闂ㄧ璁惧")
+    @Operation(summary = "添加设备", description = "添加新的门禁设备")
     public ResponseDTO<String> addDevice(@Valid @RequestBody AddDeviceRequest request) {
-        log.info("娣诲姞璁惧: deviceName={}, deviceCode={}, deviceType={}, areaId={}",
+        log.info("添加设备: deviceName={}, deviceCode={}, deviceType={}, areaId={}",
                 request.getDeviceName(), request.getDeviceCode(), request.getDeviceType(), request.getAreaId());
 
         try {
             return accessDeviceService.addDevice(request);
         } catch (Exception e) {
-            log.error("娣诲姞璁惧澶辫触", e);
-            return ResponseDTO.error("DEVICE_ADD_FAILED", "娣诲姞璁惧澶辫触: " + e.getMessage());
+            log.error("添加设备失败", e);
+            return ResponseDTO.error("DEVICE_ADD_FAILED", "添加设备失败: " + e.getMessage());
         }
     }
 
     /**
-     * 鍒犻櫎璁惧
+     * 删除设备
      * <p>
-     * 鍒犻櫎鎸囧畾鐨勯棬绂佽澶?     * </p>
+     * 删除指定的门禁设备
+     * </p>
      *
-     * @param deviceId 璁惧ID
-     * @return 鍒犻櫎缁撴灉
+     * @param deviceId 设备ID
+     * @return 删除结果
      */
     @Observed(name = "accessMobile.deleteDevice", contextualName = "access-mobile-device-delete")
     @DeleteMapping("/device/{deviceId}")
-    @Operation(summary = "鍒犻櫎璁惧", description = "鍒犻櫎鎸囧畾鐨勯棬绂佽澶?)
+    @Operation(summary = "删除设备", description = "删除指定的门禁设备")
     public ResponseDTO<String> deleteDevice(@PathVariable Long deviceId) {
-        log.info("鍒犻櫎璁惧: deviceId={}", deviceId);
+        log.info("删除设备: deviceId={}", deviceId);
 
         try {
             return accessDeviceService.deleteDevice(deviceId);
         } catch (Exception e) {
-            log.error("鍒犻櫎璁惧澶辫触", e);
-            return ResponseDTO.error("DEVICE_DELETE_FAILED", "鍒犻櫎璁惧澶辫触: " + e.getMessage());
+            log.error("删除设备失败", e);
+            return ResponseDTO.error("DEVICE_DELETE_FAILED", "删除设备失败: " + e.getMessage());
         }
     }
 
     /**
-     * 璁惧閲嶅惎
+     * 设备重启
      * <p>
-     * 閲嶅惎鎸囧畾璁惧
+     * 重启指定设备
      * </p>
      *
-     * @param request 閲嶅惎璇锋眰
-     * @return 閲嶅惎缁撴灉
+     * @param request 重启请求
+     * @return 重启结果
      */
     @Observed(name = "accessMobile.restartDevice", contextualName = "access-mobile-device-restart")
     @PostMapping("/device/restart")
-    @Operation(summary = "璁惧閲嶅惎", description = "閲嶅惎鎸囧畾璁惧")
+    @Operation(summary = "设备重启", description = "重启指定设备")
     public ResponseDTO<String> restartDevice(@Valid @RequestBody DeviceRestartRequest request) {
-        log.info("璁惧閲嶅惎: deviceId={}", request.getDeviceId());
+        log.info("设备重启: deviceId={}", request.getDeviceId());
 
         try {
             return accessDeviceService.restartDevice(request);
         } catch (Exception e) {
-            log.error("璁惧閲嶅惎澶辫触", e);
-            return ResponseDTO.error("DEVICE_RESTART_FAILED", "璁惧閲嶅惎澶辫触: " + e.getMessage());
+            log.error("设备重启失败", e);
+            return ResponseDTO.error("DEVICE_RESTART_FAILED", "设备重启失败: " + e.getMessage());
         }
     }
 
     /**
-     * 璁惧缁存姢
+     * 设备维护
      * <p>
-     * 璁剧疆璁惧缁存姢鐘舵€?     * </p>
+     * 设置设备维护状态
+     * </p>
      *
-     * @param request 缁存姢璇锋眰
-     * @return 缁存姢缁撴灉
+     * @param request 维护请求
+     * @return 维护结果
      */
     @Observed(name = "accessMobile.maintainDevice", contextualName = "access-mobile-device-maintain")
     @PostMapping("/device/maintain")
-    @Operation(summary = "璁惧缁存姢", description = "璁剧疆璁惧缁存姢鐘舵€?)
+    @Operation(summary = "设备维护", description = "设置设备维护状态")
     public ResponseDTO<String> maintainDevice(@Valid @RequestBody DeviceMaintainRequest request) {
-        log.info("璁惧缁存姢: deviceId={}, action={}", request.getDeviceId(), request.getAction());
+        log.info("设备维护: deviceId={}, action={}", request.getDeviceId(), request.getAction());
 
         try {
             return accessDeviceService.maintainDevice(request);
         } catch (Exception e) {
-            log.error("璁惧缁存姢澶辫触", e);
-            return ResponseDTO.error("DEVICE_MAINTAIN_FAILED", "璁惧缁存姢澶辫触: " + e.getMessage());
+            log.error("设备维护失败", e);
+            return ResponseDTO.error("DEVICE_MAINTAIN_FAILED", "设备维护失败: " + e.getMessage());
         }
     }
 
     /**
-     * 璁惧鏍″噯
+     * 设备校准
      * <p>
-     * 鎵ц璁惧鏍″噯鎿嶄綔
+     * 执行设备校准操作
      * </p>
      *
-     * @param request 鏍″噯璇锋眰
-     * @return 鏍″噯缁撴灉
+     * @param request 校准请求
+     * @return 校准结果
      */
     @Observed(name = "accessMobile.calibrateDevice", contextualName = "access-mobile-device-calibrate")
     @PostMapping("/device/calibrate")
-    @Operation(summary = "璁惧鏍″噯", description = "鎵ц璁惧鏍″噯鎿嶄綔")
+    @Operation(summary = "设备校准", description = "执行设备校准操作")
     public ResponseDTO<String> calibrateDevice(@Valid @RequestBody DeviceCalibrateRequest request) {
-        log.info("璁惧鏍″噯: deviceId={}", request.getDeviceId());
+        log.info("设备校准: deviceId={}", request.getDeviceId());
 
         try {
             return accessDeviceService.calibrateDevice(request);
         } catch (Exception e) {
-            log.error("璁惧鏍″噯澶辫触", e);
-            return ResponseDTO.error("DEVICE_CALIBRATE_FAILED", "璁惧鏍″噯澶辫触: " + e.getMessage());
+            log.error("设备校准失败", e);
+            return ResponseDTO.error("DEVICE_CALIBRATE_FAILED", "设备校准失败: " + e.getMessage());
         }
     }
 
     /**
-     * 鑾峰彇璁惧璇︽儏
+     * 获取设备详情
      * <p>
-     * 鑾峰彇鎸囧畾璁惧鐨勮缁嗕俊鎭?     * </p>
+     * 获取指定设备的详细信息
+     * </p>
      *
-     * @param deviceId 璁惧ID
-     * @return 璁惧璇︽儏
+     * @param deviceId 设备ID
+     * @return 设备详情
      */
     @Observed(name = "accessMobile.getDeviceDetail", contextualName = "access-mobile-device-detail")
     @GetMapping("/device/{deviceId}")
-    @Operation(summary = "鑾峰彇璁惧璇︽儏", description = "鑾峰彇鎸囧畾璁惧鐨勮缁嗕俊鎭?)
+    @Operation(summary = "获取设备详情", description = "获取指定设备的详细信息")
     public ResponseDTO<MobileDeviceDetailVO> getDeviceDetail(@PathVariable Long deviceId) {
-        log.info("鑾峰彇璁惧璇︽儏: deviceId={}", deviceId);
+        log.info("获取设备详情: deviceId={}", deviceId);
 
         try {
             return accessDeviceService.getMobileDeviceDetail(deviceId);
         } catch (Exception e) {
-            log.error("鑾峰彇璁惧璇︽儏澶辫触", e);
-            return ResponseDTO.error("DEVICE_DETAIL_FAILED", "鑾峰彇璁惧璇︽儏澶辫触: " + e.getMessage());
+            log.error("获取设备详情失败", e);
+            return ResponseDTO.error("DEVICE_DETAIL_FAILED", "获取设备详情失败: " + e.getMessage());
         }
     }
 
     /**
-     * 绉诲姩绔棬绂佹鏌?     *
-     * @param request 妫€鏌ヨ姹?     * @return 妫€鏌ョ粨鏋?     */
+     * 移动端门禁检查
+     *
+     * @param request 检查请求
+     * @return 检查结果
+     */
     @Observed(name = "accessMobile.mobileAccessCheck", contextualName = "access-mobile-check")
     @PostMapping("/check")
-    @Operation(summary = "绉诲姩绔棬绂佹鏌?, description = "绉诲姩绔棬绂佹潈闄愭鏌?)
+    @Operation(summary = "移动端门禁检查", description = "移动端门禁权限检查")
     public ResponseDTO<Boolean> mobileAccessCheck(@Valid @RequestBody MobileAccessCheckRequest request) {
-        log.info("绉诲姩绔棬绂佹鏌? userId={}, deviceId={}, areaId={}",
+        log.info("移动端门禁检查: userId={}, deviceId={}, areaId={}",
                 request.getUserId(), request.getDeviceId(), request.getAreaId());
 
         AdvancedAccessControlService.AccessControlResult result =
@@ -286,15 +294,16 @@ public class AccessMobileController {
     }
 
     /**
-     * 浜岀淮鐮侀獙璇?     *
-     * @param request 楠岃瘉璇锋眰
-     * @return 楠岃瘉缁撴灉
+     * 二维码验证
+     *
+     * @param request 验证请求
+     * @return 验证结果
      */
     @Observed(name = "accessMobile.verifyQRCode", contextualName = "access-mobile-qr-verify")
     @PostMapping("/qr/verify")
-    @Operation(summary = "浜岀淮鐮侀獙璇?, description = "绉诲姩绔簩缁寸爜闂ㄧ楠岃瘉")
+    @Operation(summary = "二维码验证", description = "移动端二维码门禁验证")
     public ResponseDTO<Boolean> verifyQRCode(@Valid @RequestBody QRCodeVerifyRequest request) {
-        log.info("浜岀淮鐮侀獙璇? qrCode={}, deviceId={}", request.getQrCode(), request.getDeviceId());
+        log.info("二维码验证: qrCode={}, deviceId={}", request.getQrCode(), request.getDeviceId());
 
         AdvancedAccessControlService.AccessControlResult result =
                 advancedAccessControlService.performAccessControlCheck(
@@ -308,16 +317,16 @@ public class AccessMobileController {
     }
 
     /**
-     * NFC楠岃瘉
+     * NFC验证
      *
-     * @param request 楠岃瘉璇锋眰
-     * @return 楠岃瘉缁撴灉
+     * @param request 验证请求
+     * @return 验证结果
      */
     @Observed(name = "accessMobile.verifyNFC", contextualName = "access-mobile-nfc-verify")
     @PostMapping("/nfc/verify")
-    @Operation(summary = "NFC楠岃瘉", description = "绉诲姩绔疦FC闂ㄧ楠岃瘉")
+    @Operation(summary = "NFC验证", description = "移动端NFC门禁验证")
     public ResponseDTO<Boolean> verifyNFC(@Valid @RequestBody NFCVerifyRequest request) {
-        log.info("NFC楠岃瘉: nfcCardId={}, deviceId={}", request.getNfcCardId(), request.getDeviceId());
+        log.info("NFC验证: nfcCardId={}, deviceId={}", request.getNfcCardId(), request.getDeviceId());
 
         AdvancedAccessControlService.AccessControlResult result =
                 advancedAccessControlService.performAccessControlCheck(
@@ -331,16 +340,16 @@ public class AccessMobileController {
     }
 
     /**
-     * 鐢熺墿璇嗗埆楠岃瘉
+     * 生物识别验证
      *
-     * @param request 楠岃瘉璇锋眰
-     * @return 楠岃瘉缁撴灉
+     * @param request 验证请求
+     * @return 验证结果
      */
     @Observed(name = "accessMobile.verifyBiometric", contextualName = "access-mobile-biometric-verify")
     @PostMapping("/biometric/verify")
-    @Operation(summary = "鐢熺墿璇嗗埆楠岃瘉", description = "绉诲姩绔敓鐗╄瘑鍒棬绂侀獙璇?)
+    @Operation(summary = "生物识别验证", description = "移动端生物识别门禁验证")
     public ResponseDTO<Boolean> verifyBiometric(@Valid @RequestBody BiometricVerifyRequest request) {
-        log.info("鐢熺墿璇嗗埆楠岃瘉: userId={}, biometricType={}, deviceId={}",
+        log.info("生物识别验证: userId={}, biometricType={}, deviceId={}",
                 request.getUserId(), request.getBiometricType(), request.getDeviceId());
 
         AdvancedAccessControlService.AccessControlResult result =
@@ -355,294 +364,309 @@ public class AccessMobileController {
     }
 
     /**
-     * 鑾峰彇闄勮繎璁惧
+     * 获取附近设备
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param latitude 绾害
-     * @param longitude 缁忓害
-     * @param radius 鍗婂緞锛堢背锛?     * @return 璁惧鍒楄〃
+     * @param userId 用户ID
+     * @param latitude 纬度
+     * @param longitude 经度
+     * @param radius 半径（米）
+     * @return 设备列表
      */
     @Observed(name = "accessMobile.getNearbyDevices", contextualName = "access-mobile-nearby-devices")
     @GetMapping("/devices/nearby")
-    @Operation(summary = "鑾峰彇闄勮繎璁惧", description = "鏍规嵁GPS浣嶇疆鑾峰彇闄勮繎闂ㄧ璁惧")
+    @Operation(summary = "获取附近设备", description = "根据GPS位置获取附近门禁设备")
     public ResponseDTO<List<MobileDeviceItem>> getNearbyDevices(
             @RequestParam Long userId,
             @RequestParam Double latitude,
             @RequestParam Double longitude,
             @RequestParam(defaultValue = "500") Integer radius) {
-        log.info("鑾峰彇闄勮繎璁惧: userId={}, latitude={}, longitude={}, radius={}",
+        log.info("获取附近设备: userId={}, latitude={}, longitude={}, radius={}",
                 userId, latitude, longitude, radius);
         return accessDeviceService.getNearbyDevices(userId, latitude, longitude, radius);
     }
 
     /**
-     * 鑾峰彇鐢ㄦ埛闂ㄧ鏉冮檺
+     * 获取用户门禁权限
      *
-     * @param userId 鐢ㄦ埛ID
-     * @return 鏉冮檺淇℃伅
+     * @param userId 用户ID
+     * @return 权限信息
      */
     @Observed(name = "accessMobile.getUserPermissions", contextualName = "access-mobile-user-permissions")
     @GetMapping("/permissions/{userId}")
-    @Operation(summary = "鑾峰彇鐢ㄦ埛闂ㄧ鏉冮檺", description = "鑾峰彇鎸囧畾鐢ㄦ埛鐨勯棬绂佹潈闄愬垪琛?)
+    @Operation(summary = "获取用户门禁权限", description = "获取指定用户的门禁权限列表")
     public ResponseDTO<MobileUserPermissions> getUserPermissions(@PathVariable Long userId) {
-        log.info("鑾峰彇鐢ㄦ埛闂ㄧ鏉冮檺: userId={}", userId);
+        log.info("获取用户门禁权限: userId={}", userId);
         return accessDeviceService.getMobileUserPermissions(userId);
     }
 
     /**
-     * 鑾峰彇鐢ㄦ埛璁块棶璁板綍
+     * 获取用户访问记录
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param size 璁板綍鏁伴噺
-     * @return 璁块棶璁板綍鍒楄〃
+     * @param userId 用户ID
+     * @param size 记录数量
+     * @return 访问记录列表
      */
     @Observed(name = "accessMobile.getUserAccessRecords", contextualName = "access-mobile-user-records")
     @GetMapping("/records/{userId}")
-    @Operation(summary = "鑾峰彇鐢ㄦ埛璁块棶璁板綍", description = "鑾峰彇鎸囧畾鐢ㄦ埛鐨勮闂褰?)
+    @Operation(summary = "获取用户访问记录", description = "获取指定用户的门禁访问记录")
     public ResponseDTO<List<MobileAccessRecord>> getUserAccessRecords(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "20") Integer size) {
-        log.info("鑾峰彇鐢ㄦ埛璁块棶璁板綍: userId={}, size={}", userId, size);
+        log.info("获取用户访问记录: userId={}, size={}", userId, size);
         return accessEventService.getMobileAccessRecords(userId, size);
     }
 
     /**
-     * 鑾峰彇鍖哄煙鍒楄〃
+     * 获取区域列表
      * <p>
-     * 鑾峰彇鐢ㄦ埛鏈夋潈闄愯闂殑鍖哄煙鍒楄〃锛屽寘鍚尯鍩熻鎯?     * </p>
+     * 获取用户有权限访问的区域列表，包含区域详细信息
+     * </p>
      *
-     * @param userId 鐢ㄦ埛ID锛堝彲閫夛紝涓嶄紶鍒欎粠Token鑾峰彇锛?     * @return 鍖哄煙鍒楄〃
+     * @param userId 用户ID（可选，不传则从Token获取）
+     * @return 区域列表
      */
     @Observed(name = "accessMobile.getAreas", contextualName = "access-mobile-areas")
     @GetMapping("/areas")
-    @Operation(summary = "鑾峰彇鍖哄煙鍒楄〃", description = "鑾峰彇鐢ㄦ埛鏈夋潈闄愯闂殑鍖哄煙鍒楄〃")
+    @Operation(summary = "获取区域列表", description = "获取用户有权限访问的区域列表")
     public ResponseDTO<List<MobileAreaItem>> getAreas(@RequestParam(required = false) Long userId) {
-        log.info("鑾峰彇鍖哄煙鍒楄〃: userId={}", userId);
+        log.info("获取区域列表: userId={}", userId);
         return accessDeviceService.getMobileAreas(userId);
     }
 
     /**
-     * 涓存椂寮€闂ㄧ敵璇?     *
-     * @param request 鐢宠璇锋眰
-     * @return 鐢宠缁撴灉
+     * 临时开门申请
+     *
+     * @param request 申请请求
+     * @return 申请结果
      */
     @Observed(name = "accessMobile.requestTemporaryAccess", contextualName = "access-mobile-temporary-access")
     @PostMapping("/temporary-access")
-    @Operation(summary = "涓存椂寮€闂ㄧ敵璇?, description = "鐢宠涓存椂闂ㄧ鏉冮檺")
+    @Operation(summary = "临时开门申请", description = "申请临时门禁权限")
     public ResponseDTO<String> requestTemporaryAccess(@Valid @RequestBody TemporaryAccessRequest request) {
-        log.info("涓存椂寮€闂ㄧ敵璇? userId={}, deviceId={}, reason={}",
+        log.info("临时开门申请: userId={}, deviceId={}, reason={}",
                 request.getUserId(), request.getDeviceId(), request.getReason());
-        return ResponseDTO.ok("鐢宠宸叉彁浜?);
+        return ResponseDTO.ok("申请已提交");
     }
 
     /**
-     * 鑾峰彇瀹炴椂闂ㄧ鐘舵€?     *
-     * @param deviceId 璁惧ID
-     * @return 鐘舵€佷俊鎭?     */
+     * 获取实时门禁状态
+     *
+     * @param deviceId 设备ID
+     * @return 状态信息
+     */
     @Observed(name = "accessMobile.getRealTimeStatus", contextualName = "access-mobile-realtime-status")
     @GetMapping("/status/realtime")
-    @Operation(summary = "鑾峰彇瀹炴椂闂ㄧ鐘舵€?, description = "鑾峰彇鎸囧畾璁惧鐨勫疄鏃剁姸鎬?)
+    @Operation(summary = "获取实时门禁状态", description = "获取指定设备的实时状态信息")
     public ResponseDTO<MobileRealTimeStatus> getRealTimeStatus(@RequestParam Long deviceId) {
-        log.info("鑾峰彇瀹炴椂闂ㄧ鐘舵€? deviceId={}", deviceId);
+        log.info("获取实时门禁状态: deviceId={}", deviceId);
         return accessDeviceService.getMobileRealTimeStatus(deviceId);
     }
 
     /**
-     * 鍙戦€佹帹閫侀€氱煡
+     * 发送推送通知
      *
-     * @param request 閫氱煡璇锋眰
-     * @return 鍙戦€佺粨鏋?     */
+     * @param request 通知请求
+     * @return 发送结果
+     */
     @Observed(name = "accessMobile.sendPushNotification", contextualName = "access-mobile-push-notification")
     @PostMapping("/notification/push")
-    @Operation(summary = "鍙戦€佹帹閫侀€氱煡", description = "鍙戦€侀棬绂佺浉鍏虫帹閫侀€氱煡")
+    @Operation(summary = "发送推送通知", description = "发送门禁相关推送通知")
     public ResponseDTO<String> sendPushNotification(@Valid @RequestBody PushNotificationRequest request) {
-        log.info("鍙戦€佹帹閫侀€氱煡: userId={}, notificationType={}",
+        log.info("发送推送通知: userId={}, notificationType={}",
                 request.getUserId(), request.getNotificationType());
-        return ResponseDTO.ok("閫氱煡宸插彂閫?);
+        return ResponseDTO.ok("通知已发送");
     }
 
-    // ==================== 钃濈墮闂ㄧ鍔熻兘 ====================
+    // ==================== 蓝牙门禁功能 ====================
 
     /**
-     * 钃濈墮璁惧鎵弿
+     * 蓝牙设备扫描
      * <p>
-     * 鎵弿闄勮繎鐨勮摑鐗欓棬绂佽澶?     * </p>
+     * 扫描附近的蓝牙门禁设备
+     * </p>
      *
-     * @param request 鎵弿璇锋眰
-     * @return 鎵弿缁撴灉
+     * @param request 扫描请求
+     * @return 扫描结果
      */
     @Observed(name = "accessMobile.scanBluetoothDevices", contextualName = "access-mobile-bluetooth-scan")
     @PostMapping("/bluetooth/scan")
-    @Operation(summary = "钃濈墮璁惧鎵弿", description = "鎵弿闄勮繎鐨勮摑鐗欓棬绂佽澶?)
+    @Operation(summary = "蓝牙设备扫描", description = "扫描附近的蓝牙门禁设备")
     public ResponseDTO<List<BluetoothDeviceVO>> scanBluetoothDevices(@Valid @RequestBody BluetoothScanRequest request) {
-        log.info("钃濈墮璁惧鎵弿: userId={}, location={}, duration={}ms",
+        log.info("蓝牙设备扫描: userId={}, location={}, duration={}ms",
                 request.getUserId(), request.getLocation(), request.getScanDuration());
 
         return bluetoothAccessService.scanNearbyDevices(request);
     }
 
     /**
-     * 钃濈墮璁惧杩炴帴
+     * 蓝牙设备连接
      * <p>
-     * 杩炴帴鎸囧畾鐨勮摑鐗欓棬绂佽澶?     * </p>
+     * 连接指定的蓝牙门禁设备
+     * </p>
      *
-     * @param request 杩炴帴璇锋眰
-     * @return 杩炴帴缁撴灉
+     * @param request 连接请求
+     * @return 连接结果
      */
     @Observed(name = "accessMobile.connectBluetoothDevice", contextualName = "access-mobile-bluetooth-connect")
     @PostMapping("/bluetooth/connect")
-    @Operation(summary = "钃濈墮璁惧杩炴帴", description = "杩炴帴鎸囧畾鐨勮摑鐗欓棬绂佽澶?)
+    @Operation(summary = "蓝牙设备连接", description = "连接指定的蓝牙门禁设备")
     public ResponseDTO<BluetoothConnectionResult> connectBluetoothDevice(@Valid @RequestBody BluetoothConnectRequest request) {
-        log.info("钃濈墮璁惧杩炴帴: userId={}, deviceAddress={}", request.getUserId(), request.getDeviceAddress());
+        log.info("蓝牙设备连接: userId={}, deviceAddress={}", request.getUserId(), request.getDeviceAddress());
 
         return bluetoothAccessService.connectDevice(request);
     }
 
     /**
-     * 钃濈墮闂ㄧ楠岃瘉
+     * 蓝牙门禁验证
      * <p>
-     * 閫氳繃钃濈墮杩涜闂ㄧ楠岃瘉
+     * 通过蓝牙执行门禁验证
      * </p>
      *
-     * @param request 楠岃瘉璇锋眰
-     * @return 楠岃瘉缁撴灉
+     * @param request 验证请求
+     * @return 验证结果
      */
     @Observed(name = "accessMobile.verifyBluetoothAccess", contextualName = "access-mobile-bluetooth-verify")
     @PostMapping("/bluetooth/verify")
-    @Operation(summary = "钃濈墮闂ㄧ楠岃瘉", description = "閫氳繃钃濈墮杩涜闂ㄧ楠岃瘉")
+    @Operation(summary = "蓝牙门禁验证", description = "通过蓝牙执行门禁验证")
     public ResponseDTO<BluetoothAccessResult> verifyBluetoothAccess(@Valid @RequestBody BluetoothAccessRequest request) {
-        log.info("钃濈墮闂ㄧ楠岃瘉: userId={}, deviceAddress={}, accessType={}",
+        log.info("蓝牙门禁验证: userId={}, deviceAddress={}, accessType={}",
                 request.getUserId(), request.getDeviceAddress(), request.getAccessType());
 
         return bluetoothAccessService.performBluetoothAccess(request);
     }
 
     /**
-     * 钃濈墮璁惧鐘舵€佹煡璇?     * <p>
-     * 鏌ヨ宸茶繛鎺ヨ摑鐗欒澶囩殑鐘舵€?     * </p>
+     * 蓝牙设备状态查询
+     * <p>
+     * 查询已连接蓝牙设备的状态
+     * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @return 璁惧鐘舵€佸垪琛?     */
+     * @param userId 用户ID
+     * @return 设备状态列表
+     */
     @Observed(name = "accessMobile.getBluetoothDeviceStatus", contextualName = "access-mobile-bluetooth-status")
     @GetMapping("/bluetooth/status")
-    @Operation(summary = "钃濈墮璁惧鐘舵€佹煡璇?, description = "鏌ヨ宸茶繛鎺ヨ摑鐗欒澶囩殑鐘舵€?)
+    @Operation(summary = "蓝牙设备状态查询", description = "查询已连接蓝牙设备的状态")
     public ResponseDTO<List<BluetoothDeviceStatusVO>> getBluetoothDeviceStatus(@RequestParam Long userId) {
-        log.info("钃濈墮璁惧鐘舵€佹煡璇? userId={}", userId);
+        log.info("蓝牙设备状态查询: userId={}", userId);
         return bluetoothAccessService.getConnectedDevicesStatus(userId);
     }
 
     /**
-     * 钃濈墮璁惧鏂紑杩炴帴
+     * 蓝牙设备断开连接
      * <p>
-     * 鏂紑涓庢寚瀹氳摑鐗欒澶囩殑杩炴帴
+     * 断开与指定蓝牙设备的连接
      * </p>
      *
-     * @param request 鏂紑杩炴帴璇锋眰
-     * @return 鎿嶄綔缁撴灉
+     * @param request 断开连接请求
+     * @return 操作结果
      */
     @Observed(name = "accessMobile.disconnectBluetoothDevice", contextualName = "access-mobile-bluetooth-disconnect")
     @PostMapping("/bluetooth/disconnect")
-    @Operation(summary = "钃濈墮璁惧鏂紑杩炴帴", description = "鏂紑涓庢寚瀹氳摑鐗欒澶囩殑杩炴帴")
+    @Operation(summary = "蓝牙设备断开连接", description = "断开与指定蓝牙设备的连接")
     public ResponseDTO<String> disconnectBluetoothDevice(@Valid @RequestBody BluetoothDisconnectRequest request) {
-        log.info("钃濈墮璁惧鏂紑杩炴帴: userId={}, deviceAddress={}", request.getUserId(), request.getDeviceAddress());
+        log.info("蓝牙设备断开连接: userId={}, deviceAddress={}", request.getUserId(), request.getDeviceAddress());
 
         boolean result = bluetoothAccessService.disconnectDevice(request.getUserId(), request.getDeviceAddress());
-        return result ? ResponseDTO.ok("鏂紑杩炴帴鎴愬姛") : ResponseDTO.error("DISCONNECT_FAILED", "鏂紑杩炴帴澶辫触");
+        return result ? ResponseDTO.ok("断开连接成功") : ResponseDTO.error("DISCONNECT_FAILED", "断开连接失败");
     }
 
     /**
-     * 钃濈墮璁惧閰嶅
+     * 蓝牙设备配对
      * <p>
-     * 涓庤摑鐗欒澶囪繘琛岄厤瀵?     * </p>
+     * 与蓝牙设备进行配对
+     * </p>
      *
-     * @param request 閰嶅璇锋眰
-     * @return 閰嶅缁撴灉
+     * @param request 配对请求
+     * @return 配对结果
      */
     @Observed(name = "accessMobile.pairBluetoothDevice", contextualName = "access-mobile-bluetooth-pair")
     @PostMapping("/bluetooth/pair")
-    @Operation(summary = "钃濈墮璁惧閰嶅", description = "涓庤摑鐗欒澶囪繘琛岄厤瀵?)
+    @Operation(summary = "蓝牙设备配对", description = "与蓝牙设备进行配对")
     public ResponseDTO<BluetoothPairingResult> pairBluetoothDevice(@Valid @RequestBody BluetoothPairingRequest request) {
-        log.info("钃濈墮璁惧閰嶅: userId={}, deviceAddress={}, pinCode={}",
+        log.info("蓝牙设备配对: userId={}, deviceAddress={}, pinCode={}",
                 request.getUserId(), request.getDeviceAddress(), request.getPinCode());
 
         return bluetoothAccessService.pairDevice(request);
     }
 
-    // ==================== 绂荤嚎妯″紡鍔熻兘 ====================
+    // ==================== 离线模式功能 ====================
 
     /**
-     * 绂荤嚎妯″紡鏁版嵁鍚屾
+     * 离线模式数据同步
      * <p>
-     * 鍚屾绂荤嚎妯″紡涓嬬殑闂ㄧ鏁版嵁
+     * 同步离线模式下的门禁数据
      * </p>
      *
-     * @param request 鍚屾璇锋眰
-     * @return 鍚屾缁撴灉
+     * @param request 同步请求
+     * @return 同步结果
      */
     @Observed(name = "accessMobile.syncOfflineData", contextualName = "access-mobile-offline-sync")
     @PostMapping("/offline/sync")
-    @Operation(summary = "绂荤嚎妯″紡鏁版嵁鍚屾", description = "鍚屾绂荤嚎妯″紡涓嬬殑闂ㄧ鏁版嵁")
+    @Operation(summary = "离线模式数据同步", description = "同步离线模式下的门禁数据")
     public ResponseDTO<OfflineSyncResult> syncOfflineData(@Valid @RequestBody OfflineSyncRequest request) {
-        log.info("绂荤嚎妯″紡鏁版嵁鍚屾: userId={}, syncType={}, dataSize={}",
+        log.info("离线模式数据同步: userId={}, syncType={}, dataSize={}",
                 request.getUserId(), request.getSyncType(), request.getDataSize());
 
         return offlineModeService.syncOfflineData(request);
     }
 
     /**
-     * 鑾峰彇绂荤嚎璁块棶鏉冮檺
+     * 获取离线访问权限
      * <p>
-     * 鑾峰彇鐢ㄦ埛鍦ㄧ绾挎ā寮忎笅鐨勮闂潈闄愭暟鎹?     * </p>
+     * 获取用户在离线模式下的门禁权限数据
+     * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param lastSyncTime 涓婃鍚屾鏃堕棿
-     * @return 绂荤嚎鏉冮檺鏁版嵁
+     * @param userId 用户ID
+     * @param lastSyncTime 上次同步时间
+     * @return 离线权限数据
      */
     @Observed(name = "accessMobile.getOfflinePermissions", contextualName = "access-mobile-offline-permissions")
     @GetMapping("/offline/permissions")
-    @Operation(summary = "鑾峰彇绂荤嚎璁块棶鏉冮檺", description = "鑾峰彇鐢ㄦ埛鍦ㄧ绾挎ā寮忎笅鐨勮闂潈闄愭暟鎹?)
+    @Operation(summary = "获取离线访问权限", description = "获取用户在离线模式下的门禁权限数据")
     public ResponseDTO<OfflinePermissionsVO> getOfflinePermissions(
             @RequestParam Long userId,
             @RequestParam(required = false) String lastSyncTime) {
-        log.info("鑾峰彇绂荤嚎璁块棶鏉冮檺: userId={}, lastSyncTime={}", userId, lastSyncTime);
+        log.info("获取离线访问权限: userId={}, lastSyncTime={}", userId, lastSyncTime);
         return offlineModeService.getOfflinePermissions(userId, lastSyncTime);
     }
 
     /**
-     * 绂荤嚎璁块棶璁板綍涓婃姤
+     * 离线访问记录上报
      * <p>
-     * 涓婃姤绂荤嚎妯″紡涓嬬殑璁块棶璁板綍
+     * 上报离线模式下的访问记录
      * </p>
      *
-     * @param request 涓婃姤璇锋眰
-     * @return 涓婃姤缁撴灉
+     * @param request 上报请求
+     * @return 上报结果
      */
     @Observed(name = "accessMobile.reportOfflineAccessRecords", contextualName = "access-mobile-offline-report")
     @PostMapping("/offline/records/report")
-    @Operation(summary = "绂荤嚎璁块棶璁板綍涓婃姤", description = "涓婃姤绂荤嚎妯″紡涓嬬殑璁块棶璁板綍")
+    @Operation(summary = "离线访问记录上报", description = "上报离线模式下的访问记录")
     public ResponseDTO<OfflineReportResult> reportOfflineAccessRecords(@Valid @RequestBody OfflineRecordsReportRequest request) {
-        log.info("绂荤嚎璁块棶璁板綍涓婃姤: userId={}, recordCount={}", request.getUserId(), request.getRecords().size());
+        log.info("离线访问记录上报: userId={}, recordCount={}", request.getUserId(), request.getRecords().size());
 
         return offlineModeService.reportOfflineRecords(request);
     }
 
     /**
-     * 鏃犵紳闂ㄧ閫氳
+     * 无缝门禁通行
      * <p>
-     * 瀹炵幇鏃犵紳鐨勯棬绂侀€氳浣撻獙
+     * 实现无缝的门禁通行体验
      * </p>
      *
-     * @param request 閫氳璇锋眰
-     * @return 閫氳缁撴灉
+     * @param request 通行请求
+     * @return 通行结果
      */
     @Observed(name = "accessMobile.seamlessAccess", contextualName = "access-mobile-seamless")
     @PostMapping("/seamless/access")
-    @Operation(summary = "鏃犵紳闂ㄧ閫氳", description = "瀹炵幇鏃犵紳鐨勯棬绂侀€氳浣撻獙")
+    @Operation(summary = "无缝门禁通行", description = "实现无缝的门禁通行体验")
     public ResponseDTO<SeamlessAccessResult> seamlessAccess(@Valid @RequestBody SeamlessAccessRequest request) {
-        log.info("鏃犵紳闂ㄧ閫氳: userId={}, deviceId={}, accessMode={}",
+        log.info("无缝门禁通行: userId={}, deviceId={}, accessMode={}",
                 request.getUserId(), request.getDeviceId(), request.getAccessMode());
 
-        // 浼樺厛浣跨敤钃濈墮锛屽け璐ユ椂鍥為€€鍒板叾浠栨柟寮?        if ("BLUETOOTH".equals(request.getAccessMode()) || "AUTO".equals(request.getAccessMode())) {
+        // 优先使用蓝牙，失败时回退到其他方式
+        if ("BLUETOOTH".equals(request.getAccessMode()) || "AUTO".equals(request.getAccessMode())) {
             try {
                 BluetoothAccessRequest bluetoothRequest = new BluetoothAccessRequest();
                 bluetoothRequest.setUserId(request.getUserId());
@@ -662,11 +686,12 @@ public class AccessMobileController {
                     return ResponseDTO.ok(result);
                 }
             } catch (Exception e) {
-                log.warn("钃濈墮閫氳澶辫触锛屽洖閫€鍒板叾浠栨柟寮? {}", e.getMessage());
+                log.warn("蓝牙通行失败，回退到其他方式: {}", e.getMessage());
             }
         }
 
-        // 鍥為€€鍒版爣鍑嗛棬绂侀獙璇?        AdvancedAccessControlService.AccessControlResult result =
+        // 回退到标准门禁验证
+        AdvancedAccessControlService.AccessControlResult result =
                 advancedAccessControlService.performAccessControlCheck(
                         request.getUserId(),
                         request.getDeviceId(),
@@ -685,42 +710,46 @@ public class AccessMobileController {
     }
 
     /**
-     * 鑾峰彇鐢ㄦ埛闂ㄧ鍗′俊鎭?     * <p>
-     * 鑾峰彇鐢ㄦ埛鐨勬墍鏈夐棬绂佸崱淇℃伅锛屾敮鎸佽摑鐗欓棬绂佸崱
+     * 获取用户门禁卡信息
+     * <p>
+     * 获取用户的所有门禁卡信息，仅蓝牙门禁卡
      * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @return 闂ㄧ鍗″垪琛?     */
+     * @param userId 用户ID
+     * @return 门禁卡列表
+     */
     @Observed(name = "accessMobile.getUserAccessCards", contextualName = "access-mobile-access-cards")
     @GetMapping("/cards")
-    @Operation(summary = "鑾峰彇鐢ㄦ埛闂ㄧ鍗′俊鎭?, description = "鑾峰彇鐢ㄦ埛鐨勬墍鏈夐棬绂佸崱淇℃伅锛屾敮鎸佽摑鐗欓棬绂佸崱")
+    @Operation(summary = "获取用户门禁卡信息", description = "获取用户的所有门禁卡信息，仅蓝牙门禁卡")
     public ResponseDTO<List<UserAccessCardVO>> getUserAccessCards(@RequestParam Long userId) {
-        log.info("鑾峰彇鐢ㄦ埛闂ㄧ鍗′俊鎭? userId={}", userId);
+        log.info("获取用户门禁卡信息: userId={}", userId);
         return bluetoothAccessService.getUserAccessCards(userId);
     }
 
     /**
-     * 娣诲姞钃濈墮闂ㄧ鍗?     * <p>
-     * 涓虹敤鎴锋坊鍔犺摑鐗欓棬绂佸崱
+     * 添加蓝牙门禁卡
+     * <p>
+     * 为用户添加蓝牙门禁卡
      * </p>
      *
-     * @param request 娣诲姞璇锋眰
-     * @return 娣诲姞缁撴灉
+     * @param request 添加请求
+     * @return 添加结果
      */
     @Observed(name = "accessMobile.addBluetoothAccessCard", contextualName = "access-mobile-add-bluetooth-card")
     @PostMapping("/cards/bluetooth")
-    @Operation(summary = "娣诲姞钃濈墮闂ㄧ鍗?, description = "涓虹敤鎴锋坊鍔犺摑鐗欓棬绂佸崱")
+    @Operation(summary = "添加蓝牙门禁卡", description = "为用户添加蓝牙门禁卡")
     public ResponseDTO<String> addBluetoothAccessCard(@Valid @RequestBody AddBluetoothCardRequest request) {
-        log.info("娣诲姞钃濈墮闂ㄧ鍗? userId={}, cardName={}, deviceAddress={}",
+        log.info("添加蓝牙门禁卡: userId={}, cardName={}, deviceAddress={}",
                 request.getUserId(), request.getCardName(), request.getDeviceAddress());
 
         return bluetoothAccessService.addBluetoothAccessCard(request);
     }
 
-    // ==================== 鍐呴儴璇锋眰绫?====================
+    // ==================== 内部请求类 ====================
 
     /**
-     * 绉诲姩绔棬绂佹鏌ヨ姹?     */
+     * 移动端门禁检查请求
+     */
     @Data
     public static class MobileAccessCheckRequest {
         private Long userId;
@@ -731,7 +760,8 @@ public class AccessMobileController {
     }
 
     /**
-     * 浜岀淮鐮侀獙璇佽姹?     */
+     * 二维码验证请求
+     */
     @Data
     public static class QRCodeVerifyRequest {
         private String qrCode;
@@ -739,7 +769,7 @@ public class AccessMobileController {
     }
 
     /**
-     * NFC楠岃瘉璇锋眰
+     * NFC验证请求
      */
     @Data
     public static class NFCVerifyRequest {
@@ -748,7 +778,7 @@ public class AccessMobileController {
     }
 
     /**
-     * 鐢熺墿璇嗗埆楠岃瘉璇锋眰
+     * 生物识别验证请求
      */
     @Data
     public static class BiometricVerifyRequest {
@@ -759,7 +789,8 @@ public class AccessMobileController {
     }
 
     /**
-     * 涓存椂寮€闂ㄧ敵璇疯姹?     */
+     * 临时开门申请请求
+     */
     @Data
     public static class TemporaryAccessRequest {
         private Long userId;
@@ -768,7 +799,7 @@ public class AccessMobileController {
     }
 
     /**
-     * 鎺ㄩ€侀€氱煡璇锋眰
+     * 推送通知请求
      */
     @Data
     public static class PushNotificationRequest {
@@ -777,7 +808,7 @@ public class AccessMobileController {
     }
 
     /**
-     * 绉诲姩绔澶囬」
+     * 移动端设备项
      */
     @Data
     public static class MobileDeviceItem {
@@ -790,7 +821,8 @@ public class AccessMobileController {
     }
 
     /**
-     * 绉诲姩绔敤鎴锋潈闄?     */
+     * 移动端用户权限
+     */
     @Data
     public static class MobileUserPermissions {
         private Long userId;
@@ -800,7 +832,8 @@ public class AccessMobileController {
     }
 
     /**
-     * 绉诲姩绔闂褰?     */
+     * 移动端访问记录
+     */
     @Data
     public static class MobileAccessRecord {
         private Long recordId;
@@ -813,7 +846,8 @@ public class AccessMobileController {
     }
 
     /**
-     * 绉诲姩绔疄鏃剁姸鎬?     */
+     * 移动端实时状态
+     */
     @Data
     public static class MobileRealTimeStatus {
         private Long deviceId;
@@ -824,104 +858,108 @@ public class AccessMobileController {
     }
 
     /**
-     * 绉诲姩绔尯鍩熼」
+     * 移动端区域项
      */
     @Data
     public static class MobileAreaItem {
-        private Long areaId;           // 鍖哄煙ID
-        private String areaName;       // 鍖哄煙鍚嶇О
-        private String areaType;       // 鍖哄煙绫诲瀷
-        private Integer deviceCount;    // 璁惧鏁伴噺
-        private Integer permissionCount; // 鏉冮檺鏁伴噺
-        private String description;    // 鍖哄煙鎻忚堪
-        private Boolean active;        // 鏄惁鏈夋晥
+        private Long areaId;           // 区域ID
+        private String areaName;       // 区域名称
+        private String areaType;       // 区域类型
+        private Integer deviceCount;    // 设备数量
+        private Integer permissionCount; // 权限数量
+        private String description;    // 区域描述
+        private Boolean active;        // 是否有效
     }
 
-    // ==================== 钃濈墮闂ㄧ璇锋眰绫?====================
+    // ==================== 蓝牙门禁请求类 ====================
 
     /**
-     * 钃濈墮璁惧鎵弿璇锋眰
+     * 蓝牙设备扫描请求
      */
     @Data
     public static class BluetoothScanRequest {
         private Long userId;
-        private String location;           // 褰撳墠浣嶇疆
-        private Integer scanDuration;      // 鎵弿鏃堕暱锛堟绉掞級
-        private Integer maxDevices;        // 鏈€澶ц澶囨暟閲?        private String filterType;         // 杩囨护绫诲瀷
+        private String location;           // 当前位置
+        private Integer scanDuration;      // 扫描时长（毫秒）
+        private Integer maxDevices;        // 最大设备数量
+        private String filterType;         // 过滤类型
     }
 
     /**
-     * 钃濈墮璁惧杩炴帴璇锋眰
+     * 蓝牙设备连接请求
      */
     @Data
     public static class BluetoothConnectRequest {
         private Long userId;
-        private String deviceAddress;     // 璁惧MAC鍦板潃
-        private String deviceName;         // 璁惧鍚嶇О
-        private Integer timeout;           // 杩炴帴瓒呮椂锛堟绉掞級
-        private Boolean autoReconnect;      // 鏄惁鑷姩閲嶈繛
+        private String deviceAddress;     // 设备MAC地址
+        private String deviceName;         // 设备名称
+        private Integer timeout;           // 连接超时（毫秒）
+        private Boolean autoReconnect;      // 是否自动重连
     }
 
     /**
-     * 钃濈墮闂ㄧ楠岃瘉璇锋眰
+     * 蓝牙门禁验证请求
      */
     @Data
     public static class BluetoothAccessRequest {
         private Long userId;
-        private String deviceAddress;     // 璁惧MAC鍦板潃
-        private String accessType;         // 璁块棶绫诲瀷
-        private String location;           // 浣嶇疆淇℃伅
-        private Long timestamp;            // 鏃堕棿鎴?        private String signature;          // 鏁板瓧绛惧悕
-        private String encryptedData;      // 鍔犲瘑鏁版嵁
+        private String deviceAddress;     // 设备MAC地址
+        private String accessType;         // 访问类型
+        private String location;           // 位置信息
+        private Long timestamp;            // 时间戳
+        private String signature;          // 数字签名
+        private String encryptedData;      // 加密数据
     }
 
     /**
-     * 钃濈墮璁惧鏂紑杩炴帴璇锋眰
+     * 蓝牙设备断开连接请求
      */
     @Data
     public static class BluetoothDisconnectRequest {
         private Long userId;
-        private String deviceAddress;     // 璁惧MAC鍦板潃
-        private String reason;             // 鏂紑鍘熷洜
+        private String deviceAddress;     // 设备MAC地址
+        private String reason;             // 断开原因
     }
 
     /**
-     * 钃濈墮璁惧閰嶅璇锋眰
+     * 蓝牙设备配对请求
      */
     @Data
     public static class BluetoothPairingRequest {
         private Long userId;
-        private String deviceAddress;     // 璁惧MAC鍦板潃
-        private String pinCode;            // PIN鐮?        private String pairingMethod;      // 閰嶅鏂瑰紡
-        private Integer timeout;           // 閰嶅瓒呮椂锛堟绉掞級
+        private String deviceAddress;     // 设备MAC地址
+        private String pinCode;            // PIN码
+        private String pairingMethod;      // 配对方式
+        private Integer timeout;           // 配对超时（毫秒）
     }
 
-    // ==================== 绂荤嚎妯″紡璇锋眰绫?====================
+    // ==================== 离线模式请求类 ====================
 
     /**
-     * 绂荤嚎鏁版嵁鍚屾璇锋眰
+     * 离线数据同步请求
      */
     @Data
     public static class OfflineSyncRequest {
         private Long userId;
-        private String syncType;          // 鍚屾绫诲瀷锛歅ERMISSIONS, RECORDS, CONFIG
-        private Long dataSize;            // 鏁版嵁澶у皬
-        private String checksum;           // 鏍￠獙鍜?        private Integer version;          // 鏁版嵁鐗堟湰
+        private String syncType;          // 同步类型：PERMISSIONS, RECORDS, CONFIG
+        private Long dataSize;            // 数据大小
+        private String checksum;           // 校验和
+        private Integer version;          // 数据版本
     }
 
     /**
-     * 绂荤嚎璁板綍涓婃姤璇锋眰
+     * 离线记录上报请求
      */
     @Data
     public static class OfflineRecordsReportRequest {
         private Long userId;
-        private List<OfflineAccessRecord> records;  // 绂荤嚎璁块棶璁板綍
-        private String deviceInfo;        // 璁惧淇℃伅
-        private Long reportTime;          // 涓婃姤鏃堕棿
+        private List<OfflineAccessRecord> records;  // 离线访问记录
+        private String deviceInfo;        // 设备信息
+        private Long reportTime;          // 上报时间
     }
 
     /**
-     * 绂荤嚎璁块棶璁板綍
+     * 离线访问记录
      */
     @Data
     public static class OfflineAccessRecord {
@@ -933,135 +971,148 @@ public class AccessMobileController {
         private Boolean accessResult;
         private String verificationData;
         private String locationInfo;
-        private String deviceFirmware;    // 璁惧鍥轰欢鐗堟湰
+        private String deviceFirmware;    // 设备固件版本
     }
 
     /**
-     * 鏃犵紳闂ㄧ閫氳璇锋眰
+     * 无缝门禁通行请求
      */
     @Data
     public static class SeamlessAccessRequest {
         private Long userId;
         private Long deviceId;
         private Long areaId;
-        private String deviceAddress;     // 钃濈墮璁惧鍦板潃
-        private String accessMode;         // 璁块棶妯″紡锛欱LUETOOTH, NFC, QR_CODE, AUTO
-        private String verificationType;   // 楠岃瘉绫诲瀷
-        private String location;           // 浣嶇疆淇℃伅
+        private String deviceAddress;     // 蓝牙设备地址
+        private String accessMode;         // 访问模式：BLUETOOTH, NFC, QR_CODE, AUTO
+        private String verificationType;   // 验证类型
+        private String location;           // 位置信息
     }
 
     /**
-     * 娣诲姞钃濈墮闂ㄧ鍗¤姹?     */
+     * 添加蓝牙门禁卡请求
+     */
     @Data
     public static class AddBluetoothCardRequest {
         private Long userId;
-        private String cardName;           // 鍗＄墖鍚嶇О
-        private String deviceAddress;     // 璁惧MAC鍦板潃
-        private String deviceName;         // 璁惧鍚嶇О
-        private String cardType;           // 鍗＄墖绫诲瀷
-        private Integer validPeriod;       // 鏈夋晥鏈燂紙澶╋級
-        private List<String> allowedAreas; // 鍏佽鐨勫尯鍩?    }
+        private String cardName;           // 卡片名称
+        private String deviceAddress;      // 蓝牙设备地址
+        private String deviceName;         // 设备名称
+        private String cardType;           // 卡片类型
+        private Integer validPeriod;       // 有效期（天）
+        private List<String> allowedAreas; // 允许区域
+    }
 
-    // ==================== 钃濈墮闂ㄧ鍝嶅簲绫?====================
+    // ==================== 蓝牙门禁响应类 ====================
 
     /**
-     * 钃濈墮璁惧淇℃伅
+     * 蓝牙设备信息
      */
     @Data
     public static class BluetoothDeviceVO {
-        private String deviceAddress;     // 璁惧MAC鍦板潃
-        private String deviceName;         // 璁惧鍚嶇О
-        private String deviceType;         // 璁惧绫诲瀷
-        private Integer signalStrength;    // 淇″彿寮哄害
-        private Integer batteryLevel;      // 鐢垫睜鐢甸噺
-        private Integer rssi;              // RSSI鍊?        private Boolean isPaired;          // 鏄惁宸查厤瀵?        private Boolean isConnected;       // 鏄惁宸茶繛鎺?        private String lastSeen;           // 鏈€鍚庡彂鐜版椂闂?        private Double distance;           // 浼扮畻璺濈
+        private String deviceAddress;     // 设备MAC地址
+        private String deviceName;         // 设备名称
+        private String deviceType;         // 设备类型
+        private Integer signalStrength;    // 信号强度
+        private Integer batteryLevel;      // 电池电量
+        private Integer rssi;              // RSSI值
+        private Boolean isPaired;          // 是否已配对
+        private Boolean isConnected;       // 是否已连接
+        private String lastSeen;           // 最后发现时间
+        private Double distance;           // 估计距离
     }
 
     /**
-     * 钃濈墮杩炴帴缁撴灉
+     * 蓝牙连接结果
      */
     @Data
     public static class BluetoothConnectionResult {
         private Boolean success;
         private String deviceAddress;
         private String deviceName;
-        private String connectionId;       // 杩炴帴ID
-        private Integer responseTime;      // 鍝嶅簲鏃堕棿锛堟绉掞級
-        private String errorMessage;       // 閿欒淇℃伅
-        private Integer signalStrength;    // 淇″彿寮哄害
-        private String protocolVersion;    // 鍗忚鐗堟湰
+        private String connectionId;       // 连接ID
+        private Integer responseTime;      // 响应时间（毫秒）
+        private String errorMessage;       // 错误信息
+        private Integer signalStrength;    // 信号强度
+        private String protocolVersion;    // 协议版本
     }
 
     /**
-     * 钃濈墮闂ㄧ楠岃瘉缁撴灉
+     * 蓝牙门禁验证结果
      */
     @Data
     public static class BluetoothAccessResult {
         private Boolean success;
         private Long deviceId;
         private String deviceName;
-        private String accessMethod;       // 璁块棶鏂瑰紡
-        private Long accessTime;           // 璁块棶鏃堕棿
-        private Integer responseTime;      // 鍝嶅簲鏃堕棿锛堟绉掞級
-        private String accessToken;        // 璁块棶浠ょ墝
-        private String decisionReason;     // 鍐崇瓥鍘熷洜
-        private RiskLevel riskLevel;       // 椋庨櫓绛夌骇
+        private String accessMethod;       // 访问方式
+        private Long accessTime;           // 访问时间
+        private Integer responseTime;      // 响应时间（毫秒）
+        private String accessToken;        // 访问令牌
+        private String decisionReason;     // 决策原因
+        private RiskLevel riskLevel;       // 风险等级
     }
 
     /**
-     * 钃濈墮璁惧鐘舵€?     */
+     * 蓝牙设备状态
+     */
     @Data
     public static class BluetoothDeviceStatusVO {
         private String deviceAddress;
         private String deviceName;
-        private String connectionStatus;   // 杩炴帴鐘舵€?        private Integer signalStrength;
+        private String connectionStatus;   // 连接状态
+        private Integer signalStrength;
         private Integer batteryLevel;
-        private String lastActivity;       // 鏈€鍚庢椿鍔ㄦ椂闂?        private Long totalConnections;     // 鎬昏繛鎺ユ鏁?        private Long totalAccessCount;     // 鎬昏闂鏁?        private String firmwareVersion;    // 鍥轰欢鐗堟湰
+        private String lastActivity;       // 最后活动时间
+        private Long totalConnections;     // 总连接次数
+        private Long totalAccessCount;     // 总访问次数
+        private String firmwareVersion;    // 固件版本
     }
 
     /**
-     * 钃濈墮閰嶅缁撴灉
+     * 蓝牙配对结果
      */
     @Data
     public static class BluetoothPairingResult {
         private Boolean success;
         private String deviceAddress;
-        private String pairingKey;         // 閰嶅瀵嗛挜
-        private String pairingMethod;      // 閰嶅鏂瑰紡
-        private Integer responseTime;      // 鍝嶅簲鏃堕棿锛堟绉掞級
-        private String errorMessage;       // 閿欒淇℃伅
-        private Boolean requiresConfirmation; // 鏄惁闇€瑕佺‘璁?    }
+        private String pairingKey;         // 配对密钥
+        private String pairingMethod;      // 配对方式
+        private Integer responseTime;      // 响应时间（毫秒）
+        private String errorMessage;       // 错误信息
+        private Boolean requiresConfirmation; // 是否需要确认
+    }
 
-    // ==================== 绂荤嚎妯″紡鍝嶅簲绫?====================
+    // ==================== 离线模式响应类 ====================
 
     /**
-     * 绂荤嚎鏉冮檺鏁版嵁
+     * 离线权限数据
      */
     @Data
     public static class OfflinePermissionsVO {
         private Long userId;
         private String lastSyncTime;
-        private String expiryTime;         // 鏉冮檺杩囨湡鏃堕棿
+        private String expiryTime;         // 权限过期时间
         private List<OfflineAreaPermission> areaPermissions;
         private List<OfflineDevicePermission> devicePermissions;
-        private String checksum;           // 鏁版嵁鏍￠獙鍜?        private Integer version;            // 鏁版嵁鐗堟湰
+        private String checksum;           // 数据校验和
+        private Integer version;            // 数据版本
     }
 
     /**
-     * 绂荤嚎鍖哄煙鏉冮檺
+     * 离线区域权限
      */
     @Data
     public static class OfflineAreaPermission {
         private Long areaId;
         private String areaName;
         private String permissionLevel;
-        private String validFrom;           // 鐢熸晥鏃堕棿
-        private String validUntil;          // 澶辨晥鏃堕棿
-        private List<String> accessMethods; // 璁块棶鏂瑰紡
+        private String validFrom;           // 生效时间
+        private String validUntil;          // 失效时间
+        private List<String> accessMethods; // 访问方式
     }
 
     /**
-     * 绂荤嚎璁惧鏉冮檺
+     * 离线设备权限
      */
     @Data
     public static class OfflineDevicePermission {
@@ -1069,78 +1120,86 @@ public class AccessMobileController {
         private String deviceName;
         private String deviceType;
         private String permissionLevel;
-        private Integer dailyLimit;        // 姣忔棩闄愬埗
+        private Integer dailyLimit;        // 每日限制
         private String validFrom;
         private String validUntil;
     }
 
     /**
-     * 绂荤嚎鍚屾缁撴灉
+     * 离线同步结果
      */
     @Data
     public static class OfflineSyncResult {
         private Boolean success;
         private String syncType;
-        private Integer syncedRecords;     // 鍚屾璁板綍鏁?        private Integer failedRecords;      // 澶辫触璁板綍鏁?        private Long syncDuration;          // 鍚屾鑰楁椂锛堟绉掞級
-        private String nextSyncTime;        // 涓嬫鍚屾鏃堕棿
-        private List<String> errors;        // 閿欒淇℃伅鍒楄〃
+        private Integer syncedRecords;     // 同步记录数
+        private Integer failedRecords;      // 失败记录数
+        private Long syncDuration;          // 同步耗时（毫秒）
+        private String nextSyncTime;        // 下次同步时间
+        private List<String> errors;        // 错误信息列表
     }
 
     /**
-     * 绂荤嚎璁板綍涓婃姤缁撴灉
+     * 离线记录上报结果
      */
     @Data
     public static class OfflineReportResult {
         private Boolean success;
-        private Integer reportedRecords;    // 涓婃姤璁板綍鏁?        private Integer acceptedRecords;    // 鎺ュ彈璁板綍鏁?        private Integer rejectedRecords;    // 鎷掔粷璁板綍鏁?        private List<String> rejectedReasons; // 鎷掔粷鍘熷洜
-        private String reportId;            // 涓婃姤ID
+        private Integer reportedRecords;    // 上报记录数
+        private Integer acceptedRecords;    // 接受记录数
+        private Integer rejectedRecords;    // 拒绝记录数
+        private List<String> rejectedReasons; // 拒绝原因
+        private String reportId;            // 上报ID
     }
 
-    // ==================== 鏃犵紳闂ㄧ鍝嶅簲绫?====================
+    // ==================== 无缝门禁响应类 ====================
 
     /**
-     * 鏃犵紳闂ㄧ閫氳缁撴灉
+     * 无缝门禁通行结果
      */
     @Data
     public static class SeamlessAccessResult {
         private Boolean success;
-        private String accessMethod;       // 璁块棶鏂瑰紡锛欱LUETOOTH, STANDARD
+        private String accessMethod;       // 访问方式：BLUETOOTH, STANDARD
         private Long deviceId;
         private String deviceName;
-        private Long accessTime;           // 璁块棶鏃堕棿
-        private Integer responseTime;      // 鍝嶅簲鏃堕棿锛堟绉掞級
-        private String accessToken;        // 璁块棶浠ょ墝
-        private String message;            // 鎻愮ず淇℃伅
-        private Boolean isOfflineMode;     // 鏄惁绂荤嚎妯″紡
+        private Long accessTime;           // 访问时间
+        private Integer responseTime;      // 响应时间（毫秒）
+        private String accessToken;        // 访问令牌
+        private String message;            // 提示信息
+        private Boolean isOfflineMode;     // 是否离线模式
     }
 
-    // ==================== 闂ㄧ鍗″搷搴旂被 ====================
+    // ==================== 门禁卡响应类 ====================
 
     /**
-     * 鐢ㄦ埛闂ㄧ鍗′俊鎭?     */
+     * 用户门禁卡信息
+     */
     @Data
     public static class UserAccessCardVO {
         private Long cardId;
         private String cardName;
         private String cardType;           // PHYSICAL, VIRTUAL, BLUETOOTH
-        private String cardNumber;         // 鍗″彿
-        private String deviceAddress;      // 钃濈墮璁惧鍦板潃锛堣摑鐗欏崱锛?        private String status;             // ACTIVE, INACTIVE, EXPIRED
-        private String issueTime;          // 鍙戝崱鏃堕棿
-        private String expireTime;         // 杩囨湡鏃堕棿
-        private List<String> allowedAreas; // 鍏佽鍖哄煙
-        private Integer dailyUsageLimit;   // 姣忔棩浣跨敤闄愬埗
-        private Integer currentUsage;      // 褰撳墠浣跨敤娆℃暟
-        private Boolean isPrimary;         // 鏄惁涓诲崱
+        private String cardNumber;         // 卡号
+        private String deviceAddress;      // 蓝牙设备地址（蓝牙卡）
+        private String status;             // ACTIVE, INACTIVE, EXPIRED
+        private String issueTime;          // 发卡时间
+        private String expireTime;         // 过期时间
+        private List<String> allowedAreas; // 允许区域
+        private Integer dailyUsageLimit;   // 每日使用限制
+        private Integer currentUsage;      // 当前使用次数
+        private Boolean isPrimary;         // 是否主卡
     }
 
-    // ==================== 鏋氫妇瀹氫箟 ====================
+    // ==================== 风险等级定义 ====================
 
     /**
-     * 椋庨櫓绛夌骇鏋氫妇
+     * 风险等级枚举
      */
     public enum RiskLevel {
-        LOW,        // 浣庨闄?        MEDIUM,     // 涓瓑椋庨櫓
-        HIGH,       // 楂橀闄?        CRITICAL    // 涓ラ噸椋庨櫓
+        LOW,        // 低风险
+        MEDIUM,     // 中等风险
+        HIGH,       // 高风险
+        CRITICAL    // 严重风险
     }
 }
-

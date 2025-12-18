@@ -86,7 +86,7 @@ public class BiometricTemplateManager {
             validateUserAndDevice(userId, deviceId, biometricType);
 
             // 2. 检查用户是否已有该类型模板
-            List<BiometricTemplateEntity> existingTemplates = biometricDao
+            List<BiometricTemplateEntity> existingTemplates = biometricTemplateDao
                     .selectByUserIdAndType(userId, biometricType);
 
             if (!existingTemplates.isEmpty()) {

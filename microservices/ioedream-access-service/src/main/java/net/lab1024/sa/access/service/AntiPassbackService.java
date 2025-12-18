@@ -8,14 +8,14 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 闂ㄧ鍙嶆綔鍥炴湇鍔℃帴锟?
+ * 门禁反潜回服务接口
  * <p>
- * 鍐呭瓨浼樺寲璁捐鍘熷垯锟?
- * - 鎺ュ彛绮剧畝锛岃亴璐ｅ崟涓€
- * - 浣跨敤寮傛澶勭悊锛屾彁楂樺苟鍙戞€ц兘
- * - 鐔旀柇鍣ㄤ繚鎶わ紝闃叉绾ц仈鏁呴殰
- * - 缂撳瓨绛栫暐浼樺寲锛屽噺灏戦噸澶嶆煡锟?
- * - 鎵归噺鎿嶄綔鏀寔锛屽噺灏慖O寮€閿€
+ * 安全优化设计原则：
+ * - 接口简洁，职责单一
+ * - 使用异步处理，提供高并发性能
+ * - 熔断器保护，限制并发流量
+ * - 存储策略优化，减少网络开销
+ * - 批量操作支持，提高效率
  * </p>
  *
  * @author IOE-DREAM Team
@@ -24,20 +24,20 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface AntiPassbackService {
 
-    // ==================== 鍙嶆綔鍥為獙锟?====================
+    // ==================== 反潜回检查 ====================
 
     /**
-     * 鎵ц鍙嶆綔鍥炴锟?
+     * 执行反潜回检查
      * <p>
-     * 妫€鏌ョ敤鎴锋槸鍚﹀瓨鍦ㄦ綔鍥炶锟?
-     * 鏀寔澶氱鍙嶆綔鍥炴ā寮忥細纭弽娼滃洖銆佽蒋鍙嶆綔鍥炪€佸尯鍩熷弽娼滃洖
+     * 检查用户是否存在于反潜回队列中
+     * 支持多种反潜回模式：严格反潜回、软反潜回、区域反潜回
      * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param deviceId 璁惧ID
-     * @param areaId 鍖哄煙ID
-     * @param verificationData 楠岃瘉鏁版嵁
-     * @return 鍙嶆綔鍥炴鏌ョ粨锟?
+     * @param userId 用户ID
+     * @param deviceId 设备ID
+     * @param areaId 区域ID
+     * @param verificationData 验证数据
+     * @return 反潜回检查结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackCheckFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -49,17 +49,17 @@ public interface AntiPassbackService {
     );
 
     /**
-     * 妫€鏌ュ尯鍩熷弽娼滃洖
+     * 检查区域反潜回
      * <p>
-     * 妫€鏌ョ敤鎴锋槸鍚︿粠鍖哄煙A杩涘叆鍚庢湭浠庡尯鍩烞绂诲紑
-     * 閫傜敤浜庨渶瑕佹垚瀵硅繘鍑虹殑鍖哄煙鎺у埗
+     * 检查用户是否从区域A进入后未从区域B离开
+     * 适用于需要成对进出验证的区域控制
      * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param entryAreaId 杩涘叆鍖哄煙ID
-     * @param exitAreaId 绂诲紑鍖哄煙ID
-     * @param direction 杩涘嚭鏂瑰悜锛坕n/out锟?
-     * @return 鍖哄煙鍙嶆綔鍥炴鏌ョ粨锟?
+     * @param userId 用户ID
+     * @param entryAreaId 进入区域ID
+     * @param exitAreaId 离开区域ID
+     * @param direction 进出方向（in/out）
+     * @return 区域反潜回检查结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackCheckFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -70,15 +70,15 @@ public interface AntiPassbackService {
             String direction
     );
 
-    // ==================== 鍙嶆綔鍥為厤缃锟?====================
+    // ==================== 反潜回配置管理 ====================
 
     /**
-     * 璁剧疆璁惧鍙嶆綔鍥炵瓥锟?
+     * 设置设备反潜回策略
      *
-     * @param deviceId 璁惧ID
-     * @param antiPassbackType 鍙嶆綔鍥炵被鍨嬶紙hard/soft/area/global锟?
-     * @param config 閰嶇疆鍙傛暟
-     * @return 璁剧疆缁撴灉
+     * @param deviceId 设备ID
+     * @param antiPassbackType 反潜回类型（hard/soft/area/global）
+     * @param config 配置参数
+     * @return 设置结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -89,21 +89,21 @@ public interface AntiPassbackService {
     );
 
     /**
-     * 鑾峰彇璁惧鍙嶆綔鍥炵瓥锟?
+     * 获取设备反潜回策略
      *
-     * @param deviceId 璁惧ID
-     * @return 鍙嶆綔鍥炵瓥鐣ヤ俊锟?
+     * @param deviceId 设备ID
+     * @return 反潜回策略信息
      */
     @CircuitBreaker(name = "antiPassbackService")
     @TimeLimiter(name = "antiPassbackService")
     CompletableFuture<ResponseDTO<Object>> getAntiPassbackPolicy(Long deviceId);
 
     /**
-     * 鏇存柊鍙嶆綔鍥為厤锟?
+     * 更新反潜回配置
      *
-     * @param deviceId 璁惧ID
-     * @param config 閰嶇疆鍙傛暟
-     * @return 鏇存柊缁撴灉
+     * @param deviceId 设备ID
+     * @param config 配置参数
+     * @return 更新结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -112,22 +112,22 @@ public interface AntiPassbackService {
             Map<String, Object> config
     );
 
-    // ==================== 鍙嶆綔鍥炶褰曠锟?====================
+    // ==================== 反潜回记录管理 ====================
 
     /**
-     * 璁板綍閫氳浜嬩欢
+     * 记录通行事件
      * <p>
-     * 璁板綍鐢ㄦ埛閫氳浜嬩欢锛岀敤浜庡弽娼滃洖鍒嗘瀽
-     * 鍖呮嫭杩涘嚭鏃堕棿銆佽澶囥€佸尯鍩熴€佹柟鍚戠瓑淇℃伅
+     * 记录用户通行事件，用于反潜回分析
+     * 包含进出时间、方向、区域、设备等信息
      * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param deviceId 璁惧ID
-     * @param areaId 鍖哄煙ID
-     * @param direction 杩涘嚭鏂瑰悜
-     * @param verificationData 楠岃瘉鏁版嵁
-     * @param result 閫氳缁撴灉
-     * @return 璁板綍缁撴灉
+     * @param userId 用户ID
+     * @param deviceId 设备ID
+     * @param areaId 区域ID
+     * @param direction 进出方向
+     * @param verificationData 验证数据
+     * @param result 通行结果
+     * @return 记录结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -141,24 +141,24 @@ public interface AntiPassbackService {
     );
 
     /**
-     * 鑾峰彇鐢ㄦ埛鍙嶆綔鍥炵姸锟?
+     * 获取用户反潜回状态
      *
-     * @param userId 鐢ㄦ埛ID
-     * @return 鐢ㄦ埛鍙嶆綔鍥炵姸锟?
+     * @param userId 用户ID
+     * @return 用户反潜回状态
      */
     @CircuitBreaker(name = "antiPassbackService")
     @TimeLimiter(name = "antiPassbackService")
     CompletableFuture<ResponseDTO<Object>> getUserAntiPassbackStatus(Long userId);
 
     /**
-     * 娓呯悊鐢ㄦ埛鍙嶆綔鍥炶锟?
+     * 清理用户反潜回记录
      * <p>
-     * 娓呯悊鐢ㄦ埛鐨勫弽娼滃洖璁板綍锛岄€氬父鍦ㄦ甯稿畬鎴愯繘鍑烘祦绋嬪悗璋冪敤
+     * 清理用户的反潜回记录，通常在用户完成退出流程后调用
      * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param deviceId 璁惧ID
-     * @return 娓呯悊缁撴灉
+     * @param userId 用户ID
+     * @param deviceId 设备ID
+     * @return 清理结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -167,19 +167,19 @@ public interface AntiPassbackService {
             Long deviceId
     );
 
-    // ==================== 鍙嶆綔鍥炲紓甯稿锟?====================
+    // ==================== 反潜回异常处理 ====================
 
     /**
-     * 澶勭悊鍙嶆綔鍥炲紓锟?
+     * 手动处理反潜回异常
      * <p>
-     * 褰撴娴嬪埌鍙嶆綔鍥炲紓甯告椂杩涜澶勭悊
-     * 鍖呮嫭鍛婅閫氱煡銆佽褰曞紓甯搞€佷复鏃堕攣瀹氱瓑
+     * 当检测到反潜回异常时执行手动处理
+     * 包括记录异常、通知管理员、设置处理状态等
      * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param deviceId 璁惧ID
-     * @param antiPassbackResult 鍙嶆綔鍥炵粨锟?
-     * @return 澶勭悊缁撴灉
+     * @param userId 用户ID
+     * @param deviceId 设备ID
+     * @param antiPassbackResult 反潜回结果
+     * @return 处理结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -190,16 +190,16 @@ public interface AntiPassbackService {
     );
 
     /**
-     * 閲嶇疆鐢ㄦ埛鍙嶆綔鍥炵姸锟?
+     * 重置用户反潜回状态
      * <p>
-     * 绠＄悊鍛樻墜鍔ㄩ噸缃敤鎴风殑鍙嶆綔鍥炵姸锟?
-     * 鐢ㄤ簬瑙ｅ喅寮傚父鎯呭喌鎴栬锟?
+     * 管理员手动重置用户反潜回状态
+     * 用于处理异常情况的恢复
      * </p>
      *
-     * @param userId 鐢ㄦ埛ID
-     * @param operatorId 鎿嶄綔鍛業D
-     * @param reason 閲嶇疆鍘熷洜
-     * @return 閲嶇疆缁撴灉
+     * @param userId 用户ID
+     * @param operatorId 操作员ID
+     * @param reason 重置原因
+     * @return 重置结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -209,14 +209,14 @@ public interface AntiPassbackService {
             String reason
     );
 
-    // ==================== 鍙嶆綔鍥炵粺璁″垎锟?====================
+    // ==================== 反潜回统计分析 ====================
 
     /**
-     * 鑾峰彇鍙嶆綔鍥炵粺璁′俊锟?
+     * 获取反潜回统计信息
      *
-     * @param startTime 寮€濮嬫椂锟?
-     * @param endTime 缁撴潫鏃堕棿
-     * @return 缁熻淇℃伅
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 统计信息
      */
     @CircuitBreaker(name = "antiPassbackService")
     @TimeLimiter(name = "antiPassbackService")
@@ -226,12 +226,12 @@ public interface AntiPassbackService {
     );
 
     /**
-     * 鑾峰彇鍙嶆綔鍥炲紓甯告姤锟?
+     * 获取反潜回异常报告
      *
-     * @param deviceId 璁惧ID
-     * @param startTime 寮€濮嬫椂锟?
-     * @param endTime 缁撴潫鏃堕棿
-     * @return 寮傚父鎶ュ憡
+     * @param deviceId 设备ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 异常报告
      */
     @CircuitBreaker(name = "antiPassbackService")
     @TimeLimiter(name = "antiPassbackService")
@@ -241,13 +241,13 @@ public interface AntiPassbackService {
             String endTime
     );
 
-    // ==================== 鎵归噺鎿嶄綔 ====================
+    // ==================== 批量操作 ====================
 
     /**
-     * 鎵归噺妫€鏌ュ弽娼滃洖鐘讹拷?
+     * 批量检查反潜回状态
      *
-     * @param userIds 鐢ㄦ埛ID鍒楄〃
-     * @return 鎵归噺妫€鏌ョ粨锟?
+     * @param userIds 用户ID列表
+     * @return 批量检查结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackBatchOperationFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -256,10 +256,10 @@ public interface AntiPassbackService {
     );
 
     /**
-     * 鎵归噺娓呯悊鍙嶆綔鍥炶锟?
+     * 批量清理反潜回记录
      *
-     * @param userIds 鐢ㄦ埛ID鍒楄〃
-     * @return 鎵归噺娓呯悊缁撴灉
+     * @param userIds 用户ID列表
+     * @return 批量清理结果
      */
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackBatchOperationFallback")
     @TimeLimiter(name = "antiPassbackService")
@@ -267,44 +267,44 @@ public interface AntiPassbackService {
             String userIds
     );
 
-    // ==================== 鍐呴儴鏁版嵁锟?====================
+    // ==================== 内部数据 ====================
 
     /**
-     * 鍙嶆綔鍥炵粨锟?
+     * 反潜回结果
      */
     class AntiPassbackResult {
         /**
-         * 鏄惁閫氳繃鍙嶆綔鍥炴锟?
+         * 是否通过反潜回检查
          */
         private Boolean passed;
 
         /**
-         * 鍙嶆綔鍥炵被锟?
+         * 反潜回类型
          */
         private String antiPassbackType;
 
         /**
-         * 鎷掔粷鍘熷洜
+         * 拒绝原因
          */
         private String denyReason;
 
         /**
-         * 鏈€鍚庨€氳璁板綍
+         * 最近通行记录
          */
         private Object lastAccessRecord;
 
         /**
-         * 杩濊绾у埆
+         * 违规级别
          */
         private String violationLevel;
 
         /**
-         * 寤鸿澶勭悊鏂瑰紡
+         * 推荐处理方式
          */
         private String recommendedAction;
 
         /**
-         * 椋庨櫓璇勫垎
+         * 风险评分
          */
         private Integer riskScore;
 
@@ -370,35 +370,35 @@ public interface AntiPassbackService {
         }
     }
 
-    // ==================== 闄嶇骇澶勭悊鏂规硶 ====================
+    // ==================== 降级处理方法 ====================
 
     /**
-     * 鍙嶆綔鍥炴鏌ラ檷绾у锟?
+     * 反潜回检查降级处理
      */
     default CompletableFuture<ResponseDTO<AntiPassbackResult>> antiPassbackCheckFallback(
             Long userId, Exception exception, Object... params) {
         return CompletableFuture.completedFuture(
-                ResponseDTO.error("ANTIPASSBACK_SERVICE_UNAVAILABLE", "鍙嶆綔鍥炴湇鍔℃殏鏃朵笉鍙敤锛屽凡闄嶇骇涓哄父瑙勬锟?)
+                ResponseDTO.error("ANTIPASSBACK_SERVICE_UNAVAILABLE", "反潜回服务暂时不可用，已降级为父警通过")
         );
     }
 
     /**
-     * 鍙嶆綔鍥炴搷浣滈檷绾у锟?
+     * 反潜回操作降级处理
      */
     default CompletableFuture<ResponseDTO<Void>> antiPassbackOperationFallback(
             Exception exception, Object... params) {
         return CompletableFuture.completedFuture(
-                ResponseDTO.error("ANTIPASSBACK_SERVICE_UNAVAILABLE", "鍙嶆綔鍥炴湇鍔℃殏鏃朵笉鍙敤锛岃绋嶅悗閲嶈瘯")
+                ResponseDTO.error("ANTIPASSBACK_SERVICE_UNAVAILABLE", "反潜回服务暂时不可用，操作稍后重试")
         );
     }
 
     /**
-     * 鍙嶆綔鍥炴壒閲忔搷浣滈檷绾у锟?
+     * 反潜回批量操作降级处理
      */
     default CompletableFuture<ResponseDTO<Map<Long, Object>>> antiPassbackBatchOperationFallback(
             String params, Exception exception) {
         return CompletableFuture.completedFuture(
-                ResponseDTO.error("ANTIPASSBACK_BATCH_SERVICE_UNAVAILABLE", "鎵归噺鍙嶆綔鍥炴湇鍔℃殏鏃朵笉鍙敤锛岃绋嶅悗閲嶈瘯")
+                ResponseDTO.error("ANTIPASSBACK_BATCH_SERVICE_UNAVAILABLE", "批量反潜回服务暂时不可用，稍后重试")
         );
     }
 }

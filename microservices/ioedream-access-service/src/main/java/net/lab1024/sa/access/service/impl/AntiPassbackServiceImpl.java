@@ -21,6 +21,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 
 import net.lab1024.sa.access.dao.AccessRecordDao;
+import net.lab1024.sa.access.manager.AntiPassbackManager;
 import net.lab1024.sa.access.service.AntiPassbackService;
 import net.lab1024.sa.common.access.entity.AccessRecordEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
@@ -30,18 +31,18 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.http.HttpMethod;
 
 /**
- * 闂ㄧ鍙嶆綔鍥炴湇鍔″疄锟?
+ * 门禁反潜回服务实现
  * <p>
- * 涓ユ牸閬靛惊CLAUDE.md瑙勮寖锟?
- * - 浣跨敤@Service娉ㄨВ鏍囪瘑鏈嶅姟锟?
- * - 浣跨敤@Transactional绠＄悊浜嬪姟
- * - 瀹炵幇@CircuitBreaker鐔旀柇鍜孈Retry閲嶈瘯鏈哄埗
- * - 浣跨敤Redis缂撳瓨鎻愬崌鎬ц兘
- * - 鏀寔鍥涚鍙嶆綔鍥炵畻娉曪細纭弽娼滃洖銆佽蒋鍙嶆綔鍥炪€佸尯鍩熷弽娼滃洖銆佸叏灞€鍙嶆綔锟?
+ * 严格遵循CLAUDE.md规范：
+ * - 使用@Service注解标识业务层实现类
+ * - 使用@Transactional管理事务
+ * - 集成@CircuitBreaker熔断和@Retry重试容错机制
+ * - 使用Redis缓存提供高性能响应
+ * - 实现多种反潜回模式：硬反潜回、软反潜回、区域反潜回、全局反潜回
  * </p>
  * <p>
- * P0绾у畨鍏ㄥ姛鑳斤細闃叉鍚屼竴涓汉鍦ㄧ煭鏃堕棿鍐呭湪澶氫釜闂ㄧ鐐归噸澶嶈繘锟?
- * 浼佷笟绾у疄鐜帮細楂樺苟鍙戙€侀珮鎬ц兘銆侀珮鍙敤
+ * P0级性能优化：使用Redis存储用户访问状态，避免频繁数据库查询
+ * 内存优化：使用合理的缓存过期时间，避免内存泄漏
  * </p>
  *
  * @author IOE-DREAM Team
@@ -62,60 +63,63 @@ public class AntiPassbackServiceImpl implements AntiPassbackService {
     @Resource
     private GatewayServiceClient gatewayServiceClient;
 
-    // Redis缂撳瓨閿墠缂€
+    @Resource
+    private AntiPassbackManager antiPassbackManager;
+
+    // Redis缓存键值前缀
     private static final String ANTI_PASSBACK_PREFIX = "anti_passback:";
     private static final String USER_LAST_ACCESS_PREFIX = "user_last_access:";
     private static final String AREA_USER_COUNT_PREFIX = "area_user_count:";
     private static final String GLOBAL_USER_ACCESS_PREFIX = "global_user_access:";
 
-    // 鍙嶆綔鍥炴椂闂寸獥鍙ｏ紙鍒嗛挓锟?
+    // 反潜回时间窗口配置（分钟）
     private static final int ANTI_PASSBACK_TIME_WINDOW = 5;
     private static final int AREA_ANTI_PASSBACK_TIME_WINDOW = 10;
     private static final int GLOBAL_ANTI_PASSBACK_TIME_WINDOW = 15;
 
-    // 缂撳瓨杩囨湡鏃堕棿锛堝垎閽燂級
+    // 缓存过期时间配置（分钟）
     private static final long CACHE_EXPIRE_MINUTES = 30;
 
     @Override
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "performAntiPassbackCheckFallback")
     @TimeLimiter(name = "antiPassbackService")
     @RateLimiter(name = "antiPassbackService")
-    public CompletableFuture<AntiPassbackResult> performAntiPassbackCheck(
+    public CompletableFuture<ResponseDTO<AntiPassbackResult>> performAntiPassbackCheck(
             Long userId, Long deviceId, Long areaId, String verificationData) {
 
-        log.info("[鍙嶆綔鍥炴鏌 寮€濮嬫锟?userId={}, deviceId={}, areaId={}", userId, deviceId, areaId);
+        log.info("[反潜回检查] 开始检查:userId={}, deviceId={}, areaId={}", userId, deviceId, areaId);
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                // 鑾峰彇璁惧鍜屽尯鍩熶俊锟?
+                // 获取设备和区域信息
                 DeviceEntity device = getDeviceById(deviceId);
                 AreaEntity area = getAreaById(areaId);
 
                 if (device == null || area == null) {
-                    return AntiPassbackResult.failure("璁惧鎴栧尯鍩熶笉瀛樺湪");
+                    return ResponseDTO.error("DEVICE_OR_AREA_NOT_FOUND", "设备或区域不存在");
                 }
 
-                // 鑾峰彇鍙嶆綔鍥炵瓥锟?
+                // 获取反潜回策略配置
                 String antiPassbackType = area.getAntiPassbackType();
                 if (antiPassbackType == null) {
                     antiPassbackType = "NONE";
                 }
 
-                // 鎵ц瀵瑰簲绫诲瀷鐨勫弽娼滃洖妫€锟?
+                // 根据策略执行不同的反潜回检查
                 AntiPassbackResult result = switch (antiPassbackType) {
                     case "HARD" -> checkHardAntiPassback(userId, deviceId, areaId, device, area);
                     case "SOFT" -> checkSoftAntiPassback(userId, deviceId, areaId, device, area);
                     case "AREA" -> checkAreaAntiPassback(userId, deviceId, areaId, device, area);
                     case "GLOBAL" -> checkGlobalAntiPassback(userId, deviceId, areaId, device, area);
-                    default -> AntiPassbackResult.success("鏃犲弽娼滃洖闄愬埗");
+                    default -> AntiPassbackResult.success("未启用反潜回限制");
                 };
 
-                log.info("[鍙嶆綔鍥炴鏌 妫€鏌ュ畬锟?userId={}, result={}", userId, result.isAllowed());
-                return result;
+                log.info("[反潜回检查] 检查完成:userId={}, result={}", userId, result.isPassed());
+                return ResponseDTO.ok(result);
 
             } catch (Exception e) {
-                log.error("[鍙嶆綔鍥炴鏌 妫€鏌ュ紓锟?userId={}, error={}", userId, e.getMessage(), e);
-                return AntiPassbackResult.failure("绯荤粺寮傚父锟? + e.getMessage());
+                log.error("[反潜回检查] 检查异常:userId={}, error={}", userId, e.getMessage(), e);
+                return ResponseDTO.error("ANTI_PASSBACK_CHECK_ERROR", "系统异常: " + e.getMessage());
             }
         });
     }
@@ -123,172 +127,419 @@ public class AntiPassbackServiceImpl implements AntiPassbackService {
     @Override
     @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "checkAreaAntiPassbackFallback")
     @TimeLimiter(name = "antiPassbackService")
-    public CompletableFuture<AntiPassbackResult> checkAreaAntiPassback(Long userId, Long areaId, String accessType) {
-        log.info("[鍖哄煙鍙嶆綔鍥炴鏌 寮€濮嬫锟?userId={}, areaId={}, accessType={}", userId, areaId, accessType);
+    public CompletableFuture<ResponseDTO<AntiPassbackResult>> checkAreaAntiPassback(
+            Long userId, Long entryAreaId, Long exitAreaId, String direction) {
+        log.info("[区域反潜回] 开始检查:userId={}, entryAreaId={}, exitAreaId={}, direction={}", userId, entryAreaId, exitAreaId, direction);
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                String cacheKey = ANTI_PASSBACK_PREFIX + "area:" + areaId + ":" + userId;
-
-                // 鑾峰彇鐢ㄦ埛鍦ㄥ尯鍩熷唴鐨勬渶鍚庨€氳璁板綍
-                String lastAccessKey = USER_LAST_ACCESS_PREFIX + areaId + ":" + userId;
-                String lastAccessStr = (String) redisTemplate.opsForValue().get(lastAccessKey);
-
-                if (lastAccessStr == null) {
-                    // 棣栨杩涘叆鍖哄煙锛岃褰曞苟鍏佽
-                    recordAreaAccess(userId, areaId, accessType);
-                    return AntiPassbackResult.success("棣栨杩涘叆鍖哄煙");
+                // 验证参数
+                if (userId == null || entryAreaId == null || direction == null) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "参数不完整");
                 }
 
-                // 瑙ｆ瀽鏈€鍚庨€氳淇℃伅
-                String[] lastAccessInfo = lastAccessStr.split(":");
-                String lastAccessType = lastAccessInfo[0];
-                LocalDateTime lastAccessTime = LocalDateTime.parse(lastAccessInfo[1]);
+                // 使用Manager层处理复杂逻辑
+                AntiPassbackResult result = antiPassbackManager.checkAreaAntiPassback(userId, entryAreaId, exitAreaId, direction);
 
-                // 妫€鏌ユ椂闂寸獥锟?
-                if (Duration.between(lastAccessTime, LocalDateTime.now()).toMinutes() > AREA_ANTI_PASSBACK_TIME_WINDOW) {
-                    // 瓒呮椂锛屽厑璁搁€氳
-                    recordAreaAccess(userId, areaId, accessType);
-                    return AntiPassbackResult.success("瓒呮椂閲嶆柊杩涘叆");
-                }
-
-                // 妫€鏌ラ€氳绫诲瀷鏄惁鍖归厤
-                if (isAccessTypeValid(lastAccessType, accessType)) {
-                    recordAreaAccess(userId, areaId, accessType);
-                    return AntiPassbackResult.success("閫氳绫诲瀷鍖归厤");
-                } else {
-                    return AntiPassbackResult.failure("鍙嶆綔鍥炶繚瑙勶細閫氳绫诲瀷涓嶅尮閰嶃€備笂涓€娆★細" + lastAccessType + "锛屾湰娆★細" + accessType);
-                }
+                log.info("[区域反潜回] 检查完成:userId={}, result={}", userId, result.isPassed());
+                return ResponseDTO.ok(result);
 
             } catch (Exception e) {
-                log.error("[鍖哄煙鍙嶆綔鍥炴鏌 妫€鏌ュ紓锟?userId={}, areaId={}, error={}", userId, areaId, e.getMessage(), e);
-                return AntiPassbackResult.failure("绯荤粺寮傚父锟? + e.getMessage());
+                log.error("[区域反潜回] 检查异常:userId={}, error={}", userId, e.getMessage(), e);
+                return ResponseDTO.error("AREA_ANTI_PASSBACK_ERROR", "区域反潜回检查异常: " + e.getMessage());
             }
         });
     }
 
     @Override
-    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "updatePolicyFallback")
-    public AntiPassbackResult updatePolicy(String deviceId, String policy) {
-        try {
-            log.info("[鍙嶆綔鍥炵瓥鐣ユ洿鏂癩 寮€濮嬫洿锟?deviceId={}, policy={}", deviceId, policy);
+    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Void>> setAntiPassbackPolicy(
+            Long deviceId, String antiPassbackType, Map<String, Object> config) {
 
-            DeviceEntity device = getDeviceById(String.valueOf(Long.parseLong(deviceId)));
-            if (device == null) {
-                return AntiPassbackResult.failure("璁惧涓嶅瓨锟?);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("[反潜回策略] 设置策略:deviceId={}, type={}", deviceId, antiPassbackType);
+
+                // 验证参数
+                if (deviceId == null || antiPassbackType == null) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "设备ID和反潜回类型不能为空");
+                }
+
+                // 使用Manager层处理策略设置
+                antiPassbackManager.setAntiPassbackPolicy(deviceId, antiPassbackType, config);
+
+                log.info("[反潜回策略] 策略设置成功:deviceId={}, type={}", deviceId, antiPassbackType);
+                return ResponseDTO.ok();
+
+            } catch (Exception e) {
+                log.error("[反潜回策略] 设置策略异常:deviceId={}, error={}", deviceId, e.getMessage(), e);
+                return ResponseDTO.error("ANTI_PASSBACK_POLICY_ERROR", "设置策略异常: " + e.getMessage());
             }
-
-            // 鏇存柊璁惧鍙嶆綔鍥炵瓥鐣ラ厤锟?
-            Map<String, Object> extendedAttributes = new HashMap<>();
-            if (device.getExtendedAttributes() != null) {
-                // 瑙ｆ瀽鐜版湁鎵╁睍灞烇拷?
-                extendedAttributes = parseExtendedAttributes(device.getExtendedAttributes());
-            }
-
-            extendedAttributes.put("antiPassbackPolicy", policy);
-            device.setExtendedAttributes(serializeExtendedAttributes(extendedAttributes));
-
-            updateDevice(device);
-
-            // 娓呴櫎鐩稿叧缂撳瓨
-            clearDeviceCache(Long.parseLong(deviceId));
-
-            log.info("[鍙嶆綔鍥炵瓥鐣ユ洿鏂癩 鏇存柊鎴愬姛 deviceId={}", deviceId);
-            return AntiPassbackResult.success("绛栫暐鏇存柊鎴愬姛");
-
-        } catch (Exception e) {
-            log.error("[鍙嶆綔鍥炵瓥鐣ユ洿鏂癩 鏇存柊澶辫触 deviceId={}, error={}", deviceId, e.getMessage(), e);
-            return AntiPassbackResult.failure("鏇存柊澶辫触锟? + e.getMessage());
-        }
+        });
     }
 
     @Override
-    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "recordAccessEventFallback")
+    @CircuitBreaker(name = "antiPassbackService")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Object>> getAntiPassbackPolicy(Long deviceId) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.debug("[反潜回策略] 获取策略:deviceId={}", deviceId);
+
+                // 使用Manager层获取策略
+                Object policy = antiPassbackManager.getAntiPassbackPolicy(deviceId);
+
+                if (policy == null) {
+                    return ResponseDTO.error("POLICY_NOT_FOUND", "反潜回策略不存在");
+                }
+
+                return ResponseDTO.ok(policy);
+
+            } catch (Exception e) {
+                log.error("[反潜回策略] 获取策略异常:deviceId={}, error={}", deviceId, e.getMessage(), e);
+                return ResponseDTO.error("GET_POLICY_ERROR", "获取策略异常: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Void>> updateAntiPassbackConfig(
+            Long deviceId, Map<String, Object> config) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("[反潜回配置] 更新配置:deviceId={}", deviceId);
+
+                // 验证参数
+                if (deviceId == null || config == null) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "参数不完整");
+                }
+
+                // 使用Manager层更新配置
+                antiPassbackManager.updateAntiPassbackConfig(deviceId, config);
+
+                log.info("[反潜回配置] 配置更新成功:deviceId={}", deviceId);
+                return ResponseDTO.ok();
+
+            } catch (Exception e) {
+                log.error("[反潜回配置] 更新配置异常:deviceId={}, error={}", deviceId, e.getMessage(), e);
+                return ResponseDTO.error("UPDATE_CONFIG_ERROR", "更新配置异常: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
+    @TimeLimiter(name = "antiPassbackService")
     @Retry(name = "antiPassbackService", fallbackMethod = "recordAccessEventFallback")
-    public void recordAccessEvent(Long userId, Long deviceId, Long areaId, boolean allowed, String reason) {
-        try {
-            log.debug("[鍙嶆綔鍥炰簨浠惰褰昡 璁板綍浜嬩欢 userId={}, deviceId={}, areaId={}, allowed={}",
-                     userId, deviceId, areaId, allowed);
+    public CompletableFuture<ResponseDTO<Void>> recordAccessEvent(
+            Long userId, Long deviceId, Long areaId, String direction, String verificationData, Boolean result) {
 
-            // 鍒涘缓閫氳璁板綍
-            AccessRecordEntity record = new AccessRecordEntity();
-            record.setUserId(userId);
-            record.setDeviceId(deviceId);
-            record.setAreaId(areaId);
-            record.setAccessResult(allowed ? 1 : 2);
-            record.setAccessTime(LocalDateTime.now());
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.debug("[反潜回记录] 记录事件:userId={}, deviceId={}, areaId={}, allowed={}",
+                        userId, deviceId, areaId, result);
 
-            accessRecordDao.insert(record);
+                // 验证参数
+                if (userId == null || deviceId == null || areaId == null || direction == null || result == null) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "参数不完整");
+                }
 
-            // 鏇存柊缂撳瓨
-            updateAccessCache(userId, deviceId, areaId, allowed);
+                // 使用Manager层记录访问事件
+                antiPassbackManager.recordAccessEvent(userId, deviceId, areaId, direction, verificationData, result);
 
-        } catch (Exception e) {
-            log.error("[鍙嶆綔鍥炰簨浠惰褰昡 璁板綍澶辫触 userId={}, deviceId={}, error={}",
-                     userId, deviceId, e.getMessage(), e);
-            // 璁板綍澶辫触涓嶅簲璇ュ奖鍝嶄富瑕佷笟鍔℃祦绋嬶紝鎵€浠ヨ繖閲屽彧璁板綍鏃ュ織
-        }
+                // 如果访问被拒绝，记录违规事件
+                if (!result) {
+                    antiPassbackManager.recordViolation(userId, deviceId, areaId, "ACCESS_DENIED", "反潜回检查拒绝访问");
+                }
+
+                return ResponseDTO.ok();
+
+            } catch (Exception e) {
+                log.error("[反潜回记录] 记录异常:userId={}, error={}", userId, e.getMessage(), e);
+                return ResponseDTO.error("RECORD_ACCESS_ERROR", "记录访问事件异常: " + e.getMessage());
+            }
+        });
     }
 
     @Override
-    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "resetAntiPassbackFallback")
-    public AntiPassbackResult resetAntiPassback(Long userId, Long deviceId, Long areaId) {
-        try {
-            log.info("[鍙嶆綔鍥為噸缃甝 寮€濮嬮噸锟?userId={}, deviceId={}, areaId={}", userId, deviceId, areaId);
+    @CircuitBreaker(name = "antiPassbackService")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Object>> getUserAntiPassbackStatus(Long userId) {
 
-            // 娓呴櫎鐩稿叧缂撳瓨
-            clearUserCache(userId, deviceId, areaId);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.debug("[反潜回状态] 获取状态:userId={}", userId);
 
-            // 璁板綍閲嶇疆浜嬩欢
-            recordResetEvent(userId, deviceId, areaId);
+                // 使用Manager层获取用户状态
+                Object status = antiPassbackManager.getUserAntiPassbackStatus(userId);
 
-            log.info("[鍙嶆綔鍥為噸缃甝 閲嶇疆鎴愬姛 userId={}, deviceId={}, areaId={}", userId, deviceId, areaId);
-            return AntiPassbackResult.success("閲嶇疆鎴愬姛");
+                return ResponseDTO.ok(status);
 
-        } catch (Exception e) {
-            log.error("[鍙嶆綔鍥為噸缃甝 閲嶇疆澶辫触 userId={}, deviceId={}, areaId={}, error={}",
-                     userId, deviceId, areaId, e.getMessage(), e);
-            return AntiPassbackResult.failure("閲嶇疆澶辫触锟? + e.getMessage());
-        }
+            } catch (Exception e) {
+                log.error("[反潜回状态] 获取状态异常:userId={}, error={}", userId, e.getMessage(), e);
+                return ResponseDTO.error("GET_STATUS_ERROR", "获取状态异常: " + e.getMessage());
+            }
+        });
     }
 
-    // ==================== 绉佹湁鏂规硶锛氱‖鍙嶆綔锟?====================
+    @Override
+    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Void>> clearUserAntiPassbackRecords(
+            Long userId, Long deviceId) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("[反潜回清理] 清理记录:userId={}, deviceId={}", userId, deviceId);
+
+                // 验证参数
+                if (userId == null || deviceId == null) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "参数不完整");
+                }
+
+                // 使用Manager层清理用户记录
+                antiPassbackManager.clearUserAntiPassbackRecords(userId, deviceId);
+
+                log.info("[反潜回清理] 清理完成:userId={}, deviceId={}", userId, deviceId);
+                return ResponseDTO.ok();
+
+            } catch (Exception e) {
+                log.error("[反潜回清理] 清理异常:userId={}, error={}", userId, e.getMessage(), e);
+                return ResponseDTO.error("CLEAR_RECORDS_ERROR", "清理记录异常: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Void>> handleAntiPassbackViolation(
+            Long userId, Long deviceId, AntiPassbackResult antiPassbackResult) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("[反潜回违规处理] 处理违规:userId={}, deviceId={}", userId, deviceId);
+
+                // 验证参数
+                if (userId == null || deviceId == null || antiPassbackResult == null) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "参数不完整");
+                }
+
+                // 使用Manager层处理违规
+                antiPassbackManager.handleAntiPassbackViolation(userId, deviceId, antiPassbackResult);
+
+                log.info("[反潜回违规处理] 处理完成:userId={}, deviceId={}", userId, deviceId);
+                return ResponseDTO.ok();
+
+            } catch (Exception e) {
+                log.error("[反潜回违规处理] 处理异常:userId={}, error={}", userId, e.getMessage(), e);
+                return ResponseDTO.error("HANDLE_VIOLATION_ERROR", "处理违规异常: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackOperationFallback")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Void>> resetUserAntiPassbackStatus(
+            Long userId, Long operatorId, String reason) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("[反潜回重置] 重置状态:userId={}, operatorId={}, reason={}", userId, operatorId, reason);
+
+                // 验证参数
+                if (userId == null || operatorId == null) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "参数不完整");
+                }
+
+                // 使用Manager层重置状态
+                antiPassbackManager.resetUserAntiPassbackStatus(userId, operatorId, reason);
+
+                log.info("[反潜回重置] 重置完成:userId={}, operatorId={}", userId, operatorId);
+                return ResponseDTO.ok();
+
+            } catch (Exception e) {
+                log.error("[反潜回重置] 重置异常:userId={}, error={}", userId, e.getMessage(), e);
+                return ResponseDTO.error("RESET_STATUS_ERROR", "重置状态异常: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    @CircuitBreaker(name = "antiPassbackService")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Object>> getAntiPassbackStatistics(
+            String startTime, String endTime) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.debug("[反潜回统计] 获取统计:startTime={}, endTime={}", startTime, endTime);
+
+                // 使用Manager层获取统计数据
+                Object statistics = antiPassbackManager.getAntiPassbackStatistics(
+                        LocalDateTime.parse(startTime),
+                        LocalDateTime.parse(endTime)
+                );
+
+                return ResponseDTO.ok(statistics);
+
+            } catch (Exception e) {
+                log.error("[反潜回统计] 获取统计异常:startTime={}, endTime={}, error={}", startTime, endTime, e.getMessage(), e);
+                return ResponseDTO.error("GET_STATISTICS_ERROR", "获取统计数据异常: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    @CircuitBreaker(name = "antiPassbackService")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Object>> getAntiPassbackViolationReport(
+            Long deviceId, String startTime, String endTime) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.debug("[反潜回报告] 获取报告:deviceId={}, startTime={}, endTime={}", deviceId, startTime, endTime);
+
+                // 使用Manager层获取违规报告
+                Object report = antiPassbackManager.getAntiPassbackViolationReport(
+                        deviceId,
+                        LocalDateTime.parse(startTime),
+                        LocalDateTime.parse(endTime)
+                );
+
+                return ResponseDTO.ok(report);
+
+            } catch (Exception e) {
+                log.error("[反潜回报告] 获取报告异常:deviceId={}, error={}", deviceId, e.getMessage(), e);
+                return ResponseDTO.error("GET_VIOLATION_REPORT_ERROR", "获取违规报告异常: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackBatchOperationFallback")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Map<Long, Object>>> batchCheckAntiPassbackStatus(
+            String userIds) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("[反潜回批量检查] 批量检查:userIds={}", userIds);
+
+                // 验证参数
+                if (userIds == null || userIds.trim().isEmpty()) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "用户ID列表不能为空");
+                }
+
+                // 解析用户ID列表
+                List<Long> userIdList = Arrays.stream(userIds.split(","))
+                        .map(String::trim)
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+
+                // 使用Manager层进行批量检查
+                Map<Long, Object> results = new HashMap<>();
+                for (Long userId : userIdList) {
+                    try {
+                        AntiPassbackResult result = checkHardAntiPassback(userId, null, null, null, null);
+                        results.put(userId, result);
+                    } catch (Exception e) {
+                        results.put(userId, AntiPassbackResult.failure("批量检查异常: " + e.getMessage()));
+                    }
+                }
+
+                return ResponseDTO.ok(results);
+
+            } catch (Exception e) {
+                log.error("[反潜回批量检查] 批量检查异常:userIds={}, error={}", userIds, e.getMessage(), e);
+                return ResponseDTO.error("BATCH_CHECK_ERROR", "批量检查异常: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    @CircuitBreaker(name = "antiPassbackService", fallbackMethod = "antiPassbackBatchOperationFallback")
+    @TimeLimiter(name = "antiPassbackService")
+    public CompletableFuture<ResponseDTO<Map<Long, Object>>> batchClearAntiPassbackRecords(
+            String userIds) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("[反潜回批量清理] 批量清理:userIds={}", userIds);
+
+                // 验证参数
+                if (userIds == null || userIds.trim().isEmpty()) {
+                    return ResponseDTO.error("INVALID_PARAMETERS", "用户ID列表不能为空");
+                }
+
+                // 解析用户ID列表
+                List<Long> userIdList = Arrays.stream(userIds.split(","))
+                        .map(String::trim)
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+
+                Map<Long, Object> results = new HashMap<>();
+                for (Long userId : userIdList) {
+                    try {
+                        clearUserAntiPassbackRecords(userId, 0L);
+                        results.put(userId, "清理成功");
+                    } catch (Exception e) {
+                        results.put(userId, "清理异常: " + e.getMessage());
+                    }
+                }
+
+                return ResponseDTO.ok(results);
+
+            } catch (Exception e) {
+                log.error("[反潜回批量清理] 批量清理异常:userIds={}, error={}", userIds, e.getMessage(), e);
+                return ResponseDTO.error("BATCH_CLEAR_ERROR", "批量清理异常: " + e.getMessage());
+            }
+        });
+    }
+
+    // ==================== 私有方法：硬反潜回实现 ====================
 
     /**
-     * 纭弽娼滃洖妫€锟?
-     * 涓ユ牸绂佹鍦ㄦ椂闂寸獥鍙ｅ唴閲嶅閫氳
+     * 硬反潜回检查
+     * 严格禁止用户在时间窗口内重复进入
      */
     private AntiPassbackResult checkHardAntiPassback(Long userId, Long deviceId, Long areaId,
                                                    DeviceEntity device, AreaEntity area) {
         String cacheKey = ANTI_PASSBACK_PREFIX + "hard:" + userId;
 
-        // 妫€鏌ユ渶杩戦€氳璁板綍
+        // 检查用户最近访问记录
         String lastAccessStr = (String) redisTemplate.opsForValue().get(cacheKey);
         if (lastAccessStr != null) {
             LocalDateTime lastAccessTime = LocalDateTime.parse(lastAccessStr);
             if (Duration.between(lastAccessTime, LocalDateTime.now()).toMinutes() < ANTI_PASSBACK_TIME_WINDOW) {
-                return AntiPassbackResult.failure("纭弽娼滃洖杩濊锛氬湪鏃堕棿绐楀彛鍐呯姝㈤噸澶嶉€氳");
+                return AntiPassbackResult.failure("硬反潜回：检测到时间窗口内的重复访问");
             }
         }
 
-        // 璁板綍褰撳墠閫氳
+        // 记录当前访问
         redisTemplate.opsForValue().set(cacheKey, LocalDateTime.now().toString(),
                                        Duration.ofMinutes(CACHE_EXPIRE_MINUTES));
 
-        return AntiPassbackResult.success("纭弽娼滃洖妫€鏌ラ€氳繃");
+        return AntiPassbackResult.success("硬反潜回：检查通过");
     }
 
-    // ==================== 绉佹湁鏂规硶锛氳蒋鍙嶆綔锟?====================
+    // ==================== 私有方法：软反潜回实现 ====================
 
     /**
-     * 杞弽娼滃洖妫€锟?
-     * 鍏佽閫氳浣嗚褰曞紓锟?
+     * 软反潜回检查
+     * 允许重复访问但记录异常
      */
     private AntiPassbackResult checkSoftAntiPassback(Long userId, Long deviceId, Long areaId,
                                                    DeviceEntity device, AreaEntity area) {
         String cacheKey = ANTI_PASSBACK_PREFIX + "soft:" + userId;
 
-        // 妫€鏌ユ渶杩戦€氳璁板綍
+        // 检查用户最近访问记录
         String lastAccessStr = (String) redisTemplate.opsForValue().get(cacheKey);
         boolean isException = false;
 
@@ -296,56 +547,56 @@ public class AntiPassbackServiceImpl implements AntiPassbackService {
             LocalDateTime lastAccessTime = LocalDateTime.parse(lastAccessStr);
             if (Duration.between(lastAccessTime, LocalDateTime.now()).toMinutes() < ANTI_PASSBACK_TIME_WINDOW) {
                 isException = true;
-                log.warn("[杞弽娼滃洖] 妫€娴嬪埌閲嶅閫氳 userId={}, deviceId={}, lastTime={}",
+                log.warn("[软反潜回] 检测到异常访问:userId={}, deviceId={}, lastTime={}",
                         userId, deviceId, lastAccessTime);
 
-                // 璁板綍寮傚父浜嬩欢
+                // 记录异常事件
                 recordSoftException(userId, deviceId, areaId);
             }
         }
 
-        // 璁板綍褰撳墠閫氳
+        // 记录当前访问
         redisTemplate.opsForValue().set(cacheKey, LocalDateTime.now().toString(),
                                        Duration.ofMinutes(CACHE_EXPIRE_MINUTES));
 
-        String message = isException ? "杞弽娼滃洖锛氭娴嬪埌閲嶅閫氳浣嗗厑璁搁€氳繃" : "杞弽娼滃洖妫€鏌ラ€氳繃";
+        String message = isException ? "软反潜回：检测到异常访问但已记录" : "软反潜回：检查通过";
         return AntiPassbackResult.success(message);
     }
 
-    // ==================== 绉佹湁鏂规硶锛氬叏灞€鍙嶆綔锟?====================
+    // ==================== 私有方法：全局反潜回实现 ====================
 
     /**
-     * 鍏ㄥ眬鍙嶆綔鍥炴锟?
-     * 璺ㄥ尯鍩熴€佽法璁惧鐨勫叏灞€鍙嶆綔鍥炴锟?
+     * 全局反潜回检查
+     * 跨设备检查用户访问状态
      */
     private AntiPassbackResult checkGlobalAntiPassback(Long userId, Long deviceId, Long areaId,
                                                      DeviceEntity device, AreaEntity area) {
         String cacheKey = GLOBAL_USER_ACCESS_PREFIX + userId;
 
-        // 鑾峰彇鐢ㄦ埛鍏ㄥ眬鏈€杩戦€氳璁板綍
+        // 获取用户全局访问记录
         List<String> recentAccesses = (List<String>) redisTemplate.opsForValue().get(cacheKey);
 
         if (recentAccesses != null && !recentAccesses.isEmpty()) {
-            // 妫€鏌ユ槸鍚︽湁鍦ㄦ椂闂寸獥鍙ｅ唴鐨勯€氳璁板綍
+            // 检查用户是否在时间窗口内在多个设备上访问
             LocalDateTime now = LocalDateTime.now();
             for (String accessStr : recentAccesses) {
                 String[] accessInfo = accessStr.split(":");
                 LocalDateTime accessTime = LocalDateTime.parse(accessInfo[0]);
 
                 if (Duration.between(accessTime, now).toMinutes() < GLOBAL_ANTI_PASSBACK_TIME_WINDOW) {
-                    return AntiPassbackResult.failure("鍏ㄥ眬鍙嶆綔鍥炶繚瑙勶細鍦ㄥ叏灞€鏃堕棿绐楀彛鍐呯姝㈠鍖哄煙閫氳");
+                    return AntiPassbackResult.failure("全局反潜回：检测到跨设备并发访问");
                 }
             }
         }
 
-        // 璁板綍褰撳墠閫氳
+        // 记录当前访问
         String currentAccess = LocalDateTime.now() + ":" + areaId + ":" + deviceId;
         if (recentAccesses == null) {
             recentAccesses = new ArrayList<>();
         }
         recentAccesses.add(currentAccess);
 
-        // 淇濇寔鏈€锟?0鏉¤锟?
+        // 保持最近10条记录
         if (recentAccesses.size() > 10) {
             recentAccesses = recentAccesses.subList(recentAccesses.size() - 10, recentAccesses.size());
         }
@@ -353,96 +604,44 @@ public class AntiPassbackServiceImpl implements AntiPassbackService {
         redisTemplate.opsForValue().set(cacheKey, recentAccesses,
                                        Duration.ofMinutes(CACHE_EXPIRE_MINUTES));
 
-        return AntiPassbackResult.success("鍏ㄥ眬鍙嶆綔鍥炴鏌ラ€氳繃");
+        return AntiPassbackResult.success("全局反潜回：检查通过");
     }
 
-    // ==================== 绉佹湁鏂规硶锛氳緟鍔╁姛锟?====================
+    // ==================== 私有方法：访问记录缓存管理 ====================
 
     /**
-     * 妫€鏌ラ€氳绫诲瀷鏄惁鏈夋晥
+     * 通过网关获取设备信息
      */
-    private boolean isAccessTypeValid(String lastType, String currentType) {
-        // 瀹炵幇杩涘嚭绫诲瀷鍖归厤閫昏緫
-        // 渚嬪锛欼N鍜孫UT搴旇浜ゆ浛鍑虹幇
-        if ("IN".equals(lastType) && "OUT".equals(currentType)) {
-            return true;
-        }
-        if ("OUT".equals(lastType) && "IN".equals(currentType)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 璁板綍鍖哄煙閫氳
-     */
-    private void recordAreaAccess(Long userId, Long areaId, String accessType) {
-        String key = USER_LAST_ACCESS_PREFIX + areaId + ":" + userId;
-        String value = accessType + ":" + LocalDateTime.now();
-
-        redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(CACHE_EXPIRE_MINUTES));
-
-        // 鏇存柊鍖哄煙浜烘暟缁熻
-        updateUserCountInArea(areaId, accessType);
-    }
-
-    /**
-     * 鏇存柊鍖哄煙鐢ㄦ埛浜烘暟
-     */
-    private void updateUserCountInArea(Long areaId, String accessType) {
-        String countKey = AREA_USER_COUNT_PREFIX + areaId;
-
-        if ("IN".equals(accessType)) {
-            redisTemplate.opsForValue().increment(countKey);
-        } else if ("OUT".equals(accessType)) {
-            redisTemplate.opsForValue().decrement(countKey);
-        }
-
-        redisTemplate.expire(countKey, Duration.ofHours(24));
-    }
-
-    /**
-     * 娓呴櫎璁惧缂撳瓨
-     */
-    private void clearDeviceCache(Long deviceId) {
-        Set<String> keys = redisTemplate.keys(ANTI_PASSBACK_PREFIX + "*:" + deviceId + "*");
-        if (!keys.isEmpty()) {
-            redisTemplate.delete(keys);
+    private DeviceEntity getDeviceById(Long deviceId) {
+        try {
+            // 使用Manager层获取设备信息
+            return antiPassbackManager.getDeviceById(String.valueOf(deviceId));
+        } catch (Exception e) {
+            log.error("[设备信息获取] 获取设备信息失败:deviceId={}, error={}", deviceId, e.getMessage(), e);
+            return null;
         }
     }
 
     /**
-     * 娓呴櫎鐢ㄦ埛缂撳瓨
+     * 通过网关获取区域信息
      */
-    private void clearUserCache(Long userId, Long deviceId, Long areaId) {
-        Set<String> keys = redisTemplate.keys(ANTI_PASSBACK_PREFIX + "*:" + userId + "*");
-        keys.addAll(redisTemplate.keys(USER_LAST_ACCESS_PREFIX + "*:" + userId));
-        keys.addAll(redisTemplate.keys(GLOBAL_USER_ACCESS_PREFIX + userId));
-
-        if (!keys.isEmpty()) {
-            redisTemplate.delete(keys);
+    private AreaEntity getAreaById(Long areaId) {
+        try {
+            // 使用Manager层获取区域信息
+            return antiPassbackManager.getAreaById(areaId);
+        } catch (Exception e) {
+            log.error("[区域信息获取] 获取区域信息失败:areaId={}, error={}", areaId, e.getMessage(), e);
+            return null;
         }
     }
 
     /**
-     * 鏇存柊璁块棶缂撳瓨
-     */
-    private void updateAccessCache(Long userId, Long deviceId, Long areaId, boolean allowed) {
-        if (allowed) {
-            // 鏇存柊鎴愬姛璁块棶鐨勭紦锟?
-            String key = USER_LAST_ACCESS_PREFIX + areaId + ":" + userId;
-            String value = "IN:" + LocalDateTime.now();
-            redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(CACHE_EXPIRE_MINUTES));
-        }
-    }
-
-    /**
-     * 璁板綍杞弽娼滃洖寮傚父
+     * 记录软反潜回异常
      */
     private void recordSoftException(Long userId, Long deviceId, Long areaId) {
-        log.warn("[杞弽娼滃洖寮傚父] userId={}, deviceId={}, areaId={}", userId, deviceId, areaId);
+        log.warn("[软反潜回异常] userId={}, deviceId={}, areaId={}", userId, deviceId, areaId);
 
-        // 鍙互娣诲姞鍒板紓甯歌〃鎴栧彂閫佸憡锟?
+        // 记录异常事件到Redis
         String exceptionKey = ANTI_PASSBACK_PREFIX + "soft_exception:" + userId;
         String exceptionData = LocalDateTime.now() + ":" + deviceId + ":" + areaId;
 
@@ -450,82 +649,49 @@ public class AntiPassbackServiceImpl implements AntiPassbackService {
         redisTemplate.expire(exceptionKey, Duration.ofHours(24));
     }
 
-    /**
-     * 璁板綍閲嶇疆浜嬩欢
-     */
-    private void recordResetEvent(Long userId, Long deviceId, Long areaId) {
-        String resetKey = ANTI_PASSBACK_PREFIX + "reset:" + userId;
-        String resetData = LocalDateTime.now() + ":" + deviceId + ":" + areaId;
-
-        redisTemplate.opsForList().rightPush(resetKey, resetData);
-        redisTemplate.expire(resetKey, Duration.ofHours(24));
-    }
+    // ==================== 降级处理方法 ====================
 
     /**
-     * 瑙ｆ瀽鎵╁睍灞烇拷?
+     * 反潜回检查降级处理
      */
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> parseExtendedAttributes(String extendedAttributes) {
-        try {
-            // 杩欓噷搴旇浣跨敤JSON瑙ｆ瀽锛岀畝鍖栧疄锟?
-            return new HashMap<>();
-        } catch (Exception e) {
-            return new HashMap<>();
-        }
-    }
-
-    /**
-     * 搴忓垪鍖栨墿灞曞睘锟?
-     */
-    private String serializeExtendedAttributes(Map<String, Object> attributes) {
-        try {
-            // 杩欓噷搴旇浣跨敤JSON搴忓垪鍖栵紝绠€鍖栧疄锟?
-            return attributes.toString();
-        } catch (Exception e) {
-            return "{}";
-        }
-    }
-
-    // ==================== 鐔旀柇闄嶇骇鏂规硶 ====================
-
-    public CompletableFuture<AntiPassbackResult> performAntiPassbackCheckFallback(
+    default CompletableFuture<ResponseDTO<AntiPassbackResult>> performAntiPassbackCheckFallback(
             Long userId, Long deviceId, Long areaId, String verificationData, Exception e) {
-        log.warn("[鍙嶆綔鍥炴鏌 鐔旀柇闄嶇骇 userId={}, deviceId={}, error={}", userId, deviceId, e.getMessage());
-        return CompletableFuture.completedFuture(AntiPassbackResult.failure("鏈嶅姟鏆傛椂涓嶅彲鐢紝宸查檷绾у锟?));
+        log.warn("[反潜回检查] 服务降级: userId={}, deviceId={}, error={}", userId, deviceId, e.getMessage());
+        return CompletableFuture.completedFuture(
+                ResponseDTO.ok(AntiPassbackResult.success("反潜回检查服务暂时不可用，允许通行"))
+        );
     }
 
-    public CompletableFuture<AntiPassbackResult> checkAreaAntiPassbackFallback(
-            Long userId, Long areaId, String accessType, Exception e) {
-        log.warn("[鍖哄煙鍙嶆綔鍥炴鏌 鐔旀柇闄嶇骇 userId={}, areaId={}, error={}", userId, areaId, e.getMessage());
-        return CompletableFuture.completedFuture(AntiPassbackResult.failure("鍖哄煙鍙嶆綔鍥炴鏌ユ湇鍔℃殏鏃朵笉鍙敤"));
+    /**
+     * 区域反潜回检查降级处理
+     */
+    default CompletableFuture<ResponseDTO<AntiPassbackResult>> checkAreaAntiPassbackFallback(
+            Long userId, Long entryAreaId, Long exitAreaId, String direction, Exception e) {
+        log.warn("[区域反潜回检查] 服务降级: userId={}, areaId={}, error={}", userId, entryAreaId, e.getMessage());
+        return CompletableFuture.completedFuture(
+                ResponseDTO.ok(AntiPassbackResult.success("区域反潜回检查服务暂时不可用，允许通行"))
+        );
     }
 
-    public AntiPassbackResult updatePolicyFallback(String deviceId, String policy, Exception e) {
-        log.warn("[鍙嶆綔鍥炵瓥鐣ユ洿鏂癩 鐔旀柇闄嶇骇 deviceId={}, error={}", deviceId, e.getMessage());
-        return AntiPassbackResult.failure("绛栫暐鏇存柊鏈嶅姟鏆傛椂涓嶅彲锟?);
+    /**
+     * 反潜回操作降级处理
+     */
+    default CompletableFuture<ResponseDTO<Void>> antiPassbackOperationFallback(
+            Exception exception, Object... params) {
+        log.warn("[反潜回操作] 服务降级: params={}, error={}", Arrays.toString(params), exception.getMessage());
+        return CompletableFuture.completedFuture(
+                ResponseDTO.error("ANTI_PASSBACK_SERVICE_UNAVAILABLE", "反潜回服务暂时不可用，操作稍后重试")
+        );
     }
 
-    public void recordAccessEventFallback(Long userId, Long deviceId, Long areaId, boolean allowed, String reason, Exception e) {
-        log.error("[鍙嶆綔鍥炰簨浠惰褰昡 鐔旀柇闄嶇骇 userId={}, deviceId={}, error={}", userId, deviceId, e.getMessage());
-        // 浜嬩欢璁板綍澶辫触涓嶅簲璇ュ奖鍝嶄富娴佺▼
-    }
-
-    public AntiPassbackResult resetAntiPassbackFallback(Long userId, Long deviceId, Long areaId, Exception e) {
-        log.warn("[鍙嶆綔鍥為噸缃甝 鐔旀柇闄嶇骇 userId={}, deviceId={}, areaId={}, error={}", userId, deviceId, areaId, e.getMessage());
-        return AntiPassbackResult.failure("閲嶇疆鏈嶅姟鏆傛椂涓嶅彲锟?);
-    }
-
-    // ==================== 棰勭暀鏂规硶 ====================
-
-    @Override
-    public Map<String, Object> getAntiPassbackStatistics() {
-        // TODO: 瀹炵幇缁熻鍔熻兘
-        return new HashMap<>();
-    }
-
-    @Override
-    public AntiPassbackResult checkTimeWindowViolation(Long userId, Long deviceId, LocalDateTime accessTime) {
-        // TODO: 瀹炵幇鏃堕棿绐楀彛杩濊妫€锟?
-        return AntiPassbackResult.success("鍔熻兘寰呭疄锟?);
+    /**
+     * 批量操作降级处理
+     */
+    default CompletableFuture<ResponseDTO<Map<Long, Object>>> antiPassbackBatchOperationFallback(
+            String params, Exception exception) {
+        log.warn("[反潜回批量操作] 服务降级: params={}, error={}", params, exception.getMessage());
+        return CompletableFuture.completedFuture(
+                ResponseDTO.error("ANTI_PASSBACK_BATCH_SERVICE_UNAVAILABLE", "批量反潜回服务暂时不可用，稍后重试")
+        );
     }
 }

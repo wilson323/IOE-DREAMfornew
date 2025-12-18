@@ -3,8 +3,8 @@ package net.lab1024.sa.attendance.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.attendance.domain.form.AttendancePunchForm;
-import net.lab1024.sa.attendance.attendance.service.AttendancePunchService;
+import net.lab1024.sa.attendance.domain.form.AttendanceRecordAddForm;
+import net.lab1024.sa.attendance.service.AttendanceRecordService;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.monitoring.BusinessMetrics;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
 public class DeviceAttendancePunchController {
 
     @Resource
-    private net.lab1024.sa.attendance.attendance.service.AttendanceService attendanceService;
+    private AttendanceRecordService attendanceRecordService;
 
     @Resource
     private BusinessMetrics businessMetrics;
@@ -44,20 +44,19 @@ public class DeviceAttendancePunchController {
      * ⭐ 软件端处理：存储记录+排班匹配+考勤计算+异常检测
      * </p>
      *
-     * @param punchForm 打卡表单
+     * @param form 打卡表单
      * @return 处理结果
      */
     @PostMapping("/upload-punch")
     @Operation(summary = "接收设备上传的打卡记录", description = "设备端完成识别，软件端进行排班匹配和考勤计算")
-    public ResponseDTO<Void> uploadAttendancePunch(@Valid @RequestBody AttendancePunchForm punchForm) {
+    public ResponseDTO<Void> uploadAttendancePunch(@Valid @RequestBody AttendanceRecordAddForm form) {
         long startTime = System.currentTimeMillis();
         log.info("[设备考勤打卡] 接收设备上传的打卡记录, deviceId={}, userId={}, punchTime={}",
-                punchForm.getDeviceId(), punchForm.getUserId(), punchForm.getPunchTime());
+                form.getDeviceId(), form.getUserId(), form.getPunchTime());
 
         try {
             // 1. 保存打卡记录
-            // 通过AttendanceService保存打卡记录
-            ResponseDTO<Void> saveResult = attendanceService.createPunchRecord(punchForm);
+            ResponseDTO<Long> saveResult = attendanceRecordService.createAttendanceRecord(form);
             if (!saveResult.isSuccess()) {
                 log.error("[设备考勤打卡] 保存打卡记录失败: {}", saveResult.getMessage());
                 return ResponseDTO.error(saveResult.getCode(), saveResult.getMessage());
@@ -67,10 +66,10 @@ public class DeviceAttendancePunchController {
             businessMetrics.recordAttendanceEvent("SUCCESS");
 
             // 3. 实时推送到监控大屏（通过WebSocket）
-            pushAttendanceEvent(punchForm);
+            pushAttendanceEvent(form);
 
             // 4. 异常检测（跨设备打卡、频繁打卡等）
-            checkAttendanceAnomaly(punchForm);
+            checkAttendanceAnomaly(form);
 
             long duration = System.currentTimeMillis() - startTime;
             businessMetrics.recordResponseTime("attendance.device.upload-punch", duration);
@@ -88,16 +87,16 @@ public class DeviceAttendancePunchController {
     /**
      * 推送考勤事件
      */
-    private void pushAttendanceEvent(AttendancePunchForm punchForm) {
+    private void pushAttendanceEvent(AttendanceRecordAddForm form) {
         // 通过WebSocket推送实时考勤事件
-        log.debug("[设备考勤打卡] 推送考勤事件, userId={}, deviceId={}", punchForm.getUserId(), punchForm.getDeviceId());
+        log.debug("[设备考勤打卡] 推送考勤事件, userId={}, deviceId={}", form.getUserId(), form.getDeviceId());
     }
 
     /**
      * 检查考勤异常
      */
-    private void checkAttendanceAnomaly(AttendancePunchForm punchForm) {
+    private void checkAttendanceAnomaly(AttendanceRecordAddForm form) {
         // 检查跨设备打卡、频繁打卡等异常
-        log.debug("[设备考勤打卡] 检查考勤异常, userId={}, deviceId={}", punchForm.getUserId(), punchForm.getDeviceId());
+        log.debug("[设备考勤打卡] 检查考勤异常, userId={}, deviceId={}", form.getUserId(), form.getDeviceId());
     }
 }
