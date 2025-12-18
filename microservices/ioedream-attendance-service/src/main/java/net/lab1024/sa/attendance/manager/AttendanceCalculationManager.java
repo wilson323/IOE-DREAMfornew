@@ -102,10 +102,10 @@ public class AttendanceCalculationManager {
             IAttendanceRuleStrategy strategy = strategies.get(0);
             log.debug("[考勤计算管理器] 使用策略计算考勤: {}", strategy.getRuleName());
             AttendanceResultVO result = strategy.calculate(firstRecord, schedule);
-            
+
             // 计算实际工作时长
             result.setWorkingMinutes(calculateWorkingMinutes(punchRecords));
-            
+
             return result;
         }
 
@@ -185,13 +185,13 @@ public class AttendanceCalculationManager {
      */
     private AttendanceResultVO calculateDefaultAttendance(
             Long userId, LocalDate date, ScheduleRecordEntity schedule, List<AttendanceRecordEntity> punchRecords) {
-        
+
         AttendanceResultVO result = new AttendanceResultVO();
         result.setUserId(userId);
         result.setDate(date);
         result.setStatus("NORMAL");
         result.setWorkingMinutes(calculateWorkingMinutes(punchRecords));
-        
+
         log.debug("[考勤计算管理器] 默认考勤计算完成, userId={}, date={}", userId, date);
         return result;
     }

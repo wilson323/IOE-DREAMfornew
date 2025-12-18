@@ -26,9 +26,9 @@ public class BasicAccessFlowExecutor implements IAccessFlowExecutor {
         // 基础通行逻辑
         // 实际应该调用AbstractAccessFlowTemplate的processAccess方法
         // 这里简化处理，实际应该注入具体的流程实现（如BiometricAccessFlow）
-        log.debug("[基础通行执行器] 执行通行流程, userId={}, deviceId={}", 
+        log.debug("[基础通行执行器] 执行通行流程, userId={}, deviceId={}",
                 request.getUserId(), request.getDeviceId());
-        
+
         // TODO: 调用具体的流程实现
         return AbstractAccessFlowTemplate.AccessResult.success();
     }
