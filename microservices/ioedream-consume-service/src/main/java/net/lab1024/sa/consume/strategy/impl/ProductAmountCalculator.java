@@ -7,25 +7,23 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.dao.ConsumeProductDao;
 import net.lab1024.sa.common.consume.entity.AccountEntity;
 import net.lab1024.sa.common.consume.entity.ConsumeAreaEntity;
 import net.lab1024.sa.common.consume.entity.ConsumeProductEntity;
+import net.lab1024.sa.common.factory.StrategyMarker;
+import net.lab1024.sa.consume.client.AccountKindConfigClient;
+import net.lab1024.sa.consume.dao.ConsumeProductDao;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionForm;
 import net.lab1024.sa.consume.domain.request.ConsumeRequest;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
-import net.lab1024.sa.consume.client.AccountKindConfigClient;
 
 /**
  * 商品模式计算器策略实现
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 用于计算商品消费模式的消费金额
- * 严格遵循CLAUDE.md规范：
- * - 策略实现类使用@Component注解
- * - 使用@Resource注入依赖
- * - 实现ConsumeAmountCalculator接口
  * </p>
  * <p>
  * 业务场景：
@@ -40,6 +38,7 @@ import net.lab1024.sa.consume.client.AccountKindConfigClient;
  */
 @Slf4j
 @Component
+@StrategyMarker(name = "PRODUCT", type = "CONSUME_MODE", priority = 90)
 public class ProductAmountCalculator implements ConsumeAmountCalculator {
 
     @Resource
