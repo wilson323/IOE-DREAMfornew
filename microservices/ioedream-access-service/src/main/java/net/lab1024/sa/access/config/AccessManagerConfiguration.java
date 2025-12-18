@@ -65,6 +65,9 @@ public class AccessManagerConfiguration {
     @Resource
     private net.lab1024.sa.common.organization.dao.AreaAccessExtDao areaAccessExtDao;
 
+    @Resource
+    private AccessVerificationProperties verificationProperties;
+
     /**
      * 注册AccessVerificationManager为Spring Bean
      *
@@ -84,7 +87,8 @@ public class AccessManagerConfiguration {
                 objectMapper,
                 areaAccessExtDao,
                 interlockRecordDao,
-                multiPersonRecordDao
+                multiPersonRecordDao,
+                verificationProperties
         );
     }
 }

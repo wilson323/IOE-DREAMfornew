@@ -52,8 +52,8 @@ class BackendVerificationStrategyTest {
     @Test
     void testVerify_Success() {
         // Given
-        when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt())).thenReturn(true);
-        when(accessVerificationManager.verifyInterlock(anyLong())).thenReturn(true);
+        when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt(), anyLong())).thenReturn(true);
+        when(accessVerificationManager.verifyInterlock(anyLong(), anyLong())).thenReturn(true);
         when(accessVerificationManager.verifyTimePeriod(anyLong(), anyLong(), any())).thenReturn(true);
         when(accessVerificationManager.isBlacklisted(anyLong())).thenReturn(false);
         when(accessVerificationManager.isMultiPersonRequired(anyLong())).thenReturn(false);
@@ -68,8 +68,8 @@ class BackendVerificationStrategyTest {
         assertNotNull(result.getControlCommand());
         assertEquals("backend", result.getVerificationMode());
 
-        verify(accessVerificationManager).verifyAntiPassback(1001L, 2001L, 1);
-        verify(accessVerificationManager).verifyInterlock(2001L);
+        verify(accessVerificationManager).verifyAntiPassback(1001L, 2001L, 1, 3001L);
+        verify(accessVerificationManager).verifyInterlock(2001L, 3001L);
         verify(accessVerificationManager).verifyTimePeriod(1001L, 2001L, request.getVerifyTime());
         verify(accessVerificationManager).isBlacklisted(1001L);
     }
@@ -77,7 +77,7 @@ class BackendVerificationStrategyTest {
     @Test
     void testVerify_AntiPassbackFailed() {
         // Given
-        when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt())).thenReturn(false);
+        when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt(), anyLong())).thenReturn(false);
 
         // When
         VerificationResult result = strategy.verify(request);
@@ -88,15 +88,15 @@ class BackendVerificationStrategyTest {
         assertEquals("FAILED", result.getAuthStatus());
         assertEquals("ANTI_PASSBACK_VIOLATION", result.getErrorCode());
 
-        verify(accessVerificationManager).verifyAntiPassback(1001L, 2001L, 1);
-        verify(accessVerificationManager, never()).verifyInterlock(anyLong());
+        verify(accessVerificationManager).verifyAntiPassback(1001L, 2001L, 1, 3001L);
+        verify(accessVerificationManager, never()).verifyInterlock(anyLong(), anyLong());
     }
 
     @Test
     void testVerify_InterlockFailed() {
         // Given
-        when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt())).thenReturn(true);
-        when(accessVerificationManager.verifyInterlock(anyLong())).thenReturn(false);
+        when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt(), anyLong())).thenReturn(true);
+        when(accessVerificationManager.verifyInterlock(anyLong(), anyLong())).thenReturn(false);
 
         // When
         VerificationResult result = strategy.verify(request);
@@ -111,8 +111,8 @@ class BackendVerificationStrategyTest {
     @Test
     void testVerify_Blacklisted() {
         // Given
-        when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt())).thenReturn(true);
-        when(accessVerificationManager.verifyInterlock(anyLong())).thenReturn(true);
+        when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt(), anyLong())).thenReturn(true);
+        when(accessVerificationManager.verifyInterlock(anyLong(), anyLong())).thenReturn(true);
         when(accessVerificationManager.verifyTimePeriod(anyLong(), anyLong(), any())).thenReturn(true);
         when(accessVerificationManager.isBlacklisted(anyLong())).thenReturn(true);
 

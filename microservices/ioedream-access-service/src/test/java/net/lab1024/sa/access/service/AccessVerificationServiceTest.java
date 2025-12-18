@@ -2,6 +2,7 @@ package net.lab1024.sa.access.service;
 
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
+import net.lab1024.sa.access.monitor.AccessVerificationMetrics;
 import net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl;
 import net.lab1024.sa.access.strategy.VerificationModeStrategy;
 import net.lab1024.sa.common.organization.dao.AreaAccessExtDao;
@@ -39,6 +40,9 @@ class AccessVerificationServiceTest {
 
     @Mock
     private VerificationModeStrategy edgeStrategy;
+
+    @Mock
+    private AccessVerificationMetrics verificationMetrics;
 
     @InjectMocks
     private AccessVerificationServiceImpl service;

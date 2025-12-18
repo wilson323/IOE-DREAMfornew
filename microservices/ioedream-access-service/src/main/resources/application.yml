@@ -61,7 +61,7 @@ access:
       backend-enabled: ${ACCESS_BACKEND_VERIFICATION_ENABLED:true}
       # 是否支持设备端验证
       edge-enabled: ${ACCESS_EDGE_VERIFICATION_ENABLED:true}
-    
+
     # 后台验证配置
     backend:
       # 响应超时时间(毫秒)
@@ -78,7 +78,7 @@ access:
       multi-person-enabled: ${ACCESS_MULTI_PERSON_ENABLED:false}
       # 多人验证超时(秒)
       multi-person-timeout: ${ACCESS_MULTI_PERSON_TIMEOUT:120}
-    
+
     # 设备端验证配置
     edge:
       # 权限数据同步间隔(分钟)
@@ -99,9 +99,35 @@ mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   type-aliases-package: net.lab1024.sa.common.entity,net.lab1024.sa.common.organization.entity,net.lab1024.sa.access.entity
 
+# ==================== Actuator监控配置 ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.95,0.99
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+
 # ==================== 日志配置 ====================
 logging:
   level:
     root: INFO
     net.lab1024.sa: DEBUG
     net.lab1024.sa.access: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

@@ -1,6 +1,7 @@
 package net.lab1024.sa.access.manager;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.access.config.AccessVerificationProperties;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
@@ -69,10 +70,12 @@ public class AccessVerificationManager {
     private final AreaAccessExtDao areaAccessExtDao;
     private final InterlockRecordDao interlockRecordDao;
     private final MultiPersonRecordDao multiPersonRecordDao;
+    private final AccessVerificationProperties verificationProperties;
 
     /**
      * 反潜时间窗口（秒）
      * 默认5分钟，在此时间窗口内不允许重复进入
+     * 注意：实际值从配置中读取
      */
     private static final int DEFAULT_ANTI_PASSBACK_WINDOW_SECONDS = 300;
 
@@ -101,6 +104,7 @@ public class AccessVerificationManager {
      * @param areaAccessExtDao 区域门禁扩展DAO
      * @param interlockRecordDao 互锁记录DAO
      * @param multiPersonRecordDao 多人验证记录DAO
+     * @param verificationProperties 验证配置属性
      */
     public AccessVerificationManager(
             AntiPassbackRecordDao antiPassbackRecordDao,
@@ -112,7 +116,8 @@ public class AccessVerificationManager {
             ObjectMapper objectMapper,
             AreaAccessExtDao areaAccessExtDao,
             InterlockRecordDao interlockRecordDao,
-            MultiPersonRecordDao multiPersonRecordDao) {
+            MultiPersonRecordDao multiPersonRecordDao,
+            AccessVerificationProperties verificationProperties) {
         this.antiPassbackRecordDao = antiPassbackRecordDao;
         this.userAreaPermissionDao = userAreaPermissionDao;
         this.userAreaPermissionManager = userAreaPermissionManager;
@@ -123,6 +128,7 @@ public class AccessVerificationManager {
         this.areaAccessExtDao = areaAccessExtDao;
         this.interlockRecordDao = interlockRecordDao;
         this.multiPersonRecordDao = multiPersonRecordDao;
+        this.verificationProperties = verificationProperties;
     }
 
     /**
@@ -976,7 +982,16 @@ public class AccessVerificationManager {
         }
 
         try {
-            // 方案1：通过GatewayServiceClient调用common-service查询用户信息
+            // 1. 从Redis缓存查询黑名单状态
+            String cacheKey = CACHE_KEY_BLACKLIST + userId;
+            Object cachedStatus = redisTemplate.opsForValue().get(cacheKey);
+            if (cachedStatus instanceof Boolean) {
+                boolean isBlacklisted = (Boolean) cachedStatus;
+                log.debug("[黑名单验证] 从缓存获取黑名单状态: userId={}, isBlacklisted={}", userId, isBlacklisted);
+                return isBlacklisted;
+            }
+
+            // 2. 通过GatewayServiceClient调用common-service查询用户信息
             ResponseDTO<Map<String, Object>> response = gatewayServiceClient.callCommonService(
                     "/api/v1/user/" + userId,
                     HttpMethod.GET,
@@ -984,6 +999,7 @@ public class AccessVerificationManager {
                     new TypeReference<ResponseDTO<Map<String, Object>>>() {}
             );
 
+            boolean isBlacklisted = false;
             if (response != null && response.isSuccess() && response.getData() != null) {
                 Map<String, Object> userData = response.getData();
                 
@@ -994,38 +1010,45 @@ public class AccessVerificationManager {
                     if (status != null && status != 1) {
                         // 用户状态为禁用
                         log.warn("[黑名单验证] 用户已被禁用: userId={}, status={}", userId, status);
-                        return true;
+                        isBlacklisted = true;
                     }
                 }
 
                 // 检查账户锁定状态
-                Object accountLockedObj = userData.get("accountLocked");
-                if (accountLockedObj != null) {
-                    Integer accountLocked = accountLockedObj instanceof Number ? ((Number) accountLockedObj).intValue() : null;
-                    if (accountLocked != null && accountLocked == 1) {
-                        // 用户账户被锁定
-                        log.warn("[黑名单验证] 用户账户已被锁定: userId={}", userId);
-                        return true;
+                if (!isBlacklisted) {
+                    Object accountLockedObj = userData.get("accountLocked");
+                    if (accountLockedObj != null) {
+                        Integer accountLocked = accountLockedObj instanceof Number ? ((Number) accountLockedObj).intValue() : null;
+                        if (accountLocked != null && accountLocked == 1) {
+                            // 用户账户被锁定
+                            log.warn("[黑名单验证] 用户账户已被锁定: userId={}", userId);
+                            isBlacklisted = true;
+                        }
                     }
                 }
 
                 // 检查账户过期时间
-                Object accountExpireTimeObj = userData.get("accountExpireTime");
-                if (accountExpireTimeObj != null && accountExpireTimeObj instanceof String) {
-                    try {
-                        LocalDateTime expireTime = LocalDateTime.parse((String) accountExpireTimeObj);
-                        if (expireTime.isBefore(LocalDateTime.now())) {
-                            // 用户账户已过期
-                            log.warn("[黑名单验证] 用户账户已过期: userId={}, expireTime={}", userId, expireTime);
-                            return true;
+                if (!isBlacklisted) {
+                    Object accountExpireTimeObj = userData.get("accountExpireTime");
+                    if (accountExpireTimeObj != null && accountExpireTimeObj instanceof String) {
+                        try {
+                            LocalDateTime expireTime = LocalDateTime.parse((String) accountExpireTimeObj);
+                            if (expireTime.isBefore(LocalDateTime.now())) {
+                                // 用户账户已过期
+                                log.warn("[黑名单验证] 用户账户已过期: userId={}, expireTime={}", userId, expireTime);
+                                isBlacklisted = true;
+                            }
+                        } catch (Exception e) {
+                            log.warn("[黑名单验证] 解析账户过期时间失败: userId={}, expireTime={}", userId, accountExpireTimeObj);
                         }
-                    } catch (Exception e) {
-                        log.warn("[黑名单验证] 解析账户过期时间失败: userId={}, expireTime={}", userId, accountExpireTimeObj);
                     }
                 }
 
-                log.debug("[黑名单验证] 用户不在黑名单: userId={}", userId);
-                return false;
+                // 3. 写入Redis缓存
+                redisTemplate.opsForValue().set(cacheKey, isBlacklisted, CACHE_EXPIRE_BLACKLIST);
+                log.debug("[黑名单验证] 黑名单状态已缓存: userId={}, isBlacklisted={}", userId, isBlacklisted);
+
+                return isBlacklisted;
             }
 
             // 如果查询失败，允许通过（降级策略）
@@ -1258,7 +1281,7 @@ public class AccessVerificationManager {
         newSession.setUserIds("[]");
         newSession.setStatus(MultiPersonRecordEntity.Status.WAITING);
         newSession.setStartTime(LocalDateTime.now());
-        newSession.setExpireTime(LocalDateTime.now().plusSeconds(DEFAULT_MULTI_PERSON_TIMEOUT_SECONDS));
+        newSession.setExpireTime(LocalDateTime.now().plusSeconds(getMultiPersonTimeout()));
 
         // 保存到数据库
         multiPersonRecordDao.insert(newSession);

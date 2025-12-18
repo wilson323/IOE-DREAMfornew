@@ -8,7 +8,9 @@ import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.AreaUserEntity;
 import net.lab1024.sa.common.organization.manager.AreaPermissionManager;
 import net.lab1024.sa.common.organization.service.AreaPermissionService;
+import org.springframework.context.ApplicationEventPublisher;
 
+import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +34,9 @@ public class AreaPermissionServiceImpl implements AreaPermissionService {
     private final AreaUserDao areaUserDao;
     private final AreaDao areaDao;
 
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
+
     @Override
     public String grantAreaPermission(Long areaId, Long userId, String username, String realName,
                                      Integer relationType, Integer permissionLevel,
@@ -43,11 +48,16 @@ public class AreaPermissionServiceImpl implements AreaPermissionService {
                 areaId, userId, permissionLevel);
 
         try {
-            return areaPermissionManager.grantAreaPermission(
+            String relationId = areaPermissionManager.grantAreaPermission(
                     areaId, userId, username, realName, relationType, permissionLevel,
                     effectiveTime, expireTime, allowStartTime, allowEndTime,
                     workdayOnly, accessPermissions, extendedAttributes, remark
             );
+
+            // 发布权限新增事件（异步触发权限同步）
+            publishPermissionChangeEvent(userId, areaId, "ADDED");
+
+            return relationId;
         } catch (Exception e) {
             log.error("[区域权限服务] 分配区域权限失败: areaId={}, userId={}, error={}",
                     areaId, userId, e.getMessage(), e);
@@ -60,7 +70,19 @@ public class AreaPermissionServiceImpl implements AreaPermissionService {
         log.info("[区域权限服务] 撤销区域权限: relationId={}", relationId);
 
         try {
-            return areaPermissionManager.revokeAreaPermission(relationId);
+            // 先获取权限信息（用于发布事件）
+            AreaUserEntity relation = areaUserDao.selectById(relationId);
+            Long userId = relation != null ? relation.getUserId() : null;
+            Long areaId = relation != null ? relation.getAreaId() : null;
+
+            boolean result = areaPermissionManager.revokeAreaPermission(relationId);
+
+            // 发布权限移除事件（异步触发权限移除）
+            if (result && userId != null && areaId != null) {
+                publishPermissionChangeEvent(userId, areaId, "REMOVED");
+            }
+
+            return result;
         } catch (Exception e) {
             log.error("[区域权限服务] 撤销区域权限失败: relationId={}, error={}",
                     relationId, e.getMessage(), e);
@@ -463,5 +485,62 @@ public class AreaPermissionServiceImpl implements AreaPermissionService {
     private void triggerDeviceSync(String relationId) {
         // 异步触发设备同步
         log.info("[区域权限服务] 触发设备同步: relationId={}", relationId);
+    }
+
+    /**
+     * 发布权限变更事件
+     * <p>
+     * 发布权限变更事件，触发权限同步到设备
+     * 使用通用的ApplicationEvent，各个服务可以监听并处理
+     * </p>
+     *
+     * @param userId 用户ID
+     * @param areaId 区域ID
+     * @param changeType 变更类型（ADDED/REMOVED）
+     */
+    private void publishPermissionChangeEvent(Long userId, Long areaId, String changeType) {
+        try {
+            // 创建权限变更事件（使用Spring的ApplicationEvent作为基类）
+            PermissionChangeEvent event = new PermissionChangeEvent(this, userId, areaId, changeType);
+            eventPublisher.publishEvent(event);
+            
+            log.debug("[区域权限服务] 权限变更事件已发布: userId={}, areaId={}, changeType={}",
+                    userId, areaId, changeType);
+        } catch (Exception e) {
+            log.error("[区域权限服务] 发布权限变更事件失败: userId={}, areaId={}, changeType={}, error={}",
+                    userId, areaId, changeType, e.getMessage(), e);
+            // 不抛出异常，避免影响主流程
+        }
+    }
+
+    /**
+     * 权限变更事件（内部类）
+     * <p>
+     * 通用的权限变更事件，可以被各个服务监听
+     * </p>
+     */
+    public static class PermissionChangeEvent extends org.springframework.context.ApplicationEvent {
+        private final Long userId;
+        private final Long areaId;
+        private final String changeType;
+
+        public PermissionChangeEvent(Object source, Long userId, Long areaId, String changeType) {
+            super(source);
+            this.userId = userId;
+            this.areaId = areaId;
+            this.changeType = changeType;
+        }
+
+        public Long getUserId() {
+            return userId;
+        }
+
+        public Long getAreaId() {
+            return areaId;
+        }
+
+        public String getChangeType() {
+            return changeType;
+        }
     }
 }

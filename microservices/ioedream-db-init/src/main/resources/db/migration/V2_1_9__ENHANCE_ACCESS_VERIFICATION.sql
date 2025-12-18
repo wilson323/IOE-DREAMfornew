@@ -29,8 +29,8 @@ EXECUTE alterIfNotExists;
 DEALLOCATE PREPARE alterIfNotExists;
 
 -- 如果字段已存在，则修改字段定义
-ALTER TABLE t_access_area_ext 
-MODIFY COLUMN verification_mode VARCHAR(20) DEFAULT 'edge' 
+ALTER TABLE t_access_area_ext
+MODIFY COLUMN verification_mode VARCHAR(20) DEFAULT 'edge'
 COMMENT '验证方式: edge=设备端验证, backend=后台验证, hybrid=混合验证';
 
 -- 添加索引以优化查询性能
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS t_access_anti_passback_record (
     create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     deleted_flag TINYINT DEFAULT 0 COMMENT '删除标记: 0-未删除 1-已删除',
-    
+
     -- 索引优化
     INDEX idx_user_device (user_id, device_id, record_time),
     INDEX idx_user_area (user_id, area_id, record_time),
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS t_access_interlock_record (
     create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     deleted_flag TINYINT DEFAULT 0 COMMENT '删除标记: 0-未删除 1-已删除',
-    
+
     -- 索引优化
     INDEX idx_device_group (device_id, interlock_group_id),
     INDEX idx_lock_status (lock_status, lock_time)
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS t_access_multi_person_record (
     create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     deleted_flag TINYINT DEFAULT 0 COMMENT '删除标记: 0-未删除 1-已删除',
-    
+
     -- 索引优化
     UNIQUE INDEX uk_session_id (verification_session_id, deleted_flag),
     INDEX idx_area_device (area_id, device_id, status),
@@ -148,8 +148,8 @@ CREATE TABLE IF NOT EXISTS t_access_multi_person_record (
 -- =====================================================
 
 -- 为现有记录设置默认值（如果verification_mode为NULL）
-UPDATE t_access_area_ext 
-SET verification_mode = 'edge' 
+UPDATE t_access_area_ext
+SET verification_mode = 'edge'
 WHERE verification_mode IS NULL OR verification_mode = '';
 
 -- =====================================================

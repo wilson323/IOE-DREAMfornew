@@ -1,8 +1,11 @@
 package net.lab1024.sa.access.service.impl;
 
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
+import net.lab1024.sa.access.monitor.AccessVerificationMetrics;
 import net.lab1024.sa.access.service.AccessVerificationService;
 import net.lab1024.sa.access.strategy.VerificationModeStrategy;
 import net.lab1024.sa.common.organization.dao.AreaAccessExtDao;
@@ -44,6 +47,9 @@ public class AccessVerificationServiceImpl implements AccessVerificationService 
     @Resource
     private List<VerificationModeStrategy> strategyList;
 
+    @Resource
+    private AccessVerificationMetrics verificationMetrics;
+
     /**
      * 策略映射缓存（按模式名称索引）
      */
@@ -73,11 +79,18 @@ public class AccessVerificationServiceImpl implements AccessVerificationService 
     }
 
     @Override
+    @Timed(value = "access.verification.duration", description = "门禁验证耗时", 
+           percentiles = {0.5, 0.9, 0.95, 0.99})
+    @Counted(value = "access.verification.count", description = "门禁验证次数")
     public VerificationResult verifyAccess(AccessVerificationRequest request) {
+        long startTime = System.currentTimeMillis();
         log.info("[验证服务] 开始验证: userId={}, deviceId={}, areaId={}",
                 request.getUserId(), request.getDeviceId(), request.getAreaId());
 
         try {
+            // 记录验证总数
+            verificationMetrics.recordVerificationTotal();
+
             // 1. 获取区域验证模式
             String mode = getVerificationMode(request.getAreaId());
             log.info("[验证服务] 区域验证模式: areaId={}, mode={}", request.getAreaId(), mode);
@@ -89,19 +102,54 @@ public class AccessVerificationServiceImpl implements AccessVerificationService 
             VerificationModeStrategy strategy = strategyMap.get(mode);
             if (strategy == null) {
                 log.error("[验证服务] 不支持的验证模式: areaId={}, mode={}", request.getAreaId(), mode);
+                verificationMetrics.recordVerificationFailed();
                 return VerificationResult.failed("UNSUPPORTED_MODE", "不支持的验证模式: " + mode);
             }
 
             // 4. 执行验证
             VerificationResult result = strategy.verify(request);
 
-            log.info("[验证服务] 验证完成: userId={}, mode={}, result={}",
-                    request.getUserId(), mode, result.getAuthStatus());
+            // 5. 记录验证结果
+            if (result.isSuccess()) {
+                verificationMetrics.recordVerificationSuccess();
+            } else {
+                verificationMetrics.recordVerificationFailed();
+                // 根据错误码记录具体失败原因
+                if (result.getErrorCode() != null) {
+                    switch (result.getErrorCode()) {
+                        case "ANTI_PASSBACK_VIOLATION":
+                            verificationMetrics.recordAntiPassbackViolation();
+                            break;
+                        case "INTERLOCK_VIOLATION":
+                            verificationMetrics.recordInterlockViolation();
+                            break;
+                        case "MULTI_PERSON_WAITING":
+                            verificationMetrics.recordMultiPersonWaiting();
+                            break;
+                        case "BLACKLIST_REJECTION":
+                            verificationMetrics.recordBlacklistRejection();
+                            break;
+                        case "TIME_PERIOD_REJECTION":
+                            verificationMetrics.recordTimePeriodRejection();
+                            break;
+                    }
+                }
+            }
+
+            // 6. 记录验证耗时
+            long duration = System.currentTimeMillis() - startTime;
+            verificationMetrics.recordVerificationDuration(duration);
+
+            log.info("[验证服务] 验证完成: userId={}, mode={}, result={}, duration={}ms",
+                    request.getUserId(), mode, result.getAuthStatus(), duration);
 
             return result;
 
         } catch (Exception e) {
             log.error("[验证服务] 验证异常: userId={}, error={}", request.getUserId(), e.getMessage(), e);
+            verificationMetrics.recordVerificationFailed();
+            long duration = System.currentTimeMillis() - startTime;
+            verificationMetrics.recordVerificationDuration(duration);
             return VerificationResult.failed("SYSTEM_ERROR", "系统异常，请稍后重试");
         }
     }
