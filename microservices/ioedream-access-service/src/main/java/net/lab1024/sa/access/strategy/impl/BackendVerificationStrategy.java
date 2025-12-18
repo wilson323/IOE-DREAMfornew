@@ -63,9 +63,9 @@ public class BackendVerificationStrategy implements VerificationModeStrategy {
                 return VerificationResult.failed("INTERLOCK_VIOLATION", "互锁门禁冲突,请等待");
             }
 
-            // 3. 时间段验证
+            // 3. 时间段验证（传递areaId参数以提高性能，避免重复查询）
             if (!accessVerificationManager.verifyTimePeriod(
-                    request.getUserId(), request.getDeviceId(), request.getVerifyTime())) {
+                    request.getUserId(), request.getDeviceId(), request.getVerifyTime(), request.getAreaId())) {
                 log.warn("[后台验证] 时间段验证失败: userId={}", request.getUserId());
                 return VerificationResult.failed("INVALID_TIME_PERIOD", "非有效时间段");
             }

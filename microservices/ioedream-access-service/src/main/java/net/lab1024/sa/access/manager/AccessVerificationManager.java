@@ -390,7 +390,7 @@ public class AccessVerificationManager {
      * </p>
      * <p>
      * 实现逻辑：
-     * 1. 根据设备ID查询设备所属区域
+     * 1. 根据设备ID查询设备所属区域（如果areaId未提供）
      * 2. 从区域扩展配置中解析互锁组配置
      * 3. 查询互锁组中其他设备的锁定状态
      * 4. 如果其他设备已锁定，则拒绝当前设备开门
@@ -398,10 +398,11 @@ public class AccessVerificationManager {
      * </p>
      *
      * @param deviceId 设备ID（Long类型，兼容String转Long）
+     * @param areaId 区域ID（可选，如果为null则根据deviceId查询，提高性能）
      * @return 是否通过验证
      */
-    public boolean verifyInterlock(Long deviceId) {
-        log.debug("[互锁验证] 开始验证: deviceId={}", deviceId);
+    public boolean verifyInterlock(Long deviceId, Long areaId) {
+        log.debug("[互锁验证] 开始验证: deviceId={}, areaId={}", deviceId, areaId);
 
         if (deviceId == null) {
             log.warn("[互锁验证] 设备ID为空");
@@ -409,12 +410,14 @@ public class AccessVerificationManager {
         }
 
         try {
-            // 1. 根据设备ID查询设备所属区域
-            Long areaId = getAreaIdByDeviceId(String.valueOf(deviceId));
+            // 1. 如果areaId未提供，根据设备ID查询设备所属区域
             if (areaId == null) {
-                log.warn("[互锁验证] 无法获取设备区域ID: deviceId={}", deviceId);
-                // 如果无法获取区域ID，允许通过（降级策略）
-                return true;
+                areaId = getAreaIdByDeviceId(String.valueOf(deviceId));
+                if (areaId == null) {
+                    log.warn("[互锁验证] 无法获取设备区域ID: deviceId={}", deviceId);
+                    // 如果无法获取区域ID，允许通过（降级策略）
+                    return true;
+                }
             }
 
             // 2. 从区域扩展配置中解析互锁组配置
@@ -798,23 +801,26 @@ public class AccessVerificationManager {
      * @param userId 用户ID
      * @param deviceId 设备ID（Long类型，兼容String转Long）
      * @param verifyTime 验证时间（如果为null，使用当前时间）
+     * @param areaId 区域ID（可选，如果为null则根据deviceId查询，提高性能）
      * @return 是否通过验证
      */
-    public boolean verifyTimePeriod(Long userId, Long deviceId, LocalDateTime verifyTime) {
-        log.debug("[时间段验证] 开始验证: userId={}, deviceId={}, verifyTime={}", userId, deviceId, verifyTime);
+    public boolean verifyTimePeriod(Long userId, Long deviceId, LocalDateTime verifyTime, Long areaId) {
+        log.debug("[时间段验证] 开始验证: userId={}, deviceId={}, verifyTime={}, areaId={}", userId, deviceId, verifyTime, areaId);
 
         if (verifyTime == null) {
             verifyTime = LocalDateTime.now();
         }
 
         try {
-            // 1. 通过设备ID获取区域ID（将Long转换为String）
-            String deviceIdStr = deviceId != null ? String.valueOf(deviceId) : null;
-            Long areaId = getAreaIdByDeviceId(deviceIdStr);
+            // 1. 如果areaId未提供，通过设备ID获取区域ID（将Long转换为String）
             if (areaId == null) {
-                log.warn("[时间段验证] 无法获取设备区域ID: deviceId={}", deviceId);
-                // 如果无法获取区域ID，允许通过（降级策略）
-                return true;
+                String deviceIdStr = deviceId != null ? String.valueOf(deviceId) : null;
+                areaId = getAreaIdByDeviceId(deviceIdStr);
+                if (areaId == null) {
+                    log.warn("[时间段验证] 无法获取设备区域ID: deviceId={}", deviceId);
+                    // 如果无法获取区域ID，允许通过（降级策略）
+                    return true;
+                }
             }
 
             // 2. 使用UserAreaPermissionManager验证权限

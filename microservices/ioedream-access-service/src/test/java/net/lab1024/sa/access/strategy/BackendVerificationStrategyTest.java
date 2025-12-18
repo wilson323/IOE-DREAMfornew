@@ -54,7 +54,7 @@ class BackendVerificationStrategyTest {
         // Given
         when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt(), anyLong())).thenReturn(true);
         when(accessVerificationManager.verifyInterlock(anyLong(), anyLong())).thenReturn(true);
-        when(accessVerificationManager.verifyTimePeriod(anyLong(), anyLong(), any())).thenReturn(true);
+        when(accessVerificationManager.verifyTimePeriod(anyLong(), anyLong(), any(), anyLong())).thenReturn(true);
         when(accessVerificationManager.isBlacklisted(anyLong())).thenReturn(false);
         when(accessVerificationManager.isMultiPersonRequired(anyLong())).thenReturn(false);
 
@@ -70,7 +70,7 @@ class BackendVerificationStrategyTest {
 
         verify(accessVerificationManager).verifyAntiPassback(1001L, 2001L, 1, 3001L);
         verify(accessVerificationManager).verifyInterlock(2001L, 3001L);
-        verify(accessVerificationManager).verifyTimePeriod(1001L, 2001L, request.getVerifyTime());
+        verify(accessVerificationManager).verifyTimePeriod(1001L, 2001L, request.getVerifyTime(), 3001L);
         verify(accessVerificationManager).isBlacklisted(1001L);
     }
 
@@ -113,7 +113,7 @@ class BackendVerificationStrategyTest {
         // Given
         when(accessVerificationManager.verifyAntiPassback(anyLong(), anyLong(), anyInt(), anyLong())).thenReturn(true);
         when(accessVerificationManager.verifyInterlock(anyLong(), anyLong())).thenReturn(true);
-        when(accessVerificationManager.verifyTimePeriod(anyLong(), anyLong(), any())).thenReturn(true);
+        when(accessVerificationManager.verifyTimePeriod(anyLong(), anyLong(), any(), anyLong())).thenReturn(true);
         when(accessVerificationManager.isBlacklisted(anyLong())).thenReturn(true);
 
         // When
