@@ -22,6 +22,7 @@ spring:
     import:
       - "classpath:common-config/cache-application.yml"
       - "classpath:common-config/database-application.yml"
+      - "classpath:common-config/resilience4j-application.yml"
 
 # ==================== Nacos服务发现配置 ====================
   cloud:
