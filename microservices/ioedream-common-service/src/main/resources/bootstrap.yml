@@ -26,8 +26,8 @@ spring:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
-        username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        username: ${NACOS_USERNAME:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z)}
+        password: ${NACOS_PASSWORD:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z)}
         enabled: true
         register-enabled: true
         # 服务注册元数据
@@ -41,8 +41,8 @@ spring:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
-        username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        username: ${NACOS_USERNAME:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z)}
+        password: ${NACOS_PASSWORD:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z)}
         file-extension: yaml
         enabled: ${NACOS_CONFIG_ENABLED:true}
         refresh-enabled: ${NACOS_CONFIG_REFRESH_ENABLED:true}

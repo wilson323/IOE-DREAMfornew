@@ -33,16 +33,16 @@ spring:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
-        username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        username: ${NACOS_USERNAME:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z)}
+        password: ${NACOS_PASSWORD:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z)}
         enabled: true
         register-enabled: true
       config:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
-        username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        username: ${NACOS_USERNAME:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z)}
+        password: ${NACOS_PASSWORD:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z)}
         file-extension: yaml
         enabled: false  # 本地开发环境禁用配置中心，使用本地配置文件
         import-check:
