@@ -830,24 +830,31 @@ public class ManagerConfiguration {
     }
 
     /**
-     * 权限模块统一缓存管理器Bean配置（microservices-common-permission）
+     * 权限模块统一缓存管理器Bean配置（已统一使用标准实现）
      * <p>
-     * 权限模块专用的统一缓存管理器，实现三级缓存架构
+     * 权限模块统一使用microservices-common-cache中的标准UnifiedCacheManager
      * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
      * </p>
      * <p>
      * 使用方：
      * - PermissionCacheManagerImpl需要此Manager进行权限缓存管理
      * </p>
+     * <p>
+     * 注意：此Bean已废弃，统一使用标准UnifiedCacheManager Bean
+     * </p>
      *
      * @param redisTemplate Redis模板
-     * @return 权限模块统一缓存管理器实例
+     * @param redissonClient Redisson客户端
+     * @return 权限模块统一缓存管理器实例（使用标准实现）
+     * @deprecated 已统一使用标准UnifiedCacheManager，此方法保留仅为向后兼容
      */
     @Bean("permissionUnifiedCacheManager")
     @ConditionalOnMissingBean(name = "permissionUnifiedCacheManager")
-    public net.lab1024.sa.common.permission.cache.UnifiedCacheManager permissionUnifiedCacheManager(
-            RedisTemplate<String, Object> redisTemplate) {
-        log.info("[PermissionUnifiedCacheManager] 初始化权限模块统一缓存管理器");
-        return new net.lab1024.sa.common.permission.cache.UnifiedCacheManager(redisTemplate);
+    @Deprecated
+    public net.lab1024.sa.common.cache.UnifiedCacheManager permissionUnifiedCacheManager(
+            RedisTemplate<String, Object> redisTemplate,
+            RedissonClient redissonClient) {
+        log.info("[PermissionUnifiedCacheManager] 初始化权限模块统一缓存管理器（使用标准实现）");
+        return new net.lab1024.sa.common.cache.UnifiedCacheManager(redisTemplate, redissonClient);
     }
 }

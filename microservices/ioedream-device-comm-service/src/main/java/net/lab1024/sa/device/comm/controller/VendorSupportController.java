@@ -7,7 +7,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.util.RequestUtils;
+import net.lab1024.sa.common.util.SmartRequestUtil;
 import net.lab1024.sa.device.comm.service.VendorSupportService;
 import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +49,7 @@ public class VendorSupportController {
     @Operation(summary = "获取所有支持的厂商信息", description = "返回所有支持的厂商详细信息")
     public ResponseDTO<List<DeviceVendorSupportManager.VendorInfo>> getAllSupportedVendors() {
         try {
-            log.info("[厂商支持管理] 查询所有支持的厂商信息, 操作人: {}", RequestUtils.getUserId());
+            log.info("[厂商支持管理] 查询所有支持的厂商信息, 操作人: {}", SmartRequestUtil.getUserId());
 
             List<DeviceVendorSupportManager.VendorInfo> vendors = deviceVendorSupportManager.getAllSupportedVendors();
 
@@ -74,7 +74,7 @@ public class VendorSupportController {
             @Parameter(description = "厂商名称", required = true, example = "海康威视")
             @PathVariable String vendorName) {
         try {
-            log.info("[厂商支持管理] 查询厂商信息: {}, 操作人: {}", vendorName, RequestUtils.getUserId());
+            log.info("[厂商支持管理] 查询厂商信息: {}, 操作人: {}", vendorName, SmartRequestUtil.getUserId());
 
             DeviceVendorSupportManager.VendorInfo vendorInfo = vendorSupportService.getVendorInfo(vendorName);
 
@@ -104,7 +104,7 @@ public class VendorSupportController {
             @Parameter(description = "厂商名称", required = true, example = "海康威视")
             @PathVariable String vendorName) {
         try {
-            log.info("[厂商支持管理] 查询厂商设备列表: {}, 操作人: {}", vendorName, RequestUtils.getUserId());
+            log.info("[厂商支持管理] 查询厂商设备列表: {}, 操作人: {}", vendorName, SmartRequestUtil.getUserId());
 
             List<DeviceVendorSupportManager.DeviceInfo> devices = vendorSupportService.getVendorDevices(vendorName);
 
@@ -129,7 +129,7 @@ public class VendorSupportController {
             @Parameter(description = "设备类型", example = "视频监控")
             @RequestParam String deviceType) {
         try {
-            log.info("[厂商支持管理] 查询设备类型: {}, 操作人: {}", deviceType, RequestUtils.getUserId());
+            log.info("[厂商支持管理] 查询设备类型: {}, 操作人: {}", deviceType, SmartRequestUtil.getUserId());
 
             List<DeviceVendorSupportManager.DeviceInfo> devices = deviceVendorSupportManager.getDevicesByType(deviceType);
 
@@ -154,7 +154,7 @@ public class VendorSupportController {
             @Parameter(description = "厂商名称", required = true, example = "海康威视")
             @PathVariable String vendorName) {
         try {
-            log.info("[厂商支持管理] 检查厂商支持: {}, 操作人: {}", vendorName, RequestUtils.getUserId());
+            log.info("[厂商支持管理] 检查厂商支持: {}, 操作人: {}", vendorName, SmartRequestUtil.getUserId());
 
             boolean supported = vendorSupportService.isVendorSupported(vendorName);
 
@@ -179,7 +179,7 @@ public class VendorSupportController {
             @Parameter(description = "设备型号", required = true, example = "DS-2CD2032-I")
             @PathVariable String deviceModel) {
         try {
-            log.info("[厂商支持管理] 检查设备型号支持: {}, 操作人: {}", deviceModel, RequestUtils.getUserId());
+            log.info("[厂商支持管理] 检查设备型号支持: {}, 操作人: {}", deviceModel, SmartRequestUtil.getUserId());
 
             boolean supported = deviceVendorSupportManager.isDeviceModelSupported(deviceModel);
 
@@ -201,7 +201,7 @@ public class VendorSupportController {
     @Operation(summary = "获取厂商支持统计", description = "获取厂商设备支持的详细统计信息")
     public ResponseDTO<DeviceVendorSupportManager.VendorSupportStatistics> getSupportStatistics() {
         try {
-            log.info("[厂商支持管理] 查询厂商支持统计, 操作人: {}", RequestUtils.getUserId());
+            log.info("[厂商支持管理] 查询厂商支持统计, 操作人: {}", SmartRequestUtil.getUserId());
 
             DeviceVendorSupportManager.VendorSupportStatistics statistics = vendorSupportService.getSupportStatistics();
 
@@ -223,7 +223,7 @@ public class VendorSupportController {
     @Operation(summary = "获取兼容性报告", description = "获取所有厂商设备的兼容性分析报告")
     public ResponseDTO<DeviceVendorSupportManager.CompatibilityReport> getCompatibilityReport() {
         try {
-            log.info("[厂商支持管理] 查询兼容性报告, 操作人: {}", RequestUtils.getUserId());
+            log.info("[厂商支持管理] 查询兼容性报告, 操作人: {}", SmartRequestUtil.getUserId());
 
             DeviceVendorSupportManager.CompatibilityReport report = vendorSupportService.getCompatibilityReport();
 
@@ -246,7 +246,7 @@ public class VendorSupportController {
     @Operation(summary = "重新加载厂商支持", description = "重新加载所有厂商设备支持信息")
     public ResponseDTO<Void> reloadVendorSupport() {
         try {
-            log.info("[厂商支持管理] 重新加载厂商支持, 操作人: {}", RequestUtils.getUserId());
+            log.info("[厂商支持管理] 重新加载厂商支持, 操作人: {}", SmartRequestUtil.getUserId());
 
             boolean success = deviceVendorSupportManager.reloadVendorSupport();
 
@@ -276,7 +276,7 @@ public class VendorSupportController {
             @Valid @RequestBody Map<String, List<DeviceVendorSupportManager.DeviceInfo>> vendorDevices) {
         try {
             log.info("[厂商支持管理] 批量注册厂商设备, 厂商数: {}, 操作人: {}",
-                    vendorDevices.size(), RequestUtils.getUserId());
+                    vendorDevices.size(), SmartRequestUtil.getUserId());
 
             Map<String, Boolean> results = vendorSupportService.batchRegisterVendorDevices(vendorDevices);
 
@@ -309,7 +309,7 @@ public class VendorSupportController {
             @PathVariable String deviceModel) {
         try {
             log.info("[厂商支持管理] 移除厂商设备: {} - {}, 操作人: {}",
-                    vendorName, deviceModel, RequestUtils.getUserId());
+                    vendorName, deviceModel, SmartRequestUtil.getUserId());
 
             boolean success = vendorSupportService.removeVendorDevice(vendorName, deviceModel);
 

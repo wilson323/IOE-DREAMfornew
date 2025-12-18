@@ -1,7 +1,7 @@
 package net.lab1024.sa.common.permission.optimize;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.permission.cache.UnifiedCacheManager;
+import net.lab1024.sa.common.cache.UnifiedCacheManager;
 import net.lab1024.sa.common.permission.domain.dto.PermissionValidationResult;
 import net.lab1024.sa.common.permission.manager.PermissionCacheManager;
 import jakarta.annotation.Resource;

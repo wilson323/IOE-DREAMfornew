@@ -196,6 +196,85 @@ public class UnifiedCacheManager {
     }
 
     /**
+     * 获取缓存（单参数版本，兼容旧代码）
+     * <p>
+     * 兼容权限模块等使用单参数get方法的代码
+     * </p>
+     *
+     * @param key 缓存键
+     * @param <T> 值类型
+     * @return 缓存值，如果不存在返回null
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
+        if (key == null) {
+            return null;
+        }
+
+        // L1: 本地缓存
+        T value = (T) localCache.getIfPresent(key);
+        if (value != null) {
+            log.debug("[多级缓存] L1命中: key={}", key);
+            return value;
+        }
+
+        // 布隆过滤器检查
+        if (!bloomFilter.mightContain(key)) {
+            log.debug("[多级缓存] 布隆过滤器未命中: key={}", key);
+            return null;
+        }
+
+        // L2: Redis缓存
+        value = (T) redisTemplate.opsForValue().get(key);
+        if (value != null) {
+            log.debug("[多级缓存] L2命中: key={}", key);
+            localCache.put(key, value);
+            return value;
+        }
+
+        log.debug("[多级缓存] 未命中: key={}", key);
+        return null;
+    }
+
+    /**
+     * 写入缓存（long参数版本，兼容旧代码）
+     * <p>
+     * 兼容权限模块等使用long参数put方法的代码
+     * </p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     * @param expireMs 过期时间（毫秒）
+     */
+    public void put(String key, Object value, long expireMs) {
+        if (key == null || value == null) {
+            return;
+        }
+
+        Duration ttl = Duration.ofMillis(expireMs);
+        put(key, value, ttl);
+    }
+
+    /**
+     * 写入缓存（int参数版本，兼容旧代码）
+     * <p>
+     * 兼容权限模块等使用int参数put方法的代码（秒为单位）
+     * </p>
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     * @param ttlSeconds 过期时间（秒）
+     */
+    public void put(String key, Object value, int ttlSeconds) {
+        if (key == null || value == null) {
+            return;
+        }
+
+        Duration ttl = Duration.ofSeconds(ttlSeconds);
+        put(key, value, ttl);
+    }
+
+    /**
      * 删除缓存
      * <p>
      * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
