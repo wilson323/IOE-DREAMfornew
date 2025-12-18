@@ -207,8 +207,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onShow, onPullDownRefresh, onReachBottom } from 'vue'
 import dayjs from 'dayjs'
+import { recordApi } from '@/api/business/access/access-api'
 
 // 响应式数据
 const recordList = ref([])
@@ -301,36 +302,78 @@ const initPage = () => {
   loadStatistics()
 }
 
+/**
+ * 加载访问记录
+ * @param {Boolean} isRefresh 是否刷新
+ */
 const loadRecords = async (isRefresh = false) => {
   if (loading.value) return
 
   loading.value = true
 
   try {
+    // 构建查询参数
+    const now = dayjs()
+    let startDate = null
+    let endDate = null
+
+    // 根据时间范围设置日期
+    if (dateRange.value === 'today') {
+      startDate = now.format('YYYY-MM-DD')
+      endDate = now.format('YYYY-MM-DD')
+    } else if (dateRange.value === 'week') {
+      startDate = now.subtract(7, 'day').format('YYYY-MM-DD')
+      endDate = now.format('YYYY-MM-DD')
+    } else if (dateRange.value === 'month') {
+      startDate = now.subtract(1, 'month').format('YYYY-MM-DD')
+      endDate = now.format('YYYY-MM-DD')
+    }
+
     const params = {
       userId: userId.value,
       pageNum: isRefresh ? 1 : pageNum.value,
-      pageSize: pageSize.value
+      pageSize: pageSize.value,
+      startDate,
+      endDate
     }
 
-    // 这里调用真实的API
-    const mockData = generateMockData()
+    // 调用真实API
+    const response = await recordApi.queryAccessRecords(params)
+    
+    if (response && response.code === 200 && response.data) {
+      const records = response.data.list || []
+      
+      // 转换数据格式
+      const formattedRecords = records.map(record => ({
+        id: record.id || record.recordId,
+        userName: record.userName || record.userName,
+        deptName: record.deptName || record.departmentName,
+        areaName: record.areaName || record.areaName,
+        deviceName: record.deviceName || record.deviceName,
+        accessTime: record.accessTime || record.createTime,
+        success: record.accessStatus === 'SUCCESS' || record.success === true,
+        accessMethod: record.accessMethod || record.verificationType,
+        failReason: record.failReason || record.rejectReason
+      }))
 
-    if (isRefresh) {
-      recordList.value = mockData
-      pageNum.value = 1
+      if (isRefresh) {
+        recordList.value = formattedRecords
+        pageNum.value = 1
+      } else {
+        recordList.value = [...recordList.value, ...formattedRecords]
+      }
+
+      // 更新加载状态
+      hasMore.value = formattedRecords.length >= pageSize.value
+      loadMoreStatus.value = hasMore.value ? 'more' : 'noMore'
     } else {
-      recordList.value = [...recordList.value, ...mockData]
+      throw new Error(response?.message || '获取记录失败')
     }
-
-    // 更新加载状态
-    hasMore.value = mockData.length >= pageSize.value
-    loadMoreStatus.value = hasMore.value ? 'more' : 'noMore'
 
   } catch (error) {
     console.error('加载记录失败:', error)
     uni.showToast({
-      title: '加载失败',
+      title: error.message || '加载失败',
       icon: 'none'
     })
   } finally {
@@ -341,36 +384,47 @@ const loadRecords = async (isRefresh = false) => {
   }
 }
 
-const generateMockData = () => {
-  const mockRecords = []
-  const now = new Date()
-
-  for (let i = 0; i < pageSize.value; i++) {
-    const recordTime = new Date(now.getTime() - i * 3600000)
-    mockRecords.push({
-      id: `record_${pageNum.value}_${i}`,
-      userName: userName.value,
-      deptName: deptName.value,
-      areaName: ['主门', '侧门', '车库入口', '办公区', '会议室'][Math.floor(Math.random() * 5)],
-      deviceName: ['门禁终端A1', '门禁终端B2', '门禁终端C3'][Math.floor(Math.random() * 3)],
-      accessTime: recordTime.toISOString(),
-      success: Math.random() > 0.2,
-      accessMethod: ['人脸识别', '刷卡', '指纹', '二维码'][Math.floor(Math.random() * 4)],
-      failReason: Math.random() > 0.2 ? null : ['权限不足', '卡片过期', '识别失败'][Math.floor(Math.random() * 3)]
-    })
-  }
-
-  return mockRecords
-}
-
+/**
+ * 加载统计数据
+ */
 const loadStatistics = async () => {
   try {
-    // 模拟统计数据
-    todayCount.value = Math.floor(Math.random() * 10) + 1
-    weekCount.value = Math.floor(Math.random() * 50) + 10
-    successRate.value = Math.floor(Math.random() * 20) + 80
+    const now = dayjs()
+    const params = {
+      userId: userId.value,
+      startDate: now.format('YYYY-MM-DD'),
+      endDate: now.format('YYYY-MM-DD')
+    }
+
+    // 调用真实API获取统计数据
+    const response = await recordApi.getAccessRecordStatistics(params)
+    
+    if (response && response.code === 200 && response.data) {
+      const stats = response.data
+      
+      // 今日通行次数
+      todayCount.value = stats.todayCount || stats.totalCount || 0
+      
+      // 本周通行次数（需要计算）
+      const weekStart = now.subtract(7, 'day').format('YYYY-MM-DD')
+      const weekResponse = await recordApi.getAccessRecordStatistics({
+        userId: userId.value,
+        startDate: weekStart,
+        endDate: now.format('YYYY-MM-DD')
+      })
+      weekCount.value = weekResponse?.data?.totalCount || 0
+      
+      // 成功率
+      const successCount = stats.successCount || 0
+      const totalCount = stats.totalCount || 1
+      successRate.value = totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0
+    }
   } catch (error) {
     console.error('加载统计数据失败:', error)
+    // 失败时使用默认值
+    todayCount.value = 0
+    weekCount.value = 0
+    successRate.value = 0
   }
 }
 

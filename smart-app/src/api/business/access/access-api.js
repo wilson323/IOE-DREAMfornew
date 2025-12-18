@@ -99,7 +99,33 @@ export const recordApi = {
    * @returns {Promise}
    */
   getUserAccessRecords: (userId, size = 20) =>
-    getRequest(`/api/v1/mobile/access/records/${userId}`, { size })
+    getRequest(`/api/v1/mobile/access/records/${userId}`, { size }),
+
+  /**
+   * 分页查询访问记录
+   * @param {Object} params 查询参数
+   * @param {Number} params.userId 用户ID
+   * @param {Number} params.pageNum 页码（默认1）
+   * @param {Number} params.pageSize 每页数量（默认20）
+   * @param {String} params.startDate 开始日期（可选）
+   * @param {String} params.endDate 结束日期（可选）
+   * @param {String} params.status 状态筛选（可选：success/fail）
+   * @returns {Promise}
+   */
+  queryAccessRecords: (params) =>
+    getRequest('/api/v1/access/record/query', params),
+
+  /**
+   * 获取访问记录统计
+   * @param {Object} params 统计参数
+   * @param {String} params.startDate 开始日期（可选）
+   * @param {String} params.endDate 结束日期（可选）
+   * @param {Number} params.areaId 区域ID（可选）
+   * @param {Number} params.userId 用户ID（可选）
+   * @returns {Promise}
+   */
+  getAccessRecordStatistics: (params) =>
+    getRequest('/api/v1/access/record/statistics', params)
 }
 
 // 临时访问相关接口
