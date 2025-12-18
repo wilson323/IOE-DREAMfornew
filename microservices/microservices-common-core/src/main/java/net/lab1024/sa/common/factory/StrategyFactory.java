@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * </p>
  * <p>
  * 使用场景:
- * - 生物识别策略 (IBiometricRecognitionStrategy)
+ * - 生物特征提取策略 (IBiometricFeatureExtractionStrategy)
  * - 门禁权限策略 (IAccessPermissionStrategy)
  * - 考勤规则策略 (IAttendanceRuleStrategy)
  * - 消费模式策略 (IConsumeModeStrategy)

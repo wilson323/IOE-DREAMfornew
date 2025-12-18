@@ -1104,13 +1104,13 @@ public class BiometricTemplateSyncService {
 }
 ```
 
-**3. 验证服务**
+**3. 特征提取服务（⚠️ 重要：验证和识别由设备端完成）**
 ```java
 @Service
-public class BiometricVerificationService {
+public class BiometricFeatureExtractionService {
     
     @Resource
-    private StrategyFactory<IBiometricRecognitionStrategy> strategyFactory;
+    private Map<BiometricType, IBiometricFeatureExtractionStrategy> biometricFeatureExtractionStrategyFactory;
     
     @Resource
     private BiometricTemplateDao templateDao;
@@ -1119,39 +1119,38 @@ public class BiometricVerificationService {
     private UnifiedCacheManager cacheManager;
     
     /**
-     * 1:1验证
+     * 提取特征向量（只用于入职时处理上传的照片）
+     * ⚠️ 注意：验证和识别由设备端完成，服务端不实现
      */
-    public ResponseDTO<MatchResult> verify(BiometricVerifyDTO verifyDTO) {
-        // 1. 选择识别策略
-        IBiometricRecognitionStrategy strategy = strategyFactory.get(
-            verifyDTO.getBiometricType().name()
-        );
+    public ResponseDTO<FeatureVector> extractFeature(MultipartFile photo, BiometricType type) {
+        // 1. 选择特征提取策略
+        IBiometricFeatureExtractionStrategy strategy = biometricFeatureExtractionStrategyFactory.get(type);
+        if (strategy == null) {
+            return ResponseDTO.error("不支持的生物识别类型");
+        }
         
-        // 2. 提取特征
+        // 2. 构建样本
         BiometricSample sample = BiometricSample.builder()
-            .type(verifyDTO.getBiometricType())
-            .imageData(verifyDTO.getFeatureData())
+            .type(type)
+            .imageData(Base64.getEncoder().encodeToString(photo.getBytes()))
             .build();
-        FeatureVector probeFeature = strategy.extractFeature(sample);
         
-        // 3. 获取注册模板(带缓存)
-        BiometricTemplateEntity template = getTemplate(
-            verifyDTO.getUserId(), 
-            verifyDTO.getBiometricType()
-        );
-        if (template == null) {
-            return ResponseDTO.error("用户未注册该生物特征");
+        // 3. 提取特征向量
+        FeatureVector featureVector = strategy.extractFeature(sample);
+        
+        // 4. 质量验证
+        if (!strategy.validateFeatureQuality(featureVector)) {
+            return ResponseDTO.error("特征质量不达标，请重新采集");
         }
         
-        FeatureVector galleryFeature = deserializeFeature(template.getFeatureData());
-        
-        // 4. 活体检测
-        LivenessResult livenessResult = strategy.detectLiveness(sample);
-        if (!livenessResult.isAlive()) {
-            return ResponseDTO.error("活体检测失败");
-        }
-        
-        // 5. 特征匹配
+        return ResponseDTO.ok(featureVector);
+    }
+    
+    /**
+     * 保存模板到数据库（用于后续下发到设备）
+     */
+    public ResponseDTO<Void> saveTemplate(Long userId, BiometricType type, FeatureVector featureVector) {
+        // 保存模板逻辑
         MatchResult matchResult = strategy.verify(probeFeature, galleryFeature);
         
         return ResponseDTO.ok(matchResult);
