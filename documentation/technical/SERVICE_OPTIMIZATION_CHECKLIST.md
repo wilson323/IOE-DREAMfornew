@@ -59,7 +59,9 @@
 ### 3. ioedream-attendance-service (8091) - 考勤管理服务
 
 #### 缓存使用检查
-- ⏳ 待检查
+- ✅ `AttendanceRecordServiceImpl.getAttendanceRecordStatistics()` - 已使用@Cacheable（统计查询缓存）
+- ⚠️ `ScheduleServiceImpl` - 多处使用selectById，建议添加缓存
+- ⏳ 其他服务类待检查
 
 #### 数据库查询优化
 - ⏳ 待检查

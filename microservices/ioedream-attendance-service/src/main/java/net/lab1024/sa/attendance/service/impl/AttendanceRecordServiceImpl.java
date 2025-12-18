@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,6 +139,7 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
     @Override
     @Observed(name = "attendance.record.getStatistics", contextualName = "attendance-record-get-statistics")
     @Transactional(readOnly = true)
+    @Cacheable(value = "attendance:record:statistics", key = "#startDate + ':' + #endDate + ':' + (#employeeId != null ? #employeeId : 'all')", unless = "#result == null || !#result.getOk()")
     public ResponseDTO<AttendanceRecordStatisticsVO> getAttendanceRecordStatistics(
             LocalDate startDate, LocalDate endDate, Long employeeId) {
         log.info("[考勤记录] 获取考勤记录统计，startDate={}, endDate={}, employeeId={}",
