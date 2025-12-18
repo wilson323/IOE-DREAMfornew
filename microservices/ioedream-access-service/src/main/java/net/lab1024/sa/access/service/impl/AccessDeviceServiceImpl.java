@@ -256,7 +256,8 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
     @RateLimiter(name = "write-operation-ratelimiter")
     @Timed(value = "access.device.update", description = "闂ㄧ璁惧鏇存柊鑰楁椂")
     @Counted(value = "access.device.update.count", description = "闂ㄧ璁惧鏇存柊娆℃暟")
-    @CacheEvict(value = "access:device:detail", key = "#updateForm.deviceId")    public ResponseDTO<Boolean> updateDevice(AccessDeviceUpdateForm updateForm) {
+    @CacheEvict(value = "access:device:detail", key = "#updateForm.deviceId")
+    public ResponseDTO<Boolean> updateDevice(AccessDeviceUpdateForm updateForm) {
         log.info("[闂ㄧ璁惧] 鏇存柊璁惧锛宒eviceId={}", updateForm.getDeviceId());
 
         try {

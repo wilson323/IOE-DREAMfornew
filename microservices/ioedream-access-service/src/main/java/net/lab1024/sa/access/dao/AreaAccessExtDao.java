@@ -13,22 +13,23 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.access.entity.AreaAccessExtEntity;
 
 /**
- * 区域门禁扩展Repository
+ * 区域门禁扩展数据访问对象
  * <p>
- * 严格遵循Repository架构规范：
- * - 统一Repository模式，必须使用Dao命名
- * - 使用@Mapper注解代替@Mapper
+ * 严格遵循DAO架构规范：
+ * - 统一DAO模式，必须使用Dao命名
+ * - 使用@Mapper注解标识数据访问层
  * - 查询方法使用@Transactional(readOnly = true)
  * - 继承BaseMapper使用MyBatis-Plus
  * - 基于AreaAccessExtEntity提供数据访问方法
- * - 命名规范统一：符合{BaseDomain}{Module}ExtRepository标准模式
+ * - 命名规范统一：符合{BaseDomain}{Module}ExtDao标准模式
  * - 严格遵循项目编码规范和架构设计
  * - 提供扩展查询和性能优化功能
  * </p>
  *
- * @author SmartAdmin Team
+ * @author IOE-DREAM Team
+ * @version 1.0.0
  * @since 2025-11-25
- * @updated 2025-12-01 遵循Repository架构规范重构
+ * @updated 2025-12-01 遵循DAO架构规范重构
  */
 @Mapper
 public interface AreaAccessExtDao extends BaseMapper<AreaAccessExtEntity> {
