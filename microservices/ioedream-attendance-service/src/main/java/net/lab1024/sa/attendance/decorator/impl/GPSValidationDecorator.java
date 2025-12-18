@@ -22,9 +22,6 @@ import jakarta.annotation.Resource;
 @Component
 public class GPSValidationDecorator extends PunchDecorator {
 
-    @Resource
-    private CompanyAreaService companyAreaService;
-
     /**
      * 构造函数
      *
@@ -38,7 +35,10 @@ public class GPSValidationDecorator extends PunchDecorator {
     public PunchResult execute(MobilePunchRequest request) {
         // GPS位置验证
         if (request.getLatitude() != null && request.getLongitude() != null) {
-            boolean withinCompanyArea = companyAreaService.isWithinArea(
+            // TODO: 实现GPS位置验证逻辑
+            // 1. 调用区域服务检查用户是否在公司区域内
+            // 2. 如果不在区域内，返回失败
+            boolean withinCompanyArea = isWithinCompanyArea(
                     request.getLatitude(),
                     request.getLongitude()
             );
@@ -54,9 +54,18 @@ public class GPSValidationDecorator extends PunchDecorator {
     }
 
     /**
-     * 公司区域服务（临时接口，待实现）
+     * 检查是否在公司区域内
+     * <p>
+     * TODO: 实现GPS位置验证逻辑
+     * </p>
+     *
+     * @param latitude 纬度
+     * @param longitude 经度
+     * @return 是否在区域内
      */
-    public interface CompanyAreaService {
-        boolean isWithinArea(Double latitude, Double longitude);
+    private boolean isWithinCompanyArea(Double latitude, Double longitude) {
+        // TODO: 实现GPS位置验证逻辑
+        // 临时实现：默认允许
+        return true;
     }
 }

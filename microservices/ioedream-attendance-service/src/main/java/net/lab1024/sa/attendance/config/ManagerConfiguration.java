@@ -7,9 +7,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
+import net.lab1024.sa.attendance.dao.ScheduleRecordDao;
+import net.lab1024.sa.attendance.manager.AttendanceCalculationManager;
 import net.lab1024.sa.attendance.manager.AttendanceManager;
 import net.lab1024.sa.attendance.engine.rule.cache.RuleCacheManager;
 import net.lab1024.sa.attendance.engine.rule.cache.impl.RuleCacheManagerImpl;
+import net.lab1024.sa.attendance.strategy.IAttendanceRuleStrategy;
+import net.lab1024.sa.common.factory.StrategyFactory;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 
 /**
@@ -69,5 +74,26 @@ public class ManagerConfiguration {
     public RuleCacheManager ruleCacheManager() {
         log.info("[RuleCacheManager] 初始化规则缓存管理器");
         return new RuleCacheManagerImpl(redisTemplate, objectMapper);
+    }
+
+    /**
+     * 注册AttendanceCalculationManager为Spring Bean
+     * <p>
+     * 考勤计算管理器，用于排班联动计算
+     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
+     * </p>
+     *
+     * @param attendanceRecordDao 考勤记录DAO
+     * @param scheduleRecordDao 排班记录DAO
+     * @param strategyFactory 策略工厂
+     * @return AttendanceCalculationManager实例
+     */
+    @Bean
+    public AttendanceCalculationManager attendanceCalculationManager(
+            AttendanceRecordDao attendanceRecordDao,
+            ScheduleRecordDao scheduleRecordDao,
+            StrategyFactory<IAttendanceRuleStrategy> strategyFactory) {
+        log.info("[AttendanceCalculationManager] 初始化考勤计算管理器");
+        return new AttendanceCalculationManager(attendanceRecordDao, scheduleRecordDao, strategyFactory);
     }
 }
