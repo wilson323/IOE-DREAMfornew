@@ -148,7 +148,7 @@ public abstract class AbstractAccessFlowTemplate {
         if (device == null) {
             throw new IllegalArgumentException("设备不存在: " + deviceId);
         }
-        if (device.getStatus() != 1) {
+        if (device.getDeviceStatus() != null && device.getDeviceStatus() != 1) {
             throw new IllegalArgumentException("设备未启用: " + deviceId);
         }
         return device;

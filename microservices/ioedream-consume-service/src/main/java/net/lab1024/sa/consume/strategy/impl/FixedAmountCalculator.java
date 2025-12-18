@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.common.factory.StrategyMarker;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 import net.lab1024.sa.consume.service.impl.DefaultFixedAmountCalculator;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
@@ -13,11 +14,8 @@ import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
 /**
  * 定值金额计算器策略实现
  * <p>
+ * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
  * 用于计算定值消费模式的消费金额
- * 严格遵循CLAUDE.md规范：
- * - 策略实现类使用@Component注解
- * - 使用@Resource注入依赖
- * - 实现ConsumeAmountCalculator接口
  * </p>
  * <p>
  * 业务场景：
@@ -32,6 +30,7 @@ import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;
  */
 @Slf4j
 @Component
+@StrategyMarker(name = "FIXED", type = "CONSUME_MODE", priority = 100)
 public class FixedAmountCalculator implements ConsumeAmountCalculator {
 
     private final DefaultFixedAmountCalculator defaultFixedAmountCalculator;
