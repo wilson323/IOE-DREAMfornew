@@ -316,13 +316,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- FastJSON2 (JSON处理) -->
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <version>${fastjson2.version}</version>
-        </dependency>
-
         <!-- Apache Commons Lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
