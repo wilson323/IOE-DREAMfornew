@@ -133,7 +133,7 @@ public abstract class AbstractTemplateSyncTemplate {
         if (device == null) {
             throw new IllegalArgumentException("设备不存在: " + deviceId);
         }
-        if (device.getStatus() != 1) {
+        if (device.getDeviceStatus() != null && device.getDeviceStatus() != 1) {
             throw new IllegalArgumentException("设备未启用: " + deviceId);
         }
         return device;
@@ -144,7 +144,7 @@ public abstract class AbstractTemplateSyncTemplate {
      */
     private void recordSyncResult(BiometricTemplateEntity template, DeviceEntity device, boolean success) {
         log.info("[模板同步] 同步结果 templateId={}, deviceId={}, success={}",
-                template.getTemplateId(), device.getId(), success);
+                template.getTemplateId(), device.getDeviceId(), success);
     }
 
     /**
