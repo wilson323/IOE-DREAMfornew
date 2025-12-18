@@ -42,7 +42,7 @@ public class AIAnalysisException extends BusinessException {
      * @param cause 原因
      */
     public AIAnalysisException(String analysisType, String errorCode, String message, Throwable cause) {
-        super(errorCode, message, cause);
+        super(errorCode, message, cause, new Object[0]);
         this.analysisType = analysisType;
     }
 }

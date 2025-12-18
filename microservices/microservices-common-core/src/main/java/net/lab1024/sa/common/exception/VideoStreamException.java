@@ -42,7 +42,7 @@ public class VideoStreamException extends BusinessException {
      * @param cause 原因
      */
     public VideoStreamException(String streamId, String errorCode, String message, Throwable cause) {
-        super(errorCode, message, cause);
+        super(errorCode, message, cause, new Object[0]);
         this.streamId = streamId;
     }
 }

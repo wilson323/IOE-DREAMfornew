@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
 
 /**
  * 门禁验证管理器
@@ -84,12 +83,21 @@ public class AccessVerificationManager {
      */
     private static final String CACHE_KEY_ANTI_PASSBACK_RECORD = "access:anti-passback:record:";
     private static final String CACHE_KEY_AREA_CONFIG = "access:area:config:";
+    private static final String CACHE_KEY_BLACKLIST = "access:blacklist:user:";
+    private static final String CACHE_KEY_MULTI_PERSON_SESSION = "access:multi-person:session:";
     
     /**
      * 缓存过期时间
      */
     private static final Duration CACHE_EXPIRE_RECORD = Duration.ofMinutes(10); // 反潜记录缓存10分钟
     private static final Duration CACHE_EXPIRE_CONFIG = Duration.ofHours(1); // 配置缓存1小时
+    private static final Duration CACHE_EXPIRE_BLACKLIST = Duration.ofHours(1); // 黑名单缓存1小时
+    private static final Duration CACHE_EXPIRE_SESSION = Duration.ofMinutes(5); // 多人验证会话缓存5分钟
+    
+    /**
+     * 时间格式化器
+     */
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     /**
      * 构造函数注入依赖
@@ -1503,5 +1511,24 @@ public class AccessVerificationManager {
             return String.format("TimePeriodConfig{startTime='%s', endTime='%s', days=%s}",
                     startTime, endTime, days);
         }
+    }
+
+    /**
+     * 获取多人验证超时时间（秒）
+     * <p>
+     * 从配置中读取，如果未配置则使用默认值60秒
+     * </p>
+     *
+     * @return 超时时间（秒）
+     */
+    private int getMultiPersonTimeout() {
+        if (verificationProperties != null && verificationProperties.getBackend() != null) {
+            Integer timeout = verificationProperties.getBackend().getMultiPersonTimeout();
+            if (timeout != null && timeout > 0) {
+                return timeout;
+            }
+        }
+        // 默认60秒
+        return 60;
     }
 }

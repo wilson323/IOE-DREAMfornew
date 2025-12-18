@@ -3,15 +3,21 @@ package net.lab1024.sa.access.strategy;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
 import net.lab1024.sa.access.strategy.impl.EdgeVerificationStrategy;
+import net.lab1024.sa.common.organization.dao.AccessRecordDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * 设备端验证策略单元测试
@@ -22,6 +28,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 class EdgeVerificationStrategyTest {
+
+    @Mock
+    private AccessRecordDao accessRecordDao;
+
+    @Mock
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, Object> valueOperations;
 
     @InjectMocks
     private EdgeVerificationStrategy strategy;
@@ -39,6 +54,12 @@ class EdgeVerificationStrategyTest {
                 .inOutStatus(1)
                 .verifyTime(LocalDateTime.now())
                 .build();
+
+        // Mock Redis操作
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(redisTemplate.hasKey(anyString())).thenReturn(false);
+        when(accessRecordDao.selectByCompositeKey(anyLong(), anyLong(), any())).thenReturn(null);
+        when(accessRecordDao.insert(any())).thenReturn(1);
     }
 
     @Test

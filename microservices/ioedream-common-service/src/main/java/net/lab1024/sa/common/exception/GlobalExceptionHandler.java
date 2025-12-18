@@ -26,6 +26,12 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+// 视频相关异常类
+import net.lab1024.sa.common.exception.VideoDeviceException;
+import net.lab1024.sa.common.exception.VideoStreamException;
+import net.lab1024.sa.common.exception.AIAnalysisException;
+import net.lab1024.sa.common.exception.VideoRecordingException;
+
 /**
  * 全局异常处理器（内存优化+指标收集版本）
  * <p>
@@ -253,6 +259,77 @@ public class GlobalExceptionHandler {
         log.warn("[文件上传大小超限] maxSize={}", e.getMaxUploadSize());
         return ResponseDTO.error("FILE_TOO_LARGE", "上传文件大小超过限制");
     }
+
+    // ==================== 视频相关异常处理 ====================
+
+    /**
+     * 处理视频设备异常
+     */
+    @ExceptionHandler(VideoDeviceException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDTO<Void> handleVideoDeviceException(VideoDeviceException e) {
+        long startTime = System.nanoTime();
+        String traceId = getTraceId();
+
+        log.error("[视频设备异常] traceId={}, deviceId={}, errorCode={}, message={}",
+                traceId, e.getDeviceId(), e.getErrorCode(), e.getMessage(), e);
+
+        recordExceptionMetrics(e, startTime);
+        return ResponseDTO.error(e.getErrorCode(), e.getMessage());
+    }
+
+    /**
+     * 处理视频流异常
+     */
+    @ExceptionHandler(VideoStreamException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDTO<Void> handleVideoStreamException(VideoStreamException e) {
+        long startTime = System.nanoTime();
+        String traceId = getTraceId();
+
+        log.error("[视频流异常] traceId={}, streamId={}, errorCode={}, message={}",
+                traceId, e.getStreamId(), e.getErrorCode(), e.getMessage(), e);
+
+        recordExceptionMetrics(e, startTime);
+        return ResponseDTO.error(e.getErrorCode(), e.getMessage());
+    }
+
+    /**
+     * 处理AI分析异常
+     */
+    @ExceptionHandler(AIAnalysisException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDTO<Void> handleAIAnalysisException(AIAnalysisException e) {
+        long startTime = System.nanoTime();
+        String traceId = getTraceId();
+
+        log.error("[AI分析异常] traceId={}, analysisType={}, errorCode={}, message={}",
+                traceId, e.getAnalysisType(), e.getErrorCode(), e.getMessage(), e);
+
+        recordExceptionMetrics(e, startTime);
+        return ResponseDTO.error(e.getErrorCode(), e.getMessage());
+    }
+
+    /**
+     * 处理录像异常
+     */
+    @ExceptionHandler(VideoRecordingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDTO<Void> handleVideoRecordingException(VideoRecordingException e) {
+        long startTime = System.nanoTime();
+        String traceId = getTraceId();
+
+        log.error("[录像异常] traceId={}, recordingId={}, errorCode={}, message={}",
+                traceId, e.getRecordingId(), e.getErrorCode(), e.getMessage(), e);
+
+        recordExceptionMetrics(e, startTime);
+        return ResponseDTO.error(e.getErrorCode(), e.getMessage());
+    }
+
+    // ==================== Flowable工作流异常处理 ====================
+    // 注意：Flowable异常处理已移除，因为common-service不依赖Flowable
+    // Flowable异常应在oa-service中捕获并转换为SystemException或BusinessException
+    // 如果FlowableException未被捕获，会被下面的handleException方法处理
 
     // ==================== 通用异常处理 ====================
 

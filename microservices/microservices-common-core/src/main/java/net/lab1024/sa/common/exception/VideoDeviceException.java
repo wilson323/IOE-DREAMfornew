@@ -42,7 +42,7 @@ public class VideoDeviceException extends BusinessException {
      * @param cause 原因
      */
     public VideoDeviceException(Long deviceId, String errorCode, String message, Throwable cause) {
-        super(errorCode, message, cause);
+        super(errorCode, message, cause, new Object[0]);
         this.deviceId = deviceId;
     }
 }

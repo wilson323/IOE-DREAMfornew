@@ -66,9 +66,15 @@ class AccessVerificationServiceTest {
         areaExt.setAreaId(3001L);
         areaExt.setVerificationMode("backend");
 
-        // 设置策略列表
+        // 设置策略列表（使用反射设置私有字段）
         List<VerificationModeStrategy> strategyList = Arrays.asList(backendStrategy, edgeStrategy);
-        // 使用反射设置strategyList（实际实现中通过@Resource注入）
+        try {
+            java.lang.reflect.Field field = AccessVerificationServiceImpl.class.getDeclaredField("strategyList");
+            field.setAccessible(true);
+            field.set(service, strategyList);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to set strategyList", e);
+        }
     }
 
     @Test

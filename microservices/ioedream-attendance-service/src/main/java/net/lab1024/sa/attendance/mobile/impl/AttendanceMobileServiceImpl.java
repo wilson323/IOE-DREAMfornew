@@ -14,8 +14,10 @@ import net.lab1024.sa.attendance.common.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.common.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.common.entity.ShiftScheduleEntity;
 import net.lab1024.sa.attendance.common.dao.ShiftScheduleDao;
-import net.lab1024.sa.attendance.common.entity.EmployeeEntity;
-import net.lab1024.sa.attendance.common.dao.EmployeeDao;
+import net.lab1024.sa.common.security.entity.UserEntity;
+import net.lab1024.sa.common.auth.dao.UserDao;
+import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
+import net.lab1024.sa.common.system.employee.domain.entity.EmployeeEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 import org.springframework.data.domain.Page;
@@ -48,6 +50,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
 
     private final AttendanceRecordDao attendanceRecordDao;
     private final ShiftScheduleDao shiftScheduleDao;
+    private final UserDao userDao;
     private final EmployeeDao employeeDao;
     private final RealtimeCalculationEngine realtimeCalculationEngine;
     private final ShiftRotationSystem shiftRotationSystem;
@@ -70,27 +73,33 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
     @Override
     public ResponseDTO<MobileLoginResult> login(MobileLoginRequest request) {
         try {
-            // 验证用户名密码
-            EmployeeEntity employee = employeeDao.selectByUsername(request.getUsername());
-            if (employee == null || !verifyPassword(request.getPassword(), employee.getPassword())) {
+            // 验证用户名密码（使用User实体进行认证）
+            UserEntity user = userDao.selectByUsername(request.getUsername());
+            if (user == null || !verifyPassword(request.getPassword(), user.getPassword())) {
                 return ResponseDTO.error("INVALID_CREDENTIALS", "用户名或密码错误");
             }
 
-            if (employee.getStatus() != 1) {
+            if (user.getStatus() != 1) {
                 return ResponseDTO.error("ACCOUNT_DISABLED", "账户已禁用");
             }
 
+            // 根据userId查询员工信息（EmployeeEntity.userId关联UserEntity.userId）
+            EmployeeEntity employee = null;
+            if (user.getUserId() != null) {
+                employee = employeeDao.selectByUserId(user.getUserId());
+            }
+
             // 生成访问令牌
-            String accessToken = generateAccessToken(employee);
-            String refreshToken = generateRefreshToken(employee);
+            String accessToken = generateAccessToken(user, employee);
+            String refreshToken = generateRefreshToken(user, employee);
 
             // 创建用户会话
             MobileUserSession session = MobileUserSession.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .employeeId(employee.getId())
-                .username(employee.getUsername())
-                .employeeName(employee.getName())
+                .employeeId(employee != null ? employee.getId() : null)
+                .username(user.getUsername())
+                .employeeName(employee != null ? employee.getEmployeeName() : user.getRealName())
                 .loginTime(LocalDateTime.now())
                 .expiresTime(LocalDateTime.now().plusHours(24))
                 .deviceInfo(request.getDeviceInfo())
@@ -103,17 +112,17 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             MobileLoginResult loginResult = MobileLoginResult.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .employeeId(employee.getId())
-                .employeeName(employee.getName())
-                .departmentName(employee.getDepartmentName())
-                .position(employee.getPosition())
-                .avatarUrl(employee.getAvatarUrl())
-                .permissions(getEmployeePermissions(employee.getId()))
+                .employeeId(employee != null ? employee.getId() : null)
+                .employeeName(employee != null ? employee.getEmployeeName() : user.getRealName())
+                .departmentName(employee != null ? employee.getDepartmentName() : null)
+                .position(employee != null ? employee.getPosition() : null)
+                .avatarUrl(user.getAvatar() != null ? user.getAvatar() : (employee != null ? employee.getAvatar() : null))
+                .permissions(getEmployeePermissions(employee != null ? employee.getId() : user.getUserId()))
                 .settings(getDefaultSettings())
                 .build();
 
             // 记录登录日志
-            recordLoginEvent(employee, request);
+            recordLoginEvent(user, employee, request);
 
             return ResponseDTO.ok(loginResult);
 
@@ -134,7 +143,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             }
 
             // 清除设备信息
-            if (session != null) {
+            if (session != null && session.getEmployeeId() != null) {
                 deviceInfoCache.remove("device:" + session.getEmployeeId());
             }
 
@@ -155,10 +164,26 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
                 return ResponseDTO.error("INVALID_REFRESH_TOKEN", "刷新令牌无效");
             }
 
+            // 根据employeeId查询员工信息
+            EmployeeEntity employee = session.getEmployeeId() != null 
+                ? employeeDao.selectById(session.getEmployeeId()) 
+                : null;
+            
+            // 查询用户信息（如果employee存在，通过employee.getUserId()查询；否则通过username查询）
+            UserEntity user = null;
+            if (employee != null && employee.getUserId() != null) {
+                // EmployeeEntity.userId关联UserEntity.userId，使用selectById查询
+                user = userDao.selectById(employee.getUserId());
+            } else if (session.getUsername() != null) {
+                user = userDao.selectByUsername(session.getUsername());
+            }
+            
+            if (user == null) {
+                return ResponseDTO.error("USER_NOT_FOUND", "用户不存在");
+            }
+
             // 生成新的访问令牌
-            String newAccessToken = generateAccessToken(
-                employeeDao.selectById(session.getEmployeeId())
-            );
+            String newAccessToken = generateAccessToken(user, employee);
 
             // 更新会话
             session.setAccessToken(newAccessToken);
@@ -188,7 +213,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
         try {
             // 验证用户会话
             MobileUserSession session = validateUserSession(request.getAccessToken());
-            if (!session.getEmployeeId().equals(request.getEmployeeId())) {
+            if (session == null || session.getEmployeeId() == null || !session.getEmployeeId().equals(request.getEmployeeId())) {
                 return ResponseDTO.error("PERMISSION_DENIED", "用户身份验证失败");
             }
 
@@ -279,7 +304,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
         try {
             // 验证用户会话
             MobileUserSession session = validateUserSession(request.getAccessToken());
-            if (!session.getEmployeeId().equals(request.getEmployeeId())) {
+            if (session == null || session.getEmployeeId() == null || !session.getEmployeeId().equals(request.getEmployeeId())) {
                 return ResponseDTO.error("PERMISSION_DENIED", "用户身份验证失败");
             }
 
@@ -379,7 +404,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
         try {
             // 验证用户会话
             MobileUserSession session = validateUserSession(request.getAccessToken());
-            if (!session.getEmployeeId().equals(request.getEmployeeId())) {
+            if (session == null || session.getEmployeeId() == null || !session.getEmployeeId().equals(request.getEmployeeId())) {
                 return ResponseDTO.error("PERMISSION_DENIED", "用户身份验证失败");
             }
 
@@ -427,7 +452,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
         try {
             // 验证用户会话
             MobileUserSession session = validateUserSession(request.getAccessToken());
-            if (!session.getEmployeeId().equals(request.getEmployeeId())) {
+            if (session == null || session.getEmployeeId() == null || !session.getEmployeeId().equals(request.getEmployeeId())) {
                 return ResponseDTO.error("PERMISSION_DENIED", "用户身份验证失败");
             }
 
@@ -453,7 +478,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
         try {
             // 验证用户会话
             MobileUserSession session = validateUserSession(request.getAccessToken());
-            if (!session.getEmployeeId().equals(request.getEmployeeId())) {
+            if (session == null || session.getEmployeeId() == null || !session.getEmployeeId().equals(request.getEmployeeId())) {
                 return ResponseDTO.error("PERMISSION_DENIED", "用户身份验证失败");
             }
 
@@ -477,7 +502,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
         try {
             // 验证用户会话
             MobileUserSession session = validateUserSession(request.getAccessToken());
-            if (!session.getEmployeeId().equals(request.getEmployeeId())) {
+            if (session == null || session.getEmployeeId() == null || !session.getEmployeeId().equals(request.getEmployeeId())) {
                 return ResponseDTO.error("PERMISSION_DENIED", "用户身份验证失败");
             }
 
@@ -916,7 +941,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
     /**
      * 生成访问令牌
      */
-    private String generateAccessToken(EmployeeEntity employee) {
+    private String generateAccessToken(UserEntity user, EmployeeEntity employee) {
         // 简化实现，实际应该使用JWT生成
         return UUID.randomUUID().toString().replace("-", "");
     }
@@ -924,7 +949,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
     /**
      * 生成刷新令牌
      */
-    private String generateRefreshToken(EmployeeEntity employee) {
+    private String generateRefreshToken(UserEntity user, EmployeeEntity employee) {
         // 简化实现，实际应该使用JWT生成
         return UUID.randomUUID().toString().replace("-", "");
     }
@@ -951,9 +976,11 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
     /**
      * 记录登录事件
      */
-    private void recordLoginEvent(EmployeeEntity employee, MobileLoginRequest request) {
-        log.info("[移动端登录] 员工ID={}, 用户名={}, 设备={}",
-            employee.getId(), employee.getUsername(), request.getDeviceInfo());
+    private void recordLoginEvent(UserEntity user, EmployeeEntity employee, MobileLoginRequest request) {
+        log.info("[移动端登录] 用户ID={}, 用户名={}, 员工ID={}, 设备={}",
+            user.getUserId(), user.getUsername(), 
+            employee != null ? employee.getId() : null, 
+            request.getDeviceInfo());
     }
 
     /**
