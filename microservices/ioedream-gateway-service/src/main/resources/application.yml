@@ -122,7 +122,15 @@ spring:
             - id: ioedream-device-comm-service
               uri: lb://ioedream-device-comm-service
               predicates:
-                - Path=/api/v1/device/**,/api/v1/biometric/**
+                - Path=/api/v1/device/**
+              filters:
+                - StripPrefix=0
+
+            # 生物模板管理服务路由（端口8096）
+            - id: ioedream-biometric-service
+              uri: lb://ioedream-biometric-service
+              predicates:
+                - Path=/api/v1/biometric/**
               filters:
                 - StripPrefix=0
 

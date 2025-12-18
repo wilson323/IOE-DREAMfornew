@@ -19,8 +19,8 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 # 🏢 IOE-DREAM 智慧园区一卡通管理平台
 
-> **项目定位**: 企业级智慧安防管理平台
-> **核心价值**: 多模态生物识别 + 一卡通 + 智能安防一体化解决方案
+> **项目定位**: 企业级智慧安防管理平台  
+> **核心价值**: 多模态生物识别 + 一卡通 + 智能安防一体化解决方案  
 > **技术架构**: Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Spring Cloud Alibaba 2025.0.0.0 + Vue3 + 微服务架构
 > **数据库架构**: 统一MySQL 8.0.35 + Druid 1.2.25 + MyBatis-Plus 3.5.15
 > **安全等级**: 国家三级等保合规 + 金融级安全防护
@@ -33,7 +33,7 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 **IOE-DREAM**（Intelligent Operations & Enterprise - Digital Resource & Enterprise Application Management）是IOE基于Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Spring Cloud Alibaba 2025.0.0.0 + Sa-Token + MyBatis-Plus和Vue3 + Ant Design Vue + Uni-App构建的新一代**智慧园区一卡通管理平台**。
 
-该平台专注于园区一卡通和生物识别安全管理，是国内首个集成多种生物识别技术（人脸、指纹、掌纹、虹膜、声纹等）并满足《网络安全-三级等保》、《数据安全》功能要求的开源项目，支持多模态身份认证、智能门禁控制、无感消费结算、自动考勤管理、智能访客管理、视频监控联动等一系列智慧安防功能。
+该平台专注于园区一卡通和生物识别安全管理，**采用边缘计算架构，生物识别在设备端完成，软件端负责模板管理和数据分析**。是国内首个集成多种生物识别技术（人脸、指纹、掌纹、虹膜、声纹等）并满足《网络安全-三级等保》、《数据安全》功能要求的开源项目，支持多模态身份认证、智能门禁控制、无感消费结算、自动考勤管理、智能访客管理、视频监控联动等一系列智慧安防功能。
 
 ### 核心定位
 
@@ -223,16 +223,18 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 ### 微服务架构
 
-**7个核心微服务**:
+**11个核心微服务**:
 - **ioedream-gateway-service** (8080): API网关，统一入口
-- **ioedream-common-service** (8088): 公共业务服务
-- **ioedream-device-comm-service** (8087): 设备通讯服务
-- **ioedream-oa-service** (8089): OA办公服务
-- **ioedream-access-service** (8090): 门禁管理服务
-- **ioedream-attendance-service** (8091): 考勤管理服务
-- **ioedream-video-service** (8092): 视频监控服务
-- **ioedream-consume-service** (8094): 消费管理服务
-- **ioedream-visitor-service** (8095): 访客管理服务
+- **ioedream-common-service** (8088): 公共业务服务（用户、组织、权限）
+- **ioedream-device-comm-service** (8087): 设备通讯服务（协议适配、模板下发 ⚠️ 不做识别）
+- **ioedream-oa-service** (8089): OA办公服务（工作流、审批）
+- **ioedream-access-service** (8090): 门禁管理服务（采用边缘自主验证模式 ⚠️ 接收设备上传记录）
+- **ioedream-attendance-service** (8091): 考勤管理服务（采用边缘识别+中心计算模式）
+- **ioedream-video-service** (8092): 视频监控服务（采用边缘AI计算模式）
+- **ioedream-database-service** (8093): 数据库管理服务（备份恢复、性能监控）
+- **ioedream-consume-service** (8094): 消费管理服务（采用中心实时验证模式）
+- **ioedream-visitor-service** (8095): 访客管理服务（采用混合验证模式）
+- **ioedream-biometric-service** (8096): 生物模板管理服务（模板存储、特征提取、设备下发 ⚠️ 仅管理数据，不做识别）
 
 ### 技术栈优势
 
@@ -659,6 +661,15 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 - ❌ `javax.validation.Valid`
 - ❌ `javax.persistence.Entity`
 
+**⚠️ 例外说明 - Java标准库javax包（允许使用）**：
+> 以下`javax.*`包属于**Java SE标准库**，不在Jakarta EE迁移范围内，可正常使用：
+- ✅ `javax.crypto.*` - Java加密扩展（Cipher、Mac、SecretKey等）
+- ✅ `javax.sql.DataSource` - JDBC数据源接口
+- ✅ `javax.imageio.ImageIO` - 图像I/O处理
+- ✅ `javax.net.ssl.*` - SSL/TLS网络安全
+
+**说明**: Jakarta EE 9+仅迁移了原Java EE规范包（如annotation、validation、persistence、servlet等），Java SE标准库中的javax包保持不变。
+
 ### 6. 微服务间调用规范（强制执行）
 
 **混合调用（强制执行）**：
@@ -981,22 +992,24 @@ public class ConsumeMonitor {
 
 ## 🔌 端口分配规范（强制执行）
 
-**严格按照7微服务架构分配端口：**
+**严格按照11微服务架构分配端口：**
 
 | 服务名称 | 端口 | 类型 | 说明 |
 |---------|------|------|------|
 | ioedream-gateway-service | 8080 | 基础设施 | API网关 |
-| **ioedream-common-service** | **8088** | **核心** | **公共模块微服务** |
-| **ioedream-device-comm-service** | **8087** | **核心** | **设备通讯微服务** |
-| **ioedream-oa-service** | **8089** | **核心** | **OA微服务** |
-| ioedream-access-service | 8090 | 核心 | 门禁服务 |
-| ioedream-attendance-service | 8091 | 核心 | 考勤服务 |
-| ioedream-video-service | 8092 | 核心 | 视频服务 |
-| ioedream-consume-service | 8094 | 核心 | 消费服务 |
-| ioedream-visitor-service | 8095 | 核心 | 访客服务 |
+| **ioedream-common-service** | **8088** | **核心** | **公共模块微服务（用户、组织、权限）** |
+| **ioedream-device-comm-service** | **8087** | **核心** | **设备通讯微服务（协议适配、模板下发 ⚠️ 不做识别）** |
+| **ioedream-oa-service** | **8089** | **核心** | **OA微服务（工作流、审批）** |
+| ioedream-access-service | 8090 | 核心 | 门禁服务（边缘自主验证模式 ⚠️ 接收设备上传记录） |
+| ioedream-attendance-service | 8091 | 核心 | 考勤服务（边缘识别+中心计算+排班联动） |
+| ioedream-video-service | 8092 | 核心 | 视频服务（边缘AI计算模式） |
+| ioedream-database-service | 8093 | 核心 | 数据库管理服务 |
+| ioedream-consume-service | 8094 | 核心 | 消费服务（中心实时验证模式） |
+| ioedream-visitor-service | 8095 | 核心 | 访客服务（混合验证模式） |
+| **ioedream-biometric-service** | **8096** | **核心** | **生物模板管理服务（模板存储、特征提取、设备下发 ⚠️ 仅管理数据，不做识别）** |
 | ioedream-config-service | 8888 | 基础设施 | Nacos配置中心 |
 
-**注意：** 以下服务已整合到7个核心微服务中，不再独立存在：
+**注意：** 以下服务已整合到11个核心微服务中，不再独立存在：
 - ioedream-auth-service → 整合到 ioedream-common-service
 - ioedream-identity-service → 整合到 ioedream-common-service
 - ioedream-device-service → 整合到 ioedream-device-comm-service
@@ -1426,9 +1439,9 @@ public class DataSecurityManager {
 
 ## 🔧 技术栈规范（强制执行）
 
-> **更新日期**: 2025-12-10
-> **规范版本**: v2.0.0
-> **适用范围**: IOE-DREAM全部微服务
+> **更新日期**: 2025-12-10  
+> **规范版本**: v2.0.0  
+> **适用范围**: IOE-DREAM全部微服务  
 > **重要更新**: 统一使用成熟技术栈，禁止自定义实现
 
 ### 核心原则
@@ -1507,85 +1520,137 @@ seata:
 
 ---
 
-### 2. 缓存管理规范 - Spring Cache（强制执行）
+### 2. 缓存管理规范 - 三级缓存架构（强制执行）
+
+**三级缓存架构**:
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      三级缓存架构                                │
+├─────────────────────────────────────────────────────────────────┤
+│    ┌─────────────┐                                              │
+│    │   L1 缓存   │  Caffeine 本地缓存                           │
+│    │  (毫秒级)   │  TTL: 5分钟，容量: 10000                     │
+│    └──────┬──────┘                                              │
+│           │ 未命中                                              │
+│           ▼                                                     │
+│    ┌─────────────┐                                              │
+│    │   L2 缓存   │  Redis 分布式缓存                            │
+│    │  (毫秒级)   │  TTL: 30分钟，集群模式                       │
+│    └──────┬──────┘                                              │
+│           │ 未命中                                              │
+│           ▼                                                     │
+│    ┌─────────────┐                                              │
+│    │   L3 缓存   │  网关缓存 (GatewayServiceClient)             │
+│    │  (减少RPC) │  服务间调用结果缓存                          │
+│    └──────┬──────┘                                              │
+│           │ 未命中                                              │
+│           ▼                                                     │
+│    ┌─────────────┐                                              │
+│    │   数据库    │  MySQL 持久化存储                            │
+│    └─────────────┘                                              │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 **强制要求**:
-- ✅ **统一使用 Spring Cache + Caffeine + Redis**
-- ❌ **禁止使用自定义CacheManager**
-- ❌ **禁止使用自定义UnifiedCacheManager**
-- ❌ **禁止使用自定义MultiLevelCacheManager**
+- ✅ **L1本地缓存**: Caffeine 3.1.8，毫秒级响应
+- ✅ **L2分布式缓存**: Redis 7.x，数据一致性
+- ✅ **L3网关缓存**: GatewayServiceClient调用结果缓存
+- ✅ **使用UnifiedCacheManager统一管理多级缓存**
 
-**Spring Cache集成规范**:
+**UnifiedCacheManager使用规范**:
 
 ```java
-// ❌ 错误示例 - 自定义缓存管理器
-AccountEntity account = cacheManager.getWithRefresh(
-    "account",
-    "account:" + accountId,
-    () -> accountDao.selectById(accountId),
-    Duration.ofMinutes(30)
-);
+// ✅ 正确示例 - 使用UnifiedCacheManager
+@Service
+public class UserServiceImpl implements UserService {
 
-// ✅ 正确示例 - 使用Spring Cache注解
-@Cacheable(value = "account", key = "#accountId", unless = "#result == null")
-public AccountEntity getAccountById(Long accountId) {
-    return accountDao.selectById(accountId);
-}
+    @Resource
+    private UnifiedCacheManager cacheManager;
+    
+    @Resource
+    private UserDao userDao;
 
-@CacheEvict(value = "account", key = "#accountId")
-public void updateAccount(AccountEntity account) {
-    accountDao.updateById(account);
-}
-
-@CachePut(value = "account", key = "#account.id")
-public AccountEntity saveAccount(AccountEntity account) {
-    accountDao.insert(account);
-    return account;
+    public UserEntity getUserById(Long userId) {
+        String cacheKey = "user:" + userId;
+        
+        // 多级缓存查询
+        UserEntity user = cacheManager.get(cacheKey);
+        if (user != null) {
+            return user;
+        }
+        
+        // 从数据库加载
+        user = userDao.selectById(userId);
+        if (user != null) {
+            // 写入缓存（默认TTL 1小时）
+            cacheManager.put(cacheKey, user);
+        }
+        return user;
+    }
+    
+    public void updateUser(UserEntity user) {
+        userDao.updateById(user);
+        // 清除缓存
+        cacheManager.evict("user:" + user.getId());
+    }
 }
 ```
 
 **缓存配置规范**:
 
-```java
-@Configuration
-@EnableCaching
-public class CacheConfiguration {
+```yaml
+# application.yml 缓存配置
+cache:
+  # L1 本地缓存配置
+  l1-local:
+    enabled: true
+    maximum-size: 10000
+    expire-after-write: 5m
+    refresh-after-write: 3m
+    record-stats: true
+  
+  # L2 Redis缓存配置  
+  l2-redis:
+    enabled: true
+    default-ttl: 30m
+    key-prefix: "ioedream:"
+    null-ttl: 5m  # 空值缓存防穿透
+  
+  # L3 网关缓存配置
+  l3-gateway:
+    enabled: true
+    ttl: 10m
+    max-size: 5000
 
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        // L1: Caffeine本地缓存
-        CaffeineCacheManager localCacheManager = new CaffeineCacheManager();
-        localCacheManager.setCaffeine(Caffeine.newBuilder()
-            .maximumSize(10000)
-            .expireAfterWrite(5, TimeUnit.MINUTES)
-            .recordStats());
-
-        // L2: Redis分布式缓存
-        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
-            .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(30))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                    .fromSerializer(new GenericJackson2JsonRedisSerializer())));
-
-        // 组合缓存管理器（L1 + L2）
-        return new CompositeCacheManager(localCacheManager, redisCacheManager);
-    }
-}
+  # 缓存域配置
+  domains:
+    user:
+      l1-size: 1000
+      l2-ttl: 1h
+    permission:
+      l1-size: 2000
+      l2-ttl: 30m
+    device:
+      l1-size: 500
+      l2-ttl: 10m
+    config:
+      l1-size: 500
+      l2-ttl: 2h
 ```
 
-**Spring Cache优势**:
-- ✅ **声明式缓存**: 使用注解即可，代码简洁
-- ✅ **AOP支持**: 自动处理缓存逻辑，无侵入
-- ✅ **多缓存支持**: 支持Caffeine、Redis、EhCache等
-- ✅ **缓存抽象**: 统一的CacheManager接口
-- ✅ **条件缓存**: 支持unless、condition等条件
-- ✅ **缓存同步**: 支持@CachePut自动更新
+**三级缓存优势**:
+- ✅ **L1本地缓存**: 毫秒级响应，无网络开销
+- ✅ **L2 Redis缓存**: 分布式一致性，集群共享
+- ✅ **L3网关缓存**: 减少微服务间RPC调用
+- ✅ **缓存穿透防护**: 空值缓存 + 布隆过滤器
+- ✅ **缓存击穿防护**: 互斥锁 + 逻辑过期
+- ✅ **缓存雪崩防护**: 差异化TTL + 预热机制
 
 **实施要求**:
-1. 移除所有自定义缓存管理器类
-2. 统一使用@Cacheable/@CacheEvict/@CachePut注解
-3. 配置CompositeCacheManager（L1本地+L2Redis）
-4. 缓存配置统一到application.yml
+1. 使用UnifiedCacheManager进行多级缓存管理
+2. 按照缓存域配置不同的TTL和容量
+3. 实现缓存预热机制（启动时加载热点数据）
+4. 配置缓存监控指标（命中率、大小、驱逐率）
 
 ---
 
@@ -2030,7 +2095,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 
 ### 技术栈违规（新增 - 2025-12-10）
 - ❌ 禁止使用自定义SagaManager（必须使用Seata）
-- ❌ 禁止使用自定义CacheManager（必须使用Spring Cache）
+- ✅ 使用UnifiedCacheManager实现三级缓存（L1本地+L2Redis+L3网关）
 - ❌ 禁止使用自定义重试逻辑（必须使用Resilience4j）
 - ❌ 禁止使用自定义指标收集器（必须使用Micrometer）
 - ❌ 禁止重复实现已有工具类功能（优先使用Apache Commons/Guava）
@@ -2325,7 +2390,7 @@ export const dictApi = {
   getTypeList() {
     return request.get('/api/v1/dict/type/list');
   },
-
+  
   getDataList(typeCode) {
     return request.get('/api/v1/dict/data/list', { params: { typeCode } });
   }
@@ -2416,7 +2481,7 @@ smart-app/
 ```java
 @Configuration
 public class ManagerConfiguration {
-
+    
     @Bean
     public UserManager userManager(UserDao userDao, DepartmentDao departmentDao) {
         return new UserManager(userDao, departmentDao);
@@ -2475,7 +2540,7 @@ public class ManagerConfiguration {
 // microservices-common中的Manager（纯Java类）
 public class UserManager {
     private final UserDao userDao;
-
+    
     public UserManager(UserDao userDao) {
         this.userDao = userDao;
     }
@@ -2526,6 +2591,262 @@ public class UserServiceImpl implements UserService {
 | ioedream-visitor-service | 8095 | 访客预约、访客登记 | ✅ |
 | ioedream-video-service | 8092 | 视频监控、录像回放 | ✅ |
 | ioedream-device-comm-service | 8087 | 设备协议、连接管理 | ✅ |
+
+---
+
+## 🔄 设备交互架构设计规范 (2025-12-18新增)
+
+### ⭐ 核心设计理念
+
+IOE-DREAM采用**边缘计算优先**的架构设计，根据不同业务场景选择最优的设备交互模式：
+
+```
+设备端识别，软件端管理
+
+1. 边缘智能优先: 门禁设备端完成验证，降低服务器压力
+2. 数据安全第一: 消费设备不存余额，防止篡改
+3. 离线能力保障: 关键场景支持离线工作
+4. 中心计算精准: 考勤排班+规则在软件端，灵活可控
+5. AI边缘推理: 视频设备本地识别，只上传结果
+```
+
+### 📊 5种设备交互模式详解
+
+#### Mode 1: 边缘自主验证 (门禁系统)
+
+**核心理念**: 设备端识别，软件端管理
+
+**适用服务**: `ioedream-access-service (8090)`
+
+**交互流程**:
+```
+【数据下发】软件 → 设备
+  ├─ 生物模板（人脸/指纹特征向量）
+  ├─ 权限数据（时间段/区域/有效期）
+  └─ 人员信息（姓名/工号）
+
+【实时通行】设备端完全自主 ⚠️ 无需联网
+  ├─ 本地识别: 设备内嵌算法1:N比对
+  ├─ 本地验证: 检查本地权限表
+  └─ 本地控制: 直接开门（<1秒）
+
+【事后上传】设备 → 软件
+  └─ 批量上传通行记录（每分钟或100条）
+```
+
+**技术优势**:
+- ✅ 离线可用: 网络中断不影响通行
+- ✅ 秒级响应: 识别+验证+开门<1秒
+- ✅ 降低压力: 1000次通行只需处理记录存储
+
+**架构要求**:
+- ✅ 设备端必须支持本地1:N比对
+- ✅ 设备端必须维护本地权限表
+- ✅ 软件端负责模板下发和权限同步
+- ✅ 软件端接收设备上传的通行记录
+
+#### Mode 2: 中心实时验证 (消费系统)
+
+**核心理念**: 设备采集，服务器验证
+
+**适用服务**: `ioedream-consume-service (8094)`
+
+**交互流程**:
+```
+【数据下发】软件 → 设备
+  ├─ 生物模板（可选，部分设备不需要）
+  └─ 设备配置（消费单价、限额等）
+
+【实时消费】设备 ⇄ 软件（必须在线）
+  设备端采集 → 上传biometricData/cardNo → 服务器验证
+  服务器处理 → 识别用户 → 检查余额 → 执行扣款
+  服务器返回 → 扣款结果 → 设备显示+语音提示
+
+【离线降级】设备端处理
+  ⚠️ 网络故障时: 支持有限次数的离线消费
+  ├─ 白名单验证: 仅允许白名单用户
+  ├─ 固定额度: 单次消费固定金额
+  └─ 事后补录: 网络恢复后上传补录
+```
+
+**技术优势**:
+- ✅ 数据安全: 余额存储在服务器，防止篡改
+- ✅ 实时补贴: 可立即发放补贴到账户
+- ✅ 灵活定价: 可根据时段/菜品动态定价
+
+**架构要求**:
+- ✅ 设备端采集生物特征或卡片信息
+- ✅ 服务器端实时验证和扣款
+- ✅ 支持离线降级模式（白名单+固定额度）
+- ✅ 网络恢复后自动补录离线消费
+
+#### Mode 3: 边缘识别+中心计算 (考勤系统)
+
+**核心理念**: 设备识别，服务器计算
+
+**适用服务**: `ioedream-attendance-service (8091)`
+
+**交互流程**:
+```
+【数据下发】软件 → 设备
+  ├─ 生物模板
+  ├─ 基础排班信息（仅当日）
+  └─ 人员授权列表
+
+【实时打卡】设备端识别
+  ├─ 本地识别: 人脸/指纹1:N比对
+  ├─ 上传打卡: 实时上传userId+time+location
+  └─ 快速反馈: 设备端显示"打卡成功"
+
+【服务器计算】软件端处理
+  ├─ 排班匹配: 根据用户排班规则判断状态
+  ├─ 考勤统计: 出勤/迟到/早退/旷工
+  ├─ 异常检测: 跨设备打卡、频繁打卡告警
+  └─ 数据推送: WebSocket推送实时考勤结果
+```
+
+**技术优势**:
+- ✅ 识别速度快: 设备端识别<1秒
+- ✅ 规则灵活: 排班规则在软件端，可随时调整
+- ✅ 数据准确: 服务器计算，防止设备端篡改
+
+**架构要求**:
+- ✅ 设备端完成生物识别
+- ✅ 设备端实时上传打卡数据
+- ✅ 服务器端完成排班匹配和统计
+- ✅ 支持WebSocket实时推送考勤结果
+
+#### Mode 4: 混合验证 (访客系统)
+
+**核心理念**: 临时访客中心验证，常客边缘验证
+
+**适用服务**: `ioedream-visitor-service (8095)`
+
+**交互流程**:
+```
+【临时访客】中心实时验证
+  预约申请 → 审批通过 → 生成访客码
+  到访时扫码 → 服务器验证 → 现场采集人脸
+  服务器生成临时模板 → 下发设备 → 设置有效期
+  访客通行 → 实时上报 → 服务器记录轨迹
+  访问结束 → 自动失效 → 从设备删除模板
+
+【常客】边缘验证
+  长期合作伙伴 → 申请常客权限 → 审批通过
+  采集生物特征 → 下发所有授权设备
+  日常通行 → 设备端验证 → 批量上传记录
+  权限到期 → 自动失效 → 从设备删除
+```
+
+**技术优势**:
+- ✅ 灵活控制: 根据安全等级选择验证模式
+- ✅ 效率平衡: 常客快速通行，临时访客严格验证
+- ✅ 轨迹追踪: 访客完整行为轨迹记录
+
+**架构要求**:
+- ✅ 临时访客必须中心验证
+- ✅ 常客支持边缘验证
+- ✅ 支持临时模板自动下发和失效
+- ✅ 完整记录访客轨迹
+
+#### Mode 5: 边缘AI计算 (视频监控)
+
+**核心理念**: 设备端AI分析，服务器端管理
+
+**适用服务**: `ioedream-video-service (8092)`
+
+**交互流程**:
+```
+【模板下发】软件 → 设备
+  ├─ 重点人员底库（黑名单/VIP/员工）
+  ├─ AI模型更新（定期推送新版本）
+  └─ 告警规则配置（区域入侵/徘徊检测）
+
+【实时分析】设备端AI处理
+  视频采集 → AI芯片分析 → 人脸检测+识别
+            ↓
+  行为分析 → 异常检测（徘徊/聚集/越界）
+            ↓
+  结构化数据 → 上传服务器
+
+【服务器处理】软件端
+  接收结构化数据 → 存储（人脸抓拍/行为事件）
+  告警规则匹配 → 实时推送告警
+  人脸检索 → 以图搜图/轨迹追踪
+  视频联动 → 告警时调取原始视频
+
+【原始视频】设备端存储
+  ⚠️ 原始视频不上传，设备端录像7-30天
+  ⚠️ 只有告警/案件时，才回调原始视频
+```
+
+**技术优势**:
+- ✅ 带宽节省: 只上传结构化数据，节省>95%带宽
+- ✅ 实时响应: 设备端AI分析，告警延迟<1秒
+- ✅ 隐私保护: 原始视频不上传，符合隐私法规
+
+**架构要求**:
+- ✅ 设备端必须支持AI芯片分析
+- ✅ 只上传结构化数据，不上传原始视频
+- ✅ 告警时支持回调原始视频
+- ✅ 支持AI模型远程更新
+
+### 🔑 生物模板管理服务 (biometric-service)
+
+**服务定位**: `ioedream-biometric-service (8096)`
+
+**⚠️ 重要说明**:
+```
+❓ 该服务负责生物识别吗？
+✖️ 不！生物识别由设备端完成
+
+❓ 那该服务做什么？
+✅ 只管理模板数据，并下发给设备
+
+【正确的架构流程】
+
+1. 人员入职时：
+   用户 → 上传人脸照片 → biometric-service
+   biometric-service → 提取512维特征向量 → 存入数据库
+   biometric-service → 查询用户有权限的区域 → 找出所有相关门禁设备
+   biometric-service → 下发模板到这些设备 ⭐ 核心
+
+2. 实时通行时：
+   设备 → 采集人脸图像 → 设备内嵌算法提取特征
+   设备 → 与本地存储的模板1:N比对 ⭐ 全部在设备端
+   设备 → 匹配成功 → 检查本地权限表 → 开门
+   设备 → 批量上传通行记录到软件
+
+3. 人员离职时：
+   biometric-service → 从数据库删除模板
+   biometric-service → 从所有设备删除模板 ⭐ 防止离职人员仍可通行
+```
+
+**核心职责**:
+- ✅ 模板管理: 生物特征模板CRUD（人脸、指纹、掌纹等）
+- ✅ 特征提取: 用户入职时从照片提取512维特征向量
+- ✅ 设备同步: ⭐ 核心职责 - 模板下发到边缘设备
+- ✅ 权限联动: 根据用户权限智能同步到相关设备
+- ✅ 模板压缩: 特征向量压缩存储
+- ✅ 版本管理: 模板更新历史管理
+
+### 🗄️ 数据库管理服务 (database-service)
+
+**服务定位**: `ioedream-database-service (8093)`
+
+**核心职责**:
+- ✅ 数据备份: 定时全量/增量备份
+- ✅ 数据恢复: 备份文件恢复
+- ✅ 性能监控: 慢查询/连接数监控
+- ✅ 数据迁移: 数据导入导出
+- ✅ 健康检查: 数据库连接状态监控
+- ✅ 容量管理: 数据库容量监控和告警
+
+### 📖 相关文档
+
+- **[完整架构方案](documentation/architecture/ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md)** - 企业级架构重构完整方案
+- **[系统架构设计](documentation/architecture/01-系统架构设计文档.md)** - 系统架构设计文档
+- **[设备交互模式详解](README.md#-设备交互架构)** - README设备交互架构章节
 
 ---
 
@@ -2966,20 +3287,20 @@ net.lab1024.sa.common.{module}/
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_user")
 public class UserEntity extends BaseEntity {
-
+    
     @TableId(type = IdType.AUTO)
     private Long id;
-
+    
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
-
+    
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
-
+    
     @TableLogic
     @TableField("deleted_flag")
     private Boolean deletedFlag;
-
+    
     @Version
     private Integer version;
 }
@@ -2993,16 +3314,16 @@ public interface UserDao extends BaseMapper<UserEntity> {
 // ✅ 正确的Manager类（在microservices-common中，不使用Spring注解）
 // Manager类通过构造函数注入依赖，保持为纯Java类
 public class UserManager {
-
+    
     private final UserDao userDao;
     private final DepartmentDao departmentDao;
-
+    
     // 构造函数注入依赖
     public UserManager(UserDao userDao, DepartmentDao departmentDao) {
         this.userDao = userDao;
         this.departmentDao = departmentDao;
     }
-
+    
     // 业务方法
     public UserEntity getUserWithDepartment(Long userId) {
         // 复杂业务逻辑
@@ -3014,10 +3335,10 @@ public class UserManager {
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
-
+    
     @Resource
     private UserDao userDao;
-
+    
     @Resource
     private UserManager userManager;  // 由配置类注册为Spring Bean
 }
@@ -3027,7 +3348,7 @@ public class UserServiceImpl implements UserService {
 @RequestMapping("/api/v1/user")
 @Tag(name = "用户管理")
 public class UserController {
-
+    
     @Resource
     private UserService userService;
 }
@@ -3072,7 +3393,7 @@ public class UserController {
 @TableName("t_work_shift")
 public class WorkShiftEntity {
     // 基础信息 (10字段)
-    // 工作时间 (15字段)
+    // 工作时间 (15字段)  
     // 弹性时间 (12字段)
     // 加班规则 (10字段)
     // 休息规则 (8字段)
@@ -3080,7 +3401,7 @@ public class WorkShiftEntity {
     // 考勤规则 (12字段)
     // 节假日规则 (8字段)
     // ... 共80+字段，772行
-
+    
     // ❌ 业务逻辑不应在Entity中
     public BigDecimal calculateOvertimePay() {
         return overtimeHours.multiply(overtimeRate);
@@ -3095,30 +3416,30 @@ public class WorkShiftEntity {
 public class WorkShiftEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long shiftId;
-
+    
     @NotBlank(message = "班次名称不能为空")
     @Size(max = 100)
     @TableField("shift_name")
     private String shiftName;
-
+    
     @TableField("shift_type")
     private Integer shiftType; // 1-固定 2-弹性 3-轮班
-
+    
     @NotNull
     @TableField("work_start_time")
     private LocalTime workStartTime;
-
+    
     @NotNull
     @TableField("work_end_time")
     private LocalTime workEndTime;
-
+    
     // 基础审计字段
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
-
+    
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
-
+    
     @TableLogic
     private Integer deletedFlag;
 }
@@ -3129,24 +3450,24 @@ public class WorkShiftEntity {
 public class WorkShiftRuleEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long ruleId;
-
+    
     @TableField("shift_id")
     private Long shiftId; // 外键关联
-
+    
     // 弹性时间规则
     @TableField("flexible_enabled")
     private Integer flexibleEnabled;
-
+    
     @TableField("flexible_start_time")
     private LocalTime flexibleStartTime;
-
+    
     // 加班规则
     @TableField("overtime_enabled")
     private Integer overtimeEnabled;
-
+    
     @TableField("overtime_rate")
     private BigDecimal overtimeRate;
-
+    
     // ... 其他规则字段
 }
 
@@ -3157,20 +3478,20 @@ public class WorkShiftManager {
     private WorkShiftDao workShiftDao;
     @Resource
     private WorkShiftRuleDao workShiftRuleDao;
-
+    
     /**
      * 获取完整班次信息
      */
     public WorkShiftFullVO getFullWorkShift(Long shiftId) {
         WorkShiftEntity shift = workShiftDao.selectById(shiftId);
         WorkShiftRuleEntity rule = workShiftRuleDao.selectByShiftId(shiftId);
-
+        
         return WorkShiftFullVO.builder()
             .shift(shift)
             .rule(rule)
             .build();
     }
-
+    
     /**
      * 计算加班费（业务逻辑在Manager层）
      */
@@ -3240,11 +3561,11 @@ public class ResponseDTO<T> {
     private String message;      // 提示信息
     private T data;              // 响应数据
     private Long timestamp;      // 时间戳
-
+    
     public static <T> ResponseDTO<T> ok(T data) {
         return new ResponseDTO<>(200, "success", data, System.currentTimeMillis());
     }
-
+    
     public static <T> ResponseDTO<T> error(String code, String message) {
         return new ResponseDTO<>(Integer.parseInt(code), message, null, System.currentTimeMillis());
     }
@@ -3324,15 +3645,15 @@ CREATE TABLE t_common_user (
     department_id BIGINT,
     status TINYINT DEFAULT 1,
     create_time DATETIME NOT NULL,
-
+    
     -- 唯一索引
     UNIQUE INDEX uk_user_username (username),
     UNIQUE INDEX uk_user_phone (phone),
-
+    
     -- 普通索引
     INDEX idx_user_department (department_id),
     INDEX idx_user_status (status),
-
+    
     -- 联合索引 (覆盖常用查询条件)
     INDEX idx_user_dept_status_time (department_id, status, create_time)
 );
@@ -3357,21 +3678,21 @@ CREATE TABLE t_common_user (
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
-
+    
     @Override
     public ResponseDTO<UserVO> getUserById(Long userId) {
         log.info("[用户查询] 开始查询用户, userId={}", userId);
-
+        
         try {
             UserEntity user = userDao.selectById(userId);
             if (user == null) {
                 log.warn("[用户查询] 用户不存在, userId={}", userId);
                 return ResponseDTO.error("USER_NOT_FOUND", "用户不存在");
             }
-
+            
             log.info("[用户查询] 查询成功, userId={}, username={}", userId, user.getUsername());
             return ResponseDTO.ok(convertToVO(user));
-
+            
         } catch (Exception e) {
             log.error("[用户查询] 查询异常, userId={}, error={}", userId, e.getMessage(), e);
             throw new BusinessException("USER_QUERY_ERROR", "查询用户失败");
@@ -3394,7 +3715,7 @@ log.error("error");  // 信息不足
 public class BusinessException extends RuntimeException {
     private String code;
     private String message;
-
+    
     public BusinessException(String code, String message) {
         super(message);
         this.code = code;
@@ -3406,7 +3727,7 @@ public class BusinessException extends RuntimeException {
 public class SystemException extends RuntimeException {
     private String code;
     private String message;
-
+    
     public SystemException(String code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
@@ -3421,14 +3742,14 @@ public class SystemException extends RuntimeException {
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-
+    
     // 业务异常处理
     @ExceptionHandler(BusinessException.class)
     public ResponseDTO<Void> handleBusinessException(BusinessException e) {
         log.warn("[业务异常] code={}, message={}", e.getCode(), e.getMessage());
         return ResponseDTO.error(e.getCode(), e.getMessage());
     }
-
+    
     // 参数验证异常处理
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseDTO<Void> handleValidationException(MethodArgumentNotValidException e) {
@@ -3438,7 +3759,7 @@ public class GlobalExceptionHandler {
         log.warn("[参数验证异常] message={}", message);
         return ResponseDTO.error("VALIDATION_ERROR", message);
     }
-
+    
     // 系统异常处理
     @ExceptionHandler(Exception.class)
     public ResponseDTO<Void> handleException(Exception e) {
@@ -3468,10 +3789,10 @@ void test_getUserById_userExists_returnUserVO() {
     Long userId = 1L;
     UserEntity mockUser = createMockUser(userId);
     when(userDao.selectById(userId)).thenReturn(mockUser);
-
+    
     // when
     ResponseDTO<UserVO> result = userService.getUserById(userId);
-
+    
     // then
     assertNotNull(result);
     assertEquals(200, result.getCode());
@@ -3484,10 +3805,10 @@ void test_getUserById_userNotExists_returnError() {
     // given
     Long userId = 999L;
     when(userDao.selectById(userId)).thenReturn(null);
-
+    
     // when
     ResponseDTO<UserVO> result = userService.getUserById(userId);
-
+    
     // then
     assertNotNull(result);
     assertEquals("USER_NOT_FOUND", result.getCode().toString());

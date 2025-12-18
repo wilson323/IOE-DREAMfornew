@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * <p>
  * 端口: 8096
  * 职责: 提供生物特征模板管理、特征提取、设备同步等功能
+ * </p>
  * <p>
  * 严格遵循CLAUDE.md规范:
  * - 使用@SpringBootApplication注解
@@ -22,15 +23,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * </p>
  * <p>
  * 核心功能模块:
- * - 模板管理: 生物特征模板CRUD、版本管理、质量检测
+ * - 模板管理: 生物特征模板CRUD、版本管理
  * - 特征提取: 从用户上传照片提取512维特征向量
- * - 设备同步: 智能同步模板到相关门禁设备
+ * - 设备同步: 智能下发模板到相关门禁设备
  * - 权限联动: 根据用户权限自动同步模板
  * </p>
  * <p>
  * <b>重要说明</b>:
- * ⚠️ 该服务不负责实时生物识别，识别由设备端完成
- * ✅ 该服务只管理模板数据，并下发给设备
+ * ⚠️ 该服务只管理模板数据，不负责实时识别
+ * ⚠️ 实时识别由设备端完成，软件端只处理模板存储和下发
  * </p>
  *
  * @author IOE-DREAM Team
@@ -51,9 +52,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         // 安全认证
         "net.lab1024.sa.common.security",
         // 组织架构
-        "net.lab1024.sa.common.organization",
-        // RBAC权限
-        "net.lab1024.sa.common.rbac"
+        "net.lab1024.sa.common.organization"
     },
     exclude = {
         HibernateJpaAutoConfiguration.class
@@ -65,13 +64,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan(basePackages = {
     // Common模块DAO
     "net.lab1024.sa.common.auth.dao",
-    "net.lab1024.sa.common.rbac.dao",
-    "net.lab1024.sa.common.system.employee.dao",
-    "net.lab1024.sa.common.system.dao",
     "net.lab1024.sa.common.organization.dao",
-    "net.lab1024.sa.common.audit.dao",
-    "net.lab1024.sa.common.dict.dao",
-    "net.lab1024.sa.common.menu.dao",
+    "net.lab1024.sa.common.system.employee.dao",
     // Biometric模块DAO
     "net.lab1024.sa.biometric.dao"
 })
