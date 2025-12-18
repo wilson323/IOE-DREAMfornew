@@ -83,11 +83,11 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Redisson分布式锁 -->
+        <!-- Redisson分布式锁（使用父POM统一版本） -->
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>3.27.0</version>
+            <version>${redisson.version}</version>
         </dependency>
 
         <!-- Spring Cloud Nacos Discovery (服务发现) -->
@@ -114,11 +114,10 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- MyBatis-Plus (Spring Boot 3.x专用) -->
+        <!-- MyBatis-Plus (Spring Boot 3.x专用) - 使用父POM统一版本 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <version>3.5.15</version>
         </dependency>
 
         <!-- MySQL Driver -->
@@ -128,11 +127,10 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Druid连接池 -->
+        <!-- Druid连接池 - 使用父POM统一版本 -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-3-starter</artifactId>
-            <version>1.2.25</version>
         </dependency>
 
         <!-- Lombok -->
@@ -142,7 +140,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- ZXing (二维码生成) -->
+        <!-- ZXing (二维码生成) - 使用父POM统一版本 -->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
@@ -172,18 +170,18 @@
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
-        <!-- SpringDoc OpenAPI (API文档，提供io.swagger.v3.oas.models类) -->
+        <!-- SpringDoc OpenAPI (API文档，提供io.swagger.v3.oas.models类) - 使用父POM统一版本 -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
+            <version>${springdoc.version}</version>
         </dependency>
 
-        <!-- Swagger Models (提供io.swagger.v3.oas.models类，确保OpenAPI类可用) -->
+        <!-- Swagger Models (提供io.swagger.v3.oas.models类，确保OpenAPI类可用) - 使用父POM统一版本 -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-models</artifactId>
-            <version>2.2.41</version>
+            <version>${swagger.version}</version>
         </dependency>
 
         <!-- 阿里云短信SDK -->
