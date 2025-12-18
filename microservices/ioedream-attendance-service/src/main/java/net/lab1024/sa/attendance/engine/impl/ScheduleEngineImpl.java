@@ -46,14 +46,12 @@ public class ScheduleEngineImpl implements ScheduleEngine {
             ConflictDetector conflictDetector,
             ConflictResolver conflictResolver,
             ScheduleOptimizer scheduleOptimizer,
-            SchedulePredictor schedulePredictor,
-            ScheduleStatisticsCalculator statisticsCalculator) {
+            SchedulePredictor schedulePredictor) {
         this.algorithmFactory = algorithmFactory;
         this.conflictDetector = conflictDetector;
         this.conflictResolver = conflictResolver;
         this.scheduleOptimizer = scheduleOptimizer;
         this.schedulePredictor = schedulePredictor;
-        this.statisticsCalculator = statisticsCalculator;
     }
 
     @Override

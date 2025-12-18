@@ -125,6 +125,8 @@
 4. ✅ `microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/entity/ApprovalConfigEntity.java`
 5. ✅ `microservices/microservices-common-permission/src/main/java/net/lab1024/sa/common/permission/cache/UnifiedCacheManager.java`
 6. ✅ `microservices/microservices-common/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java`
+7. ✅ `microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/RequestUtils.java`
+8. ✅ `microservices/microservices-common-core/src/main/java/net/lab1024/sa/common/util/SmartAESUtil.java`
 
 ### 已删除的目录（备份）
 
@@ -151,16 +153,15 @@
 
 ## 📝 待执行（P1级）
 
-### 删除重复工具类
+### 删除重复工具类 ✅
 
-**待删除文件**:
-- [ ] `microservices/microservices-common-core/src/main/java/net/lab1024/sa/common/util/SmartAESUtil.java` (需要检查是否还有引用)
-- [ ] `microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/RequestUtils.java` (需要检查是否还有引用)
+**已删除文件**:
+- ✅ `microservices/microservices-common-core/src/main/java/net/lab1024/sa/common/util/SmartAESUtil.java` (仅在backup中使用，backup已删除)
+- ✅ `microservices/microservices-common/src/main/java/net/lab1024/sa/common/util/RequestUtils.java` (已统一使用SmartRequestUtil)
 
-**处理方案**:
-1. 检查是否还有引用
-2. 如果没有引用，删除文件
-3. 如果有引用，更新引用后删除
+**处理结果**:
+- ✅ 检查确认无其他引用
+- ✅ 已删除文件
 
 ---
 
@@ -190,9 +191,9 @@
 
 ### 删除统计
 
-- **删除文件数**: 6个重复实现文件
+- **删除文件数**: 8个重复实现文件
 - **删除目录数**: 2个备份目录
-- **删除文件总数**: 262个备份文件 + 6个重复实现 = 268个文件
+- **删除文件总数**: 262个备份文件 + 8个重复实现 = 270个文件
 
 ### 更新统计
 
