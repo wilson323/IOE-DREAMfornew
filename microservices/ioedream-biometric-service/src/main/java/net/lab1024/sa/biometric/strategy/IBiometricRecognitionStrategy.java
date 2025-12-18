@@ -12,6 +12,14 @@ import java.util.List;
 /**
  * 生物识别策略接口
  * <p>
+ * ⚠️ 已废弃：本接口包含不应该在服务端实现的方法（verify、identify、detectLiveness）
+ * 根据ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md架构方案，识别功能应由设备端完成
+ * </p>
+ * <p>
+ * 请使用 {@link IBiometricFeatureExtractionStrategy} 替代
+ * 新接口只包含特征提取功能，符合架构要求
+ * </p>
+ * <p>
  * 定义5大生物识别算法的统一接口：
  * - 人脸识别 (FaceRecognitionStrategy)
  * - 指纹识别 (FingerprintRecognitionStrategy)
@@ -29,7 +37,10 @@ import java.util.List;
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-18
+ * @deprecated 请使用 {@link IBiometricFeatureExtractionStrategy} 替代
+ * @see IBiometricFeatureExtractionStrategy
  */
+@Deprecated
 public interface IBiometricRecognitionStrategy {
 
     /**

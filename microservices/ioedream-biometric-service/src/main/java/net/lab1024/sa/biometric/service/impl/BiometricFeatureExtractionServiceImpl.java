@@ -2,8 +2,10 @@ package net.lab1024.sa.biometric.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.biometric.domain.entity.BiometricType;
+import net.lab1024.sa.biometric.domain.vo.BiometricSample;
 import net.lab1024.sa.biometric.domain.vo.FeatureVector;
 import net.lab1024.sa.biometric.service.BiometricFeatureExtractionService;
+import net.lab1024.sa.biometric.strategy.IBiometricFeatureExtractionStrategy;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.annotation.Resource;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Map;
 
 /**
  * 生物特征提取服务实现
@@ -41,6 +44,15 @@ import java.util.Base64;
 @Service
 public class BiometricFeatureExtractionServiceImpl implements BiometricFeatureExtractionService {
 
+    /**
+     * 特征提取策略工厂
+     * <p>
+     * 根据生物识别类型获取对应的特征提取策略
+     * </p>
+     */
+    @Resource
+    private Map<BiometricType, IBiometricFeatureExtractionStrategy> biometricFeatureExtractionStrategyFactory;
+
     // TODO: 集成OpenCV和深度学习模型
     // @Resource
     // private FaceNetModel faceNetModel;
@@ -64,7 +76,22 @@ public class BiometricFeatureExtractionServiceImpl implements BiometricFeatureEx
             // 2. 读取图像数据
             byte[] imageData = photo.getBytes();
 
-            // 3. 人脸检测（TODO: 集成OpenCV）
+            // 3. 使用策略模式提取特征（优先使用新策略）
+            IBiometricFeatureExtractionStrategy strategy = biometricFeatureExtractionStrategyFactory.get(BiometricType.FACE);
+            if (strategy != null) {
+                log.info("[特征提取] 使用策略模式提取特征, strategy={}", strategy.getClass().getSimpleName());
+                BiometricSample sample = BiometricSample.builder()
+                        .type(BiometricType.FACE)
+                        .imageData(Base64.getEncoder().encodeToString(imageData))
+                        .build();
+                FeatureVector featureVector = strategy.extractFeature(sample);
+                return ResponseDTO.ok(featureVector);
+            }
+
+            // 4. 降级方案：使用原有实现（临时方案，待所有策略实现后移除）
+            log.warn("[特征提取] 策略未找到，使用降级方案");
+
+            // 5. 人脸检测（TODO: 集成OpenCV）
             // Mat image = readImageFromBytes(imageData);
             // List<Rect> faces = detectFaces(image);
             // if (faces.isEmpty()) {
@@ -74,13 +101,13 @@ public class BiometricFeatureExtractionServiceImpl implements BiometricFeatureEx
             //     throw new BusinessException("FEATURE_EXTRACTION_ERROR", "图片中检测到多个人脸，请使用单人照片");
             // }
 
-            // 4. 人脸对齐（TODO: 集成OpenCV）
+            // 6. 人脸对齐（TODO: 集成OpenCV）
             // Mat alignedFace = alignFace(image, faces.get(0));
 
-            // 5. 特征提取（TODO: 集成FaceNet模型）
+            // 7. 特征提取（TODO: 集成FaceNet模型）
             // float[] embeddings = faceNetModel.extract(alignedFace);
 
-            // 6. 质量检测（TODO: 实现质量评估算法）
+            // 8. 质量检测（TODO: 实现质量评估算法）
             // double qualityScore = assessFaceQuality(alignedFace);
             // if (qualityScore < 0.7) {
             //     throw new BusinessException("FEATURE_EXTRACTION_ERROR", "照片质量太低，请重新拍摄（光线充足、正面、无遮挡）");

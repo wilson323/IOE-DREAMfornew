@@ -164,6 +164,29 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
+        <!-- ==================== 生物识别相关依赖 ==================== -->
+        <!-- OpenCV Java绑定（用于图像处理和人脸检测） -->
+        <dependency>
+            <groupId>org.openpnp</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.8.0-1</version>
+        </dependency>
+
+        <!-- TensorFlow Java API（用于FaceNet模型推理） -->
+        <!-- TODO: 根据实际使用的模型框架选择：
+             - TensorFlow: org.tensorflow:tensorflow-core-platform
+             - PyTorch: org.pytorch:pytorch_java_only
+             - ONNX Runtime: com.microsoft.onnxruntime:onnxruntime
+             或者使用第三方SDK（如旷视、商汤等）
+        -->
+        <!--
+        <dependency>
+            <groupId>org.tensorflow</groupId>
+            <artifactId>tensorflow-core-platform</artifactId>
+            <version>2.15.0</version>
+        </dependency>
+        -->
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
