@@ -133,7 +133,7 @@ public class VendorProtocolConfiguration {
     private void registerVendorAdapters(DeviceVendorSupportManager manager) {
         try {
             // 注册海康威视适配器到工厂
-            不要总想着简化，需要全局梳理依次企业级实现模块化组件化，增加复用性，采用企业级设计模式如策略模式，工厂模式，装饰器模式，模版方法模式等等，确保企业级高质量完善全面实  到底什么原因导致增加这么多异常            protocolAdapterFactory.registerAdapter(videoHikvisionV20Adapter());
+            protocolAdapterFactory.registerAdapter(videoHikvisionV20Adapter());
             log.info("[厂商协议配置] 注册海康威视适配器到工厂");
 
             // 注册大华技术适配器到工厂

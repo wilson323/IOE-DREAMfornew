@@ -5,6 +5,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
+
 /**
  * 加密工具类
  * <p>
@@ -41,6 +45,7 @@ public class EncryptionUtil {
      * SHA256加密
      * <p>
      * 用于数据摘要和哈希计算
+     * Spring Boot 3.x中DigestUtils没有sha256相关方法，使用Java标准库MessageDigest实现
      * </p>
      *
      * @param input 原始字符串
@@ -50,7 +55,31 @@ public class EncryptionUtil {
         if (input == null) {
             return null;
         }
-        return DigestUtils.sha256Hex(input);
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+            return bytesToHex(hashBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256算法不可用", e);
+        }
+    }
+
+    /**
+     * 将字节数组转换为十六进制字符串
+     *
+     * @param bytes 字节数组
+     * @return 十六进制字符串
+     */
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     /**

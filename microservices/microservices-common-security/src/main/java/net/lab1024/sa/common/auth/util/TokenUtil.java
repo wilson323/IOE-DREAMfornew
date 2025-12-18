@@ -2,13 +2,14 @@ package net.lab1024.sa.common.auth.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.constant.Constants;
 import net.lab1024.sa.common.domain.UserContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 /**
@@ -49,15 +50,18 @@ public class TokenUtil {
             throw new IllegalArgumentException("用户上下文信息不能为空");
         }
 
+        // 使用JJWT 0.12.6 API：生成SecretKey
+        SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
         return Jwts.builder()
-                .setSubject(userContext.getUserId().toString())
+                .subject(userContext.getUserId().toString())
                 .claim("username", userContext.getUserName())
                 .claim("roles", userContext.getRoles())
                 .claim("departmentId", userContext.getDepartmentId())
-                .setExpiration(new Date(
+                .expiration(new Date(
                         System.currentTimeMillis() + Constants.TOKEN_EXPIRE_SECONDS * 1000
                 ))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(secretKey)
                 .compact();
     }
 
@@ -76,10 +80,15 @@ public class TokenUtil {
         }
 
         try {
+            // 使用JJWT 0.12.6 API：生成SecretKey
+            SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+            // 使用JJWT 0.12.6 API：解析令牌
             Claims claims = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
 
             UserContext context = new UserContext();
             context.setUserId(Long.parseLong(claims.getSubject()));
@@ -120,7 +129,14 @@ public class TokenUtil {
         }
 
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            // 使用JJWT 0.12.6 API：生成SecretKey
+            SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+            // 使用JJWT 0.12.6 API：验证令牌
+            Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token);
             return true;
         } catch (Exception e) {
             log.debug("[Token工具] 令牌验证失败: {}", e.getMessage());

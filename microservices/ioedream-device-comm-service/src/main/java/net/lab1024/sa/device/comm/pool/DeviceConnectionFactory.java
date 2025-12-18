@@ -56,7 +56,7 @@ public class DeviceConnectionFactory extends BasePooledObjectFactory<DeviceConne
     @Override
     public void destroyObject(PooledObject<DeviceConnectionPoolManager.DeviceConnection> p) throws Exception {
         DeviceConnectionPoolManager.DeviceConnection connection = p.getObject();
-        log.debug("[设备连接工厂] 销毁连接 deviceId={}, connectionId={}", 
+        log.debug("[设备连接工厂] 销毁连接 deviceId={}, connectionId={}",
                 connection.getDeviceId(), connection.getConnectionId());
     }
 }
