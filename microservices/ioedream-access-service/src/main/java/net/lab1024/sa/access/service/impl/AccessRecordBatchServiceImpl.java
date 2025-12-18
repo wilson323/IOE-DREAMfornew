@@ -6,7 +6,7 @@ import net.lab1024.sa.access.service.AccessRecordBatchService;
 import net.lab1024.sa.access.util.AccessRecordIdempotencyUtil;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
 import net.lab1024.sa.common.organization.entity.AccessRecordEntity;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

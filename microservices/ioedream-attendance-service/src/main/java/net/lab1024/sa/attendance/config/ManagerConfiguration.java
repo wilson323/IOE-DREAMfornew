@@ -117,7 +117,7 @@ public class ManagerConfiguration {
             net.lab1024.sa.attendance.dao.ScheduleRecordDao scheduleRecordDao,
             net.lab1024.sa.attendance.dao.WorkShiftDao workShiftDao,
             net.lab1024.sa.attendance.dao.ScheduleTemplateDao scheduleTemplateDao,
-            net.lab1024.sa.common.organization.dao.EmployeeDao employeeDao,
+            net.lab1024.sa.common.system.employee.dao.EmployeeDao employeeDao,
             RedisTemplate<String, Object> redisTemplate,
             ObjectMapper objectMapper) {
         log.info("[SmartSchedulingEngine] 初始化智能排班引擎");

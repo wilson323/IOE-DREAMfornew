@@ -10,7 +10,7 @@ import net.lab1024.sa.access.domain.form.AccessDeviceUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessDeviceVO;
 import net.lab1024.sa.access.service.AccessDeviceService;
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.annotation.Resource;

@@ -7,7 +7,7 @@ import net.lab1024.sa.common.organization.dao.AreaDeviceDao;
 import net.lab1024.sa.common.organization.dao.AreaUserDao;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 import net.lab1024.sa.common.organization.entity.AreaUserEntity;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 

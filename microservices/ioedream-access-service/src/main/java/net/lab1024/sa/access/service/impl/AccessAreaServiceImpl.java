@@ -36,7 +36,7 @@ import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.organization.entity.UserAreaPermissionEntity;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 门禁区域空间管理服务实现

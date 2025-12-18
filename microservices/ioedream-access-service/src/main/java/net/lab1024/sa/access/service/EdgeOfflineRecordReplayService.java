@@ -1,6 +1,6 @@
 package net.lab1024.sa.access.service;
 
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 边缘验证离线记录补录服务接口

@@ -35,7 +35,7 @@ import net.lab1024.sa.common.organization.dao.AccessRecordDao;
 import net.lab1024.sa.common.organization.entity.AccessRecordEntity;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 门禁实时监控服务实现

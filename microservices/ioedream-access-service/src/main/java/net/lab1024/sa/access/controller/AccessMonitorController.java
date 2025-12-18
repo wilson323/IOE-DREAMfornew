@@ -12,7 +12,7 @@ import net.lab1024.sa.access.domain.vo.AccessMonitorStatisticsVO;
 import net.lab1024.sa.access.domain.vo.AccessPersonTrackVO;
 import net.lab1024.sa.access.service.AccessMonitorService;
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 

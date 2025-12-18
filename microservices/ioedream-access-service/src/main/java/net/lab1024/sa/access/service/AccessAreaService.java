@@ -5,7 +5,7 @@ import net.lab1024.sa.access.domain.vo.AccessAreaOverviewVO;
 import net.lab1024.sa.access.domain.vo.AccessAreaPersonVO;
 import net.lab1024.sa.access.domain.vo.AccessAreaPermissionMatrixVO;
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import java.util.List;
 

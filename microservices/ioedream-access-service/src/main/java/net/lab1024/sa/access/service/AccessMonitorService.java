@@ -5,7 +5,7 @@ import net.lab1024.sa.access.domain.vo.AccessAlarmVO;
 import net.lab1024.sa.access.domain.vo.AccessDeviceStatusVO;
 import net.lab1024.sa.access.domain.vo.AccessPersonTrackVO;
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import java.util.List;
 

@@ -7,8 +7,8 @@ import net.lab1024.sa.attendance.dao.ScheduleTemplateDao;
 import net.lab1024.sa.attendance.domain.entity.ScheduleRecordEntity;
 import net.lab1024.sa.attendance.domain.entity.WorkShiftEntity;
 import net.lab1024.sa.attendance.domain.entity.ScheduleTemplateEntity;
-import net.lab1024.sa.common.organization.dao.EmployeeDao;
-import net.lab1024.sa.common.organization.entity.EmployeeEntity;
+import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
+import net.lab1024.sa.common.system.employee.domain.entity.EmployeeEntity;
 import org.springframework.data.redis.core.RedisTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -683,5 +683,96 @@ public class SmartSchedulingEngine {
 
     private double calculateConfidenceLevel(List<ScheduleRecordEntity> historicalData) {
         return 0.0;
+    }
+
+    /**
+     * 排班预测请求
+     */
+    public static class SchedulingForecastRequest {
+        private Long departmentId;
+        private int forecastPeriod;
+
+        // Getters and Setters
+        public Long getDepartmentId() { return departmentId; }
+        public void setDepartmentId(Long departmentId) { this.departmentId = departmentId; }
+        public int getForecastPeriod() { return forecastPeriod; }
+        public void setForecastPeriod(int forecastPeriod) { this.forecastPeriod = forecastPeriod; }
+    }
+
+    /**
+     * 排班预测结果
+     */
+    public static class SchedulingForecast {
+        private Long departmentId;
+        private int forecastPeriod;
+        private TrendAnalysis trendAnalysis;
+        private Map<LocalDate, List<StaffingRequirement>> staffingRequirements;
+        private double confidenceLevel;
+        private LocalDateTime generatedAt;
+
+        // Getters and Setters
+        public Long getDepartmentId() { return departmentId; }
+        public void setDepartmentId(Long departmentId) { this.departmentId = departmentId; }
+        public int getForecastPeriod() { return forecastPeriod; }
+        public void setForecastPeriod(int forecastPeriod) { this.forecastPeriod = forecastPeriod; }
+        public TrendAnalysis getTrendAnalysis() { return trendAnalysis; }
+        public void setTrendAnalysis(TrendAnalysis trendAnalysis) { this.trendAnalysis = trendAnalysis; }
+        public Map<LocalDate, List<StaffingRequirement>> getStaffingRequirements() { return staffingRequirements; }
+        public void setStaffingRequirements(Map<LocalDate, List<StaffingRequirement>> staffingRequirements) { this.staffingRequirements = staffingRequirements; }
+        public double getConfidenceLevel() { return confidenceLevel; }
+        public void setConfidenceLevel(double confidenceLevel) { this.confidenceLevel = confidenceLevel; }
+        public LocalDateTime getGeneratedAt() { return generatedAt; }
+        public void setGeneratedAt(LocalDateTime generatedAt) { this.generatedAt = generatedAt; }
+    }
+
+    /**
+     * 趋势分析
+     */
+    private static class TrendAnalysis {
+        private String trendType;
+        private double trendValue;
+        private Map<String, Object> trendData;
+
+        // Getters and Setters
+        public String getTrendType() { return trendType; }
+        public void setTrendType(String trendType) { this.trendType = trendType; }
+        public double getTrendValue() { return trendValue; }
+        public void setTrendValue(double trendValue) { this.trendValue = trendValue; }
+        public Map<String, Object> getTrendData() { return trendData; }
+        public void setTrendData(Map<String, Object> trendData) { this.trendData = trendData; }
+    }
+
+    /**
+     * 人员需求
+     */
+    private static class StaffingRequirement {
+        private Long shiftId;
+        private int requiredCount;
+        private List<String> skillRequirements;
+
+        // Getters and Setters
+        public Long getShiftId() { return shiftId; }
+        public void setShiftId(Long shiftId) { this.shiftId = shiftId; }
+        public int getRequiredCount() { return requiredCount; }
+        public void setRequiredCount(int requiredCount) { this.requiredCount = requiredCount; }
+        public List<String> getSkillRequirements() { return skillRequirements; }
+        public void setSkillRequirements(List<String> skillRequirements) { this.skillRequirements = skillRequirements; }
+    }
+
+    /**
+     * 排班分析
+     */
+    private static class ScheduleAnalysis {
+        private int totalConflicts;
+        private double averageWorkload;
+        private Map<String, Object> analysisData;
+
+        // Getters and Setters
+        public int getTotalConflicts() { return totalConflicts; }
+        public void setTotalConflicts(int totalConflicts) { this.totalConflicts = totalConflicts; }
+        public double getAverageWorkload() { return averageWorkload; }
+        public void setAverageWorkload(double averageWorkload) { this.averageWorkload = averageWorkload; }
+        public Map<String, Object> getAnalysisData() { return analysisData; }
+        public void setAnalysisData(Map<String, Object> analysisData) { this.analysisData = analysisData; }
     }
 }

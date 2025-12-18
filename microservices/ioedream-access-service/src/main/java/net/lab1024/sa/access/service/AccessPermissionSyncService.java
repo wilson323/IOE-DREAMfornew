@@ -1,6 +1,6 @@
 package net.lab1024.sa.access.service;
 
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;

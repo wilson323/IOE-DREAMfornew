@@ -1,7 +1,7 @@
 package net.lab1024.sa.access.service;
 
 import net.lab1024.sa.access.domain.dto.AccessRecordBatchUploadRequest;
-import net.lab1024.sa.common.response.ResponseDTO;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 门禁记录批量上传服务接口
