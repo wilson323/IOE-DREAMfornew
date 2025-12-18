@@ -227,6 +227,17 @@ documentation/
 3. [安全架构设计](./architecture/SECURITY_ARCHITECTURE.md) - 安全防护体系
 4. [部署架构设计](./architecture/DEPLOYMENT_ARCHITECTURE.md) - 部署架构
 
+**设备交互架构** ⭐ 新增:
+1. [设备交互架构总览](../README.md#-设备交互架构) - 5种设备交互模式详解
+2. [边缘自主验证模式](../README.md#mode-1-边缘自主验证-门禁系统) - 门禁系统设备交互
+3. [中心实时验证模式](../README.md#mode-2-中心实时验证-消费系统) - 消费系统设备交互
+4. [边缘识别+中心计算模式](../README.md#mode-3-边缘识别中心计算-考勤系统) - 考勤系统设备交互
+5. [混合验证模式](../README.md#mode-4-混合验证-访客系统) - 访客系统设备交互
+6. [边缘AI计算模式](../README.md#mode-5-边缘ai计算-视频监控) - 视频监控设备交互
+7. [生物模板管理服务](../README.md#-核心服务说明) - biometric-service服务说明
+8. [数据库管理服务](../README.md#ioedream-database-service-8093---数据库管理服务) - database-service服务说明
+9. [完整架构方案](./architecture/ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md) - 企业级架构重构完整方案
+
 ### 💻 开发指南
 
 **后端开发**:
@@ -361,6 +372,18 @@ documentation/
 ├── 门禁管理 → 设备管理 → 权限控制 → 安全监控
 ├── 消费管理 → 账户管理 → 支付流程 → 数据统计
 └── 考勤管理 → 排班管理 → 异常处理 → AI分析
+```
+
+### 🔄 设备交互模式关联 ⭐ 新增
+```
+设备交互架构
+├── Mode 1: 边缘自主验证 → 门禁服务 → 设备端识别 → 批量上传记录
+├── Mode 2: 中心实时验证 → 消费服务 → 服务器验证 → 实时扣款
+├── Mode 3: 边缘识别+中心计算 → 考勤服务 → 设备识别 → 服务器统计
+├── Mode 4: 混合验证 → 访客服务 → 临时访客中心验证 → 常客边缘验证
+├── Mode 5: 边缘AI计算 → 视频服务 → 设备AI分析 → 结构化数据上传
+├── 生物模板管理 → biometric-service → 模板存储 → 设备下发
+└── 数据库管理 → database-service → 备份恢复 → 性能监控
 ```
 
 ---
