@@ -88,7 +88,7 @@ public class AccessVerificationServiceImpl implements AccessVerificationService 
     }
 
     @Override
-    @Timed(value = "access.verification.duration", description = "门禁验证耗时", 
+    @Timed(value = "access.verification.duration", description = "门禁验证耗时",
            percentiles = {0.5, 0.9, 0.95, 0.99})
     @Counted(value = "access.verification.count", description = "门禁验证次数")
     public VerificationResult verifyAccess(AccessVerificationRequest request) {

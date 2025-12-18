@@ -133,7 +133,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
 
                 } catch (Exception e) {
                     result.setFailCount(result.getFailCount() + 1);
-                    log.error("[离线记录补录] 处理记录异常: recordUniqueId={}, error={}", 
+                    log.error("[离线记录补录] 处理记录异常: recordUniqueId={}, error={}",
                             recordUniqueId, e.getMessage(), e);
                 }
             }
@@ -148,7 +148,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
             result.setProcessTime(System.currentTimeMillis() - startTime);
 
             log.info("[离线记录补录] 补录完成: total={}, success={}, fail={}, duplicate={}, processTime={}ms",
-                    result.getTotalCount(), result.getSuccessCount(), 
+                    result.getTotalCount(), result.getSuccessCount(),
                     result.getFailCount(), result.getDuplicateCount(), result.getProcessTime());
 
             return ResponseDTO.ok(result);
@@ -171,7 +171,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
 
         try {
             OfflineRecordStatistics statistics = new OfflineRecordStatistics();
-            
+
             // 1. 获取队列长度
             Long queueSize = redisTemplate.opsForList().size(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE);
             statistics.setTotalCount(queueSize != null ? queueSize.intValue() : 0);
@@ -253,7 +253,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
             }
             return null;
         } catch (Exception e) {
-            log.warn("[离线记录补录] 获取离线记录失败: recordUniqueId={}, error={}", 
+            log.warn("[离线记录补录] 获取离线记录失败: recordUniqueId={}, error={}",
                     recordUniqueId, e.getMessage());
             return null;
         }
@@ -287,7 +287,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
             return insertCount;
 
         } catch (Exception e) {
-            log.error("[离线记录补录] 批量插入异常: count={}, error={}", 
+            log.error("[离线记录补录] 批量插入异常: count={}, error={}",
                     entities.size(), e.getMessage(), e);
             return 0;
         }
@@ -302,7 +302,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
         try {
             redisTemplate.opsForList().remove(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, 1, recordUniqueId);
         } catch (Exception e) {
-            log.warn("[离线记录补录] 从队列移除失败: recordUniqueId={}, error={}", 
+            log.warn("[离线记录补录] 从队列移除失败: recordUniqueId={}, error={}",
                     recordUniqueId, e.getMessage());
         }
     }
@@ -317,7 +317,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
             String cacheKey = AccessCacheConstants.buildOfflineRecordKey(recordUniqueId);
             redisTemplate.delete(cacheKey);
         } catch (Exception e) {
-            log.warn("[离线记录补录] 删除离线记录缓存失败: recordUniqueId={}, error={}", 
+            log.warn("[离线记录补录] 删除离线记录缓存失败: recordUniqueId={}, error={}",
                     recordUniqueId, e.getMessage());
         }
     }

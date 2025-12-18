@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
     public ResponseDTO<AccessRecordBatchUploadRequest.BatchUploadResult> batchUploadRecords(
             AccessRecordBatchUploadRequest request) {
         long startTime = System.currentTimeMillis();
-        log.info("[批量上传] 开始批量上传: deviceId={}, recordCount={}", 
+        log.info("[批量上传] 开始批量上传: deviceId={}, recordCount={}",
                 request.getDeviceId(), request.getRecords() != null ? request.getRecords().size() : 0);
 
         // 1. 生成批次ID（如果未提供）
@@ -77,7 +76,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
         }
 
         // 3. 初始化结果
-        AccessRecordBatchUploadRequest.BatchUploadResult result = 
+        AccessRecordBatchUploadRequest.BatchUploadResult result =
                 AccessRecordBatchUploadRequest.BatchUploadResult.builder()
                         .batchId(batchId)
                         .totalCount(request.getRecords() != null ? request.getRecords().size() : 0)
@@ -90,7 +89,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
 
         try {
             // 4. 幂等性检查：过滤重复记录
-            List<AccessRecordBatchUploadRequest.AccessRecordDTO> validRecords = 
+            List<AccessRecordBatchUploadRequest.AccessRecordDTO> validRecords =
                     filterDuplicateRecords(request.getRecords(), request.getDeviceId(), result);
 
             if (validRecords.isEmpty()) {
@@ -98,7 +97,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
                 result.setStatus("SUCCESS");
                 result.setProcessTime(System.currentTimeMillis() - startTime);
                 cacheBatchResult(batchId, result);
-                log.info("[批量上传] 所有记录都是重复的: batchId={}, duplicateCount={}", 
+                log.info("[批量上传] 所有记录都是重复的: batchId={}, duplicateCount={}",
                         batchId, result.getDuplicateCount());
                 return ResponseDTO.ok(result);
             }
@@ -122,7 +121,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
             cacheBatchResult(batchId, result);
 
             log.info("[批量上传] 批量上传完成: batchId={}, total={}, success={}, fail={}, duplicate={}, processTime={}ms",
-                    batchId, result.getTotalCount(), result.getSuccessCount(), 
+                    batchId, result.getTotalCount(), result.getSuccessCount(),
                     result.getFailCount(), result.getDuplicateCount(), result.getProcessTime());
 
             return ResponseDTO.ok(result);
@@ -174,7 +173,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
             List<AccessRecordBatchUploadRequest.AccessRecordDTO> records,
             String deviceId,
             AccessRecordBatchUploadRequest.BatchUploadResult result) {
-        
+
         List<AccessRecordBatchUploadRequest.AccessRecordDTO> validRecords = new ArrayList<>();
         int duplicateCount = 0;
 
@@ -189,8 +188,8 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
 
         for (AccessRecordBatchUploadRequest.AccessRecordDTO record : records) {
             // 1. 生成记录唯一标识（使用统一工具类）
-            String recordUniqueId = deviceIdLong != null ? 
-                    generateRecordUniqueId(record, deviceIdLong) : 
+            String recordUniqueId = deviceIdLong != null ?
+                    generateRecordUniqueId(record, deviceIdLong) :
                     generateRecordUniqueIdFallback(record, deviceId);
             record.setRecordUniqueId(recordUniqueId);
 
@@ -205,7 +204,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
                         continue;
                     }
                 } catch (Exception e) {
-                    log.warn("[批量上传] 幂等性检查异常，跳过: recordUniqueId={}, error={}", 
+                    log.warn("[批量上传] 幂等性检查异常，跳过: recordUniqueId={}, error={}",
                             recordUniqueId, e.getMessage());
                     // 继续处理，不因为检查异常而跳过记录
                 }
@@ -221,7 +220,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
                         continue;
                     }
                 } catch (Exception e) {
-                    log.warn("[批量上传] 幂等性检查异常（fallback），跳过: recordUniqueId={}, error={}", 
+                    log.warn("[批量上传] 幂等性检查异常（fallback），跳过: recordUniqueId={}, error={}",
                             recordUniqueId, e.getMessage());
                     // 继续处理，不因为检查异常而跳过记录
                 }
@@ -251,9 +250,9 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
         if (record.getRecordUniqueId() != null && !record.getRecordUniqueId().trim().isEmpty()) {
             return record.getRecordUniqueId();
         }
-        
+
         // 使用统一工具类生成（复用AccessRecordIdempotencyUtil）
-        LocalDateTime accessTime = record.getAccessTime() != null ? 
+        LocalDateTime accessTime = record.getAccessTime() != null ?
                 record.getAccessTime() : LocalDateTime.now();
         return AccessRecordIdempotencyUtil.generateRecordUniqueId(
                 record.getUserId(), deviceId, accessTime);
@@ -267,7 +266,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
      */
     private String generateRecordUniqueIdFallback(
             AccessRecordBatchUploadRequest.AccessRecordDTO record, String deviceId) {
-        LocalDateTime accessTime = record.getAccessTime() != null ? 
+        LocalDateTime accessTime = record.getAccessTime() != null ?
                 record.getAccessTime() : LocalDateTime.now();
         // 使用deviceId的hashCode作为临时deviceId
         Long deviceIdLong = (long) deviceId.hashCode();
@@ -281,7 +280,7 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
     private List<AccessRecordEntity> convertToEntities(
             List<AccessRecordBatchUploadRequest.AccessRecordDTO> records,
             String deviceId) {
-        
+
         return records.stream().map(record -> {
             AccessRecordEntity entity = new AccessRecordEntity();
             entity.setUserId(record.getUserId());

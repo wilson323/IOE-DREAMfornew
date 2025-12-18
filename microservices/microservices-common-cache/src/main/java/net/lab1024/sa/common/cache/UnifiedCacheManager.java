@@ -8,8 +8,8 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.nio.charset.Charset;
 import java.time.Duration;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -307,5 +307,154 @@ public class UnifiedCacheManager {
         localCache.invalidateAll();
         // 注意：不清空Redis所有键，只清空特定前缀的键
         log.warn("[多级缓存] L1本地缓存已清空，L2 Redis缓存需手动清理");
+    }
+
+    /**
+     * 按前缀删除缓存
+     * <p>
+     * 删除所有以指定前缀开头的缓存键
+     * </p>
+     *
+     * @param prefix 缓存键前缀
+     */
+    public void evictByPrefix(String prefix) {
+        if (prefix == null || prefix.isEmpty()) {
+            return;
+        }
+
+        try {
+            // 删除L1本地缓存中匹配的键
+            localCache.asMap().keySet().removeIf(key -> key != null && key.startsWith(prefix));
+
+            // 删除L2 Redis缓存中匹配的键
+            Set<String> keys = redisTemplate.keys(prefix + "*");
+            if (keys != null && !keys.isEmpty()) {
+                redisTemplate.delete(keys);
+                log.debug("[多级缓存] 按前缀删除缓存: prefix={}, count={}", prefix, keys.size());
+            }
+        } catch (Exception e) {
+            log.warn("[多级缓存] 按前缀删除缓存失败: prefix={}, error={}", prefix, e.getMessage());
+        }
+    }
+
+    /**
+     * 删除过期缓存
+     * <p>
+     * 清理L1本地缓存中的过期条目（Caffeine会自动处理）
+     * Redis中的过期键由Redis自动清理
+     * </p>
+     */
+    public void evictExpired() {
+        // Caffeine会自动清理过期条目，这里只需要清理统计信息
+        localCache.cleanUp();
+        log.debug("[多级缓存] 过期缓存清理完成");
+    }
+
+    /**
+     * 获取缓存统计信息
+     * <p>
+     * 返回L1和L2缓存的统计信息
+     * </p>
+     *
+     * @return 缓存统计信息
+     */
+    public CacheStats getCacheStats() {
+        // 获取Caffeine统计信息
+        var caffeineStats = localCache.stats();
+
+        // 获取Redis缓存大小（估算）
+        long redisCacheSize = 0;
+        try {
+            Set<String> keys = redisTemplate.keys("*");
+            if (keys != null) {
+                redisCacheSize = keys.size();
+            }
+        } catch (Exception e) {
+            log.warn("[多级缓存] 获取Redis缓存大小失败: error={}", e.getMessage());
+        }
+
+        return new CacheStats(
+            localCache.estimatedSize(),
+            redisCacheSize,
+            caffeineStats.hitRate(),
+            caffeineStats.hitRate(), // Redis命中率暂时使用Caffeine的（需要额外统计）
+            caffeineStats.hitRate(),
+            caffeineStats.evictionCount(),
+            caffeineStats.loadCount(),
+            caffeineStats.loadExceptionCount(),
+            caffeineStats.averageLoadPenalty() / 1_000_000.0 // 转换为毫秒
+        );
+    }
+
+    /**
+     * 缓存统计信息内部类
+     */
+    public static class CacheStats {
+        private final long localCacheSize;
+        private final long redisCacheSize;
+        private final double localHitRate;
+        private final double redisHitRate;
+        private final double overallHitRate;
+        private final long evictionCount;
+        private final long loadCount;
+        private final long loadExceptionCount;
+        private final double averageLoadTime;
+
+        public CacheStats(
+                long localCacheSize,
+                long redisCacheSize,
+                double localHitRate,
+                double redisHitRate,
+                double overallHitRate,
+                long evictionCount,
+                long loadCount,
+                long loadExceptionCount,
+                double averageLoadTime) {
+            this.localCacheSize = localCacheSize;
+            this.redisCacheSize = redisCacheSize;
+            this.localHitRate = localHitRate;
+            this.redisHitRate = redisHitRate;
+            this.overallHitRate = overallHitRate;
+            this.evictionCount = evictionCount;
+            this.loadCount = loadCount;
+            this.loadExceptionCount = loadExceptionCount;
+            this.averageLoadTime = averageLoadTime;
+        }
+
+        public long getLocalCacheSize() {
+            return localCacheSize;
+        }
+
+        public long getRedisCacheSize() {
+            return redisCacheSize;
+        }
+
+        public double getLocalHitRate() {
+            return localHitRate;
+        }
+
+        public double getRedisHitRate() {
+            return redisHitRate;
+        }
+
+        public double getOverallHitRate() {
+            return overallHitRate;
+        }
+
+        public long getEvictionCount() {
+            return evictionCount;
+        }
+
+        public long getLoadCount() {
+            return loadCount;
+        }
+
+        public long getLoadExceptionCount() {
+            return loadExceptionCount;
+        }
+
+        public double getAverageLoadTime() {
+            return averageLoadTime;
+        }
     }
 }

@@ -118,7 +118,7 @@ public class AccessBackendAuthServiceImpl implements AccessBackendAuthService {
 
             // 3. 从AreaDeviceDao查询设备-区域关联
             List<AreaDeviceEntity> areaDevices = areaDeviceDao.selectByDeviceId(deviceId);
-            
+
             if (areaDevices == null || areaDevices.isEmpty()) {
                 log.warn("[后台验证服务] 设备未关联区域: deviceId={}", deviceId);
                 return null;

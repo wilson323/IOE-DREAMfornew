@@ -83,20 +83,20 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
     public VerificationResult verify(AccessVerificationRequest request) {
         long startTime = System.currentTimeMillis();
         log.info("[设备端验证] 开始接收通行记录: userId={}, deviceId={}, areaId={}, event={}, verifyType={}, verifyTime={}",
-                request.getUserId(), request.getDeviceId(), request.getAreaId(), 
+                request.getUserId(), request.getDeviceId(), request.getAreaId(),
                 request.getEvent(), request.getVerifyType(), request.getVerifyTime());
 
         try {
             // 1. 验证记录有效性
             ValidationResult validation = validateRecord(request);
             if (!validation.isValid()) {
-                log.warn("[设备端验证] 记录验证失败: userId={}, deviceId={}, reason={}", 
+                log.warn("[设备端验证] 记录验证失败: userId={}, deviceId={}, reason={}",
                         request.getUserId(), request.getDeviceId(), validation.getReason());
                 return VerificationResult.failed("INVALID_RECORD", validation.getReason());
             }
 
             // 2. 生成记录唯一标识（使用统一工具类）
-            LocalDateTime verifyTime = request.getVerifyTime() != null ? 
+            LocalDateTime verifyTime = request.getVerifyTime() != null ?
                     request.getVerifyTime() : LocalDateTime.now();
             String recordUniqueId = AccessRecordIdempotencyUtil.generateRecordUniqueId(
                     request.getUserId(), request.getDeviceId(), verifyTime);
@@ -105,14 +105,14 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
             if (AccessRecordIdempotencyUtil.isDuplicateRecord(
                     recordUniqueId, request.getUserId(), request.getDeviceId(), verifyTime,
                     redisTemplate, accessRecordDao)) {
-                log.warn("[设备端验证] 记录重复（幂等性检查）: userId={}, deviceId={}, recordUniqueId={}", 
+                log.warn("[设备端验证] 记录重复（幂等性检查）: userId={}, deviceId={}, recordUniqueId={}",
                         request.getUserId(), request.getDeviceId(), recordUniqueId);
                 return VerificationResult.success("记录已存在（重复）", null, "edge");
             }
 
             // 4. 尝试存储记录到数据库
             boolean stored = storeRecord(request, recordUniqueId);
-            
+
             if (stored) {
                 // 5. 更新记录唯一标识缓存（使用统一工具类）
                 AccessRecordIdempotencyUtil.updateRecordUniqueIdCache(recordUniqueId, redisTemplate);
@@ -124,7 +124,7 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
             } else {
                 // 6. 数据库存储失败，缓存到Redis（离线支持）
                 cacheOfflineRecord(request, recordUniqueId);
-                
+
                 long duration = System.currentTimeMillis() - startTime;
                 log.warn("[设备端验证] 数据库存储失败，已缓存到Redis: userId={}, deviceId={}, recordUniqueId={}, duration={}ms",
                         request.getUserId(), request.getDeviceId(), recordUniqueId, duration);
@@ -133,12 +133,12 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("[设备端验证] 记录处理异常: userId={}, deviceId={}, duration={}ms, error={}", 
+            log.error("[设备端验证] 记录处理异常: userId={}, deviceId={}, duration={}ms, error={}",
                     request.getUserId(), request.getDeviceId(), duration, e.getMessage(), e);
-            
+
             // 异常时也尝试缓存到Redis（离线支持）
             try {
-                LocalDateTime verifyTime = request.getVerifyTime() != null ? 
+                LocalDateTime verifyTime = request.getVerifyTime() != null ?
                         request.getVerifyTime() : LocalDateTime.now();
                 String recordUniqueId = AccessRecordIdempotencyUtil.generateRecordUniqueId(
                         request.getUserId(), request.getDeviceId(), verifyTime);
@@ -149,7 +149,7 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
                 log.error("[设备端验证] 缓存离线记录失败: userId={}, deviceId={}, error={}",
                         request.getUserId(), request.getDeviceId(), cacheException.getMessage(), cacheException);
             }
-            
+
             return VerificationResult.failed("SYSTEM_ERROR", "系统异常，记录已缓存，请稍后重试");
         }
     }
@@ -177,7 +177,7 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
         if (verifyTime == null) {
             verifyTime = LocalDateTime.now();
         }
-        
+
         // 检查时间是否在未来（允许5分钟误差）
         LocalDateTime now = LocalDateTime.now();
         if (verifyTime.isAfter(now.plusMinutes(5))) {
@@ -223,7 +223,7 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
                         entity.getRecordId(), entity.getUserId(), entity.getDeviceId());
                 return true;
             } else {
-                log.warn("[设备端验证] 数据库插入失败: userId={}, deviceId={}", 
+                log.warn("[设备端验证] 数据库插入失败: userId={}, deviceId={}",
                         entity.getUserId(), entity.getDeviceId());
                 return false;
             }
@@ -247,21 +247,21 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
         entity.setUserId(request.getUserId());
         entity.setDeviceId(request.getDeviceId());
         entity.setAreaId(request.getAreaId());
-        
+
         // 通行结果（设备端验证模式下，设备已通过验证，默认为成功）
         entity.setAccessResult(1); // 1=成功
-        
+
         // 通行时间
-        entity.setAccessTime(request.getVerifyTime() != null ? 
+        entity.setAccessTime(request.getVerifyTime() != null ?
                 request.getVerifyTime() : LocalDateTime.now());
-        
+
         // 通行类型（根据inOutStatus判断）
         if (request.getInOutStatus() != null) {
             entity.setAccessType(request.getInOutStatus() == 1 ? "IN" : "OUT");
         } else {
             entity.setAccessType("IN"); // 默认进入
         }
-        
+
         // 验证方式（根据verifyType判断）
         if (request.getVerifyType() != null) {
             switch (request.getVerifyType()) {
@@ -283,10 +283,10 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
         } else {
             entity.setVerifyMethod("CARD"); // 默认刷卡
         }
-        
+
         // 记录唯一标识（用于幂等性检查）
         entity.setRecordUniqueId(recordUniqueId);
-        
+
         return entity;
     }
 
@@ -310,7 +310,7 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
 
             // 3. 添加到离线队列（用于批量补录）
             redisTemplate.opsForList().rightPush(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, recordUniqueId);
-            
+
             // 设置队列过期时间（7天）
             redisTemplate.expire(AccessCacheConstants.CACHE_KEY_OFFLINE_QUEUE, AccessCacheConstants.CACHE_EXPIRE_OFFLINE_RECORD);
 
@@ -336,17 +336,17 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
      * @return 验证结果
      */
     private VerificationResult verifyFallback(AccessVerificationRequest request, Exception exception) {
-        log.warn("[设备端验证] 触发降级处理: userId={}, deviceId={}, error={}", 
+        log.warn("[设备端验证] 触发降级处理: userId={}, deviceId={}, error={}",
                 request.getUserId(), request.getDeviceId(), exception.getMessage());
 
         try {
             // 降级时缓存到Redis
-            LocalDateTime verifyTime = request.getVerifyTime() != null ? 
+            LocalDateTime verifyTime = request.getVerifyTime() != null ?
                     request.getVerifyTime() : LocalDateTime.now();
             String recordUniqueId = AccessRecordIdempotencyUtil.generateRecordUniqueId(
                     request.getUserId(), request.getDeviceId(), verifyTime);
             cacheOfflineRecord(request, recordUniqueId);
-            
+
             log.info("[设备端验证] 降级处理：记录已缓存到Redis: recordUniqueId={}", recordUniqueId);
             return VerificationResult.success("记录已缓存（降级模式）", null, "edge");
         } catch (Exception e) {

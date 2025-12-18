@@ -1,6 +1,5 @@
 package net.lab1024.sa.attendance.mobile.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.mobile.AttendanceMobileService;
 import net.lab1024.sa.attendance.mobile.model.*;
@@ -44,21 +43,41 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 public class AttendanceMobileServiceImpl implements AttendanceMobileService {
 
-    private final AttendanceRecordDao attendanceRecordDao;
-    private final ShiftScheduleDao shiftScheduleDao;
-    private final UserDao userDao;
-    private final EmployeeDao employeeDao;
-    private final RealtimeCalculationEngine realtimeCalculationEngine;
-    private final ShiftRotationSystem shiftRotationSystem;
-    private final LeaveCancellationService leaveCancellationService;
-    private final AttendanceRuleEngine attendanceRuleEngine;
-    private final AttendanceReportService attendanceReportService;
-    private final SchedulingService schedulingService;
-    private final RedisTemplate<String, Object> redisTemplate;
+    @Resource
+    private AttendanceRecordDao attendanceRecordDao;
+    
+    @Resource
+    private ShiftScheduleDao shiftScheduleDao;
+    
+    @Resource
+    private UserDao userDao;
+    
+    @Resource
+    private EmployeeDao employeeDao;
+    
+    @Resource
+    private RealtimeCalculationEngine realtimeCalculationEngine;
+    
+    @Resource
+    private ShiftRotationSystem shiftRotationSystem;
+    
+    @Resource
+    private LeaveCancellationService leaveCancellationService;
+    
+    @Resource
+    private AttendanceRuleEngine attendanceRuleEngine;
+    
+    @Resource
+    private AttendanceReportService attendanceReportService;
+    
+    @Resource
+    private SchedulingService schedulingService;
+    
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     // 移动端缓存 - 内存优化
     private final Map<String, MobileUserSession> userSessionCache = new ConcurrentHashMap<>();

@@ -72,7 +72,7 @@ public class AccessRecordIdempotencyUtil {
 
         LocalDateTime time = accessTime != null ? accessTime : LocalDateTime.now();
         String timeStr = time.format(TIME_FORMATTER);
-        
+
         // 使用hashCode生成短哈希（避免过长）
         String hash = String.valueOf((userId + deviceId + timeStr).hashCode());
         return String.format("REC_%d_%d_%s_%s", userId, deviceId, timeStr, hash);
@@ -101,7 +101,7 @@ public class AccessRecordIdempotencyUtil {
             LocalDateTime accessTime,
             RedisTemplate<String, Object> redisTemplate,
             AccessRecordDao accessRecordDao) {
-        
+
         try {
             // 1. 检查Redis缓存（快速检查）
             String cacheKey = AccessCacheConstants.buildRecordUniqueKey(recordUniqueId);
