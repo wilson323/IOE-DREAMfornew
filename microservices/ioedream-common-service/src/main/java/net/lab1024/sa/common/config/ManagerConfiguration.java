@@ -35,6 +35,8 @@ import net.lab1024.sa.common.notification.manager.NotificationTemplateManager;
 import net.lab1024.sa.common.notification.dao.NotificationTemplateDao;
 import net.lab1024.sa.common.workflow.manager.ApprovalConfigManager;
 import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
+import net.lab1024.sa.common.organization.manager.UserAreaPermissionManager;
+import net.lab1024.sa.common.organization.dao.UserAreaPermissionDao;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -668,4 +670,27 @@ public class ManagerConfiguration {
     //     log.info("[WorkflowApprovalManager] ApprovalConfigManager: {}", approvalConfigManager != null ? "已注入" : "未注入");
     //     return new WorkflowApprovalManager(gatewayServiceClient, approvalConfigManager);
     // }
+
+    /**
+     * 用户区域权限管理器Bean配置
+     * <p>
+     * 负责用户区域权限的复杂业务逻辑编排、权限验证和有效期管理
+     * 符合CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * </p>
+     * <p>
+     * 使用方：
+     * - 门禁服务需要此Manager进行权限验证
+     * - 生物识别服务需要此Manager查询用户权限区域
+     * </p>
+     *
+     * @param userAreaPermissionDao 用户区域权限DAO
+     * @return 用户区域权限管理器实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(UserAreaPermissionManager.class)
+    public UserAreaPermissionManager userAreaPermissionManager(UserAreaPermissionDao userAreaPermissionDao) {
+        log.info("[UserAreaPermissionManager] 初始化用户区域权限管理器");
+        log.info("[UserAreaPermissionManager] UserAreaPermissionDao: {}", userAreaPermissionDao != null ? "已注入" : "未注入");
+        return new UserAreaPermissionManager(userAreaPermissionDao);
+    }
 }
