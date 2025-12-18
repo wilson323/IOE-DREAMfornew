@@ -110,3 +110,25 @@ logging:
     net.lab1024.sa: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+
+# ==================== 生物识别服务配置 ====================
+biometric:
+  # FaceNet模型配置
+  facenet:
+    # 模型文件路径（可选，如果未配置则使用降级方案）
+    # 支持格式：TensorFlow SavedModel、PyTorch、ONNX Runtime
+    # 示例：classpath:models/facenet.pb 或 file:/path/to/facenet.pb
+    model-path: ${BIOMETRIC_FACENET_MODEL_PATH:}
+    # 模型输入尺寸（FaceNet标准：160x160）
+    input-size: 160
+    # 特征向量维度（FaceNet标准：512）
+    feature-dimension: 512
+  # 特征提取配置
+  feature-extraction:
+    # 质量阈值（0.0-1.0，低于此值将要求重新拍摄）
+    quality-threshold: 0.7
+    # 最大图像尺寸（MB）
+    max-image-size: 5
+    # 最小图像尺寸（像素）
+    min-image-width: 64
+    min-image-height: 64

@@ -4,9 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.biometric.domain.entity.BiometricType;
 import net.lab1024.sa.biometric.domain.vo.BiometricSample;
 import net.lab1024.sa.biometric.domain.vo.FeatureVector;
+import net.lab1024.sa.biometric.model.FaceNetModel;
 import net.lab1024.sa.biometric.strategy.IBiometricFeatureExtractionStrategy;
+import net.lab1024.sa.biometric.util.ImageProcessingUtil;
 import net.lab1024.sa.common.exception.BusinessException;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.Resource;
+import java.awt.image.BufferedImage;
+import java.util.Base64;
 
 /**
  * 人脸特征提取策略实现
@@ -59,11 +65,14 @@ public class FaceFeatureExtractionStrategy implements IBiometricFeatureExtractio
         return DEFAULT_QUALITY_THRESHOLD;
     }
 
-    // TODO: 集成OpenCV和FaceNet模型
-    // @Resource
-    // private FaceNetModel faceNetModel;
-    // @Resource
-    // private OpenCVFaceDetector faceDetector;
+    /**
+     * FaceNet模型（用于特征提取）
+     * <p>
+     * TODO: 待模型文件准备完成后，在配置类中初始化
+     * </p>
+     */
+    @Resource(required = false)
+    private FaceNetModel faceNetModel;
 
     @Override
     public BiometricType getSupportedType() {
@@ -78,52 +87,62 @@ public class FaceFeatureExtractionStrategy implements IBiometricFeatureExtractio
             // 1. 验证样本数据
             validateSample(sample);
 
-            // 2. 图像预处理（TODO: 集成OpenCV）
-            // Mat image = readImageFromBytes(sample.getImageData());
-            // List<Rect> faces = faceDetector.detectFaces(image);
-            // if (faces.isEmpty()) {
-            //     throw new BusinessException("FEATURE_EXTRACTION_ERROR", "图片中未检测到人脸");
-            // }
-            // if (faces.size() > 1) {
-            //     throw new BusinessException("FEATURE_EXTRACTION_ERROR", "图片中检测到多个人脸，请使用单人照片");
-            // }
+            // 2. 读取图像
+            BufferedImage image = ImageProcessingUtil.readImageFromBase64(sample.getImageData());
+            ImageProcessingUtil.validateImageSize(image);
 
-            // 3. 人脸对齐（TODO: 集成OpenCV）
-            // Mat alignedFace = alignFace(image, faces.get(0));
+            // 3. 人脸检测
+            int faceCount = ImageProcessingUtil.detectFaceCount(image);
+            if (faceCount == 0) {
+                throw new BusinessException("FEATURE_EXTRACTION_ERROR", "图片中未检测到人脸，请使用包含人脸的清晰照片");
+            }
+            if (faceCount > 1) {
+                throw new BusinessException("FEATURE_EXTRACTION_ERROR", "图片中检测到多个人脸，请使用单人照片");
+            }
 
-            // 4. 特征提取（TODO: 集成FaceNet模型）
-            // float[] embeddings = faceNetModel.extract(alignedFace);
-            // if (embeddings == null || embeddings.length != 512) {
-            //     throw new BusinessException("FEATURE_EXTRACTION_ERROR", "特征提取失败，特征向量维度不正确");
-            // }
+            // 4. 人脸对齐（TODO: 集成OpenCV实现真正的人脸对齐）
+            BufferedImage alignedFace = ImageProcessingUtil.alignFace(image, null);
 
-            // 5. L2归一化
-            // normalizeL2(embeddings);
+            // 5. 质量检测（基础质量评估）
+            double qualityScore = ImageProcessingUtil.assessImageQuality(alignedFace);
+            if (qualityScore < getQualityThreshold()) {
+                throw new BusinessException("FEATURE_EXTRACTION_ERROR",
+                        String.format("照片质量太低(%.2f)，请重新拍摄（光线充足、正面、无遮挡）", qualityScore));
+            }
 
-            // 6. 质量检测（TODO: 实现质量评估算法）
-            // double qualityScore = assessFaceQuality(alignedFace);
-            // if (qualityScore < getQualityThreshold()) {
-            //     throw new BusinessException("FEATURE_EXTRACTION_ERROR", 
-            //         String.format("照片质量太低(%.2f)，请重新拍摄（光线充足、正面、无遮挡）", qualityScore));
-            // }
+            // 6. 特征提取
+            float[] embeddings;
+            if (faceNetModel != null && faceNetModel.isModelLoaded()) {
+                // 使用FaceNet模型提取特征
+                log.info("[人脸特征提取] 使用FaceNet模型提取特征");
+                embeddings = faceNetModel.extract(alignedFace);
+            } else {
+                // 降级方案：使用临时实现
+                log.warn("[人脸特征提取] FaceNet模型未加载，使用临时实现");
+                embeddings = generateTemporaryFeatureVector();
+            }
 
-            // 临时实现：返回模拟特征向量（待集成OpenCV和FaceNet后替换）
-            log.warn("[人脸特征提取] 使用临时实现，待集成OpenCV和FaceNet");
-            // 注意：BiometricSample.imageData是String类型（Base64编码），需要解码
-            byte[] imageBytes = java.util.Base64.getDecoder().decode(sample.getImageData());
-            String featureData = encodeFeatureData(imageBytes);
-            double qualityScore = 0.95; // 模拟质量分数
+            // 7. 验证特征向量维度
+            if (embeddings == null || embeddings.length != BiometricType.FACE.getDimension()) {
+                throw new BusinessException("FEATURE_EXTRACTION_ERROR",
+                        String.format("特征提取失败，特征向量维度不正确，期望: %d, 实际: %d",
+                                BiometricType.FACE.getDimension(),
+                                embeddings != null ? embeddings.length : 0));
+            }
+
+            // 8. 序列化特征向量
+            String featureData = serializeFeatureVector(embeddings);
 
             FeatureVector featureVector = FeatureVector.builder()
                     .biometricType(BiometricType.FACE.getCode())
                     .dimension(BiometricType.FACE.getDimension())
                     .data(featureData)
                     .qualityScore(qualityScore)
-                    .algorithmVersion("1.0")
+                    .algorithmVersion(faceNetModel != null && faceNetModel.isModelLoaded() ? "1.0" : "0.1-temp")
                     .build();
 
-            log.info("[人脸特征提取] 提取特征向量完成, dimension={}, qualityScore={}",
-                    featureVector.getDimension(), featureVector.getQualityScore());
+            log.info("[人脸特征提取] 提取特征向量完成, dimension={}, qualityScore={}, algorithmVersion={}",
+                    featureVector.getDimension(), featureVector.getQualityScore(), featureVector.getAlgorithmVersion());
 
             return featureVector;
 
@@ -160,12 +179,76 @@ public class FaceFeatureExtractionStrategy implements IBiometricFeatureExtractio
     }
 
     /**
-     * 编码特征数据（临时实现，待替换为真正的特征向量）
+     * 生成临时特征向量（降级方案）
+     * <p>
+     * TODO: 待FaceNet模型集成后移除此方法
+     * </p>
+     *
+     * @return 512维特征向量（已L2归一化）
      */
-    private String encodeFeatureData(byte[] imageData) {
-        // TODO: 替换为真正的特征向量序列化
-        // 当前临时实现：使用Base64编码
-        return java.util.Base64.getEncoder().encodeToString(imageData);
+    private float[] generateTemporaryFeatureVector() {
+        float[] embeddings = new float[BiometricType.FACE.getDimension()];
+        for (int i = 0; i < embeddings.length; i++) {
+            embeddings[i] = (float) (Math.random() * 2 - 1); // 模拟随机特征
+        }
+        normalizeL2(embeddings); // L2归一化
+        return embeddings;
+    }
+
+    /**
+     * L2归一化
+     * <p>
+     * 对特征向量进行L2归一化，确保向量长度为1
+     * </p>
+     *
+     * @param vector 特征向量
+     */
+    private void normalizeL2(float[] vector) {
+        if (vector == null || vector.length == 0) {
+            return;
+        }
+
+        // 计算L2范数
+        double norm = 0.0;
+        for (float value : vector) {
+            norm += value * value;
+        }
+        norm = Math.sqrt(norm);
+
+        // 归一化（避免除零）
+        if (norm > 1e-8) {
+            for (int i = 0; i < vector.length; i++) {
+                vector[i] = (float) (vector[i] / norm);
+            }
+        }
+    }
+
+    /**
+     * 序列化特征向量
+     * <p>
+     * 将float数组转换为Base64编码的字符串
+     * </p>
+     *
+     * @param embeddings 特征向量（float数组）
+     * @return Base64编码的特征向量字符串
+     */
+    private String serializeFeatureVector(float[] embeddings) {
+        if (embeddings == null || embeddings.length == 0) {
+            throw new BusinessException("FEATURE_EXTRACTION_ERROR", "特征向量不能为空");
+        }
+
+        // 将float数组转换为字节数组
+        byte[] bytes = new byte[embeddings.length * 4]; // float占4字节
+        for (int i = 0; i < embeddings.length; i++) {
+            int intBits = Float.floatToIntBits(embeddings[i]);
+            bytes[i * 4] = (byte) (intBits & 0xFF);
+            bytes[i * 4 + 1] = (byte) ((intBits >> 8) & 0xFF);
+            bytes[i * 4 + 2] = (byte) ((intBits >> 16) & 0xFF);
+            bytes[i * 4 + 3] = (byte) ((intBits >> 24) & 0xFF);
+        }
+
+        // Base64编码
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
     @Override
