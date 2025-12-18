@@ -69,6 +69,14 @@ resilience4j:
         minimum-number-of-calls: 20
         slow-call-duration-threshold: 8s
 
+      # 边缘验证熔断器
+      edge-verification-circuitbreaker:
+        base-config: default
+        failure-rate-threshold: 40%                    # 边缘验证更保守
+        wait-duration-in-open-state: 30s
+        minimum-number-of-calls: 10
+        slow-call-duration-threshold: 5s
+
   # 重试配置
   retry:
     configs:
@@ -111,6 +119,17 @@ resilience4j:
         exponential-backoff-multiplier: 2
         retry-on-result-exceptions:
           - org.springframework.web.client.HttpServerErrorException
+
+      # 边缘验证重试
+      edge-verification-retry:
+        base-config: default
+        max-attempts: 3                               # 边缘验证重试3次
+        wait-duration: 1s
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - org.springframework.dao.DataAccessException
+          - java.net.SocketTimeoutException
+          - java.io.IOException
 
   # 限流配置
   ratelimiter:

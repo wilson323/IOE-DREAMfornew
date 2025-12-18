@@ -3,6 +3,7 @@ package net.lab1024.sa.access.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.domain.dto.AccessRecordBatchUploadRequest;
 import net.lab1024.sa.access.service.AccessRecordBatchService;
+import net.lab1024.sa.access.util.AccessRecordIdempotencyUtil;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
 import net.lab1024.sa.common.organization.entity.AccessRecordEntity;
 import net.lab1024.sa.common.response.ResponseDTO;
@@ -44,16 +45,14 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
     private RedisTemplate<String, Object> redisTemplate;
 
     /**
-     * 缓存键前缀
+     * 缓存键前缀（复用统一工具类的记录唯一标识缓存键）
      */
     private static final String CACHE_KEY_BATCH_STATUS = "access:batch:status:";
-    private static final String CACHE_KEY_RECORD_UNIQUE = "access:record:unique:";
     
     /**
      * 缓存过期时间
      */
     private static final Duration CACHE_EXPIRE_BATCH = Duration.ofHours(24); // 批次状态缓存24小时
-    private static final Duration CACHE_EXPIRE_UNIQUE = Duration.ofDays(7); // 记录唯一标识缓存7天
 
     /**
      * 批量上传通行记录
@@ -181,36 +180,41 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
         List<AccessRecordBatchUploadRequest.AccessRecordDTO> validRecords = new ArrayList<>();
         int duplicateCount = 0;
 
+        // 将deviceId转换为Long（统一处理）
+        Long deviceIdLong = null;
+        try {
+            deviceIdLong = Long.parseLong(deviceId);
+        } catch (NumberFormatException e) {
+            log.warn("[批量上传] 设备ID格式错误: deviceId={}", deviceId);
+            // 如果转换失败，后续处理会使用hashCode作为临时方案
+        }
+
         for (AccessRecordBatchUploadRequest.AccessRecordDTO record : records) {
-            // 1. 生成记录唯一标识（使用组合键）
-            String recordUniqueId = generateRecordUniqueId(record);
+            // 1. 生成记录唯一标识（使用统一工具类）
+            String recordUniqueId = deviceIdLong != null ? 
+                    generateRecordUniqueId(record, deviceIdLong) : 
+                    generateRecordUniqueIdFallback(record, deviceId);
             record.setRecordUniqueId(recordUniqueId);
 
-            // 2. 检查Redis缓存（快速检查）
-            String cacheKey = CACHE_KEY_RECORD_UNIQUE + recordUniqueId;
-            Boolean exists = redisTemplate.hasKey(cacheKey);
-            if (Boolean.TRUE.equals(exists)) {
-                duplicateCount++;
-                log.debug("[批量上传] 记录重复（Redis缓存）: recordUniqueId={}", recordUniqueId);
-                continue;
-            }
-
-            // 3. 检查数据库（使用组合键查询，确保准确性）
+            // 2. 使用统一工具类进行幂等性检查
             // 注意：需要将deviceId从String转换为Long
             try {
                 Long deviceIdLong = Long.parseLong(deviceId);
-                AccessRecordEntity existingRecord = accessRecordDao.selectByCompositeKey(
-                        record.getUserId(), deviceIdLong, record.getAccessTime());
-                if (existingRecord != null) {
+                if (AccessRecordIdempotencyUtil.isDuplicateRecord(
+                        recordUniqueId, record.getUserId(), deviceIdLong, record.getAccessTime(),
+                        redisTemplate, accessRecordDao)) {
                     duplicateCount++;
-                    // 更新Redis缓存
-                    redisTemplate.opsForValue().set(cacheKey, "1", CACHE_EXPIRE_UNIQUE);
-                    log.debug("[批量上传] 记录重复（数据库）: recordUniqueId={}", recordUniqueId);
+                    log.debug("[批量上传] 记录重复（幂等性检查）: recordUniqueId={}", recordUniqueId);
                     continue;
                 }
+            } catch (NumberFormatException e) {
+                log.warn("[批量上传] 设备ID格式错误，跳过幂等性检查: deviceId={}, recordUniqueId={}", 
+                        deviceId, recordUniqueId);
+                // 继续处理，不因为格式错误而跳过记录
             } catch (Exception e) {
-                log.warn("[批量上传] 数据库查询异常，跳过: recordUniqueId={}, error={}", recordUniqueId, e.getMessage());
-                // 继续处理，不因为查询异常而跳过记录
+                log.warn("[批量上传] 幂等性检查异常，跳过: recordUniqueId={}, error={}", 
+                        recordUniqueId, e.getMessage());
+                // 继续处理，不因为检查异常而跳过记录
             }
 
             // 记录有效，添加到列表
@@ -222,26 +226,43 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
     }
 
     /**
-     * 生成记录唯一标识
+     * 生成记录唯一标识（使用统一工具类）
      * <p>
-     * 使用 userId + deviceId + accessTime 的组合作为唯一标识
-     * 格式：REC_{userId}_{deviceId}_{accessTime}
+     * 复用AccessRecordIdempotencyUtil，确保全局一致性
+     * 注意：需要deviceId参数，从外部传入
      * </p>
+     *
+     * @param record 记录DTO
+     * @param deviceId 设备ID（Long类型）
+     * @return 记录唯一标识
      */
-    private String generateRecordUniqueId(AccessRecordBatchUploadRequest.AccessRecordDTO record) {
+    private String generateRecordUniqueId(AccessRecordBatchUploadRequest.AccessRecordDTO record, Long deviceId) {
         // 如果请求中已提供唯一标识，直接使用
         if (record.getRecordUniqueId() != null && !record.getRecordUniqueId().trim().isEmpty()) {
             return record.getRecordUniqueId();
         }
         
-        // 生成唯一标识：REC_{userId}_{accessTime}_{hash}
-        String timeStr = record.getAccessTime() != null ? 
-                record.getAccessTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) : 
-                String.valueOf(System.currentTimeMillis());
-        
-        // 使用MD5生成短哈希（避免过长）
-        String hash = String.valueOf((record.getUserId() + timeStr).hashCode());
-        return String.format("REC_%d_%s_%s", record.getUserId(), timeStr, hash);
+        // 使用统一工具类生成（复用AccessRecordIdempotencyUtil）
+        LocalDateTime accessTime = record.getAccessTime() != null ? 
+                record.getAccessTime() : LocalDateTime.now();
+        return AccessRecordIdempotencyUtil.generateRecordUniqueId(
+                record.getUserId(), deviceId, accessTime);
+    }
+
+    /**
+     * 生成记录唯一标识（降级方案，当deviceId无法转换为Long时使用）
+     * <p>
+     * 使用deviceId的hashCode作为临时方案
+     * </p>
+     */
+    private String generateRecordUniqueIdFallback(
+            AccessRecordBatchUploadRequest.AccessRecordDTO record, String deviceId) {
+        LocalDateTime accessTime = record.getAccessTime() != null ? 
+                record.getAccessTime() : LocalDateTime.now();
+        // 使用deviceId的hashCode作为临时deviceId
+        Long deviceIdLong = (long) deviceId.hashCode();
+        return AccessRecordIdempotencyUtil.generateRecordUniqueId(
+                record.getUserId(), deviceIdLong, accessTime);
     }
 
     /**
@@ -275,13 +296,12 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
     }
 
     /**
-     * 更新记录唯一标识缓存
+     * 更新记录唯一标识缓存（使用统一工具类）
      */
     private void updateRecordUniqueIdCache(List<AccessRecordBatchUploadRequest.AccessRecordDTO> records) {
         for (AccessRecordBatchUploadRequest.AccessRecordDTO record : records) {
             if (record.getRecordUniqueId() != null) {
-                String cacheKey = CACHE_KEY_RECORD_UNIQUE + record.getRecordUniqueId();
-                redisTemplate.opsForValue().set(cacheKey, "1", CACHE_EXPIRE_UNIQUE);
+                AccessRecordIdempotencyUtil.updateRecordUniqueIdCache(record.getRecordUniqueId(), redisTemplate);
             }
         }
     }

@@ -22,6 +22,7 @@ spring:
     import:
       - "classpath:common-config/cache-application.yml"
       - "classpath:common-config/database-application.yml"
+      - "classpath:common-config/resilience4j-application.yml"
 
 # ==================== Nacos服务发现配置 ====================
   cloud:
@@ -89,6 +90,8 @@ access:
       batch-upload-interval: ${ACCESS_EDGE_BATCH_INTERVAL:60}
       # 离线验证支持
       offline-enabled: ${ACCESS_EDGE_OFFLINE_ENABLED:true}
+      # 离线记录补录间隔(毫秒，默认5分钟)
+      replay-interval: ${ACCESS_EDGE_REPLAY_INTERVAL:300000}
 
 # ==================== MyBatis-Plus配置 ====================
 mybatis-plus:
