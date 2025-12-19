@@ -12,8 +12,12 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.video.domain.form.VideoDisplayTaskAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallAddForm;
+import net.lab1024.sa.video.domain.form.VideoWallPresetAddForm;
+import net.lab1024.sa.video.domain.form.VideoWallTourAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallUpdateForm;
 import net.lab1024.sa.video.domain.vo.VideoDisplayTaskVO;
+import net.lab1024.sa.video.domain.vo.VideoWallPresetVO;
+import net.lab1024.sa.video.domain.vo.VideoWallTourVO;
 import net.lab1024.sa.video.domain.vo.VideoWallVO;
 import net.lab1024.sa.video.service.VideoWallService;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -207,5 +211,182 @@ public class VideoWallController {
             @PathVariable @NotNull(message = "电视墙ID不能为空") Long wallId) {
         log.info("[解码上墙API] 查询上墙任务列表: wallId={}", wallId);
         return videoWallService.getTaskList(wallId);
+    }
+
+    /**
+     * 创建预案
+     * <p>
+     * 严格遵循RESTful规范：创建操作使用POST方法
+     * </p>
+     *
+     * @param wallId 电视墙ID
+     * @param addForm 新增表单
+     * @return 预案ID
+     */
+    @PostMapping("/{wallId}/presets")
+    @Operation(summary = "创建预案", description = "为指定电视墙创建预案")
+    @Observed(name = "video.wall.preset.create", contextualName = "video-wall-preset-create")
+    public ResponseDTO<Long> createPreset(
+            @Parameter(description = "电视墙ID", required = true)
+            @PathVariable @NotNull(message = "电视墙ID不能为空") Long wallId,
+            @Valid @RequestBody VideoWallPresetAddForm addForm) {
+        log.info("[解码上墙API] 创建预案: wallId={}, presetName={}", wallId, addForm.getPresetName());
+        addForm.setWallId(wallId);
+        return videoWallService.createPreset(addForm);
+    }
+
+    /**
+     * 删除预案
+     * <p>
+     * 严格遵循RESTful规范：删除操作使用DELETE方法
+     * </p>
+     *
+     * @param presetId 预案ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/presets/{presetId}")
+    @Operation(summary = "删除预案", description = "删除指定的预案")
+    @Observed(name = "video.wall.preset.delete", contextualName = "video-wall-preset-delete")
+    public ResponseDTO<Void> deletePreset(
+            @Parameter(description = "预案ID", required = true)
+            @PathVariable @NotNull(message = "预案ID不能为空") Long presetId) {
+        log.info("[解码上墙API] 删除预案: presetId={}", presetId);
+        return videoWallService.deletePreset(presetId);
+    }
+
+    /**
+     * 查询预案列表
+     * <p>
+     * 严格遵循RESTful规范：查询操作使用GET方法
+     * </p>
+     *
+     * @param wallId 电视墙ID
+     * @return 预案列表
+     */
+    @GetMapping("/{wallId}/presets")
+    @Operation(summary = "查询预案列表", description = "查询指定电视墙的预案列表")
+    @Observed(name = "video.wall.preset.list", contextualName = "video-wall-preset-list")
+    public ResponseDTO<List<VideoWallPresetVO>> getPresetList(
+            @Parameter(description = "电视墙ID", required = true)
+            @PathVariable @NotNull(message = "电视墙ID不能为空") Long wallId) {
+        log.info("[解码上墙API] 查询预案列表: wallId={}", wallId);
+        return videoWallService.getPresetList(wallId);
+    }
+
+    /**
+     * 调用预案
+     * <p>
+     * 严格遵循RESTful规范：操作使用POST方法
+     * </p>
+     *
+     * @param presetId 预案ID
+     * @return 操作结果
+     */
+    @PostMapping("/presets/{presetId}/apply")
+    @Operation(summary = "调用预案", description = "应用指定的预案配置")
+    @Observed(name = "video.wall.preset.apply", contextualName = "video-wall-preset-apply")
+    public ResponseDTO<Void> applyPreset(
+            @Parameter(description = "预案ID", required = true)
+            @PathVariable @NotNull(message = "预案ID不能为空") Long presetId) {
+        log.info("[解码上墙API] 调用预案: presetId={}", presetId);
+        return videoWallService.applyPreset(presetId);
+    }
+
+    /**
+     * 创建轮巡
+     * <p>
+     * 严格遵循RESTful规范：创建操作使用POST方法
+     * </p>
+     *
+     * @param wallId 电视墙ID
+     * @param addForm 新增表单
+     * @return 轮巡ID
+     */
+    @PostMapping("/{wallId}/tours")
+    @Operation(summary = "创建轮巡", description = "为指定电视墙创建轮巡")
+    @Observed(name = "video.wall.tour.create", contextualName = "video-wall-tour-create")
+    public ResponseDTO<Long> createTour(
+            @Parameter(description = "电视墙ID", required = true)
+            @PathVariable @NotNull(message = "电视墙ID不能为空") Long wallId,
+            @Valid @RequestBody VideoWallTourAddForm addForm) {
+        log.info("[解码上墙API] 创建轮巡: wallId={}, tourName={}", wallId, addForm.getTourName());
+        addForm.setWallId(wallId);
+        return videoWallService.createTour(addForm);
+    }
+
+    /**
+     * 删除轮巡
+     * <p>
+     * 严格遵循RESTful规范：删除操作使用DELETE方法
+     * </p>
+     *
+     * @param tourId 轮巡ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/tours/{tourId}")
+    @Operation(summary = "删除轮巡", description = "删除指定的轮巡")
+    @Observed(name = "video.wall.tour.delete", contextualName = "video-wall-tour-delete")
+    public ResponseDTO<Void> deleteTour(
+            @Parameter(description = "轮巡ID", required = true)
+            @PathVariable @NotNull(message = "轮巡ID不能为空") Long tourId) {
+        log.info("[解码上墙API] 删除轮巡: tourId={}", tourId);
+        return videoWallService.deleteTour(tourId);
+    }
+
+    /**
+     * 查询轮巡列表
+     * <p>
+     * 严格遵循RESTful规范：查询操作使用GET方法
+     * </p>
+     *
+     * @param wallId 电视墙ID
+     * @return 轮巡列表
+     */
+    @GetMapping("/{wallId}/tours")
+    @Operation(summary = "查询轮巡列表", description = "查询指定电视墙的轮巡列表")
+    @Observed(name = "video.wall.tour.list", contextualName = "video-wall-tour-list")
+    public ResponseDTO<List<VideoWallTourVO>> getTourList(
+            @Parameter(description = "电视墙ID", required = true)
+            @PathVariable @NotNull(message = "电视墙ID不能为空") Long wallId) {
+        log.info("[解码上墙API] 查询轮巡列表: wallId={}", wallId);
+        return videoWallService.getTourList(wallId);
+    }
+
+    /**
+     * 启动轮巡
+     * <p>
+     * 严格遵循RESTful规范：操作使用POST方法
+     * </p>
+     *
+     * @param tourId 轮巡ID
+     * @return 操作结果
+     */
+    @PostMapping("/tours/{tourId}/start")
+    @Operation(summary = "启动轮巡", description = "启动指定的轮巡任务")
+    @Observed(name = "video.wall.tour.start", contextualName = "video-wall-tour-start")
+    public ResponseDTO<Void> startTour(
+            @Parameter(description = "轮巡ID", required = true)
+            @PathVariable @NotNull(message = "轮巡ID不能为空") Long tourId) {
+        log.info("[解码上墙API] 启动轮巡: tourId={}", tourId);
+        return videoWallService.startTour(tourId);
+    }
+
+    /**
+     * 停止轮巡
+     * <p>
+     * 严格遵循RESTful规范：操作使用POST方法
+     * </p>
+     *
+     * @param tourId 轮巡ID
+     * @return 操作结果
+     */
+    @PostMapping("/tours/{tourId}/stop")
+    @Operation(summary = "停止轮巡", description = "停止指定的轮巡任务")
+    @Observed(name = "video.wall.tour.stop", contextualName = "video-wall-tour-stop")
+    public ResponseDTO<Void> stopTour(
+            @Parameter(description = "轮巡ID", required = true)
+            @PathVariable @NotNull(message = "轮巡ID不能为空") Long tourId) {
+        log.info("[解码上墙API] 停止轮巡: tourId={}", tourId);
+        return videoWallService.stopTour(tourId);
     }
 }

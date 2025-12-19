@@ -5,8 +5,12 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.domain.form.VideoDisplayTaskAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallAddForm;
+import net.lab1024.sa.video.domain.form.VideoWallPresetAddForm;
+import net.lab1024.sa.video.domain.form.VideoWallTourAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallUpdateForm;
 import net.lab1024.sa.video.domain.vo.VideoDisplayTaskVO;
+import net.lab1024.sa.video.domain.vo.VideoWallPresetVO;
+import net.lab1024.sa.video.domain.vo.VideoWallTourVO;
 import net.lab1024.sa.video.domain.vo.VideoWallVO;
 
 import java.util.List;
@@ -88,4 +92,76 @@ public interface VideoWallService {
      * @return 任务列表
      */
     ResponseDTO<List<VideoDisplayTaskVO>> getTaskList(Long wallId);
+
+    /**
+     * 创建预案
+     *
+     * @param addForm 新增表单
+     * @return 预案ID
+     */
+    ResponseDTO<Long> createPreset(@Valid VideoWallPresetAddForm addForm);
+
+    /**
+     * 删除预案
+     *
+     * @param presetId 预案ID
+     * @return 操作结果
+     */
+    ResponseDTO<Void> deletePreset(Long presetId);
+
+    /**
+     * 查询预案列表
+     *
+     * @param wallId 电视墙ID
+     * @return 预案列表
+     */
+    ResponseDTO<List<VideoWallPresetVO>> getPresetList(Long wallId);
+
+    /**
+     * 调用预案
+     *
+     * @param presetId 预案ID
+     * @return 操作结果
+     */
+    ResponseDTO<Void> applyPreset(Long presetId);
+
+    /**
+     * 创建轮巡
+     *
+     * @param addForm 新增表单
+     * @return 轮巡ID
+     */
+    ResponseDTO<Long> createTour(@Valid VideoWallTourAddForm addForm);
+
+    /**
+     * 删除轮巡
+     *
+     * @param tourId 轮巡ID
+     * @return 操作结果
+     */
+    ResponseDTO<Void> deleteTour(Long tourId);
+
+    /**
+     * 查询轮巡列表
+     *
+     * @param wallId 电视墙ID
+     * @return 轮巡列表
+     */
+    ResponseDTO<List<VideoWallTourVO>> getTourList(Long wallId);
+
+    /**
+     * 启动轮巡
+     *
+     * @param tourId 轮巡ID
+     * @return 操作结果
+     */
+    ResponseDTO<Void> startTour(Long tourId);
+
+    /**
+     * 停止轮巡
+     *
+     * @param tourId 轮巡ID
+     * @return 操作结果
+     */
+    ResponseDTO<Void> stopTour(Long tourId);
 }

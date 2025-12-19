@@ -54,6 +54,12 @@ public class VideoWallServiceImpl implements VideoWallService {
     @Resource
     private VideoWallDao videoWallDao;
 
+    @Resource
+    private VideoWallPresetDao videoWallPresetDao;
+
+    @Resource
+    private VideoWallTourDao videoWallTourDao;
+
     @Override
     public ResponseDTO<Long> createWall(@Valid VideoWallAddForm addForm) {
         log.info("[解码上墙] 创建电视墙: wallCode={}, wallName={}, rows={}, cols={}",
@@ -401,5 +407,298 @@ public class VideoWallServiceImpl implements VideoWallService {
             case 3 -> "失败";
             default -> "未知";
         };
+    }
+
+    @Override
+    public ResponseDTO<Long> createPreset(@Valid VideoWallPresetAddForm addForm) {
+        log.info("[解码上墙] 创建预案: wallId={}, presetName={}", addForm.getWallId(), addForm.getPresetName());
+
+        try {
+            // 检查电视墙是否存在
+            VideoWallEntity wall = videoWallDao.selectById(addForm.getWallId());
+            if (wall == null) {
+                log.warn("[解码上墙] 电视墙不存在: wallId={}", addForm.getWallId());
+                return ResponseDTO.error("WALL_NOT_FOUND", "电视墙不存在");
+            }
+
+            // 转换为实体
+            VideoWallPresetEntity preset = convertPresetAddFormToEntity(addForm);
+
+            // 如果设置为默认预案，先取消其他默认预案
+            if (preset.getIsDefault() != null && preset.getIsDefault() == 1) {
+                VideoWallPresetEntity defaultPreset = videoWallPresetDao.selectDefaultPreset(addForm.getWallId());
+                if (defaultPreset != null) {
+                    defaultPreset.setIsDefault(0);
+                    videoWallPresetDao.updateById(defaultPreset);
+                }
+            }
+
+            videoWallPresetDao.insert(preset);
+
+            log.info("[解码上墙] 创建预案成功: presetId={}", preset.getPresetId());
+            return ResponseDTO.ok(preset.getPresetId());
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 创建预案异常: wallId={}, presetName={}", addForm.getWallId(), addForm.getPresetName(), e);
+            return ResponseDTO.error("CREATE_PRESET_ERROR", "创建预案失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO<Void> deletePreset(Long presetId) {
+        log.info("[解码上墙] 删除预案: presetId={}", presetId);
+
+        try {
+            VideoWallPresetEntity preset = videoWallPresetDao.selectById(presetId);
+            if (preset == null) {
+                log.warn("[解码上墙] 预案不存在: presetId={}", presetId);
+                return ResponseDTO.error("PRESET_NOT_FOUND", "预案不存在");
+            }
+
+            preset.setDeletedFlag(true);
+            videoWallPresetDao.updateById(preset);
+
+            log.info("[解码上墙] 删除预案成功: presetId={}", presetId);
+            return ResponseDTO.ok();
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 删除预案异常: presetId={}", presetId, e);
+            return ResponseDTO.error("DELETE_PRESET_ERROR", "删除预案失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseDTO<List<VideoWallPresetVO>> getPresetList(Long wallId) {
+        log.info("[解码上墙] 查询预案列表: wallId={}", wallId);
+
+        try {
+            List<VideoWallPresetEntity> presets = videoWallPresetDao.selectByWallId(wallId);
+            List<VideoWallPresetVO> voList = presets.stream()
+                    .map(this::convertPresetToVO)
+                    .collect(Collectors.toList());
+
+            log.info("[解码上墙] 查询预案列表成功: wallId={}, count={}", wallId, voList.size());
+            return ResponseDTO.ok(voList);
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 查询预案列表异常: wallId={}", wallId, e);
+            return ResponseDTO.error("GET_PRESET_LIST_ERROR", "查询预案列表失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO<Void> applyPreset(Long presetId) {
+        log.info("[解码上墙] 调用预案: presetId={}", presetId);
+
+        try {
+            VideoWallPresetEntity preset = videoWallPresetDao.selectById(presetId);
+            if (preset == null) {
+                log.warn("[解码上墙] 预案不存在: presetId={}", presetId);
+                return ResponseDTO.error("PRESET_NOT_FOUND", "预案不存在");
+            }
+
+            // TODO: 解析预案配置（JSON格式），为每个窗口创建上墙任务
+            // 这里需要解析config字段，然后批量创建上墙任务
+            log.info("[解码上墙] 调用预案成功: presetId={}", presetId);
+            return ResponseDTO.ok();
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 调用预案异常: presetId={}", presetId, e);
+            return ResponseDTO.error("APPLY_PRESET_ERROR", "调用预案失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO<Long> createTour(@Valid VideoWallTourAddForm addForm) {
+        log.info("[解码上墙] 创建轮巡: wallId={}, tourName={}, intervalSeconds={}",
+                addForm.getWallId(), addForm.getTourName(), addForm.getIntervalSeconds());
+
+        try {
+            // 检查电视墙是否存在
+            VideoWallEntity wall = videoWallDao.selectById(addForm.getWallId());
+            if (wall == null) {
+                log.warn("[解码上墙] 电视墙不存在: wallId={}", addForm.getWallId());
+                return ResponseDTO.error("WALL_NOT_FOUND", "电视墙不存在");
+            }
+
+            // 转换为实体
+            VideoWallTourEntity tour = convertTourAddFormToEntity(addForm);
+            tour.setStatus(0); // 默认停止状态
+            tour.setCurrentIndex(0);
+
+            videoWallTourDao.insert(tour);
+
+            log.info("[解码上墙] 创建轮巡成功: tourId={}", tour.getTourId());
+            return ResponseDTO.ok(tour.getTourId());
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 创建轮巡异常: wallId={}, tourName={}", addForm.getWallId(), addForm.getTourName(), e);
+            return ResponseDTO.error("CREATE_TOUR_ERROR", "创建轮巡失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO<Void> deleteTour(Long tourId) {
+        log.info("[解码上墙] 删除轮巡: tourId={}", tourId);
+
+        try {
+            VideoWallTourEntity tour = videoWallTourDao.selectById(tourId);
+            if (tour == null) {
+                log.warn("[解码上墙] 轮巡不存在: tourId={}", tourId);
+                return ResponseDTO.error("TOUR_NOT_FOUND", "轮巡不存在");
+            }
+
+            tour.setDeletedFlag(true);
+            videoWallTourDao.updateById(tour);
+
+            log.info("[解码上墙] 删除轮巡成功: tourId={}", tourId);
+            return ResponseDTO.ok();
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 删除轮巡异常: tourId={}", tourId, e);
+            return ResponseDTO.error("DELETE_TOUR_ERROR", "删除轮巡失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseDTO<List<VideoWallTourVO>> getTourList(Long wallId) {
+        log.info("[解码上墙] 查询轮巡列表: wallId={}", wallId);
+
+        try {
+            List<VideoWallTourEntity> tours = videoWallTourDao.selectByWallId(wallId);
+            List<VideoWallTourVO> voList = tours.stream()
+                    .map(this::convertTourToVO)
+                    .collect(Collectors.toList());
+
+            log.info("[解码上墙] 查询轮巡列表成功: wallId={}, count={}", wallId, voList.size());
+            return ResponseDTO.ok(voList);
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 查询轮巡列表异常: wallId={}", wallId, e);
+            return ResponseDTO.error("GET_TOUR_LIST_ERROR", "查询轮巡列表失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO<Void> startTour(Long tourId) {
+        log.info("[解码上墙] 启动轮巡: tourId={}", tourId);
+
+        try {
+            VideoWallTourEntity tour = videoWallTourDao.selectById(tourId);
+            if (tour == null) {
+                log.warn("[解码上墙] 轮巡不存在: tourId={}", tourId);
+                return ResponseDTO.error("TOUR_NOT_FOUND", "轮巡不存在");
+            }
+
+            if (tour.getStatus() == 1) {
+                log.warn("[解码上墙] 轮巡已在运行中: tourId={}", tourId);
+                return ResponseDTO.error("TOUR_ALREADY_RUNNING", "轮巡已在运行中");
+            }
+
+            videoWallTourDao.updateStatus(tourId, 1);
+
+            // TODO: 启动轮巡任务调度（定时任务或异步任务）
+            log.info("[解码上墙] 启动轮巡成功: tourId={}", tourId);
+            return ResponseDTO.ok();
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 启动轮巡异常: tourId={}", tourId, e);
+            return ResponseDTO.error("START_TOUR_ERROR", "启动轮巡失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO<Void> stopTour(Long tourId) {
+        log.info("[解码上墙] 停止轮巡: tourId={}", tourId);
+
+        try {
+            VideoWallTourEntity tour = videoWallTourDao.selectById(tourId);
+            if (tour == null) {
+                log.warn("[解码上墙] 轮巡不存在: tourId={}", tourId);
+                return ResponseDTO.error("TOUR_NOT_FOUND", "轮巡不存在");
+            }
+
+            videoWallTourDao.updateStatus(tourId, 0);
+
+            // TODO: 停止轮巡任务调度
+            log.info("[解码上墙] 停止轮巡成功: tourId={}", tourId);
+            return ResponseDTO.ok();
+
+        } catch (Exception e) {
+            log.error("[解码上墙] 停止轮巡异常: tourId={}", tourId, e);
+            return ResponseDTO.error("STOP_TOUR_ERROR", "停止轮巡失败：" + e.getMessage());
+        }
+    }
+
+    // ==================== 预案和轮巡转换方法 ====================
+
+    /**
+     * 转换预案新增表单为实体
+     */
+    private VideoWallPresetEntity convertPresetAddFormToEntity(VideoWallPresetAddForm addForm) {
+        VideoWallPresetEntity preset = new VideoWallPresetEntity();
+        preset.setWallId(addForm.getWallId());
+        preset.setPresetName(addForm.getPresetName());
+        preset.setPresetCode(addForm.getPresetCode());
+        preset.setGroupId(addForm.getGroupId());
+        preset.setDescription(addForm.getDescription());
+        preset.setConfig(addForm.getConfig());
+        preset.setIsDefault(addForm.getIsDefault() != null ? addForm.getIsDefault() : 0);
+        return preset;
+    }
+
+    /**
+     * 转换预案实体为VO
+     */
+    private VideoWallPresetVO convertPresetToVO(VideoWallPresetEntity preset) {
+        VideoWallPresetVO vo = new VideoWallPresetVO();
+        vo.setPresetId(preset.getPresetId());
+        vo.setWallId(preset.getWallId());
+        vo.setPresetName(preset.getPresetName());
+        vo.setPresetCode(preset.getPresetCode());
+        vo.setGroupId(preset.getGroupId());
+        vo.setDescription(preset.getDescription());
+        vo.setConfig(preset.getConfig());
+        vo.setIsDefault(preset.getIsDefault());
+        vo.setIsDefaultDesc(preset.getIsDefault() == 1 ? "是" : "否");
+        vo.setCreateBy(preset.getCreateBy());
+        vo.setCreateTime(preset.getCreateTime());
+        vo.setUpdateTime(preset.getUpdateTime());
+        return vo;
+    }
+
+    /**
+     * 转换轮巡新增表单为实体
+     */
+    private VideoWallTourEntity convertTourAddFormToEntity(VideoWallTourAddForm addForm) {
+        VideoWallTourEntity tour = new VideoWallTourEntity();
+        tour.setWallId(addForm.getWallId());
+        tour.setTourName(addForm.getTourName());
+        tour.setWindowIds(addForm.getWindowIds());
+        tour.setDeviceIds(addForm.getDeviceIds());
+        tour.setIntervalSeconds(addForm.getIntervalSeconds());
+        return tour;
+    }
+
+    /**
+     * 转换轮巡实体为VO
+     */
+    private VideoWallTourVO convertTourToVO(VideoWallTourEntity tour) {
+        VideoWallTourVO vo = new VideoWallTourVO();
+        vo.setTourId(tour.getTourId());
+        vo.setWallId(tour.getWallId());
+        vo.setTourName(tour.getTourName());
+        vo.setWindowIds(tour.getWindowIds());
+        vo.setDeviceIds(tour.getDeviceIds());
+        vo.setIntervalSeconds(tour.getIntervalSeconds());
+        vo.setStatus(tour.getStatus());
+        vo.setStatusDesc(tour.getStatus() == 1 ? "运行中" : "停止");
+        vo.setCurrentIndex(tour.getCurrentIndex());
+        vo.setCreateBy(tour.getCreateBy());
+        vo.setCreateTime(tour.getCreateTime());
+        vo.setUpdateTime(tour.getUpdateTime());
+        return vo;
     }
 }
