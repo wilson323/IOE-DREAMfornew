@@ -97,8 +97,9 @@ class ConsumeReportManagerTest {
                 transactions.add(mockTransaction);
 
                 when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-                // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
-                when(objectMapper.readValue(anyString(), any(TypeReference.class)))
+                // 正确的 Mockito Matcher 用法：使用带泛型的 TypeReference
+                when(objectMapper.readValue(anyString(),
+                                org.mockito.ArgumentMatchers.<TypeReference<Map<String, Object>>>any()))
                                 .thenReturn(Map.of("includeDetails", false));
                 when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                                 .thenReturn(transactions);
@@ -123,8 +124,9 @@ class ConsumeReportManagerTest {
                 transactions.add(mockTransaction);
 
                 when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-                // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
-                when(objectMapper.readValue(anyString(), any(TypeReference.class)))
+                // 正确的 Mockito Matcher 用法：使用带泛型的 TypeReference
+                when(objectMapper.readValue(anyString(),
+                                org.mockito.ArgumentMatchers.<TypeReference<Map<String, Object>>>any()))
                                 .thenReturn(Map.of("includeDetails", false));
                 when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                                 .thenReturn(transactions);
@@ -154,8 +156,9 @@ class ConsumeReportManagerTest {
                 transactions.add(mockTransaction);
 
                 when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-                // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
-                when(objectMapper.readValue(anyString(), any(TypeReference.class)))
+                // 正确的 Mockito Matcher 用法：使用带泛型的 TypeReference
+                when(objectMapper.readValue(anyString(),
+                                org.mockito.ArgumentMatchers.<TypeReference<Map<String, Object>>>any()))
                                 .thenReturn(Map.of("includeDetails", false));
                 when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                                 .thenReturn(transactions);
@@ -179,8 +182,9 @@ class ConsumeReportManagerTest {
                 transactions.add(mockTransaction);
 
                 when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-                // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
-                when(objectMapper.readValue(anyString(), any(TypeReference.class)))
+                // 正确的 Mockito Matcher 用法：使用带泛型的 TypeReference
+                when(objectMapper.readValue(anyString(),
+                                org.mockito.ArgumentMatchers.<TypeReference<Map<String, Object>>>any()))
                                 .thenReturn(Map.of("includeDetails", false));
                 when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                                 .thenReturn(transactions);
@@ -204,8 +208,9 @@ class ConsumeReportManagerTest {
                 transactions.add(mockTransaction);
 
                 when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-                // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
-                when(objectMapper.readValue(anyString(), any(TypeReference.class)))
+                // 正确的 Mockito Matcher 用法：使用带泛型的 TypeReference
+                when(objectMapper.readValue(anyString(),
+                                org.mockito.ArgumentMatchers.<TypeReference<Map<String, Object>>>any()))
                                 .thenReturn(Map.of("includeDetails", false));
                 when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                                 .thenReturn(transactions);
@@ -229,8 +234,9 @@ class ConsumeReportManagerTest {
                 transactions.add(mockTransaction);
 
                 when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-                // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
-                when(objectMapper.readValue(anyString(), any(TypeReference.class)))
+                // 正确的 Mockito Matcher 用法：使用带泛型的 TypeReference
+                when(objectMapper.readValue(anyString(),
+                                org.mockito.ArgumentMatchers.<TypeReference<Map<String, Object>>>any()))
                                 .thenReturn(Map.of("includeDetails", false));
                 when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                                 .thenReturn(transactions);

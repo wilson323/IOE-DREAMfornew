@@ -1,8 +1,12 @@
 package net.lab1024.sa.consume.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,18 +25,18 @@ import org.mockito.quality.Strictness;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
-import net.lab1024.sa.consume.service.impl.ConsumeMobileServiceImpl;
-import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
+import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
+import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
-import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.consume.domain.form.ConsumeMobileFaceForm;
+import net.lab1024.sa.consume.domain.form.ConsumeMobileNfcForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileQuickForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileScanForm;
-import net.lab1024.sa.consume.domain.form.ConsumeMobileNfcForm;
-import net.lab1024.sa.consume.domain.form.ConsumeMobileFaceForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserStatsVO;
 import net.lab1024.sa.consume.domain.vo.MobileBillDetailVO;
-import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.consume.service.impl.ConsumeMobileServiceImpl;
 
 /**
  * ConsumeMobileServiceImpl单元测试
@@ -164,8 +168,7 @@ class ConsumeMobileServiceImplTest {
     @DisplayName("Test syncOfflineTransactions - Not Implemented")
     void test_syncOfflineTransactions_NotImplemented() {
         // Given
-        net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm form =
-            new net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm();
+        net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm form = new net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm();
 
         // When & Then
         assertThrows(BusinessException.class, () -> {
@@ -186,8 +189,7 @@ class ConsumeMobileServiceImplTest {
     @DisplayName("Test validateConsumePermission - Not Implemented")
     void test_validateConsumePermission_NotImplemented() {
         // Given
-        net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm form =
-            new net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm();
+        net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm form = new net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm();
 
         // When & Then
         assertThrows(BusinessException.class, () -> {
@@ -214,9 +216,9 @@ class ConsumeMobileServiceImplTest {
         monthTransactions.add(tx2);
 
         when(consumeTransactionDao.selectList(any(LambdaQueryWrapper.class)))
-            .thenReturn(totalTransactions)  // First call for total
-            .thenReturn(todayTransactions)  // Second call for today
-            .thenReturn(monthTransactions); // Third call for month
+                .thenReturn(totalTransactions) // First call for total
+                .thenReturn(todayTransactions) // Second call for today
+                .thenReturn(monthTransactions); // Third call for month
 
         // When
         ConsumeMobileUserStatsVO result = consumeMobileServiceImpl.getUserStats(userId);
@@ -248,7 +250,7 @@ class ConsumeMobileServiceImplTest {
         // Given
         Long userId = 1001L;
         when(consumeTransactionDao.selectList(any(LambdaQueryWrapper.class)))
-            .thenReturn(new ArrayList<>());
+                .thenReturn(new ArrayList<>());
 
         // When
         ConsumeMobileUserStatsVO result = consumeMobileServiceImpl.getUserStats(userId);
@@ -269,15 +271,13 @@ class ConsumeMobileServiceImplTest {
     void test_getBillDetail_Success() {
         // Given
         String orderId = "ORDER001";
-        net.lab1024.sa.consume.entity.ConsumeRecordEntity consumeRecord =
-            new net.lab1024.sa.consume.entity.ConsumeRecordEntity();
+        net.lab1024.sa.consume.entity.ConsumeRecordEntity consumeRecord = new net.lab1024.sa.consume.entity.ConsumeRecordEntity();
         consumeRecord.setOrderNo(orderId);
         consumeRecord.setTransactionNo("TXN001");
         consumeRecord.setAmount(new BigDecimal("50.00"));
         consumeRecord.setConsumeTime(LocalDateTime.now());
 
-        net.lab1024.sa.consume.entity.PaymentRecordEntity paymentRecord =
-            new net.lab1024.sa.consume.entity.PaymentRecordEntity();
+        net.lab1024.sa.consume.entity.PaymentRecordEntity paymentRecord = new net.lab1024.sa.consume.entity.PaymentRecordEntity();
         paymentRecord.setTransactionNo("TXN001");
         paymentRecord.setPaymentAmount(new BigDecimal("50.00"));
         paymentRecord.setActualAmount(new BigDecimal("50.00"));
@@ -347,7 +347,3 @@ class ConsumeMobileServiceImplTest {
     }
 
 }
-
-
-
-

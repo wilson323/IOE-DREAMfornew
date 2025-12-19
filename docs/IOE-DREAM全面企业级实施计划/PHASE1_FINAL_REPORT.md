@@ -133,6 +133,7 @@ private Integer parseQrTypeToCode(String qrType) {
 ### 2. 统一类型转换工具
 
 使用 `ConsumeTypeConverter` 工具类统一处理类型转换：
+
 - 状态转换：Integer ↔ String
 - 金额转换：BigDecimal ↔ Long/String
 - ID转换：Long ↔ String
@@ -141,6 +142,7 @@ private Integer parseQrTypeToCode(String qrType) {
 ### 3. 四层架构规范
 
 严格遵循四层架构边界：
+
 - Controller层：仅负责接口控制
 - Service层：核心业务逻辑
 - Manager层：复杂流程编排
@@ -176,6 +178,7 @@ private Integer parseQrTypeToCode(String qrType) {
 **优先级**: P1（快速执行）
 
 **P0级任务（5个）**:
+
 1. 区域管理模块完善（2小时）
 2. 餐别分类模块完善（1.5小时）
 3. 账户类别与消费模式模块完善（2小时）

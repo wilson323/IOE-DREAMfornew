@@ -192,7 +192,100 @@ public class ConsumeAreaEntity extends BaseEntity {
     @Schema(description = "GPS位置信息（latitude,longitude）")
     private String gpsLocation;
 
-    
+    /**
+     * 层级
+     * <p>
+     * 区域在层级结构中的层级，1为顶级区域
+     * </p>
+     */
+    @TableField("level")
+    @Schema(description = "层级（1为顶级）")
+    private Integer level;
+
+    /**
+     * 定值配置（JSON格式）
+     * <p>
+     * 存储餐别制模式下的定值金额配置
+     * 示例：{"breakfast": {"amount": 5.00, "unit": "元"}, "lunch": {"amount": 12.00,
+     * "unit": "元"}}
+     * </p>
+     */
+    @TableField("fixed_value_config")
+    @Schema(description = "定值配置JSON")
+    private String fixedValueConfig;
+
+    /**
+     * 餐别分类（JSON数组格式）
+     * <p>
+     * 存储允许的餐别分类ID列表
+     * 示例：["1", "2", "3"]
+     * </p>
+     */
+    @TableField("meal_categories")
+    @Schema(description = "允许餐别分类IDs JSON数组")
+    private String mealCategories;
+
+    /**
+     * 营业开始时间
+     * <p>
+     * TIME类型，格式：HH:mm:ss
+     * </p>
+     */
+    @TableField("open_time")
+    @Schema(description = "营业开始时间")
+    private java.time.LocalTime openTime;
+
+    /**
+     * 营业结束时间
+     * <p>
+     * TIME类型，格式：HH:mm:ss
+     * </p>
+     */
+    @TableField("close_time")
+    @Schema(description = "营业结束时间")
+    private java.time.LocalTime closeTime;
+
+    /**
+     * 区域地址
+     */
+    @TableField("address")
+    @Schema(description = "区域地址")
+    private String address;
+
+    /**
+     * 负责人姓名
+     */
+    @TableField("contact_name")
+    @Schema(description = "负责人姓名")
+    private String contactName;
+
+    /**
+     * 联系电话
+     */
+    @TableField("contact_phone")
+    @Schema(description = "联系电话")
+    private String contactPhone;
+
+    /**
+     * 排序号
+     * <p>
+     * 用于区域列表排序，数值越小越靠前
+     * </p>
+     */
+    @TableField("sort_order")
+    @Schema(description = "排序号")
+    private Integer sortOrder;
+
+    /**
+     * 库存标记
+     * <p>
+     * 0-否，1-是。是否启用库存管理
+     * </p>
+     */
+    @TableField("inventory_flag")
+    @Schema(description = "是否启用库存：0否1是")
+    private Integer inventoryFlag;
+
     // 缺失的getter/setter方法 - 根据错误日志添加
     public Long getParentId() {
         return this.parentId;

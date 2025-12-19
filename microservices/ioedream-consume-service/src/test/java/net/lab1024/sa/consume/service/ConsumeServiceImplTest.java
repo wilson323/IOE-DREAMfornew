@@ -1,8 +1,13 @@
 package net.lab1024.sa.consume.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,7 +27,6 @@ import org.mockito.quality.Strictness;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionForm;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeDeviceStatisticsVO;
@@ -30,6 +34,7 @@ import net.lab1024.sa.consume.domain.vo.ConsumeDeviceVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeRealtimeStatisticsVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeTransactionDetailVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO;
+import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.manager.ConsumeDeviceManager;
 import net.lab1024.sa.consume.manager.ConsumeExecutionManager;
 import net.lab1024.sa.consume.service.impl.ConsumeServiceImpl;
@@ -93,8 +98,7 @@ class ConsumeServiceImplTest {
         // Given
         ConsumeTransactionEntity mockEntity = createMockTransactionEntity("TXN001");
         @SuppressWarnings("rawtypes")
-        net.lab1024.sa.common.dto.ResponseDTO successResponse =
-                net.lab1024.sa.common.dto.ResponseDTO.ok(mockEntity);
+        net.lab1024.sa.common.dto.ResponseDTO successResponse = net.lab1024.sa.common.dto.ResponseDTO.ok(mockEntity);
         doReturn(successResponse).when(consumeExecutionManager).executeConsumption(any());
 
         // When
@@ -182,7 +186,8 @@ class ConsumeServiceImplTest {
         // Then
         assertNotNull(result);
         assertNotNull(result.getList());
-        verify(consumeTransactionDao, times(1)).queryTransactions(any(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(consumeTransactionDao, times(1)).queryTransactions(any(), any(), any(), any(), any(), any(), any(),
+                any(), any());
     }
 
     @Test
@@ -190,8 +195,7 @@ class ConsumeServiceImplTest {
     void testGetDeviceDetail_Success() {
         // Given
         Long deviceId = 3001L;
-        net.lab1024.sa.common.organization.entity.DeviceEntity deviceEntity =
-                new net.lab1024.sa.common.organization.entity.DeviceEntity();
+        net.lab1024.sa.common.organization.entity.DeviceEntity deviceEntity = new net.lab1024.sa.common.organization.entity.DeviceEntity();
         deviceEntity.setDeviceId(String.valueOf(deviceId)); // DeviceEntity主键为String类型deviceId
         deviceEntity.setDeviceName("测试消费机");
 
@@ -258,12 +262,10 @@ class ConsumeServiceImplTest {
     // 辅助方法：创建模拟分页结果
     private com.baomidou.mybatisplus.core.metadata.IPage<ConsumeTransactionEntity> createMockPage(
             List<ConsumeTransactionEntity> list, Long total) {
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<ConsumeTransactionEntity> page =
-                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(1, Math.max(1, list.size()));
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<ConsumeTransactionEntity> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(
+                1, Math.max(1, list.size()));
         page.setRecords(list);
         page.setTotal(total != null ? total : 0L);
         return page;
     }
 }
-
-
