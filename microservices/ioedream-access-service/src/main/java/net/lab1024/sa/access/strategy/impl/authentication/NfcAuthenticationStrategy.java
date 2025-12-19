@@ -49,7 +49,7 @@ public class NfcAuthenticationStrategy extends AbstractAuthenticationStrategy {
         // - 设备端通过1:N比对识别出人员编号（pin）
         // - 设备端已验证认证方式是否支持（如果设备不支持，不会识别成功）
         // - 软件端只记录认证方式（verifytype）用于统计和审计
-        
+
         // 记录认证方式（用于统计和审计）
         // TODO: 后续扩展：统计各认证方式的使用次数
         // TODO: 后续扩展：提供认证方式使用报表

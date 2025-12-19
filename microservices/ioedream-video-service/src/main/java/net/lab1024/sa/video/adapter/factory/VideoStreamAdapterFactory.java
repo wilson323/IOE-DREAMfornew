@@ -45,7 +45,10 @@ public class VideoStreamAdapterFactory {
     /**
      * 构造函数注入ApplicationContext
      * <p>
-     * Spring 4.3+自动识别，无需@Autowired注解
+     * 严格遵循CLAUDE.md规范：
+     * - 使用构造函数注入（Spring 4.3+自动识别，无需@Autowired注解）
+     * - 构造函数注入是符合规范的依赖注入方式
+     * - 无需使用@Resource或@Autowired注解
      * </p>
      */
     public VideoStreamAdapterFactory(ApplicationContext applicationContext) {

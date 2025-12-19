@@ -4,7 +4,7 @@ import net.lab1024.sa.access.domain.form.AccessDeviceAddForm;
 import net.lab1024.sa.access.domain.form.AccessDeviceQueryForm;
 import net.lab1024.sa.access.domain.form.AccessDeviceUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessDeviceVO;
-import net.lab1024.sa.common.dto.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**

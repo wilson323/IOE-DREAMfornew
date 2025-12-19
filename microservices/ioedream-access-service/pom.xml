@@ -70,6 +70,19 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Common Storage (文件存储) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Boot AMQP (消息队列) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
         <!-- Spring Cloud Nacos Discovery (服务发现) -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

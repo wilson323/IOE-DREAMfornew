@@ -45,8 +45,13 @@ public class StrategyFactory<T> {
     private final Map<Class<?>, Map<String, T>> strategyCache = new ConcurrentHashMap<>();
 
     /**
-     * 构造函数注入（Spring 4.3+自动识别，无需@Autowired注解）
-     * 严格遵循CLAUDE.md规范：统一使用@Resource，但构造函数注入无需注解
+     * 构造函数注入
+     * <p>
+     * 严格遵循CLAUDE.md规范：
+     * - 使用构造函数注入（Spring 4.3+自动识别，无需@Autowired注解）
+     * - 构造函数注入是符合规范的依赖注入方式
+     * - 无需使用@Resource或@Autowired注解
+     * </p>
      */
     public StrategyFactory(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
