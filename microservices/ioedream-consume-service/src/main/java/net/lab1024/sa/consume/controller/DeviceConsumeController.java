@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.domain.form.PaymentProcessForm;
-import net.lab1024.sa.consume.service.PaymentService;
+import net.lab1024.sa.consume.consume.service.PaymentService;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.monitoring.BusinessMetrics;
 import org.springframework.web.bind.annotation.*;

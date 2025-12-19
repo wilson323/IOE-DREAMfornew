@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.service;
+package net.lab1024.sa.consume.consume.service;
 
 import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;

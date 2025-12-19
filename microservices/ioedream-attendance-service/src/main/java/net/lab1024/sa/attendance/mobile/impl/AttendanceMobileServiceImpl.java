@@ -50,7 +50,7 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
     private AttendanceRecordDao attendanceRecordDao;
 
     @Resource
-    private ShiftScheduleDao shiftScheduleDao;
+    private ScheduleRecordDao scheduleRecordDao;
 
     @Resource
     private UserDao userDao;
@@ -90,7 +90,8 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
     // ==================== 用户认证相关 ====================
 
     @Override
-    public ResponseDTO<MobileLoginResult> login(MobileLoginRequest request) {
+    public CompletableFuture<MobileLoginResult> login(MobileLoginRequest request) {
+        return CompletableFuture.supplyAsync(() -> {
         try {
             // 验证用户名密码（使用User实体进行认证）
             UserEntity user = userDao.selectByUsername(request.getUsername());
@@ -143,35 +144,41 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
             // 记录登录日志
             recordLoginEvent(user, employee, request);
 
-            return ResponseDTO.ok(loginResult);
+            return loginResult;
 
         } catch (Exception e) {
             log.error("[移动端登录] 失败: username={}, error={}", request.getUsername(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "登录失败，请重试");
+            throw new RuntimeException("登录失败，请重试: " + e.getMessage(), e);
         }
+        }, asyncExecutor);
     }
 
     @Override
-    public ResponseDTO<Void> logout(MobileLogoutRequest request) {
-        try {
-            // 验证并清除会话
-            MobileUserSession session = userSessionCache.get(request.getAccessToken());
-            if (session != null) {
-                userSessionCache.remove(request.getAccessToken());
-                recordLogoutEvent(session);
+    public CompletableFuture<MobileLogoutResult> logout(String token) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // 验证并清除会话
+                MobileUserSession session = userSessionCache.get(token);
+                if (session != null) {
+                    userSessionCache.remove(token);
+                    recordLogoutEvent(session);
+                }
+
+                // 清除设备信息
+                if (session != null && session.getEmployeeId() != null) {
+                    deviceInfoCache.remove("device:" + session.getEmployeeId());
+                }
+
+                return MobileLogoutResult.builder()
+                    .success(true)
+                    .message("登出成功")
+                    .build();
+
+            } catch (Exception e) {
+                log.error("[移动端登出] 失败: error={}", e.getMessage(), e);
+                throw new RuntimeException("登出失败，请重试: " + e.getMessage(), e);
             }
-
-            // 清除设备信息
-            if (session != null && session.getEmployeeId() != null) {
-                deviceInfoCache.remove("device:" + session.getEmployeeId());
-            }
-
-            return ResponseDTO.ok();
-
-        } catch (Exception e) {
-            log.error("[移动端登出] 失败: error={}", e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "登出失败，请重试");
-        }
+        }, asyncExecutor);
     }
 
     @Override
@@ -228,192 +235,211 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
     // ==================== 打卡相关 ====================
 
     @Override
-    public ResponseDTO<MobileClockInResult> clockIn(MobileClockInRequest request) {
-        try {
-            // 验证用户会话
-            MobileUserSession session = validateUserSession(request.getAccessToken());
-            if (session == null || session.getEmployeeId() == null || !session.getEmployeeId().equals(request.getEmployeeId())) {
-                return ResponseDTO.error("PERMISSION_DENIED", "用户身份验证失败");
-            }
-
-            // 验证生物识别
-            if (request.getBiometricData() != null) {
-                BiometricVerificationResult verificationResult = verifyBiometric(
-                    request.getEmployeeId(),
-                    request.getBiometricType(),
-                    request.getBiometricData()
-                );
-                if (!verificationResult.isVerified()) {
-                    return ResponseDTO.error("BIOMETRIC_FAILED",
-                        "生物识别验证失败: " + verificationResult.getFailureReason());
+    public CompletableFuture<MobileClockInResult> clockIn(MobileClockInRequest request, String token) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // 验证用户会话
+                MobileUserSession session = validateUserSession(token);
+                if (session == null || session.getEmployeeId() == null) {
+                    throw new RuntimeException("用户身份验证失败");
                 }
-            }
+                Long employeeId = session.getEmployeeId();
 
-            // 验证位置信息
-            if (request.getLocation() != null) {
-                LocationVerificationResult locationResult = verifyLocation(
-                    request.getEmployeeId(),
-                    request.getLocation()
-                );
-                if (!locationResult.isValid()) {
-                    log.warn("[移动端打卡] 位置验证失败: {}", locationResult.getFailureReason());
+                // 验证生物识别
+                if (request.getBiometricData() != null) {
+                    BiometricVerificationResult verificationResult = verifyBiometric(
+                        employeeId,
+                        request.getBiometricData().getType(),
+                        request.getBiometricData().getData()
+                    );
+                    if (!verificationResult.isVerified()) {
+                        throw new RuntimeException("生物识别验证失败: " + verificationResult.getFailureReason());
+                    }
                 }
+
+                // 验证位置信息
+                LocationInfo locationInfo = null;
+                if (request.getLocation() != null) {
+                    locationInfo = LocationInfo.builder()
+                        .latitude(request.getLocation().getLatitude())
+                        .longitude(request.getLocation().getLongitude())
+                        .address(request.getLocation().getAddress())
+                        .accuracy(request.getLocation().getAccuracy())
+                        .build();
+                    LocationVerificationResult locationResult = verifyLocation(employeeId, locationInfo);
+                    if (!locationResult.isValid()) {
+                        log.warn("[移动端打卡] 位置验证失败: {}", locationResult.getFailureReason());
+                    }
+                }
+
+                // 检查是否已打卡
+                List<AttendanceRecordEntity> todayRecords = attendanceRecordDao.selectByEmployeeAndDate(
+                    employeeId, LocalDate.now()
+                );
+
+                boolean hasClockIn = todayRecords.stream()
+                    .anyMatch(record -> record.getClockInTime() != null);
+
+                if (hasClockIn) {
+                    throw new RuntimeException("今日已上班打卡");
+                }
+
+                // 执行打卡
+                AttendanceClockInEvent clockInEvent = AttendanceClockInEvent.builder()
+                    .employeeId(employeeId)
+                    .deviceId(request.getDeviceCode() != null ? Long.parseLong(request.getDeviceCode()) : null)
+                    .location(locationInfo)
+                    .clockInTime(LocalDateTime.now())
+                    .biometricType(request.getBiometricData() != null ? request.getBiometricData().getType() : null)
+                    .biometricVerified(request.getBiometricData() != null)
+                    .locationVerified(request.getLocation() != null)
+                    .deviceType("MOBILE")
+                    .build();
+
+                // 创建考勤记录
+                AttendanceRecordEntity record = new AttendanceRecordEntity();
+                record.setUserId(employeeId);
+                record.setAttendanceDate(LocalDate.now());
+                record.setPunchTime(clockInEvent.getClockInTime());
+                record.setPunchType(0); // 0-上班打卡
+                record.setAttendanceType("CHECK_IN");
+                if (locationInfo != null) {
+                    record.setLongitude(java.math.BigDecimal.valueOf(locationInfo.getLongitude()));
+                    record.setLatitude(java.math.BigDecimal.valueOf(locationInfo.getLatitude()));
+                    record.setPunchAddress(locationInfo.getAddress());
+                }
+                attendanceRecordDao.insert(record);
+
+                // 构造返回结果
+                MobileClockInResult clockInResult = MobileClockInResult.builder()
+                    .employeeId(employeeId)
+                    .clockInTime(clockInEvent.getClockInTime())
+                    .clockInStatus("SUCCESS")
+                    .build();
+
+                // 异步处理后续任务
+                asyncExecutor.submit(() -> {
+                    sendClockInNotification(employeeId, clockInEvent);
+                });
+
+                return clockInResult;
+
+            } catch (Exception e) {
+                log.error("[移动端打卡上班] 失败: error={}", e.getMessage(), e);
+                throw new RuntimeException("打卡失败，请重试: " + e.getMessage(), e);
             }
-
-            // 检查是否已打卡
-            List<AttendanceRecordEntity> todayRecords = attendanceRecordDao.selectByEmployeeAndDate(
-                request.getEmployeeId(), LocalDate.now()
-            );
-
-            boolean hasClockIn = todayRecords.stream()
-                .anyMatch(record -> record.getClockInTime() != null);
-
-            if (hasClockIn) {
-                return ResponseDTO.error("ALREADY_CLOCKED_IN", "今日已上班打卡");
-            }
-
-            // 执行打卡
-            AttendanceClockInEvent clockInEvent = AttendanceClockInEvent.builder()
-                .employeeId(request.getEmployeeId())
-                .deviceId(request.getDeviceId())
-                .location(request.getLocation())
-                .clockInTime(LocalDateTime.now())
-                .biometricType(request.getBiometricType())
-                .biometricVerified(request.getBiometricData() != null)
-                .locationVerified(request.getLocation() != null)
-                .deviceType(detectDeviceType(request.getDeviceInfo()))
-                .build();
-
-            RealtimeCalculationResult result = realtimeCalculationEngine.processAttendanceEvent(
-                AttendanceEvent.fromClockIn(clockInEvent)
-            );
-
-            if (!result.isSuccess()) {
-                return ResponseDTO.error("CLOCK_IN_FAILED", result.getErrorMessage());
-            }
-
-            // 构造返回结果
-            MobileClockInResult clockInResult = MobileClockInResult.builder()
-                .employeeId(request.getEmployeeId())
-                .clockInTime(clockInEvent.getClockInTime())
-                .clockInStatus("SUCCESS")
-                .deviceInfo(request.getDeviceInfo())
-                .location(request.getLocation())
-                .biometricVerified(clockInEvent.isBiometricVerified())
-                .locationVerified(clockInEvent.isLocationVerified())
-                .workShiftInfo(getCurrentShift(request.getEmployeeId()))
-                .build();
-
-            // 异步处理后续任务
-            asyncExecutor.submit(() -> {
-                sendClockInNotification(request.getEmployeeId(), clockInEvent);
-                updateMobileDeviceCache(request.getEmployeeId(), request.getDeviceInfo());
-            });
-
-            return ResponseDTO.ok(clockInResult);
-
-        } catch (Exception e) {
-            log.error("[移动端打卡上班] 失败: 员工ID={}, error={}", request.getEmployeeId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "打卡失败，请重试");
-        }
+        }, asyncExecutor);
     }
 
     @Override
-    public ResponseDTO<MobileClockOutResult> clockOut(MobileClockOutRequest request) {
-        try {
-            // 验证用户会话
-            MobileUserSession session = validateUserSession(request.getAccessToken());
-            if (session == null || session.getEmployeeId() == null || !session.getEmployeeId().equals(request.getEmployeeId())) {
-                return ResponseDTO.error("PERMISSION_DENIED", "用户身份验证失败");
-            }
-
-            // 验证生物识别
-            if (request.getBiometricData() != null) {
-                BiometricVerificationResult verificationResult = verifyBiometric(
-                    request.getEmployeeId(),
-                    request.getBiometricType(),
-                    request.getBiometricData()
-                );
-                if (!verificationResult.isVerified()) {
-                    return ResponseDTO.error("BIOMETRIC_FAILED",
-                        "生物识别验证失败: " + verificationResult.getFailureReason());
+    public CompletableFuture<MobileClockOutResult> clockOut(MobileClockOutRequest request, String token) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // 验证用户会话
+                MobileUserSession session = validateUserSession(token);
+                if (session == null || session.getEmployeeId() == null) {
+                    throw new RuntimeException("用户身份验证失败");
                 }
-            }
+                Long employeeId = session.getEmployeeId();
 
-            // 验证位置信息
-            if (request.getLocation() != null) {
-                LocationVerificationResult locationResult = verifyLocation(
-                    request.getEmployeeId(),
-                    request.getLocation()
-                );
-                if (!locationResult.isValid()) {
-                    log.warn("[移动端打卡] 位置验证失败: {}", locationResult.getFailureReason());
+                // 验证生物识别
+                if (request.getBiometricData() != null) {
+                    BiometricVerificationResult verificationResult = verifyBiometric(
+                        employeeId,
+                        request.getBiometricData().getType(),
+                        request.getBiometricData().getData()
+                    );
+                    if (!verificationResult.isVerified()) {
+                        throw new RuntimeException("生物识别验证失败: " + verificationResult.getFailureReason());
+                    }
                 }
+
+                // 验证位置信息
+                LocationInfo locationInfo = null;
+                if (request.getLocation() != null) {
+                    locationInfo = LocationInfo.builder()
+                        .latitude(request.getLocation().getLatitude())
+                        .longitude(request.getLocation().getLongitude())
+                        .address(request.getLocation().getAddress())
+                        .accuracy(request.getLocation().getAccuracy())
+                        .build();
+                    LocationVerificationResult locationResult = verifyLocation(employeeId, locationInfo);
+                    if (!locationResult.isValid()) {
+                        log.warn("[移动端打卡] 位置验证失败: {}", locationResult.getFailureReason());
+                    }
+                }
+
+                // 检查是否已上班打卡
+                List<AttendanceRecordEntity> todayRecords = attendanceRecordDao.selectByEmployeeAndDate(
+                    employeeId, LocalDate.now()
+                );
+
+                boolean hasClockIn = todayRecords.stream()
+                    .anyMatch(record -> record.getClockInTime() != null);
+
+                if (!hasClockIn) {
+                    throw new RuntimeException("请先上班打卡");
+                }
+
+                boolean hasClockOut = todayRecords.stream()
+                    .anyMatch(record -> record.getClockOutTime() != null);
+
+                if (hasClockOut) {
+                    throw new RuntimeException("今日已下班打卡");
+                }
+
+                // 执行打卡
+                AttendanceClockOutEvent clockOutEvent = AttendanceClockOutEvent.builder()
+                    .employeeId(employeeId)
+                    .deviceId(request.getDeviceCode() != null ? Long.parseLong(request.getDeviceCode()) : null)
+                    .location(locationInfo)
+                    .clockOutTime(LocalDateTime.now())
+                    .biometricType(request.getBiometricData() != null ? request.getBiometricData().getType() : null)
+                    .biometricVerified(request.getBiometricData() != null)
+                    .locationVerified(request.getLocation() != null)
+                    .deviceType("MOBILE")
+                    .build();
+
+                // 创建考勤记录
+                AttendanceRecordEntity record = new AttendanceRecordEntity();
+                record.setUserId(employeeId);
+                record.setAttendanceDate(LocalDate.now());
+                record.setPunchTime(clockOutEvent.getClockOutTime());
+                record.setPunchType(1); // 1-下班打卡
+                record.setAttendanceType("CHECK_OUT");
+                if (locationInfo != null) {
+                    record.setLongitude(java.math.BigDecimal.valueOf(locationInfo.getLongitude()));
+                    record.setLatitude(java.math.BigDecimal.valueOf(locationInfo.getLatitude()));
+                    record.setPunchAddress(locationInfo.getAddress());
+                }
+                attendanceRecordDao.insert(record);
+
+                // 计算工作时长
+                Double workHours = calculateWorkHours(employeeId);
+
+                // 构造返回结果
+                MobileClockOutResult clockOutResult = MobileClockOutResult.builder()
+                    .success(true)
+                    .clockOutTime(clockOutEvent.getClockOutTime())
+                    .recordId(record.getRecordId())
+                    .workHours(workHours)
+                    .message("下班打卡成功")
+                    .timestamp(System.currentTimeMillis())
+                    .attendanceStatus("NORMAL")
+                    .build();
+
+                // 异步处理后续任务
+                asyncExecutor.submit(() -> {
+                    sendClockOutNotification(employeeId, clockOutEvent);
+                });
+
+                return clockOutResult;
+
+            } catch (Exception e) {
+                log.error("[移动端打卡下班] 失败: error={}", e.getMessage(), e);
+                throw new RuntimeException("打卡失败，请重试: " + e.getMessage(), e);
             }
-
-            // 检查是否已上班打卡
-            List<AttendanceRecordEntity> todayRecords = attendanceRecordDao.selectByEmployeeAndDate(
-                request.getEmployeeId(), LocalDate.now()
-            );
-
-            boolean hasClockIn = todayRecords.stream()
-                .anyMatch(record -> record.getClockInTime() != null);
-
-            if (!hasClockIn) {
-                return ResponseDTO.error("NOT_CLOCKED_IN", "请先上班打卡");
-            }
-
-            boolean hasClockOut = todayRecords.stream()
-                .anyMatch(record -> record.getClockOutTime() != null);
-
-            if (hasClockOut) {
-                return ResponseDTO.error("ALREADY_CLOCKED_OUT", "今日已下班打卡");
-            }
-
-            // 执行打卡
-            AttendanceClockOutEvent clockOutEvent = AttendanceClockOutEvent.builder()
-                .employeeId(request.getEmployeeId())
-                .deviceId(request.getDeviceId())
-                .location(request.getLocation())
-                .clockOutTime(LocalDateTime.now())
-                .biometricType(request.getBiometricType())
-                .biometricVerified(request.getBiometricData() != null)
-                .locationVerified(request.getLocation() != null)
-                .deviceType(detectDeviceType(request.getDeviceInfo()))
-                .build();
-
-            RealtimeCalculationResult result = realtimeCalculationEngine.processAttendanceEvent(
-                AttendanceEvent.fromClockOut(clockOutEvent)
-            );
-
-            if (!result.isSuccess()) {
-                return ResponseDTO.error("CLOCK_OUT_FAILED", result.getErrorMessage());
-            }
-
-            // 构造返回结果
-            MobileClockOutResult clockOutResult = MobileClockOutResult.builder()
-                .employeeId(request.getEmployeeId())
-                .clockOutTime(clockOutEvent.getClockOutTime())
-                .clockOutStatus("SUCCESS")
-                .deviceInfo(request.getDeviceInfo())
-                .location(request.getLocation())
-                .biometricVerified(clockOutEvent.isBiometricVerified())
-                .locationVerified(clockOutEvent.isLocationVerified())
-                .workHours(calculateWorkHours(request.getEmployeeId()))
-                .build();
-
-            // 异步处理后续任务
-            asyncExecutor.submit(() -> {
-                sendClockOutNotification(request.getEmployeeId(), clockOutEvent);
-                updateMobileDeviceCache(request.getEmployeeId(), request.getDeviceInfo());
-            });
-
-            return ResponseDTO.ok(clockOutResult);
-
-        } catch (Exception e) {
-            log.error("[移动端打卡下班] 失败: 员工ID={}, error={}", request.getEmployeeId(), e.getMessage(), e);
-            return ResponseDTO.error("SYSTEM_ERROR", "打卡失败，请重试");
-        }
+        }, asyncExecutor);
     }
 
     // ==================== 考勤状态查询 ====================
@@ -786,8 +812,8 @@ public class AttendanceMobileServiceImpl implements AttendanceMobileService {
      */
     private WorkShiftInfo getCurrentShift(Long employeeId) {
         try {
-            List<ShiftScheduleEntity> todaySchedules = shiftScheduleDao.selectByEmployeeAndDate(
-                employeeId, LocalDate.now()
+            List<ScheduleRecordEntity> todaySchedules = scheduleRecordDao.selectByEmployeeIdAndDateRange(
+                employeeId, LocalDate.now(), LocalDate.now()
             );
 
             if (todaySchedules.isEmpty()) {

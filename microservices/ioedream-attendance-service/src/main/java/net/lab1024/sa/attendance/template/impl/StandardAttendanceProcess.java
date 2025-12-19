@@ -61,7 +61,16 @@ public class StandardAttendanceProcess extends AbstractAttendanceProcessTemplate
         // 保存打卡记录
         AttendanceRecordEntity record = new AttendanceRecordEntity();
         record.setUserId(identity.getUserId());
-        record.setDeviceId(device.getDeviceId());
+        // 设备ID类型转换：DeviceEntity使用String，AttendanceRecordEntity使用Long
+        if (device.getDeviceId() != null) {
+            try {
+                record.setDeviceId(Long.parseLong(device.getDeviceId()));
+            } catch (NumberFormatException e) {
+                log.warn("[标准考勤流程] 设备ID格式转换失败: deviceId={}, error={}", device.getDeviceId(), e.getMessage());
+                // 如果转换失败，尝试使用hashCode作为临时ID（不推荐，但保证功能可用）
+                record.setDeviceId((long) device.getDeviceId().hashCode());
+            }
+        }
         record.setPunchTime(punchForm.getPunchTime() != null ? punchForm.getPunchTime() : LocalDateTime.now());
         record.setPunchType(punchForm.getPunchType());
         record.setPunchAddress(punchForm.getPunchAddress());
@@ -93,7 +102,7 @@ public class StandardAttendanceProcess extends AbstractAttendanceProcessTemplate
         }
 
         // 使用策略模式计算考勤结果
-        List<IAttendanceRuleStrategy> strategies = strategyFactory.getAll();
+        List<IAttendanceRuleStrategy> strategies = strategyFactory.getAll(IAttendanceRuleStrategy.class);
         strategies.sort(Comparator.comparingInt(IAttendanceRuleStrategy::getPriority).reversed());
 
         // 使用第一个策略（优先级最高）计算考勤结果

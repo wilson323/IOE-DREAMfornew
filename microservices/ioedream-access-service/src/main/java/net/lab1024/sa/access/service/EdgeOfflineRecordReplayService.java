@@ -82,13 +82,28 @@ public interface EdgeOfflineRecordReplayService {
         int getTotalCount();
 
         /**
+         * 设置总记录数
+         */
+        void setTotalCount(int totalCount);
+
+        /**
          * 最早记录时间
          */
         String getEarliestRecordTime();
 
         /**
+         * 设置最早记录时间
+         */
+        void setEarliestRecordTime(String earliestRecordTime);
+
+        /**
          * 最晚记录时间
          */
         String getLatestRecordTime();
+
+        /**
+         * 设置最晚记录时间
+         */
+        void setLatestRecordTime(String latestRecordTime);
     }
 }

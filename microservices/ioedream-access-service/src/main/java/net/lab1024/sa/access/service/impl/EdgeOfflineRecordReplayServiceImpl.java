@@ -97,7 +97,6 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
 
             // 2. 批量处理（分批补录，避免一次性处理过多）
             List<AccessRecordEntity> entitiesToInsert = new ArrayList<>();
-            int processedCount = 0;
 
             for (String recordUniqueId : recordUniqueIds) {
                 try {
@@ -122,7 +121,6 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
 
                     // 2.3 添加到待插入列表
                     entitiesToInsert.add(entity);
-                    processedCount++;
 
                     // 2.4 达到批量大小，执行批量插入
                     if (entitiesToInsert.size() >= BATCH_REPLAY_SIZE) {
@@ -248,7 +246,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
         try {
             String cacheKey = AccessCacheConstants.buildOfflineRecordKey(recordUniqueId);
             Object cached = redisTemplate.opsForValue().get(cacheKey);
-            if (cached instanceof AccessRecordEntity) {
+            if (cached != null && cached instanceof AccessRecordEntity) {
                 return (AccessRecordEntity) cached;
             }
             return null;
@@ -314,8 +312,10 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
      */
     private void deleteOfflineRecord(String recordUniqueId) {
         try {
+            if (recordUniqueId != null) {
             String cacheKey = AccessCacheConstants.buildOfflineRecordKey(recordUniqueId);
             redisTemplate.delete(cacheKey);
+            }
         } catch (Exception e) {
             log.warn("[离线记录补录] 删除离线记录缓存失败: recordUniqueId={}, error={}",
                     recordUniqueId, e.getMessage());

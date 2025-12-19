@@ -15,6 +15,7 @@ import java.time.LocalTime;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 /**
  * 考勤计算管理器
@@ -94,7 +95,7 @@ public class AttendanceCalculationManager {
 
         // 步骤3：使用策略模式计算考勤结果
         AttendanceRecordEntity firstRecord = punchRecords.get(0);
-        List<IAttendanceRuleStrategy> strategies = strategyFactory.getAll();
+        List<IAttendanceRuleStrategy> strategies = strategyFactory.getAll(IAttendanceRuleStrategy.class);
         strategies.sort(Comparator.comparingInt(IAttendanceRuleStrategy::getPriority).reversed());
 
         // 使用第一个策略（优先级最高）计算考勤结果
@@ -116,16 +117,25 @@ public class AttendanceCalculationManager {
     /**
      * 查询排班记录
      *
-     * @param userId 用户ID
+     * @param userId 用户ID（与employeeId相同）
      * @param date 日期
      * @return 排班记录
      */
     private ScheduleRecordEntity getScheduleRecord(Long userId, LocalDate date) {
-        // TODO: 实现排班记录查询逻辑
-        // 1. 根据userId和date查询排班记录
-        // 2. 返回排班信息（班次类型、开始时间、结束时间等）
         log.debug("[考勤计算管理器] 查询排班记录, userId={}, date={}", userId, date);
-        return null; // 临时实现
+        try {
+            // 根据userId（作为employeeId）和date查询排班记录
+            List<ScheduleRecordEntity> schedules = scheduleRecordDao.selectByEmployeeIdAndDateRange(
+                    userId, date, date);
+            if (schedules != null && !schedules.isEmpty()) {
+                return schedules.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            log.error("[考勤计算管理器] 查询排班记录异常: userId={}, date={}, error={}",
+                    userId, date, e.getMessage(), e);
+            return null;
+        }
     }
 
     /**
@@ -136,11 +146,20 @@ public class AttendanceCalculationManager {
      * @return 打卡记录列表
      */
     private List<AttendanceRecordEntity> getPunchRecords(Long userId, LocalDate date) {
-        // TODO: 实现打卡记录查询逻辑
-        // 1. 根据userId和date查询打卡记录
-        // 2. 返回打卡记录列表（上班打卡、下班打卡）
         log.debug("[考勤计算管理器] 查询打卡记录, userId={}, date={}", userId, date);
-        return List.of(); // 临时实现
+        try {
+            // 根据userId和date查询打卡记录
+            return attendanceRecordDao.selectList(
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRecordEntity>()
+                            .eq(AttendanceRecordEntity::getUserId, userId)
+                            .eq(AttendanceRecordEntity::getAttendanceDate, date)
+                            .orderByAsc(AttendanceRecordEntity::getPunchTime)
+            );
+        } catch (Exception e) {
+            log.error("[考勤计算管理器] 查询打卡记录异常: userId={}, date={}, error={}",
+                    userId, date, e.getMessage(), e);
+            return List.of();
+        }
     }
 
     /**

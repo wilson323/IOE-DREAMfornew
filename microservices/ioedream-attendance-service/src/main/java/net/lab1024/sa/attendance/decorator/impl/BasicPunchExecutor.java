@@ -28,16 +28,18 @@ public class BasicPunchExecutor implements IPunchExecutor {
     private AttendanceRecordDao attendanceRecordDao;
 
     @Override
-    public PunchResult execute(MobilePunchRequest request) {
+    public IPunchExecutor.PunchResult execute(IPunchExecutor.MobilePunchRequest request) {
         // 基础打卡逻辑
         AttendanceRecordEntity record = new AttendanceRecordEntity();
         record.setUserId(request.getUserId());
         record.setPunchTime(LocalDateTime.now());
-        record.setPunchType(request.getPunchType() != null ? Integer.parseInt(request.getPunchType()) : 0);
+        // 设置打卡类型：0-上班打卡，1-下班打卡
+        Integer punchType = request.getPunchType() != null ? Integer.parseInt(request.getPunchType()) : 0;
+        record.setPunchType(punchType);
 
         attendanceRecordDao.insert(record);
 
         log.debug("[基础打卡执行器] 打卡成功, userId={}, recordId={}", request.getUserId(), record.getRecordId());
-        return PunchResult.success(record);
+        return IPunchExecutor.PunchResult.success(record);
     }
 }

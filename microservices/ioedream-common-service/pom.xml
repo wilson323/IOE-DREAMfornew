@@ -83,6 +83,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Common Module (公共模块 - 包含SeataTransactionManager等) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Redisson分布式锁（使用父POM统一版本） -->
         <dependency>
             <groupId>org.redisson</groupId>
