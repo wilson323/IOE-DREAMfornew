@@ -107,7 +107,7 @@ public class UnifiedCacheManager {
      * @param <T> 值类型
      * @return 缓存值
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "null"})
     public <T> T get(String key, Class<T> type, Supplier<T> loader) {
         // L1: 本地缓存
         T value = (T) localCache.getIfPresent(key);
@@ -123,8 +123,9 @@ public class UnifiedCacheManager {
         }
 
         // L2: Redis缓存
-        value = (T) redisTemplate.opsForValue().get(key);
-        if (value != null) {
+        Object redisValue = redisTemplate.opsForValue().get(key);
+        if (redisValue != null) {
+            value = (T) redisValue;
             log.debug("[多级缓存] L2命中: key={}", key);
             localCache.put(key, value);
             return value;
@@ -136,8 +137,9 @@ public class UnifiedCacheManager {
         try {
             if (lock.tryLock(5, TimeUnit.SECONDS)) {
                 // 双重检查
-                value = (T) redisTemplate.opsForValue().get(key);
-                if (value != null) {
+                Object redisValueDoubleCheck = redisTemplate.opsForValue().get(key);
+                if (redisValueDoubleCheck != null) {
+                    value = (T) redisValueDoubleCheck;
                     log.debug("[多级缓存] L2双重检查命中: key={}", key);
                     localCache.put(key, value);
                     return value;
@@ -176,10 +178,11 @@ public class UnifiedCacheManager {
      *
      * @param key 缓存键
      * @param value 缓存值
-     * @param ttl 过期时间
+     * @param ttl 过期时间（不能为null）
      */
+    @SuppressWarnings("null")
     public void put(String key, Object value, Duration ttl) {
-        if (key == null || value == null) {
+        if (key == null || value == null || ttl == null) {
             return;
         }
 

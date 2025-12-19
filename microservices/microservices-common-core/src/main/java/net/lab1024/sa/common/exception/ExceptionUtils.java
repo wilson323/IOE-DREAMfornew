@@ -1,7 +1,6 @@
 package net.lab1024.sa.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
