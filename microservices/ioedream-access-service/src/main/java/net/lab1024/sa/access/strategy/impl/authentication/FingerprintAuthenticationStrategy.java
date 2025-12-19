@@ -15,10 +15,20 @@ import org.springframework.stereotype.Component;
  * - 继承AbstractAuthenticationStrategy抽象类
  * </p>
  * <p>
- * 核心职责：
- * - 处理指纹识别认证逻辑
- * - 支持多指指纹识别
- * - 记录指纹认证结果
+ * ⚠️ 重要说明：不是进行人员识别
+ * </p>
+ * <p>
+ * <strong>设备端已完成人员识别</strong>：
+ * - 设备端通过指纹识别（1:N比对）识别出人员编号（pin）
+ * - 设备端发送请求到软件端：pin=1001, verifytype=1
+ * - 软件端接收的是人员编号（pin），不是指纹特征数据
+ * </p>
+ * <p>
+ * <strong>核心职责是验证认证方式是否允许</strong>：
+ * - 验证用户是否允许使用指纹认证方式
+ * - 验证区域配置中是否允许指纹认证
+ * - 验证设备配置中是否支持指纹认证
+ * - 记录指纹认证方式（用于统计和审计）
  * </p>
  *
  * @author IOE-DREAM Team
@@ -31,11 +41,17 @@ public class FingerprintAuthenticationStrategy extends AbstractAuthenticationStr
 
     @Override
     protected VerificationResult doAuthenticate(AccessVerificationRequest request) {
-        log.debug("[指纹认证] 执行认证: userId={}, deviceId={}", request.getUserId(), request.getDeviceId());
+        log.debug("[指纹认证] 验证认证方式是否允许: userId={}, deviceId={}, areaId={}",
+                request.getUserId(), request.getDeviceId(), request.getAreaId());
 
-        // 边缘验证模式下，设备端已完成指纹识别
-        // 软件端只需要验证用户权限
-        return VerificationResult.success("指纹认证通过", null, "fingerprint");
+        // TODO: 后续扩展：检查用户权限配置中是否允许指纹认证
+        // TODO: 后续扩展：检查区域配置中是否允许指纹认证
+        // TODO: 后续扩展：检查设备配置中是否支持指纹认证
+
+        // 当前实现：默认允许使用指纹认证方式
+        // 实际的权限验证在AccessVerificationManager中完成（反潜、互锁、时间段等）
+
+        return VerificationResult.success("指纹认证方式验证通过", null, "fingerprint");
     }
 
     @Override

@@ -13,6 +13,22 @@ import net.lab1024.sa.access.domain.enumeration.VerifyTypeEnum;
  * - 可扩展新的认证方式
  * </p>
  * <p>
+ * ⚠️ 重要说明：多模态认证的作用
+ * </p>
+ * <p>
+ * <strong>不是进行人员识别</strong>：
+ * - 设备端已完成人员识别（人脸、指纹、卡片等）
+ * - 设备端已识别出人员编号（pin字段）
+ * - 软件端接收的是人员编号（pin），不是生物特征数据
+ * </p>
+ * <p>
+ * <strong>核心职责是验证认证方式是否允许</strong>：
+ * - 验证用户是否允许使用该认证方式（例如：某些区域只允许人脸，不允许密码）
+ * - 验证区域配置中是否允许该认证方式
+ * - 验证设备配置中是否支持该认证方式
+ * - 记录认证方式（用于统计和审计）
+ * </p>
+ * <p>
  * 实现类：
  * - FaceAuthenticationStrategy - 人脸认证策略
  * - FingerprintAuthenticationStrategy - 指纹认证策略
@@ -32,13 +48,20 @@ import net.lab1024.sa.access.domain.enumeration.VerifyTypeEnum;
 public interface MultiModalAuthenticationStrategy {
 
     /**
-     * 执行认证
+     * 验证用户是否允许使用该认证方式
      * <p>
-     * 根据不同的认证方式执行相应的认证逻辑
+     * ⚠️ 注意：不是进行人员识别，而是验证用户是否允许使用该认证方式
+     * </p>
+     * <p>
+     * 设备端已完成人员识别，并发送了人员编号（pin）
+     * 软件端根据pin和verifyType验证：
+     * - 用户权限配置中是否允许该认证方式
+     * - 区域配置中是否允许该认证方式
+     * - 设备配置中是否支持该认证方式
      * </p>
      *
-     * @param request 验证请求
-     * @return 认证结果
+     * @param request 验证请求（包含userId、verifyType等，设备端已识别出人员编号）
+     * @return 认证方式验证结果
      */
     VerificationResult authenticate(AccessVerificationRequest request);
 

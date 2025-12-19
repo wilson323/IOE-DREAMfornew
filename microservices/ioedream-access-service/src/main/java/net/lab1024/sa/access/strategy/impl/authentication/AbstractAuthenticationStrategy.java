@@ -15,11 +15,28 @@ import net.lab1024.sa.access.strategy.MultiModalAuthenticationStrategy;
  * - 使用模板方法模式
  * </p>
  * <p>
- * 核心职责：
- * - 提供通用的认证流程框架
- * - 处理通用的参数验证和异常处理
- * - 记录认证日志和指标
+ * ⚠️ 重要说明：多模态认证的作用
  * </p>
+ * <p>
+ * <strong>不是进行人员识别</strong>：
+ * - 设备端已完成人员识别（人脸、指纹、卡片等）
+ * - 设备端已识别出人员编号（pin字段）
+ * - 软件端接收的是人员编号（pin），不是生物特征数据
+ * </p>
+ * <p>
+ * <strong>核心职责是验证认证方式是否允许</strong>：
+ * - 验证用户是否允许使用该认证方式（例如：某些区域只允许人脸，不允许密码）
+ * - 验证区域配置中是否允许该认证方式
+ * - 验证设备配置中是否支持该认证方式
+ * - 记录认证方式（用于统计和审计）
+ * </p>
+ * <p>
+ * 两种验证模式的区别：
+ * </p>
+ * <ul>
+ * <li><strong>边缘验证模式（Edge）</strong>：设备端已完成验证，软件端只记录认证方式</li>
+ * <li><strong>后台验证模式（Backend）</strong>：设备端已识别人员，软件端验证认证方式是否允许</li>
+ * </ul>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -29,16 +46,25 @@ import net.lab1024.sa.access.strategy.MultiModalAuthenticationStrategy;
 public abstract class AbstractAuthenticationStrategy implements MultiModalAuthenticationStrategy {
 
     /**
-     * 执行认证（模板方法）
+     * 执行认证方式验证（模板方法）
+     * <p>
+     * ⚠️ 注意：不是进行人员识别，而是验证用户是否允许使用该认证方式
+     * </p>
      * <p>
      * 定义统一的认证流程：
      * 1. 参数验证
-     * 2. 执行具体认证逻辑（由子类实现）
+     * 2. 执行具体认证方式验证逻辑（由子类实现）
      * 3. 记录认证结果
      * </p>
+     * <p>
+     * 验证内容：
+     * - 用户权限配置中是否允许该认证方式
+     * - 区域配置中是否允许该认证方式
+     * - 设备配置中是否支持该认证方式
+     * </p>
      *
-     * @param request 验证请求
-     * @return 认证结果
+     * @param request 验证请求（包含userId、verifyType等，设备端已识别出人员编号）
+     * @return 认证方式验证结果
      */
     @Override
     public VerificationResult authenticate(AccessVerificationRequest request) {
@@ -94,15 +120,31 @@ public abstract class AbstractAuthenticationStrategy implements MultiModalAuthen
     }
 
     /**
-     * 执行具体认证逻辑
+     * 执行具体认证方式验证逻辑
      * <p>
-     * 由子类实现具体的认证逻辑
+     * ⚠️ 注意：不是进行人员识别，而是验证用户是否允许使用该认证方式
+     * </p>
+     * <p>
+     * 由子类实现具体的认证方式验证逻辑：
+     * - 检查用户权限配置中是否允许该认证方式
+     * - 检查区域配置中是否允许该认证方式
+     * - 检查设备配置中是否支持该认证方式
+     * </p>
+     * <p>
+     * 默认实现：返回成功（表示允许使用该认证方式）
+     * 子类可以重写此方法实现更严格的验证逻辑
      * </p>
      *
-     * @param request 验证请求
-     * @return 认证结果
+     * @param request 验证请求（包含userId、verifyType等，设备端已识别出人员编号）
+     * @return 认证方式验证结果
      */
-    protected abstract VerificationResult doAuthenticate(AccessVerificationRequest request);
+    protected VerificationResult doAuthenticate(AccessVerificationRequest request) {
+        // 默认实现：允许使用该认证方式
+        // 子类可以重写此方法实现更严格的验证逻辑（例如：检查用户权限、区域配置、设备配置）
+        log.debug("[{}] 认证方式验证通过（默认实现）: userId={}, verifyType={}",
+                getStrategyName(), request.getUserId(), request.getVerifyType());
+        return VerificationResult.success("认证方式验证通过", null, getVerifyType().getName().toLowerCase());
+    }
 
     /**
      * 记录认证结果

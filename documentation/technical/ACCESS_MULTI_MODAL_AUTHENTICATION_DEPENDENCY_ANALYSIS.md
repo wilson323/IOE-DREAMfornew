@@ -242,73 +242,67 @@ Config → Manager → Strategy
 
 ### 1. 与AccessVerificationManager的集成
 
-**当前状态**: ✅ **不需要集成**
+**当前状态**: ⚠️ **未集成**
 
-**原因说明**:
-- ⚠️ **多模态认证不用于人员识别**：人员识别已在设备端完成（request中已包含userId）
-- ✅ **多模态认证只记录认证方式**：记录用户使用了哪种认证方式（人脸/指纹/卡片等）
-- ✅ **AccessVerificationManager负责权限验证**：反潜回、互锁、时间段等权限验证，不涉及人员识别
+**⚠️ 重要说明：多模态认证的正确作用**:
+- ❌ **不是进行人员识别**（设备端已完成人员识别，并发送了pin）
+- ✅ **是验证用户是否允许使用该认证方式**（例如：某些区域只允许人脸，不允许密码）
 
-**正确的职责划分**:
+**集成建议**:
+- 在 `BackendVerificationStrategy` 中，调用 `MultiModalAuthenticationManager.authenticate()` 验证认证方式是否允许
+- 在 `EdgeVerificationStrategy` 中，只记录认证方式，不验证（设备端已完成验证）
+
+**集成代码示例**:
+```java
+// 在BackendVerificationStrategy中（后台验证模式）
+@Resource
+private MultiModalAuthenticationManager multiModalAuthenticationManager;
+
+public VerificationResult verify(AccessVerificationRequest request) {
+    // 1. 验证用户是否允许使用该认证方式（不是识别用户）
+    VerificationResult authMethodResult = multiModalAuthenticationManager.authenticate(request);
+    if (!authMethodResult.isSuccess()) {
+        // 用户不允许使用该认证方式（例如：该区域只允许人脸，不允许密码）
+        return VerificationResult.failed("AUTH_METHOD_NOT_ALLOWED", "不允许使用该认证方式");
+    }
+    
+    // 2. 其他验证（反潜回、互锁、时间段等）
+    // ...
+}
+
+// 在EdgeVerificationStrategy中（边缘验证模式）
+// 只记录认证方式，不验证（设备端已完成验证）
+VerifyTypeEnum verifyTypeEnum = VerifyTypeEnum.getByCode(request.getVerifyType());
+log.info("[设备端验证] 认证方式: {}", verifyTypeEnum.getDescription());
 ```
-设备端职责：
-├─ 生物特征识别（人脸/指纹等）→ 识别是哪个人员（userId）
-├─ 单设备内反潜回验证
-└─ 设备端权限验证（边缘验证模式）
-
-软件端职责：
-├─ 接收通行记录（设备端已识别出userId）
-├─ 记录认证方式（使用VerifyTypeEnum）
-├─ 跨设备反潜回验证（AccessVerificationManager）
-├─ 互锁验证（AccessVerificationManager）
-├─ 时间段验证（AccessVerificationManager）
-└─ 统计分析
-```
-
-**结论**: ✅ **多模态认证模块不需要集成到AccessVerificationManager**
 
 ### 2. 与EdgeVerificationStrategy的集成
 
 **当前状态**: ✅ **已集成**
 
 **集成内容**:
-- ✅ `EdgeVerificationStrategy.convertToEntity()` - 使用 `VerifyTypeEnum.getByCode()` 记录认证方式
-- ✅ 在存储通行记录时，使用枚举统一管理认证方式
+- `EdgeVerificationStrategy` 在接收记录时，使用 `VerifyTypeEnum.getByCode()` 记录认证方式
+- 只记录认证方式，不验证（设备端已完成验证）
 
 **集成代码**:
 ```java
 // 在EdgeVerificationStrategy中（已实现）
-if (request.getVerifyType() != null) {
-    VerifyTypeEnum verifyTypeEnum = VerifyTypeEnum.getByCode(request.getVerifyType());
-    if (verifyTypeEnum != null) {
-        entity.setVerifyMethod(verifyTypeEnum.getName());
-    }
+VerifyTypeEnum verifyTypeEnum = VerifyTypeEnum.getByCode(request.getVerifyType());
+if (verifyTypeEnum != null) {
+    entity.setVerifyMethod(verifyTypeEnum.getName());
+} else {
+    log.warn("[设备端验证] 不支持的认证方式: verifyType={}, 使用默认值CARD", request.getVerifyType());
+    entity.setVerifyMethod("CARD");
 }
 ```
-
-**作用**: ✅ 记录用户使用了哪种认证方式（人脸/指纹/卡片等），不进行人员识别
 
 ### 3. 与AccessRecordBatchService的集成
 
-**当前状态**: ✅ **已集成**
+**当前状态**: ⚠️ **未集成**
 
-**集成内容**:
-- ✅ `AccessRecordBatchServiceImpl.convertVerifyMethodToType()` - 使用 `VerifyTypeEnum.getByName()` 统一转换
-- ✅ 在批量上传时，使用枚举统一管理认证方式转换
-
-**集成代码**:
-```java
-// 在AccessRecordBatchServiceImpl中（已实现）
-private Integer convertVerifyMethodToType(String verifyMethod) {
-    VerifyTypeEnum verifyTypeEnum = VerifyTypeEnum.getByName(verifyMethod);
-    if (verifyTypeEnum != null) {
-        return verifyTypeEnum.getCode();
-    }
-    return VerifyTypeEnum.CARD.getCode(); // 默认卡片
-}
-```
-
-**作用**: ✅ 统一转换认证方式字符串为代码，不进行人员识别
+**集成建议**:
+- `AccessRecordBatchService` 在批量上传时，可以使用 `VerifyTypeEnum` 进行认证方式转换
+- 当前代码中的 `convertVerifyMethodToType()` 方法可以优化为使用 `VerifyTypeEnum`
 
 ---
 
@@ -395,10 +389,10 @@ private Integer convertVerifyMethodToType(String verifyMethod) {
 
 ### 集成检查
 
-- [x] 与AccessVerificationManager集成（✅ 不需要集成 - 多模态认证不用于人员识别）
-- [x] 与EdgeVerificationStrategy集成（✅ 已完成 - 使用VerifyTypeEnum记录认证方式）
-- [x] 与AccessRecordBatchService集成（✅ 已完成 - 使用VerifyTypeEnum转换认证方式）
-- [x] 与AntiPassbackService集成（✅ 已完成 - 使用VerifyTypeEnum获取认证方式描述）
+- [ ] 与AccessVerificationManager集成（待完成）
+- [x] 与EdgeVerificationStrategy集成（✅ 已完成 - 使用VerifyTypeEnum）
+- [x] 与AccessRecordBatchService集成（✅ 已完成 - 使用VerifyTypeEnum）
+- [x] 与AntiPassbackService集成（✅ 已完成 - 使用VerifyTypeEnum）
 
 ---
 
@@ -419,19 +413,14 @@ public VerificationResult authenticate(AccessVerificationRequest request) {
 }
 ```
 
-### 2. 多模态认证的正确作用（已明确）
+### 2. 集成到验证流程
 
-**优先级**: ✅ **已明确，无需集成到验证流程**
+**优先级**: 🔴 P0
 
-**正确理解**:
-- ✅ **多模态认证不用于人员识别**：人员识别已在设备端完成
-- ✅ **多模态认证只记录认证方式**：记录用户使用了哪种认证方式（人脸/指纹/卡片等）
-- ✅ **已集成到记录存储流程**：EdgeVerificationStrategy、AccessRecordBatchService已使用VerifyTypeEnum
-
-**不需要集成到AccessVerificationManager的原因**:
-- AccessVerificationManager负责权限验证（反潜回、互锁、时间段等）
-- 人员识别已在设备端完成，不需要在AccessVerificationManager中再次识别
-- 多模态认证只记录认证方式，不参与权限验证流程
+**集成点**:
+- `AccessVerificationManager` - 在验证流程中调用多模态认证
+- `EdgeVerificationStrategy` - 记录认证方式时使用VerifyTypeEnum
+- `AccessRecordBatchService` - 批量上传时使用VerifyTypeEnum转换
 
 ### 3. 更新现有代码使用VerifyTypeEnum
 
@@ -471,57 +460,9 @@ public VerificationResult authenticate(AccessVerificationRequest request) {
 ## 🎯 下一步行动
 
 1. ✅ **代码统一**: 已统一使用VerifyTypeEnum替换硬编码转换逻辑
-2. ✅ **职责明确**: 已明确多模态认证不用于人员识别，只记录认证方式
+2. ⚠️ **集成验证流程**: 在AccessVerificationManager中集成多模态认证（待完成）
 3. ✅ **编译验证**: 编译通过，无语法错误
 4. ⚠️ **测试验证**: 需要验证所有9种认证策略正常工作（待完成）
-
----
-
-## ⚠️ 重要说明：多模态认证的正确作用
-
-### ❌ 错误理解
-
-**错误**: 多模态认证用于"识别是哪个人员"
-
-**为什么错误**:
-- 门禁设备识别验证人员是在**设备端**完成的
-- 设备端已完成人脸识别/指纹识别等，识别出是哪个人员（userId）
-- 软件端不应该再次进行人员识别
-
-### ✅ 正确理解
-
-**多模态认证模块的正确作用**:
-
-1. **记录和标识认证方式**
-   - 记录用户使用了哪种认证方式（人脸/指纹/卡片/密码等）
-   - 为通行记录提供认证方式信息
-   - 用于统计分析和审计
-
-2. **提供认证方式元数据**
-   - 为权限验证提供认证方式信息
-   - 为反潜回验证提供认证方式信息
-   - 为统计分析提供认证方式分类
-
-3. **支持多因子认证（未来扩展）**
-   - 支持多种认证方式的组合
-   - 支持认证方式的优先级和权重
-
-### 📊 设备端与软件端的职责划分
-
-**设备端职责**:
-- 生物特征识别（人脸/指纹/掌纹等）→ 识别是哪个人员（userId）
-- 单设备内反潜回验证
-- 设备端权限验证（如果配置为边缘验证模式）
-- 直接开门控制
-
-**软件端职责**:
-- 接收通行记录（设备端已识别出userId）
-- 记录认证方式（使用VerifyTypeEnum）
-- 跨设备反潜回验证（AccessVerificationManager）
-- 互锁验证、时间段验证、黑名单验证等
-- 统计分析
-
-**结论**: ✅ **多模态认证模块不需要集成到AccessVerificationManager，因为人员识别已在设备端完成**
 
 ---
 

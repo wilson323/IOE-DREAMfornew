@@ -19,12 +19,28 @@ import java.util.stream.Collectors;
  * - 在配置类中注册为Bean
  * </p>
  * <p>
- * 核心职责：
- * - 统一管理9种认证策略
- * - 根据认证方式自动选择策略
- * - 支持多因子认证（融合认证）
- * - 提供认证方式统计和分析
+ * ⚠️ 重要说明：多模态认证的作用
  * </p>
+ * <p>
+ * <strong>不是进行人员识别</strong>：
+ * - 设备端已完成人员识别（人脸、指纹、卡片等）
+ * - 设备端已识别出人员编号（pin字段）
+ * - 软件端接收的是人员编号（pin），不是生物特征数据
+ * </p>
+ * <p>
+ * <strong>核心职责是验证认证方式是否允许</strong>：
+ * - 验证用户是否允许使用该认证方式（例如：某些区域只允许人脸，不允许密码）
+ * - 验证区域配置中是否允许该认证方式
+ * - 验证设备配置中是否支持该认证方式
+ * - 记录认证方式（用于统计和审计）
+ * </p>
+ * <p>
+ * 两种验证模式的区别：
+ * </p>
+ * <ul>
+ * <li><strong>边缘验证模式（Edge）</strong>：设备端已完成验证，软件端只记录认证方式</li>
+ * <li><strong>后台验证模式（Backend）</strong>：设备端已识别人员，软件端验证认证方式是否允许</li>
+ * </ul>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -60,13 +76,23 @@ public class MultiModalAuthenticationManager {
     }
 
     /**
-     * 执行认证
+     * 验证用户是否允许使用该认证方式
+     * <p>
+     * ⚠️ 注意：不是进行人员识别，而是验证用户是否允许使用该认证方式
+     * </p>
+     * <p>
+     * 设备端已完成人员识别，并发送了人员编号（pin）
+     * 软件端根据pin和verifyType验证：
+     * - 用户权限配置中是否允许该认证方式
+     * - 区域配置中是否允许该认证方式
+     * - 设备配置中是否支持该认证方式
+     * </p>
      * <p>
      * 根据请求中的verifyType自动选择对应的认证策略
      * </p>
      *
-     * @param request 验证请求
-     * @return 认证结果
+     * @param request 验证请求（包含userId、verifyType等，设备端已识别出人员编号）
+     * @return 认证方式验证结果
      */
     public VerificationResult authenticate(AccessVerificationRequest request) {
         if (request == null || request.getVerifyType() == null) {
