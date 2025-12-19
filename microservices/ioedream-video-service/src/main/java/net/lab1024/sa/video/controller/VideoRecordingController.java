@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.video.domain.form.VideoRecordingQueryForm;
 import net.lab1024.sa.video.domain.form.VideoRecordingSearchForm;
@@ -64,10 +65,9 @@ public class VideoRecordingController {
     @PostMapping("/query")
     @Operation(summary = "分页查询录像列表", description = "根据条件分页查询录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<Map<String, Object>> queryRecordings(@Valid @RequestBody VideoRecordingQueryForm queryForm) {
+    public ResponseDTO<PageResult<VideoRecordingVO>> queryRecordings(@Valid @RequestBody VideoRecordingQueryForm queryForm) {
         log.info("[录像回放] 收到分页查询录像请求: {}", queryForm);
-        Map<String, Object> result = videoRecordingService.queryRecordings(queryForm);
-        return ResponseDTO.ok(result);
+        return videoRecordingService.queryRecordings(queryForm);
     }
 
     /**
@@ -79,11 +79,9 @@ public class VideoRecordingController {
     @PostMapping("/search")
     @Operation(summary = "搜索录像文件", description = "根据关键词搜索录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<List<VideoRecordingVO>> searchRecordings(
-            @Valid @RequestBody VideoRecordingSearchForm searchForm) {
+    public ResponseDTO<List<VideoRecordingVO>> searchRecordings(@Valid @RequestBody VideoRecordingSearchForm searchForm) {
         log.info("[录像回放] 收到搜索录像请求: {}", searchForm);
-        List<VideoRecordingVO> result = videoRecordingService.searchRecordings(searchForm);
-        return ResponseDTO.ok(result);
+        return videoRecordingService.searchRecordings(searchForm);
     }
 
     /**
@@ -201,7 +199,7 @@ public class VideoRecordingController {
     public ResponseDTO<Map<String, Object>> downloadRecording(
             @Parameter(description = "录像ID", required = true) @PathVariable Long recordingId) {
         log.info("[录像回放] 收到下载录像请求: recordingId={}", recordingId);
-        return SmartResponseUtil.smartResponse(videoRecordingService.downloadRecording(recordingId));
+        return videoRecordingService.downloadRecording(recordingId);
     }
 
     /**
@@ -260,7 +258,7 @@ public class VideoRecordingController {
     @GetMapping("/device/{deviceId}")
     @Operation(summary = "获取设备的录像列表", description = "获取指定设备的所有录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<Map<String, Object>> getDeviceRecordings(
+    public ResponseDTO<PageResult<VideoRecordingVO>> getDeviceRecordings(
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId,
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer pageNum,
             @Parameter(description = "页大小") @RequestParam(defaultValue = "20") Integer pageSize) {
@@ -280,15 +278,14 @@ public class VideoRecordingController {
     @GetMapping("/device/{deviceId}/channel/{channelId}")
     @Operation(summary = "获取通道的录像列表", description = "获取指定设备和通道的录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<Map<String, Object>> getChannelRecordings(
+    public ResponseDTO<PageResult<VideoRecordingVO>> getChannelRecordings(
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId,
             @Parameter(description = "通道ID", required = true) @PathVariable Long channelId,
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer pageNum,
             @Parameter(description = "页大小") @RequestParam(defaultValue = "20") Integer pageSize) {
         log.info("[录像回放] 收到获取通道录像请求: deviceId={}, channelId={}, pageNum={}, pageSize={}",
                 deviceId, channelId, pageNum, pageSize);
-        return SmartResponseUtil
-                .smartResponse(videoRecordingService.getChannelRecordings(deviceId, channelId, pageNum, pageSize));
+        return videoRecordingService.getChannelRecordings(deviceId, channelId, pageNum, pageSize);
     }
 
     /**
@@ -302,7 +299,7 @@ public class VideoRecordingController {
     @GetMapping("/events/{eventType}")
     @Operation(summary = "获取重要事件录像", description = "获取指定事件类型的录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<Map<String, Object>> getEventRecordings(
+    public ResponseDTO<PageResult<VideoRecordingVO>> getEventRecordings(
             @Parameter(description = "事件类型", required = true) @PathVariable String eventType,
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer pageNum,
             @Parameter(description = "页大小") @RequestParam(defaultValue = "20") Integer pageSize) {
@@ -352,11 +349,11 @@ public class VideoRecordingController {
     @GetMapping("/important")
     @Operation(summary = "获取重要录像列表", description = "获取所有标记为重要的录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<Map<String, Object>> getImportantRecordings(
+    public ResponseDTO<PageResult<VideoRecordingVO>> getImportantRecordings(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer pageNum,
             @Parameter(description = "页大小") @RequestParam(defaultValue = "20") Integer pageSize) {
         log.info("[录像回放] 收到获取重要录像请求: pageNum={}, pageSize={}", pageNum, pageSize);
-        return SmartResponseUtil.smartResponse(videoRecordingService.getImportantRecordings(pageNum, pageSize));
+        return videoRecordingService.getImportantRecordings(pageNum, pageSize);
     }
 
     /**
@@ -455,7 +452,7 @@ public class VideoRecordingController {
             @Parameter(description = "设备ID") @RequestParam(required = false) Long deviceId,
             @Parameter(description = "保留天数", required = true) @RequestParam Integer days) {
         log.info("[录像回放] 收到清理过期录像请求: deviceId={}, days={}", deviceId, days);
-        return SmartResponseUtil.smartResponse(videoRecordingService.cleanupExpiredRecordings(deviceId, days));
+        return videoRecordingService.cleanupExpiredRecordings(deviceId, days);
     }
 
     /**

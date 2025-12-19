@@ -20,8 +20,8 @@ import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
-import net.lab1024.sa.video.service.VideoPlayService;
 import net.lab1024.sa.video.service.VideoDeviceService;
+import net.lab1024.sa.video.service.VideoPlayService;
 
 /**
  * 视频播放服务实现类
@@ -182,7 +182,7 @@ public class VideoPlayServiceImpl implements VideoPlayService {
             LambdaQueryWrapper<DeviceEntity> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(DeviceEntity::getDeviceType, "CAMERA")
                     .eq(DeviceEntity::getDeletedFlag, 0)
-                    .eq(DeviceEntity::getEnabledFlag, 1); // 只查询启用的设备
+                    .eq(DeviceEntity::getEnabled, 1); // 只查询启用的设备
 
             // 区域筛选
             if (StringUtils.hasText(areaId)) {
@@ -250,10 +250,10 @@ public class VideoPlayServiceImpl implements VideoPlayService {
     /**
      * 构建视频流地址
      *
-     * @param device 设备实体
-     * @param channelId 通道ID
+     * @param device     设备实体
+     * @param channelId  通道ID
      * @param streamType 流类型
-     * @param protocol 协议类型
+     * @param protocol   协议类型
      * @return 视频流地址
      */
     private String buildStreamUrl(DeviceEntity device, Long channelId, String streamType, String protocol) {
@@ -290,7 +290,7 @@ public class VideoPlayServiceImpl implements VideoPlayService {
     /**
      * 构建截图URL
      *
-     * @param device 设备实体
+     * @param device    设备实体
      * @param channelId 通道ID
      * @return 截图URL
      */
@@ -320,27 +320,25 @@ public class VideoPlayServiceImpl implements VideoPlayService {
         vo.setAreaId(entity.getAreaId());
         vo.setDeviceIp(entity.getIpAddress());
         vo.setDevicePort(entity.getPort());
-        vo.setEnabledFlag(entity.getEnabledFlag() != null ? entity.getEnabledFlag() : 1);
+        vo.setEnabledFlag(entity.getEnabled() != null ? entity.getEnabled() : 1);
         vo.setCreateTime(entity.getCreateTime());
         vo.setUpdateTime(entity.getUpdateTime());
 
         // 转换设备状态
-        String deviceStatus = entity.getDeviceStatus();
-        if ("ONLINE".equals(deviceStatus)) {
-            vo.setDeviceStatus(1);
-            vo.setDeviceStatusDesc("在线");
-        } else if ("OFFLINE".equals(deviceStatus)) {
-            vo.setDeviceStatus(2);
-            vo.setDeviceStatusDesc("离线");
-        } else if ("MAINTAIN".equals(deviceStatus)) {
-            vo.setDeviceStatus(3);
-            vo.setDeviceStatusDesc("故障");
+        Integer deviceStatus = entity.getDeviceStatus();
+        if (deviceStatus != null) {
+            vo.setDeviceStatus(deviceStatus);
         } else {
             vo.setDeviceStatus(2);
+        }
+        if (deviceStatus != null && deviceStatus == 1) {
+            vo.setDeviceStatusDesc("在线");
+        } else if (deviceStatus != null && deviceStatus == 3) {
+            vo.setDeviceStatusDesc("故障");
+        } else {
             vo.setDeviceStatusDesc("离线");
         }
 
         return vo;
     }
 }
-

@@ -272,4 +272,28 @@ public class VideoDeviceEntity extends BaseEntity {
      */
     @TableField("extended_config")
     private String extendedConfig;
+
+    /**
+     * 兼容历史字段：getEnabledFlag（兼容方法）
+     * <p>
+     * 注意：VideoDeviceEntity 没有 enabled 字段，此方法用于兼容历史代码
+     * 实际应该使用 DeviceEntity（公共模块）的 getEnabled() 方法
+     * </p>
+     */
+    @TableField(exist = false)
+    private Integer enabledFlag;
+
+    /**
+     * 获取启用标志（兼容方法）
+     */
+    public Integer getEnabledFlag() {
+        return enabledFlag;
+    }
+
+    /**
+     * 设置启用标志（兼容方法）
+     */
+    public void setEnabledFlag(Integer enabledFlag) {
+        this.enabledFlag = enabledFlag;
+    }
 }

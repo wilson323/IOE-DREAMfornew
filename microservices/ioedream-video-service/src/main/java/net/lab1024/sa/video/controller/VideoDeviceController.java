@@ -1,6 +1,7 @@
 package net.lab1024.sa.video.controller;
 
-import net.lab1024.sa.common.permission.annotation.PermissionCheck;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,18 +20,17 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.video.domain.form.VideoDeviceAddForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceUpdateForm;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
 import net.lab1024.sa.video.service.VideoDeviceService;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.exception.ParamException;
-
-import java.util.List;
 
 /**
  * 视频设备管理PC端控制器
@@ -74,53 +74,32 @@ public class VideoDeviceController {
      * 严格遵循RESTful规范：查询操作使用GET方法
      * </p>
      *
-     * @param pageNum 页码（从1开始）
+     * @param pageNum  页码（从1开始）
      * @param pageSize 每页大小
-     * @param keyword 关键词（可选）
-     * @param areaId 区域ID（可选）
-     * @param status 设备状态（可选）
+     * @param keyword  关键词（可选）
+     * @param areaId   区域ID（可选）
+     * @param status   设备状态（可选）
      * @return 设备列表
      * @apiNote 示例请求：
-     * <pre>
+     *
+     *          <pre>
      * GET /api/v1/video/device/query?pageNum=1&pageSize=20&keyword=摄像头&areaId=4001&status=1
-     * </pre>
+     *          </pre>
      */
     @Observed(name = "video.device.queryDevices", contextualName = "video-device-query")
     @GetMapping("/query")
-    @Operation(
-            summary = "分页查询设备",
-            description = "根据条件分页查询视频设备，支持关键词搜索、区域筛选、状态筛选。严格遵循RESTful规范：查询操作使用GET方法。",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "查询成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "400",
-                            description = "参数错误"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "分页查询设备", description = "根据条件分页查询视频设备，支持关键词搜索、区域筛选、状态筛选。严格遵循RESTful规范：查询操作使用GET方法。", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "参数错误"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<PageResult<VideoDeviceVO>> queryDevices(
-            @Parameter(description = "页码（从1开始）")
-            @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "每页大小")
-            @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "关键词（设备名称、设备编号）")
-            @RequestParam(required = false) String keyword,
-            @Parameter(description = "区域ID（可选）")
-            @RequestParam(required = false) String areaId,
-            @Parameter(description = "设备状态（可选，1-在线，2-离线，3-故障）")
-            @RequestParam(required = false) Integer status) {
+            @Parameter(description = "页码（从1开始）") @RequestParam(defaultValue = "1") Integer pageNum,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "20") Integer pageSize,
+            @Parameter(description = "关键词（设备名称、设备编号）") @RequestParam(required = false) String keyword,
+            @Parameter(description = "区域ID（可选）") @RequestParam(required = false) String areaId,
+            @Parameter(description = "设备状态（可选，1-在线，2-离线，3-故障）") @RequestParam(required = false) Integer status) {
         log.info("[视频设备] 分页查询设备，pageNum={}, pageSize={}, keyword={}, areaId={}, status={}",
                 pageNum, pageSize, keyword, areaId, status);
         try {
@@ -163,41 +142,20 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.getDeviceDetail", contextualName = "video-device-get-detail")
     @GetMapping("/{deviceId}")
-    @Operation(
-            summary = "查询设备详情",
-            description = "根据设备ID查询设备详细信息，包括设备状态、IP地址、端口等",
-            parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
-            },
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "查询成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = VideoDeviceVO.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "404",
-                            description = "设备不存在"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "查询设备详情", description = "根据设备ID查询设备详细信息，包括设备状态、IP地址、端口等", parameters = {
+            @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
+    }, responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = VideoDeviceVO.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "设备不存在"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<VideoDeviceVO> getDeviceDetail(
             @Parameter(description = "设备ID", required = true) @PathVariable @NotNull Long deviceId) {
         log.info("[视频设备] 查询设备详情，deviceId={}", deviceId);
         try {
-            VideoDeviceVO device = videoDeviceService.getDeviceDetail(deviceId);
-            if (device == null) {
-                return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
-            }
-            return ResponseDTO.ok(device);
+            // Service层已返回统一响应格式（ResponseDTO）
+            return videoDeviceService.getDeviceDetail(deviceId);
         } catch (ParamException e) {
             log.warn("[视频设备] 查询设备详情参数错误，deviceId={}: {}", deviceId, e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
@@ -228,33 +186,17 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.addDevice", contextualName = "video-device-add")
     @PostMapping("/add")
-    @Operation(
-            summary = "新增视频设备",
-            description = "新增摄像头设备，支持完整的设备信息录入和扩展属性配置",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "新增成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = VideoDeviceVO.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "400",
-                            description = "参数错误"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "新增视频设备", description = "新增摄像头设备，支持完整的设备信息录入和扩展属性配置", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "新增成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = VideoDeviceVO.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "参数错误"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<VideoDeviceVO> addDevice(@Valid @RequestBody VideoDeviceAddForm addForm) {
         log.info("[视频设备] 新增设备，deviceCode={}, deviceName={}", addForm.getDeviceCode(), addForm.getDeviceName());
         try {
-            return videoDeviceService.addDevice(addForm);
+            ResponseDTO<VideoDeviceVO> response = videoDeviceService.addDevice(addForm);
+            return response;
         } catch (ParamException e) {
             log.warn("[视频设备] 新增设备参数错误: {}", e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
@@ -285,28 +227,12 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.updateDevice", contextualName = "video-device-update")
     @PutMapping("/update")
-    @Operation(
-            summary = "更新视频设备",
-            description = "更新设备基本信息和配置，支持部分字段更新",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "更新成功"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "400",
-                            description = "参数错误"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "404",
-                            description = "设备不存在"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "更新视频设备", description = "更新设备基本信息和配置，支持部分字段更新", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "更新成功"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "参数错误"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "设备不存在"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<Void> updateDevice(@Valid @RequestBody VideoDeviceUpdateForm updateForm) {
         log.info("[视频设备] 更新设备，deviceId={}", updateForm.getDeviceId());
@@ -341,27 +267,13 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.deleteDevice", contextualName = "video-device-delete")
     @DeleteMapping("/{deviceId}")
-    @Operation(
-            summary = "删除视频设备",
-            description = "软删除设备记录，同时停止相关视频流",
-            parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
-            },
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "删除成功"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "404",
-                            description = "设备不存在"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "删除视频设备", description = "软删除设备记录，同时停止相关视频流", parameters = {
+            @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
+    }, responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "删除成功"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "设备不存在"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<Void> deleteDevice(@PathVariable @NotNull Long deviceId) {
         log.info("[视频设备] 删除设备，deviceId={}", deviceId);
@@ -396,24 +308,11 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.batchDeleteDevices", contextualName = "video-device-batch-delete")
     @DeleteMapping("/batch")
-    @Operation(
-            summary = "批量删除视频设备",
-            description = "批量软删除设备记录，同时停止相关视频流",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "批量删除成功"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "400",
-                            description = "参数错误"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "批量删除视频设备", description = "批量软删除设备记录，同时停止相关视频流", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "批量删除成功"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "参数错误"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<Void> batchDeleteDevices(@RequestBody List<Long> deviceIds) {
         log.info("[视频设备] 批量删除设备，deviceIds={}", deviceIds);
@@ -443,34 +342,20 @@ public class VideoDeviceController {
      * 3. 启用时恢复视频流
      * </p>
      *
-     * @param deviceId 设备ID
+     * @param deviceId    设备ID
      * @param enabledFlag 启用标志：0-禁用，1-启用
      * @return 操作结果
      */
     @Observed(name = "video.device.toggleDeviceStatus", contextualName = "video-device-toggle-status")
     @PutMapping("/{deviceId}/toggle")
-    @Operation(
-            summary = "启用/禁用设备",
-            description = "切换设备启用状态，禁用时停止视频流，启用时恢复视频流",
-            parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001"),
-                    @Parameter(name = "enabledFlag", description = "启用标志：0-禁用，1-启用", required = true, example = "1")
-            },
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "操作成功"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "404",
-                            description = "设备不存在"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "启用/禁用设备", description = "切换设备启用状态，禁用时停止视频流，启用时恢复视频流", parameters = {
+            @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001"),
+            @Parameter(name = "enabledFlag", description = "启用标志：0-禁用，1-启用", required = true, example = "1")
+    }, responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "操作成功"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "设备不存在"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<Void> toggleDeviceStatus(
             @PathVariable @NotNull Long deviceId,
@@ -507,23 +392,12 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.deviceOnline", contextualName = "video-device-online")
     @PutMapping("/{deviceId}/online")
-    @Operation(
-            summary = "设备上线",
-            description = "设备连接成功后调用，更新设备状态为在线",
-            parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
-            },
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "操作成功"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "404",
-                            description = "设备不存在"
-                    )
-            }
-    )
+    @Operation(summary = "设备上线", description = "设备连接成功后调用，更新设备状态为在线", parameters = {
+            @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
+    }, responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "操作成功"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "设备不存在")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<Void> deviceOnline(@PathVariable @NotNull Long deviceId) {
         log.info("[视频设备] 设备上线，deviceId={}", deviceId);
@@ -549,23 +423,12 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.deviceOffline", contextualName = "video-device-offline")
     @PutMapping("/{deviceId}/offline")
-    @Operation(
-            summary = "设备离线",
-            description = "设备断开连接时调用，更新设备状态为离线",
-            parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
-            },
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "操作成功"
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "404",
-                            description = "设备不存在"
-                    )
-            }
-    )
+    @Operation(summary = "设备离线", description = "设备断开连接时调用，更新设备状态为离线", parameters = {
+            @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
+    }, responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "操作成功"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "设备不存在")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<Void> deviceOffline(@PathVariable @NotNull Long deviceId) {
         log.info("[视频设备] 设备离线，deviceId={}", deviceId);
@@ -591,27 +454,12 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.checkConnectivity", contextualName = "video-device-check-connectivity")
     @GetMapping("/{deviceId}/connectivity")
-    @Operation(
-            summary = "检测设备连通性",
-            description = "检测设备网络连通性，返回连通性检测结果",
-            parameters = {
-                    @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
-            },
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "检测完成",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Boolean.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "404",
-                            description = "设备不存在"
-                    )
-            }
-    )
+    @Operation(summary = "检测设备连通性", description = "检测设备网络连通性，返回连通性检测结果", parameters = {
+            @Parameter(name = "deviceId", description = "设备ID", required = true, example = "1001")
+    }, responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "检测完成", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Boolean.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "设备不存在")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<Boolean> checkDeviceConnectivity(@PathVariable @NotNull Long deviceId) {
         log.info("[视频设备] 检测设备连通性，deviceId={}", deviceId);
@@ -637,27 +485,12 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.getDevicesByAreaId", contextualName = "video-device-get-by-area")
     @GetMapping("/area/{areaId}")
-    @Operation(
-            summary = "根据区域ID查询设备列表",
-            description = "查询指定区域的所有视频设备",
-            parameters = {
-                    @Parameter(name = "areaId", description = "区域ID", required = true, example = "4001")
-            },
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "查询成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "根据区域ID查询设备列表", description = "查询指定区域的所有视频设备", parameters = {
+            @Parameter(name = "areaId", description = "区域ID", required = true, example = "4001")
+    }, responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<List<VideoDeviceVO>> getDevicesByAreaId(@PathVariable @NotNull Long areaId) {
         log.info("[视频设备] 根据区域查询设备，areaId={}", areaId);
@@ -682,24 +515,10 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.getOnlineDevices", contextualName = "video-device-get-online")
     @GetMapping("/online")
-    @Operation(
-            summary = "查询在线设备列表",
-            description = "查询所有在线的视频设备",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "查询成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "查询在线设备列表", description = "查询所有在线的视频设备", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<List<VideoDeviceVO>> getOnlineDevices() {
         log.info("[视频设备] 查询在线设备");
@@ -724,24 +543,10 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.getOfflineDevices", contextualName = "video-device-get-offline")
     @GetMapping("/offline")
-    @Operation(
-            summary = "查询离线设备列表",
-            description = "查询所有离线的视频设备",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "查询成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "查询离线设备列表", description = "查询所有离线的视频设备", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<List<VideoDeviceVO>> getOfflineDevices() {
         log.info("[视频设备] 查询离线设备");
@@ -766,24 +571,10 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.getPTZDevices", contextualName = "video-device-get-ptz")
     @GetMapping("/ptz")
-    @Operation(
-            summary = "查询支持PTZ的设备列表",
-            description = "查询支持PTZ控制的设备",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "查询成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "查询支持PTZ的设备列表", description = "查询支持PTZ控制的设备", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<List<VideoDeviceVO>> getPTZDevices() {
         log.info("[视频设备] 查询PTZ设备");
@@ -808,24 +599,10 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.getAIDevices", contextualName = "video-device-get-ai")
     @GetMapping("/ai")
-    @Operation(
-            summary = "查询支持AI的设备列表",
-            description = "查询支持AI分析的设备",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "查询成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json",
-                                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class)
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "查询支持AI的设备列表", description = "查询支持AI分析的设备", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = List.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<List<VideoDeviceVO>> getAIDevices() {
         log.info("[视频设备] 查询AI设备");
@@ -851,23 +628,10 @@ public class VideoDeviceController {
      */
     @Observed(name = "video.device.getDeviceStatistics", contextualName = "video-device-statistics")
     @GetMapping("/statistics")
-    @Operation(
-            summary = "获取设备统计信息",
-            description = "获取设备总数、在线离线数量、PTZ/AI设备数量等统计信息",
-            responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "200",
-                            description = "查询成功",
-                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                    mediaType = "application/json"
-                            )
-                    ),
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                            responseCode = "403",
-                            description = "无权限"
-                    )
-            }
-    )
+    @Operation(summary = "获取设备统计信息", description = "获取设备总数、在线离线数量、PTZ/AI设备数量等统计信息", responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json")),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
+    })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<Object> getDeviceStatistics() {
         log.info("[视频设备] 获取设备统计信息");
@@ -879,4 +643,3 @@ public class VideoDeviceController {
         }
     }
 }
-

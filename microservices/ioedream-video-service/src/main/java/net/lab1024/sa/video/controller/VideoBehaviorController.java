@@ -1,23 +1,32 @@
 package net.lab1024.sa.video.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.domain.form.VideoBehaviorAnalysisForm;
 import net.lab1024.sa.video.domain.form.VideoBehaviorPatternForm;
 import net.lab1024.sa.video.domain.vo.VideoBehaviorVO;
 import net.lab1024.sa.video.service.VideoBehaviorService;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 视频行为分析控制器
@@ -38,8 +47,10 @@ public class VideoBehaviorController {
 
     @Operation(summary = "查询行为检测记录")
     @PostMapping("/queryPage")
-    public ResponseDTO<PageResult<VideoBehaviorVO>> queryBehaviorPage(@Valid @RequestBody VideoBehaviorAnalysisForm form) {
-        return videoBehaviorService.queryBehaviorPage(form);
+    public ResponseDTO<PageResult<VideoBehaviorVO>> queryBehaviorPage(
+            @Valid @RequestBody VideoBehaviorAnalysisForm form) {
+        PageResult<VideoBehaviorVO> result = videoBehaviorService.queryBehaviorPage(form);
+        return ResponseDTO.ok(result);
     }
 
     @Operation(summary = "根据ID查询行为详情")

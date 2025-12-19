@@ -1,5 +1,20 @@
 package net.lab1024.sa.video.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,22 +23,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.domain.form.AIEventAddForm;
 import net.lab1024.sa.video.domain.form.AIEventQueryForm;
-import net.lab1024.sa.video.domain.vo.AIEventVO;
 import net.lab1024.sa.video.domain.vo.AIEventStatisticsVO;
+import net.lab1024.sa.video.domain.vo.AIEventVO;
 import net.lab1024.sa.video.service.AIEventService;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * AI事件管理控制器
@@ -69,8 +75,7 @@ public class AIEventController {
     @GetMapping("/{eventId}")
     @Operation(summary = "获取AI事件详情", description = "根据事件ID获取AI智能分析事件的详细信息")
     public ResponseDTO<AIEventVO> getAIEventDetail(
-            @Parameter(description = "事件ID", required = true)
-            @PathVariable @NotNull Long eventId) {
+            @Parameter(description = "事件ID", required = true) @PathVariable @NotNull Long eventId) {
 
         log.info("[AI事件API] 获取AI事件详情: eventId={}", eventId);
 
@@ -100,10 +105,8 @@ public class AIEventController {
     @PostMapping("/{eventId}/process")
     @Operation(summary = "处理AI事件", description = "处理指定的AI智能分析事件")
     public ResponseDTO<Void> processAIEvent(
-            @Parameter(description = "事件ID", required = true)
-            @PathVariable @NotNull Long eventId,
-            @Parameter(description = "处理结果", required = true)
-            @RequestParam @NotNull String processResult) {
+            @Parameter(description = "事件ID", required = true) @PathVariable @NotNull Long eventId,
+            @Parameter(description = "处理结果", required = true) @RequestParam @NotNull String processResult) {
 
         log.info("[AI事件API] 处理AI事件: eventId={}, result={}", eventId, processResult);
 
@@ -121,10 +124,8 @@ public class AIEventController {
     @PostMapping("/batch-process")
     @Operation(summary = "批量处理AI事件", description = "批量处理多个AI智能分析事件")
     public ResponseDTO<Map<Long, Boolean>> batchProcessAIEvents(
-            @Parameter(description = "事件ID列表", required = true)
-            @RequestParam @NotNull List<Long> eventIds,
-            @Parameter(description = "处理结果", required = true)
-            @RequestParam @NotNull String processResult) {
+            @Parameter(description = "事件ID列表", required = true) @RequestParam @NotNull List<Long> eventIds,
+            @Parameter(description = "处理结果", required = true) @RequestParam @NotNull String processResult) {
 
         log.info("[AI事件API] 批量处理AI事件: eventIds={}, result={}", eventIds, processResult);
 
@@ -138,10 +139,8 @@ public class AIEventController {
     @GetMapping("/statistics")
     @Operation(summary = "获取AI事件统计", description = "获取AI智能分析事件的统计分析数据")
     public ResponseDTO<AIEventStatisticsVO> getAIEventStatistics(
-            @Parameter(description = "开始时间")
-            @RequestParam(required = false) LocalDateTime startTime,
-            @Parameter(description = "结束时间")
-            @RequestParam(required = false) LocalDateTime endTime) {
+            @Parameter(description = "开始时间") @RequestParam(required = false) LocalDateTime startTime,
+            @Parameter(description = "结束时间") @RequestParam(required = false) LocalDateTime endTime) {
 
         log.info("[AI事件API] 获取AI事件统计: startTime={}, endTime={}", startTime, endTime);
 
@@ -155,10 +154,8 @@ public class AIEventController {
     @GetMapping("/realtime")
     @Operation(summary = "获取实时AI事件", description = "获取最近产生的实时AI智能分析事件")
     public ResponseDTO<List<AIEventVO>> getRealtimeAIEvents(
-            @Parameter(description = "事件类型")
-            @RequestParam(required = false) String eventType,
-            @Parameter(description = "限制数量")
-            @RequestParam(defaultValue = "50") @Min(value = 1, message = "限制数量必须大于0") int limit) {
+            @Parameter(description = "事件类型") @RequestParam(required = false) String eventType,
+            @Parameter(description = "限制数量") @RequestParam(defaultValue = "50") @Min(value = 1, message = "限制数量必须大于0") int limit) {
 
         log.info("[AI事件API] 获取实时AI事件: eventType={}, limit={}", eventType, limit);
 
@@ -172,8 +169,7 @@ public class AIEventController {
     @GetMapping("/high-priority")
     @Operation(summary = "获取高优先级AI事件", description = "获取需要立即处理的高优先级AI智能分析事件")
     public ResponseDTO<List<AIEventVO>> getHighPriorityAIEvents(
-            @Parameter(description = "优先级阈值")
-            @RequestParam(defaultValue = "8") @Min(value = 1, message = "优先级阈值必须大于0") int minPriority) {
+            @Parameter(description = "优先级阈值") @RequestParam(defaultValue = "8") @Min(value = 1, message = "优先级阈值必须大于0") int minPriority) {
 
         log.info("[AI事件API] 获取高优先级AI事件: minPriority={}", minPriority);
 
@@ -187,25 +183,25 @@ public class AIEventController {
     @PostMapping("/{eventId}/async-process")
     @Operation(summary = "异步处理AI事件", description = "异步处理指定的AI智能分析事件")
     public CompletableFuture<ResponseDTO<String>> asyncProcessAIEvent(
-            @Parameter(description = "事件ID", required = true)
-            @PathVariable @NotNull Long eventId,
-            @Parameter(description = "处理结果", required = true)
-            @RequestParam @NotNull String processResult) {
+            @Parameter(description = "事件ID", required = true) @PathVariable @NotNull Long eventId,
+            @Parameter(description = "处理结果", required = true) @RequestParam @NotNull String processResult) {
 
         log.info("[AI事件API] 异步处理AI事件: eventId={}, result={}", eventId, processResult);
 
-        return aiEventService.asyncProcessAIEvent(eventId, processResult)
+        CompletableFuture<ResponseDTO<String>> future = aiEventService.asyncProcessAIEvent(eventId, processResult)
                 .thenApply(success -> {
                     if (success) {
                         return ResponseDTO.ok("AI事件异步处理成功");
                     } else {
-                        return ResponseDTO.error("ASYNC_PROCESS_FAILED", "AI事件异步处理失败");
+                        return ResponseDTO.<String>error("ASYNC_PROCESS_FAILED", "AI事件异步处理失败");
                     }
                 })
                 .exceptionally(throwable -> {
                     log.error("[AI事件API] AI事件异步处理异常: eventId={}", eventId, throwable);
-                    return ResponseDTO.error("ASYNC_PROCESS_ERROR", "AI事件异步处理异常: " + throwable.getMessage());
+                    return ResponseDTO.<String>error("ASYNC_PROCESS_ERROR",
+                            "AI事件异步处理异常: " + throwable.getMessage());
                 });
+        return future;
     }
 
     /**
@@ -214,10 +210,8 @@ public class AIEventController {
     @GetMapping("/trend-analysis")
     @Operation(summary = "获取事件趋势分析", description = "获取AI事件的趋势分析数据")
     public ResponseDTO<Map<String, Object>> getEventTrendAnalysis(
-            @Parameter(description = "时间范围(小时)")
-            @RequestParam(defaultValue = "24") @Min(value = 1, message = "时间范围必须大于0") int hours,
-            @Parameter(description = "事件类型")
-            @RequestParam(required = false) String eventType) {
+            @Parameter(description = "时间范围(小时)") @RequestParam(defaultValue = "24") @Min(value = 1, message = "时间范围必须大于0") int hours,
+            @Parameter(description = "事件类型") @RequestParam(required = false) String eventType) {
 
         log.info("[AI事件API] 获取事件趋势分析: hours={}, eventType={}", hours, eventType);
 
@@ -231,12 +225,9 @@ public class AIEventController {
     @GetMapping("/device/{deviceId}/statistics")
     @Operation(summary = "获取设备AI事件统计", description = "获取指定设备的AI智能分析事件统计")
     public ResponseDTO<Map<String, Object>> getDeviceAIEventStatistics(
-            @Parameter(description = "设备ID", required = true)
-            @PathVariable @NotNull Long deviceId,
-            @Parameter(description = "开始时间")
-            @RequestParam(required = false) LocalDateTime startTime,
-            @Parameter(description = "结束时间")
-            @RequestParam(required = false) LocalDateTime endTime) {
+            @Parameter(description = "设备ID", required = true) @PathVariable @NotNull Long deviceId,
+            @Parameter(description = "开始时间") @RequestParam(required = false) LocalDateTime startTime,
+            @Parameter(description = "结束时间") @RequestParam(required = false) LocalDateTime endTime) {
 
         log.info("[AI事件API] 获取设备AI事件统计: deviceId={}, startTime={}, endTime={}", deviceId, startTime, endTime);
 
@@ -250,8 +241,7 @@ public class AIEventController {
     @DeleteMapping("/{eventId}")
     @Operation(summary = "删除AI事件", description = "删除指定的AI智能分析事件")
     public ResponseDTO<Void> deleteAIEvent(
-            @Parameter(description = "事件ID", required = true)
-            @PathVariable @NotNull Long eventId) {
+            @Parameter(description = "事件ID", required = true) @PathVariable @NotNull Long eventId) {
 
         log.info("[AI事件API] 删除AI事件: eventId={}", eventId);
 
@@ -269,8 +259,7 @@ public class AIEventController {
     @DeleteMapping("/batch-delete")
     @Operation(summary = "批量删除AI事件", description = "批量删除多个AI智能分析事件")
     public ResponseDTO<Map<Long, Boolean>> batchDeleteAIEvents(
-            @Parameter(description = "事件ID列表", required = true)
-            @RequestParam @NotNull List<Long> eventIds) {
+            @Parameter(description = "事件ID列表", required = true) @RequestParam @NotNull List<Long> eventIds) {
 
         log.info("[AI事件API] 批量删除AI事件: eventIds={}", eventIds);
 
@@ -296,8 +285,7 @@ public class AIEventController {
     @PostMapping("/{eventId}/reanalyze")
     @Operation(summary = "重新分析AI事件", description = "重新分析指定的AI智能分析事件")
     public CompletableFuture<ResponseDTO<String>> reanalyzeAIEvent(
-            @Parameter(description = "事件ID", required = true)
-            @PathVariable @NotNull Long eventId) {
+            @Parameter(description = "事件ID", required = true) @PathVariable @NotNull Long eventId) {
 
         log.info("[AI事件API] 重新分析AI事件: eventId={}", eventId);
 

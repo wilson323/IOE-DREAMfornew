@@ -99,7 +99,7 @@ class EdgeVideoProcessorTest {
         InferenceRequest request = new InferenceRequest();
         request.setDeviceId("EDGE_001");
         request.setTaskType("FACE_DETECTION");
-        request.setInputData(new byte[] { 1, 2, 3 });
+        request.setData(new byte[] { 1, 2, 3 });
 
         // When
         Future<InferenceResult> future = processor.performInference(request);
@@ -251,6 +251,7 @@ class EdgeVideoProcessorTest {
 
         // 设置能力
         java.util.List<EdgeCapability> capabilities = new java.util.ArrayList<>();
+        capabilities.add(EdgeCapability.AI_INFERENCE);
         capabilities.add(EdgeCapability.FACE_RECOGNITION);
         capabilities.add(EdgeCapability.BEHAVIOR_ANALYSIS);
         device.setCapabilities(capabilities);

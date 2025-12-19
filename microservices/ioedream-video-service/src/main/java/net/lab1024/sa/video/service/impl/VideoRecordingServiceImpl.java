@@ -1,27 +1,25 @@
 package net.lab1024.sa.video.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.util.SmartBeanUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
-import net.lab1024.sa.video.domain.form.VideoRecordingQueryForm;
-import net.lab1024.sa.video.domain.form.VideoRecordingSearchForm;
-import net.lab1024.sa.video.domain.vo.VideoRecordingVO;
-import net.lab1024.sa.video.domain.vo.VideoRecordingDetailVO;
-import net.lab1024.sa.video.domain.vo.VideoRecordingPlaybackVO;
-import net.lab1024.sa.video.service.VideoRecordingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.video.domain.form.VideoRecordingQueryForm;
+import net.lab1024.sa.video.domain.form.VideoRecordingSearchForm;
+import net.lab1024.sa.video.domain.vo.VideoRecordingDetailVO;
+import net.lab1024.sa.video.domain.vo.VideoRecordingPlaybackVO;
+import net.lab1024.sa.video.domain.vo.VideoRecordingVO;
+import net.lab1024.sa.video.service.VideoRecordingService;
 
 /**
  * 录像回放服务实现
@@ -56,7 +54,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
         try {
             // TODO: 实现录像分页查询逻辑
             PageResult<VideoRecordingVO> pageResult = new PageResult<>();
-            pageResult.setRows(new ArrayList<>());
+            pageResult.setList(new ArrayList<>());
             pageResult.setTotal(0L);
             pageResult.setPageNum(queryForm.getPageNum());
             pageResult.setPageSize(queryForm.getPageSize());
@@ -233,7 +231,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
             for (Long recordingId : recordingIds) {
                 try {
                     ResponseDTO<Void> result = deleteRecording(recordingId);
-                    if (result.getIsOk()) {
+                    if (result.getOk()) {
                         successCount++;
                     } else {
                         failCount++;
@@ -364,7 +362,8 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDTO<PageResult<VideoRecordingVO>> getDeviceRecordings(Long deviceId, Integer pageNum, Integer pageSize) {
+    public ResponseDTO<PageResult<VideoRecordingVO>> getDeviceRecordings(Long deviceId, Integer pageNum,
+            Integer pageSize) {
         log.info("[录像回放] 获取设备录像，deviceId={}, pageNum={}, pageSize={}", deviceId, pageNum, pageSize);
 
         try {
@@ -387,7 +386,8 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDTO<PageResult<VideoRecordingVO>> getChannelRecordings(Long deviceId, Long channelId, Integer pageNum, Integer pageSize) {
+    public ResponseDTO<PageResult<VideoRecordingVO>> getChannelRecordings(Long deviceId, Long channelId,
+            Integer pageNum, Integer pageSize) {
         log.info("[录像回放] 获取通道录像，deviceId={}, channelId={}, pageNum={}, pageSize={}",
                 deviceId, channelId, pageNum, pageSize);
 
@@ -412,7 +412,8 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDTO<PageResult<VideoRecordingVO>> getEventRecordings(String eventType, Integer pageNum, Integer pageSize) {
+    public ResponseDTO<PageResult<VideoRecordingVO>> getEventRecordings(String eventType, Integer pageNum,
+            Integer pageSize) {
         log.info("[录像回放] 获取事件录像，eventType={}, pageNum={}, pageSize={}", eventType, pageNum, pageSize);
 
         try {
@@ -488,7 +489,8 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
     }
 
     @Override
-    public ResponseDTO<Map<String, Object>> transcodeRecording(Long recordingId, String targetFormat, String targetQuality) {
+    public ResponseDTO<Map<String, Object>> transcodeRecording(Long recordingId, String targetFormat,
+            String targetQuality) {
         log.info("[录像回放] 录像文件转码，recordingId={}, targetFormat={}, targetQuality={}",
                 recordingId, targetFormat, targetQuality);
 
@@ -521,7 +523,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
         log.info("[录像回放] 获取转码任务状态，taskId={}", taskId);
 
         try {
-            if (!StringUtils.hasText(taskId)) {
+            if (StringUtils.isBlank(taskId)) {
                 return ResponseDTO.error("PARAM_ERROR", "任务ID不能为空");
             }
 
@@ -547,7 +549,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
         log.info("[录像回放] 取消转码任务，taskId={}", taskId);
 
         try {
-            if (!StringUtils.hasText(taskId)) {
+            if (StringUtils.isBlank(taskId)) {
                 return ResponseDTO.error("PARAM_ERROR", "任务ID不能为空");
             }
 
@@ -593,7 +595,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
         log.info("[录像回放] 获取备份任务状态，taskId={}", taskId);
 
         try {
-            if (!StringUtils.hasText(taskId)) {
+            if (StringUtils.isBlank(taskId)) {
                 return ResponseDTO.error("PARAM_ERROR", "任务ID不能为空");
             }
 
@@ -650,7 +652,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
             Map<String, Object> storageUsage = new HashMap<>();
             storageUsage.put("deviceId", deviceId);
             storageUsage.put("totalSpace", 1024L * 1024 * 1024 * 1024); // 1TB
-            storageUsage.put("usedSpace", 500L * 1024 * 1024 * 1024);  // 500GB
+            storageUsage.put("usedSpace", 500L * 1024 * 1024 * 1024); // 500GB
             storageUsage.put("freeSpace", 512L * 1024 * 1024 * 1024); // 512GB
             storageUsage.put("usagePercentage", 49.22);
             storageUsage.put("recordingCount", 1000);

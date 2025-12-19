@@ -1,14 +1,15 @@
 package net.lab1024.sa.video.manager;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.scheduling.annotation.Async;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * AI事件管理器
@@ -136,44 +137,157 @@ public class AIEventManager {
         }
 
         // Getters and Setters
-        public String getEventId() { return eventId; }
-        public void setEventId(String eventId) { this.eventId = eventId; }
-        public EventType getEventType() { return eventType; }
-        public void setEventType(EventType eventType) { this.eventType = eventType; }
-        public String getDeviceId() { return deviceId; }
-        public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
-        public String getStreamId() { return streamId; }
-        public void setStreamId(String streamId) { this.streamId = streamId; }
-        public LocalDateTime getEventTime() { return eventTime; }
-        public void setEventTime(LocalDateTime eventTime) { this.eventTime = eventTime; }
-        public EventStatus getStatus() { return status; }
-        public void setStatus(EventStatus status) { this.status = status; }
-        public AlertLevel getAlertLevel() { return alertLevel; }
-        public void setAlertLevel(AlertLevel alertLevel) { this.alertLevel = alertLevel; }
-        public String getEventTitle() { return eventTitle; }
-        public void setEventTitle(String eventTitle) { this.eventTitle = eventTitle; }
-        public String getEventDescription() { return eventDescription; }
-        public void setEventDescription(String eventDescription) { this.eventDescription = eventDescription; }
-        public Map<String, Object> getEventData() { return eventData; }
-        public void setEventData(Map<String, Object> eventData) { this.eventData = eventData; }
-        public String getRelatedPersonId() { return relatedPersonId; }
-        public void setRelatedPersonId(String relatedPersonId) { this.relatedPersonId = relatedPersonId; }
-        public String getRelatedObjectId() { return relatedObjectId; }
-        public void setRelatedObjectId(String relatedObjectId) { this.relatedObjectId = relatedObjectId; }
-        public LocalDateTime getProcessTime() { return processTime; }
-        public void setProcessTime(LocalDateTime processTime) { this.processTime = processTime; }
-        public String getProcessResult() { return processResult; }
-        public void setProcessResult(String processResult) { this.processResult = processResult; }
-        public String getOperatorId() { return operatorId; }
-        public void setOperatorId(String operatorId) { this.operatorId = operatorId; }
-        public boolean isRequiresEscalation() { return requiresEscalation; }
-        public void setRequiresEscalation(boolean requiresEscalation) { this.requiresEscalation = requiresEscalation; }
-        public boolean isRequiresNotification() { return requiresNotification; }
-        public void setRequiresNotification(boolean requiresNotification) { this.requiresNotification = requiresNotification; }
-        public List<String> getRelatedDeviceIds() { return relatedDeviceIds; }
-        public void setRelatedDeviceIds(List<String> relatedDeviceIds) { this.relatedDeviceIds = relatedDeviceIds; }
-        public Map<String, Object> getContextInfo() { return contextInfo; }
-        public void setContextInfo(Map<String, Object> contextInfo) { this.contextInfo = contextInfo; }
+        public String getEventId() {
+            return eventId;
+        }
+
+        public void setEventId(String eventId) {
+            this.eventId = eventId;
+        }
+
+        public EventType getEventType() {
+            return eventType;
+        }
+
+        public void setEventType(EventType eventType) {
+            this.eventType = eventType;
+        }
+
+        public String getDeviceId() {
+            return deviceId;
+        }
+
+        public void setDeviceId(String deviceId) {
+            this.deviceId = deviceId;
+        }
+
+        public String getStreamId() {
+            return streamId;
+        }
+
+        public void setStreamId(String streamId) {
+            this.streamId = streamId;
+        }
+
+        public LocalDateTime getEventTime() {
+            return eventTime;
+        }
+
+        public void setEventTime(LocalDateTime eventTime) {
+            this.eventTime = eventTime;
+        }
+
+        public EventStatus getStatus() {
+            return status;
+        }
+
+        public void setStatus(EventStatus status) {
+            this.status = status;
+        }
+
+        public AlertLevel getAlertLevel() {
+            return alertLevel;
+        }
+
+        public void setAlertLevel(AlertLevel alertLevel) {
+            this.alertLevel = alertLevel;
+        }
+
+        public String getEventTitle() {
+            return eventTitle;
+        }
+
+        public void setEventTitle(String eventTitle) {
+            this.eventTitle = eventTitle;
+        }
+
+        public String getEventDescription() {
+            return eventDescription;
+        }
+
+        public void setEventDescription(String eventDescription) {
+            this.eventDescription = eventDescription;
+        }
+
+        public Map<String, Object> getEventData() {
+            return eventData;
+        }
+
+        public void setEventData(Map<String, Object> eventData) {
+            this.eventData = eventData;
+        }
+
+        public String getRelatedPersonId() {
+            return relatedPersonId;
+        }
+
+        public void setRelatedPersonId(String relatedPersonId) {
+            this.relatedPersonId = relatedPersonId;
+        }
+
+        public String getRelatedObjectId() {
+            return relatedObjectId;
+        }
+
+        public void setRelatedObjectId(String relatedObjectId) {
+            this.relatedObjectId = relatedObjectId;
+        }
+
+        public LocalDateTime getProcessTime() {
+            return processTime;
+        }
+
+        public void setProcessTime(LocalDateTime processTime) {
+            this.processTime = processTime;
+        }
+
+        public String getProcessResult() {
+            return processResult;
+        }
+
+        public void setProcessResult(String processResult) {
+            this.processResult = processResult;
+        }
+
+        public String getOperatorId() {
+            return operatorId;
+        }
+
+        public void setOperatorId(String operatorId) {
+            this.operatorId = operatorId;
+        }
+
+        public boolean isRequiresEscalation() {
+            return requiresEscalation;
+        }
+
+        public void setRequiresEscalation(boolean requiresEscalation) {
+            this.requiresEscalation = requiresEscalation;
+        }
+
+        public boolean isRequiresNotification() {
+            return requiresNotification;
+        }
+
+        public void setRequiresNotification(boolean requiresNotification) {
+            this.requiresNotification = requiresNotification;
+        }
+
+        public List<String> getRelatedDeviceIds() {
+            return relatedDeviceIds;
+        }
+
+        public void setRelatedDeviceIds(List<String> relatedDeviceIds) {
+            this.relatedDeviceIds = relatedDeviceIds;
+        }
+
+        public Map<String, Object> getContextInfo() {
+            return contextInfo;
+        }
+
+        public void setContextInfo(Map<String, Object> contextInfo) {
+            this.contextInfo = contextInfo;
+        }
     }
 
     /**
@@ -616,17 +730,17 @@ public class AIEventManager {
 
     private boolean shouldCoordinateWithAccessSystem(AIEvent event) {
         return event.getEventType() == EventType.FACE_RECOGNITION &&
-               event.getRelatedPersonId() != null;
+                event.getRelatedPersonId() != null;
     }
 
     private boolean shouldCoordinateWithAttendanceSystem(AIEvent event) {
         return event.getEventType() == EventType.FACE_RECOGNITION &&
-               isWorkingTime(event.getEventTime());
+                isWorkingTime(event.getEventTime());
     }
 
     private boolean shouldCoordinateWithVisitorSystem(AIEvent event) {
         return event.getEventType() == EventType.FACE_RECOGNITION &&
-               event.getRelatedPersonId() == null;
+                event.getRelatedPersonId() == null;
     }
 
     private boolean shouldCoordinateWithConsumeSystem(AIEvent event) {

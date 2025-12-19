@@ -9,12 +9,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.video.edge.ai.EdgeAIEngine;
+import net.lab1024.sa.video.edge.communication.EdgeCommunicationManager;
+import net.lab1024.sa.video.edge.model.EdgeCapability;
 import net.lab1024.sa.video.edge.model.EdgeDevice;
 import net.lab1024.sa.video.edge.model.InferenceRequest;
 import net.lab1024.sa.video.edge.model.InferenceResult;
-import net.lab1024.sa.video.edge.model.EdgeCapability;
-import net.lab1024.sa.video.edge.ai.EdgeAIEngine;
-import net.lab1024.sa.video.edge.communication.EdgeCommunicationManager;
 
 /**
  * 边缘视频处理器
@@ -45,7 +45,7 @@ public class EdgeVideoProcessor {
     /**
      * 构造函数
      *
-     * @param config 边缘计算配置
+     * @param config               边缘计算配置
      * @param communicationManager 边缘通信管理器
      */
     public EdgeVideoProcessor(EdgeConfig config, EdgeCommunicationManager communicationManager) {
@@ -195,7 +195,8 @@ public class EdgeVideoProcessor {
 
                 // 1. 先尝试边缘推理
                 Future<InferenceResult> edgeResult = performInference(inferenceRequest);
-                InferenceResult result = edgeResult.get(config.getEdgeInferenceTimeout(), java.util.concurrent.TimeUnit.MILLISECONDS);
+                InferenceResult result = edgeResult.get(config.getEdgeInferenceTimeout(),
+                        java.util.concurrent.TimeUnit.MILLISECONDS);
 
                 // 2. 判断是否需要云端协同
                 if (result.isSuccess() && result.getConfidence() < config.getCloudCollaborationThreshold()) {
@@ -222,7 +223,7 @@ public class EdgeVideoProcessor {
      * 动态更新边缘设备上的AI模型
      * </p>
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
      * @param modelType 模型类型
      * @param modelData 模型数据
      * @return 更新结果
@@ -362,7 +363,7 @@ public class EdgeVideoProcessor {
     private boolean validateDeviceCapability(EdgeDevice device) {
         List<EdgeCapability> capabilities = device.getCapabilities();
         return capabilities != null && !capabilities.isEmpty() &&
-               capabilities.contains(EdgeCapability.AI_INFERENCE);
+                capabilities.contains(EdgeCapability.AI_INFERENCE);
     }
 
     private EdgeAIEngine createEdgeAIEngine(EdgeDevice device) {

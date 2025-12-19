@@ -20,18 +20,18 @@ import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.domain.form.VideoDeviceAddForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceUpdateForm;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
+import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.service.VideoDeviceService;
 
 /**
@@ -117,8 +117,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
                     voList,
                     pageResult.getTotal(),
                     queryForm.getPageNum(),
-                    queryForm.getPageSize()
-            );
+                    queryForm.getPageSize());
 
             log.info("[视频设备] 分页查询设备成功，总数={}", pageResult.getTotal());
             return result;
@@ -282,13 +281,19 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
      * 获取设备子类型描述
      */
     private String getDeviceSubTypeDesc(Integer deviceSubType) {
-        if (deviceSubType == null) return null;
+        if (deviceSubType == null)
+            return null;
         switch (deviceSubType) {
-            case 1: return "枪机";
-            case 2: return "球机";
-            case 3: return "半球机";
-            case 4: return "一体机";
-            default: return "未知";
+            case 1:
+                return "枪机";
+            case 2:
+                return "球机";
+            case 3:
+                return "半球机";
+            case 4:
+                return "一体机";
+            default:
+                return "未知";
         }
     }
 
@@ -296,14 +301,21 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
      * 获取协议描述
      */
     private String getProtocolDesc(Integer protocol) {
-        if (protocol == null) return null;
+        if (protocol == null)
+            return null;
         switch (protocol) {
-            case 1: return "RTSP";
-            case 2: return "RTMP";
-            case 3: return "HTTP";
-            case 4: return "TCP";
-            case 5: return "UDP";
-            default: return "未知";
+            case 1:
+                return "RTSP";
+            case 2:
+                return "RTMP";
+            case 3:
+                return "HTTP";
+            case 4:
+                return "TCP";
+            case 5:
+                return "UDP";
+            default:
+                return "未知";
         }
     }
 
@@ -787,9 +799,18 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             }
 
             // 返回设备的扩展属性作为配置信息
-            Map<String, Object> config = device.getExtendedAttributes();
-            if (config == null) {
-                config = new HashMap<>();
+            Map<String, Object> config = new HashMap<>();
+            String extendedAttributesStr = device.getExtendedAttributes();
+            if (StringUtils.hasText(extendedAttributesStr)) {
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> parsedConfig = objectMapper.readValue(extendedAttributesStr, Map.class);
+                    config = parsedConfig;
+                } catch (Exception e) {
+                    log.warn("[视频设备] 解析扩展属性失败: deviceId={}, error={}", deviceId, e.getMessage());
+                    config = new HashMap<>();
+                }
             }
 
             log.info("[视频设备] 获取设备配置完成，deviceId={}", deviceId);
@@ -871,7 +892,8 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             device.setDeviceName(updateForm.getDeviceName());
         }
         if (updateForm.getDeviceSubType() != null) {
-            // device.setExtendedAttributeValue("deviceSubType", updateForm.getDeviceSubType());
+            // device.setExtendedAttributeValue("deviceSubType",
+            // updateForm.getDeviceSubType());
         }
         if (updateForm.getAreaId() != null) {
             device.setAreaId(updateForm.getAreaId());
@@ -886,16 +908,19 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             // device.setExtendedAttributeValue("streamUrl", updateForm.getStreamUrl());
         }
         if (StringUtils.hasText(updateForm.getManufacturer())) {
-            // device.setExtendedAttributeValue("manufacturer", updateForm.getManufacturer());
+            // device.setExtendedAttributeValue("manufacturer",
+            // updateForm.getManufacturer());
         }
         if (StringUtils.hasText(updateForm.getModel())) {
             // device.setExtendedAttributeValue("model", updateForm.getModel());
         }
         if (StringUtils.hasText(updateForm.getSerialNumber())) {
-            // device.setExtendedAttributeValue("serialNumber", updateForm.getSerialNumber());
+            // device.setExtendedAttributeValue("serialNumber",
+            // updateForm.getSerialNumber());
         }
         if (StringUtils.hasText(updateForm.getInstallLocation())) {
-            // device.setExtendedAttributeValue("installLocation", updateForm.getInstallLocation());
+            // device.setExtendedAttributeValue("installLocation",
+            // updateForm.getInstallLocation());
         }
         if (updateForm.getLongitude() != null) {
             // device.setExtendedAttributeValue("longitude", updateForm.getLongitude());
@@ -907,13 +932,16 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             // device.setExtendedAttributeValue("altitude", updateForm.getAltitude());
         }
         if (updateForm.getPtzSupported() != null) {
-            // device.setExtendedAttributeValue("ptzSupported", updateForm.getPtzSupported());
+            // device.setExtendedAttributeValue("ptzSupported",
+            // updateForm.getPtzSupported());
         }
         if (updateForm.getAudioSupported() != null) {
-            // device.setExtendedAttributeValue("audioSupported", updateForm.getAudioSupported());
+            // device.setExtendedAttributeValue("audioSupported",
+            // updateForm.getAudioSupported());
         }
         if (updateForm.getNightVisionSupported() != null) {
-            // device.setExtendedAttributeValue("nightVisionSupported", updateForm.getNightVisionSupported());
+            // device.setExtendedAttributeValue("nightVisionSupported",
+            // updateForm.getNightVisionSupported());
         }
         if (updateForm.getAiSupported() != null) {
             // device.setExtendedAttributeValue("aiSupported", updateForm.getAiSupported());
@@ -925,7 +953,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             // device.setExtendedAttributeValue("frameRate", updateForm.getFrameRate());
         }
         if (updateForm.getEnabledFlag() != null) {
-            device.setEnabledFlag(updateForm.getEnabledFlag());
+            device.setEnabled(updateForm.getEnabledFlag());
         }
         if (StringUtils.hasText(updateForm.getDeviceStatus())) {
             device.setDeviceStatus(updateForm.getDeviceStatus());
@@ -966,4 +994,3 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         }
     }
 }
-

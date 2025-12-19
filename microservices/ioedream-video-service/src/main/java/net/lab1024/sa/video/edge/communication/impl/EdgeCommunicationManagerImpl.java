@@ -35,6 +35,14 @@ public class EdgeCommunicationManagerImpl implements EdgeCommunicationManager {
     private final Map<String, EdgeDevice> connectedDevices = new ConcurrentHashMap<>();
 
     /**
+     * 已知设备映射（deviceId -> EdgeDevice）
+     * <p>
+     * 用于支持“断开后仍可重连”的最小实现。
+     * </p>
+     */
+    private final Map<String, EdgeDevice> knownDevices = new ConcurrentHashMap<>();
+
+    /**
      * 设备连接时间映射（deviceId -> connectTime）
      */
     private final Map<String, Long> deviceConnectTime = new ConcurrentHashMap<>();
@@ -72,12 +80,14 @@ public class EdgeCommunicationManagerImpl implements EdgeCommunicationManager {
      */
     @Override
     public boolean connectToDevice(EdgeDevice device) {
-        if (device == null || device.getDeviceId() == null) {
+        if (device == null || device.getDeviceId() == null || device.getDeviceId().trim().isEmpty()) {
             log.warn("[边缘通信管理器] 设备信息无效，无法连接");
             return false;
         }
 
-        String deviceId = device.getDeviceId();
+        String deviceId = device.getDeviceId().trim();
+        // 记录为已知设备（用于后续重连）
+        knownDevices.put(deviceId, device);
 
         // 检查设备是否已连接
         if (connectedDevices.containsKey(deviceId)) {
@@ -117,12 +127,14 @@ public class EdgeCommunicationManagerImpl implements EdgeCommunicationManager {
      */
     @Override
     public void disconnectFromDevice(EdgeDevice device) {
-        if (device == null || device.getDeviceId() == null) {
+        if (device == null || device.getDeviceId() == null || device.getDeviceId().trim().isEmpty()) {
             log.warn("[边缘通信管理器] 设备信息无效，无法断开连接");
             return;
         }
 
-        String deviceId = device.getDeviceId();
+        String deviceId = device.getDeviceId().trim();
+        // 保留为已知设备，便于后续重连
+        knownDevices.put(deviceId, device);
 
         if (!connectedDevices.containsKey(deviceId)) {
             log.warn("[边缘通信管理器] 设备未连接，无需断开，deviceId={}", deviceId);
@@ -258,14 +270,22 @@ public class EdgeCommunicationManagerImpl implements EdgeCommunicationManager {
      * @return 重连是否成功
      */
     public boolean reconnect(String deviceId) {
-        EdgeDevice device = connectedDevices.get(deviceId);
+        if (deviceId == null || deviceId.trim().isEmpty()) {
+            log.warn("[边缘通信管理器] deviceId为空，无法重连");
+            return false;
+        }
+
+        String normalizedDeviceId = deviceId.trim();
+        EdgeDevice device = knownDevices.get(normalizedDeviceId);
         if (device == null) {
             log.warn("[边缘通信管理器] 设备未连接过，无法重连，deviceId={}", deviceId);
             return false;
         }
 
-        // 先断开连接
-        disconnectFromDevice(device);
+        // 若仍处于连接状态，直接返回成功
+        if (isConnected(normalizedDeviceId)) {
+            return true;
+        }
 
         // 重新连接
         return connectToDevice(device);
@@ -370,6 +390,11 @@ public class EdgeCommunicationManagerImpl implements EdgeCommunicationManager {
         for (EdgeDevice device : connectedDevices.values()) {
             disconnectFromDevice(device);
         }
+
+        connectedDevices.clear();
+        knownDevices.clear();
+        deviceConnectTime.clear();
+        deviceLastHeartbeat.clear();
 
         log.info("[边缘通信管理器] 通信管理器已关闭");
     }

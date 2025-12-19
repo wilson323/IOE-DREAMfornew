@@ -51,7 +51,7 @@ public interface VideoAiAnalysisService {
     /**
      * 人脸搜索（1:N）
      *
-     * @param feature 待搜索的人脸特征
+     * @param feature   待搜索的人脸特征
      * @param threshold 相似度阈值
      * @return 匹配结果列表
      */
@@ -60,7 +60,7 @@ public interface VideoAiAnalysisService {
     /**
      * 注册人脸
      *
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @param faceImage 人脸图像
      * @return 是否成功
      */
@@ -87,28 +87,30 @@ public interface VideoAiAnalysisService {
     /**
      * 徘徊检测
      *
-     * @param cameraId 摄像头ID
-     * @param personId 人员标识
-     * @param x 位置X
-     * @param y 位置Y
+     * @param cameraId  摄像头ID
+     * @param personId  人员标识
+     * @param x         位置X
+     * @param y         位置Y
      * @param timestamp 时间戳
      * @return 徘徊检测结果
      */
-    BehaviorDetectionManager.LoiteringResult detectLoitering(String cameraId, String personId, int x, int y, LocalDateTime timestamp);
+    BehaviorDetectionManager.LoiteringResult detectLoitering(String cameraId, String personId, int x, int y,
+            LocalDateTime timestamp);
 
     /**
      * 聚集检测
      *
-     * @param cameraId 摄像头ID
+     * @param cameraId        摄像头ID
      * @param personPositions 人员位置列表
      * @return 聚集检测结果
      */
-    BehaviorDetectionManager.GatheringResult detectGathering(String cameraId, List<BehaviorDetectionManager.PersonPosition> personPositions);
+    BehaviorDetectionManager.GatheringResult detectGathering(String cameraId,
+            List<BehaviorDetectionManager.PersonPosition> personPositions);
 
     /**
      * 跌倒检测
      *
-     * @param cameraId 摄像头ID
+     * @param cameraId  摄像头ID
      * @param frameData 视频帧数据
      * @return 跌倒检测结果
      */
@@ -117,7 +119,7 @@ public interface VideoAiAnalysisService {
     /**
      * 异常行为检测
      *
-     * @param cameraId 摄像头ID
+     * @param cameraId  摄像头ID
      * @param frameData 视频帧数据
      * @return 异常行为列表
      */
@@ -134,7 +136,7 @@ public interface VideoAiAnalysisService {
      * 获取行为统计
      *
      * @param cameraId 摄像头ID
-     * @param minutes 统计时间范围（分钟）
+     * @param minutes  统计时间范围（分钟）
      * @return 行为统计信息
      */
     BehaviorStatistics getBehaviorStatistics(String cameraId, int minutes);
@@ -144,7 +146,7 @@ public interface VideoAiAnalysisService {
     /**
      * 计算人流密度
      *
-     * @param cameraId 摄像头ID
+     * @param cameraId  摄像头ID
      * @param frameData 视频帧数据
      * @return 人流密度结果
      */
@@ -154,8 +156,8 @@ public interface VideoAiAnalysisService {
      * 生成热力图数据
      *
      * @param cameraId 摄像头ID
-     * @param width 宽度
-     * @param height 高度
+     * @param width    宽度
+     * @param height   高度
      * @param gridSize 网格大小
      * @return 热力图数据
      */
@@ -173,7 +175,7 @@ public interface VideoAiAnalysisService {
      * 获取人流趋势
      *
      * @param cameraId 摄像头ID
-     * @param minutes 时间范围（分钟）
+     * @param minutes  时间范围（分钟）
      * @return 趋势数据
      */
     Map<LocalDateTime, Integer> getFlowTrend(String cameraId, int minutes);
@@ -182,8 +184,8 @@ public interface VideoAiAnalysisService {
      * 添加轨迹点
      *
      * @param cameraId 摄像头ID
-     * @param x X坐标
-     * @param y Y坐标
+     * @param x        X坐标
+     * @param y        Y坐标
      */
     void addTrajectoryPoint(String cameraId, int x, int y);
 
@@ -191,17 +193,30 @@ public interface VideoAiAnalysisService {
      * 获取摄像头分析统计
      *
      * @param cameraId 摄像头ID
-     * @param minutes 统计时间范围（分钟）
+     * @param minutes  统计时间范围（分钟）
      * @return 分析统计信息
      */
     CameraAnalysisStatistics getCameraAnalysisStatistics(String cameraId, int minutes);
+
+    /**
+     * 获取摄像头支持的AI分析能力（最小可交付版本）
+     * <p>
+     * 说明：当前返回固定能力集合；后续可根据设备型号/配置/授权动态计算。
+     * </p>
+     *
+     * @param cameraId 摄像头ID
+     * @return AI能力列表
+     */
+    default List<String> getCameraAiCapabilities(String cameraId) {
+        return List.of("FACE_RECOGNITION", "BEHAVIOR_ANALYSIS", "CROWD_ANALYSIS");
+    }
 
     // ==================== 综合AI分析接口 ====================
 
     /**
      * 综合AI分析
      *
-     * @param cameraId �像头ID
+     * @param cameraId  �像头ID
      * @param frameData 视频帧数据
      * @return 综合分析结果
      */
@@ -210,8 +225,8 @@ public interface VideoAiAnalysisService {
     /**
      * 实时视频流分析
      *
-     * @param cameraId 摄像头ID
-     * @param streamUrl 视频流地址
+     * @param cameraId       摄像头ID
+     * @param streamUrl      视频流地址
      * @param analysisConfig 分析配置
      * @return 分析任务ID
      */
@@ -236,24 +251,26 @@ public interface VideoAiAnalysisService {
     /**
      * 历史视频分析
      *
-     * @param videoId 视频ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param videoId       视频ID
+     * @param startTime     开始时间
+     * @param endTime       结束时间
      * @param analysisTypes 分析类型
      * @return 历史分析结果
      */
-    HistoricalAnalysisResult analyzeHistoricalVideo(String videoId, LocalDateTime startTime, LocalDateTime endTime, List<String> analysisTypes);
+    HistoricalAnalysisResult analyzeHistoricalVideo(String videoId, LocalDateTime startTime, LocalDateTime endTime,
+            List<String> analysisTypes);
 
     /**
      * 生成AI分析报告
      *
-     * @param cameraId 摄像头ID
+     * @param cameraId   摄像头ID
      * @param reportType 报告类型
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param startTime  开始时间
+     * @param endTime    结束时间
      * @return 分析报告
      */
-    AiAnalysisReport generateAnalysisReport(String cameraId, String reportType, LocalDateTime startTime, LocalDateTime endTime);
+    AiAnalysisReport generateAnalysisReport(String cameraId, String reportType, LocalDateTime startTime,
+            LocalDateTime endTime);
 
     /**
      * 生成分析报告（多摄像头聚合版本，供Controller直接调用）
@@ -261,9 +278,9 @@ public interface VideoAiAnalysisService {
      * 说明：最小可交付版本默认选取第一个cameraId生成报告；后续可扩展为真正的多摄像头聚合报表。
      * </p>
      *
-     * @param cameraIds 摄像头ID列表
-     * @param startTime 开始时间
-     * @param endTime   结束时间
+     * @param cameraIds  摄像头ID列表
+     * @param startTime  开始时间
+     * @param endTime    结束时间
      * @param reportType 报告类型
      * @return 分析报告
      */
@@ -305,10 +322,21 @@ public interface VideoAiAnalysisService {
         private String cameraId;
         private byte[] imageData;
 
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public byte[] getImageData() { return imageData; }
-        public void setImageData(byte[] imageData) { this.imageData = imageData; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public byte[] getImageData() {
+            return imageData;
+        }
+
+        public void setImageData(byte[] imageData) {
+            this.imageData = imageData;
+        }
     }
 
     /**
@@ -320,14 +348,37 @@ public interface VideoAiAnalysisService {
         private String location;
         private LocalDateTime timestamp;
 
-        public boolean isDetected() { return detected; }
-        public void setDetected(boolean detected) { this.detected = detected; }
-        public double getConfidence() { return confidence; }
-        public void setConfidence(double confidence) { this.confidence = confidence; }
-        public String getLocation() { return location; }
-        public void setLocation(String location) { this.location = location; }
-        public LocalDateTime getTimestamp() { return timestamp; }
-        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+        public boolean isDetected() {
+            return detected;
+        }
+
+        public void setDetected(boolean detected) {
+            this.detected = detected;
+        }
+
+        public double getConfidence() {
+            return confidence;
+        }
+
+        public void setConfidence(double confidence) {
+            this.confidence = confidence;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+
+        public LocalDateTime getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(LocalDateTime timestamp) {
+            this.timestamp = timestamp;
+        }
     }
 
     /**
@@ -338,12 +389,29 @@ public interface VideoAiAnalysisService {
         private byte[] imageData;
         private List<String> analysisTypes;
 
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public byte[] getImageData() { return imageData; }
-        public void setImageData(byte[] imageData) { this.imageData = imageData; }
-        public List<String> getAnalysisTypes() { return analysisTypes; }
-        public void setAnalysisTypes(List<String> analysisTypes) { this.analysisTypes = analysisTypes; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public byte[] getImageData() {
+            return imageData;
+        }
+
+        public void setImageData(byte[] imageData) {
+            this.imageData = imageData;
+        }
+
+        public List<String> getAnalysisTypes() {
+            return analysisTypes;
+        }
+
+        public void setAnalysisTypes(List<String> analysisTypes) {
+            this.analysisTypes = analysisTypes;
+        }
     }
 
     /**
@@ -354,12 +422,29 @@ public interface VideoAiAnalysisService {
         private byte[] imageData;
         private int gridSize;
 
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public byte[] getImageData() { return imageData; }
-        public void setImageData(byte[] imageData) { this.imageData = imageData; }
-        public int getGridSize() { return gridSize; }
-        public void setGridSize(int gridSize) { this.gridSize = gridSize; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public byte[] getImageData() {
+            return imageData;
+        }
+
+        public void setImageData(byte[] imageData) {
+            this.imageData = imageData;
+        }
+
+        public int getGridSize() {
+            return gridSize;
+        }
+
+        public void setGridSize(int gridSize) {
+            this.gridSize = gridSize;
+        }
     }
 
     /**
@@ -370,12 +455,29 @@ public interface VideoAiAnalysisService {
         private double density;
         private String cameraId;
 
-        public int getTotalCount() { return totalCount; }
-        public void setTotalCount(int totalCount) { this.totalCount = totalCount; }
-        public double getDensity() { return density; }
-        public void setDensity(double density) { this.density = density; }
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+        public int getTotalCount() {
+            return totalCount;
+        }
+
+        public void setTotalCount(int totalCount) {
+            this.totalCount = totalCount;
+        }
+
+        public double getDensity() {
+            return density;
+        }
+
+        public void setDensity(double density) {
+            this.density = density;
+        }
+
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
     }
 
     /**
@@ -387,14 +489,37 @@ public interface VideoAiAnalysisService {
         private int height;
         private int gridSize;
 
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public int getWidth() { return width; }
-        public void setWidth(int width) { this.width = width; }
-        public int getHeight() { return height; }
-        public void setHeight(int height) { this.height = height; }
-        public int getGridSize() { return gridSize; }
-        public void setGridSize(int gridSize) { this.gridSize = gridSize; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public int getGridSize() {
+            return gridSize;
+        }
+
+        public void setGridSize(int gridSize) {
+            this.gridSize = gridSize;
+        }
     }
 
     /**
@@ -405,12 +530,29 @@ public interface VideoAiAnalysisService {
         private int height;
         private double[][] data;
 
-        public int getWidth() { return width; }
-        public void setWidth(int width) { this.width = width; }
-        public int getHeight() { return height; }
-        public void setHeight(int height) { this.height = height; }
-        public double[][] getData() { return data; }
-        public void setData(double[][] data) { this.data = data; }
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public double[][] getData() {
+            return data;
+        }
+
+        public void setData(double[][] data) {
+            this.data = data;
+        }
     }
 
     /**
@@ -422,14 +564,37 @@ public interface VideoAiAnalysisService {
         private int count;
         private String message;
 
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public String getLevel() { return level; }
-        public void setLevel(String level) { this.level = level; }
-        public int getCount() { return count; }
-        public void setCount(int count) { this.count = count; }
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public String getLevel() {
+            return level;
+        }
+
+        public void setLevel(String level) {
+            this.level = level;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
     /**
@@ -439,10 +604,21 @@ public interface VideoAiAnalysisService {
         private String cameraId;
         private byte[] imageData;
 
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public byte[] getImageData() { return imageData; }
-        public void setImageData(byte[] imageData) { this.imageData = imageData; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public byte[] getImageData() {
+            return imageData;
+        }
+
+        public void setImageData(byte[] imageData) {
+            this.imageData = imageData;
+        }
     }
 
     /**
@@ -453,12 +629,29 @@ public interface VideoAiAnalysisService {
         private String streamUrl;
         private RealtimeAnalysisConfig analysisConfig;
 
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public String getStreamUrl() { return streamUrl; }
-        public void setStreamUrl(String streamUrl) { this.streamUrl = streamUrl; }
-        public RealtimeAnalysisConfig getAnalysisConfig() { return analysisConfig; }
-        public void setAnalysisConfig(RealtimeAnalysisConfig analysisConfig) { this.analysisConfig = analysisConfig; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public String getStreamUrl() {
+            return streamUrl;
+        }
+
+        public void setStreamUrl(String streamUrl) {
+            this.streamUrl = streamUrl;
+        }
+
+        public RealtimeAnalysisConfig getAnalysisConfig() {
+            return analysisConfig;
+        }
+
+        public void setAnalysisConfig(RealtimeAnalysisConfig analysisConfig) {
+            this.analysisConfig = analysisConfig;
+        }
     }
 
     /**
@@ -470,14 +663,37 @@ public interface VideoAiAnalysisService {
         private LocalDateTime endTime;
         private List<String> analysisTypes;
 
-        public String getVideoId() { return videoId; }
-        public void setVideoId(String videoId) { this.videoId = videoId; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-        public LocalDateTime getEndTime() { return endTime; }
-        public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
-        public List<String> getAnalysisTypes() { return analysisTypes; }
-        public void setAnalysisTypes(List<String> analysisTypes) { this.analysisTypes = analysisTypes; }
+        public String getVideoId() {
+            return videoId;
+        }
+
+        public void setVideoId(String videoId) {
+            this.videoId = videoId;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+        }
+
+        public LocalDateTime getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(LocalDateTime endTime) {
+            this.endTime = endTime;
+        }
+
+        public List<String> getAnalysisTypes() {
+            return analysisTypes;
+        }
+
+        public void setAnalysisTypes(List<String> analysisTypes) {
+            this.analysisTypes = analysisTypes;
+        }
     }
 
     /**
@@ -489,14 +705,37 @@ public interface VideoAiAnalysisService {
         private LocalDateTime endTime;
         private String reportType;
 
-        public List<String> getCameraIds() { return cameraIds; }
-        public void setCameraIds(List<String> cameraIds) { this.cameraIds = cameraIds; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-        public LocalDateTime getEndTime() { return endTime; }
-        public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
-        public String getReportType() { return reportType; }
-        public void setReportType(String reportType) { this.reportType = reportType; }
+        public List<String> getCameraIds() {
+            return cameraIds;
+        }
+
+        public void setCameraIds(List<String> cameraIds) {
+            this.cameraIds = cameraIds;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+        }
+
+        public LocalDateTime getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(LocalDateTime endTime) {
+            this.endTime = endTime;
+        }
+
+        public String getReportType() {
+            return reportType;
+        }
+
+        public void setReportType(String reportType) {
+            this.reportType = reportType;
+        }
     }
 
     /**
@@ -513,12 +752,29 @@ public interface VideoAiAnalysisService {
         private int runningRealtimeTasks;
         private LocalDateTime reportTime;
 
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
-        public int getRunningRealtimeTasks() { return runningRealtimeTasks; }
-        public void setRunningRealtimeTasks(int runningRealtimeTasks) { this.runningRealtimeTasks = runningRealtimeTasks; }
-        public LocalDateTime getReportTime() { return reportTime; }
-        public void setReportTime(LocalDateTime reportTime) { this.reportTime = reportTime; }
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public int getRunningRealtimeTasks() {
+            return runningRealtimeTasks;
+        }
+
+        public void setRunningRealtimeTasks(int runningRealtimeTasks) {
+            this.runningRealtimeTasks = runningRealtimeTasks;
+        }
+
+        public LocalDateTime getReportTime() {
+            return reportTime;
+        }
+
+        public void setReportTime(LocalDateTime reportTime) {
+            this.reportTime = reportTime;
+        }
     }
 
     /**
@@ -531,14 +787,37 @@ public interface VideoAiAnalysisService {
         private String errorMessage;
 
         // getters and setters
-        public int getImageIndex() { return imageIndex; }
-        public void setImageIndex(int imageIndex) { this.imageIndex = imageIndex; }
-        public List<FaceRecognitionManager.FaceDetectResult> getFaces() { return faces; }
-        public void setFaces(List<FaceRecognitionManager.FaceDetectResult> faces) { this.faces = faces; }
-        public boolean isSuccess() { return success; }
-        public void setSuccess(boolean success) { this.success = success; }
-        public String getErrorMessage() { return errorMessage; }
-        public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+        public int getImageIndex() {
+            return imageIndex;
+        }
+
+        public void setImageIndex(int imageIndex) {
+            this.imageIndex = imageIndex;
+        }
+
+        public List<FaceRecognitionManager.FaceDetectResult> getFaces() {
+            return faces;
+        }
+
+        public void setFaces(List<FaceRecognitionManager.FaceDetectResult> faces) {
+            this.faces = faces;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
     }
 
     /**
@@ -553,18 +832,53 @@ public interface VideoAiAnalysisService {
         private LocalDateTime statisticsTime;
 
         // getters and setters
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public int getLoiteringCount() { return loiteringCount; }
-        public void setLoiteringCount(int loiteringCount) { this.loiteringCount = loiteringCount; }
-        public int getGatheringCount() { return gatheringCount; }
-        public void setGatheringCount(int gatheringCount) { this.gatheringCount = gatheringCount; }
-        public int getFallCount() { return fallCount; }
-        public void setFallCount(int fallCount) { this.fallCount = fallCount; }
-        public int getAbnormalBehaviorCount() { return abnormalBehaviorCount; }
-        public void setAbnormalBehaviorCount(int abnormalBehaviorCount) { this.abnormalBehaviorCount = abnormalBehaviorCount; }
-        public LocalDateTime getStatisticsTime() { return statisticsTime; }
-        public void setStatisticsTime(LocalDateTime statisticsTime) { this.statisticsTime = statisticsTime; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public int getLoiteringCount() {
+            return loiteringCount;
+        }
+
+        public void setLoiteringCount(int loiteringCount) {
+            this.loiteringCount = loiteringCount;
+        }
+
+        public int getGatheringCount() {
+            return gatheringCount;
+        }
+
+        public void setGatheringCount(int gatheringCount) {
+            this.gatheringCount = gatheringCount;
+        }
+
+        public int getFallCount() {
+            return fallCount;
+        }
+
+        public void setFallCount(int fallCount) {
+            this.fallCount = fallCount;
+        }
+
+        public int getAbnormalBehaviorCount() {
+            return abnormalBehaviorCount;
+        }
+
+        public void setAbnormalBehaviorCount(int abnormalBehaviorCount) {
+            this.abnormalBehaviorCount = abnormalBehaviorCount;
+        }
+
+        public LocalDateTime getStatisticsTime() {
+            return statisticsTime;
+        }
+
+        public void setStatisticsTime(LocalDateTime statisticsTime) {
+            this.statisticsTime = statisticsTime;
+        }
     }
 
     /**
@@ -580,20 +894,61 @@ public interface VideoAiAnalysisService {
         private LocalDateTime statisticsTime;
 
         // getters and setters
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public int getTotalFrames() { return totalFrames; }
-        public void setTotalFrames(int totalFrames) { this.totalFrames = totalFrames; }
-        public int getFaceDetectionCount() { return faceDetectionCount; }
-        public void setFaceDetectionCount(int faceDetectionCount) { this.faceDetectionCount = faceDetectionCount; }
-        public int getBehaviorDetectionCount() { return behaviorDetectionCount; }
-        public void setBehaviorDetectionCount(int behaviorDetectionCount) { this.behaviorDetectionCount = behaviorDetectionCount; }
-        public int getCrowdAnalysisCount() { return crowdAnalysisCount; }
-        public void setCrowdAnalysisCount(int crowdAnalysisCount) { this.crowdAnalysisCount = crowdAnalysisCount; }
-        public double getAverageProcessingTime() { return averageProcessingTime; }
-        public void setAverageProcessingTime(double averageProcessingTime) { this.averageProcessingTime = averageProcessingTime; }
-        public LocalDateTime getStatisticsTime() { return statisticsTime; }
-        public void setStatisticsTime(LocalDateTime statisticsTime) { this.statisticsTime = statisticsTime; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public int getTotalFrames() {
+            return totalFrames;
+        }
+
+        public void setTotalFrames(int totalFrames) {
+            this.totalFrames = totalFrames;
+        }
+
+        public int getFaceDetectionCount() {
+            return faceDetectionCount;
+        }
+
+        public void setFaceDetectionCount(int faceDetectionCount) {
+            this.faceDetectionCount = faceDetectionCount;
+        }
+
+        public int getBehaviorDetectionCount() {
+            return behaviorDetectionCount;
+        }
+
+        public void setBehaviorDetectionCount(int behaviorDetectionCount) {
+            this.behaviorDetectionCount = behaviorDetectionCount;
+        }
+
+        public int getCrowdAnalysisCount() {
+            return crowdAnalysisCount;
+        }
+
+        public void setCrowdAnalysisCount(int crowdAnalysisCount) {
+            this.crowdAnalysisCount = crowdAnalysisCount;
+        }
+
+        public double getAverageProcessingTime() {
+            return averageProcessingTime;
+        }
+
+        public void setAverageProcessingTime(double averageProcessingTime) {
+            this.averageProcessingTime = averageProcessingTime;
+        }
+
+        public LocalDateTime getStatisticsTime() {
+            return statisticsTime;
+        }
+
+        public void setStatisticsTime(LocalDateTime statisticsTime) {
+            this.statisticsTime = statisticsTime;
+        }
     }
 
     /**
@@ -609,20 +964,61 @@ public interface VideoAiAnalysisService {
         private List<String> alarmTypes;
 
         // getters and setters
-        public boolean isEnableFaceDetection() { return enableFaceDetection; }
-        public void setEnableFaceDetection(boolean enableFaceDetection) { this.enableFaceDetection = enableFaceDetection; }
-        public boolean isEnableBehaviorDetection() { return enableBehaviorDetection; }
-        public void setEnableBehaviorDetection(boolean enableBehaviorDetection) { this.enableBehaviorDetection = enableBehaviorDetection; }
-        public boolean isEnableCrowdAnalysis() { return enableCrowdAnalysis; }
-        public void setEnableCrowdAnalysis(boolean enableCrowdAnalysis) { this.enableCrowdAnalysis = enableCrowdAnalysis; }
-        public double getDetectionThreshold() { return detectionThreshold; }
-        public void setDetectionThreshold(double detectionThreshold) { this.detectionThreshold = detectionThreshold; }
-        public int getAnalysisInterval() { return analysisInterval; }
-        public void setAnalysisInterval(int analysisInterval) { this.analysisInterval = analysisInterval; }
-        public boolean isEnableAlarm() { return enableAlarm; }
-        public void setEnableAlarm(boolean enableAlarm) { this.enableAlarm = enableAlarm; }
-        public List<String> getAlarmTypes() { return alarmTypes; }
-        public void setAlarmTypes(List<String> alarmTypes) { this.alarmTypes = alarmTypes; }
+        public boolean isEnableFaceDetection() {
+            return enableFaceDetection;
+        }
+
+        public void setEnableFaceDetection(boolean enableFaceDetection) {
+            this.enableFaceDetection = enableFaceDetection;
+        }
+
+        public boolean isEnableBehaviorDetection() {
+            return enableBehaviorDetection;
+        }
+
+        public void setEnableBehaviorDetection(boolean enableBehaviorDetection) {
+            this.enableBehaviorDetection = enableBehaviorDetection;
+        }
+
+        public boolean isEnableCrowdAnalysis() {
+            return enableCrowdAnalysis;
+        }
+
+        public void setEnableCrowdAnalysis(boolean enableCrowdAnalysis) {
+            this.enableCrowdAnalysis = enableCrowdAnalysis;
+        }
+
+        public double getDetectionThreshold() {
+            return detectionThreshold;
+        }
+
+        public void setDetectionThreshold(double detectionThreshold) {
+            this.detectionThreshold = detectionThreshold;
+        }
+
+        public int getAnalysisInterval() {
+            return analysisInterval;
+        }
+
+        public void setAnalysisInterval(int analysisInterval) {
+            this.analysisInterval = analysisInterval;
+        }
+
+        public boolean isEnableAlarm() {
+            return enableAlarm;
+        }
+
+        public void setEnableAlarm(boolean enableAlarm) {
+            this.enableAlarm = enableAlarm;
+        }
+
+        public List<String> getAlarmTypes() {
+            return alarmTypes;
+        }
+
+        public void setAlarmTypes(List<String> alarmTypes) {
+            this.alarmTypes = alarmTypes;
+        }
     }
 
     /**
@@ -639,22 +1035,69 @@ public interface VideoAiAnalysisService {
         private AnalysisStatistics statistics;
 
         // getters and setters
-        public String getAnalysisId() { return analysisId; }
-        public void setAnalysisId(String analysisId) { this.analysisId = analysisId; }
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
-        public String getStatusMessage() { return statusMessage; }
-        public void setStatusMessage(String statusMessage) { this.statusMessage = statusMessage; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-        public LocalDateTime getLastUpdateTime() { return lastUpdateTime; }
-        public void setLastUpdateTime(LocalDateTime lastUpdateTime) { this.lastUpdateTime = lastUpdateTime; }
-        public int getProcessedFrames() { return processedFrames; }
-        public void setProcessedFrames(int processedFrames) { this.processedFrames = processedFrames; }
-        public AnalysisStatistics getStatistics() { return statistics; }
-        public void setStatistics(AnalysisStatistics statistics) { this.statistics = statistics; }
+        public String getAnalysisId() {
+            return analysisId;
+        }
+
+        public void setAnalysisId(String analysisId) {
+            this.analysisId = analysisId;
+        }
+
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getStatusMessage() {
+            return statusMessage;
+        }
+
+        public void setStatusMessage(String statusMessage) {
+            this.statusMessage = statusMessage;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+        }
+
+        public LocalDateTime getLastUpdateTime() {
+            return lastUpdateTime;
+        }
+
+        public void setLastUpdateTime(LocalDateTime lastUpdateTime) {
+            this.lastUpdateTime = lastUpdateTime;
+        }
+
+        public int getProcessedFrames() {
+            return processedFrames;
+        }
+
+        public void setProcessedFrames(int processedFrames) {
+            this.processedFrames = processedFrames;
+        }
+
+        public AnalysisStatistics getStatistics() {
+            return statistics;
+        }
+
+        public void setStatistics(AnalysisStatistics statistics) {
+            this.statistics = statistics;
+        }
     }
 
     /**
@@ -669,18 +1112,53 @@ public interface VideoAiAnalysisService {
         private double averageProcessingTime;
 
         // getters and setters
-        public int getTotalProcessed() { return totalProcessed; }
-        public void setTotalProcessed(int totalProcessed) { this.totalProcessed = totalProcessed; }
-        public int getFaceDetections() { return faceDetections; }
-        public void setFaceDetections(int faceDetections) { this.faceDetections = faceDetections; }
-        public int getBehaviorDetections() { return behaviorDetections; }
-        public void setBehaviorDetections(int behaviorDetections) { this.behaviorDetections = behaviorDetections; }
-        public int getCrowdWarnings() { return crowdWarnings; }
-        public void setCrowdWarnings(int crowdWarnings) { this.crowdWarnings = crowdWarnings; }
-        public int getAlarms() { return alarms; }
-        public void setAlarms(int alarms) { this.alarms = alarms; }
-        public double getAverageProcessingTime() { return averageProcessingTime; }
-        public void setAverageProcessingTime(double averageProcessingTime) { this.averageProcessingTime = averageProcessingTime; }
+        public int getTotalProcessed() {
+            return totalProcessed;
+        }
+
+        public void setTotalProcessed(int totalProcessed) {
+            this.totalProcessed = totalProcessed;
+        }
+
+        public int getFaceDetections() {
+            return faceDetections;
+        }
+
+        public void setFaceDetections(int faceDetections) {
+            this.faceDetections = faceDetections;
+        }
+
+        public int getBehaviorDetections() {
+            return behaviorDetections;
+        }
+
+        public void setBehaviorDetections(int behaviorDetections) {
+            this.behaviorDetections = behaviorDetections;
+        }
+
+        public int getCrowdWarnings() {
+            return crowdWarnings;
+        }
+
+        public void setCrowdWarnings(int crowdWarnings) {
+            this.crowdWarnings = crowdWarnings;
+        }
+
+        public int getAlarms() {
+            return alarms;
+        }
+
+        public void setAlarms(int alarms) {
+            this.alarms = alarms;
+        }
+
+        public double getAverageProcessingTime() {
+            return averageProcessingTime;
+        }
+
+        public void setAverageProcessingTime(double averageProcessingTime) {
+            this.averageProcessingTime = averageProcessingTime;
+        }
     }
 
     /**
@@ -695,18 +1173,53 @@ public interface VideoAiAnalysisService {
         private double processingTime;
 
         // getters and setters
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public LocalDateTime getTimestamp() { return timestamp; }
-        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
-        public FaceAnalysisResult getFaceResult() { return faceResult; }
-        public void setFaceResult(FaceAnalysisResult faceResult) { this.faceResult = faceResult; }
-        public BehaviorAnalysisResult getBehaviorResult() { return behaviorResult; }
-        public void setBehaviorResult(BehaviorAnalysisResult behaviorResult) { this.behaviorResult = behaviorResult; }
-        public CrowdAnalysisResult getCrowdResult() { return crowdResult; }
-        public void setCrowdResult(CrowdAnalysisResult crowdResult) { this.crowdResult = crowdResult; }
-        public double getProcessingTime() { return processingTime; }
-        public void setProcessingTime(double processingTime) { this.processingTime = processingTime; }
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public LocalDateTime getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(LocalDateTime timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public FaceAnalysisResult getFaceResult() {
+            return faceResult;
+        }
+
+        public void setFaceResult(FaceAnalysisResult faceResult) {
+            this.faceResult = faceResult;
+        }
+
+        public BehaviorAnalysisResult getBehaviorResult() {
+            return behaviorResult;
+        }
+
+        public void setBehaviorResult(BehaviorAnalysisResult behaviorResult) {
+            this.behaviorResult = behaviorResult;
+        }
+
+        public CrowdAnalysisResult getCrowdResult() {
+            return crowdResult;
+        }
+
+        public void setCrowdResult(CrowdAnalysisResult crowdResult) {
+            this.crowdResult = crowdResult;
+        }
+
+        public double getProcessingTime() {
+            return processingTime;
+        }
+
+        public void setProcessingTime(double processingTime) {
+            this.processingTime = processingTime;
+        }
     }
 
     /**
@@ -719,14 +1232,37 @@ public interface VideoAiAnalysisService {
         private List<FaceRecognitionManager.BlacklistCheckResult> blacklistMatches;
 
         // getters and setters
-        public int getFaceCount() { return faceCount; }
-        public void setFaceCount(int faceCount) { this.faceCount = faceCount; }
-        public List<FaceRecognitionManager.FaceDetectResult> getFaces() { return faces; }
-        public void setFaces(List<FaceRecognitionManager.FaceDetectResult> faces) { this.faces = faces; }
-        public boolean isHasBlacklistMatch() { return hasBlacklistMatch; }
-        public void setHasBlacklistMatch(boolean hasBlacklistMatch) { this.hasBlacklistMatch = hasBlacklistMatch; }
-        public List<FaceRecognitionManager.BlacklistCheckResult> getBlacklistMatches() { return blacklistMatches; }
-        public void setBlacklistMatches(List<FaceRecognitionManager.BlacklistCheckResult> blacklistMatches) { this.blacklistMatches = blacklistMatches; }
+        public int getFaceCount() {
+            return faceCount;
+        }
+
+        public void setFaceCount(int faceCount) {
+            this.faceCount = faceCount;
+        }
+
+        public List<FaceRecognitionManager.FaceDetectResult> getFaces() {
+            return faces;
+        }
+
+        public void setFaces(List<FaceRecognitionManager.FaceDetectResult> faces) {
+            this.faces = faces;
+        }
+
+        public boolean isHasBlacklistMatch() {
+            return hasBlacklistMatch;
+        }
+
+        public void setHasBlacklistMatch(boolean hasBlacklistMatch) {
+            this.hasBlacklistMatch = hasBlacklistMatch;
+        }
+
+        public List<FaceRecognitionManager.BlacklistCheckResult> getBlacklistMatches() {
+            return blacklistMatches;
+        }
+
+        public void setBlacklistMatches(List<FaceRecognitionManager.BlacklistCheckResult> blacklistMatches) {
+            this.blacklistMatches = blacklistMatches;
+        }
     }
 
     /**
@@ -742,20 +1278,61 @@ public interface VideoAiAnalysisService {
         private List<BehaviorDetectionManager.AbnormalBehavior> abnormalBehaviors;
 
         // getters and setters
-        public boolean isHasLoitering() { return hasLoitering; }
-        public void setHasLoitering(boolean hasLoitering) { this.hasLoitering = hasLoitering; }
-        public List<BehaviorDetectionManager.LoiteringResult> getLoiteringDetections() { return loiteringDetections; }
-        public void setLoiteringDetections(List<BehaviorDetectionManager.LoiteringResult> loiteringDetections) { this.loiteringDetections = loiteringDetections; }
-        public boolean isHasGathering() { return hasGathering; }
-        public void setHasGathering(boolean hasGathering) { this.hasGathering = hasGathering; }
-        public List<BehaviorDetectionManager.GatheringResult> getGatheringDetections() { return gatheringDetections; }
-        public void setGatheringDetections(List<BehaviorDetectionManager.GatheringResult> gatheringDetections) { this.gatheringDetections = gatheringDetections; }
-        public boolean isHasFall() { return hasFall; }
-        public void setHasFall(boolean hasFall) { this.hasFall = hasFall; }
-        public List<BehaviorDetectionManager.FallDetectionResult> getFallDetections() { return fallDetections; }
-        public void setFallDetections(List<BehaviorDetectionManager.FallDetectionResult> fallDetections) { this.fallDetections = fallDetections; }
-        public List<BehaviorDetectionManager.AbnormalBehavior> getAbnormalBehaviors() { return abnormalBehaviors; }
-        public void setAbnormalBehaviors(List<BehaviorDetectionManager.AbnormalBehavior> abnormalBehaviors) { this.abnormalBehaviors = abnormalBehaviors; }
+        public boolean isHasLoitering() {
+            return hasLoitering;
+        }
+
+        public void setHasLoitering(boolean hasLoitering) {
+            this.hasLoitering = hasLoitering;
+        }
+
+        public List<BehaviorDetectionManager.LoiteringResult> getLoiteringDetections() {
+            return loiteringDetections;
+        }
+
+        public void setLoiteringDetections(List<BehaviorDetectionManager.LoiteringResult> loiteringDetections) {
+            this.loiteringDetections = loiteringDetections;
+        }
+
+        public boolean isHasGathering() {
+            return hasGathering;
+        }
+
+        public void setHasGathering(boolean hasGathering) {
+            this.hasGathering = hasGathering;
+        }
+
+        public List<BehaviorDetectionManager.GatheringResult> getGatheringDetections() {
+            return gatheringDetections;
+        }
+
+        public void setGatheringDetections(List<BehaviorDetectionManager.GatheringResult> gatheringDetections) {
+            this.gatheringDetections = gatheringDetections;
+        }
+
+        public boolean isHasFall() {
+            return hasFall;
+        }
+
+        public void setHasFall(boolean hasFall) {
+            this.hasFall = hasFall;
+        }
+
+        public List<BehaviorDetectionManager.FallDetectionResult> getFallDetections() {
+            return fallDetections;
+        }
+
+        public void setFallDetections(List<BehaviorDetectionManager.FallDetectionResult> fallDetections) {
+            this.fallDetections = fallDetections;
+        }
+
+        public List<BehaviorDetectionManager.AbnormalBehavior> getAbnormalBehaviors() {
+            return abnormalBehaviors;
+        }
+
+        public void setAbnormalBehaviors(List<BehaviorDetectionManager.AbnormalBehavior> abnormalBehaviors) {
+            this.abnormalBehaviors = abnormalBehaviors;
+        }
     }
 
     /**
@@ -769,16 +1346,45 @@ public interface VideoAiAnalysisService {
         private boolean hasCrowdWarning;
 
         // getters and setters
-        public int getPersonCount() { return personCount; }
-        public void setPersonCount(int personCount) { this.personCount = personCount; }
-        public double getDensity() { return density; }
-        public void setDensity(double density) { this.density = density; }
-        public CrowdAnalysisManager.CrowdLevel getCrowdLevel() { return crowdLevel; }
-        public void setCrowdLevel(CrowdAnalysisManager.CrowdLevel crowdLevel) { this.crowdLevel = crowdLevel; }
-        public CrowdAnalysisManager.CrowdWarning getCrowdWarning() { return crowdWarning; }
-        public void setCrowdWarning(CrowdAnalysisManager.CrowdWarning crowdWarning) { this.crowdWarning = crowdWarning; }
-        public boolean isHasCrowdWarning() { return hasCrowdWarning; }
-        public void setHasCrowdWarning(boolean hasCrowdWarning) { this.hasCrowdWarning = hasCrowdWarning; }
+        public int getPersonCount() {
+            return personCount;
+        }
+
+        public void setPersonCount(int personCount) {
+            this.personCount = personCount;
+        }
+
+        public double getDensity() {
+            return density;
+        }
+
+        public void setDensity(double density) {
+            this.density = density;
+        }
+
+        public CrowdAnalysisManager.CrowdLevel getCrowdLevel() {
+            return crowdLevel;
+        }
+
+        public void setCrowdLevel(CrowdAnalysisManager.CrowdLevel crowdLevel) {
+            this.crowdLevel = crowdLevel;
+        }
+
+        public CrowdAnalysisManager.CrowdWarning getCrowdWarning() {
+            return crowdWarning;
+        }
+
+        public void setCrowdWarning(CrowdAnalysisManager.CrowdWarning crowdWarning) {
+            this.crowdWarning = crowdWarning;
+        }
+
+        public boolean isHasCrowdWarning() {
+            return hasCrowdWarning;
+        }
+
+        public void setHasCrowdWarning(boolean hasCrowdWarning) {
+            this.hasCrowdWarning = hasCrowdWarning;
+        }
     }
 
     /**
@@ -792,16 +1398,45 @@ public interface VideoAiAnalysisService {
         private AnalysisSummary summary;
 
         // getters and setters
-        public String getVideoId() { return videoId; }
-        public void setVideoId(String videoId) { this.videoId = videoId; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-        public LocalDateTime getEndTime() { return endTime; }
-        public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
-        public Map<String, Object> getAnalysisResults() { return analysisResults; }
-        public void setAnalysisResults(Map<String, Object> analysisResults) { this.analysisResults = analysisResults; }
-        public AnalysisSummary getSummary() { return summary; }
-        public void setSummary(AnalysisSummary summary) { this.summary = summary; }
+        public String getVideoId() {
+            return videoId;
+        }
+
+        public void setVideoId(String videoId) {
+            this.videoId = videoId;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+        }
+
+        public LocalDateTime getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(LocalDateTime endTime) {
+            this.endTime = endTime;
+        }
+
+        public Map<String, Object> getAnalysisResults() {
+            return analysisResults;
+        }
+
+        public void setAnalysisResults(Map<String, Object> analysisResults) {
+            this.analysisResults = analysisResults;
+        }
+
+        public AnalysisSummary getSummary() {
+            return summary;
+        }
+
+        public void setSummary(AnalysisSummary summary) {
+            this.summary = summary;
+        }
     }
 
     /**
@@ -814,14 +1449,37 @@ public interface VideoAiAnalysisService {
         private List<String> alerts;
 
         // getters and setters
-        public int getTotalFrames() { return totalFrames; }
-        public void setTotalFrames(int totalFrames) { this.totalFrames = totalFrames; }
-        public Map<String, Integer> getDetectionCounts() { return detectionCounts; }
-        public void setDetectionCounts(Map<String, Integer> detectionCounts) { this.detectionCounts = detectionCounts; }
-        public Map<String, Integer> getEventCounts() { return eventCounts; }
-        public void setEventCounts(Map<String, Integer> eventCounts) { this.eventCounts = eventCounts; }
-        public List<String> getAlerts() { return alerts; }
-        public void setAlerts(List<String> alerts) { this.alerts = alerts; }
+        public int getTotalFrames() {
+            return totalFrames;
+        }
+
+        public void setTotalFrames(int totalFrames) {
+            this.totalFrames = totalFrames;
+        }
+
+        public Map<String, Integer> getDetectionCounts() {
+            return detectionCounts;
+        }
+
+        public void setDetectionCounts(Map<String, Integer> detectionCounts) {
+            this.detectionCounts = detectionCounts;
+        }
+
+        public Map<String, Integer> getEventCounts() {
+            return eventCounts;
+        }
+
+        public void setEventCounts(Map<String, Integer> eventCounts) {
+            this.eventCounts = eventCounts;
+        }
+
+        public List<String> getAlerts() {
+            return alerts;
+        }
+
+        public void setAlerts(List<String> alerts) {
+            this.alerts = alerts;
+        }
     }
 
     /**
@@ -839,23 +1497,76 @@ public interface VideoAiAnalysisService {
         private LocalDateTime generatedTime;
 
         // getters and setters
-        public String getReportId() { return reportId; }
-        public void setReportId(String reportId) { this.reportId = reportId; }
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public String getReportType() { return reportType; }
-        public void setReportType(String reportType) { this.reportType = reportType; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-        public LocalDateTime getEndTime() { return endTime; }
-        public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
-        public String getReportContent() { return reportContent; }
-        public void setReportContent(String reportContent) { this.reportContent = reportContent; }
-        public Map<String, Object> getStatistics() { return statistics; }
-        public void setStatistics(Map<String, Object> statistics) { this.statistics = statistics; }
-        public List<String> getRecommendations() { return recommendations; }
-        public void setRecommendations(List<String> recommendations) { this.recommendations = recommendations; }
-        public LocalDateTime getGeneratedTime() { return generatedTime; }
-        public void setGeneratedTime(LocalDateTime generatedTime) { this.generatedTime = generatedTime; }
+        public String getReportId() {
+            return reportId;
+        }
+
+        public void setReportId(String reportId) {
+            this.reportId = reportId;
+        }
+
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public String getReportType() {
+            return reportType;
+        }
+
+        public void setReportType(String reportType) {
+            this.reportType = reportType;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+        }
+
+        public LocalDateTime getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(LocalDateTime endTime) {
+            this.endTime = endTime;
+        }
+
+        public String getReportContent() {
+            return reportContent;
+        }
+
+        public void setReportContent(String reportContent) {
+            this.reportContent = reportContent;
+        }
+
+        public Map<String, Object> getStatistics() {
+            return statistics;
+        }
+
+        public void setStatistics(Map<String, Object> statistics) {
+            this.statistics = statistics;
+        }
+
+        public List<String> getRecommendations() {
+            return recommendations;
+        }
+
+        public void setRecommendations(List<String> recommendations) {
+            this.recommendations = recommendations;
+        }
+
+        public LocalDateTime getGeneratedTime() {
+            return generatedTime;
+        }
+
+        public void setGeneratedTime(LocalDateTime generatedTime) {
+            this.generatedTime = generatedTime;
+        }
     }
 }

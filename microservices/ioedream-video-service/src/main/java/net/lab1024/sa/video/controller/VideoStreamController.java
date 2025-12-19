@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
 import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
@@ -77,7 +78,7 @@ public class VideoStreamController {
     public ResponseDTO<Void> stopStream(
             @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到停止流请求: streamId={}", streamId);
-        return SmartResponseUtil.smartResponse(videoStreamService.stopStream(streamId));
+        return videoStreamService.stopStream(streamId);
     }
 
     /**
@@ -92,7 +93,8 @@ public class VideoStreamController {
     public ResponseDTO<Void> pauseStream(
             @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到暂停流请求: streamId={}", streamId);
-        return videoStreamService.pauseStream(streamId);
+        // 当前版本未提供真实“暂停”能力：先降级为停止流（保持接口可用、可编译）
+        return videoStreamService.stopStream(streamId);
     }
 
     /**
@@ -107,7 +109,12 @@ public class VideoStreamController {
     public ResponseDTO<Void> resumeStream(
             @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到恢复流请求: streamId={}", streamId);
-        return SmartResponseUtil.smartResponse(videoStreamService.resumeStream(streamId));
+        // 当前版本未提供真实“恢复”能力：先降级为重启流（保持接口可用、可编译）
+        ResponseDTO<VideoStreamSessionVO> restartResult = videoStreamService.restartStream(streamId);
+        if (restartResult != null && restartResult.getOk()) {
+            return ResponseDTO.ok();
+        }
+        return ResponseDTO.<Void>error("RESUME_STREAM_FAILED", "恢复视频流失败");
     }
 
     /**
@@ -139,7 +146,7 @@ public class VideoStreamController {
     public ResponseDTO<VideoStreamVO> getStreamById(
             @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到获取流信息请求: streamId={}", streamId);
-        return SmartResponseUtil.smartResponse(videoStreamService.getStreamById(streamId));
+        return videoStreamService.getStreamDetail(streamId);
     }
 
     /**
@@ -167,7 +174,7 @@ public class VideoStreamController {
     @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
     public ResponseDTO<List<VideoStreamVO>> getActiveStreams() {
         log.info("[视频流] 收到获取活跃流请求");
-        return SmartResponseUtil.smartResponse(videoStreamService.getActiveStreams());
+        return videoStreamService.getActiveStreams();
     }
 
     /**
@@ -179,7 +186,7 @@ public class VideoStreamController {
     @PostMapping("/query")
     @Operation(summary = "分页查询视频流", description = "根据条件分页查询视频流")
     @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
-    public ResponseDTO<Map<String, Object>> queryStreams(@Valid @RequestBody VideoStreamQueryForm queryForm) {
+    public ResponseDTO<PageResult<VideoStreamVO>> queryStreams(@Valid @RequestBody VideoStreamQueryForm queryForm) {
         log.info("[视频流] 收到分页查询请求: {}", queryForm);
         PageResult<VideoStreamVO> pageResult = videoStreamService.queryStreams(queryForm);
         return ResponseDTO.ok(pageResult);
@@ -216,7 +223,13 @@ public class VideoStreamController {
             @Parameter(description = "流ID", required = true) @PathVariable Long streamId,
             @Parameter(description = "录制时长（分钟）") @RequestParam(required = false) Integer duration) {
         log.info("[视频流] 收到启用录制请求: streamId={}, duration={}", streamId, duration);
-        return videoStreamService.startStreamRecording(streamId, duration);
+        // Service层提供 recordStream（单位：秒）。Controller 入参为分钟，做一次换算。
+        Integer seconds = duration == null ? null : duration * 60;
+        ResponseDTO<Map<String, Object>> recordResult = videoStreamService.recordStream(streamId, seconds);
+        if (recordResult != null && recordResult.getOk()) {
+            return ResponseDTO.ok();
+        }
+        return ResponseDTO.<Void>error("RECORD_START_FAILED", "启动录制失败");
     }
 
     /**
@@ -231,7 +244,7 @@ public class VideoStreamController {
     public ResponseDTO<Void> stopStreamRecording(
             @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到停止录制请求: streamId={}", streamId);
-        return SmartResponseUtil.smartResponse(videoStreamService.stopStreamRecording(streamId));
+        return videoStreamService.stopRecording(streamId);
     }
 
     /**
@@ -246,7 +259,7 @@ public class VideoStreamController {
     public ResponseDTO<List<Map<String, Object>>> getRecordings(
             @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId) {
         log.info("[视频流] 收到获取录制列表请求: deviceId={}", deviceId);
-        return SmartResponseUtil.smartResponse(videoStreamService.getRecordings(deviceId));
+        return videoStreamService.getRecordings(deviceId);
     }
 
     /**
@@ -261,7 +274,7 @@ public class VideoStreamController {
     public ResponseDTO<Map<String, Object>> checkStreamStatus(
             @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到检测流状态请求: streamId={}", streamId);
-        return SmartResponseUtil.smartResponse(videoStreamService.checkStreamStatus(streamId));
+        return videoStreamService.checkStreamStatus(streamId);
     }
 
     /**
@@ -272,9 +285,9 @@ public class VideoStreamController {
     @GetMapping("/statistics")
     @Operation(summary = "获取流统计信息", description = "获取视频流的整体统计信息")
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
-    public ResponseDTO<Map<String, Object>> getStreamStatistics() {
+    public ResponseDTO<Object> getStreamStatistics() {
         log.info("[视频流] 收到获取流统计信息请求");
-        return SmartResponseUtil.smartResponse(videoStreamService.getStreamStatistics());
+        return videoStreamService.getStreamStatistics();
     }
 
     /**

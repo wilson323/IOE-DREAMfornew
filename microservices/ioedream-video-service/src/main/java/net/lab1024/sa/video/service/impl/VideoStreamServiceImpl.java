@@ -19,18 +19,18 @@ import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.dao.VideoStreamDao;
-import net.lab1024.sa.video.entity.VideoStreamEntity;
-import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
 import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
 import net.lab1024.sa.video.domain.vo.VideoStreamSessionVO;
 import net.lab1024.sa.video.domain.vo.VideoStreamVO;
+import net.lab1024.sa.video.entity.VideoStreamEntity;
+import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.service.VideoStreamService;
 
 /**
@@ -167,8 +167,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
                     voList,
                     pageResult.getTotal(),
                     queryForm.getPageNum(),
-                    queryForm.getPageSize()
-            );
+                    queryForm.getPageSize());
 
             log.info("[视频流] 分页查询流成功，总数={}", pageResult.getTotal());
             return result;
@@ -238,7 +237,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             // TODO: 调用设备服务验证设备状态
             // DeviceEntity device = deviceService.getById(startForm.getDeviceId());
             // if (device == null || device.getDeviceStatus() != 1) {
-            //     return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在或未在线");
+            // return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在或未在线");
             // }
 
             // 创建流记录
@@ -263,7 +262,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             stream.setDynamicBitrate(startForm.getDynamicBitrate() != null ? startForm.getDynamicBitrate() : 1);
             stream.setViewerCount(0);
             stream.setMaxViewerCount(1000);
-            stream.setExtendedParams(startForm.getExtendedParams());
+            stream.setExtendedAttributes(startForm.getExtendedParams());
             stream.setCreateTime(LocalDateTime.now());
             stream.setUpdateTime(LocalDateTime.now());
             stream.setDeletedFlag(0);
@@ -1017,7 +1016,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
      * 转换为会话VO
      *
      * @param sessionResult 会话结果
-     * @param stream 流实体
+     * @param stream        流实体
      * @return 会话VO
      */
     private VideoStreamSessionVO convertToSessionVO(Map<String, Object> sessionResult, VideoStreamEntity stream) {
@@ -1091,6 +1090,99 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         sessionVO.setRemark(stream.getRemark());
 
         return sessionVO;
+    }
+
+    @Override
+    @Observed(name = "video.stream.reconnect", contextualName = "video-stream-reconnect")
+    public ResponseDTO<Void> reconnectStream(Long streamId) {
+        log.info("[视频流] 重连流，streamId={}", streamId);
+        try {
+            if (streamId == null) {
+                return ResponseDTO.error("PARAM_ERROR", "流ID不能为空");
+            }
+
+            VideoStreamEntity stream = videoStreamDao.selectById(streamId);
+            if (stream == null || stream.getDeletedFlag() == 1) {
+                return ResponseDTO.error("STREAM_NOT_FOUND", "视频流不存在");
+            }
+
+            LambdaUpdateWrapper<VideoStreamEntity> update = new LambdaUpdateWrapper<VideoStreamEntity>()
+                    .eq(VideoStreamEntity::getStreamId, streamId)
+                    .set(VideoStreamEntity::getReconnectTime, LocalDateTime.now())
+                    .set(VideoStreamEntity::getStreamStatus, 1);
+            videoStreamDao.update(null, update);
+
+            return ResponseDTO.ok();
+        } catch (Exception e) {
+            log.error("[视频流] 重连流失败: streamId={}, error={}", streamId, e.getMessage(), e);
+            return ResponseDTO.error("RECONNECT_STREAM_ERROR", "重连视频流失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Observed(name = "video.stream.getPlayUrls", contextualName = "video-stream-get-play-urls")
+    @Transactional(readOnly = true)
+    public ResponseDTO<Map<String, String>> getStreamPlayUrls(Long streamId) {
+        log.info("[视频流] 获取流播放地址，streamId={}", streamId);
+
+        try {
+            if (streamId == null) {
+                return ResponseDTO.error("PARAM_ERROR", "流ID不能为空");
+            }
+
+            VideoStreamEntity stream = videoStreamDao.selectById(streamId);
+            if (stream == null || stream.getDeletedFlag() == 1) {
+                return ResponseDTO.error("STREAM_NOT_FOUND", "视频流不存在");
+            }
+
+            Map<String, String> playUrls = new HashMap<>();
+            String baseUrl = stream.getStreamUrl() != null ? stream.getStreamUrl() : stream.getPullUrl();
+
+            if (baseUrl != null && !baseUrl.trim().isEmpty()) {
+                // 根据协议类型生成对应协议的播放地址
+                Integer protocol = stream.getProtocol();
+                if (protocol != null) {
+                    switch (protocol) {
+                        case 1: // RTSP
+                            playUrls.put("rtsp", baseUrl);
+                            break;
+                        case 2: // RTMP
+                            playUrls.put("rtmp", baseUrl);
+                            break;
+                        case 3: // HLS
+                            playUrls.put("hls", baseUrl);
+                            break;
+                        case 4: // WebRTC
+                            playUrls.put("webrtc", baseUrl);
+                            break;
+                        case 5: // HTTP-FLV
+                            playUrls.put("flv", baseUrl);
+                            break;
+                    }
+                }
+                // 如果没有指定协议或需要多协议支持，尝试从URL推断
+                if (playUrls.isEmpty()) {
+                    if (baseUrl.startsWith("rtsp://")) {
+                        playUrls.put("rtsp", baseUrl);
+                    } else if (baseUrl.startsWith("rtmp://")) {
+                        playUrls.put("rtmp", baseUrl);
+                    } else if (baseUrl.contains(".m3u8")) {
+                        playUrls.put("hls", baseUrl);
+                    } else if (baseUrl.contains(".flv")) {
+                        playUrls.put("flv", baseUrl);
+                    } else {
+                        playUrls.put("default", baseUrl);
+                    }
+                }
+            }
+
+            log.info("[视频流] 获取流播放地址成功，streamId={}, urlCount={}", streamId, playUrls.size());
+            return ResponseDTO.ok(playUrls);
+
+        } catch (Exception e) {
+            log.error("[视频流] 获取流播放地址异常: streamId={}", streamId, e);
+            return ResponseDTO.error("GET_STREAM_PLAY_URLS_ERROR", "获取流播放地址失败");
+        }
     }
 
     /**
@@ -1207,6 +1299,51 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             return "fair";
         } else {
             return "poor";
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseDTO<Map<String, String>> getStreamPlayUrls(Long streamId) {
+        log.info("[视频流] 获取流播放地址，streamId={}", streamId);
+
+        try {
+            if (streamId == null) {
+                return ResponseDTO.error("PARAM_ERROR", "流ID不能为空");
+            }
+
+            VideoStreamEntity stream = videoStreamDao.selectById(streamId);
+            if (stream == null) {
+                return ResponseDTO.error("STREAM_NOT_FOUND", "视频流不存在");
+            }
+
+            Map<String, String> playUrls = new HashMap<>();
+
+            // RTSP地址
+            if (stream.getStreamUrl() != null) {
+                playUrls.put("rtsp", stream.getStreamUrl());
+            }
+
+            // RTMP地址
+            if (stream.getPushUrl() != null) {
+                playUrls.put("rtmp", stream.getPushUrl());
+            }
+
+            // HLS地址（需要根据实际情况生成）
+            if (stream.getPullUrl() != null) {
+                playUrls.put("hls", stream.getPullUrl());
+            }
+
+            // HTTP-FLV地址
+            if (stream.getPullUrl() != null) {
+                playUrls.put("flv", stream.getPullUrl().replace(".m3u8", ".flv"));
+            }
+
+            log.info("[视频流] 获取流播放地址完成，streamId={}, urls={}", streamId, playUrls);
+            return ResponseDTO.ok(playUrls);
+        } catch (Exception e) {
+            log.error("[视频流] 获取流播放地址失败，streamId={}, error={}", streamId, e.getMessage(), e);
+            return ResponseDTO.error("GET_PLAY_URLS_FAILED", "获取播放地址失败：" + e.getMessage());
         }
     }
 }

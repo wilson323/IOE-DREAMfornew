@@ -15,6 +15,26 @@ public class HardwareSpec {
     private Integer memoryMB;
     private Boolean gpu;
 
+    /**
+     * CPU型号（可选，用于展示/兼容）
+     */
+    private String cpuModel;
+
+    /**
+     * GPU型号（可选，用于展示/兼容）
+     */
+    private String gpuModel;
+
+    /**
+     * 内存大小（GB，可选；设置时会同步到 memoryMB）
+     */
+    private Integer memorySize;
+
+    /**
+     * 存储大小（GB，可选）
+     */
+    private Integer storageSize;
+
     public Integer getCpuCores() {
         return cpuCores;
     }
@@ -35,7 +55,47 @@ public class HardwareSpec {
         return Boolean.TRUE.equals(gpu);
     }
 
+    public Boolean getGpu() {
+        return gpu;
+    }
+
     public void setGpu(Boolean gpu) {
         this.gpu = gpu;
+    }
+
+    public String getCpuModel() {
+        return cpuModel;
+    }
+
+    public void setCpuModel(String cpuModel) {
+        this.cpuModel = cpuModel;
+    }
+
+    public String getGpuModel() {
+        return gpuModel;
+    }
+
+    public void setGpuModel(String gpuModel) {
+        this.gpuModel = gpuModel;
+    }
+
+    public Integer getMemorySize() {
+        return memorySize;
+    }
+
+    public void setMemorySize(Integer memorySize) {
+        this.memorySize = memorySize;
+        // 同步更新 memoryMB（若尚未设置）
+        if (this.memoryMB == null && memorySize != null) {
+            this.memoryMB = memorySize * 1024;
+        }
+    }
+
+    public Integer getStorageSize() {
+        return storageSize;
+    }
+
+    public void setStorageSize(Integer storageSize) {
+        this.storageSize = storageSize;
     }
 }

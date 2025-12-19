@@ -1,8 +1,10 @@
 package net.lab1024.sa.video.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,8 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
 import net.lab1024.sa.video.service.VideoDeviceService;
@@ -54,11 +56,11 @@ class VideoDeviceControllerTest {
 
         PageResult<VideoDeviceVO> pageResult = new PageResult<>();
         when(videoDeviceService.queryDevices(any(VideoDeviceQueryForm.class)))
-            .thenReturn(pageResult);
+                .thenReturn(pageResult);
 
         // When
         ResponseDTO<PageResult<VideoDeviceVO>> response = videoDeviceController.queryDevices(
-            pageNum, pageSize, keyword, areaId, status);
+                pageNum, pageSize, keyword, areaId, status);
 
         // Then
         assertNotNull(response);

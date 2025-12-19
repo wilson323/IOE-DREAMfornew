@@ -1,35 +1,41 @@
 package net.lab1024.sa.video.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.domain.PageParam;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.video.dao.VideoBehaviorDao;
-import net.lab1024.sa.video.dao.VideoBehaviorPatternDao;
-import net.lab1024.sa.video.entity.VideoBehaviorEntity;
-import net.lab1024.sa.video.entity.VideoBehaviorPatternEntity;
-import net.lab1024.sa.video.manager.VideoBehaviorManager;
-import net.lab1024.sa.video.domain.form.VideoBehaviorAnalysisForm;
-import net.lab1024.sa.video.domain.form.VideoBehaviorPatternForm;
-import net.lab1024.sa.video.domain.vo.VideoBehaviorVO;
-import net.lab1024.sa.video.service.VideoBehaviorService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageParam;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.video.dao.VideoBehaviorDao;
+import net.lab1024.sa.video.dao.VideoBehaviorPatternDao;
+import net.lab1024.sa.video.domain.form.VideoBehaviorAnalysisForm;
+import net.lab1024.sa.video.domain.form.VideoBehaviorPatternForm;
+import net.lab1024.sa.video.domain.vo.VideoBehaviorVO;
+import net.lab1024.sa.video.entity.VideoBehaviorEntity;
+import net.lab1024.sa.video.entity.VideoBehaviorPatternEntity;
+import net.lab1024.sa.video.manager.VideoBehaviorManager;
+import net.lab1024.sa.video.service.VideoBehaviorService;
 
 /**
  * 视频行为分析服务实现类
@@ -128,11 +134,11 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         // 排序
         if (StringUtils.isNotBlank(form.getSortField())) {
             if ("desc".equalsIgnoreCase(form.getSortOrder())) {
-                queryWrapper.orderByDesc(StringUtils.isNotBlank(form.getSortField()) ?
-                    VideoBehaviorEntity::getDetectionTime : null);
+                queryWrapper.orderByDesc(
+                        StringUtils.isNotBlank(form.getSortField()) ? VideoBehaviorEntity::getDetectionTime : null);
             } else {
-                queryWrapper.orderByAsc(StringUtils.isNotBlank(form.getSortField()) ?
-                    VideoBehaviorEntity::getDetectionTime : null);
+                queryWrapper.orderByAsc(
+                        StringUtils.isNotBlank(form.getSortField()) ? VideoBehaviorEntity::getDetectionTime : null);
             }
         } else {
             queryWrapper.orderByDesc(VideoBehaviorEntity::getDetectionTime);
@@ -183,7 +189,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDTO<List<VideoBehaviorVO>> getDeviceBehaviors(Long deviceId, LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<List<VideoBehaviorVO>> getDeviceBehaviors(Long deviceId, LocalDateTime startTime,
+            LocalDateTime endTime) {
         log.info("[行为分析] 获取设备行为记录, deviceId={}, startTime={}, endTime={}", deviceId, startTime, endTime);
 
         List<VideoBehaviorEntity> entities = videoBehaviorManager.getDeviceBehaviors(deviceId, startTime, endTime);
@@ -196,7 +203,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDTO<List<VideoBehaviorVO>> getPersonBehaviors(Long personId, LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<List<VideoBehaviorVO>> getPersonBehaviors(Long personId, LocalDateTime startTime,
+            LocalDateTime endTime) {
         log.info("[行为分析] 获取人员行为记录, personId={}, startTime={}, endTime={}", personId, startTime, endTime);
 
         List<VideoBehaviorEntity> entities = videoBehaviorManager.getPersonBehaviors(personId, startTime, endTime);
@@ -208,11 +216,13 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     @Override
-    public ResponseDTO<Void> processBehavior(Long behaviorId, Integer processStatus, Long userId, String userName, String remark) {
+    public ResponseDTO<Void> processBehavior(Long behaviorId, Integer processStatus, Long userId, String userName,
+            String remark) {
         log.info("[行为分析] 处理行为记录, behaviorId={}, processStatus={}, userId={}, remark={}",
                 behaviorId, processStatus, userId, remark);
 
-        boolean success = videoBehaviorManager.updateBehaviorProcessStatus(behaviorId, processStatus, userId, userName, remark);
+        boolean success = videoBehaviorManager.updateBehaviorProcessStatus(behaviorId, processStatus, userId, userName,
+                remark);
         if (success) {
             return ResponseDTO.ok();
         } else {
@@ -221,7 +231,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     @Override
-    public ResponseDTO<Integer> batchProcessBehaviors(List<Long> behaviorIds, Integer processStatus, Long userId, String userName) {
+    public ResponseDTO<Integer> batchProcessBehaviors(List<Long> behaviorIds, Integer processStatus, Long userId,
+            String userName) {
         log.info("[行为分析] 批量处理行为记录, behaviorIds={}, processStatus={}, userId={}",
                 behaviorIds.size(), processStatus, userId);
 
@@ -315,7 +326,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDTO<Map<String, Object>> analyzeBehaviorPatterns(Long deviceId, LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<Map<String, Object>> analyzeBehaviorPatterns(Long deviceId, LocalDateTime startTime,
+            LocalDateTime endTime) {
         log.info("[行为分析] 分析行为模式, deviceId={}, startTime={}, endTime={}", deviceId, startTime, endTime);
 
         List<VideoBehaviorEntity> behaviors = videoBehaviorManager.getDeviceBehaviors(deviceId, startTime, endTime);
@@ -329,7 +341,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     public ResponseDTO<Void> createBehaviorPattern(VideoBehaviorPatternForm form) {
         log.info("[行为模式] 创建行为模式, patternName={}", form.getPatternName());
 
-        VideoBehaviorPatternEntity entity = BeanUtils.copyProperties(form, VideoBehaviorPatternEntity.class);
+        VideoBehaviorPatternEntity entity = new VideoBehaviorPatternEntity();
+        BeanUtils.copyProperties(form, entity);
         videoBehaviorManager.addBehaviorPattern(entity);
         return ResponseDTO.ok();
     }
@@ -338,7 +351,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     public ResponseDTO<Void> updateBehaviorPattern(Long patternId, VideoBehaviorPatternForm form) {
         log.info("[行为模式] 更新行为模式, patternId={}", patternId);
 
-        VideoBehaviorPatternEntity entity = BeanUtils.copyProperties(form, VideoBehaviorPatternEntity.class);
+        VideoBehaviorPatternEntity entity = new VideoBehaviorPatternEntity();
+        BeanUtils.copyProperties(form, entity);
         entity.setPatternId(patternId);
         videoBehaviorManager.updateBehaviorPattern(entity);
         return ResponseDTO.ok();
@@ -362,13 +376,15 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
             return ResponseDTO.error("PATTERN_NOT_FOUND", "行为模式不存在");
         }
 
-        VideoBehaviorPatternForm form = BeanUtils.copyProperties(entity, VideoBehaviorPatternForm.class);
+        VideoBehaviorPatternForm form = new VideoBehaviorPatternForm();
+        BeanUtils.copyProperties(entity, form);
         return ResponseDTO.ok(form);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDTO<PageResult<VideoBehaviorPatternForm>> queryBehaviorPatternPage(VideoBehaviorPatternForm form, PageParam pageParam) {
+    public ResponseDTO<PageResult<VideoBehaviorPatternForm>> queryBehaviorPatternPage(VideoBehaviorPatternForm form,
+            PageParam pageParam) {
         log.info("[行为模式] 查询行为模式列表, patternName={}", form.getPatternName());
 
         LambdaQueryWrapper<VideoBehaviorPatternEntity> queryWrapper = new LambdaQueryWrapper<>();
@@ -387,7 +403,11 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         IPage<VideoBehaviorPatternEntity> pageResult = videoBehaviorPatternDao.selectPage(page, queryWrapper);
 
         List<VideoBehaviorPatternForm> formList = pageResult.getRecords().stream()
-                .map(entity -> BeanUtils.copyProperties(entity, VideoBehaviorPatternForm.class))
+                .map(entity -> {
+                    VideoBehaviorPatternForm item = new VideoBehaviorPatternForm();
+                    BeanUtils.copyProperties(entity, item);
+                    return item;
+                })
                 .collect(Collectors.toList());
 
         PageResult<VideoBehaviorPatternForm> result = new PageResult<>();
@@ -407,7 +427,11 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
         List<VideoBehaviorPatternEntity> entities = videoBehaviorManager.getActivePatterns();
         List<VideoBehaviorPatternForm> formList = entities.stream()
-                .map(entity -> BeanUtils.copyProperties(entity, VideoBehaviorPatternForm.class))
+                .map(entity -> {
+                    VideoBehaviorPatternForm item = new VideoBehaviorPatternForm();
+                    BeanUtils.copyProperties(entity, item);
+                    return item;
+                })
                 .collect(Collectors.toList());
 
         return ResponseDTO.ok(formList);
@@ -439,11 +463,13 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
      * 转换Entity为VO
      */
     private VideoBehaviorVO convertToVO(VideoBehaviorEntity entity) {
-        VideoBehaviorVO vo = BeanUtils.copyProperties(entity, VideoBehaviorVO.class);
+        VideoBehaviorVO vo = new VideoBehaviorVO();
+        BeanUtils.copyProperties(entity, vo);
 
         // 设置描述字段
         if (entity.getDetectionTime() != null) {
-            vo.setDetectionTimeDesc(entity.getDetectionTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            vo.setDetectionTimeDesc(
+                    entity.getDetectionTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
         if (entity.getStartTime() != null) {
             vo.setStartTime(entity.getStartTime());
@@ -494,7 +520,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         // 解析JSON字段
         if (StringUtils.isNotBlank(entity.getTargetIds())) {
             try {
-                vo.setTargetIdsList(objectMapper.readValue(entity.getTargetIds(), new TypeReference<List<Long>>() {}));
+                vo.setTargetIdsList(objectMapper.readValue(entity.getTargetIds(), new TypeReference<List<Long>>() {
+                }));
             } catch (Exception e) {
                 vo.setTargetIdsList(Collections.emptyList());
             }
@@ -502,7 +529,9 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
         if (StringUtils.isNotBlank(entity.getSnapshotUrls())) {
             try {
-                vo.setSnapshotUrlsList(objectMapper.readValue(entity.getSnapshotUrls(), new TypeReference<List<String>>() {}));
+                vo.setSnapshotUrlsList(
+                        objectMapper.readValue(entity.getSnapshotUrls(), new TypeReference<List<String>>() {
+                        }));
             } catch (Exception e) {
                 vo.setSnapshotUrlsList(Collections.emptyList());
             }
@@ -510,7 +539,9 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
         if (StringUtils.isNotBlank(entity.getEnvironmentInfo())) {
             try {
-                vo.setEnvironmentInfoParsed(objectMapper.readValue(entity.getEnvironmentInfo(), new TypeReference<Map<String, Object>>() {}));
+                vo.setEnvironmentInfoParsed(
+                        objectMapper.readValue(entity.getEnvironmentInfo(), new TypeReference<Map<String, Object>>() {
+                        }));
             } catch (Exception e) {
                 vo.setEnvironmentInfoParsed(new HashMap<>());
             }
@@ -526,42 +557,66 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     private String getBehaviorTypeDesc(Integer behaviorType) {
-        if (behaviorType == null) return "未知";
+        if (behaviorType == null)
+            return "未知";
         switch (behaviorType) {
-            case 1: return "人员检测";
-            case 2: return "车辆检测";
-            case 3: return "物体检测";
-            case 4: return "人脸检测";
-            case 5: return "异常行为";
-            case 6: return "正常行为";
-            case 7: return "其他行为";
-            default: return "未知类型";
+            case 1:
+                return "人员检测";
+            case 2:
+                return "车辆检测";
+            case 3:
+                return "物体检测";
+            case 4:
+                return "人脸检测";
+            case 5:
+                return "异常行为";
+            case 6:
+                return "正常行为";
+            case 7:
+                return "其他行为";
+            default:
+                return "未知类型";
         }
     }
 
     private String getBehaviorSubTypeDesc(Integer behaviorType, Integer behaviorSubType) {
-        if (behaviorSubType == null) return "未分类";
+        if (behaviorSubType == null)
+            return "未分类";
 
         switch (behaviorType) {
             case 5: // 异常行为
                 switch (behaviorSubType) {
-                    case 1: return "人员徘徊";
-                    case 2: return "异常聚集";
-                    case 3: return "逆行检测";
-                    case 4: return "区域入侵";
-                    case 5: return "物品遗留";
-                    case 6: return "打架斗殴";
-                    case 7: return "倒地检测";
-                    case 8: return "快速奔跑";
-                    default: return "其他异常";
+                    case 1:
+                        return "人员徘徊";
+                    case 2:
+                        return "异常聚集";
+                    case 3:
+                        return "逆行检测";
+                    case 4:
+                        return "区域入侵";
+                    case 5:
+                        return "物品遗留";
+                    case 6:
+                        return "打架斗殴";
+                    case 7:
+                        return "倒地检测";
+                    case 8:
+                        return "快速奔跑";
+                    default:
+                        return "其他异常";
                 }
             case 6: // 正常行为
                 switch (behaviorSubType) {
-                    case 1: return "正常行走";
-                    case 2: return "正常停留";
-                    case 3: return "正常工作";
-                    case 4: return "正常休息";
-                    default: return "其他正常";
+                    case 1:
+                        return "正常行走";
+                    case 2:
+                        return "正常停留";
+                    case 3:
+                        return "正常工作";
+                    case 4:
+                        return "正常休息";
+                    default:
+                        return "其他正常";
                 }
             default:
                 return "子类型" + behaviorSubType;
@@ -569,13 +624,19 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     private String getSeverityLevelDesc(Integer severityLevel) {
-        if (severityLevel == null) return "未知";
+        if (severityLevel == null)
+            return "未知";
         switch (severityLevel) {
-            case 1: return "低风险";
-            case 2: return "中风险";
-            case 3: return "高风险";
-            case 4: return "极高风险";
-            default: return "未知";
+            case 1:
+                return "低风险";
+            case 2:
+                return "中风险";
+            case 3:
+                return "高风险";
+            case 4:
+                return "极高风险";
+            default:
+                return "未知";
         }
     }
 
@@ -584,57 +645,87 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     private String getConfidenceGrade(BigDecimal confidenceScore) {
-        if (confidenceScore == null) return "未知";
+        if (confidenceScore == null)
+            return "未知";
         double score = confidenceScore.doubleValue();
-        if (score >= 90) return "高";
-        if (score >= 75) return "较高";
-        if (score >= 60) return "中等";
-        if (score >= 40) return "较低";
+        if (score >= 90)
+            return "高";
+        if (score >= 75)
+            return "较高";
+        if (score >= 60)
+            return "中等";
+        if (score >= 40)
+            return "较低";
         return "低";
     }
 
     private String getProcessStatusDesc(Integer processStatus) {
-        if (processStatus == null) return "未知";
+        if (processStatus == null)
+            return "未知";
         switch (processStatus) {
-            case 0: return "未处理";
-            case 1: return "处理中";
-            case 2: return "已处理";
-            case 3: return "已忽略";
-            case 4: return "已转交";
-            default: return "未知状态";
+            case 0:
+                return "未处理";
+            case 1:
+                return "处理中";
+            case 2:
+                return "已处理";
+            case 3:
+                return "已忽略";
+            case 4:
+                return "已转交";
+            default:
+                return "未知状态";
         }
     }
 
     private String getAlarmLevelDesc(Integer alarmLevel) {
-        if (alarmLevel == null) return "未知";
+        if (alarmLevel == null)
+            return "未知";
         switch (alarmLevel) {
-            case 1: return "提示";
-            case 2: return "重要";
-            case 3: return "紧急";
-            case 4: return "严重";
-            default: return "未知";
+            case 1:
+                return "提示";
+            case 2:
+                return "重要";
+            case 3:
+                return "紧急";
+            case 4:
+                return "严重";
+            default:
+                return "未知";
         }
     }
 
     private String getImpactLevelDesc(Integer impactLevel) {
-        if (impactLevel == null) return "未知";
+        if (impactLevel == null)
+            return "未知";
         switch (impactLevel) {
-            case 1: return "轻微影响";
-            case 2: return "一般影响";
-            case 3: return "重要影响";
-            case 4: return "严重影响";
-            default: return "未知";
+            case 1:
+                return "轻微影响";
+            case 2:
+                return "一般影响";
+            case 3:
+                return "重要影响";
+            case 4:
+                return "严重影响";
+            default:
+                return "未知";
         }
     }
 
     private String getProcessPriorityDesc(Integer processPriority) {
-        if (processPriority == null) return "未知";
+        if (processPriority == null)
+            return "未知";
         switch (processPriority) {
-            case 1: return "低";
-            case 2: return "中";
-            case 3: return "高";
-            case 4: return "紧急";
-            default: return "未知";
+            case 1:
+                return "低";
+            case 2:
+                return "中";
+            case 3:
+                return "高";
+            case 4:
+                return "紧急";
+            default:
+                return "未知";
         }
     }
 
@@ -645,7 +736,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
             suggestions.add("立即处理，优先级高");
         }
 
-        if (behavior.getConfidenceScore() != null && behavior.getConfidenceScore().compareTo(new BigDecimal("70")) < 0) {
+        if (behavior.getConfidenceScore() != null
+                && behavior.getConfidenceScore().compareTo(new BigDecimal("70")) < 0) {
             suggestions.add("建议人工复核检测结果");
         }
 
@@ -676,25 +768,38 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     private String getTagColor(Integer severityLevel) {
-        if (severityLevel == null) return "#999999";
+        if (severityLevel == null)
+            return "#999999";
         switch (severityLevel) {
-            case 1: return "#52C41A"; // 绿色
-            case 2: return "#FAAD14"; // 黄色
-            case 3: return "#FA8C16"; // 橙色
-            case 4: return "#FF4D4F"; // 红色
-            default: return "#999999"; // 灰色
+            case 1:
+                return "#52C41A"; // 绿色
+            case 2:
+                return "#FAAD14"; // 黄色
+            case 3:
+                return "#FA8C16"; // 橙色
+            case 4:
+                return "#FF4D4F"; // 红色
+            default:
+                return "#999999"; // 灰色
         }
     }
 
     private String getStatusIcon(Integer processStatus) {
-        if (processStatus == null) return "question";
+        if (processStatus == null)
+            return "question";
         switch (processStatus) {
-            case 0: return "clock-circle"; // 未处理
-            case 1: return "loading"; // 处理中
-            case 2: return "check-circle"; // 已处理
-            case 3: return "minus-circle"; // 已忽略
-            case 4: return "arrow-right"; // 已转交
-            default: return "question";
+            case 0:
+                return "clock-circle"; // 未处理
+            case 1:
+                return "loading"; // 处理中
+            case 2:
+                return "check-circle"; // 已处理
+            case 3:
+                return "minus-circle"; // 已忽略
+            case 4:
+                return "arrow-right"; // 已转交
+            default:
+                return "question";
         }
     }
 
@@ -717,9 +822,10 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     @Override
-    public ResponseDTO<Void> updatePatternTrainingInfo(Long patternId, LocalDateTime trainingTime, Double trainingAccuracy,
-                                                      Double validationAccuracy, Double falsePositiveRate, Double falseNegativeRate,
-                                                      Long trainingSamples, LocalDateTime nextTrainingTime, String version) {
+    public ResponseDTO<Void> updatePatternTrainingInfo(Long patternId, LocalDateTime trainingTime,
+            Double trainingAccuracy,
+            Double validationAccuracy, Double falsePositiveRate, Double falseNegativeRate,
+            Long trainingSamples, LocalDateTime nextTrainingTime, String version) {
         log.info("[行为模式] 更新模式训练信息");
         // 实现逻辑
         return ResponseDTO.ok();
@@ -740,7 +846,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     @Override
-    public ResponseDTO<List<VideoBehaviorPatternForm>> getPatternsNeedingMaintenance(Double minAccuracy, Double maxFalsePositiveRate) {
+    public ResponseDTO<List<VideoBehaviorPatternForm>> getPatternsNeedingMaintenance(Double minAccuracy,
+            Double maxFalsePositiveRate) {
         log.info("[行为模式] 获取需要维护的模式");
         // 实现逻辑
         return ResponseDTO.ok(Collections.emptyList());
@@ -782,28 +889,32 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     @Override
-    public ResponseDTO<VideoBehaviorVO> detectBehavior(Long deviceId, String videoStreamUrl, Map<String, Object> parameters) {
+    public ResponseDTO<VideoBehaviorVO> detectBehavior(Long deviceId, String videoStreamUrl,
+            Map<String, Object> parameters) {
         log.info("[AI分析] 实时行为检测");
         // 实现逻辑
         return ResponseDTO.ok(new VideoBehaviorVO());
     }
 
     @Override
-    public ResponseDTO<List<VideoBehaviorVO>> analyzeVideoBehavior(Long deviceId, String videoFilePath, LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<List<VideoBehaviorVO>> analyzeVideoBehavior(Long deviceId, String videoFilePath,
+            LocalDateTime startTime, LocalDateTime endTime) {
         log.info("[AI分析] 历史视频行为分析");
         // 实现逻辑
         return ResponseDTO.ok(Collections.emptyList());
     }
 
     @Override
-    public ResponseDTO<List<VideoBehaviorVO>> batchAnalyzeBehaviors(List<Long> deviceIds, LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<List<VideoBehaviorVO>> batchAnalyzeBehaviors(List<Long> deviceIds, LocalDateTime startTime,
+            LocalDateTime endTime) {
         log.info("[AI分析] 批量行为分析");
         // 实现逻辑
         return ResponseDTO.ok(Collections.emptyList());
     }
 
     @Override
-    public ResponseDTO<List<VideoBehaviorVO>> identifyAbnormalBehaviors(Long deviceId, LocalDateTime startTime, LocalDateTime endTime, Double confidenceThreshold) {
+    public ResponseDTO<List<VideoBehaviorVO>> identifyAbnormalBehaviors(Long deviceId, LocalDateTime startTime,
+            LocalDateTime endTime, Double confidenceThreshold) {
         log.info("[AI分析] 异常行为识别");
         // 实现逻辑
         return ResponseDTO.ok(Collections.emptyList());
@@ -817,7 +928,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     @Override
-    public ResponseDTO<VideoBehaviorVO> customBehaviorDetection(Long deviceId, Map<String, Object> customRules, Map<String, Object> thresholds) {
+    public ResponseDTO<VideoBehaviorVO> customBehaviorDetection(Long deviceId, Map<String, Object> customRules,
+            Map<String, Object> thresholds) {
         log.info("[AI分析] 自定义行为检测");
         // 实现逻辑
         return ResponseDTO.ok(new VideoBehaviorVO());
@@ -838,7 +950,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     @Override
-    public ResponseDTO<Map<String, Object>> generateBehaviorChartData(VideoBehaviorAnalysisForm form, List<String> chartTypes) {
+    public ResponseDTO<Map<String, Object>> generateBehaviorChartData(VideoBehaviorAnalysisForm form,
+            List<String> chartTypes) {
         log.info("[数据报表] 生成行为图表数据");
         // 实现逻辑
         return ResponseDTO.ok(new HashMap<>());
@@ -873,7 +986,8 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     }
 
     @Override
-    public ResponseDTO<PageResult<VideoBehaviorVO>> getBehaviorAlarms(VideoBehaviorAnalysisForm form, PageParam pageParam) {
+    public ResponseDTO<PageResult<VideoBehaviorVO>> getBehaviorAlarms(VideoBehaviorAnalysisForm form,
+            PageParam pageParam) {
         log.info("[告警通知] 获取行为告警列表");
         // 实现逻辑
         return ResponseDTO.ok(new PageResult<>());

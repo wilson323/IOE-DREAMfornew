@@ -18,7 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
@@ -61,7 +62,7 @@ class VideoDeviceServiceImplTest {
         mockDevice.setIpAddress("192.168.1.100");
         mockDevice.setPort(554);
         mockDevice.setDeviceStatus("ONLINE");
-        mockDevice.setEnabledFlag(1);
+        mockDevice.setEnabled(1);
         mockDevice.setDeletedFlag(0);
 
         queryForm = new VideoDeviceQueryForm();
@@ -126,13 +127,15 @@ class VideoDeviceServiceImplTest {
         when(deviceDao.selectById(1001L)).thenReturn(mockDevice);
 
         // When
-        VideoDeviceVO result = videoDeviceService.getDeviceDetail(1001L);
+        ResponseDTO<VideoDeviceVO> response = videoDeviceService.getDeviceDetail(1001L);
 
         // Then
-        assertNotNull(result);
-        assertEquals(1001L, result.getDeviceId());
-        assertEquals("摄像头001", result.getDeviceName());
-        assertEquals(1, result.getDeviceStatus()); // ONLINE -> 1
+        assertNotNull(response);
+        assertTrue(response.getOk());
+        assertNotNull(response.getData());
+        assertEquals(1001L, response.getData().getDeviceId());
+        assertEquals("摄像头001", response.getData().getDeviceName());
+        assertEquals(1, response.getData().getDeviceStatus()); // ONLINE -> 1
         verify(deviceDao, times(1)).selectById(1001L);
     }
 
@@ -143,10 +146,12 @@ class VideoDeviceServiceImplTest {
         when(deviceDao.selectById(9999L)).thenReturn(null);
 
         // When
-        VideoDeviceVO result = videoDeviceService.getDeviceDetail(9999L);
+        ResponseDTO<VideoDeviceVO> response = videoDeviceService.getDeviceDetail(9999L);
 
         // Then
-        assertNull(result);
+        assertNotNull(response);
+        assertFalse(response.getOk());
+        assertEquals("设备不存在", response.getMessage());
         verify(deviceDao, times(1)).selectById(9999L);
     }
 
@@ -161,11 +166,12 @@ class VideoDeviceServiceImplTest {
         when(deviceDao.selectById(1002L)).thenReturn(nonCameraDevice);
 
         // When
-        VideoDeviceVO result = videoDeviceService.getDeviceDetail(1002L);
+        ResponseDTO<VideoDeviceVO> response = videoDeviceService.getDeviceDetail(1002L);
 
         // Then
-        assertNull(result);
+        assertNotNull(response);
+        assertFalse(response.getOk());
+        assertEquals("设备类型不匹配", response.getMessage());
         verify(deviceDao, times(1)).selectById(1002L);
     }
 }
-

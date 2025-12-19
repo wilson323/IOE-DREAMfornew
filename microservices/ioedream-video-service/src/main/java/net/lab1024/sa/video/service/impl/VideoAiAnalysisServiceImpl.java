@@ -1,16 +1,19 @@
 package net.lab1024.sa.video.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.video.manager.FaceRecognitionManager;
 import net.lab1024.sa.video.manager.BehaviorDetectionManager;
 import net.lab1024.sa.video.manager.CrowdAnalysisManager;
+import net.lab1024.sa.video.manager.FaceRecognitionManager;
 import net.lab1024.sa.video.service.VideoAiAnalysisService;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * 视频AI分析服务实现
@@ -135,7 +138,8 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
     // ==================== 行为检测相关实现 ====================
 
     @Override
-    public BehaviorDetectionManager.LoiteringResult detectLoitering(String cameraId, String personId, int x, int y, LocalDateTime timestamp) {
+    public BehaviorDetectionManager.LoiteringResult detectLoitering(String cameraId, String personId, int x, int y,
+            LocalDateTime timestamp) {
         log.debug("[视频AI分析] 徘徊检测，cameraId={}, personId=({}, {})", cameraId, x, y);
 
         try {
@@ -147,7 +151,8 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
     }
 
     @Override
-    public BehaviorDetectionManager.GatheringResult detectGathering(String cameraId, List<BehaviorDetectionManager.PersonPosition> personPositions) {
+    public BehaviorDetectionManager.GatheringResult detectGathering(String cameraId,
+            List<BehaviorDetectionManager.PersonPosition> personPositions) {
         log.debug("[视频AI分析] 聚集检测，cameraId={}, personCount={}", cameraId, personPositions.size());
 
         try {
@@ -226,7 +231,8 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
             return crowdAnalysisManager.calculateDensity(cameraId, frameData);
         } catch (Exception e) {
             log.error("[视频AI分析] 人流密度计算失败，cameraId={}, error={}", cameraId, e.getMessage(), e);
-            return new CrowdAnalysisManager.DensityResult(cameraId, 0, 0.0, CrowdAnalysisManager.CrowdLevel.NORMAL, LocalDateTime.now());
+            return new CrowdAnalysisManager.DensityResult(cameraId, 0, 0.0, CrowdAnalysisManager.CrowdLevel.NORMAL,
+                    LocalDateTime.now());
         }
     }
 
@@ -369,7 +375,8 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
                 crowdResult.setPersonCount(0);
                 crowdResult.setDensity(0.0);
                 crowdResult.setCrowdLevel(CrowdAnalysisManager.CrowdLevel.NORMAL);
-                crowdResult.setCrowdWarning(new CrowdAnalysisManager.CrowdWarning(false, CrowdAnalysisManager.CrowdLevel.NORMAL, 0, "正常"));
+                crowdResult.setCrowdWarning(
+                        new CrowdAnalysisManager.CrowdWarning(false, CrowdAnalysisManager.CrowdLevel.NORMAL, 0, "正常"));
                 crowdResult.setHasCrowdWarning(false);
                 result.setCrowdResult(crowdResult);
             }
@@ -417,7 +424,7 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
     public boolean stopRealtimeAnalysis(String analysisId) {
         log.info("[视频AI分析] 停止实时分析，analysisId={}", analysisId);
 
-        RealtimeTask task = realtimeAnalysisTasks.get(analysisId);
+        RealtimeAnalysisTask task = realtimeAnalysisTasks.get(analysisId);
         if (task != null) {
             task.setStatus("STOPPED");
             realtimeAnalysisTasks.remove(analysisId);
@@ -450,7 +457,8 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
     }
 
     @Override
-    public HistoricalAnalysisResult analyzeHistoricalVideo(String videoId, LocalDateTime startTime, LocalDateTime endTime, List<String> analysisTypes) {
+    public HistoricalAnalysisResult analyzeHistoricalVideo(String videoId, LocalDateTime startTime,
+            LocalDateTime endTime, List<String> analysisTypes) {
         log.info("[视频AI分析] 历史视频分析，videoId={}, startTime={}, endTime={}, types={}",
                 videoId, startTime, endTime, analysisTypes);
 
@@ -460,14 +468,15 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
             result.setStartTime(startTime);
             result.setEndTime(endTime);
             result.setAnalysisResults(new HashMap<>());
-            result.setSummary(new AnalysisSummary());
+            AnalysisSummary summary = new AnalysisSummary();
+            result.setSummary(summary);
 
             // TODO: 实现历史视频分析逻辑
             // 当前返回空结果
-            result.setTotalFrames(0);
-            result.setDetectionCounts(new HashMap<>());
-            result.setEventCounts(new HashMap<>());
-            result.setAlerts(new ArrayList<>());
+            summary.setTotalFrames(0);
+            summary.setDetectionCounts(new HashMap<String, Integer>());
+            summary.setEventCounts(new HashMap<String, Integer>());
+            summary.setAlerts(new ArrayList<String>());
 
             return result;
         } catch (Exception e) {
@@ -477,7 +486,8 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
     }
 
     @Override
-    public AiAnalysisReport generateAnalysisReport(String cameraId, String reportType, LocalDateTime startTime, LocalDateTime endTime) {
+    public AiAnalysisReport generateAnalysisReport(String cameraId, String reportType, LocalDateTime startTime,
+            LocalDateTime endTime) {
         log.info("[视频AI分析] 生成AI分析报告，cameraId={}, reportType={}", cameraId, reportType);
 
         try {
@@ -628,23 +638,76 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
         private AnalysisStatistics statistics;
 
         // getters and setters
-        public String getAnalysisId() { return analysisId; }
-        public void setAnalysisId(String analysisId) { this.analysisId = analysisId; }
-        public String getCameraId() { return cameraId; }
-        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
-        public String getStreamUrl() { return streamUrl; }
-        public void setStreamUrl(String streamUrl) { this.streamUrl = streamUrl; }
-        public RealtimeAnalysisConfig getConfig() { return config; }
-        public void setConfig(RealtimeAnalysisConfig config) { this.config = config; }
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-        public LocalDateTime getLastUpdateTime() { return lastUpdateTime; }
-        public void setLastUpdateTime(LocalDateTime lastUpdateTime) { this.lastUpdateTime = lastUpdateTime; }
-        public int getProcessedFrames() { return processedFrames; }
-        public void setProcessedFrames(int processedFrames) { this.processedFrames = processedFrames; }
-        public AnalysisStatistics getStatistics() { return statistics; }
-        public void setStatistics(AnalysisStatistics statistics) { this.statistics = statistics; }
+        public String getAnalysisId() {
+            return analysisId;
+        }
+
+        public void setAnalysisId(String analysisId) {
+            this.analysisId = analysisId;
+        }
+
+        public String getCameraId() {
+            return cameraId;
+        }
+
+        public void setCameraId(String cameraId) {
+            this.cameraId = cameraId;
+        }
+
+        public String getStreamUrl() {
+            return streamUrl;
+        }
+
+        public void setStreamUrl(String streamUrl) {
+            this.streamUrl = streamUrl;
+        }
+
+        public RealtimeAnalysisConfig getConfig() {
+            return config;
+        }
+
+        public void setConfig(RealtimeAnalysisConfig config) {
+            this.config = config;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+        }
+
+        public LocalDateTime getLastUpdateTime() {
+            return lastUpdateTime;
+        }
+
+        public void setLastUpdateTime(LocalDateTime lastUpdateTime) {
+            this.lastUpdateTime = lastUpdateTime;
+        }
+
+        public int getProcessedFrames() {
+            return processedFrames;
+        }
+
+        public void setProcessedFrames(int processedFrames) {
+            this.processedFrames = processedFrames;
+        }
+
+        public AnalysisStatistics getStatistics() {
+            return statistics;
+        }
+
+        public void setStatistics(AnalysisStatistics statistics) {
+            this.statistics = statistics;
+        }
     }
 }

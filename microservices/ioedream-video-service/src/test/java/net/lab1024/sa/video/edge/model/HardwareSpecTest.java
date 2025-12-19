@@ -2,7 +2,6 @@ package net.lab1024.sa.video.edge.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -92,36 +91,6 @@ class HardwareSpecTest {
     }
 
     @Test
-    @DisplayName("测试设置存储类型")
-    void testSetStorageType() {
-        // When
-        spec.setStorageType("SSD");
-
-        // Then
-        assertEquals("SSD", spec.getStorageType());
-    }
-
-    @Test
-    @DisplayName("测试设置操作系统类型")
-    void testSetOsType() {
-        // When
-        spec.setOsType("Linux");
-
-        // Then
-        assertEquals("Linux", spec.getOsType());
-    }
-
-    @Test
-    @DisplayName("测试设置操作系统版本")
-    void testSetOsVersion() {
-        // When
-        spec.setOsVersion("Ubuntu 22.04");
-
-        // Then
-        assertEquals("Ubuntu 22.04", spec.getOsVersion());
-    }
-
-    @Test
     @DisplayName("测试hasGPU-有GPU")
     void testHasGPU_True() {
         // Given
@@ -158,9 +127,6 @@ class HardwareSpecTest {
         spec.setGpu(true);
         spec.setMemorySize(32);
         spec.setStorageSize(1024);
-        spec.setStorageType("NVMe SSD");
-        spec.setOsType("Linux");
-        spec.setOsVersion("Ubuntu 22.04");
 
         // Then
         assertEquals("Intel i7-12700K", spec.getCpuModel());
@@ -170,8 +136,5 @@ class HardwareSpecTest {
         assertEquals(32, spec.getMemorySize());
         assertEquals(32768, spec.getMemoryMB());
         assertEquals(1024, spec.getStorageSize());
-        assertEquals("NVMe SSD", spec.getStorageType());
-        assertEquals("Linux", spec.getOsType());
-        assertEquals("Ubuntu 22.04", spec.getOsVersion());
     }
 }

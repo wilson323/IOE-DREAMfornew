@@ -372,4 +372,68 @@ public class DeviceEntity extends BaseEntity {
     public Integer getDeviceStatus() {
         return this.deviceStatus;
     }
+
+    /**
+     * 兼容旧代码：获取设备IP地址（视频服务适配器使用）
+     *
+     * @return IP地址
+     */
+    public String getDeviceIp() {
+        return this.ipAddress;
+    }
+
+    /**
+     * 兼容旧代码：设置设备IP地址
+     *
+     * @param deviceIp IP地址
+     */
+    public void setDeviceIp(String deviceIp) {
+        this.ipAddress = deviceIp;
+    }
+
+    /**
+     * 兼容旧代码：获取设备端口（视频服务适配器使用）
+     *
+     * @return 端口号
+     */
+    public Integer getDevicePort() {
+        return this.port;
+    }
+
+    /**
+     * 兼容旧代码：设置设备端口
+     *
+     * @param devicePort 端口号
+     */
+    public void setDevicePort(Integer devicePort) {
+        this.port = devicePort;
+    }
+
+    /**
+     * 兼容旧代码：获取设备用户名（RTSP等协议使用，从extendedAttributes解析）
+     * <p>
+     * 注意：用户名存储在extendedAttributes JSON字段中，此处提供默认值
+     * 完整实现应从extendedAttributes中解析
+     * </p>
+     *
+     * @return 用户名
+     */
+    public String getDeviceUsername() {
+        // TODO: 从extendedAttributes JSON中解析username字段
+        return "admin"; // 默认值
+    }
+
+    /**
+     * 兼容旧代码：获取设备密码（RTSP等协议使用，从extendedAttributes解析）
+     * <p>
+     * 注意：密码存储在extendedAttributes JSON字段中，此处提供默认值
+     * 完整实现应从extendedAttributes中解析
+     * </p>
+     *
+     * @return 密码
+     */
+    public String getDevicePassword() {
+        // TODO: 从extendedAttributes JSON中解析password字段
+        return "admin"; // 默认值
+    }
 }

@@ -1,8 +1,12 @@
 package net.lab1024.sa.video.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,12 +56,12 @@ class VideoPlayControllerTest {
 
         Map<String, Object> streamInfo = new HashMap<>();
         streamInfo.put("streamUrl", "rtsp://example.com/stream");
-        when(videoPlayService.getVideoStream(anyLong(), any(), anyString()))
-            .thenReturn(streamInfo);
+        when(videoPlayService.getVideoStream(anyLong(), anyLong(), anyString()))
+                .thenReturn(streamInfo);
 
         // When
         ResponseDTO<Map<String, Object>> response = videoPlayController.getVideoStream(
-            deviceId, channelId, streamType);
+                deviceId, channelId, streamType);
 
         // Then
         assertNotNull(response);

@@ -1,28 +1,33 @@
 package net.lab1024.sa.video.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.dao.AIEventDao;
 import net.lab1024.sa.video.domain.entity.AIEventEntity;
 import net.lab1024.sa.video.domain.form.AIEventAddForm;
 import net.lab1024.sa.video.domain.form.AIEventQueryForm;
-import net.lab1024.sa.video.domain.vo.AIEventVO;
 import net.lab1024.sa.video.domain.vo.AIEventStatisticsVO;
+import net.lab1024.sa.video.domain.vo.AIEventVO;
 import net.lab1024.sa.video.manager.AIEventManager;
 import net.lab1024.sa.video.service.AIEventService;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * AI事件服务实现类
@@ -67,7 +72,11 @@ public class AIEventServiceImpl implements AIEventService {
                 .map(this::convertToVO)
                 .collect(Collectors.toList());
 
-        return PageResult.of(voList, pageResult.getTotal(), pageResult.getCurrent(), pageResult.getSize());
+        return PageResult.of(
+                voList,
+                pageResult.getTotal(),
+                (int) pageResult.getCurrent(),
+                (int) pageResult.getSize());
     }
 
     @Override
@@ -173,7 +182,8 @@ public class AIEventServiceImpl implements AIEventService {
 
         // 按类型统计
         Map<String, Long> typeStatistics = new HashMap<>();
-        for (String type : Arrays.asList("FACE_RECOGNITION", "BEHAVIOR_ANALYSIS", "OBJECT_DETECTION", "ANOMALY_DETECTION", "CROWD_ANALYSIS")) {
+        for (String type : Arrays.asList("FACE_RECOGNITION", "BEHAVIOR_ANALYSIS", "OBJECT_DETECTION",
+                "ANOMALY_DETECTION", "CROWD_ANALYSIS")) {
             LambdaQueryWrapper<AIEventEntity> typeQuery = new LambdaQueryWrapper<>();
             typeQuery.eq(AIEventEntity::getEventType, type);
             if (startTime != null) {
@@ -296,16 +306,16 @@ public class AIEventServiceImpl implements AIEventService {
         // 趋势数据
         trendAnalysis.put("totalCount", (long) events.size());
         trendAnalysis.put("timeRange", Map.of(
-            "startTime", startTime,
-            "endTime", endTime,
-            "hours", hours
-        ));
+                "startTime", startTime,
+                "endTime", endTime,
+                "hours", hours));
 
         return trendAnalysis;
     }
 
     @Override
-    public Map<String, Object> getDeviceAIEventStatistics(Long deviceId, LocalDateTime startTime, LocalDateTime endTime) {
+    public Map<String, Object> getDeviceAIEventStatistics(Long deviceId, LocalDateTime startTime,
+            LocalDateTime endTime) {
         log.info("[AI事件Service] 获取设备AI事件统计: deviceId={}, startTime={}, endTime={}", deviceId, startTime, endTime);
 
         LambdaQueryWrapper<AIEventEntity> queryWrapper = new LambdaQueryWrapper<>();
@@ -376,7 +386,8 @@ public class AIEventServiceImpl implements AIEventService {
         countMap.put("totalUnprocessed", totalCount);
 
         // 按类型统计未处理数量
-        for (String type : Arrays.asList("FACE_RECOGNITION", "BEHAVIOR_ANALYSIS", "OBJECT_DETECTION", "ANOMALY_DETECTION", "CROWD_ANALYSIS")) {
+        for (String type : Arrays.asList("FACE_RECOGNITION", "BEHAVIOR_ANALYSIS", "OBJECT_DETECTION",
+                "ANOMALY_DETECTION", "CROWD_ANALYSIS")) {
             LambdaQueryWrapper<AIEventEntity> typeQuery = new LambdaQueryWrapper<>();
             typeQuery.eq(AIEventEntity::getEventType, type);
             typeQuery.eq(AIEventEntity::getEventStatus, 1);
