@@ -10,11 +10,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
+import net.lab1024.sa.video.domain.form.VideoDecoderAddForm;
+import net.lab1024.sa.video.domain.form.VideoDecoderUpdateForm;
 import net.lab1024.sa.video.domain.form.VideoDisplayTaskAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallPresetAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallTourAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallUpdateForm;
+import net.lab1024.sa.video.domain.vo.VideoDecoderVO;
 import net.lab1024.sa.video.domain.vo.VideoDisplayTaskVO;
 import net.lab1024.sa.video.domain.vo.VideoWallPresetVO;
 import net.lab1024.sa.video.domain.vo.VideoWallTourVO;
@@ -388,5 +391,101 @@ public class VideoWallController {
             @PathVariable @NotNull(message = "轮巡ID不能为空") Long tourId) {
         log.info("[解码上墙API] 停止轮巡: tourId={}", tourId);
         return videoWallService.stopTour(tourId);
+    }
+
+    /**
+     * 添加解码器
+     * <p>
+     * 严格遵循RESTful规范：创建操作使用POST方法
+     * </p>
+     *
+     * @param addForm 新增表单
+     * @return 解码器ID
+     */
+    @PostMapping("/decoders")
+    @Operation(summary = "添加解码器", description = "添加新的解码器设备")
+    @Observed(name = "video.wall.decoder.add", contextualName = "video-wall-decoder-add")
+    public ResponseDTO<Long> addDecoder(@Valid @RequestBody VideoDecoderAddForm addForm) {
+        log.info("[解码上墙API] 添加解码器: decoderCode={}, decoderName={}", addForm.getDecoderCode(), addForm.getDecoderName());
+        return videoWallService.addDecoder(addForm);
+    }
+
+    /**
+     * 更新解码器
+     * <p>
+     * 严格遵循RESTful规范：更新操作使用PUT方法
+     * </p>
+     *
+     * @param decoderId 解码器ID
+     * @param updateForm 更新表单
+     * @return 操作结果
+     */
+    @PutMapping("/decoders/{decoderId}")
+    @Operation(summary = "更新解码器", description = "更新解码器配置信息")
+    @Observed(name = "video.wall.decoder.update", contextualName = "video-wall-decoder-update")
+    public ResponseDTO<Void> updateDecoder(
+            @Parameter(description = "解码器ID", required = true)
+            @PathVariable @NotNull(message = "解码器ID不能为空") Long decoderId,
+            @Valid @RequestBody VideoDecoderUpdateForm updateForm) {
+        log.info("[解码上墙API] 更新解码器: decoderId={}", decoderId);
+        updateForm.setDecoderId(decoderId);
+        return videoWallService.updateDecoder(updateForm);
+    }
+
+    /**
+     * 删除解码器
+     * <p>
+     * 严格遵循RESTful规范：删除操作使用DELETE方法
+     * </p>
+     *
+     * @param decoderId 解码器ID
+     * @return 操作结果
+     */
+    @DeleteMapping("/decoders/{decoderId}")
+    @Operation(summary = "删除解码器", description = "逻辑删除解码器")
+    @Observed(name = "video.wall.decoder.delete", contextualName = "video-wall-decoder-delete")
+    public ResponseDTO<Void> deleteDecoder(
+            @Parameter(description = "解码器ID", required = true)
+            @PathVariable @NotNull(message = "解码器ID不能为空") Long decoderId) {
+        log.info("[解码上墙API] 删除解码器: decoderId={}", decoderId);
+        return videoWallService.deleteDecoder(decoderId);
+    }
+
+    /**
+     * 查询解码器详情
+     * <p>
+     * 严格遵循RESTful规范：查询操作使用GET方法
+     * </p>
+     *
+     * @param decoderId 解码器ID
+     * @return 解码器详情
+     */
+    @GetMapping("/decoders/{decoderId}")
+    @Operation(summary = "查询解码器详情", description = "根据ID查询解码器详细信息")
+    @Observed(name = "video.wall.decoder.get", contextualName = "video-wall-decoder-get")
+    public ResponseDTO<VideoDecoderVO> getDecoderById(
+            @Parameter(description = "解码器ID", required = true)
+            @PathVariable @NotNull(message = "解码器ID不能为空") Long decoderId) {
+        log.info("[解码上墙API] 查询解码器详情: decoderId={}", decoderId);
+        return videoWallService.getDecoderById(decoderId);
+    }
+
+    /**
+     * 查询解码器列表
+     * <p>
+     * 严格遵循RESTful规范：查询操作使用GET方法
+     * </p>
+     *
+     * @param areaId 区域ID（可选）
+     * @return 解码器列表
+     */
+    @GetMapping("/decoders")
+    @Operation(summary = "查询解码器列表", description = "查询解码器列表，支持按区域筛选")
+    @Observed(name = "video.wall.decoder.list", contextualName = "video-wall-decoder-list")
+    public ResponseDTO<List<VideoDecoderVO>> getDecoderList(
+            @Parameter(description = "区域ID", required = false)
+            @RequestParam(required = false) Long areaId) {
+        log.info("[解码上墙API] 查询解码器列表: areaId={}", areaId);
+        return videoWallService.getDecoderList(areaId);
     }
 }

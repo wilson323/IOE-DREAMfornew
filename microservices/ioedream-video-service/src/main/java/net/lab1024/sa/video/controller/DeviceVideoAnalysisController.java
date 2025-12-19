@@ -1,14 +1,17 @@
 package net.lab1024.sa.video.controller;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.monitoring.BusinessMetrics;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +37,7 @@ import java.util.Map;
 public class DeviceVideoAnalysisController {
 
     @Resource
-    private BusinessMetrics businessMetrics;
+    private MeterRegistry meterRegistry;
 
     @Resource
     private RabbitTemplate rabbitTemplate;
@@ -71,26 +74,42 @@ public class DeviceVideoAnalysisController {
                 triggerVideoCallback(analysisData);
             }
 
-            // 4. 记录业务指标
-            businessMetrics.recordBiometricPerformance(
-                    analysisData.getAnalysisType(),
-                    System.currentTimeMillis() - startTime,
-                    true
-            );
-
+            // 4. 记录业务指标（使用Micrometer标准方式）
             long duration = System.currentTimeMillis() - startTime;
-            businessMetrics.recordResponseTime("video.device.upload-analysis", duration);
+            Timer.builder("video.device.upload.analysis.time")
+                    .tag("analysisType", analysisData.getAnalysisType())
+                    .tag("success", "true")
+                    .description("设备视频分析处理耗时")
+                    .register(meterRegistry)
+                    .record(duration, TimeUnit.MILLISECONDS);
+
+            Timer.builder("api.response.time")
+                    .tag("api", "video.device.upload-analysis")
+                    .description("API响应时间")
+                    .register(meterRegistry)
+                    .record(duration, TimeUnit.MILLISECONDS);
+
             log.info("[设备视频分析] 处理完成, duration={}ms", duration);
 
             return ResponseDTO.ok();
 
         } catch (Exception e) {
             log.error("[设备视频分析] 处理异常", e);
-            businessMetrics.recordBiometricPerformance(
-                    analysisData.getAnalysisType(),
-                    System.currentTimeMillis() - startTime,
-                    false
-            );
+            long duration = System.currentTimeMillis() - startTime;
+            // 记录失败指标
+            Timer.builder("video.device.upload.analysis.time")
+                    .tag("analysisType", analysisData.getAnalysisType())
+                    .tag("success", "false")
+                    .description("设备视频分析处理耗时")
+                    .register(meterRegistry)
+                    .record(duration, TimeUnit.MILLISECONDS);
+
+            Counter.builder("video.device.upload.analysis.error")
+                    .tag("analysisType", analysisData.getAnalysisType())
+                    .description("设备视频分析错误计数")
+                    .register(meterRegistry)
+                    .increment();
+
             return ResponseDTO.error("VIDEO_ANALYSIS_ERROR", "处理视频分析数据失败: " + e.getMessage());
         }
     }

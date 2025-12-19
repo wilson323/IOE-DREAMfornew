@@ -26,7 +26,7 @@ import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.common.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.attendance.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordAddForm;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordQueryForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordStatisticsVO;

@@ -166,7 +166,7 @@ public abstract class AbstractAuthenticationStrategy implements MultiModalAuthen
         } else {
             log.warn("[{}] 认证失败: userId={}, deviceId={}, errorCode={}, errorMessage={}",
                     getStrategyName(), request.getUserId(), request.getDeviceId(),
-                    result.getErrorCode(), result.getErrorMessage());
+                    result.getErrorCode(), result.getMessage());
         }
     }
 

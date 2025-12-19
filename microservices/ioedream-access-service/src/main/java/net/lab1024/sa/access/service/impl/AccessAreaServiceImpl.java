@@ -364,9 +364,13 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                             );
 
                     if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
-                        person.setUserName(userResponse.getData().getUserName());
-                        person.setUserNo(userResponse.getData().getUserNo());
-                        person.setDepartmentName(userResponse.getData().getDepartmentName());
+                        UserEntity user = userResponse.getData();
+                        person.setUserName(user.getRealName() != null ? user.getRealName() : user.getUsername());
+                        // UserEntity没有userNo字段，暂时设置为null
+                        person.setUserNo(null);
+                        // 查询部门名称（TODO: 需要确认部门查询API和返回类型）
+                        // 暂时不查询部门名称，避免类型不匹配
+                        person.setDepartmentName(null);
                     }
                 } catch (Exception e) {
                     log.debug("[区域管理] 查询用户信息失败: userId={}, error={}", permission.getUserId(), e.getMessage());
@@ -400,7 +404,8 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                             );
 
                     if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
-                        row.setUserName(userResponse.getData().getUserName());
+                        UserEntity user = userResponse.getData();
+                        row.setUserName(user.getRealName() != null ? user.getRealName() : user.getUsername());
                     }
                 } catch (Exception e) {
                     log.debug("[区域管理] 查询用户信息失败: userId={}, error={}", permission.getUserId(), e.getMessage());
@@ -777,10 +782,13 @@ public class AccessAreaServiceImpl implements AccessAreaService {
 
             if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
                 UserEntity user = userResponse.getData();
-                vo.setUserName(user.getUserName());
-                vo.setUserNo(user.getUserNo());
+                vo.setUserName(user.getRealName() != null ? user.getRealName() : user.getUsername());
+                // UserEntity没有userNo字段，暂时设置为null
+                vo.setUserNo(null);
                 vo.setDepartmentId(user.getDepartmentId());
-                vo.setDepartmentName(user.getDepartmentName());
+                // 查询部门名称（TODO: 需要确认部门查询API和返回类型）
+                // 暂时不查询部门名称，避免类型不匹配
+                vo.setDepartmentName(null);
             }
         } catch (Exception e) {
             log.debug("[区域管理] 查询用户信息失败: userId={}, error={}", permission.getUserId(), e.getMessage());
@@ -881,7 +889,8 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                         );
 
                 if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
-                    recent.setUserName(userResponse.getData().getUserName());
+                    UserEntity user = userResponse.getData();
+                    recent.setUserName(user.getRealName() != null ? user.getRealName() : user.getUsername());
                 }
             } catch (Exception e) {
                 log.debug("[区域管理] 查询用户信息失败: userId={}, error={}", record.getUserId(), e.getMessage());

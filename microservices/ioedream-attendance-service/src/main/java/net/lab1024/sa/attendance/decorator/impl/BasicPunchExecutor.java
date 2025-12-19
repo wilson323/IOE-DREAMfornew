@@ -3,7 +3,7 @@ package net.lab1024.sa.attendance.decorator.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.decorator.IPunchExecutor;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.common.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.attendance.attendance.entity.AttendanceRecordEntity;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;

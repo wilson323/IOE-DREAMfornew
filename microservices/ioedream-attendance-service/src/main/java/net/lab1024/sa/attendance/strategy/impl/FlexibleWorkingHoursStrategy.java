@@ -1,7 +1,7 @@
 package net.lab1024.sa.attendance.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.domain.entity.AttendanceRecordEntity;
+import net.lab1024.sa.attendance.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.domain.vo.AttendanceResultVO;
 import net.lab1024.sa.attendance.strategy.IAttendanceRuleStrategy;
 import net.lab1024.sa.common.factory.StrategyMarker;

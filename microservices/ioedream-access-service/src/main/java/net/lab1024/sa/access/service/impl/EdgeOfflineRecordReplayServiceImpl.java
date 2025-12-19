@@ -74,7 +74,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResponseDTO<ReplayResult> replayOfflineRecords() {
+    public ResponseDTO<EdgeOfflineRecordReplayService.ReplayResult> replayOfflineRecords() {
         long startTime = System.currentTimeMillis();
         log.info("[离线记录补录] 开始补录离线记录");
 
@@ -166,7 +166,7 @@ public class EdgeOfflineRecordReplayServiceImpl implements EdgeOfflineRecordRepl
      * @return 统计结果
      */
     @Override
-    public ResponseDTO<OfflineRecordStatistics> getOfflineRecordStatistics() {
+    public ResponseDTO<EdgeOfflineRecordReplayService.OfflineRecordStatistics> getOfflineRecordStatistics() {
         log.debug("[离线记录补录] 获取离线记录统计");
 
         try {

@@ -6,7 +6,7 @@ import net.lab1024.sa.attendance.attendance.domain.vo.AttendanceResultVO;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.strategy.IAttendanceRuleStrategy;
 import net.lab1024.sa.attendance.template.AbstractAttendanceProcessTemplate;
-import net.lab1024.sa.common.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.attendance.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.common.factory.StrategyFactory;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import org.springframework.stereotype.Component;

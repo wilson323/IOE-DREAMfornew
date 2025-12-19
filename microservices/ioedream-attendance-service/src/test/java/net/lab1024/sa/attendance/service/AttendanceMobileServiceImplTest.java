@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.AttendanceShiftDao;
-import net.lab1024.sa.common.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.attendance.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.service.impl.AttendanceMobileServiceImpl;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;

@@ -11,6 +11,8 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -119,7 +121,7 @@ public class AccessPermissionSyncServiceImpl implements AccessPermissionSyncServ
             result.setSyncRecords(syncRecords);
 
             // 7. 更新同步状态
-            updateSyncStatus(permission.getRelationId(), successCount == devices.size() ? 2 : 3, null);
+            updateSyncStatus(permission.getId(), successCount == devices.size() ? 2 : 3, null);
 
             log.info("[权限同步] 同步完成: userId={}, areaId={}, total={}, success={}, fail={}",
                     userId, areaId, result.getTotalCount(), successCount, failCount);
@@ -279,7 +281,8 @@ public class AccessPermissionSyncServiceImpl implements AccessPermissionSyncServ
             status.setSyncStatus(permission.getDeviceSyncStatus());
             status.setLastSyncTime(permission.getLastSyncTime());
             status.setRetryCount(permission.getRetryCount());
-            status.setLastErrorMessage(permission.getLastSyncError());
+            // AreaUserEntity没有lastSyncError字段，暂时设置为null
+            status.setLastErrorMessage(null);
 
             return ResponseDTO.ok(status);
 
@@ -329,12 +332,14 @@ public class AccessPermissionSyncServiceImpl implements AccessPermissionSyncServ
             request.put("permissionData", permissionData);
             request.put("operation", "ADD"); // 新增权限
 
-            ResponseDTO<Map<String, Object>> response = gatewayServiceClient.callDeviceCommService(
-                    "/api/v1/device/permission/sync",
-                    org.springframework.http.HttpMethod.POST,
-                    request,
-                    Map.class
-            );
+            @SuppressWarnings("unchecked")
+            ResponseDTO<?> rawResponse = gatewayServiceClient.callDeviceCommService(
+                            "/api/v1/device/permission/sync",
+                            org.springframework.http.HttpMethod.POST,
+                            request,
+                            Map.class
+                    );
+            ResponseDTO<Map<String, Object>> response = (ResponseDTO<Map<String, Object>>) rawResponse;
 
             if (response != null && response.isSuccess()) {
                 record.setSuccess(true);
@@ -371,12 +376,14 @@ public class AccessPermissionSyncServiceImpl implements AccessPermissionSyncServ
             request.put("userId", userId);
             request.put("operation", "REMOVE"); // 移除权限
 
-            ResponseDTO<Map<String, Object>> response = gatewayServiceClient.callDeviceCommService(
-                    "/api/v1/device/permission/sync",
-                    org.springframework.http.HttpMethod.POST,
-                    request,
-                    Map.class
-            );
+            @SuppressWarnings("unchecked")
+            ResponseDTO<?> rawResponse = gatewayServiceClient.callDeviceCommService(
+                            "/api/v1/device/permission/sync",
+                            org.springframework.http.HttpMethod.POST,
+                            request,
+                            Map.class
+                    );
+            ResponseDTO<Map<String, Object>> response = (ResponseDTO<Map<String, Object>>) rawResponse;
 
             if (response != null && response.isSuccess()) {
                 record.setSuccess(true);

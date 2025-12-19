@@ -3,11 +3,14 @@ package net.lab1024.sa.video.service;
 import jakarta.validation.Valid;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.video.domain.form.VideoDecoderAddForm;
+import net.lab1024.sa.video.domain.form.VideoDecoderUpdateForm;
 import net.lab1024.sa.video.domain.form.VideoDisplayTaskAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallPresetAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallTourAddForm;
 import net.lab1024.sa.video.domain.form.VideoWallUpdateForm;
+import net.lab1024.sa.video.domain.vo.VideoDecoderVO;
 import net.lab1024.sa.video.domain.vo.VideoDisplayTaskVO;
 import net.lab1024.sa.video.domain.vo.VideoWallPresetVO;
 import net.lab1024.sa.video.domain.vo.VideoWallTourVO;
@@ -164,4 +167,44 @@ public interface VideoWallService {
      * @return 操作结果
      */
     ResponseDTO<Void> stopTour(Long tourId);
+
+    /**
+     * 添加解码器
+     *
+     * @param addForm 新增表单
+     * @return 解码器ID
+     */
+    ResponseDTO<Long> addDecoder(@Valid VideoDecoderAddForm addForm);
+
+    /**
+     * 更新解码器
+     *
+     * @param updateForm 更新表单
+     * @return 操作结果
+     */
+    ResponseDTO<Void> updateDecoder(@Valid VideoDecoderUpdateForm updateForm);
+
+    /**
+     * 删除解码器
+     *
+     * @param decoderId 解码器ID
+     * @return 操作结果
+     */
+    ResponseDTO<Void> deleteDecoder(Long decoderId);
+
+    /**
+     * 查询解码器详情
+     *
+     * @param decoderId 解码器ID
+     * @return 解码器详情
+     */
+    ResponseDTO<VideoDecoderVO> getDecoderById(Long decoderId);
+
+    /**
+     * 查询解码器列表
+     *
+     * @param areaId 区域ID（可选）
+     * @return 解码器列表
+     */
+    ResponseDTO<List<VideoDecoderVO>> getDecoderList(Long areaId);
 }

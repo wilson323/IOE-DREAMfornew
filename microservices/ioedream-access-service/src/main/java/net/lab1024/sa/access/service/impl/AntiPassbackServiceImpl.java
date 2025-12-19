@@ -155,8 +155,12 @@ public class AntiPassbackServiceImpl implements AntiPassbackService {
                     .collect(Collectors.toList());
 
             // 构建分页结果
-            PageResult<AntiPassbackRecordVO> result = PageResult.from(page);
+            PageResult<AntiPassbackRecordVO> result = new PageResult<>();
             result.setRecords(voList);
+            result.setTotal(page.getTotal());
+            result.setPageNum((int) page.getCurrent());
+            result.setPageSize((int) page.getSize());
+            result.setTotalPages((int) page.getPages());
 
             log.info("[反潜回] 分页查询成功: total={}, pageNum={}, pageSize={}",
                     result.getTotal(), queryForm.getPageNum(), queryForm.getPageSize());
@@ -296,7 +300,8 @@ public class AntiPassbackServiceImpl implements AntiPassbackService {
                 );
 
                 if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
-                    vo.setUserName(userResponse.getData().getUserName());
+                    UserEntity user = userResponse.getData();
+                    vo.setUserName(user.getRealName() != null ? user.getRealName() : user.getUsername());
                 }
             } catch (Exception e) {
                 log.debug("[反潜回] 查询用户信息失败: userId={}, error={}", entity.getUserId(), e.getMessage());

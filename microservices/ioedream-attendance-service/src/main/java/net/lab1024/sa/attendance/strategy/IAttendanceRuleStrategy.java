@@ -1,6 +1,6 @@
 package net.lab1024.sa.attendance.strategy;
 
-import net.lab1024.sa.common.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.attendance.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.attendance.domain.vo.AttendanceResultVO;
 
 /**

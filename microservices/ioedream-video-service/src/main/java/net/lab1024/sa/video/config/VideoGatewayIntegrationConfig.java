@@ -3,10 +3,16 @@ package net.lab1024.sa.video.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
 
@@ -14,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * 视频服务网关集成配置
@@ -50,17 +57,14 @@ public class VideoGatewayIntegrationConfig {
     public RestTemplate restTemplate() {
         log.info("[RestTemplate] 初始化HTTP客户端");
 
-        RestTemplate restTemplate = new RestTemplate();
+        // 配置HTTP请求工厂，设置超时时间
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout((int) Duration.ofSeconds(5).toMillis());
+        factory.setReadTimeout((int) Duration.ofSeconds(30).toMillis());
 
-        // 配置连接超时和读取超时
-        restTemplate.getRequestFactory().setConnectTimeout(Duration.ofSeconds(5));
-        restTemplate.getRequestFactory().setReadTimeout(Duration.ofSeconds(30));
+        RestTemplate restTemplate = new RestTemplate(factory);
 
-        // 配置默认请求头
-        HttpHeaders defaultHeaders = new HttpHeaders();
-        defaultHeaders.setContentType(MediaType.APPLICATION_JSON);
-        defaultHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        defaultHeaders.set("User-Agent", "IOE-DREAM-Video-Service/1.0.0");
+        log.info("[RestTemplate] HTTP客户端初始化完成，连接超时: 5秒，读取超时: 30秒");
 
         return restTemplate;
     }
@@ -75,14 +79,16 @@ public class VideoGatewayIntegrationConfig {
      * - 错误处理
      * </p>
      *
+     * @param restTemplate RestTemplate实例
+     * @param objectMapper ObjectMapper实例
      * @return 微服务调用助手
      */
     @Bean
     @ConditionalOnMissingBean(name = "microServiceCallHelper")
-    public MicroServiceCallHelper microServiceCallHelper(RestTemplate restTemplate) {
+    public MicroServiceCallHelper microServiceCallHelper(RestTemplate restTemplate, ObjectMapper objectMapper) {
         log.info("[MicroServiceCallHelper] 初始化微服务调用助手");
 
-        return new MicroServiceCallHelper(restTemplate);
+        return new MicroServiceCallHelper(restTemplate, objectMapper);
     }
 
     /**
@@ -91,6 +97,7 @@ public class VideoGatewayIntegrationConfig {
     public static class MicroServiceCallHelper {
 
         private final RestTemplate restTemplate;
+        private final ObjectMapper objectMapper;
 
         // 微服务基础路径
         private static final String GATEWAY_BASE_URL = "http://ioedream-gateway-service:8080";
@@ -101,8 +108,9 @@ public class VideoGatewayIntegrationConfig {
         private static final String CONSUME_SERVICE_PATH = "/api/v1/consume";
         private static final String VISITOR_SERVICE_PATH = "/api/v1/visitor";
 
-        public MicroServiceCallHelper(RestTemplate restTemplate) {
+        public MicroServiceCallHelper(RestTemplate restTemplate, ObjectMapper objectMapper) {
             this.restTemplate = restTemplate;
+            this.objectMapper = objectMapper;
         }
 
         /**
@@ -149,34 +157,89 @@ public class VideoGatewayIntegrationConfig {
 
         /**
          * 通用服务调用方法
+         * <p>
+         * 使用exchange方法调用服务，并正确反序列化为ResponseDTO<T>
+         * </p>
+         *
+         * @param servicePath 服务路径
+         * @param method HTTP方法
+         * @param request 请求体
+         * @param responseType 响应数据类型
+         * @param <T> 响应数据类型
+         * @return 响应结果
          */
+        @SuppressWarnings("null")
         private <T> ResponseDTO<T> callService(String servicePath, HttpMethod method, Object request, Class<T> responseType) {
+            // 参数验证
+            if (method == null) {
+                log.error("[微服务调用] HTTP方法不能为空");
+                return ResponseDTO.error("PARAM_ERROR", "HTTP方法不能为空");
+            }
+
             String url = GATEWAY_BASE_URL + servicePath;
 
             try {
                 log.debug("[微服务调用] {} {}", method, url);
 
-                ResponseDTO<T> response;
+                // 配置请求头
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                @SuppressWarnings("null")
+                List<MediaType> acceptTypes = Collections.singletonList(MediaType.APPLICATION_JSON);
+                headers.setAccept(acceptTypes);
+
+                // 序列化请求体
+                String requestBodyJson = null;
+                if (request != null) {
+                    requestBodyJson = objectMapper.writeValueAsString(request);
+                }
+
+                HttpEntity<String> entity = new HttpEntity<>(requestBodyJson, headers);
+
+                // 使用exchange方法调用服务
+                ResponseEntity<String> response;
                 if (method == HttpMethod.GET) {
-                    response = restTemplate.getForObject(url, responseType);
+                    response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
                 } else if (method == HttpMethod.POST) {
-                    response = restTemplate.postForObject(url, request, responseType);
+                    response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
                 } else if (method == HttpMethod.PUT) {
-                    restTemplate.put(url, request);
-                    response = null;
+                    response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
                 } else if (method == HttpMethod.DELETE) {
-                    restTemplate.delete(url);
-                    response = null;
+                    response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
                 } else {
                     throw new UnsupportedOperationException("不支持的HTTP方法: " + method);
                 }
 
-                log.debug("[微服务调用] 响应: {}", response);
-                return response;
+                // 反序列化响应为ResponseDTO<T>
+                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                    // 先反序列化为ResponseDTO<Object>
+                    ResponseDTO<Object> responseBody = objectMapper.readValue(
+                            response.getBody(),
+                            new TypeReference<ResponseDTO<Object>>() {}
+                    );
+
+                    if (responseBody.getData() != null && responseType != null) {
+                        // 转换响应数据
+                        Object data = responseBody.getData();
+                        T convertedData = objectMapper.convertValue(data, responseType);
+                        ResponseDTO<T> result = ResponseDTO.ok(convertedData);
+                        log.debug("[微服务调用] 响应: {}", result);
+                        return result;
+                    }
+
+                    // 如果没有数据，直接返回ResponseDTO
+                    @SuppressWarnings("unchecked")
+                    ResponseDTO<T> result = (ResponseDTO<T>) responseBody;
+                    log.debug("[微服务调用] 响应: {}", result);
+                    return result;
+                } else {
+                    log.warn("[微服务调用] 调用失败，url={}, status={}", url, response.getStatusCode());
+                    return ResponseDTO.error("SERVICE_CALL_ERROR", "服务调用失败");
+                }
 
             } catch (Exception e) {
                 log.error("[微服务调用] {} {} 调用失败: {}", method, url, e.getMessage(), e);
-                throw new RuntimeException("微服务调用失败: " + e.getMessage(), e);
+                return ResponseDTO.error("SERVICE_CALL_ERROR", "微服务调用失败: " + e.getMessage());
             }
         }
 

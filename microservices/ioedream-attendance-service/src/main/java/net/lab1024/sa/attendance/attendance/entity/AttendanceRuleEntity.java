@@ -1,4 +1,4 @@
-package net.lab1024.sa.common.attendance.entity;
+package net.lab1024.sa.attendance.attendance.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

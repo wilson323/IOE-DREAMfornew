@@ -4,6 +4,7 @@ import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
 import net.lab1024.sa.access.strategy.impl.EdgeVerificationStrategy;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
+import net.lab1024.sa.common.organization.entity.AccessRecordEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +60,7 @@ class EdgeVerificationStrategyTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(redisTemplate.hasKey(anyString())).thenReturn(false);
         when(accessRecordDao.selectByCompositeKey(anyLong(), anyLong(), any())).thenReturn(null);
-        when(accessRecordDao.insert(any())).thenReturn(1);
+        when(accessRecordDao.insert(any(AccessRecordEntity.class))).thenReturn(1);
     }
 
     @Test

@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.common.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.attendance.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordQueryForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordStatisticsVO;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordVO;
@@ -131,7 +131,7 @@ class AttendanceRecordServiceImplTest {
         when(attendanceRecordDao.selectList(any())).thenReturn(entities);
 
         // When
-        ResponseDTO<AttendanceRecordStatisticsVO> result = 
+        ResponseDTO<AttendanceRecordStatisticsVO> result =
                 attendanceRecordService.getAttendanceRecordStatistics(startDate, endDate, employeeId);
 
         // Then
@@ -152,7 +152,7 @@ class AttendanceRecordServiceImplTest {
         when(attendanceRecordDao.selectList(any())).thenReturn(new ArrayList<>());
 
         // When
-        ResponseDTO<AttendanceRecordStatisticsVO> result = 
+        ResponseDTO<AttendanceRecordStatisticsVO> result =
                 attendanceRecordService.getAttendanceRecordStatistics(startDate, endDate, employeeId);
 
         // Then
