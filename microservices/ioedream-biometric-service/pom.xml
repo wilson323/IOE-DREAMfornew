@@ -166,10 +166,11 @@
 
         <!-- ==================== 生物识别相关依赖 ==================== -->
         <!-- OpenCV Java绑定（用于图像处理和人脸检测） -->
+        <!-- 使用JavaCV (bytedeco) 提供的OpenCV Java绑定 -->
         <dependency>
-            <groupId>org.openpnp</groupId>
-            <artifactId>opencv</artifactId>
-            <version>4.8.0-1</version>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv-platform</artifactId>
+            <version>4.8.0-1.21</version>
         </dependency>
 
         <!-- TensorFlow Java API（用于FaceNet模型推理） -->

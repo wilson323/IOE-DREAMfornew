@@ -1,18 +1,17 @@
 package net.lab1024.sa.attendance.mobile;
 
+import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 考勤移动端服务接口
  * <p>
  * 定义移动端考勤功能的API接口
- * 高性能移动端适配，支持异步处理和内存优化
- * 严格遵循CLAUDE.md全局架构规范
+ * 严格遵循CLAUDE.md全局架构规范，统一使用ResponseDTO返回类型
  * </p>
  *
  * @author IOE-DREAM架构团队
@@ -30,7 +29,7 @@ public interface AttendanceMobileService {
      * @return 登录结果
      */
     @PostMapping("/login")
-    CompletableFuture<MobileLoginResult> login(@RequestBody MobileLoginRequest request);
+    ResponseDTO<MobileLoginResult> login(@RequestBody MobileLoginRequest request);
 
     /**
      * 用户登出
@@ -39,7 +38,7 @@ public interface AttendanceMobileService {
      * @return 登出结果
      */
     @PostMapping("/logout")
-    CompletableFuture<MobileLogoutResult> logout(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileLogoutResult> logout(@RequestHeader("Authorization") String token);
 
     /**
      * 刷新令牌
@@ -48,7 +47,7 @@ public interface AttendanceMobileService {
      * @return 刷新结果
      */
     @PostMapping("/refresh")
-    CompletableFuture<MobileTokenRefreshResult> refreshToken(@RequestBody MobileTokenRefreshRequest request);
+    ResponseDTO<MobileTokenRefreshResult> refreshToken(@RequestBody MobileTokenRefreshRequest request);
 
     /**
      * 获取用户信息
@@ -57,7 +56,7 @@ public interface AttendanceMobileService {
      * @return 用户信息
      */
     @GetMapping("/user/info")
-    CompletableFuture<MobileUserInfoResult> getUserInfo(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileUserInfoResult> getUserInfo(@RequestHeader("Authorization") String token);
 
     /**
      * 获取今日考勤状态
@@ -66,7 +65,7 @@ public interface AttendanceMobileService {
      * @return 今日考勤状态
      */
     @GetMapping("/today/status")
-    CompletableFuture<MobileTodayStatusResult> getTodayStatus(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileTodayStatusResult> getTodayStatus(@RequestHeader("Authorization") String token);
 
     /**
      * 上班打卡
@@ -76,7 +75,7 @@ public interface AttendanceMobileService {
      * @return 打卡结果
      */
     @PostMapping("/clock-in")
-    CompletableFuture<MobileClockInResult> clockIn(
+    ResponseDTO<MobileClockInResult> clockIn(
             @RequestBody MobileClockInRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -88,7 +87,7 @@ public interface AttendanceMobileService {
      * @return 打卡结果
      */
     @PostMapping("/clock-out")
-    CompletableFuture<MobileClockOutResult> clockOut(
+    ResponseDTO<MobileClockOutResult> clockOut(
             @RequestBody MobileClockOutRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -100,7 +99,7 @@ public interface AttendanceMobileService {
      * @return 考勤记录列表
      */
     @GetMapping("/records")
-    CompletableFuture<MobileAttendanceRecordsResult> getAttendanceRecords(
+    ResponseDTO<MobileAttendanceRecordsResult> getAttendanceRecords(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileRecordQueryParam queryParam);
 
@@ -112,7 +111,7 @@ public interface AttendanceMobileService {
      * @return 考勤统计
      */
     @GetMapping("/statistics")
-    CompletableFuture<MobileStatisticsResult> getStatistics(
+    ResponseDTO<MobileStatisticsResult> getStatistics(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileStatisticsQueryParam queryParam);
 
@@ -124,7 +123,7 @@ public interface AttendanceMobileService {
      * @return 请假申请结果
      */
     @PostMapping("/leave/apply")
-    CompletableFuture<MobileLeaveApplicationResult> applyLeave(
+    ResponseDTO<MobileLeaveApplicationResult> applyLeave(
             @RequestBody MobileLeaveApplicationRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -136,7 +135,7 @@ public interface AttendanceMobileService {
      * @return 请假记录
      */
     @GetMapping("/leave/records")
-    CompletableFuture<MobileLeaveRecordsResult> getLeaveRecords(
+    ResponseDTO<MobileLeaveRecordsResult> getLeaveRecords(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileLeaveQueryParam queryParam);
 
@@ -148,7 +147,7 @@ public interface AttendanceMobileService {
      * @return 销假申请结果
      */
     @PostMapping("/leave/cancel")
-    CompletableFuture<MobileLeaveCancellationResult> cancelLeave(
+    ResponseDTO<MobileLeaveCancellationResult> cancelLeave(
             @RequestBody MobileLeaveCancellationRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -160,7 +159,7 @@ public interface AttendanceMobileService {
      * @return 班次信息
      */
     @GetMapping("/shifts")
-    CompletableFuture<MobileShiftsResult> getShifts(
+    ResponseDTO<MobileShiftsResult> getShifts(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileShiftQueryParam queryParam);
 
@@ -172,7 +171,7 @@ public interface AttendanceMobileService {
      * @return 排班信息
      */
     @GetMapping("/schedule")
-    CompletableFuture<MobileScheduleResult> getSchedule(
+    ResponseDTO<MobileScheduleResult> getSchedule(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileScheduleQueryParam queryParam);
 
@@ -184,7 +183,7 @@ public interface AttendanceMobileService {
      * @return 设置结果
      */
     @PostMapping("/reminder/settings")
-    CompletableFuture<MobileReminderSettingsResult> setReminderSettings(
+    ResponseDTO<MobileReminderSettingsResult> setReminderSettings(
             @RequestBody MobileReminderSettingsRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -196,7 +195,7 @@ public interface AttendanceMobileService {
      * @return 提醒列表
      */
     @GetMapping("/reminders")
-    CompletableFuture<MobileRemindersResult> getReminders(
+    ResponseDTO<MobileRemindersResult> getReminders(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileReminderQueryParam queryParam);
 
@@ -208,7 +207,7 @@ public interface AttendanceMobileService {
      * @return 考勤日历
      */
     @GetMapping("/calendar")
-    CompletableFuture<MobileCalendarResult> getCalendar(
+    ResponseDTO<MobileCalendarResult> getCalendar(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileCalendarQueryParam queryParam);
 
@@ -220,7 +219,7 @@ public interface AttendanceMobileService {
      * @return 上传结果
      */
     @PostMapping("/profile/avatar/upload")
-    CompletableFuture<MobileAvatarUploadResult> uploadAvatar(
+    ResponseDTO<MobileAvatarUploadResult> uploadAvatar(
             @ModelAttribute MobileAvatarUploadRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -231,7 +230,7 @@ public interface AttendanceMobileService {
      * @return 用户配置
      */
     @GetMapping("/profile/settings")
-    CompletableFuture<MobileProfileSettingsResult> getProfileSettings(
+    ResponseDTO<MobileProfileSettingsResult> getProfileSettings(
             @RequestHeader("Authorization") String token);
 
     /**
@@ -242,7 +241,7 @@ public interface AttendanceMobileService {
      * @return 更新结果
      */
     @PostMapping("/profile/settings")
-    CompletableFuture<MobileProfileSettingsUpdateResult> updateProfileSettings(
+    ResponseDTO<MobileProfileSettingsUpdateResult> updateProfileSettings(
             @RequestBody MobileProfileSettingsUpdateRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -252,7 +251,7 @@ public interface AttendanceMobileService {
      * @return 版本信息
      */
     @GetMapping("/app/version")
-    CompletableFuture<MobileAppVersionResult> getAppVersion();
+    ResponseDTO<MobileAppVersionResult> getAppVersion();
 
     /**
      * 检查应用更新
@@ -261,7 +260,7 @@ public interface AttendanceMobileService {
      * @return 更新检查结果
      */
     @PostMapping("/app/update/check")
-    CompletableFuture<MobileAppUpdateCheckResult> checkAppUpdate(@RequestBody MobileAppUpdateCheckRequest request);
+    ResponseDTO<MobileAppUpdateCheckResult> checkAppUpdate(@RequestBody MobileAppUpdateCheckRequest request);
 
     /**
      * 获取系统通知
@@ -271,7 +270,7 @@ public interface AttendanceMobileService {
      * @return 通知列表
      */
     @GetMapping("/notifications")
-    CompletableFuture<MobileNotificationsResult> getNotifications(
+    ResponseDTO<MobileNotificationsResult> getNotifications(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileNotificationQueryParam queryParam);
 
@@ -283,7 +282,7 @@ public interface AttendanceMobileService {
      * @return 标记结果
      */
     @PostMapping("/notifications/{notificationId}/read")
-    CompletableFuture<MobileNotificationReadResult> markNotificationAsRead(
+    ResponseDTO<MobileNotificationReadResult> markNotificationAsRead(
             @PathVariable String notificationId,
             @RequestHeader("Authorization") String token);
 
@@ -295,7 +294,7 @@ public interface AttendanceMobileService {
      * @return 异常列表
      */
     @GetMapping("/anomalies")
-    CompletableFuture<MobileAnomaliesResult> getAnomalies(
+    ResponseDTO<MobileAnomaliesResult> getAnomalies(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileAnomalyQueryParam queryParam);
 
@@ -307,7 +306,7 @@ public interface AttendanceMobileService {
      * @return 排行榜数据
      */
     @GetMapping("/leaderboard")
-    CompletableFuture<MobileLeaderboardResult> getLeaderboard(
+    ResponseDTO<MobileLeaderboardResult> getLeaderboard(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileLeaderboardQueryParam queryParam);
 
@@ -319,7 +318,7 @@ public interface AttendanceMobileService {
      * @return 图表数据
      */
     @GetMapping("/charts")
-    CompletableFuture<MobileChartsResult> getCharts(
+    ResponseDTO<MobileChartsResult> getCharts(
             @RequestHeader("Authorization") String token,
             @ModelAttribute MobileChartQueryParam queryParam);
 
@@ -331,7 +330,7 @@ public interface AttendanceMobileService {
      * @return 验证结果
      */
     @PostMapping("/biometric/verify")
-    CompletableFuture<MobileBiometricVerificationResult> verifyBiometric(
+    ResponseDTO<MobileBiometricVerificationResult> verifyBiometric(
             @RequestBody MobileBiometricVerificationRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -342,7 +341,7 @@ public interface AttendanceMobileService {
      * @return 位置信息
      */
     @GetMapping("/location/current")
-    CompletableFuture<MobileLocationResult> getCurrentLocation(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileLocationResult> getCurrentLocation(@RequestHeader("Authorization") String token);
 
     /**
      * 上报位置
@@ -352,7 +351,7 @@ public interface AttendanceMobileService {
      * @return 上报结果
      */
     @PostMapping("/location/report")
-    CompletableFuture<MobileLocationReportResult> reportLocation(
+    ResponseDTO<MobileLocationReportResult> reportLocation(
             @RequestBody MobileLocationReportRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -363,7 +362,7 @@ public interface AttendanceMobileService {
      * @return 设备信息
      */
     @GetMapping("/device/info")
-    CompletableFuture<MobileDeviceInfoResult> getDeviceInfo(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileDeviceInfoResult> getDeviceInfo(@RequestHeader("Authorization") String token);
 
     /**
      * 设备注册
@@ -373,7 +372,7 @@ public interface AttendanceMobileService {
      * @return 注册结果
      */
     @PostMapping("/device/register")
-    CompletableFuture<MobileDeviceRegisterResult> registerDevice(
+    ResponseDTO<MobileDeviceRegisterResult> registerDevice(
             @RequestBody MobileDeviceRegisterRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -384,7 +383,7 @@ public interface AttendanceMobileService {
      * @return 安全设置
      */
     @GetMapping("/security/settings")
-    CompletableFuture<MobileSecuritySettingsResult> getSecuritySettings(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileSecuritySettingsResult> getSecuritySettings(@RequestHeader("Authorization") String token);
 
     /**
      * 更新安全设置
@@ -394,7 +393,7 @@ public interface AttendanceMobileService {
      * @return 更新结果
      */
     @PostMapping("/security/settings")
-    CompletableFuture<MobileSecuritySettingsUpdateResult> updateSecuritySettings(
+    ResponseDTO<MobileSecuritySettingsUpdateResult> updateSecuritySettings(
             @RequestBody MobileSecuritySettingsUpdateRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -405,7 +404,7 @@ public interface AttendanceMobileService {
      * @return 同步结果
      */
     @PostMapping("/data/sync")
-    CompletableFuture<MobileDataSyncResult> syncData(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileDataSyncResult> syncData(@RequestHeader("Authorization") String token);
 
     /**
      * 获取离线数据
@@ -414,7 +413,7 @@ public interface AttendanceMobileService {
      * @return 离线数据
      */
     @GetMapping("/data/offline")
-    CompletableFuture<MobileOfflineDataResult> getOfflineData(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileOfflineDataResult> getOfflineData(@RequestHeader("Authorization") String token);
 
     /**
      * 上传离线数据
@@ -424,7 +423,7 @@ public interface AttendanceMobileService {
      * @return 上传结果
      */
     @PostMapping("/data/offline/upload")
-    CompletableFuture<MobileOfflineDataUploadResult> uploadOfflineData(
+    ResponseDTO<MobileOfflineDataUploadResult> uploadOfflineData(
             @RequestBody MobileOfflineDataUploadRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -435,7 +434,7 @@ public interface AttendanceMobileService {
      * @return 健康检查结果
      */
     @GetMapping("/health/check")
-    CompletableFuture<MobileHealthCheckResult> healthCheck(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileHealthCheckResult> healthCheck(@RequestHeader("Authorization") String token);
 
     /**
      * 性能测试
@@ -445,7 +444,7 @@ public interface AttendanceMobileService {
      * @return 测试结果
      */
     @PostMapping("/performance/test")
-    CompletableFuture<MobilePerformanceTestResult> performanceTest(
+    ResponseDTO<MobilePerformanceTestResult> performanceTest(
             @RequestBody MobilePerformanceTestRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -457,7 +456,7 @@ public interface AttendanceMobileService {
      * @return 反馈结果
      */
     @PostMapping("/feedback/submit")
-    CompletableFuture<MobileFeedbackSubmitResult> submitFeedback(
+    ResponseDTO<MobileFeedbackSubmitResult> submitFeedback(
             @RequestBody MobileFeedbackSubmitRequest request,
             @RequestHeader("Authorization") String token);
 
@@ -468,7 +467,7 @@ public interface AttendanceMobileService {
      * @return 帮助信息
      */
     @GetMapping("/help")
-    CompletableFuture<MobileHelpResult> getHelp(@ModelAttribute MobileHelpQueryParam queryParam);
+    ResponseDTO<MobileHelpResult> getHelp(@ModelAttribute MobileHelpQueryParam queryParam);
 
     /**
      * 获取使用统计
@@ -477,5 +476,5 @@ public interface AttendanceMobileService {
      * @return 使用统计
      */
     @GetMapping("/usage/statistics")
-    CompletableFuture<MobileUsageStatisticsResult> getUsageStatistics(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileUsageStatisticsResult> getUsageStatistics(@RequestHeader("Authorization") String token);
 }

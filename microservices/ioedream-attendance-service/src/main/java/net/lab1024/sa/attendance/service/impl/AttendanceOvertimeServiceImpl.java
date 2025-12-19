@@ -35,7 +35,7 @@ public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService 
     private WorkflowApprovalManager workflowApprovalManager;
 
     @Resource
-    private net.lab1024.sa.attendance.attendance.manager.AttendanceManager attendanceManager;
+    private net.lab1024.sa.attendance.manager.AttendanceManager attendanceManager;
 
     @Override
     @Observed(name = "attendance.overtime.submit", contextualName = "attendance-overtime-submit")

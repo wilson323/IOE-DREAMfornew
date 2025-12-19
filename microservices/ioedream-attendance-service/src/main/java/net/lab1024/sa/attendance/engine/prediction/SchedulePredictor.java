@@ -2,6 +2,7 @@ package net.lab1024.sa.attendance.engine.prediction;
 
 import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
+import net.lab1024.sa.attendance.engine.prediction.model.*;
 
 import java.time.LocalDateTime;
 import java.util.List;

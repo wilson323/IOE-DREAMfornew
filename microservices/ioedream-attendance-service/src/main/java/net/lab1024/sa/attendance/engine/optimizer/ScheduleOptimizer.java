@@ -2,6 +2,7 @@ package net.lab1024.sa.attendance.engine.optimizer;
 
 import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
+import net.lab1024.sa.attendance.engine.optimizer.model.*;
 
 import java.util.List;
 import java.util.Map;

@@ -154,15 +154,11 @@ public class ScheduleData {
         private List<String> preferredSkills; // 优先技能
         private String workLocation; // 工作地点
         private String departmentId; // 所属部门
-        private Double difficulty; // 难度系数 0-1
-        private Double importance; // 重要性 0-1
+        private Double difficulty; // 难度系数 0-1（班次难度）
+        private Double importance; // 重要性 0-1（班次重要性）
         private Boolean isCritical; // 是否关键岗位
         private Set<DayOfWeek> activeDays; // 激活日期
         private Map<String, Object> shiftAttributes; // 班次扩展属性
-
-        // 动态计算属性
-        private Double difficulty; // 班次难度
-        private Double importance; // 班次重要性
     }
 
     /**
