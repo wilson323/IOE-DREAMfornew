@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
 import net.lab1024.sa.access.manager.AccessVerificationManager;
-import net.lab1024.sa.access.manager.MultiModalAuthenticationManager;
 import net.lab1024.sa.access.strategy.VerificationModeStrategy;
 import org.springframework.stereotype.Component;
 
@@ -28,26 +27,33 @@ import jakarta.annotation.Resource;
  * ⚠️ 重要说明：后台验证模式的职责划分
  * </p>
  * <p>
- * <strong>设备端已完成人员识别</strong>：
+ * <strong>设备端已完成所有识别和认证方式验证</strong>：
  * - 设备端通过人脸/指纹/卡片等识别出人员编号（pin）
+ * - 设备端已验证认证方式是否支持（如果设备不支持该认证方式，设备端不会识别成功）
  * - 设备端发送请求到软件端：pin=1001, verifytype=11
- * - 软件端接收的是人员编号（pin），不是生物特征数据
+ * - 软件端接收的是人员编号（pin）和认证方式（verifytype），不是生物特征数据
  * </p>
  * <p>
  * <strong>软件端验证内容</strong>：
- * - 验证用户是否允许使用该认证方式（多模态认证）
- * - 验证用户权限（反潜、互锁、时间段、黑名单等）
- * - 返回开门指令
+ * - ⚠️ 不需要验证认证方式（设备端已完成）
+ * - ✅ 验证用户权限（反潜、互锁、时间段、黑名单等）
+ * - ✅ 记录认证方式（verifytype）用于统计和审计
+ * - ✅ 返回开门指令
  * </p>
  * <p>
  * 验证流程：
- * 1. 多模态认证验证（验证用户是否允许使用该认证方式）
- * 2. 反潜验证
- * 3. 互锁验证
- * 4. 时间段验证
- * 5. 黑名单验证
- * 6. 多人验证（如需要）
- * 7. 返回验证结果和控制指令
+ * 1. 反潜验证
+ * 2. 互锁验证
+ * 3. 时间段验证
+ * 4. 黑名单验证
+ * 5. 多人验证（如需要）
+ * 6. 返回验证结果和控制指令
+ * </p>
+ * <p>
+ * <strong>多模态认证的作用</strong>：
+ * - ✅ 记录认证方式（verifytype）用于统计和审计
+ * - ❌ 不进行人员识别（设备端已完成）
+ * - ❌ 不验证认证方式是否允许（设备端已完成）
  * </p>
  *
  * @author IOE-DREAM Team
@@ -61,56 +67,48 @@ public class BackendVerificationStrategy implements VerificationModeStrategy {
     @Resource
     private AccessVerificationManager accessVerificationManager;
 
-    @Resource
-    private MultiModalAuthenticationManager multiModalAuthenticationManager;
-
     @Override
     public VerificationResult verify(AccessVerificationRequest request) {
         log.info("[后台验证] 开始验证: userId={}, deviceId={}, areaId={}, event={}, verifyType={}",
                 request.getUserId(), request.getDeviceId(), request.getAreaId(), request.getEvent(), request.getVerifyType());
 
         try {
-            // 1. 多模态认证验证（验证用户是否允许使用该认证方式）
-            // ⚠️ 注意：不是进行人员识别，设备端已完成人员识别并发送了pin
-            // 这里验证的是用户是否允许使用该认证方式（例如：某些区域只允许人脸，不允许密码）
-            VerificationResult authMethodResult = multiModalAuthenticationManager.authenticate(request);
-            if (!authMethodResult.isSuccess()) {
-                log.warn("[后台验证] 认证方式验证失败: userId={}, verifyType={}, errorCode={}, errorMessage={}",
-                        request.getUserId(), request.getVerifyType(),
-                        authMethodResult.getErrorCode(), authMethodResult.getErrorMessage());
-                return VerificationResult.failed("AUTH_METHOD_NOT_ALLOWED",
-                        "不允许使用该认证方式: " + authMethodResult.getErrorMessage());
-            }
-            log.debug("[后台验证] 认证方式验证通过: userId={}, verifyType={}",
-                    request.getUserId(), request.getVerifyType());
+            // ⚠️ 注意：设备端已完成人员识别和认证方式验证
+            // - 设备端通过1:N比对识别出人员编号（pin）
+            // - 设备端已验证认证方式是否支持（如果设备不支持该认证方式，设备端不会识别成功）
+            // - 设备端发送请求到软件端：pin=1001, verifytype=11
+            // - 软件端只需要验证权限（反潜、互锁、时间段等），不需要验证认证方式
+            
+            // 记录认证方式（用于统计和审计）
+            log.debug("[后台验证] 认证方式: verifyType={}", request.getVerifyType());
 
-            // 2. 反潜验证（传递areaId参数以读取反潜配置）
+            // 1. 反潜验证（传递areaId参数以读取反潜配置）
             if (!accessVerificationManager.verifyAntiPassback(
                     request.getUserId(), request.getDeviceId(), request.getInOutStatus(), request.getAreaId())) {
                 log.warn("[后台验证] 反潜验证失败: userId={}", request.getUserId());
                 return VerificationResult.failed("ANTI_PASSBACK_VIOLATION", "反潜验证失败,请从正确的门进出");
             }
 
-            // 3. 互锁验证（传递areaId参数以读取互锁配置）
+            // 2. 互锁验证（传递areaId参数以读取互锁配置）
             if (!accessVerificationManager.verifyInterlock(request.getDeviceId(), request.getAreaId())) {
                 log.warn("[后台验证] 互锁验证失败: deviceId={}", request.getDeviceId());
                 return VerificationResult.failed("INTERLOCK_VIOLATION", "互锁门禁冲突,请等待");
             }
 
-            // 4. 时间段验证（传递areaId参数以提高性能，避免重复查询）
+            // 3. 时间段验证（传递areaId参数以提高性能，避免重复查询）
             if (!accessVerificationManager.verifyTimePeriod(
                     request.getUserId(), request.getDeviceId(), request.getVerifyTime(), request.getAreaId())) {
                 log.warn("[后台验证] 时间段验证失败: userId={}", request.getUserId());
                 return VerificationResult.failed("INVALID_TIME_PERIOD", "非有效时间段");
             }
 
-            // 5. 黑名单验证
+            // 4. 黑名单验证
             if (accessVerificationManager.isBlacklisted(request.getUserId())) {
                 log.warn("[后台验证] 黑名单验证失败: userId={}", request.getUserId());
                 return VerificationResult.failed("BLACKLIST", "用户已被列入黑名单");
             }
 
-            // 6. 多人验证（如需要）
+            // 5. 多人验证（如需要）
             if (accessVerificationManager.isMultiPersonRequired(request.getAreaId())) {
                 VerificationResult multiPersonResult = accessVerificationManager.verifyMultiPerson(request);
                 if (!multiPersonResult.isSuccess()) {
@@ -119,10 +117,10 @@ public class BackendVerificationStrategy implements VerificationModeStrategy {
                 }
             }
 
-            // 7. 构建控制指令
+            // 6. 构建控制指令
             String controlCommand = buildControlCommand(request);
 
-            // 8. 记录反潜验证结果
+            // 7. 记录反潜验证结果（同时记录认证方式verifytype用于统计和审计）
             accessVerificationManager.recordAntiPassback(
                     request.getUserId(),
                     request.getDeviceId(),

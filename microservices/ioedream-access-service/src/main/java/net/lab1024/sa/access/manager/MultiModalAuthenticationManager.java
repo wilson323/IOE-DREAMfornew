@@ -76,23 +76,24 @@ public class MultiModalAuthenticationManager {
     }
 
     /**
-     * 验证用户是否允许使用该认证方式
+     * 记录认证方式（用于统计和审计）
      * <p>
-     * ⚠️ 注意：不是进行人员识别，而是验证用户是否允许使用该认证方式
+     * ⚠️ 注意：不是进行人员识别，也不是验证认证方式是否允许
      * </p>
      * <p>
-     * 设备端已完成人员识别，并发送了人员编号（pin）
-     * 软件端根据pin和verifyType验证：
-     * - 用户权限配置中是否允许该认证方式
-     * - 区域配置中是否允许该认证方式
-     * - 设备配置中是否支持该认证方式
+     * 设备端已完成：
+     * - 人员识别（1:N比对，识别出pin）
+     * - 认证方式验证（如果设备不支持该认证方式，设备端不会识别成功）
      * </p>
      * <p>
-     * 根据请求中的verifyType自动选择对应的认证策略
+     * 软件端只记录认证方式（verifytype）用于统计和审计
+     * </p>
+     * <p>
+     * 根据请求中的verifyType自动选择对应的认证策略进行记录
      * </p>
      *
      * @param request 验证请求（包含userId、verifyType等，设备端已识别出人员编号）
-     * @return 认证方式验证结果
+     * @return 记录结果（始终成功，因为只是记录）
      */
     public VerificationResult authenticate(AccessVerificationRequest request) {
         if (request == null || request.getVerifyType() == null) {

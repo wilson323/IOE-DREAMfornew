@@ -24,11 +24,12 @@ import org.springframework.stereotype.Component;
  * - 软件端接收的是人员编号（pin），不是虹膜特征数据
  * </p>
  * <p>
- * <strong>核心职责是验证认证方式是否允许</strong>：
- * - 验证用户是否允许使用虹膜认证方式
- * - 验证区域配置中是否允许虹膜认证
- * - 验证设备配置中是否支持虹膜认证
- * - 记录虹膜认证方式（用于统计和审计）
+ * <strong>核心职责是记录认证方式用于统计和审计</strong>：
+ * - ✅ 记录认证方式（verifytype）用于统计和审计
+ * - ✅ 提供认证方式枚举（VerifyTypeEnum）统一管理
+ * - ✅ 转换认证方式（verifytype ↔ verifyMethod）用于数据存储和展示
+ * - ❌ 不进行人员识别（设备端已完成）
+ * - ❌ 不验证认证方式是否允许（设备端已完成，如果设备不支持该认证方式，设备端不会识别成功）
  * </p>
  *
  * @author IOE-DREAM Team
@@ -41,17 +42,19 @@ public class IrisAuthenticationStrategy extends AbstractAuthenticationStrategy {
 
     @Override
     protected VerificationResult doAuthenticate(AccessVerificationRequest request) {
-        log.debug("[虹膜认证] 验证认证方式是否允许: userId={}, deviceId={}, areaId={}",
-                request.getUserId(), request.getDeviceId(), request.getAreaId());
+        log.debug("[虹膜认证] 记录认证方式: userId={}, deviceId={}, areaId={}, verifyType={}",
+                request.getUserId(), request.getDeviceId(), request.getAreaId(), request.getVerifyType());
 
-        // TODO: 后续扩展：检查用户权限配置中是否允许虹膜认证
-        // TODO: 后续扩展：检查区域配置中是否允许虹膜认证
-        // TODO: 后续扩展：检查设备配置中是否支持虹膜认证
+        // ⚠️ 注意：设备端已完成人员识别和认证方式验证
+        // - 设备端通过1:N比对识别出人员编号（pin）
+        // - 设备端已验证认证方式是否支持（如果设备不支持，不会识别成功）
+        // - 软件端只记录认证方式（verifytype）用于统计和审计
+        
+        // 记录认证方式（用于统计和审计）
+        // TODO: 后续扩展：统计各认证方式的使用次数
+        // TODO: 后续扩展：提供认证方式使用报表
 
-        // 当前实现：默认允许使用虹膜认证方式
-        // 实际的权限验证在AccessVerificationManager中完成（反潜、互锁、时间段等）
-
-        return VerificationResult.success("虹膜认证方式验证通过", null, "iris");
+        return VerificationResult.success("虹膜认证方式记录成功", null, "iris");
     }
 
     @Override

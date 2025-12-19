@@ -53,7 +53,7 @@
 - ✅ 后台验证模式已实现
 - ✅ 门禁通行验证流程已实现
 - ✅ 反潜回检查流程已实现
-- ✅ 多模态认证验证流程已实现（验证认证方式是否允许）
+- ✅ 多模态认证记录功能已实现（记录认证方式用于统计和审计）
 
 **详细报告**: [ACCESS_SERVICE_CONSISTENCY_ANALYSIS.md](./ACCESS_SERVICE_CONSISTENCY_ANALYSIS.md)
 

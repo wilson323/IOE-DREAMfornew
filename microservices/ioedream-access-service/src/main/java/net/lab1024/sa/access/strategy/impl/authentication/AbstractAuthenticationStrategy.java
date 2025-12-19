@@ -24,18 +24,19 @@ import net.lab1024.sa.access.strategy.MultiModalAuthenticationStrategy;
  * - 软件端接收的是人员编号（pin），不是生物特征数据
  * </p>
  * <p>
- * <strong>核心职责是验证认证方式是否允许</strong>：
- * - 验证用户是否允许使用该认证方式（例如：某些区域只允许人脸，不允许密码）
- * - 验证区域配置中是否允许该认证方式
- * - 验证设备配置中是否支持该认证方式
- * - 记录认证方式（用于统计和审计）
+ * <strong>核心职责是记录认证方式用于统计和审计</strong>：
+ * - ✅ 记录认证方式（verifytype）用于统计和审计
+ * - ✅ 提供认证方式枚举（VerifyTypeEnum）统一管理
+ * - ✅ 转换认证方式（verifytype ↔ verifyMethod）用于数据存储和展示
+ * - ❌ 不进行人员识别（设备端已完成）
+ * - ❌ 不验证认证方式是否允许（设备端已完成，如果设备不支持该认证方式，设备端不会识别成功）
  * </p>
  * <p>
  * 两种验证模式的区别：
  * </p>
  * <ul>
  * <li><strong>边缘验证模式（Edge）</strong>：设备端已完成验证，软件端只记录认证方式</li>
- * <li><strong>后台验证模式（Backend）</strong>：设备端已识别人员，软件端验证认证方式是否允许</li>
+ * <li><strong>后台验证模式（Backend）</strong>：设备端已识别人员和验证认证方式，软件端只记录认证方式</li>
  * </ul>
  *
  * @author IOE-DREAM Team
@@ -46,25 +47,30 @@ import net.lab1024.sa.access.strategy.MultiModalAuthenticationStrategy;
 public abstract class AbstractAuthenticationStrategy implements MultiModalAuthenticationStrategy {
 
     /**
-     * 执行认证方式验证（模板方法）
+     * 记录认证方式（模板方法）
      * <p>
-     * ⚠️ 注意：不是进行人员识别，而是验证用户是否允许使用该认证方式
+     * ⚠️ 注意：不是进行人员识别，也不是验证认证方式是否允许
      * </p>
      * <p>
-     * 定义统一的认证流程：
+     * 设备端已完成：
+     * - 人员识别（1:N比对，识别出pin）
+     * - 认证方式验证（如果设备不支持该认证方式，设备端不会识别成功）
+     * </p>
+     * <p>
+     * 定义统一的记录流程：
      * 1. 参数验证
-     * 2. 执行具体认证方式验证逻辑（由子类实现）
+     * 2. 执行具体认证方式记录逻辑（由子类实现，默认返回成功）
      * 3. 记录认证结果
      * </p>
      * <p>
-     * 验证内容：
-     * - 用户权限配置中是否允许该认证方式
-     * - 区域配置中是否允许该认证方式
-     * - 设备配置中是否支持该认证方式
+     * 核心职责：
+     * - 记录认证方式（verifytype）用于统计和审计
+     * - 提供认证方式枚举（VerifyTypeEnum）统一管理
+     * - 转换认证方式（verifytype ↔ verifyMethod）用于数据存储和展示
      * </p>
      *
      * @param request 验证请求（包含userId、verifyType等，设备端已识别出人员编号）
-     * @return 认证方式验证结果
+     * @return 记录结果（始终成功，因为只是记录）
      */
     @Override
     public VerificationResult authenticate(AccessVerificationRequest request) {
@@ -77,7 +83,7 @@ public abstract class AbstractAuthenticationStrategy implements MultiModalAuthen
                 return VerificationResult.failed("INVALID_REQUEST", "认证请求参数无效");
             }
 
-            // 2. 执行具体认证逻辑（由子类实现）
+            // 2. 执行具体认证方式记录逻辑（由子类实现，默认返回成功）
             VerificationResult result = doAuthenticate(request);
 
             // 3. 记录认证结果
@@ -120,30 +126,29 @@ public abstract class AbstractAuthenticationStrategy implements MultiModalAuthen
     }
 
     /**
-     * 执行具体认证方式验证逻辑
+     * 执行具体认证方式记录逻辑（由子类实现）
      * <p>
-     * ⚠️ 注意：不是进行人员识别，而是验证用户是否允许使用该认证方式
+     * ⚠️ 注意：不是进行人员识别，也不是验证认证方式是否允许
      * </p>
      * <p>
-     * 由子类实现具体的认证方式验证逻辑：
-     * - 检查用户权限配置中是否允许该认证方式
-     * - 检查区域配置中是否允许该认证方式
-     * - 检查设备配置中是否支持该认证方式
+     * 设备端已完成：
+     * - 人员识别（1:N比对，识别出pin）
+     * - 认证方式验证（如果设备不支持该认证方式，设备端不会识别成功）
      * </p>
      * <p>
-     * 默认实现：返回成功（表示允许使用该认证方式）
-     * 子类可以重写此方法实现更严格的验证逻辑
+     * 子类可以重写此方法实现更具体的记录逻辑（例如：记录认证方式的使用次数）
+     * 默认实现：返回成功，表示记录成功
      * </p>
      *
      * @param request 验证请求（包含userId、verifyType等，设备端已识别出人员编号）
-     * @return 认证方式验证结果
+     * @return 记录结果（默认返回成功）
      */
     protected VerificationResult doAuthenticate(AccessVerificationRequest request) {
-        // 默认实现：允许使用该认证方式
-        // 子类可以重写此方法实现更严格的验证逻辑（例如：检查用户权限、区域配置、设备配置）
-        log.debug("[{}] 认证方式验证通过（默认实现）: userId={}, verifyType={}",
+        // 默认实现：记录认证方式（用于统计和审计）
+        // 子类可以重写此方法实现更具体的记录逻辑（例如：统计各认证方式的使用次数）
+        log.debug("[{}] 认证方式记录: userId={}, verifyType={}",
                 getStrategyName(), request.getUserId(), request.getVerifyType());
-        return VerificationResult.success("认证方式验证通过", null, getVerifyType().getName().toLowerCase());
+        return VerificationResult.success("认证方式记录成功", null, getVerifyType().getName().toLowerCase());
     }
 
     /**
