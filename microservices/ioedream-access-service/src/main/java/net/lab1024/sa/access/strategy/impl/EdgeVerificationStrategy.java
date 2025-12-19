@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
+import net.lab1024.sa.access.manager.AntiPassbackManager;
 import net.lab1024.sa.access.strategy.VerificationModeStrategy;
 import net.lab1024.sa.access.util.AccessRecordIdempotencyUtil;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -62,6 +62,9 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Resource
+    private AntiPassbackManager antiPassbackManager;
 
     /**
      * 缓存键前缀和过期时间统一使用AccessCacheConstants
@@ -221,6 +224,28 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
             if (insertCount > 0) {
                 log.debug("[设备端验证] 记录已存储到数据库: recordId={}, userId={}, deviceId={}",
                         entity.getRecordId(), entity.getUserId(), entity.getDeviceId());
+
+                // 4. ⚠️ 边缘验证模式：只记录反潜回信息，不验证
+                // 原因：设备端已完成单设备内反潜回验证，软件端无法跨设备验证
+                // 用途：用于统计、分析和审计
+                if (request.getInOutStatus() != null) {
+                    try {
+                        antiPassbackManager.recordAntiPassback(
+                                request.getUserId(),
+                                request.getDeviceId(),
+                                request.getAreaId(),
+                                request.getInOutStatus(),
+                                request.getVerifyType()
+                        );
+                        log.debug("[设备端验证] 反潜回信息已记录: userId={}, deviceId={}, inOutStatus={}",
+                                request.getUserId(), request.getDeviceId(), request.getInOutStatus());
+                    } catch (Exception e) {
+                        // 反潜回记录失败不影响主流程，只记录警告日志
+                        log.warn("[设备端验证] 记录反潜回信息失败: userId={}, deviceId={}, error={}",
+                                request.getUserId(), request.getDeviceId(), e.getMessage());
+                    }
+                }
+
                 return true;
             } else {
                 log.warn("[设备端验证] 数据库插入失败: userId={}, deviceId={}",

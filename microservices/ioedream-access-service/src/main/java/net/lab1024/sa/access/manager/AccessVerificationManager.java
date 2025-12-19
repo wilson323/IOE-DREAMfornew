@@ -5,14 +5,13 @@ import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.config.AccessVerificationProperties;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
+import net.lab1024.sa.access.manager.AntiPassbackManager;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.organization.dao.AntiPassbackRecordDao;
 import net.lab1024.sa.common.organization.dao.AreaAccessExtDao;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.dao.InterlockRecordDao;
 import net.lab1024.sa.common.organization.dao.MultiPersonRecordDao;
 import net.lab1024.sa.common.organization.dao.UserAreaPermissionDao;
-import net.lab1024.sa.common.organization.entity.AntiPassbackRecordEntity;
 import net.lab1024.sa.common.organization.entity.AreaAccessExtEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.organization.entity.InterlockRecordEntity;
@@ -32,11 +31,9 @@ import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * 门禁验证管理器
@@ -60,7 +57,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AccessVerificationManager {
 
-    private final AntiPassbackRecordDao antiPassbackRecordDao;
+    private final AntiPassbackManager antiPassbackManager;
     private final UserAreaPermissionDao userAreaPermissionDao;
     private final UserAreaPermissionManager userAreaPermissionManager;
     private final DeviceDao deviceDao;
@@ -72,12 +69,6 @@ public class AccessVerificationManager {
     private final MultiPersonRecordDao multiPersonRecordDao;
     private final AccessVerificationProperties verificationProperties;
 
-    /**
-     * 反潜时间窗口（秒）
-     * 默认5分钟，在此时间窗口内不允许重复进入
-     * 注意：实际值从配置中读取
-     */
-    private static final int DEFAULT_ANTI_PASSBACK_WINDOW_SECONDS = 300;
 
     /**
      * 缓存键前缀和过期时间统一使用AccessCacheConstants
@@ -92,7 +83,7 @@ public class AccessVerificationManager {
     /**
      * 构造函数注入依赖
      *
-     * @param antiPassbackRecordDao 反潜记录DAO
+     * @param antiPassbackManager 反潜回管理器（统一管理反潜回逻辑）
      * @param userAreaPermissionDao 用户区域权限DAO
      * @param userAreaPermissionManager 用户区域权限管理器
      * @param deviceDao 设备DAO
@@ -105,7 +96,7 @@ public class AccessVerificationManager {
      * @param verificationProperties 验证配置属性
      */
     public AccessVerificationManager(
-            AntiPassbackRecordDao antiPassbackRecordDao,
+            AntiPassbackManager antiPassbackManager,
             UserAreaPermissionDao userAreaPermissionDao,
             UserAreaPermissionManager userAreaPermissionManager,
             DeviceDao deviceDao,
@@ -116,7 +107,7 @@ public class AccessVerificationManager {
             InterlockRecordDao interlockRecordDao,
             MultiPersonRecordDao multiPersonRecordDao,
             AccessVerificationProperties verificationProperties) {
-        this.antiPassbackRecordDao = antiPassbackRecordDao;
+        this.antiPassbackManager = antiPassbackManager;
         this.userAreaPermissionDao = userAreaPermissionDao;
         this.userAreaPermissionManager = userAreaPermissionManager;
         this.deviceDao = deviceDao;
@@ -139,10 +130,10 @@ public class AccessVerificationManager {
      * - 时间窗口内不允许重复进入
      * </p>
      * <p>
-     * 优化实现：
-     * - 从AreaAccessExtEntity.extConfig中读取反潜配置
-     * - 使用Redis缓存最近的反潜记录
-     * - 支持可配置的时间窗口
+     * 重构说明：
+     * - 委托给AntiPassbackManager统一管理反潜回逻辑
+     * - 消除代码重复，符合DRY原则
+     * - 支持跨设备验证（后台验证模式）
      * </p>
      *
      * @param userId 用户ID
@@ -152,52 +143,8 @@ public class AccessVerificationManager {
      * @return 是否通过验证
      */
     public boolean verifyAntiPassback(Long userId, Long deviceId, Integer inOutStatus, Long areaId) {
-        log.debug("[反潜验证] 开始验证: userId={}, deviceId={}, inOutStatus={}, areaId={}",
-                userId, deviceId, inOutStatus, areaId);
-
-        try {
-            // 1. 读取反潜配置（从AreaAccessExtEntity.extConfig中读取）
-            AntiPassbackConfig config = getAntiPassbackConfig(areaId);
-            if (config == null || !config.isEnabled()) {
-                log.debug("[反潜验证] 反潜功能未启用，允许通过: areaId={}", areaId);
-                return true; // 未启用反潜，允许通过
-            }
-
-            // 2. 查询用户最近的进出记录（优先从Redis缓存查询）
-            AntiPassbackRecordEntity lastRecord = getLastRecordWithCache(userId, deviceId);
-
-            // 3. 如果没有历史记录，允许通过（首次进入）
-            if (lastRecord == null) {
-                log.debug("[反潜验证] 无历史记录，允许通过: userId={}", userId);
-                return true;
-            }
-
-            // 4. 检查反潜规则
-            Integer lastInOutStatus = lastRecord.getInOutStatus();
-            LocalDateTime lastRecordTime = lastRecord.getRecordTime();
-
-            // 4.1 如果上次是进入，当前不能是进入
-            if (AntiPassbackRecordEntity.InOutStatus.IN == lastInOutStatus
-                    && AntiPassbackRecordEntity.InOutStatus.IN == inOutStatus) {
-                // 检查时间窗口（使用配置的时间窗口，如果未配置则使用默认值）
-                int timeWindow = config.getTimeWindow() != null ? config.getTimeWindow() : DEFAULT_ANTI_PASSBACK_WINDOW_SECONDS;
-                long secondsBetween = ChronoUnit.SECONDS.between(lastRecordTime, LocalDateTime.now());
-                if (secondsBetween < timeWindow) {
-                    log.warn("[反潜验证] 反潜违规: userId={}, 上次进入时间={}, 间隔={}秒, 时间窗口={}秒",
-                            userId, lastRecordTime, secondsBetween, timeWindow);
-                    return false;
-                }
-            }
-
-            // 4.2 如果上次是离开，当前可以是进入或离开（允许）
-            log.debug("[反潜验证] 验证通过: userId={}", userId);
-            return true;
-
-        } catch (Exception e) {
-            log.error("[反潜验证] 验证异常: userId={}, error={}", userId, e.getMessage(), e);
-            // 异常时允许通过，避免影响正常通行
-            return true;
-        }
+        // 委托给AntiPassbackManager统一管理反潜回验证逻辑
+        return antiPassbackManager.verifyAntiPassback(userId, deviceId, inOutStatus, areaId);
     }
 
     /**
@@ -213,139 +160,15 @@ public class AccessVerificationManager {
     }
 
     /**
-     * 反潜配置类
-     */
-    private static class AntiPassbackConfig {
-        private Boolean enabled;
-        private Integer timeWindow; // 时间窗口（秒）
-
-        public Boolean isEnabled() {
-            return enabled != null && enabled;
-        }
-
-        public Integer getTimeWindow() {
-            return timeWindow;
-        }
-    }
-
-    /**
-     * 从区域扩展配置中读取反潜配置
-     *
-     * @param areaId 区域ID
-     * @return 反潜配置，如果未配置或解析失败则返回null
-     */
-    private AntiPassbackConfig getAntiPassbackConfig(Long areaId) {
-        if (areaId == null) {
-            return null;
-        }
-
-        try {
-            // 1. 从Redis缓存查询配置
-            String cacheKey = AccessCacheConstants.buildAreaConfigKey(areaId);
-            Object cachedConfig = redisTemplate.opsForValue().get(cacheKey);
-            if (cachedConfig instanceof AntiPassbackConfig) {
-                return (AntiPassbackConfig) cachedConfig;
-            }
-
-            // 2. 从数据库查询区域扩展配置
-            AreaAccessExtEntity areaExt = areaAccessExtDao.selectByAreaId(areaId);
-            if (areaExt == null || areaExt.getExtConfig() == null || areaExt.getExtConfig().trim().isEmpty()) {
-                // 未配置，返回默认配置（启用反潜，使用默认时间窗口）
-                AntiPassbackConfig defaultConfig = new AntiPassbackConfig();
-                defaultConfig.enabled = true;
-                defaultConfig.timeWindow = DEFAULT_ANTI_PASSBACK_WINDOW_SECONDS;
-                return defaultConfig;
-            }
-
-            // 3. 解析extConfig JSON
-            try {
-                Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), Map.class);
-                AntiPassbackConfig config = new AntiPassbackConfig();
-
-                // 读取反潜配置
-                if (configMap.containsKey("antiPassback")) {
-                    Object antiPassbackObj = configMap.get("antiPassback");
-                    if (antiPassbackObj instanceof Map) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> antiPassbackMap = (Map<String, Object>) antiPassbackObj;
-                        config.enabled = (Boolean) antiPassbackMap.getOrDefault("enabled", true);
-                        if (antiPassbackMap.containsKey("timeWindow")) {
-                            Object timeWindowObj = antiPassbackMap.get("timeWindow");
-                            if (timeWindowObj instanceof Number) {
-                                config.timeWindow = ((Number) timeWindowObj).intValue();
-                            }
-                        }
-                    } else if (antiPassbackObj instanceof Boolean) {
-                        config.enabled = (Boolean) antiPassbackObj;
-                    }
-                } else {
-                    // 未配置反潜，使用默认值
-                    config.enabled = true;
-                    config.timeWindow = DEFAULT_ANTI_PASSBACK_WINDOW_SECONDS;
-                }
-
-                // 4. 写入缓存
-                redisTemplate.opsForValue().set(cacheKey, config, AccessCacheConstants.CACHE_EXPIRE_AREA_CONFIG);
-                log.debug("[反潜验证] 反潜配置已缓存: areaId={}, enabled={}, timeWindow={}",
-                        areaId, config.enabled, config.timeWindow);
-
-                return config;
-
-            } catch (Exception e) {
-                log.warn("[反潜验证] 解析反潜配置失败: areaId={}, extConfig={}, error={}",
-                        areaId, areaExt.getExtConfig(), e.getMessage());
-                // 解析失败，返回默认配置
-                AntiPassbackConfig defaultConfig = new AntiPassbackConfig();
-                defaultConfig.enabled = true;
-                defaultConfig.timeWindow = DEFAULT_ANTI_PASSBACK_WINDOW_SECONDS;
-                return defaultConfig;
-            }
-
-        } catch (Exception e) {
-            log.error("[反潜验证] 获取反潜配置异常: areaId={}, error={}", areaId, e.getMessage(), e);
-            // 异常时返回默认配置
-            AntiPassbackConfig defaultConfig = new AntiPassbackConfig();
-            defaultConfig.enabled = true;
-            defaultConfig.timeWindow = DEFAULT_ANTI_PASSBACK_WINDOW_SECONDS;
-            return defaultConfig;
-        }
-    }
-
-    /**
-     * 获取用户最近的进出记录（带缓存）
-     *
-     * @param userId 用户ID
-     * @param deviceId 设备ID
-     * @return 最近的记录，不存在返回null
-     */
-    private AntiPassbackRecordEntity getLastRecordWithCache(Long userId, Long deviceId) {
-        // 1. 从Redis缓存查询
-        String cacheKey = AccessCacheConstants.buildAntiPassbackRecordKey(userId, deviceId);
-        Object cachedRecord = redisTemplate.opsForValue().get(cacheKey);
-        if (cachedRecord instanceof AntiPassbackRecordEntity) {
-            log.debug("[反潜验证] 从缓存获取记录: userId={}, deviceId={}", userId, deviceId);
-            return (AntiPassbackRecordEntity) cachedRecord;
-        }
-
-        // 2. 从数据库查询
-        List<AntiPassbackRecordEntity> records = antiPassbackRecordDao.selectRecentRecords(userId, deviceId, 1);
-        AntiPassbackRecordEntity lastRecord = records != null && !records.isEmpty() ? records.get(0) : null;
-
-        // 3. 写入缓存（如果存在记录）
-        if (lastRecord != null) {
-            redisTemplate.opsForValue().set(cacheKey, lastRecord, AccessCacheConstants.CACHE_EXPIRE_ANTI_PASSBACK_RECORD);
-            log.debug("[反潜验证] 记录已缓存: userId={}, deviceId={}", userId, deviceId);
-        }
-
-        return lastRecord;
-    }
-
-
-    /**
      * 记录反潜验证结果
      * <p>
      * 验证通过后记录本次进出
      * 同时更新Redis缓存
+     * </p>
+     * <p>
+     * 重构说明：
+     * - 委托给AntiPassbackManager统一管理反潜回记录逻辑
+     * - 消除代码重复，符合DRY原则
      * </p>
      *
      * @param userId 用户ID
@@ -356,28 +179,8 @@ public class AccessVerificationManager {
      */
     public void recordAntiPassback(Long userId, Long deviceId, Long areaId,
                                    Integer inOutStatus, Integer verifyType) {
-        try {
-            AntiPassbackRecordEntity record = new AntiPassbackRecordEntity();
-            record.setUserId(userId);
-            record.setDeviceId(deviceId);
-            record.setAreaId(areaId);
-            record.setInOutStatus(inOutStatus);
-            record.setRecordTime(LocalDateTime.now());
-            record.setAccessType(inOutStatus == 1 ? "IN" : "OUT");
-            record.setVerifyType(verifyType);
-
-            // 1. 保存到数据库
-            antiPassbackRecordDao.insert(record);
-            log.debug("[反潜验证] 记录已保存: userId={}, deviceId={}, inOutStatus={}", userId, deviceId, inOutStatus);
-
-            // 2. 更新Redis缓存
-            String cacheKey = AccessCacheConstants.buildAntiPassbackRecordKey(userId, deviceId);
-            redisTemplate.opsForValue().set(cacheKey, record, AccessCacheConstants.CACHE_EXPIRE_ANTI_PASSBACK_RECORD);
-            log.debug("[反潜验证] 记录已缓存: userId={}, deviceId={}", userId, deviceId);
-
-        } catch (Exception e) {
-            log.error("[反潜验证] 记录保存异常: userId={}, error={}", userId, e.getMessage(), e);
-        }
+        // 委托给AntiPassbackManager统一管理反潜回记录逻辑
+        antiPassbackManager.recordAntiPassback(userId, deviceId, areaId, inOutStatus, verifyType);
     }
 
     /**

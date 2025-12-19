@@ -1,0 +1,229 @@
+package net.lab1024.sa.common.util;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+/**
+ * 请求工具类
+ * <p>
+ * 提供HTTP请求相关的工具方法
+ * 严格遵循CLAUDE.md规范：
+ * - 工具类使用静态方法
+ * - 完整的参数验证
+ * - 统一的异常处理
+ * </p>
+ * <p>
+ * 迁移说明：从microservices-common-core迁移到microservices-common
+ * 原因：common-core应保持最小稳定内核，不包含Spring Web运行时依赖
+ * </p>
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-01-30
+ */
+public class SmartRequestUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(SmartRequestUtil.class);
+
+    /**
+     * 私有构造函数，防止实例化
+     */
+    private SmartRequestUtil() {
+        throw new UnsupportedOperationException("工具类不允许实例化");
+    }
+
+    /**
+     * 获取当前HTTP请求对象
+     * <p>
+     * 从Spring的RequestContextHolder中获取当前请求
+     * 如果不在Web环境中，返回null
+     * </p>
+     *
+     * @return 当前HTTP请求对象，如果不在Web环境中则返回null
+     */
+    public static HttpServletRequest getRequest() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return null;
+        }
+        return attributes.getRequest();
+    }
+
+    /**
+     * 获取请求IP地址
+     * <p>
+     * 优先获取X-Forwarded-For头，其次获取X-Real-IP头，最后获取RemoteAddr
+     * </p>
+     *
+     * @return 请求IP地址，如果无法获取则返回null
+     */
+    public static String getIpAddress() {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+
+        // 1. 优先获取X-Forwarded-For头（代理服务器转发）
+        String ip = request.getHeader("X-Forwarded-For");
+        if (StringUtils.isNotEmpty(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            // X-Forwarded-For可能包含多个IP，取第一个
+            int index = ip.indexOf(',');
+            if (index != -1) {
+                ip = ip.substring(0, index).trim();
+            }
+            return ip;
+        }
+
+        // 2. 获取X-Real-IP头（Nginx代理）
+        ip = request.getHeader("X-Real-IP");
+        if (StringUtils.isNotEmpty(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+
+        // 3. 获取RemoteAddr（直接连接）
+        ip = request.getRemoteAddr();
+        return ip;
+    }
+
+    /**
+     * 获取请求User-Agent
+     *
+     * @return User-Agent字符串，如果无法获取则返回null
+     */
+    public static String getUserAgent() {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+        return request.getHeader("User-Agent");
+    }
+
+    /**
+     * 获取请求URI
+     *
+     * @return 请求URI，如果无法获取则返回null
+     */
+    public static String getRequestURI() {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+        return request.getRequestURI();
+    }
+
+    /**
+     * 获取请求方法（GET、POST等）
+     *
+     * @return 请求方法，如果无法获取则返回null
+     */
+    public static String getRequestMethod() {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+        return request.getMethod();
+    }
+
+    /**
+     * 获取请求头值
+     *
+     * @param headerName 请求头名称
+     * @return 请求头值，如果无法获取则返回null
+     */
+    public static String getHeader(String headerName) {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+        return request.getHeader(headerName);
+    }
+
+    /**
+     * 获取请求参数值
+     *
+     * @param paramName 参数名称
+     * @return 参数值，如果无法获取则返回null
+     */
+    public static String getParameter(String paramName) {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+        return request.getParameter(paramName);
+    }
+
+    /**
+     * 获取请求参数值（带默认值）
+     *
+     * @param paramName   参数名称
+     * @param defaultValue 默认值
+     * @return 参数值，如果无法获取则返回默认值
+     */
+    public static String getParameter(String paramName, String defaultValue) {
+        String value = getParameter(paramName);
+        return value == null ? defaultValue : value;
+    }
+
+    /**
+     * 判断是否为Ajax请求
+     *
+     * @return true表示是Ajax请求，false表示不是
+     */
+    public static boolean isAjaxRequest() {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return false;
+        }
+        String requestedWith = request.getHeader("X-Requested-With");
+        return "XMLHttpRequest".equalsIgnoreCase(requestedWith);
+    }
+
+    /**
+     * 获取当前登录用户ID
+     * <p>
+     * 从请求属性中获取用户ID（通常由认证拦截器或过滤器设置）
+     * 支持的属性名：
+     * - userId: 用户ID（Long类型）
+     * - user_id: 用户ID（Long类型）
+     * - loginUserId: 登录用户ID（Long类型）
+     * </p>
+     *
+     * @return 当前登录用户ID，如果无法获取则返回null
+     */
+    public static Long getUserId() {
+        HttpServletRequest request = getRequest();
+        if (request == null) {
+            return null;
+        }
+
+        // 尝试从请求属性中获取用户ID
+        Object userIdObj = request.getAttribute("userId");
+        if (userIdObj == null) {
+            userIdObj = request.getAttribute("user_id");
+        }
+        if (userIdObj == null) {
+            userIdObj = request.getAttribute("loginUserId");
+        }
+
+        // 转换为Long类型
+        if (userIdObj instanceof Long) {
+            return (Long) userIdObj;
+        } else if (userIdObj instanceof Number) {
+            return ((Number) userIdObj).longValue();
+        } else if (userIdObj instanceof String) {
+            try {
+                return Long.parseLong((String) userIdObj);
+            } catch (NumberFormatException e) {
+                log.debug("[请求工具] 用户ID解析失败，返回null: userIdObj={}", userIdObj);
+                return null;
+            }
+        }
+
+        return null;
+    }
+}

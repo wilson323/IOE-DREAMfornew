@@ -536,8 +536,8 @@ public class PermissionPerformanceMonitor {
         private Long minValidationTime = 0L;
         private Double cacheHitRate = 0.0;
         private Double averageCacheTime = 0.0;
-        private Integer localCacheSize = 0;
-        private Integer redisCacheSize = 0;
+        private Long localCacheSize = 0L;
+        private Long redisCacheSize = 0L;
         private Double localHitRate = 0.0;
         private Double redisHitRate = 0.0;
         private Double overallHitRate = 0.0;

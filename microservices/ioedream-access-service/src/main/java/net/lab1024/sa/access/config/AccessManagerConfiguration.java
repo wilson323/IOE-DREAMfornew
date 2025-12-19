@@ -3,8 +3,8 @@ package net.lab1024.sa.access.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.manager.AccessVerificationManager;
+import net.lab1024.sa.access.manager.AntiPassbackManager;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.organization.dao.AreaAccessExtDao;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -69,16 +69,40 @@ public class AccessManagerConfiguration {
     private AccessVerificationProperties verificationProperties;
 
     /**
+     * 注册AntiPassbackManager为Spring Bean
+     * <p>
+     * 注意：必须在AccessVerificationManager之前注册，因为AccessVerificationManager依赖AntiPassbackManager
+     * </p>
+     *
+     * @return AntiPassbackManager实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(AntiPassbackManager.class)
+    public AntiPassbackManager antiPassbackManager() {
+        log.info("[Manager配置] 注册AntiPassbackManager Bean");
+        return new AntiPassbackManager(
+                antiPassbackRecordDao,
+                areaAccessExtDao,
+                redisTemplate,
+                objectMapper
+        );
+    }
+
+    /**
      * 注册AccessVerificationManager为Spring Bean
+     * <p>
+     * 注意：使用@DependsOn确保AntiPassbackManager先注册
+     * </p>
      *
      * @return AccessVerificationManager实例
      */
     @Bean
     @ConditionalOnMissingBean(AccessVerificationManager.class)
+    @org.springframework.context.annotation.DependsOn("antiPassbackManager")
     public AccessVerificationManager accessVerificationManager() {
         log.info("[Manager配置] 注册AccessVerificationManager Bean");
         return new AccessVerificationManager(
-                antiPassbackRecordDao,
+                antiPassbackManager(),  // 使用已注册的AntiPassbackManager Bean
                 userAreaPermissionDao,
                 userAreaPermissionManager,
                 deviceDao,
@@ -91,4 +115,5 @@ public class AccessManagerConfiguration {
                 verificationProperties
         );
     }
+
 }

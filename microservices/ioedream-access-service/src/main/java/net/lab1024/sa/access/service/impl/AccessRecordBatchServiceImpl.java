@@ -3,6 +3,7 @@ package net.lab1024.sa.access.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.domain.dto.AccessRecordBatchUploadRequest;
+import net.lab1024.sa.access.manager.AntiPassbackManager;
 import net.lab1024.sa.access.service.AccessRecordBatchService;
 import net.lab1024.sa.access.util.AccessRecordIdempotencyUtil;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
@@ -43,6 +44,9 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Resource
+    private AntiPassbackManager antiPassbackManager;
 
     /**
      * 缓存键前缀（复用统一工具类的记录唯一标识缓存键）
@@ -109,15 +113,22 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
             int insertCount = accessRecordDao.batchInsert(entities);
             result.setSuccessCount(insertCount);
 
-            // 7. 更新记录唯一标识缓存（用于后续幂等性检查）
+            // 7. ⚠️ 边缘验证模式：批量记录反潜回信息，不验证
+            // 原因：设备端已完成单设备内反潜回验证，软件端无法跨设备验证
+            // 用途：用于统计、分析和审计
+            if (insertCount > 0) {
+                batchRecordAntiPassback(entities);
+            }
+
+            // 8. 更新记录唯一标识缓存（用于后续幂等性检查）
             updateRecordUniqueIdCache(validRecords);
 
-            // 8. 更新结果状态
+            // 9. 更新结果状态
             result.setFailCount(result.getTotalCount() - result.getSuccessCount() - result.getDuplicateCount());
             result.setStatus(result.getFailCount() == 0 ? "SUCCESS" : "FAILED");
             result.setProcessTime(System.currentTimeMillis() - startTime);
 
-            // 9. 缓存结果
+            // 10. 缓存结果
             cacheBatchResult(batchId, result);
 
             log.info("[批量上传] 批量上传完成: batchId={}, total={}, success={}, fail={}, duplicate={}, processTime={}ms",
@@ -302,6 +313,80 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
             entity.setRecordUniqueId(record.getRecordUniqueId());
             return entity;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 批量记录反潜回信息
+     * <p>
+     * ⚠️ 边缘验证模式：只记录反潜回信息，不验证
+     * 原因：设备端已完成单设备内反潜回验证，软件端无法跨设备验证
+     * 用途：用于统计、分析和审计
+     * </p>
+     *
+     * @param entities 通行记录实体列表
+     */
+    private void batchRecordAntiPassback(List<AccessRecordEntity> entities) {
+        int successCount = 0;
+        int failCount = 0;
+
+        for (AccessRecordEntity entity : entities) {
+            // 只处理有进出状态的记录
+            if (entity.getAccessType() == null || (!"IN".equals(entity.getAccessType()) && !"OUT".equals(entity.getAccessType()))) {
+                continue;
+            }
+
+            try {
+                // 将accessType转换为inOutStatus（1=进, 2=出）
+                Integer inOutStatus = "IN".equals(entity.getAccessType()) ? 1 : 2;
+
+                // 将verifyMethod转换为verifyType
+                Integer verifyType = convertVerifyMethodToType(entity.getVerifyMethod());
+
+                // 记录反潜回信息
+                antiPassbackManager.recordAntiPassback(
+                        entity.getUserId(),
+                        entity.getDeviceId(),
+                        entity.getAreaId(),
+                        inOutStatus,
+                        verifyType
+                );
+                successCount++;
+            } catch (Exception e) {
+                failCount++;
+                // 反潜回记录失败不影响主流程，只记录警告日志
+                log.warn("[批量上传] 记录反潜回信息失败: userId={}, deviceId={}, error={}",
+                        entity.getUserId(), entity.getDeviceId(), e.getMessage());
+            }
+        }
+
+        if (successCount > 0) {
+            log.info("[批量上传] 批量记录反潜回信息完成: successCount={}, failCount={}", successCount, failCount);
+        }
+    }
+
+    /**
+     * 将验证方式字符串转换为验证类型整数
+     *
+     * @param verifyMethod 验证方式（FACE/FINGERPRINT/CARD/PASSWORD等）
+     * @return 验证类型（0=密码, 1=指纹, 2=卡片, 11=人脸）
+     */
+    private Integer convertVerifyMethodToType(String verifyMethod) {
+        if (verifyMethod == null) {
+            return 2; // 默认卡片
+        }
+
+        switch (verifyMethod.toUpperCase()) {
+            case "PASSWORD":
+                return 0;
+            case "FINGERPRINT":
+                return 1;
+            case "CARD":
+                return 2;
+            case "FACE":
+                return 11;
+            default:
+                return 2; // 默认卡片
+        }
     }
 
     /**
