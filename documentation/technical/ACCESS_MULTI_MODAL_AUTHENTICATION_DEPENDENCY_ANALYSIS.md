@@ -410,10 +410,10 @@ private Integer convertVerifyMethodToType(String verifyMethod) {
 
 ### 集成检查
 
-- [ ] 与AccessVerificationManager集成（待完成）
-- [x] 与EdgeVerificationStrategy集成（✅ 已完成 - 使用VerifyTypeEnum）
-- [x] 与AccessRecordBatchService集成（✅ 已完成 - 使用VerifyTypeEnum）
-- [x] 与AntiPassbackService集成（✅ 已完成 - 使用VerifyTypeEnum）
+- [x] 与BackendVerificationStrategy集成（✅ 已完成 - 验证认证方式是否允许）
+- [x] 与EdgeVerificationStrategy集成（✅ 已完成 - 使用VerifyTypeEnum记录认证方式）
+- [x] 与AccessRecordBatchService集成（✅ 已完成 - 使用VerifyTypeEnum转换认证方式）
+- [x] 与AntiPassbackService集成（✅ 已完成 - 使用VerifyTypeEnum获取描述）
 
 ---
 
