@@ -16,24 +16,25 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileFaceForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileNfcForm;
-import net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileQuickForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileScanForm;
+import net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm;
+import net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeDeviceConfigVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileMealVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileResultVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileStatsVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileSummaryVO;
-import net.lab1024.sa.consume.domain.vo.ConsumeSyncDataVO;
-import net.lab1024.sa.consume.domain.vo.ConsumeSyncResultVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserInfoVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserStatsVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserVO;
+import net.lab1024.sa.consume.domain.vo.ConsumeSyncDataVO;
+import net.lab1024.sa.consume.domain.vo.ConsumeSyncResultVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeValidateResultVO;
 import net.lab1024.sa.consume.service.ConsumeMobileService;
-import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 消费移动端控制器
@@ -126,7 +127,7 @@ public class ConsumeMobileController {
     /**
      * 快速用户查询
      *
-     * @param queryType 查询类型
+     * @param queryType  查询类型
      * @param queryValue 查询值
      * @return 用户信息
      */
@@ -254,7 +255,8 @@ public class ConsumeMobileController {
     @PostMapping("/validate/permission")
     @Observed(name = "consumeMobile.validatePermission", contextualName = "consume-mobile-validate-permission")
     @Operation(summary = "权限验证", description = "验证用户消费权限")
-    public ResponseDTO<ConsumeValidateResultVO> validatePermission(@Valid @RequestBody ConsumePermissionValidateForm form) {
+    public ResponseDTO<ConsumeValidateResultVO> validatePermission(
+            @Valid @RequestBody ConsumePermissionValidateForm form) {
         log.info("权限验证: userId={}, areaId={}, amount={}",
                 form.getUserId(), form.getAreaId(), form.getAmount());
         ConsumeValidateResultVO result = consumeMobileService.validateConsumePermission(form);
@@ -279,6 +281,3 @@ public class ConsumeMobileController {
         return ResponseDTO.ok(stats);
     }
 }
-
-
-

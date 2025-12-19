@@ -279,8 +279,8 @@ class ConsumeMobileServiceImplTest {
         paymentRecord.setPaymentAmount(new BigDecimal("50.00"));
         paymentRecord.setActualAmount(new BigDecimal("50.00"));
         paymentRecord.setPaymentStatus(3); // 支付成功
-        paymentRecord.setPaymentMethod(3); // 支付宝
-        paymentRecord.setPaymentChannel(3); // 移动端
+        paymentRecord.setPaymentMethod("ALIPAY"); // 支付宝
+        paymentRecord.setPaymentChannel("MOBILE"); // 移动端
         paymentRecord.setBusinessType(1); // 消费
         paymentRecord.setDeviceId("DEV001");
         paymentRecord.setUserId(1001L);

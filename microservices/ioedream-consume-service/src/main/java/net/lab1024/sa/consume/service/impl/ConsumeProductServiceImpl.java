@@ -15,9 +15,9 @@ import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
-import net.lab1024.sa.consume.entity.ConsumeProductEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeProductQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeProductVO;
+import net.lab1024.sa.consume.entity.ConsumeProductEntity;
 import net.lab1024.sa.consume.service.ConsumeProductService;
 
 /**
@@ -89,19 +89,15 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     private ConsumeProductVO toVO(ConsumeProductEntity entity) {
         ConsumeProductVO vo = new ConsumeProductVO();
-        vo.setProductId(entity.getId());
-        vo.setProductCode(entity.getCode());
-        vo.setProductName(entity.getName());
+        vo.setProductId(entity.getId() != null ? String.valueOf(entity.getId()) : null);
+        vo.setProductCode(entity.getProductCode());
+        vo.setProductName(entity.getProductName());
         vo.setImageUrl(entity.getImageUrl());
         vo.setPrice(entity.getPrice());
-        vo.setStatus(Boolean.TRUE.equals(entity.getAvailable()) ? 1 : 0);
+        vo.setStatus(Integer.valueOf(1).equals(entity.getAvailable()) ? 1 : 0);
 
         vo.setStock(null);
         vo.setCategoryName(null);
         return vo;
     }
 }
-
-
-
-

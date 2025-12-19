@@ -1,25 +1,5 @@
 package net.lab1024.sa.consume.service.impl;
 
-import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.dao.MealOrderDao;
-import net.lab1024.sa.consume.dao.MealOrderItemDao;
-import net.lab1024.sa.consume.entity.MealOrderEntity;
-import net.lab1024.sa.consume.entity.MealOrderItemEntity;
-import net.lab1024.sa.consume.domain.form.MealOrderCreateForm;
-import net.lab1024.sa.consume.domain.form.MealOrderQueryForm;
-import net.lab1024.sa.consume.domain.form.MealOrderVerifyForm;
-import net.lab1024.sa.consume.domain.vo.MealOrderDetailVO;
-import net.lab1024.sa.consume.domain.vo.MealOrderStatisticsVO;
-import net.lab1024.sa.consume.domain.vo.MealOrderVO;
-import net.lab1024.sa.consume.manager.MealOrderManager;
-import net.lab1024.sa.consume.service.MealOrderService;
-import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,6 +7,27 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.consume.dao.MealOrderDao;
+import net.lab1024.sa.consume.dao.MealOrderItemDao;
+import net.lab1024.sa.consume.domain.form.MealOrderCreateForm;
+import net.lab1024.sa.consume.domain.form.MealOrderQueryForm;
+import net.lab1024.sa.consume.domain.form.MealOrderVerifyForm;
+import net.lab1024.sa.consume.domain.vo.MealOrderDetailVO;
+import net.lab1024.sa.consume.domain.vo.MealOrderStatisticsVO;
+import net.lab1024.sa.consume.domain.vo.MealOrderVO;
+import net.lab1024.sa.consume.entity.MealOrderEntity;
+import net.lab1024.sa.consume.entity.MealOrderItemEntity;
+import net.lab1024.sa.consume.manager.MealOrderManager;
+import net.lab1024.sa.consume.service.MealOrderService;
 
 /**
  * 订餐服务实现
@@ -195,14 +196,23 @@ public class MealOrderServiceImpl implements MealOrderService {
         return vo;
     }
 
-    private String getStatusDesc(String status) {
-        if (status == null) return "";
+    /**
+     * 获取订单状态描述
+     *
+     * @param status 订单状态（整型状态码）
+     * @return 状态中文描述
+     */
+    private String getStatusDesc(Integer status) {
+        if (status == null) {
+            return "";
+        }
+        // 约定：1-待取餐 2-已完成 3-已取消 4-已过期（若后续有枚举，可在此集中映射）
         return switch (status) {
-            case "PENDING" -> "待取餐";
-            case "COMPLETED" -> "已完成";
-            case "CANCELLED" -> "已取消";
-            case "EXPIRED" -> "已过期";
-            default -> status;
+            case 1 -> "待取餐";
+            case 2 -> "已完成";
+            case 3 -> "已取消";
+            case 4 -> "已过期";
+            default -> String.valueOf(status);
         };
     }
 }

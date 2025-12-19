@@ -129,7 +129,7 @@ public class AccountEntity extends BaseEntity {
      */
     private LocalDateTime lastUseTime;
 
-      // 注意：version、createTime、updateTime、createUserId、updateUserId、deletedFlag
+    // 注意：version、createTime、updateTime、createUserId、updateUserId、deletedFlag
     // 已由BaseEntity提供，无需重复定义
 
     // 便捷方法：为了兼容现有代码调用getId()
@@ -189,6 +189,24 @@ public class AccountEntity extends BaseEntity {
     }
 
     /**
+     * 获取账户状态
+     *
+     * @return 账户状态：1-正常 2-冻结 3-注销
+     */
+    public Integer getStatus() {
+        return this.status;
+    }
+
+    /**
+     * 设置账户状态
+     *
+     * @param status 账户状态：1-正常 2-冻结 3-注销
+     */
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    /**
      * 设置补贴余额（BigDecimal类型，兼容方法）
      */
     public void setAllowanceBalance(BigDecimal allowanceBalance) {
@@ -233,6 +251,7 @@ public class AccountEntity extends BaseEntity {
         }
     }
 }
+
 
 
 

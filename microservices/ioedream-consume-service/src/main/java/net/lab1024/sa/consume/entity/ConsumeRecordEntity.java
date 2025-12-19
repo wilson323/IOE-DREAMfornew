@@ -219,6 +219,90 @@ public class ConsumeRecordEntity extends BaseEntity {
     @Schema(description = "补贴金额")
     private BigDecimal subsidyAmount;
 
+    // ==================== 显式 Getter/Setter（避免 Lombok 在构建时未生效） ====================
+
+    /**
+     * 获取主键ID
+     *
+     * @return 主键ID
+     */
+    public Long getId() {
+        return this.id;
+    }
+
+    /**
+     * 设置订单号
+     *
+     * @param orderNo 订单号
+     */
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    /**
+     * 设置账户ID
+     *
+     * @param accountId 账户ID
+     */
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    /**
+     * 设置消费金额
+     *
+     * @param amount 消费金额
+     */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * 设置设备ID
+     *
+     * @param deviceId 设备ID
+     */
+    public void setDeviceId(Long deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    /**
+     * 设置区域ID
+     *
+     * @param areaId 区域ID
+     */
+    public void setAreaId(Long areaId) {
+        this.areaId = areaId;
+    }
+
+    /**
+     * 设置消费类型
+     *
+     * @param consumeType 消费类型
+     */
+    public void setConsumeType(String consumeType) {
+        // 字段名在实体中为 consumeType（后续字段在本文件下方定义）
+        this.consumeType = consumeType;
+    }
+
+    /**
+     * 设置状态
+     *
+     * @param status 状态
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * 设置消费时间
+     *
+     * @param consumeTime 消费时间
+     */
+    public void setConsumeTime(LocalDateTime consumeTime) {
+        this.consumeTime = consumeTime;
+    }
+
     /**
      * 实际支付金额
      */
@@ -373,10 +457,60 @@ public class ConsumeRecordEntity extends BaseEntity {
     @Schema(description = "备注")
     private String remark;
 
+    /**
+     * 消费记录业务ID（兼容字段，与id保持一致）
+     * <p>
+     * 根据chonggou.txt和业务模块文档要求添加
+     * 用于业务代码中统一使用recordId作为业务标识
+     * </p>
+     */
+    @TableField(exist = false)
+    @Schema(description = "消费记录业务ID")
+    private Long recordId;
+
+    /**
+     * 支付状态（枚举类型）
+     * <p>
+     * 根据chonggou.txt要求添加
+     * 1-待支付 2-支付中 3-支付成功 4-支付失败 5-已退款 6-部分退款
+     * </p>
+     */
+    @TableField("payment_status")
+    @Schema(description = "支付状态")
+    private Integer paymentStatus;
+
+    /**
+     * 支付方式（枚举类型）
+     * <p>
+     * 根据chonggou.txt要求添加
+     * 1-余额支付 2-微信支付 3-支付宝 4-银行卡 5-现金 6-二维码 7-NFC 8-生物识别
+     * </p>
+     */
+    @TableField("payment_method")
+    @Schema(description = "支付方式")
+    private Integer paymentMethod;
+
     // 注意：createTime, updateTime, createUserId, updateUserId, deletedFlag, version
     // 已由BaseEntity提供，无需重复定义
+
+    /**
+     * 获取消费记录业务ID
+     * <p>
+     * 兼容方法：如果recordId为空，则返回id
+     * </p>
+     *
+     * @return 消费记录业务ID
+     */
+    public Long getRecordId() {
+        return this.recordId != null ? this.recordId : this.id;
+    }
+
+    /**
+     * 设置消费记录业务ID
+     *
+     * @param recordId 消费记录业务ID
+     */
+    public void setRecordId(Long recordId) {
+        this.recordId = recordId;
+    }
 }
-
-
-
-

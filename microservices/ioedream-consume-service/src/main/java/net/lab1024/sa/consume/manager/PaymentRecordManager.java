@@ -1,23 +1,24 @@
 package net.lab1024.sa.consume.manager;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.consume.entity.PaymentRefundRecordEntity;
-import net.lab1024.sa.consume.dao.PaymentRecordDao;
-import net.lab1024.sa.consume.dao.PaymentRefundRecordDao;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
-import java.math.BigDecimal;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.consume.dao.PaymentRecordDao;
+import net.lab1024.sa.consume.dao.PaymentRefundRecordDao;
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.entity.PaymentRefundRecordEntity;
 
 /**
  * 支付记录管理器
@@ -41,9 +42,9 @@ public class PaymentRecordManager {
 
     // 构造函数注入依赖
     public PaymentRecordManager(PaymentRecordDao paymentRecordDao,
-                              PaymentRefundRecordDao paymentRefundRecordDao,
-                              GatewayServiceClient gatewayServiceClient,
-                              ObjectMapper objectMapper) {
+            PaymentRefundRecordDao paymentRefundRecordDao,
+            GatewayServiceClient gatewayServiceClient,
+            ObjectMapper objectMapper) {
         this.paymentRecordDao = paymentRecordDao;
         this.paymentRefundRecordDao = paymentRefundRecordDao;
         this.gatewayServiceClient = gatewayServiceClient;
@@ -62,7 +63,10 @@ public class PaymentRecordManager {
 
         try {
             // 1. 设置基本信息
-            paymentRecord.setPaymentId("PAY-" + UUID.randomUUID().toString().replace("-", ""));
+            // paymentId是Long类型，应该使用支付编号(paymentNo)存储业务标识
+            // 这里生成支付编号，paymentId由数据库自动生成
+            String paymentNo = "PAY-" + UUID.randomUUID().toString().replace("-", "");
+            paymentRecord.setPaymentNo(paymentNo);
 
             // 2. 生成订单号和交易流水号
             if (paymentRecord.getOrderNo() == null || paymentRecord.getOrderNo().trim().isEmpty()) {
@@ -104,14 +108,14 @@ public class PaymentRecordManager {
     /**
      * 更新支付状态
      *
-     * @param paymentId 支付记录ID
-     * @param status 新状态
-     * @param thirdPartyOrderNo 第三方订单号
+     * @param paymentId               支付记录ID
+     * @param status                  新状态
+     * @param thirdPartyOrderNo       第三方订单号
      * @param thirdPartyTransactionNo 第三方交易号
      * @return 是否更新成功
      */
-    public boolean updatePaymentStatus(String paymentId, Integer status,
-                                     String thirdPartyOrderNo, String thirdPartyTransactionNo) {
+    public boolean updatePaymentStatus(Long paymentId, Integer status,
+            String thirdPartyOrderNo, String thirdPartyTransactionNo) {
         log.info("[支付记录管理] 更新支付状态: paymentId={}, status={}", paymentId, status);
 
         try {
@@ -178,13 +182,14 @@ public class PaymentRecordManager {
             }
 
             // 3. 检查退款金额是否超过可退款金额
+            // calculateAvailableRefundAmount需要Long类型
             BigDecimal availableRefundAmount = calculateAvailableRefundAmount(paymentRecord.getPaymentId());
             if (refundRecord.getRefundAmount().compareTo(availableRefundAmount) > 0) {
                 throw new IllegalArgumentException("退款金额超过可退款金额");
             }
 
             // 4. 创建退款记录
-            refundRecord.setRefundId("REF-" + UUID.randomUUID().toString().replace("-", ""));
+            // refundId是Long类型，由数据库自动生成，这里只设置refundNo
             refundRecord.setRefundNo(generateRefundNo());
             refundRecord.setRefundTransactionNo(generateRefundTransactionNo());
             refundRecord.setRefundStatus(1); // 申请中
@@ -201,8 +206,8 @@ public class PaymentRecordManager {
             }
 
             // 5. 更新原支付记录的退款金额
-            BigDecimal currentRefundAmount = paymentRecord.getRefundAmount() != null ?
-                paymentRecord.getRefundAmount() : BigDecimal.ZERO;
+            BigDecimal currentRefundAmount = paymentRecord.getRefundAmount() != null ? paymentRecord.getRefundAmount()
+                    : BigDecimal.ZERO;
             paymentRecord.setRefundAmount(currentRefundAmount.add(refundRecord.getRefundAmount()));
 
             // 6. 如果是全额退款，更新支付状态
@@ -239,8 +244,8 @@ public class PaymentRecordManager {
     /**
      * 执行对账
      *
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param startTime  开始时间
+     * @param endTime    结束时间
      * @param merchantId 商户ID（可选）
      * @return 对账结果
      */
@@ -250,7 +255,7 @@ public class PaymentRecordManager {
         try {
             // 1. 查询本地支付记录
             List<PaymentRecordEntity> localPayments = paymentRecordDao.selectForReconciliation(
-                startTime, endTime, merchantId);
+                    startTime, endTime, merchantId);
 
             // 2. 查询第三方支付记录
             Map<String, Object> thirdPartyRequest = new HashMap<>();
@@ -262,9 +267,9 @@ public class PaymentRecordManager {
 
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> thirdPartyPayments = (List<Map<String, Object>>) gatewayServiceClient
-                .callCommonService("/api/v1/payment/third-party/reconciliation",
-                    org.springframework.http.HttpMethod.POST, thirdPartyRequest, Map.class)
-                .getData();
+                    .callCommonService("/api/v1/payment/third-party/reconciliation",
+                            org.springframework.http.HttpMethod.POST, thirdPartyRequest, Map.class)
+                    .getData();
 
             // 3. 执行对账逻辑
             Map<String, Object> reconciliationResult = performReconciliationLogic(localPayments, thirdPartyPayments);
@@ -286,9 +291,9 @@ public class PaymentRecordManager {
     /**
      * 获取用户支付统计
      *
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return 统计结果
      */
     public Map<String, Object> getUserPaymentStatistics(Long userId, LocalDateTime startTime, LocalDateTime endTime) {
@@ -296,28 +301,29 @@ public class PaymentRecordManager {
 
         try {
             // 查询用户支付记录
-            List<PaymentRecordEntity> payments = paymentRecordDao.selectUserPaymentStatistics(userId, startTime, endTime);
+            List<PaymentRecordEntity> payments = paymentRecordDao.selectUserPaymentStatistics(userId, startTime,
+                    endTime);
 
             // 计算统计数据
             Map<String, Object> statistics = new HashMap<>();
 
             BigDecimal totalAmount = payments.stream()
-                .filter(p -> p.getPaymentStatus() == 3) // 支付成功
-                .map(PaymentRecordEntity::getPaymentAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .filter(p -> p.getPaymentStatus() == 3) // 支付成功
+                    .map(PaymentRecordEntity::getPaymentAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             BigDecimal totalRefundAmount = payments.stream()
-                .filter(p -> p.getPaymentStatus() >= 5) // 已退款或部分退款
-                .map(p -> p.getRefundAmount() != null ? p.getRefundAmount() : BigDecimal.ZERO)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .filter(p -> p.getPaymentStatus() >= 5) // 已退款或部分退款
+                    .map(p -> p.getRefundAmount() != null ? p.getRefundAmount() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             long successCount = payments.stream()
-                .filter(p -> p.getPaymentStatus() == 3)
-                .count();
+                    .filter(p -> p.getPaymentStatus() == 3)
+                    .count();
 
             long refundCount = payments.stream()
-                .filter(p -> p.getPaymentStatus() >= 5)
-                .count();
+                    .filter(p -> p.getPaymentStatus() >= 5)
+                    .count();
 
             statistics.put("userId", userId);
             statistics.put("startTime", startTime);
@@ -331,13 +337,16 @@ public class PaymentRecordManager {
             statistics.put("successRate", !payments.isEmpty() ? (double) successCount / payments.size() : 0.0);
 
             // 按支付方式分组统计
-            Map<Integer, Long> paymentMethodStats = payments.stream()
-                .collect(Collectors.groupingBy(PaymentRecordEntity::getPaymentMethod, Collectors.counting()));
+            // getPaymentMethod()返回String，需要转换为Integer进行分组
+            Map<String, Long> paymentMethodStats = payments.stream()
+                    .collect(Collectors.groupingBy(
+                            p -> p.getPaymentMethod() != null ? p.getPaymentMethod() : "UNKNOWN",
+                            Collectors.counting()));
             statistics.put("paymentMethodStats", paymentMethodStats);
 
             // 按业务类型分组统计
             Map<Integer, Long> businessTypeStats = payments.stream()
-                .collect(Collectors.groupingBy(PaymentRecordEntity::getBusinessType, Collectors.counting()));
+                    .collect(Collectors.groupingBy(PaymentRecordEntity::getBusinessType, Collectors.counting()));
             statistics.put("businessTypeStats", businessTypeStats);
 
             return statistics;
@@ -352,42 +361,44 @@ public class PaymentRecordManager {
      * 获取商户结算统计
      *
      * @param merchantId 商户ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param startTime  开始时间
+     * @param endTime    结束时间
      * @return 结算统计
      */
-    public Map<String, Object> getMerchantSettlementStatistics(Long merchantId, LocalDateTime startTime, LocalDateTime endTime) {
+    public Map<String, Object> getMerchantSettlementStatistics(Long merchantId, LocalDateTime startTime,
+            LocalDateTime endTime) {
         log.debug("[支付记录管理] 获取商户结算统计: merchantId={}, startTime={}, endTime={}", merchantId, startTime, endTime);
 
         try {
             // 查询商户支付记录
-            List<PaymentRecordEntity> payments = paymentRecordDao.selectMerchantSettlementStatistics(merchantId, startTime, endTime);
+            List<PaymentRecordEntity> payments = paymentRecordDao.selectMerchantSettlementStatistics(merchantId,
+                    startTime, endTime);
 
             // 计算结算统计数据
             Map<String, Object> statistics = new HashMap<>();
 
             BigDecimal totalAmount = payments.stream()
-                .filter(p -> p.getPaymentStatus() == 3) // 支付成功
-                .map(PaymentRecordEntity::getPaymentAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .filter(p -> p.getPaymentStatus() == 3) // 支付成功
+                    .map(PaymentRecordEntity::getPaymentAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             BigDecimal totalFee = payments.stream()
-                .filter(p -> p.getPaymentFee() != null && p.getPaymentStatus() == 3)
-                .map(PaymentRecordEntity::getPaymentFee)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .filter(p -> p.getPaymentFee() != null && p.getPaymentStatus() == 3)
+                    .map(PaymentRecordEntity::getPaymentFee)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             BigDecimal totalSettlementAmount = payments.stream()
-                .filter(p -> p.getSettlementAmount() != null && p.getSettlementStatus() == 2) // 已结算
-                .map(PaymentRecordEntity::getSettlementAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .filter(p -> p.getSettlementAmount() != null && p.getSettlementStatus() == 2) // 已结算
+                    .map(PaymentRecordEntity::getSettlementAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             long settledCount = payments.stream()
-                .filter(p -> p.getSettlementStatus() == 2)
-                .count();
+                    .filter(p -> p.getSettlementStatus() == 2)
+                    .count();
 
             long unsettledCount = payments.stream()
-                .filter(p -> p.getPaymentStatus() == 3 && p.getSettlementStatus() == 1)
-                .count();
+                    .filter(p -> p.getPaymentStatus() == 3 && p.getSettlementStatus() == 1)
+                    .count();
 
             statistics.put("merchantId", merchantId);
             statistics.put("startTime", startTime);
@@ -413,34 +424,34 @@ public class PaymentRecordManager {
      * 生成订单号
      */
     private String generateOrderNo() {
-        return "ORD" + System.currentTimeMillis() + String.format("%04d", (int)(Math.random() * 10000));
+        return "ORD" + System.currentTimeMillis() + String.format("%04d", (int) (Math.random() * 10000));
     }
 
     /**
      * 生成交易流水号
      */
     private String generateTransactionNo() {
-        return "TXN" + System.currentTimeMillis() + String.format("%04d", (int)(Math.random() * 10000));
+        return "TXN" + System.currentTimeMillis() + String.format("%04d", (int) (Math.random() * 10000));
     }
 
     /**
      * 生成退款单号
      */
     private String generateRefundNo() {
-        return "REF" + System.currentTimeMillis() + String.format("%04d", (int)(Math.random() * 10000));
+        return "REF" + System.currentTimeMillis() + String.format("%04d", (int) (Math.random() * 10000));
     }
 
     /**
      * 生成退款交易流水号
      */
     private String generateRefundTransactionNo() {
-        return "RTX" + System.currentTimeMillis() + String.format("%04d", (int)(Math.random() * 10000));
+        return "RTX" + System.currentTimeMillis() + String.format("%04d", (int) (Math.random() * 10000));
     }
 
     /**
      * 计算可退款金额
      */
-    private BigDecimal calculateAvailableRefundAmount(String paymentId) {
+    private BigDecimal calculateAvailableRefundAmount(Long paymentId) {
         try {
             PaymentRecordEntity paymentRecord = paymentRecordDao.selectById(paymentId);
             if (paymentRecord == null) {
@@ -449,8 +460,8 @@ public class PaymentRecordManager {
 
             // 可退款金额 = 实付金额 - 已退款金额
             BigDecimal paidAmount = paymentRecord.getActualAmount();
-            BigDecimal refundedAmount = paymentRecord.getRefundAmount() != null ?
-                paymentRecord.getRefundAmount() : BigDecimal.ZERO;
+            BigDecimal refundedAmount = paymentRecord.getRefundAmount() != null ? paymentRecord.getRefundAmount()
+                    : BigDecimal.ZERO;
 
             return paidAmount.subtract(refundedAmount);
 
@@ -464,15 +475,14 @@ public class PaymentRecordManager {
      * 执行对账逻辑
      */
     private Map<String, Object> performReconciliationLogic(List<PaymentRecordEntity> localPayments,
-                                                         List<Map<String, Object>> thirdPartyPayments) {
+            List<Map<String, Object>> thirdPartyPayments) {
         Map<String, Object> result = new HashMap<>();
 
         // 构建第三方支付记录映射
         Map<String, Map<String, Object>> thirdPartyMap = thirdPartyPayments.stream()
-            .collect(Collectors.toMap(
-                payment -> (String) payment.get("transactionNo"),
-                payment -> payment
-            ));
+                .collect(Collectors.toMap(
+                        payment -> (String) payment.get("transactionNo"),
+                        payment -> payment));
 
         int matchedCount = 0;
         int mismatchCount = 0;
@@ -513,8 +523,8 @@ public class PaymentRecordManager {
      * 创建不匹配记录
      */
     private Map<String, Object> createMismatchRecord(PaymentRecordEntity localPayment,
-                                                      Map<String, Object> thirdPartyPayment,
-                                                      String reason) {
+            Map<String, Object> thirdPartyPayment,
+            String reason) {
         Map<String, Object> mismatch = new HashMap<>();
         mismatch.put("localPayment", localPayment);
         mismatch.put("thirdPartyPayment", thirdPartyPayment);
@@ -535,7 +545,3 @@ public class PaymentRecordManager {
         return missing;
     }
 }
-
-
-
-

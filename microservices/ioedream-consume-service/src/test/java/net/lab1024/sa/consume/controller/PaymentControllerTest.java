@@ -248,8 +248,9 @@ class PaymentControllerTest {
         // Given
         String paymentId = "PAYMENT001";
         PaymentRecordEntity mockRecord = new PaymentRecordEntity();
-        mockRecord.setPaymentId(paymentId);
-        // PaymentRecordEntity可能使用不同的字段名，这里只设置paymentId
+        // PaymentRecordEntity.paymentId 为 Long，这里使用 paymentNo 作为业务标识断言
+        mockRecord.setPaymentId(1L);
+        mockRecord.setPaymentNo(paymentId);
 
         when(paymentService.getPaymentRecord(paymentId)).thenReturn(mockRecord);
 
@@ -260,7 +261,7 @@ class PaymentControllerTest {
         assertNotNull(result);
         assertTrue(result.getOk());
         assertNotNull(result.getData());
-        assertEquals(paymentId, result.getData().getPaymentId());
+        assertEquals(paymentId, result.getData().getPaymentNo());
         verify(paymentService, times(1)).getPaymentRecord(paymentId);
     }
 
@@ -290,10 +291,15 @@ class PaymentControllerTest {
         Integer pageSize = 20;
 
         List<PaymentRecordEntity> mockRecords = java.util.Collections.emptyList();
-        when(paymentService.getUserPaymentRecords(userId, pageNum, pageSize)).thenReturn(mockRecords);
+        Map<String, Object> mockResult = new HashMap<>();
+        mockResult.put("list", mockRecords);
+        mockResult.put("total", 0L);
+        mockResult.put("pageNum", pageNum);
+        mockResult.put("pageSize", pageSize);
+        when(paymentService.getUserPaymentRecords(userId, pageNum, pageSize)).thenReturn(mockResult);
 
         // When
-        ResponseDTO<List<PaymentRecordEntity>> result = paymentController.getUserPaymentRecords(userId, pageNum, pageSize);
+        ResponseDTO<Map<String, Object>> result = paymentController.getUserPaymentRecords(userId, pageNum, pageSize);
 
         // Then
         assertNotNull(result);
@@ -307,7 +313,7 @@ class PaymentControllerTest {
         when(paymentService.getUserPaymentRecords(isNull(), anyInt(), anyInt()))
                 .thenThrow(new IllegalArgumentException("userId不能为空"));
 
-        ResponseDTO<List<PaymentRecordEntity>> result = paymentController.getUserPaymentRecords(null, 1, 20);
+        ResponseDTO<Map<String, Object>> result = paymentController.getUserPaymentRecords(null, 1, 20);
         assertNotNull(result);
         assertFalse(result.getOk());
     }

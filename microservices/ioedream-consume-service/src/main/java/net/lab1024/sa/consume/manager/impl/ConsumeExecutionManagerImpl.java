@@ -604,7 +604,9 @@ public class ConsumeExecutionManagerImpl implements ConsumeExecutionManager {
             }
 
             // 2. 验证商品状态
-            if (product.getAvailable() == null || !product.getAvailable()) {
+            // 修复类型兼容：getAvailable()返回Integer类型（1-可用 0-不可用）
+            Integer available = product.getAvailable();
+            if (available == null || available != 1) {
                 log.warn("[消费执行] 商品未上架，productId={}", productId);
                 return BigDecimal.ZERO;
             }

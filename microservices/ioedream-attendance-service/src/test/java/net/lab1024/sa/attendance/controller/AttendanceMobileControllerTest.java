@@ -8,9 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.attendance.mobile.AttendanceMobileService;
 import net.lab1024.sa.attendance.service.AttendanceLocationService;
-import net.lab1024.sa.attendance.service.AttendanceMobileService;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 移动端考勤控制器单元测试
@@ -91,4 +91,3 @@ class AttendanceMobileControllerTest {
         org.junit.jupiter.api.Assertions.assertEquals(200, response.getCode());
     }
 }
-

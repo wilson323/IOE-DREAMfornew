@@ -189,7 +189,7 @@ class ConsumeServiceImplTest {
         Long deviceId = 3001L;
         net.lab1024.sa.common.organization.entity.DeviceEntity deviceEntity =
                 new net.lab1024.sa.common.organization.entity.DeviceEntity();
-        deviceEntity.setId(deviceId); // DeviceEntity使用setId方法设置设备ID
+        deviceEntity.setDeviceId(String.valueOf(deviceId)); // DeviceEntity主键为String类型deviceId
         deviceEntity.setDeviceName("测试消费机");
 
         when(consumeDeviceManager.getConsumeDeviceById(deviceId)).thenReturn(deviceEntity);

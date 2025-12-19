@@ -1,12 +1,82 @@
 package net.lab1024.sa.attendance.mobile;
 
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.attendance.mobile.model.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+import net.lab1024.sa.attendance.mobile.model.MobileAnomaliesResult;
+import net.lab1024.sa.attendance.mobile.model.MobileAnomalyQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileAppUpdateCheckRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileAppUpdateCheckResult;
+import net.lab1024.sa.attendance.mobile.model.MobileAppVersionResult;
+import net.lab1024.sa.attendance.mobile.model.MobileAttendanceRecordsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileAvatarUploadRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileAvatarUploadResult;
+import net.lab1024.sa.attendance.mobile.model.MobileBiometricVerificationRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileBiometricVerificationResult;
+import net.lab1024.sa.attendance.mobile.model.MobileCalendarQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileCalendarResult;
+import net.lab1024.sa.attendance.mobile.model.MobileChartQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileChartsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileClockInRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileClockInResult;
+import net.lab1024.sa.attendance.mobile.model.MobileClockOutRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileClockOutResult;
+import net.lab1024.sa.attendance.mobile.model.MobileDataSyncResult;
+import net.lab1024.sa.attendance.mobile.model.MobileDeviceInfoResult;
+import net.lab1024.sa.attendance.mobile.model.MobileDeviceRegisterRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileDeviceRegisterResult;
+import net.lab1024.sa.attendance.mobile.model.MobileFeedbackSubmitRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileFeedbackSubmitResult;
+import net.lab1024.sa.attendance.mobile.model.MobileHealthCheckResult;
+import net.lab1024.sa.attendance.mobile.model.MobileHelpQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileHelpResult;
+import net.lab1024.sa.attendance.mobile.model.MobileLeaderboardQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileLeaderboardResult;
+import net.lab1024.sa.attendance.mobile.model.MobileLeaveApplicationRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileLeaveApplicationResult;
+import net.lab1024.sa.attendance.mobile.model.MobileLeaveCancellationRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileLeaveCancellationResult;
+import net.lab1024.sa.attendance.mobile.model.MobileLeaveQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileLeaveRecordsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileLocationReportRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileLocationReportResult;
+import net.lab1024.sa.attendance.mobile.model.MobileLocationResult;
+import net.lab1024.sa.attendance.mobile.model.MobileLoginRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileLoginResult;
+import net.lab1024.sa.attendance.mobile.model.MobileLogoutResult;
+import net.lab1024.sa.attendance.mobile.model.MobileNotificationQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileNotificationReadResult;
+import net.lab1024.sa.attendance.mobile.model.MobileNotificationsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileOfflineDataResult;
+import net.lab1024.sa.attendance.mobile.model.MobileOfflineDataUploadRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileOfflineDataUploadResult;
+import net.lab1024.sa.attendance.mobile.model.MobilePerformanceTestRequest;
+import net.lab1024.sa.attendance.mobile.model.MobilePerformanceTestResult;
+import net.lab1024.sa.attendance.mobile.model.MobileProfileSettingsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileProfileSettingsUpdateRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileProfileSettingsUpdateResult;
+import net.lab1024.sa.attendance.mobile.model.MobileRecordQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileReminderQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileReminderSettingsRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileReminderSettingsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileRemindersResult;
+import net.lab1024.sa.attendance.mobile.model.MobileScheduleQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileScheduleResult;
+import net.lab1024.sa.attendance.mobile.model.MobileSecuritySettingsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileSecuritySettingsUpdateRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileSecuritySettingsUpdateResult;
+import net.lab1024.sa.attendance.mobile.model.MobileShiftQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileShiftsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileStatisticsQueryParam;
+import net.lab1024.sa.attendance.mobile.model.MobileStatisticsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileTodayStatusResult;
+import net.lab1024.sa.attendance.mobile.model.MobileTokenRefreshRequest;
+import net.lab1024.sa.attendance.mobile.model.MobileTokenRefreshResult;
+import net.lab1024.sa.attendance.mobile.model.MobileUsageStatisticsResult;
+import net.lab1024.sa.attendance.mobile.model.MobileUserInfoResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 考勤移动端服务接口
@@ -14,13 +84,15 @@ import java.util.List;
  * 定义移动端考勤功能的API接口
  * 严格遵循CLAUDE.md全局架构规范，统一使用ResponseDTO返回类型
  * </p>
+ * <p>
+ * 注意：这是Service接口，不应该包含@RestController注解
+ * Controller层应该单独实现，通过调用此Service接口提供服务
+ * </p>
  *
  * @author IOE-DREAM架构团队
  * @version 1.0.0
  * @since 2025-12-16
  */
-@RestController
-@RequestMapping("/api/mobile/v1/attendance")
 public interface AttendanceMobileService {
 
     /**
@@ -29,8 +101,7 @@ public interface AttendanceMobileService {
      * @param request 登录请求
      * @return 登录结果
      */
-    @PostMapping("/login")
-    ResponseDTO<MobileLoginResult> login(@RequestBody MobileLoginRequest request);
+    ResponseDTO<MobileLoginResult> login(MobileLoginRequest request);
 
     /**
      * 用户登出
@@ -38,8 +109,7 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 登出结果
      */
-    @PostMapping("/logout")
-    ResponseDTO<MobileLogoutResult> logout(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileLogoutResult> logout(String token);
 
     /**
      * 刷新令牌
@@ -47,8 +117,7 @@ public interface AttendanceMobileService {
      * @param request 刷新请求
      * @return 刷新结果
      */
-    @PostMapping("/refresh")
-    ResponseDTO<MobileTokenRefreshResult> refreshToken(@RequestBody MobileTokenRefreshRequest request);
+    ResponseDTO<MobileTokenRefreshResult> refreshToken(MobileTokenRefreshRequest request);
 
     /**
      * 获取用户信息
@@ -56,8 +125,7 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 用户信息
      */
-    @GetMapping("/user/info")
-    ResponseDTO<MobileUserInfoResult> getUserInfo(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileUserInfoResult> getUserInfo(String token);
 
     /**
      * 获取今日考勤状态
@@ -65,14 +133,13 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 今日考勤状态
      */
-    @GetMapping("/today/status")
-    ResponseDTO<MobileTodayStatusResult> getTodayStatus(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileTodayStatusResult> getTodayStatus(String token);
 
     /**
      * 上班打卡
      *
      * @param request 打卡请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 打卡结果
      */
     @PostMapping("/clock-in")
@@ -84,7 +151,7 @@ public interface AttendanceMobileService {
      * 下班打卡
      *
      * @param request 打卡请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 打卡结果
      */
     @PostMapping("/clock-out")
@@ -95,134 +162,123 @@ public interface AttendanceMobileService {
     /**
      * 获取考勤记录列表
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 考勤记录列表
      */
-    @GetMapping("/records")
     ResponseDTO<MobileAttendanceRecordsResult> getAttendanceRecords(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileRecordQueryParam queryParam);
+            String token,
+            MobileRecordQueryParam queryParam);
 
     /**
      * 获取考勤统计
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 考勤统计
      */
-    @GetMapping("/statistics")
     ResponseDTO<MobileStatisticsResult> getStatistics(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileStatisticsQueryParam queryParam);
+            String token,
+            MobileStatisticsQueryParam queryParam);
 
     /**
      * 申请请假
      *
      * @param request 请假请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 请假申请结果
      */
-    @PostMapping("/leave/apply")
     ResponseDTO<MobileLeaveApplicationResult> applyLeave(
-            @RequestBody MobileLeaveApplicationRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileLeaveApplicationRequest request,
+            String token);
 
     /**
      * 获取请假记录
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 请假记录
      */
-    @GetMapping("/leave/records")
     ResponseDTO<MobileLeaveRecordsResult> getLeaveRecords(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileLeaveQueryParam queryParam);
+            String token,
+            MobileLeaveQueryParam queryParam);
 
     /**
      * 申请销假
      *
      * @param request 销假申请请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 销假申请结果
      */
-    @PostMapping("/leave/cancel")
     ResponseDTO<MobileLeaveCancellationResult> cancelLeave(
-            @RequestBody MobileLeaveCancellationRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileLeaveCancellationRequest request,
+            String token);
 
     /**
      * 获取班次信息
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 班次信息
      */
-    @GetMapping("/shifts")
     ResponseDTO<MobileShiftsResult> getShifts(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileShiftQueryParam queryParam);
+            String token,
+            MobileShiftQueryParam queryParam);
 
     /**
      * 获取排班信息
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 排班信息
      */
-    @GetMapping("/schedule")
     ResponseDTO<MobileScheduleResult> getSchedule(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileScheduleQueryParam queryParam);
+            String token,
+            MobileScheduleQueryParam queryParam);
 
     /**
      * 考勤提醒设置
      *
      * @param request 设置请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 设置结果
      */
-    @PostMapping("/reminder/settings")
     ResponseDTO<MobileReminderSettingsResult> setReminderSettings(
-            @RequestBody MobileReminderSettingsRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileReminderSettingsRequest request,
+            String token);
 
     /**
      * 获取考勤提醒
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 提醒列表
      */
-    @GetMapping("/reminders")
     ResponseDTO<MobileRemindersResult> getReminders(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileReminderQueryParam queryParam);
+            String token,
+            MobileReminderQueryParam queryParam);
 
     /**
      * 获取考勤日历
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 考勤日历
      */
-    @GetMapping("/calendar")
     ResponseDTO<MobileCalendarResult> getCalendar(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileCalendarQueryParam queryParam);
+            String token,
+            MobileCalendarQueryParam queryParam);
 
     /**
      * 上传头像
      *
      * @param request 上传请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 上传结果
      */
-    @PostMapping("/profile/avatar/upload")
     ResponseDTO<MobileAvatarUploadResult> uploadAvatar(
-            @ModelAttribute MobileAvatarUploadRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileAvatarUploadRequest request,
+            String token);
 
     /**
      * 获取用户配置
@@ -230,21 +286,19 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 用户配置
      */
-    @GetMapping("/profile/settings")
     ResponseDTO<MobileProfileSettingsResult> getProfileSettings(
-            @RequestHeader("Authorization") String token);
+            String token);
 
     /**
      * 更新用户配置
      *
      * @param request 更新请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 更新结果
      */
-    @PostMapping("/profile/settings")
     ResponseDTO<MobileProfileSettingsUpdateResult> updateProfileSettings(
-            @RequestBody MobileProfileSettingsUpdateRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileProfileSettingsUpdateRequest request,
+            String token);
 
     /**
      * 获取应用版本信息
@@ -260,80 +314,73 @@ public interface AttendanceMobileService {
      * @param request 版本检查请求
      * @return 更新检查结果
      */
-    @PostMapping("/app/update/check")
-    ResponseDTO<MobileAppUpdateCheckResult> checkAppUpdate(@RequestBody MobileAppUpdateCheckRequest request);
+    ResponseDTO<MobileAppUpdateCheckResult> checkAppUpdate(MobileAppUpdateCheckRequest request);
 
     /**
      * 获取系统通知
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 通知列表
      */
-    @GetMapping("/notifications")
     ResponseDTO<MobileNotificationsResult> getNotifications(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileNotificationQueryParam queryParam);
+            String token,
+            MobileNotificationQueryParam queryParam);
 
     /**
      * 标记通知已读
      *
      * @param notificationId 通知ID
-     * @param token 访问令牌
+     * @param token          访问令牌
      * @return 标记结果
      */
-    @PostMapping("/notifications/{notificationId}/read")
     ResponseDTO<MobileNotificationReadResult> markNotificationAsRead(
-            @PathVariable String notificationId,
-            @RequestHeader("Authorization") String token);
+            String notificationId,
+            String token);
 
     /**
      * 获取考勤异常
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 异常列表
      */
-    @GetMapping("/anomalies")
     ResponseDTO<MobileAnomaliesResult> getAnomalies(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileAnomalyQueryParam queryParam);
+            String token,
+            MobileAnomalyQueryParam queryParam);
 
     /**
      * 获取考勤排行榜
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 排行榜数据
      */
-    @GetMapping("/leaderboard")
     ResponseDTO<MobileLeaderboardResult> getLeaderboard(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileLeaderboardQueryParam queryParam);
+            String token,
+            MobileLeaderboardQueryParam queryParam);
 
     /**
      * 获取考勤统计图表
      *
-     * @param token 访问令牌
+     * @param token      访问令牌
      * @param queryParam 查询参数
      * @return 图表数据
      */
-    @GetMapping("/charts")
     ResponseDTO<MobileChartsResult> getCharts(
-            @RequestHeader("Authorization") String token,
-            @ModelAttribute MobileChartQueryParam queryParam);
+            String token,
+            MobileChartQueryParam queryParam);
 
     /**
      * 生物识别验证
      *
      * @param request 生物识别请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 验证结果
      */
-    @PostMapping("/biometric/verify")
     ResponseDTO<MobileBiometricVerificationResult> verifyBiometric(
-            @RequestBody MobileBiometricVerificationRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileBiometricVerificationRequest request,
+            String token);
 
     /**
      * 获取位置信息
@@ -341,20 +388,18 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 位置信息
      */
-    @GetMapping("/location/current")
-    ResponseDTO<MobileLocationResult> getCurrentLocation(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileLocationResult> getCurrentLocation(String token);
 
     /**
      * 上报位置
      *
      * @param request 位置上报请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 上报结果
      */
-    @PostMapping("/location/report")
     ResponseDTO<MobileLocationReportResult> reportLocation(
-            @RequestBody MobileLocationReportRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileLocationReportRequest request,
+            String token);
 
     /**
      * 获取设备信息
@@ -369,13 +414,12 @@ public interface AttendanceMobileService {
      * 设备注册
      *
      * @param request 设备注册请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 注册结果
      */
-    @PostMapping("/device/register")
     ResponseDTO<MobileDeviceRegisterResult> registerDevice(
-            @RequestBody MobileDeviceRegisterRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileDeviceRegisterRequest request,
+            String token);
 
     /**
      * 获取安全设置
@@ -383,20 +427,18 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 安全设置
      */
-    @GetMapping("/security/settings")
-    ResponseDTO<MobileSecuritySettingsResult> getSecuritySettings(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileSecuritySettingsResult> getSecuritySettings(String token);
 
     /**
      * 更新安全设置
      *
      * @param request 更新请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 更新结果
      */
-    @PostMapping("/security/settings")
     ResponseDTO<MobileSecuritySettingsUpdateResult> updateSecuritySettings(
-            @RequestBody MobileSecuritySettingsUpdateRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileSecuritySettingsUpdateRequest request,
+            String token);
 
     /**
      * 同步数据
@@ -404,8 +446,7 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 同步结果
      */
-    @PostMapping("/data/sync")
-    ResponseDTO<MobileDataSyncResult> syncData(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileDataSyncResult> syncData(String token);
 
     /**
      * 获取离线数据
@@ -420,13 +461,12 @@ public interface AttendanceMobileService {
      * 上传离线数据
      *
      * @param request 上传请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 上传结果
      */
-    @PostMapping("/data/offline/upload")
     ResponseDTO<MobileOfflineDataUploadResult> uploadOfflineData(
-            @RequestBody MobileOfflineDataUploadRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileOfflineDataUploadRequest request,
+            String token);
 
     /**
      * 健康检查
@@ -434,32 +474,29 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 健康检查结果
      */
-    @GetMapping("/health/check")
-    ResponseDTO<MobileHealthCheckResult> healthCheck(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileHealthCheckResult> healthCheck(String token);
 
     /**
      * 性能测试
      *
      * @param request 性能测试请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 测试结果
      */
-    @PostMapping("/performance/test")
     ResponseDTO<MobilePerformanceTestResult> performanceTest(
-            @RequestBody MobilePerformanceTestRequest request,
-            @RequestHeader("Authorization") String token);
+            MobilePerformanceTestRequest request,
+            String token);
 
     /**
      * 用户反馈
      *
      * @param request 反馈请求
-     * @param token 访问令牌
+     * @param token   访问令牌
      * @return 反馈结果
      */
-    @PostMapping("/feedback/submit")
     ResponseDTO<MobileFeedbackSubmitResult> submitFeedback(
-            @RequestBody MobileFeedbackSubmitRequest request,
-            @RequestHeader("Authorization") String token);
+            MobileFeedbackSubmitRequest request,
+            String token);
 
     /**
      * 获取帮助信息
@@ -467,8 +504,7 @@ public interface AttendanceMobileService {
      * @param queryParam 查询参数
      * @return 帮助信息
      */
-    @GetMapping("/help")
-    ResponseDTO<MobileHelpResult> getHelp(@ModelAttribute MobileHelpQueryParam queryParam);
+    ResponseDTO<MobileHelpResult> getHelp(MobileHelpQueryParam queryParam);
 
     /**
      * 获取使用统计
@@ -476,6 +512,5 @@ public interface AttendanceMobileService {
      * @param token 访问令牌
      * @return 使用统计
      */
-    @GetMapping("/usage/statistics")
-    ResponseDTO<MobileUsageStatisticsResult> getUsageStatistics(@RequestHeader("Authorization") String token);
+    ResponseDTO<MobileUsageStatisticsResult> getUsageStatistics(String token);
 }

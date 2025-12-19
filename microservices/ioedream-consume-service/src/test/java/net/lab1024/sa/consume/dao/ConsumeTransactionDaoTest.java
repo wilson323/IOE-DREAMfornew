@@ -69,7 +69,7 @@ class ConsumeTransactionDaoTest {
     void testSelectById_Success() {
         // Given
         consumeTransactionDao.insert(testTransaction);
-        String id = testTransaction.getId();
+        Long id = testTransaction.getId();
 
         // When
         ConsumeTransactionEntity result = consumeTransactionDao.selectById(id);
@@ -84,7 +84,7 @@ class ConsumeTransactionDaoTest {
     @DisplayName("测试根据ID查询交易记录-不存在")
     void testSelectById_NotFound() {
         // When
-        ConsumeTransactionEntity result = consumeTransactionDao.selectById("NON_EXISTENT");
+        ConsumeTransactionEntity result = consumeTransactionDao.selectById(999999999L);
 
         // Then
         assertNull(result);
@@ -106,7 +106,7 @@ class ConsumeTransactionDaoTest {
         // 验证更新
         ConsumeTransactionEntity updated = consumeTransactionDao.selectById(testTransaction.getId());
         assertNotNull(updated);
-        assertEquals(2, updated.getStatus());
+        assertEquals("SUCCESS", updated.getStatus());
     }
 
     @Test
@@ -114,7 +114,7 @@ class ConsumeTransactionDaoTest {
     void testDelete_Success() {
         // Given
         consumeTransactionDao.insert(testTransaction);
-        String id = testTransaction.getId();
+        Long id = testTransaction.getId();
 
         // When
         int result = consumeTransactionDao.deleteById(id);

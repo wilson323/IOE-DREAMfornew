@@ -47,7 +47,7 @@ class ConsumeDeviceManagerTest {
         // Given
         String deviceId = "DEV001";
         DeviceEntity device = new DeviceEntity();
-        device.setId(1L);
+        device.setDeviceId("1");
         device.setDeviceCode(deviceId);
         device.setDeviceName("消费设备1");
 
@@ -77,9 +77,10 @@ class ConsumeDeviceManagerTest {
         // Given
         String deviceId = "1";
         DeviceEntity device = new DeviceEntity();
-        device.setId(1L);
+        device.setDeviceId(deviceId);
         device.setDeviceCode("DEV001");
-        device.setDeviceStatus("ONLINE");
+        // DeviceEntity.deviceStatus 为 String 类型，保持与公共模块定义一致
+        device.setDeviceStatus("1");
 
         when(gatewayServiceClient.callCommonService(
                 eq("/api/v1/device/" + deviceId),
@@ -102,7 +103,7 @@ class ConsumeDeviceManagerTest {
         String deviceId = "1";
         String consumeMode = "FIXED";
         DeviceEntity device = new DeviceEntity();
-        device.setId(1L);
+        device.setDeviceId(deviceId);
         device.setDeviceCode("DEV001");
         device.setExtendedAttributes("{\"supportedConsumeModes\":[\"FIXED\",\"AMOUNT\"]}");
 

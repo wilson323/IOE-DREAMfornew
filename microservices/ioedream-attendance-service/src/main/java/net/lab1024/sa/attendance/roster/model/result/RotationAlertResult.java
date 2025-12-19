@@ -25,3 +25,4 @@ public class RotationAlertResult {
     private String errorMessage;
     private String errorCode;
 }
+

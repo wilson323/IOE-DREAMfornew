@@ -1,12 +1,12 @@
 package net.lab1024.sa.attendance.openapi.domain.response;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * 部门考勤统计响应
@@ -78,4 +78,5 @@ public class DepartmentAttendanceStatisticsResponse {
         private Integer abnormalCount;
     }
 }
+
 

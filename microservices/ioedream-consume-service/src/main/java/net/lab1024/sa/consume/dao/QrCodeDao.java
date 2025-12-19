@@ -1,15 +1,18 @@
 package net.lab1024.sa.consume.dao;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import net.lab1024.sa.consume.entity.QrCodeEntity;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 二维码数据访问层
@@ -58,12 +61,13 @@ public interface QrCodeDao extends BaseMapper<QrCodeEntity> {
     /**
      * 根据用户ID和业务模块查询二维码列表
      *
-     * @param userId 用户ID
+     * @param userId         用户ID
      * @param businessModule 业务模块
      * @return 二维码列表
      */
     @Select("SELECT * FROM t_consume_qrcode WHERE user_id = #{userId} AND business_module = #{businessModule} AND deleted_flag = 0 ORDER BY create_time DESC")
-    List<QrCodeEntity> selectByUserIdAndModule(@Param("userId") Long userId, @Param("businessModule") String businessModule);
+    List<QrCodeEntity> selectByUserIdAndModule(@Param("userId") Long userId,
+            @Param("businessModule") String businessModule);
 
     /**
      * 查询有效的二维码
@@ -105,29 +109,29 @@ public interface QrCodeDao extends BaseMapper<QrCodeEntity> {
     /**
      * 分页查询二维码
      *
-     * @param page 分页对象
-     * @param userId 用户ID（可选）
-     * @param qrType 二维码类型（可选）
+     * @param page           分页对象
+     * @param userId         用户ID（可选）
+     * @param qrType         二维码类型（可选）
      * @param businessModule 业务模块（可选）
-     * @param qrStatus 二维码状态（可选）
-     * @param areaId 区域ID（可选）
+     * @param qrStatus       二维码状态（可选）
+     * @param areaId         区域ID（可选）
      * @return 分页结果
      */
     default IPage<QrCodeEntity> selectPageByCondition(Page<QrCodeEntity> page,
-                                                      @Param("userId") Long userId,
-                                                      @Param("qrType") Integer qrType,
-                                                      @Param("businessModule") String businessModule,
-                                                      @Param("qrStatus") Integer qrStatus,
-                                                      @Param("areaId") Long areaId) {
+            @Param("userId") Long userId,
+            @Param("qrType") Integer qrType,
+            @Param("businessModule") String businessModule,
+            @Param("qrStatus") Integer qrStatus,
+            @Param("areaId") Long areaId) {
         LambdaQueryWrapper<QrCodeEntity> wrapper = new LambdaQueryWrapper<>();
 
         wrapper.eq(userId != null, QrCodeEntity::getUserId, userId)
-               .eq(qrType != null, QrCodeEntity::getQrType, qrType)
-               .eq(businessModule != null, QrCodeEntity::getBusinessModule, businessModule)
-               .eq(qrStatus != null, QrCodeEntity::getQrStatus, qrStatus)
-               .eq(areaId != null, QrCodeEntity::getAreaId, areaId)
-               .eq(QrCodeEntity::getDeletedFlag, 0)
-               .orderByDesc(QrCodeEntity::getCreateTime);
+                .eq(qrType != null, QrCodeEntity::getQrType, qrType)
+                .eq(businessModule != null, QrCodeEntity::getBusinessModule, businessModule)
+                .eq(qrStatus != null, QrCodeEntity::getQrStatus, qrStatus)
+                .eq(areaId != null, QrCodeEntity::getAreaId, areaId)
+                .eq(QrCodeEntity::getDeletedFlag, 0)
+                .orderByDesc(QrCodeEntity::getCreateTime);
 
         return selectPage(page, wrapper);
     }
@@ -135,7 +139,7 @@ public interface QrCodeDao extends BaseMapper<QrCodeEntity> {
     /**
      * 批量更新二维码状态
      *
-     * @param qrIds 二维码ID列表
+     * @param qrIds  二维码ID列表
      * @param status 新状态
      * @return 更新行数
      */
@@ -173,7 +177,7 @@ public interface QrCodeDao extends BaseMapper<QrCodeEntity> {
     /**
      * 查询即将过期的二维码
      *
-     * @param currentTime 当前时间
+     * @param currentTime     当前时间
      * @param expireThreshold 过期阈值（分钟）
      * @return 即将过期的二维码列表
      */
@@ -182,28 +186,28 @@ public interface QrCodeDao extends BaseMapper<QrCodeEntity> {
             "expire_time <= DATE_ADD(#{currentTime}, INTERVAL #{expireThreshold} MINUTE) " +
             "AND deleted_flag = 0 ORDER BY expire_time ASC")
     List<QrCodeEntity> selectSoonToExpireQrCodes(@Param("currentTime") LocalDateTime currentTime,
-                                                  @Param("expireThreshold") Integer expireThreshold);
+            @Param("expireThreshold") Integer expireThreshold);
 
     /**
      * 查询高频使用的二维码
      *
      * @param minUsageCount 最小使用次数
-     * @param days 查询天数
+     * @param days          查询天数
      * @return 高频使用的二维码列表
      */
     @Select("SELECT * FROM t_consume_qrcode WHERE used_count >= #{minUsageCount} AND " +
             "last_used_time >= DATE_SUB(NOW(), INTERVAL #{days} DAY) " +
             "AND deleted_flag = 0 ORDER BY used_count DESC")
     List<QrCodeEntity> selectHighUsageQrCodes(@Param("minUsageCount") Integer minUsageCount,
-                                             @Param("days") Integer days);
+            @Param("days") Integer days);
 
     /**
      * 更新二维码使用信息
      *
-     * @param qrId 二维码ID
-     * @param usedCount 使用次数
-     * @param lastUsedTime 最后使用时间
-     * @param lastUsedDevice 最后使用设备
+     * @param qrId             二维码ID
+     * @param usedCount        使用次数
+     * @param lastUsedTime     最后使用时间
+     * @param lastUsedDevice   最后使用设备
      * @param lastUsedLocation 最后使用位置
      * @return 更新行数
      */
@@ -214,10 +218,10 @@ public interface QrCodeDao extends BaseMapper<QrCodeEntity> {
             "last_used_location = #{lastUsedLocation} " +
             "WHERE qr_id = #{qrId} AND deleted_flag = 0")
     int updateUsageInfo(@Param("qrId") String qrId,
-                        @Param("usedCount") Integer usedCount,
-                        @Param("lastUsedTime") LocalDateTime lastUsedTime,
-                        @Param("lastUsedDevice") String lastUsedDevice,
-                        @Param("lastUsedLocation") String lastUsedLocation);
+            @Param("usedCount") Integer usedCount,
+            @Param("lastUsedTime") LocalDateTime lastUsedTime,
+            @Param("lastUsedDevice") String lastUsedDevice,
+            @Param("lastUsedLocation") String lastUsedLocation);
 
     /**
      * 软删除二维码
@@ -227,7 +231,9 @@ public interface QrCodeDao extends BaseMapper<QrCodeEntity> {
      */
     default int softDeleteById(@Param("qrId") String qrId) {
         QrCodeEntity updateEntity = new QrCodeEntity();
-        updateEntity.setQrId(qrId);
+        // 类型转换：String转Long
+        Long qrIdLong = qrId != null ? Long.parseLong(qrId) : null;
+        updateEntity.setQrId(qrIdLong);
         updateEntity.setDeletedFlag(1);
 
         LambdaQueryWrapper<QrCodeEntity> wrapper = new LambdaQueryWrapper<>();
@@ -274,7 +280,3 @@ public interface QrCodeDao extends BaseMapper<QrCodeEntity> {
     @Select("SELECT COUNT(1) FROM t_consume_qrcode WHERE qr_token = #{qrToken} AND deleted_flag = 0")
     int checkTokenExists(@Param("qrToken") String qrToken);
 }
-
-
-
-

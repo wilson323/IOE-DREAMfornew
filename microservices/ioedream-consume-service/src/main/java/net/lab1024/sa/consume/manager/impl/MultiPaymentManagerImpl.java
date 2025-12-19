@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.dao.AccountDao;
@@ -16,9 +20,6 @@ import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.manager.AccountManager;
 import net.lab1024.sa.consume.manager.MultiPaymentManager;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * 多支付方式管理Manager实现类
@@ -64,17 +65,17 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
     /**
      * 构造函数注入依赖
      *
-     * @param accountManager 账户管理器
-     * @param accountDao 账户DAO
-     * @param paymentRecordDao 支付记录DAO
+     * @param accountManager       账户管理器
+     * @param accountDao           账户DAO
+     * @param paymentRecordDao     支付记录DAO
      * @param gatewayServiceClient 网关服务客户端
-     * @param restTemplate HTTP客户端
-     * @param bankGatewayUrl 银行支付网关URL
-     * @param bankMerchantId 银行商户ID
-     * @param bankApiKey 银行API密钥
-     * @param bankPaymentEnabled 银行支付是否启用
-     * @param creditLimitEnabled 信用额度是否启用
-     * @param defaultCreditLimit 默认信用额度
+     * @param restTemplate         HTTP客户端
+     * @param bankGatewayUrl       银行支付网关URL
+     * @param bankMerchantId       银行商户ID
+     * @param bankApiKey           银行API密钥
+     * @param bankPaymentEnabled   银行支付是否启用
+     * @param creditLimitEnabled   信用额度是否启用
+     * @param defaultCreditLimit   默认信用额度
      */
     public MultiPaymentManagerImpl(
             AccountManager accountManager,
@@ -110,11 +111,11 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
      * 3. 记录支付记录
      * </p>
      *
-     * @param accountId 账户ID
-     * @param amount 支付金额（单位：元）
-     * @param orderId 订单ID
+     * @param accountId   账户ID
+     * @param amount      支付金额（单位：元）
+     * @param orderId     订单ID
      * @param description 商品描述
-     * @param bankCardNo 银行卡号（可选，如果为空则从账户信息获取）
+     * @param bankCardNo  银行卡号（可选，如果为空则从账户信息获取）
      * @return 支付结果（包含支付状态、交易号等）
      */
     @Override
@@ -209,9 +210,9 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
      * </p>
      *
      * @param accountId 账户ID
-     * @param amount 扣除金额（单位：元）
-     * @param orderId 订单ID
-     * @param reason 扣除原因
+     * @param amount    扣除金额（单位：元）
+     * @param orderId   订单ID
+     * @param reason    扣除原因
      * @return 是否成功
      */
     @Override
@@ -270,7 +271,7 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
      * 验证信用额度是否充足
      *
      * @param accountId 账户ID
-     * @param amount 需要金额（单位：元）
+     * @param amount    需要金额（单位：元）
      * @return 是否充足
      */
     @Override
@@ -375,11 +376,11 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
     /**
      * 构建银行支付请求
      *
-     * @param accountId 账户ID
-     * @param amount 支付金额
-     * @param orderId 订单ID
+     * @param accountId   账户ID
+     * @param amount      支付金额
+     * @param orderId     订单ID
      * @param description 商品描述
-     * @param bankCardNo 银行卡号
+     * @param bankCardNo  银行卡号
      * @return 银行支付请求Map
      */
     private Map<String, Object> buildBankPaymentRequest(
@@ -474,16 +475,15 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
             // 2. 调用银行支付网关API
             org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
             headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-            org.springframework.http.HttpEntity<Map<String, Object>> httpEntity =
-                    new org.springframework.http.HttpEntity<>(request, headers);
+            org.springframework.http.HttpEntity<Map<String, Object>> httpEntity = new org.springframework.http.HttpEntity<>(
+                    request, headers);
 
-            @SuppressWarnings({"rawtypes", "null"})
+            @SuppressWarnings({ "rawtypes", "null" })
             ResponseEntity<Map> httpResponse = restTemplate.exchange(
                     bankGatewayUrl + "/api/payment/create",
                     org.springframework.http.HttpMethod.POST,
                     httpEntity,
-                    Map.class
-            );
+                    Map.class);
 
             // 3. 处理响应
             if (httpResponse.getStatusCode() == HttpStatus.OK && httpResponse.getBody() != null) {
@@ -528,10 +528,10 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
     /**
      * 处理银行支付响应
      *
-     * @param response 银行支付响应
+     * @param response  银行支付响应
      * @param accountId 账户ID
-     * @param orderId 订单ID
-     * @param amount 支付金额
+     * @param orderId   订单ID
+     * @param amount    支付金额
      * @return 是否成功
      */
     private boolean processBankPaymentResponse(
@@ -547,8 +547,15 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
 
             // 1. 创建支付记录
             PaymentRecordEntity paymentRecord = new PaymentRecordEntity();
-            paymentRecord.setPaymentId(orderId);
-            paymentRecord.setPaymentMethod(4); // 4-银行卡
+            // 类型转换：orderId 是 String，需要安全转换为 Long（可能为业务订单号/非数字）
+            Long paymentId;
+            try {
+                paymentId = orderId != null ? Long.parseLong(orderId) : null;
+            } catch (NumberFormatException e) {
+                paymentId = null;
+            }
+            paymentRecord.setPaymentId(paymentId);
+            paymentRecord.setPaymentMethod("BANK_CARD"); // 银行卡支付方式
             paymentRecord.setPaymentAmount(amount);
             paymentRecord.setPaymentStatus(3); // 3-支付成功
             paymentRecord.setThirdPartyTransactionNo((String) response.get("transactionId"));
@@ -590,7 +597,3 @@ public class MultiPaymentManagerImpl implements MultiPaymentManager {
         }
     }
 }
-
-
-
-

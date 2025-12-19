@@ -25,3 +25,4 @@ public class RotationStatisticsResult {
     private String errorMessage;
     private String errorCode;
 }
+

@@ -1,15 +1,15 @@
 package net.lab1024.sa.consume.manager;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.domain.vo.MobileAccountInfoVO;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.consume.domain.vo.MobileAccountInfoVO;
 
 /**
  * 移动端账户信息Manager
@@ -39,7 +39,7 @@ public class MobileAccountInfoManager {
      * 获取移动端账户信息
      *
      * @param accountId 账户ID
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @return 移动端账户信息
      */
     public MobileAccountInfoVO getAccountInfo(Long accountId, Long userId) {
@@ -100,8 +100,7 @@ public class MobileAccountInfoManager {
                     "/api/v1/account/" + accountId + "?userId=" + userId,
                     org.springframework.http.HttpMethod.GET,
                     null,
-                    Map.class
-            ).getData();
+                    Map.class).getData();
         } catch (Exception e) {
             log.warn("[账户信息Manager] 通过网关获取账户信息失败, accountId={}, error={}",
                     accountId, e.getMessage());
@@ -131,7 +130,7 @@ public class MobileAccountInfoManager {
      * 获取账户消费统计信息
      * 通过网关调用consume-service获取统计信息
      */
-    @SuppressWarnings({"unchecked", "rawtypes", "null"})
+    @SuppressWarnings({ "unchecked", "rawtypes", "null" })
     private AccountConsumeStats getAccountConsumeStats(Long accountId) {
         try {
             // 通过网关调用consume-service获取消费统计
@@ -140,10 +139,10 @@ public class MobileAccountInfoManager {
                     "/api/v1/consume/statistics/account/" + accountId,
                     org.springframework.http.HttpMethod.GET,
                     null,
-                    Map.class
-            );
+                    Map.class);
 
-            Map<String, Object> stats = response != null && response.getOk() ? (Map<String, Object>) response.getData() : null;
+            Map<String, Object> stats = response != null && response.getOk() ? (Map<String, Object>) response.getData()
+                    : null;
 
             if (stats == null) {
                 return createDefaultStats();
@@ -154,8 +153,9 @@ public class MobileAccountInfoManager {
                     .todayConsumeAmount(new BigDecimal(stats.getOrDefault("todayConsumeAmount", "0").toString()))
                     .monthConsumeCount((Integer) stats.getOrDefault("monthConsumeCount", 0))
                     .monthConsumeAmount(new BigDecimal(stats.getOrDefault("monthConsumeAmount", "0").toString()))
-                    .lastConsumeTime(stats.get("lastConsumeTime") != null ?
-                            LocalDateTime.parse(stats.get("lastConsumeTime").toString()) : null)
+                    .lastConsumeTime(stats.get("lastConsumeTime") != null
+                            ? LocalDateTime.parse(stats.get("lastConsumeTime").toString())
+                            : null)
                     .lastConsumeAmount(new BigDecimal(stats.getOrDefault("lastConsumeAmount", "0").toString()))
                     .build();
 
@@ -189,10 +189,11 @@ public class MobileAccountInfoManager {
         // 基础账户信息
         accountInfo.setAccountId(((Number) account.getOrDefault("accountId", 0L)).longValue());
         accountInfo.setAccountNumber((String) account.getOrDefault("accountNumber", ""));
-        accountInfo.setBalance(account.get("balance") != null ?
-                new BigDecimal(account.get("balance").toString()) : BigDecimal.ZERO);
-        accountInfo.setFrozenAmount(account.get("frozenAmount") != null ?
-                new BigDecimal(account.get("frozenAmount").toString()) : BigDecimal.ZERO);
+        accountInfo.setBalance(
+                account.get("balance") != null ? new BigDecimal(account.get("balance").toString()) : BigDecimal.ZERO);
+        accountInfo.setFrozenAmount(
+                account.get("frozenAmount") != null ? new BigDecimal(account.get("frozenAmount").toString())
+                        : BigDecimal.ZERO);
 
         // 可用余额 = 总余额 - 冻结金额
         BigDecimal availableBalance = accountInfo.getBalance().subtract(accountInfo.getFrozenAmount());
@@ -218,10 +219,12 @@ public class MobileAccountInfoManager {
         accountInfo.setTodayConsumeAmount(consumeStats.getTodayConsumeAmount());
 
         // 信用额度信息（从账户信息中获取）
-        accountInfo.setCreditLimit(account.get("creditLimit") != null ?
-                new BigDecimal(account.get("creditLimit").toString()) : BigDecimal.ZERO);
-        accountInfo.setUsedCreditLimit(account.get("usedCreditLimit") != null ?
-                new BigDecimal(account.get("usedCreditLimit").toString()) : BigDecimal.ZERO);
+        accountInfo.setCreditLimit(
+                account.get("creditLimit") != null ? new BigDecimal(account.get("creditLimit").toString())
+                        : BigDecimal.ZERO);
+        accountInfo.setUsedCreditLimit(
+                account.get("usedCreditLimit") != null ? new BigDecimal(account.get("usedCreditLimit").toString())
+                        : BigDecimal.ZERO);
         BigDecimal availableCreditLimit = accountInfo.getCreditLimit().subtract(accountInfo.getUsedCreditLimit());
         accountInfo.setAvailableCreditLimit(availableCreditLimit);
 
@@ -237,8 +240,7 @@ public class MobileAccountInfoManager {
                     "/api/v1/user/username/" + userId,
                     org.springframework.http.HttpMethod.GET,
                     null,
-                    String.class
-            ).getData();
+                    String.class).getData();
         } catch (Exception e) {
             log.warn("[账户信息Manager] 获取用户信息失败, userId={}, error={}", userId, e.getMessage());
             return "用户" + userId;
@@ -254,8 +256,7 @@ public class MobileAccountInfoManager {
                     "/api/v1/user/phone/" + userId,
                     org.springframework.http.HttpMethod.GET,
                     null,
-                    String.class
-            ).getData();
+                    String.class).getData();
         } catch (Exception e) {
             log.warn("[账户信息Manager] 获取用户手机号失败, userId={}, error={}", userId, e.getMessage());
             return "138****8888";
@@ -320,9 +321,41 @@ public class MobileAccountInfoManager {
         private BigDecimal monthConsumeAmount;
         private LocalDateTime lastConsumeTime;
         private BigDecimal lastConsumeAmount;
+
+        /**
+         * 获取最近消费时间
+         *
+         * @return 最近消费时间
+         */
+        public LocalDateTime getLastConsumeTime() {
+            return this.lastConsumeTime;
+        }
+
+        /**
+         * 获取最近消费金额
+         *
+         * @return 最近消费金额
+         */
+        public BigDecimal getLastConsumeAmount() {
+            return this.lastConsumeAmount;
+        }
+
+        /**
+         * 获取今日消费次数
+         *
+         * @return 今日消费次数
+         */
+        public Integer getTodayConsumeCount() {
+            return this.todayConsumeCount;
+        }
+
+        /**
+         * 获取今日消费金额
+         *
+         * @return 今日消费金额
+         */
+        public BigDecimal getTodayConsumeAmount() {
+            return this.todayConsumeAmount;
+        }
     }
 }
-
-
-
-

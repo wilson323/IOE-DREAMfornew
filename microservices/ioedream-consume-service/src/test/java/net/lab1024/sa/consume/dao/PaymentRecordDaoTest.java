@@ -41,15 +41,18 @@ class PaymentRecordDaoTest {
     void setUp() {
         // 创建测试数据
         testPaymentRecord = new PaymentRecordEntity();
-        testPaymentRecord.setPaymentId("PAY" + System.currentTimeMillis());
+        // paymentId 为 Long（DB主键），测试使用时间戳生成
+        long now = System.currentTimeMillis();
+        testPaymentRecord.setPaymentId(now);
+        testPaymentRecord.setPaymentNo("PAY" + now);
         testPaymentRecord.setUserId(1001L);
         testPaymentRecord.setAccountId(2001L);
         testPaymentRecord.setOrderNo("ORDER" + System.currentTimeMillis());
         testPaymentRecord.setTransactionNo("TXN" + System.currentTimeMillis());
         testPaymentRecord.setPaymentAmount(new BigDecimal("100.00"));
         testPaymentRecord.setActualAmount(new BigDecimal("100.00"));
-        testPaymentRecord.setPaymentMethod(3); // 3=支付宝
-        testPaymentRecord.setPaymentChannel(3); // 3=移动端
+        testPaymentRecord.setPaymentMethod("ALIPAY"); // 支付宝
+        testPaymentRecord.setPaymentChannel("MOBILE"); // 移动端
         testPaymentRecord.setPaymentStatus(3); // 3=支付成功
         testPaymentRecord.setBusinessType(1); // 1=消费
         testPaymentRecord.setDeviceId("DEV001");
@@ -66,7 +69,7 @@ class PaymentRecordDaoTest {
 
         // Then
         assertEquals(1, result);
-        assertNotNull(testPaymentRecord.getPaymentId());
+        assertNotNull(testPaymentRecord.getId());
     }
 
     @Test
@@ -74,14 +77,13 @@ class PaymentRecordDaoTest {
     void testSelectById_Success() {
         // Given
         paymentRecordDao.insert(testPaymentRecord);
-        String paymentId = testPaymentRecord.getPaymentId();
+        Long id = testPaymentRecord.getId();
 
         // When
-        PaymentRecordEntity result = paymentRecordDao.selectById(paymentId);
+        PaymentRecordEntity result = paymentRecordDao.selectById(id);
 
         // Then
         assertNotNull(result);
-        assertEquals(paymentId, result.getPaymentId());
         assertEquals(testPaymentRecord.getPaymentId(), result.getPaymentId());
     }
 
@@ -89,7 +91,7 @@ class PaymentRecordDaoTest {
     @DisplayName("测试根据ID查询支付记录-不存在")
     void testSelectById_NotFound() {
         // When
-        PaymentRecordEntity result = paymentRecordDao.selectById("NON_EXISTENT_ID");
+        PaymentRecordEntity result = paymentRecordDao.selectById(999999999999L);
 
         // Then
         assertNull(result);
@@ -100,10 +102,10 @@ class PaymentRecordDaoTest {
     void testSelectByPaymentId_Success() {
         // Given
         paymentRecordDao.insert(testPaymentRecord);
-        String paymentId = testPaymentRecord.getPaymentId();
+        Long paymentId = testPaymentRecord.getPaymentId();
 
         // When
-        PaymentRecordEntity result = paymentRecordDao.selectByPaymentId(paymentId);
+        PaymentRecordEntity result = paymentRecordDao.selectByPaymentId(String.valueOf(paymentId));
 
         // Then
         assertNotNull(result);
@@ -161,7 +163,7 @@ class PaymentRecordDaoTest {
         assertEquals(1, result);
 
         // 验证更新
-        PaymentRecordEntity updated = paymentRecordDao.selectById(testPaymentRecord.getPaymentId());
+        PaymentRecordEntity updated = paymentRecordDao.selectById(testPaymentRecord.getId());
         assertNotNull(updated);
         assertEquals(Integer.valueOf(4), updated.getPaymentStatus());
         assertEquals("FAILED", updated.getStatus()); // 使用兼容方法
@@ -172,16 +174,16 @@ class PaymentRecordDaoTest {
     void testDelete_Success() {
         // Given
         paymentRecordDao.insert(testPaymentRecord);
-        String paymentId = testPaymentRecord.getPaymentId();
+        Long id = testPaymentRecord.getId();
 
         // When
-        int result = paymentRecordDao.deleteById(paymentId);
+        int result = paymentRecordDao.deleteById(id);
 
         // Then
         assertEquals(1, result);
 
         // 验证删除
-        PaymentRecordEntity deleted = paymentRecordDao.selectById(paymentId);
+        PaymentRecordEntity deleted = paymentRecordDao.selectById(id);
         assertNull(deleted);
     }
 

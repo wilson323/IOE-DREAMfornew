@@ -118,8 +118,15 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
 
         try {
 
-            if (paymentRecord.getPaymentId() == null || paymentRecord.getPaymentId().trim().isEmpty()) {
+            // 修复类型错误：paymentId是Long类型，不能调用trim()方法
+            // 根据业务模块文档，paymentId应该是Long类型
+            if (paymentRecord.getPaymentId() == null) {
                 throw new ParamException("PAYMENT_ID_NULL", "支付订单号不能为空");
+            }
+            
+            // 如果paymentNo存在，验证paymentNo不为空
+            if (paymentRecord.getPaymentNo() != null && paymentRecord.getPaymentNo().trim().isEmpty()) {
+                throw new ParamException("PAYMENT_NO_EMPTY", "支付编号不能为空");
             }
 
             if (paymentRecord.getPaymentAmount() == null || paymentRecord.getPaymentAmount().compareTo(java.math.BigDecimal.ZERO) <= 0) {
@@ -330,9 +337,13 @@ public class PaymentRecordServiceImpl implements PaymentRecordService {
 
             // 2. 发送支付成功通知
             if (paymentRecord.getUserId() != null) {
+                // 修复类型错误：paymentId是Long类型，需要转换为String
+                String paymentIdStr = paymentRecord.getPaymentNo() != null 
+                        ? paymentRecord.getPaymentNo() 
+                        : String.valueOf(paymentRecord.getPaymentId());
                 sendPaymentSuccessNotification(
                         paymentRecord.getUserId(),
-                        paymentRecord.getPaymentId(),
+                        paymentIdStr,
                         paymentRecord.getPaymentAmount()
                 );
             }

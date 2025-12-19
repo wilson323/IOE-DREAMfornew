@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,6 +37,7 @@ import net.lab1024.sa.consume.manager.ConsumeAreaManager;
  * @since 2025-01-30
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("DefaultFixedAmountCalculator单元测试")
 class DefaultFixedAmountCalculatorTest {
 

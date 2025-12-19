@@ -1,9 +1,22 @@
 package net.lab1024.sa.consume.manager;
 
-import net.lab1024.sa.consume.dao.MealOrderDao;
-import net.lab1024.sa.consume.dao.MealOrderItemDao;
-import net.lab1024.sa.consume.entity.MealOrderEntity;
-import net.lab1024.sa.consume.entity.MealOrderItemEntity;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,13 +24,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import net.lab1024.sa.consume.dao.MealOrderDao;
+import net.lab1024.sa.consume.dao.MealOrderItemDao;
+import net.lab1024.sa.consume.entity.MealOrderEntity;
+import net.lab1024.sa.consume.entity.MealOrderItemEntity;
 
 /**
  * 订餐管理器单元测试
@@ -59,7 +69,6 @@ class MealOrderManagerTest {
         // 准备数据
         MealOrderEntity order = new MealOrderEntity();
         order.setUserId(1L);
-        order.setAccountId(1L);
         order.setAreaId(1L);
         order.setMealTypeId(1L);
 
@@ -83,7 +92,7 @@ class MealOrderManagerTest {
         assertNotNull(orderId);
         assertEquals(1L, orderId);
         assertNotNull(order.getOrderNo());
-        assertEquals("PENDING", order.getStatus());
+        assertEquals(Integer.valueOf(1), order.getStatus());
         assertEquals(new BigDecimal("15.00"), order.getAmount());
 
         verify(mealOrderDao, times(1)).insert(any(MealOrderEntity.class));
@@ -106,7 +115,7 @@ class MealOrderManagerTest {
     void verifyOrder_wrongStatus_shouldReturnFalse() {
         MealOrderEntity order = new MealOrderEntity();
         order.setId(1L);
-        order.setStatus("COMPLETED");
+        order.setStatus(2);
 
         when(mealOrderDao.selectById(1L)).thenReturn(order);
 
@@ -121,7 +130,7 @@ class MealOrderManagerTest {
     void verifyOrder_shouldSucceed() {
         MealOrderEntity order = new MealOrderEntity();
         order.setId(1L);
-        order.setStatus("PENDING");
+        order.setStatus(1);
         order.setPickupStartTime(LocalDateTime.now().minusHours(1));
         order.setPickupEndTime(LocalDateTime.now().plusHours(1));
 
@@ -139,7 +148,7 @@ class MealOrderManagerTest {
     void cancelOrder_shouldSucceed() {
         MealOrderEntity order = new MealOrderEntity();
         order.setId(1L);
-        order.setStatus("PENDING");
+        order.setStatus(1);
 
         when(mealOrderDao.selectById(1L)).thenReturn(order);
         when(mealOrderDao.cancelOrder(eq(1L), eq("用户取消"), any())).thenReturn(1);

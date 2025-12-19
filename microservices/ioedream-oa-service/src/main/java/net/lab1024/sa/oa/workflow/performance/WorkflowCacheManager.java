@@ -36,9 +36,8 @@ import java.util.Set;
  * @version 1.0.0
  * @since 2025-01-16
  */
+@Slf4j
 public class WorkflowCacheManager {
-
-    private static final Logger log = LoggerFactory.getLogger(WorkflowCacheManager.class);
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final MeterRegistry meterRegistry;

@@ -1,27 +1,28 @@
 package net.lab1024.sa.consume.manager;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.entity.QrCodeEntity;
-import net.lab1024.sa.consume.dao.QrCodeDao;
-import net.lab1024.sa.consume.domain.form.QrCodeGenerateForm;
-import net.lab1024.sa.consume.domain.form.QrCodeConsumeForm;
-import net.lab1024.sa.consume.domain.vo.QrCodeVO;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.exception.SystemException;
+import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.UUID;
-import java.security.MessageDigest;
-import java.util.Base64;
-import java.io.ByteArrayOutputStream;
-import java.math.BigDecimal;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.consume.dao.QrCodeDao;
+import net.lab1024.sa.consume.domain.form.QrCodeConsumeForm;
+import net.lab1024.sa.consume.domain.form.QrCodeGenerateForm;
+import net.lab1024.sa.consume.domain.vo.QrCodeVO;
+import net.lab1024.sa.consume.entity.QrCodeEntity;
 
 /**
  * 二维码管理器
@@ -61,9 +62,15 @@ public class QrCodeManager {
         try {
             // 1. 创建二维码实体
             QrCodeEntity qrCode = new QrCodeEntity();
-            qrCode.setQrId("QR-" + UUID.randomUUID().toString().replace("-", ""));
+            // qrId是Long类型，由数据库自动生成，这里不设置
+            // 使用qrCode字段存储业务标识
+            String qrCodeStr = "QR-" + UUID.randomUUID().toString().replace("-", "");
+            qrCode.setQrCode(qrCodeStr);
             qrCode.setUserId(form.getUserId());
-            qrCode.setQrType(form.getQrType());
+            // qrType是String类型，form.getQrType()是Integer，需要转换
+            if (form.getQrType() != null) {
+                qrCode.setQrType(String.valueOf(form.getQrType()));
+            }
             qrCode.setBusinessModule(form.getBusinessModule());
 
             // 2. 生成二维码标识和安全令牌
@@ -85,7 +92,15 @@ public class QrCodeManager {
 
             // 6. 设置区域和设备限制
             qrCode.setAreaId(form.getAreaId());
-            qrCode.setDeviceId(form.getDeviceId());
+            // deviceId是Long类型，form.getDeviceId()是String，需要转换
+            if (form.getDeviceId() != null && !form.getDeviceId().trim().isEmpty()) {
+                try {
+                    qrCode.setDeviceId(Long.valueOf(form.getDeviceId()));
+                } catch (NumberFormatException e) {
+                    log.warn("[二维码管理] 设备ID格式错误: {}", form.getDeviceId());
+                    qrCode.setDeviceId(null);
+                }
+            }
 
             // 7. 设置业务特定限制
             qrCode.setAmountLimit(form.getAmountLimit());
@@ -233,8 +248,8 @@ public class QrCodeManager {
      * 生成二维码图片
      *
      * @param qrContent 二维码内容
-     * @param width 宽度
-     * @param height 高度
+     * @param width     宽度
+     * @param height    高度
      * @return Base64编码的图片
      */
     public String generateQrImage(String qrContent, int width, int height) {
@@ -355,7 +370,7 @@ public class QrCodeManager {
 
         // 验证使用次数
         if (qrCode.getUsageLimit() != null && qrCode.getUsageLimit() > 0 &&
-            qrCode.getUsedCount() >= qrCode.getUsageLimit()) {
+                qrCode.getUsedCount() >= qrCode.getUsageLimit()) {
             throw new IllegalArgumentException("二维码使用次数已用完");
         }
     }
@@ -376,7 +391,9 @@ public class QrCodeManager {
     private void validateConsumeLimit(QrCodeEntity qrCode, QrCodeConsumeForm form) {
         if (qrCode.getAmountLimit() != null) {
             // 查询已消费金额
-            BigDecimal usedAmount = getUsedAmount(qrCode.getQrId());
+            // getQrId()返回Long，getUsedAmount()需要String，需要转换
+            String qrIdStr = qrCode.getQrId() != null ? String.valueOf(qrCode.getQrId()) : null;
+            BigDecimal usedAmount = getUsedAmount(qrIdStr);
             BigDecimal remainingAmount = qrCode.getAmountLimit().subtract(usedAmount);
 
             if (form.getConsumeAmount().compareTo(remainingAmount) > 0) {
@@ -422,8 +439,7 @@ public class QrCodeManager {
                     "/api/v1/consume/process",
                     org.springframework.http.HttpMethod.POST,
                     consumeRequest,
-                    Object.class
-            ).getData();
+                    Object.class).getData();
 
             return Map.of("response", response, "message", "消费处理成功");
 
@@ -445,7 +461,7 @@ public class QrCodeManager {
 
             // 检查是否需要更新状态
             if (qrCode.getUsageLimit() != null && qrCode.getUsageLimit() > 0 &&
-                qrCode.getUsedCount() >= qrCode.getUsageLimit()) {
+                    qrCode.getUsedCount() >= qrCode.getUsageLimit()) {
                 qrCode.setQrStatus(3); // 已用完
             }
 
@@ -469,8 +485,7 @@ public class QrCodeManager {
                     "/api/v1/consume/get-used-amount",
                     org.springframework.http.HttpMethod.POST,
                     request,
-                    Map.class
-            ).getData();
+                    Map.class).getData();
 
             if (response instanceof Map) {
                 @SuppressWarnings("unchecked")
@@ -494,12 +509,18 @@ public class QrCodeManager {
      */
     private String getQrStatusName(Integer status) {
         switch (status) {
-            case 1: return "有效";
-            case 2: return "已过期";
-            case 3: return "已用完";
-            case 4: return "已撤销";
-            case 5: return "暂停使用";
-            default: return "未知状态";
+            case 1:
+                return "有效";
+            case 2:
+                return "已过期";
+            case 3:
+                return "已用完";
+            case 4:
+                return "已撤销";
+            case 5:
+                return "暂停使用";
+            default:
+                return "未知状态";
         }
     }
 
@@ -516,13 +537,15 @@ public class QrCodeManager {
             Long remainingTime = null;
             if (qrCode.getExpireTime() != null) {
                 remainingTime = java.time.Duration.between(now, qrCode.getExpireTime()).getSeconds();
-                if (remainingTime < 0) remainingTime = 0L;
+                if (remainingTime < 0)
+                    remainingTime = 0L;
             }
 
             Integer remainingUsage = null;
             if (qrCode.getUsageLimit() != null && qrCode.getUsageLimit() > 0) {
                 remainingUsage = qrCode.getUsageLimit() - qrCode.getUsedCount();
-                if (remainingUsage < 0) remainingUsage = 0;
+                if (remainingUsage < 0)
+                    remainingUsage = 0;
             }
 
             // 计算使用进度
@@ -540,8 +563,7 @@ public class QrCodeManager {
                         "/api/v1/user/" + qrCode.getUserId(),
                         org.springframework.http.HttpMethod.GET,
                         null,
-                        Map.class
-                ).getData();
+                        Map.class).getData();
 
                 if (userResponse != null) {
                     Map<String, Object> userMap = userResponse;
@@ -552,13 +574,15 @@ public class QrCodeManager {
                 log.debug("[二维码管理] 获取用户信息失败: userId={}", qrCode.getUserId());
             }
 
+            Integer qrTypeCode = parseQrTypeToCode(qrCode.getQrType());
             return QrCodeVO.builder()
-                    .qrId(qrCode.getQrId())
+                    .qrId(qrCode.getQrId() != null ? String.valueOf(qrCode.getQrId()) : null)
                     .userId(qrCode.getUserId())
                     .username(username)
                     .nickname(nickname)
-                    .qrType(qrCode.getQrType())
-                    .qrTypeName(getQrTypeName(qrCode.getQrType()))
+                    // 修复类型：QrCodeEntity.qrType 是 String，QrCodeVO.qrType 是 Integer
+                    .qrType(qrTypeCode)
+                    .qrTypeName(getQrTypeName(qrTypeCode))
                     .qrContent(qrCode.getQrContent())
                     .qrImageUrl("data:image/png;base64," + qrImageUrl)
                     .qrToken(qrCode.getQrToken())
@@ -575,7 +599,8 @@ public class QrCodeManager {
                     .securityLevel(qrCode.getSecurityLevel())
                     .securityLevelName(getSecurityLevelName(qrCode.getSecurityLevel()))
                     .areaId(qrCode.getAreaId())
-                    .deviceId(qrCode.getDeviceId())
+                    // 修复类型：QrCodeEntity.deviceId 是 Long，QrCodeVO.deviceId 是 String
+                    .deviceId(qrCode.getDeviceId() != null ? String.valueOf(qrCode.getDeviceId()) : null)
                     .amountLimit(qrCode.getAmountLimit())
                     .requireBiometric(qrCode.getRequireBiometric())
                     .biometricRequireDesc(getBiometricRequireDesc(qrCode.getRequireBiometric()))
@@ -590,7 +615,7 @@ public class QrCodeManager {
                     .updateTime(qrCode.getUpdateTime())
                     .extendedAttributes(qrCode.getExtendedAttributes())
                     .immediatelyUsable(now.isAfter(qrCode.getEffectiveTime()) &&
-                                      (qrCode.getExpireTime() == null || now.isBefore(qrCode.getExpireTime())))
+                            (qrCode.getExpireTime() == null || now.isBefore(qrCode.getExpireTime())))
                     .usageProgress(usageProgress)
                     .build();
 
@@ -602,56 +627,128 @@ public class QrCodeManager {
 
     private String getQrTypeName(Integer qrType) {
         switch (qrType) {
-            case 1: return "消费码";
-            case 2: return "门禁码";
-            case 3: return "考勤码";
-            case 4: return "访客码";
-            case 5: return "通用码";
-            default: return "未知类型";
+            case 1:
+                return "消费码";
+            case 2:
+                return "门禁码";
+            case 3:
+                return "考勤码";
+            case 4:
+                return "访客码";
+            case 5:
+                return "通用码";
+            default:
+                return "未知类型";
+        }
+    }
+
+    /**
+     * 解析二维码类型（String -> Integer）
+     * <p>
+     * 兼容两类输入：
+     * 1) 数字字符串：\"1\"-\"5\"
+     * 2) 英文枚举：CONSUME/ACCESS/ATTENDANCE/VISITOR/COMMON
+     * </p>
+     *
+     * @param qrType 二维码类型（String）
+     * @return 二维码类型编码（Integer），无法识别则返回 5（通用码）
+     */
+    private Integer parseQrTypeToCode(String qrType) {
+        if (qrType == null || qrType.trim().isEmpty()) {
+            return 5;
+        }
+
+        String trimmed = qrType.trim();
+        try {
+            return Integer.parseInt(trimmed);
+        } catch (NumberFormatException ignore) {
+            // fall through
+        }
+
+        switch (trimmed.toUpperCase()) {
+            case "CONSUME":
+                return 1;
+            case "ACCESS":
+                return 2;
+            case "ATTENDANCE":
+                return 3;
+            case "VISITOR":
+                return 4;
+            case "COMMON":
+            default:
+                return 5;
+        }
+    }
+
+    private String getQrTypeName(String qrType) {
+        if (qrType == null || qrType.trim().isEmpty()) {
+            return "未知类型";
+        }
+        try {
+            return getQrTypeName(Integer.parseInt(qrType));
+        } catch (NumberFormatException e) {
+            // 如果不是数字，直接返回字符串作为类型名
+            return qrType;
         }
     }
 
     private String getBusinessModuleName(String businessModule) {
         switch (businessModule) {
-            case "consume": return "消费";
-            case "access": return "门禁";
-            case "attendance": return "考勤";
-            case "visitor": return "访客";
-            default: return "其他";
+            case "consume":
+                return "消费";
+            case "access":
+                return "门禁";
+            case "attendance":
+                return "考勤";
+            case "visitor":
+                return "访客";
+            default:
+                return "其他";
         }
     }
 
     private String getSecurityLevelName(Integer securityLevel) {
         switch (securityLevel) {
-            case 1: return "低";
-            case 2: return "中";
-            case 3: return "高";
-            case 4: return "极高";
-            default: return "未知";
+            case 1:
+                return "低";
+            case 2:
+                return "中";
+            case 3:
+                return "高";
+            case 4:
+                return "极高";
+            default:
+                return "未知";
         }
     }
 
     private String getBiometricRequireDesc(Integer requireBiometric) {
         switch (requireBiometric) {
-            case 0: return "不需要";
-            case 1: return "需要指纹";
-            case 2: return "需要人脸";
-            case 3: return "需要指纹+人脸";
-            default: return "未知";
+            case 0:
+                return "不需要";
+            case 1:
+                return "需要指纹";
+            case 2:
+                return "需要人脸";
+            case 3:
+                return "需要指纹+人脸";
+            default:
+                return "未知";
         }
     }
 
     private String getCreateMethodName(Integer createMethod) {
         switch (createMethod) {
-            case 1: return "用户生成";
-            case 2: return "系统生成";
-            case 3: return "管理员生成";
-            case 4: return "API生成";
-            default: return "未知";
+            case 1:
+                return "用户生成";
+            case 2:
+                return "系统生成";
+            case 3:
+                return "管理员生成";
+            case 4:
+                return "API生成";
+            default:
+                return "未知";
         }
     }
 }
-
-
-
-

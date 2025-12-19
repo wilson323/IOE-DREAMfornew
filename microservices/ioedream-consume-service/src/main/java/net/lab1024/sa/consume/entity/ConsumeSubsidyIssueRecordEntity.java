@@ -1,12 +1,10 @@
 package net.lab1024.sa.consume.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -73,6 +71,14 @@ public class ConsumeSubsidyIssueRecordEntity extends BaseEntity {
     @TableField("remark")
     @Schema(description = "备注")
     private String remark;
+
+    /**
+     * 补贴账户ID
+     */
+    @TableField("subsidy_account_id")
+    @Schema(description = "补贴账户ID")
+    private Long subsidyAccountId;
+
     // 注意：createTime, updateTime, createUserId, updateUserId, deletedFlag, version
     // 已由BaseEntity提供，无需重复定义
 }

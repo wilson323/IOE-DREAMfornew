@@ -36,6 +36,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Common 整合模块 -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Micrometer 监控 -->
         <dependency>
             <groupId>io.micrometer</groupId>

@@ -128,7 +128,7 @@ class PaymentServiceIntegrationTest {
 
         try {
             // When - 使用processPayment方法测试支付宝支付
-            var paymentForm = new net.lab1024.sa.consume.consume.domain.form.PaymentProcessForm();
+            var paymentForm = new net.lab1024.sa.consume.domain.form.PaymentProcessForm();
             paymentForm.setOrderNo(orderId);
             paymentForm.setPaymentAmount(amount);
             paymentForm.setConsumeDescription(description);

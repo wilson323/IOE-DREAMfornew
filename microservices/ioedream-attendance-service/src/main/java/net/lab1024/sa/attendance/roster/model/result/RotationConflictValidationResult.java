@@ -26,3 +26,4 @@ public class RotationConflictValidationResult {
     private String errorMessage;
     private String errorCode;
 }
+

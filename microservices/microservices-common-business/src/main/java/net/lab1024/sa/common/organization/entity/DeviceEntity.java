@@ -278,4 +278,98 @@ public class DeviceEntity extends BaseEntity {
      */
     @TableField("extended_attributes")
     private String extendedAttributes;
+
+    // ==================== 兼容性方法（用于历史测试/旧代码迁移） ====================
+
+    /**
+     * 兼容旧代码：以Long形式设置设备ID
+     *
+     * @param id 设备ID（Long）
+     */
+    public void setId(Long id) {
+        this.deviceId = id == null ? null : String.valueOf(id);
+    }
+
+    /**
+     * 兼容旧代码：以long形式设置设备ID
+     *
+     * @param id 设备ID（long）
+     */
+    public void setId(long id) {
+        this.deviceId = String.valueOf(id);
+    }
+
+    /**
+     * 兼容旧代码：获取设备ID（Long）
+     * <p>
+     * 若deviceId不是纯数字，则返回null（避免抛出异常影响主流程）。
+     * </p>
+     *
+     * @return 设备ID（Long）或null
+     */
+    public Long getId() {
+        if (this.deviceId == null || this.deviceId.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.parseLong(this.deviceId.trim());
+        } catch (NumberFormatException ignore) {
+            return null;
+        }
+    }
+
+    /**
+     * 兼容旧代码：以字符串形式设置设备状态
+     * <p>
+     * 映射规则（最小可交付版本）：ONLINE->1，OFFLINE->2，其它->null
+     * </p>
+     *
+     * @param statusText 状态字符串
+     */
+    public void setDeviceStatus(String statusText) {
+        if (statusText == null || statusText.trim().isEmpty()) {
+            this.deviceStatus = null;
+            return;
+        }
+        String normalized = statusText.trim().toUpperCase();
+        if ("ONLINE".equals(normalized)) {
+            this.deviceStatus = 1;
+            return;
+        }
+        if ("OFFLINE".equals(normalized)) {
+            this.deviceStatus = 2;
+            return;
+        }
+        this.deviceStatus = null;
+    }
+
+    /**
+     * 兼容：设置设备状态（Integer）
+     * <p>
+     * 说明：部分模块未开启 Lombok 注解处理时，需要显式提供 setDeviceStatus(Integer)。
+     * </p>
+     *
+     * @param deviceStatus 设备状态
+     */
+    public void setDeviceStatus(Integer deviceStatus) {
+        this.deviceStatus = deviceStatus;
+    }
+
+    /**
+     * 兼容：设置设备状态（int）
+     *
+     * @param deviceStatus 设备状态
+     */
+    public void setDeviceStatus(int deviceStatus) {
+        this.deviceStatus = deviceStatus;
+    }
+
+    /**
+     * 兼容：获取设备状态
+     *
+     * @return 设备状态
+     */
+    public Integer getDeviceStatus() {
+        return this.deviceStatus;
+    }
 }

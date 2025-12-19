@@ -3,6 +3,8 @@ package net.lab1024.sa.consume.config;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.cache.CacheService;
 import net.lab1024.sa.common.cache.SpringCacheServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -33,6 +35,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @EnableCaching
 public class CacheConfiguration {
+
+    private static final Logger log = LoggerFactory.getLogger(CacheConfiguration.class);
 
     /**
      * 注册 RedisTemplate Bean

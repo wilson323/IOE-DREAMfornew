@@ -1,9 +1,10 @@
 package net.lab1024.sa.video.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -50,19 +51,26 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     @Resource
     private VideoBehaviorManager videoBehaviorManager;
 
+    @Resource
+    private ObjectMapper objectMapper;
+
     // ==================== 行为检测记录管理 ====================
 
     @Override
     public PageResult<VideoBehaviorVO> queryBehaviorPage(VideoBehaviorAnalysisForm form) {
-        log.info("[行为分析] 查询行为记录, form={}", JSONUtil.toJsonStr(form));
+        try {
+            log.info("[行为分析] 查询行为记录, form={}", objectMapper.writeValueAsString(form));
+        } catch (Exception e) {
+            log.info("[行为分析] 查询行为记录, form={}", form.toString());
+        }
 
         // 构建查询条件
         LambdaQueryWrapper<VideoBehaviorEntity> queryWrapper = new LambdaQueryWrapper<>();
 
-        if (CollUtil.isNotEmpty(form.getDeviceIds())) {
+        if (CollectionUtils.isNotEmpty(form.getDeviceIds())) {
             queryWrapper.in(VideoBehaviorEntity::getDeviceId, form.getDeviceIds());
         }
-        if (CollUtil.isNotEmpty(form.getBehaviorTypes())) {
+        if (CollectionUtils.isNotEmpty(form.getBehaviorTypes())) {
             queryWrapper.in(VideoBehaviorEntity::getBehaviorType, form.getBehaviorTypes());
         }
         if (form.getMinSeverityLevel() != null) {
@@ -92,13 +100,13 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         if (form.getEndTime() != null) {
             queryWrapper.le(VideoBehaviorEntity::getDetectionTime, form.getEndTime());
         }
-        if (CollUtil.isNotEmpty(form.getPersonIds())) {
+        if (CollectionUtils.isNotEmpty(form.getPersonIds())) {
             queryWrapper.in(VideoBehaviorEntity::getPersonId, form.getPersonIds());
         }
-        if (CollUtil.isNotEmpty(form.getProcessStatuses())) {
+        if (CollectionUtils.isNotEmpty(form.getProcessStatuses())) {
             queryWrapper.in(VideoBehaviorEntity::getProcessStatus, form.getProcessStatuses());
         }
-        if (CollUtil.isNotEmpty(form.getAlarmLevels())) {
+        if (CollectionUtils.isNotEmpty(form.getAlarmLevels())) {
             queryWrapper.in(VideoBehaviorEntity::getAlarmLevel, form.getAlarmLevels());
         }
         if (form.getMinTargetCount() != null) {
@@ -118,12 +126,12 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         }
 
         // 排序
-        if (StrUtil.isNotBlank(form.getSortField())) {
+        if (StringUtils.isNotBlank(form.getSortField())) {
             if ("desc".equalsIgnoreCase(form.getSortOrder())) {
-                queryWrapper.orderByDesc(StrUtil.isNotBlank(form.getSortField()) ?
+                queryWrapper.orderByDesc(StringUtils.isNotBlank(form.getSortField()) ?
                     VideoBehaviorEntity::getDetectionTime : null);
             } else {
-                queryWrapper.orderByAsc(StrUtil.isNotBlank(form.getSortField()) ?
+                queryWrapper.orderByAsc(StringUtils.isNotBlank(form.getSortField()) ?
                     VideoBehaviorEntity::getDetectionTime : null);
             }
         } else {
@@ -142,9 +150,9 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         PageResult<VideoBehaviorVO> pageResultVO = new PageResult<>();
         pageResultVO.setList(voList);
         pageResultVO.setTotal(pageResult.getTotal());
-        pageResultVO.setPageNum(pageResult.getCurrent());
-        pageResultVO.setPageSize(pageResult.getSize());
-        pageResultVO.setPages(pageResult.getPages());
+        pageResultVO.setPageNum(Math.toIntExact(pageResult.getCurrent()));
+        pageResultVO.setPageSize(Math.toIntExact(pageResult.getSize()));
+        pageResultVO.setPages(Math.toIntExact(pageResult.getPages()));
 
         log.info("[行为分析] 查询完成, 返回{}条记录", voList.size());
         return pageResultVO;
@@ -321,7 +329,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     public ResponseDTO<Void> createBehaviorPattern(VideoBehaviorPatternForm form) {
         log.info("[行为模式] 创建行为模式, patternName={}", form.getPatternName());
 
-        VideoBehaviorPatternEntity entity = BeanUtil.copyProperties(form, VideoBehaviorPatternEntity.class);
+        VideoBehaviorPatternEntity entity = BeanUtils.copyProperties(form, VideoBehaviorPatternEntity.class);
         videoBehaviorManager.addBehaviorPattern(entity);
         return ResponseDTO.ok();
     }
@@ -330,7 +338,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
     public ResponseDTO<Void> updateBehaviorPattern(Long patternId, VideoBehaviorPatternForm form) {
         log.info("[行为模式] 更新行为模式, patternId={}", patternId);
 
-        VideoBehaviorPatternEntity entity = BeanUtil.copyProperties(form, VideoBehaviorPatternEntity.class);
+        VideoBehaviorPatternEntity entity = BeanUtils.copyProperties(form, VideoBehaviorPatternEntity.class);
         entity.setPatternId(patternId);
         videoBehaviorManager.updateBehaviorPattern(entity);
         return ResponseDTO.ok();
@@ -354,7 +362,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
             return ResponseDTO.error("PATTERN_NOT_FOUND", "行为模式不存在");
         }
 
-        VideoBehaviorPatternForm form = BeanUtil.copyProperties(entity, VideoBehaviorPatternForm.class);
+        VideoBehaviorPatternForm form = BeanUtils.copyProperties(entity, VideoBehaviorPatternForm.class);
         return ResponseDTO.ok(form);
     }
 
@@ -365,7 +373,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
         LambdaQueryWrapper<VideoBehaviorPatternEntity> queryWrapper = new LambdaQueryWrapper<>();
 
-        if (StrUtil.isNotBlank(form.getPatternName())) {
+        if (StringUtils.isNotBlank(form.getPatternName())) {
             queryWrapper.like(VideoBehaviorPatternEntity::getPatternName, form.getPatternName());
         }
         if (form.getPatternType() != null) {
@@ -379,15 +387,15 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         IPage<VideoBehaviorPatternEntity> pageResult = videoBehaviorPatternDao.selectPage(page, queryWrapper);
 
         List<VideoBehaviorPatternForm> formList = pageResult.getRecords().stream()
-                .map(entity -> BeanUtil.copyProperties(entity, VideoBehaviorPatternForm.class))
+                .map(entity -> BeanUtils.copyProperties(entity, VideoBehaviorPatternForm.class))
                 .collect(Collectors.toList());
 
         PageResult<VideoBehaviorPatternForm> result = new PageResult<>();
         result.setList(formList);
         result.setTotal(pageResult.getTotal());
-        result.setPageNum(pageResult.getCurrent());
-        result.setPageSize(pageResult.getSize());
-        result.setPages(pageResult.getPages());
+        result.setPageNum(Math.toIntExact(pageResult.getCurrent()));
+        result.setPageSize(Math.toIntExact(pageResult.getSize()));
+        result.setPages(Math.toIntExact(pageResult.getPages()));
 
         return ResponseDTO.ok(result);
     }
@@ -399,7 +407,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
         List<VideoBehaviorPatternEntity> entities = videoBehaviorManager.getActivePatterns();
         List<VideoBehaviorPatternForm> formList = entities.stream()
-                .map(entity -> BeanUtil.copyProperties(entity, VideoBehaviorPatternForm.class))
+                .map(entity -> BeanUtils.copyProperties(entity, VideoBehaviorPatternForm.class))
                 .collect(Collectors.toList());
 
         return ResponseDTO.ok(formList);
@@ -431,7 +439,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
      * 转换Entity为VO
      */
     private VideoBehaviorVO convertToVO(VideoBehaviorEntity entity) {
-        VideoBehaviorVO vo = BeanUtil.copyProperties(entity, VideoBehaviorVO.class);
+        VideoBehaviorVO vo = BeanUtils.copyProperties(entity, VideoBehaviorVO.class);
 
         // 设置描述字段
         if (entity.getDetectionTime() != null) {
@@ -484,25 +492,25 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         }
 
         // 解析JSON字段
-        if (StrUtil.isNotBlank(entity.getTargetIds())) {
+        if (StringUtils.isNotBlank(entity.getTargetIds())) {
             try {
-                vo.setTargetIdsList(JSONUtil.parseArray(entity.getTargetIds(), Long.class));
+                vo.setTargetIdsList(objectMapper.readValue(entity.getTargetIds(), new TypeReference<List<Long>>() {}));
             } catch (Exception e) {
                 vo.setTargetIdsList(Collections.emptyList());
             }
         }
 
-        if (StrUtil.isNotBlank(entity.getSnapshotUrls())) {
+        if (StringUtils.isNotBlank(entity.getSnapshotUrls())) {
             try {
-                vo.setSnapshotUrlsList(JSONUtil.parseArray(entity.getSnapshotUrls(), String.class));
+                vo.setSnapshotUrlsList(objectMapper.readValue(entity.getSnapshotUrls(), new TypeReference<List<String>>() {}));
             } catch (Exception e) {
                 vo.setSnapshotUrlsList(Collections.emptyList());
             }
         }
 
-        if (StrUtil.isNotBlank(entity.getEnvironmentInfo())) {
+        if (StringUtils.isNotBlank(entity.getEnvironmentInfo())) {
             try {
-                vo.setEnvironmentInfoParsed(JSONUtil.parseObj(entity.getEnvironmentInfo()));
+                vo.setEnvironmentInfoParsed(objectMapper.readValue(entity.getEnvironmentInfo(), new TypeReference<Map<String, Object>>() {}));
             } catch (Exception e) {
                 vo.setEnvironmentInfoParsed(new HashMap<>());
             }

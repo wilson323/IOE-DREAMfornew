@@ -1,12 +1,12 @@
 package net.lab1024.sa.attendance.openapi.domain.response;
 
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 /**
  * 补卡申请响应
@@ -40,7 +40,8 @@ public class SupplementApplicationResponse {
     @Schema(description = "申请原因", example = "出差")
     private String reason;
 
-    @Schema(description = "申请状态", example = "pending", allowableValues = {"pending", "approved", "rejected", "cancelled"})
+    @Schema(description = "申请状态", example = "pending", allowableValues = { "pending", "approved", "rejected",
+            "cancelled" })
     private String applicationStatus;
 
     @Schema(description = "审批意见", example = "同意")
@@ -52,4 +53,3 @@ public class SupplementApplicationResponse {
     @Schema(description = "创建时间", example = "2025-12-16T09:30:00")
     private LocalDateTime createTime;
 }
-

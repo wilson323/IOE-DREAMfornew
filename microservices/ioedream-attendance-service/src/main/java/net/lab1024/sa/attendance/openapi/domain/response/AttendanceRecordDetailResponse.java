@@ -1,13 +1,13 @@
 package net.lab1024.sa.attendance.openapi.domain.response;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 考勤记录详情响应
@@ -64,4 +64,3 @@ public class AttendanceRecordDetailResponse {
         private String remark;
     }
 }
-

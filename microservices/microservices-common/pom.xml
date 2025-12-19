@@ -69,12 +69,14 @@
         </dependency>
 
         <!-- Common Monitor (监控告警模块) -->
+        <!-- 注释掉避免循环依赖
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-monitor</artifactId>
             <version>${project.version}</version>
             <optional>true</optional>
         </dependency>
+        -->
 
         <!-- Common Business (业务公共模块) -->
         <dependency>

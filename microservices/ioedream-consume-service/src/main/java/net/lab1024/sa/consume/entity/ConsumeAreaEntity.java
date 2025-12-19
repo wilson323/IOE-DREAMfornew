@@ -1,12 +1,10 @@
 package net.lab1024.sa.consume.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -67,6 +65,182 @@ public class ConsumeAreaEntity extends BaseEntity {
     @TableField("remark")
     @Schema(description = "备注")
     private String remark;
+
+    // 缺失字段 - 根据错误日志添加
+    /**
+     * 区域名称 (兼容字段)
+     */
+    @TableField("name")
+    @Schema(description = "区域名称(兼容)")
+    private String name;
+
+    /**
+     * 管理模式
+     */
+    @TableField("manage_mode")
+    @Schema(description = "管理模式")
+    private Integer manageMode;
+
+    /**
+     * 管理模式 (String兼容)
+     */
+    @TableField("manage_mode_str")
+    @Schema(description = "管理模式(String)")
+    private String manageModeStr;
+
+    /**
+     * 区域描述
+     */
+    @TableField("description")
+    @Schema(description = "区域描述")
+    private String description;
+
+    /**
+     * 容纳人数
+     */
+    @TableField("capacity")
+    @Schema(description = "容纳人数")
+    private Integer capacity;
+
+    /**
+     * 营业时间开始
+     */
+    @TableField("business_hours_start")
+    @Schema(description = "营业时间开始")
+    private String businessHoursStart;
+
+    /**
+     * 营业时间结束
+     */
+    @TableField("business_hours_end")
+    @Schema(description = "营业时间结束")
+    private String businessHoursEnd;
+
+    /**
+     * 区域状态
+     */
+    @TableField("area_status")
+    @Schema(description = "区域状态")
+    private Integer areaStatus;
+
     // 注意：createTime, updateTime, createUserId, updateUserId, deletedFlag, version
     // 已由BaseEntity提供，无需重复定义
+
+    // 缺失的getter/setter方法 - 根据错误日志添加
+    public String getName() {
+        return this.name != null ? this.name : this.areaName;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        this.areaName = name;
+    }
+
+    public Integer getManageMode() {
+        return this.manageMode;
+    }
+
+    public void setManageMode(Integer manageMode) {
+        this.manageMode = manageMode;
+    }
+
+    public String getManageModeStr() {
+        return this.manageModeStr;
+    }
+
+    public void setManageModeStr(String manageModeStr) {
+        this.manageModeStr = manageModeStr;
+    }
+
+    // 缺失字段 - 根据错误日志添加
+    /**
+     * 父级区域ID
+     */
+    @TableField("parent_id")
+    @Schema(description = "父级区域ID")
+    private Long parentId;
+
+    /**
+     * 完整路径
+     */
+    @TableField("full_path")
+    @Schema(description = "完整路径")
+    private String fullPath;
+
+    /**
+     * 区域子类型
+     */
+    @TableField("area_sub_type")
+    @Schema(description = "区域子类型")
+    private Integer areaSubType;
+
+    /**
+     * 扩展属性 (JSON格式)
+     */
+    @TableField("extended_attributes")
+    @Schema(description = "扩展属性")
+    private String extendedAttributes;
+
+    /**
+     * GPS位置信息
+     * <p>
+     * 兼容推荐服务对区域位置的解析需求。
+     * 推荐的存储格式：`latitude,longitude`，例如：`31.2304,121.4737`。
+     * </p>
+     */
+    @TableField("gps_location")
+    @Schema(description = "GPS位置信息（latitude,longitude）")
+    private String gpsLocation;
+
+    
+    // 缺失的getter/setter方法 - 根据错误日志添加
+    public Long getParentId() {
+        return this.parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getFullPath() {
+        return this.fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
+    }
+
+    public Integer getAreaSubType() {
+        return this.areaSubType;
+    }
+
+    public void setAreaSubType(Integer areaSubType) {
+        this.areaSubType = areaSubType;
+    }
+
+    public String getExtendedAttributes() {
+        return this.extendedAttributes;
+    }
+
+    public void setExtendedAttributes(String extendedAttributes) {
+        this.extendedAttributes = extendedAttributes;
+    }
+
+    /**
+     * 获取GPS定位信息
+     *
+     * @return GPS定位信息（lng,lat）
+     */
+    public String getGpsLocation() {
+        return this.gpsLocation;
+    }
+
+    /**
+     * 设置GPS定位信息
+     *
+     * @param gpsLocation GPS定位信息（lng,lat）
+     */
+    public void setGpsLocation(String gpsLocation) {
+        this.gpsLocation = gpsLocation;
+    }
 }

@@ -1,12 +1,12 @@
 package net.lab1024.sa.attendance.openapi.domain.response;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * 用户考勤画像响应
@@ -43,4 +43,3 @@ public class UserAttendanceProfileResponse {
     @Schema(description = "画像标签")
     private List<String> tags;
 }
-

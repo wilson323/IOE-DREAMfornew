@@ -1,12 +1,12 @@
 package net.lab1024.sa.consume.domain.form;
 
-import lombok.Data;
+import java.math.BigDecimal;
+
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.DecimalMin;
-
-import java.math.BigDecimal;
+import lombok.Data;
 
 /**
  * 支付处理表单
@@ -27,6 +27,12 @@ public class PaymentProcessForm {
      */
     @Size(max = 100, message = "订单号长度不能超过100个字符")
     private String orderNo;
+
+    /**
+     * 账户编号（可选，用于兼容旧方法）
+     */
+    @Size(max = 100, message = "账户编号长度不能超过100个字符")
+    private String accountNo;
 
     /**
      * 用户ID
@@ -202,6 +208,3 @@ public class PaymentProcessForm {
      */
     private Long clientTimestamp;
 }
-
-
-

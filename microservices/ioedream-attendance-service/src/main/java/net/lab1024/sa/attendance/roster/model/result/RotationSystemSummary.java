@@ -2,12 +2,11 @@ package net.lab1024.sa.attendance.roster.model.result;
 
 import java.time.LocalDateTime;
 
-import net.lab1024.sa.attendance.roster.model.RotationSystemConfig;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.lab1024.sa.attendance.roster.model.RotationSystemConfig;
 
 /**
  * 轮班制度摘要

@@ -1,12 +1,12 @@
 package net.lab1024.sa.attendance.openapi.domain.response;
 
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 /**
  * 考勤异常响应
@@ -46,13 +46,14 @@ public class AbnormalAttendanceResponse {
     @Schema(description = "异常原因", example = "迟到 10 分钟")
     private String abnormalReason;
 
-    @Schema(description = "严重程度", example = "medium", allowableValues = {"low", "medium", "high", "critical"})
+    @Schema(description = "严重程度", example = "medium", allowableValues = { "low", "medium", "high", "critical" })
     private String severityLevel;
 
     @Schema(description = "异常时间", example = "2025-12-16T09:10:00")
     private LocalDateTime abnormalTime;
 
-    @Schema(description = "处理状态", example = "unprocessed", allowableValues = {"unprocessed", "processing", "processed", "ignored"})
+    @Schema(description = "处理状态", example = "unprocessed", allowableValues = { "unprocessed", "processing", "processed",
+            "ignored" })
     private String processStatus;
 
     @Schema(description = "处理人", example = "管理员")
@@ -61,4 +62,3 @@ public class AbnormalAttendanceResponse {
     @Schema(description = "处理时间", example = "2025-12-16T10:00:00")
     private LocalDateTime processTime;
 }
-

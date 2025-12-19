@@ -23,3 +23,4 @@ public class RotationOptimizationRequest {
     private LocalDate endDate;
     private String optimizationStrategy;
 }
+

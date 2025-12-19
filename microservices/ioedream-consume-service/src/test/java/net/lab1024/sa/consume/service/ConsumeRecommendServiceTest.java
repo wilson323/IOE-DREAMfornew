@@ -75,7 +75,7 @@ class ConsumeRecommendServiceTest {
 
         // 准备模拟交易记录
         mockTransaction = new ConsumeTransactionEntity();
-        mockTransaction.setId("TXN001");
+        mockTransaction.setId(1L);
         mockTransaction.setUserId(1001L);
         mockTransaction.setAmount(new BigDecimal("15.00"));
         mockTransaction.setTransactionTime(LocalDateTime.now());
@@ -84,15 +84,15 @@ class ConsumeRecommendServiceTest {
 
         // 准备模拟商品
         mockProduct = new ConsumeProductEntity();
-        mockProduct.setId("PROD001");
-        mockProduct.setName("测试商品");
+        mockProduct.setId(1L);
+        mockProduct.setProductName("测试商品");
         mockProduct.setSalePrice(new BigDecimal("15.00"));
         mockProduct.setRating(new BigDecimal("4.5"));
-        mockProduct.setSaleQuantity(100);
-        mockProduct.setViewQuantity(500);
-        mockProduct.setCategoryId("CAT001");
-        mockProduct.setIsRecommended(true);
-        mockProduct.setIsHotSale(false);
+        mockProduct.setSaleQuantity(100L);
+        mockProduct.setViewQuantity(500L);
+        mockProduct.setCategoryId(1L);
+        mockProduct.setRecommended(true);
+        mockProduct.setHotSale(false);
         mockProduct.setIsNew(false);
     }
 

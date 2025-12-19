@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.lab1024.sa.consume.domain.form.ConsumeMobileFaceForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileNfcForm;
+import net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm;
 import net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileQuickForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileScanForm;
@@ -18,6 +19,7 @@ import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserInfoVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserStatsVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeValidateResultVO;
+import net.lab1024.sa.consume.domain.vo.MobileBillDetailVO;
 
 /**
  * 消费移动端服务接口

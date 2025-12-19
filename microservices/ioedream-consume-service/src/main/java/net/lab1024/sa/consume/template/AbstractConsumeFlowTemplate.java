@@ -147,20 +147,88 @@ public abstract class AbstractConsumeFlowTemplate {
 
     /**
      * 设备验证
+     * <p>
+     * 根据chonggou.txt和业务模块文档要求实现
+     * 验证设备是否存在且可用
+     * DeviceEntity.deviceId是String类型（主键），支持通过设备ID或设备编码查询
+     * </p>
+     *
+     * @param deviceId 设备ID或设备编码（String格式）
+     * @return 设备实体，如果设备不存在或不可用则返回null
      */
     private DeviceEntity validateDevice(String deviceId) {
-        // TODO: 实现设备验证逻辑
-        // 临时实现：返回null
-        return null;
+        if (deviceId == null || deviceId.trim().isEmpty()) {
+            log.debug("[消费流程] 设备ID为空，跳过设备验证");
+            return null;
+        }
+
+        if (deviceDao == null) {
+            log.warn("[消费流程] 设备Dao未注入，跳过设备验证");
+            return null;
+        }
+
+        try {
+            // 方案1：直接使用deviceId作为主键查询（DeviceEntity.deviceId是String类型）
+            DeviceEntity device = deviceDao.selectById(deviceId);
+            if (device != null && device.getDeleted() != null && device.getDeleted() == 0) {
+                log.debug("[消费流程] 设备验证通过（通过ID查询）, deviceId={}, deviceName={}", deviceId, device.getDeviceName());
+                return device;
+            }
+
+            // 方案2：尝试作为设备编码查询
+            try {
+                device = deviceDao.selectByDeviceCode(deviceId);
+                if (device != null && device.getDeleted() != null && device.getDeleted() == 0) {
+                    log.debug("[消费流程] 设备验证通过（通过编码查询）, deviceCode={}, deviceName={}", deviceId, device.getDeviceName());
+                    return device;
+                }
+            } catch (Exception e) {
+                log.debug("[消费流程] 设备编码查询失败: deviceId={}, error={}", deviceId, e.getMessage());
+            }
+
+            // 方案3：尝试作为设备序列号查询
+            try {
+                device = deviceDao.selectBySerialNumber(deviceId);
+                if (device != null && device.getDeleted() != null && device.getDeleted() == 0) {
+                    log.debug("[消费流程] 设备验证通过（通过序列号查询）, serialNumber={}, deviceName={}", deviceId, device.getDeviceName());
+                    return device;
+                }
+            } catch (Exception e) {
+                log.debug("[消费流程] 设备序列号查询失败: deviceId={}, error={}", deviceId, e.getMessage());
+            }
+
+            log.warn("[消费流程] 设备不存在或已删除, deviceId={}", deviceId);
+            return null;
+
+        } catch (Exception e) {
+            log.error("[消费流程] 设备验证异常, deviceId={}, error={}", deviceId, e.getMessage(), e);
+            // 设备验证异常不影响主流程，返回null
+            return null;
+        }
     }
 
     /**
      * 保存消费记录
+     * <p>
+     * 根据chonggou.txt要求实现
+     * 注意：此方法在executePayment之后调用，记录可能已经在executePayment中保存
+     * 这里主要进行日志记录和后续处理
+     * </p>
+     *
+     * @param record 消费记录实体
      */
     private void saveConsumeRecord(ConsumeRecordEntity record) {
+        if (record == null) {
+            log.warn("[消费流程] 消费记录为空，跳过保存");
+            return;
+        }
+
         log.info("[消费流程] 保存消费记录, recordId={}, userId={}, amount={}",
                 record.getRecordId(), record.getUserId(), record.getAmount());
-        // TODO: 实现保存逻辑
+
+        // 注意：实际的数据库保存操作已在executePayment方法中完成（子类实现）
+        // 这里主要进行日志记录和后续处理
+        // 如果需要在保存后进行额外处理，可以在这里添加
     }
 
     /**

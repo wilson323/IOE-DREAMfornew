@@ -1,25 +1,25 @@
 package net.lab1024.sa.attendance.controller;
 
-import io.micrometer.observation.annotation.Observed;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.mobile.AttendanceMobileService;
 import net.lab1024.sa.attendance.service.AttendanceLocationService;
-import net.lab1024.sa.attendance.service.AttendanceMobileService;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 
 /**
  * 移动端考勤Controller
@@ -38,7 +38,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
  */
 @Slf4j
 @RestController
-@RequestMapping({"/api/v1/attendance/mobile", "/api/attendance/mobile"})
+@RequestMapping({ "/api/v1/attendance/mobile", "/api/attendance/mobile" })
 @Tag(name = "移动端考勤", description = "移动端考勤相关接口")
 @PermissionCheck(description = "移动端考勤管理")
 public class AttendanceMobileController {
@@ -58,7 +58,7 @@ public class AttendanceMobileController {
     @Observed(name = "attendanceMobile.gpsPunch", contextualName = "attendance-mobile-gps-punch")
     @PostMapping("/gps-punch")
     @Operation(summary = "GPS定位打卡", description = "移动端GPS定位打卡")
-    @PermissionCheck(value = {"ATTENDANCE_MOBILE_GPS_PUNCH"}, description = "GPS定位打卡")
+    @PermissionCheck(value = { "ATTENDANCE_MOBILE_GPS_PUNCH" }, description = "GPS定位打卡")
     public ResponseDTO<String> gpsPunch(@Valid @RequestBody GpsPunchRequest request) {
         log.info("GPS定位打卡: 员工ID={}, 经纬度=({},{})",
                 request.getEmployeeId(), request.getLatitude(), request.getLongitude());
@@ -74,7 +74,7 @@ public class AttendanceMobileController {
     @Observed(name = "attendanceMobile.validateLocation", contextualName = "attendance-mobile-validate-location")
     @PostMapping("/location/validate")
     @Operation(summary = "位置验证", description = "验证GPS位置是否有效")
-    @PermissionCheck(value = {"ATTENDANCE_MOBILE_LOCATION_VALIDATE"}, description = "位置验证")
+    @PermissionCheck(value = { "ATTENDANCE_MOBILE_LOCATION_VALIDATE" }, description = "位置验证")
     public ResponseDTO<Boolean> validateLocation(@Valid @RequestBody LocationValidationRequest request) {
         log.debug("位置验证: 员工ID={}", request.getEmployeeId());
         return ResponseDTO.ok(true);
@@ -89,7 +89,7 @@ public class AttendanceMobileController {
     @Observed(name = "attendanceMobile.cacheOfflinePunch", contextualName = "attendance-mobile-cache-offline")
     @PostMapping("/offline/cache")
     @Operation(summary = "离线打卡缓存", description = "缓存移动端离线打卡数据")
-    @PermissionCheck(value = {"ATTENDANCE_MOBILE_OFFLINE_CACHE"}, description = "离线打卡缓存")
+    @PermissionCheck(value = { "ATTENDANCE_MOBILE_OFFLINE_CACHE" }, description = "离线打卡缓存")
     public ResponseDTO<String> cacheOfflinePunch(@Valid @RequestBody OfflinePunchRequest request) {
         log.info("离线打卡缓存: 员工ID={}, 缓存数量={}",
                 request.getEmployeeId(), request.getPunchDataList().size());
@@ -105,7 +105,7 @@ public class AttendanceMobileController {
     @Observed(name = "attendanceMobile.syncOfflinePunches", contextualName = "attendance-mobile-sync-offline")
     @PostMapping("/offline/sync/{employeeId}")
     @Operation(summary = "离线数据同步", description = "同步移动端离线打卡数据")
-    @PermissionCheck(value = {"ATTENDANCE_MOBILE_OFFLINE_SYNC"}, description = "离线数据同步")
+    @PermissionCheck(value = { "ATTENDANCE_MOBILE_OFFLINE_SYNC" }, description = "离线数据同步")
     public ResponseDTO<String> syncOfflinePunches(@PathVariable Long employeeId) {
         log.info("离线数据同步: 员工ID={}", employeeId);
         return ResponseDTO.ok("离线数据同步成功");
@@ -156,5 +156,3 @@ public class AttendanceMobileController {
         private String photoUrl;
     }
 }
-
-

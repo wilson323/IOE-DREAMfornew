@@ -191,7 +191,7 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
             }
 
             // 4. 根据支付方式处理退款
-            Integer paymentMethod = paymentRecord.getPaymentMethod();
+            Integer paymentMethod = parsePaymentMethod(paymentRecord.getPaymentMethod());
             boolean refundSuccess = false;
 
             if (paymentMethod != null && (paymentMethod == 2 || paymentMethod == 3)) { // 2-微信支付 3-支付宝
@@ -251,7 +251,7 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
             // 调用第三方支付退款接口
             // 根据支付方式调用不同的退款接口
 
-            Integer paymentMethod = paymentRecord.getPaymentMethod();
+            Integer paymentMethod = parsePaymentMethod(paymentRecord.getPaymentMethod());
 
             if (paymentMethod != null && paymentMethod == 2) { // 2-微信支付
                 // 微信支付退款
@@ -308,7 +308,7 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
 
             // 3. 调用微信支付退款接口
             Map<String, Object> refundResult = paymentService.wechatRefund(
-                    paymentRecord.getPaymentId(),
+                    paymentRecord.getPaymentId() != null ? String.valueOf(paymentRecord.getPaymentId()) : null,
                     refundEntity.getRefundNo(),
                     totalAmount,
                     refundAmount
@@ -360,7 +360,7 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
 
             // 2. 调用支付宝退款接口
             Map<String, Object> refundResult = paymentService.alipayRefund(
-                    paymentRecord.getPaymentId(),
+                    paymentRecord.getPaymentId() != null ? String.valueOf(paymentRecord.getPaymentId()) : null,
                     refundEntity.getRefundAmount(),
                     refundEntity.getRefundReason() != null ? refundEntity.getRefundReason() : "用户申请退款"
             );
@@ -431,6 +431,38 @@ public class RefundApplicationServiceImpl implements RefundApplicationService {
         } catch (Exception e) {
             log.error("[退款申请] 账户余额退款处理未知异常，userId={}", paymentRecord.getUserId(), e);
             return false;
+        }
+    }
+
+    /**
+     * 解析支付方式（兼容PaymentRecordEntity.paymentMethod为String的历史实现）
+     *
+     * @param paymentMethod 支付方式（可能为数字字符串或枚举字符串，如：\"1\"/\"BALANCE\"/\"WECHAT\"）
+     * @return 支付方式编码：1-余额 2-微信 3-支付宝 4-银行卡；无法识别时返回null
+     */
+    private Integer parsePaymentMethod(String paymentMethod) {
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+            return null;
+        }
+        String v = paymentMethod.trim();
+        try {
+            return Integer.valueOf(v);
+        } catch (NumberFormatException ignored) {
+            // 非数字，按关键字解析
+        }
+        switch (v.toUpperCase()) {
+            case "BALANCE":
+                return 1;
+            case "WECHAT":
+            case "WECHATPAY":
+                return 2;
+            case "ALIPAY":
+                return 3;
+            case "BANK":
+            case "BANKCARD":
+                return 4;
+            default:
+                return null;
         }
     }
 

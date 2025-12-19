@@ -52,7 +52,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
      * 支持正数（增加）和负数（减少）
      *
      * @param accountId 账户ID
-     * @param amount   变动金额（正数增加，负数减少）
+     * @param amount    变动金额（正数增加，负数减少）
      * @return 影响的行数
      */
     @Transactional(rollbackFor = Exception.class)
@@ -62,8 +62,8 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
             "update_user_id = #{updateUserId} " +
             "WHERE account_id = #{accountId} AND deleted_flag = 0")
     int updateBalance(@Param("accountId") Long accountId,
-                     @Param("amount") BigDecimal amount,
-                     @Param("updateUserId") Long updateUserId);
+            @Param("amount") BigDecimal amount,
+            @Param("updateUserId") Long updateUserId);
 
     /**
      * 冻结账户金额
@@ -79,8 +79,8 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
             "update_user_id = #{updateUserId} " +
             "WHERE account_id = #{accountId} AND deleted_flag = 0")
     int freezeAmount(@Param("accountId") Long accountId,
-                       @Param("amount") BigDecimal amount,
-                       @Param("updateUserId") Long updateUserId);
+            @Param("amount") BigDecimal amount,
+            @Param("updateUserId") Long updateUserId);
 
     /**
      * 解冻账户金额
@@ -96,14 +96,14 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
             "update_user_id = #{updateUserId} " +
             "WHERE account_id = #{accountId} AND deleted_flag = 0")
     int unfreezeAmount(@Param("accountId") Long accountId,
-                         @Param("amount") BigDecimal amount,
-                         @Param("updateUserId") Long updateUserId);
+            @Param("amount") BigDecimal amount,
+            @Param("updateUserId") Long updateUserId);
 
     /**
      * 更新账户状态
      *
-     * @param accountId 账户ID
-     * @param status    状态值
+     * @param accountId    账户ID
+     * @param status       状态值
      * @param updateUserId 更新人ID
      * @return 影响的行数
      */
@@ -114,8 +114,8 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
             "update_user_id = #{updateUserId} " +
             "WHERE account_id = #{accountId} AND deleted_flag = 0")
     int updateStatus(@Param("accountId") Long accountId,
-                       @Param("status") Integer status,
-                       @Param("updateUserId") Long updateUserId);
+            @Param("status") Integer status,
+            @Param("updateUserId") Long updateUserId);
 
     /**
      * 检查账户余额是否充足
@@ -128,7 +128,7 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
             "FROM t_consume_account " +
             "WHERE account_id = #{accountId} AND deleted_flag = 0")
     boolean checkBalanceSufficient(@Param("accountId") Long accountId,
-                                   @Param("amount") BigDecimal amount);
+            @Param("amount") BigDecimal amount);
 
     /**
      * 获取可用余额（余额 - 冻结金额）
@@ -156,7 +156,28 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
             "FROM t_consume_account " +
             "WHERE account_id = #{accountId} AND deleted_flag = 0")
     AccountEntity selectAccountDetails(@Param("accountId") Long accountId);
+
+    /**
+     * 扣减余额（乐观锁）
+     * <p>
+     * 根据chonggou.txt要求添加
+     * 使用乐观锁机制防止并发问题
+     * </p>
+     *
+     * @param accountId 账户ID
+     * @param amount    扣减金额
+     * @param version   乐观锁版本号
+     * @return 影响的行数（0表示版本不匹配或余额不足）
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Update("UPDATE t_consume_account SET balance = balance - #{amount}, " +
+            "version = version + 1, " +
+            "update_time = NOW() " +
+            "WHERE account_id = #{accountId} " +
+            "AND balance >= #{amount} " +
+            "AND version = #{version} " +
+            "AND deleted_flag = 0")
+    int deductBalance(@Param("accountId") Long accountId,
+            @Param("amount") BigDecimal amount,
+            @Param("version") Integer version);
 }
-
-
-

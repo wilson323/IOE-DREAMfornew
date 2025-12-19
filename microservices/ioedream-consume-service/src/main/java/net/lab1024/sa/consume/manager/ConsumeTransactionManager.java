@@ -1,24 +1,22 @@
 package net.lab1024.sa.consume.manager;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.transaction.annotation.Transactional;
+
 import io.seata.spring.annotation.GlobalTransactional;
-// 注意：GlobalTransactional在Seata 2.x中已标记为过时，但仍可正常使用
-// Seata官方建议继续使用此注解，未来版本会提供新的替代方案
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.dao.AccountDao;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO;
 import net.lab1024.sa.consume.entity.AccountEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
 
 /**
  * 消费事务管理器（使用Seata分布式事务）
@@ -43,8 +41,8 @@ public class ConsumeTransactionManager {
      * 构造函数注入依赖
      */
     public ConsumeTransactionManager(ConsumeRecordDao consumeRecordDao,
-                                   AccountDao accountDao,
-                                   GatewayServiceClient gatewayServiceClient) {
+            AccountDao accountDao,
+            GatewayServiceClient gatewayServiceClient) {
         this.consumeRecordDao = consumeRecordDao;
         this.accountDao = accountDao;
         this.gatewayServiceClient = gatewayServiceClient;
@@ -60,12 +58,8 @@ public class ConsumeTransactionManager {
      * @param consumeRequest 消费请求
      * @return 消费记录ID
      */
-    @SuppressWarnings("deprecation")  // Seata 2.x标记为过时，但官方建议继续使用
-    @GlobalTransactional(
-            name = "consume-transaction",
-            rollbackFor = Exception.class,
-            timeoutMills = 30000
-    )
+    @SuppressWarnings("deprecation") // Seata 2.x标记为过时，但官方建议继续使用
+    @GlobalTransactional(name = "consume-transaction", rollbackFor = Exception.class, timeoutMills = 30000)
     @Transactional(rollbackFor = Exception.class)
     public Long executeConsumeTransaction(ConsumeRequestDTO consumeRequest) {
         log.info("[消费事务] 开始执行消费事务，orderId={}, amount={}, accountId={}",
@@ -122,7 +116,7 @@ public class ConsumeTransactionManager {
      * 扣减余额
      *
      * @param consumeRequest 消费请求
-     * @param account 账户实体
+     * @param account        账户实体
      * @return 新余额
      */
     private BigDecimal deductBalance(ConsumeRequestDTO consumeRequest, AccountEntity account) {
@@ -138,8 +132,7 @@ public class ConsumeTransactionManager {
         int updateCount = accountDao.updateBalance(
                 consumeRequest.getAccountId(),
                 amount.negate(),
-                consumeRequest.getUserId()
-        );
+                consumeRequest.getUserId());
 
         if (updateCount <= 0) {
             throw new BusinessException("BALANCE_UPDATE_FAILED", "余额更新失败");
@@ -163,16 +156,8 @@ public class ConsumeTransactionManager {
         record.setAccountId(consumeRequest.getAccountId());
         record.setAmount(consumeRequest.getAmount());
 
-        // 设备ID类型转换：String -> Long
-        String deviceIdStr = consumeRequest.getDeviceId();
-        if (deviceIdStr != null && !deviceIdStr.isEmpty()) {
-            try {
-                record.setDeviceId(Long.parseLong(deviceIdStr));
-            } catch (NumberFormatException e) {
-                log.warn("[消费事务] 设备ID格式错误: {}", deviceIdStr);
-                record.setDeviceId(null);
-            }
-        }
+        // 设备ID（ConsumeRequestDTO中deviceId是Long类型）
+        record.setDeviceId(consumeRequest.getDeviceId());
 
         record.setAreaId(consumeRequest.getAreaId());
         record.setConsumeType(consumeRequest.getConsumeType());
@@ -205,8 +190,7 @@ public class ConsumeTransactionManager {
             String notificationContent = String.format(
                     "您的消费订单 %s 已完成，金额：%.2f 元。感谢您的使用！",
                     consumeRequest.getOrderId(),
-                    consumeRequest.getAmount() != null ? consumeRequest.getAmount() : BigDecimal.ZERO
-            );
+                    consumeRequest.getAmount() != null ? consumeRequest.getAmount() : BigDecimal.ZERO);
 
             Map<String, Object> notificationData = new HashMap<>();
             notificationData.put("recipientUserId", consumeRequest.getUserId());
@@ -223,8 +207,7 @@ public class ConsumeTransactionManager {
                         "/api/v1/notification/send",
                         HttpMethod.POST,
                         notificationData,
-                        Long.class
-                );
+                        Long.class);
                 log.info("[消费事务] 消费成功通知发送成功: orderId={}, userId={}",
                         consumeRequest.getOrderId(), consumeRequest.getUserId());
             }

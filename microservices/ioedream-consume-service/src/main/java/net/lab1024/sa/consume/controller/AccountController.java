@@ -3,7 +3,6 @@ package net.lab1024.sa.consume.controller;
 import java.math.BigDecimal;
 import java.util.List;
 
-import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,9 +25,10 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.consume.entity.AccountEntity;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.consume.domain.form.AccountAddForm;
 import net.lab1024.sa.consume.domain.form.AccountUpdateForm;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.service.AccountService;
 
 /**
@@ -72,37 +72,23 @@ public class AccountController {
      * @param form 账户创建表单
      * @return 账户ID
      * @apiNote 示例请求：
-     * <pre>
+     * 
+     *          <pre>
      * {
      *   "userId": 1001,
      *   "accountKindId": 1,
      *   "initialBalance": 100.00
      * }
-     * </pre>
+     *          </pre>
      */
     @PostMapping("/add")
     @Observed(name = "account.createAccount", contextualName = "account-create-account")
-    @Operation(
-        summary = "创建账户",
-        description = "为指定用户创建新的消费账户，支持设置初始余额和账户类型。如果用户已有账户，将返回错误。",
-        tags = {"账户管理"}
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "创建成功，返回账户ID",
-        content = @io.swagger.v3.oas.annotations.media.Content(
-            mediaType = "application/json",
-            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Long.class)
-        )
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "400",
-        description = "账户已存在或参数错误"
-    )
+    @Operation(summary = "创建账户", description = "为指定用户创建新的消费账户，支持设置初始余额和账户类型。如果用户已有账户，将返回错误。", tags = { "账户管理" })
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "创建成功，返回账户ID", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Long.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "账户已存在或参数错误")
     @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<Long> createAccount(
-            @Parameter(description = "账户创建表单", required = true)
-            @Valid @RequestBody AccountAddForm form) {
+            @Parameter(description = "账户创建表单", required = true) @Valid @RequestBody AccountAddForm form) {
         log.info("[账户管理] 创建账户请求，userId={}, accountKindId={}",
                 form.getUserId(), form.getAccountKindId());
         try {
@@ -115,7 +101,8 @@ public class AccountController {
             log.warn("[账户管理] 创建账户业务异常，userId={}, code={}, message={}", form.getUserId(), e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[账户管理] 创建账户系统异常，userId={}, code={}, message={}", form.getUserId(), e.getCode(), e.getMessage(), e);
+            log.error("[账户管理] 创建账户系统异常，userId={}, code={}, message={}", form.getUserId(), e.getCode(), e.getMessage(),
+                    e);
             return ResponseDTO.error("CREATE_ACCOUNT_SYSTEM_ERROR", "创建账户失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("[账户管理] 创建账户未知异常，userId={}", form.getUserId(), e);
@@ -142,10 +129,12 @@ public class AccountController {
             log.warn("[账户管理] 更新账户参数错误，accountId={}, error={}", form.getAccountId(), e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[账户管理] 更新账户业务异常，accountId={}, code={}, message={}", form.getAccountId(), e.getCode(), e.getMessage());
+            log.warn("[账户管理] 更新账户业务异常，accountId={}, code={}, message={}", form.getAccountId(), e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[账户管理] 更新账户系统异常，accountId={}, code={}, message={}", form.getAccountId(), e.getCode(), e.getMessage(), e);
+            log.error("[账户管理] 更新账户系统异常，accountId={}, code={}, message={}", form.getAccountId(), e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("UPDATE_ACCOUNT_SYSTEM_ERROR", "更新账户失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("[账户管理] 更新账户未知异常，accountId={}", form.getAccountId(), e);
@@ -164,27 +153,12 @@ public class AccountController {
      */
     @GetMapping("/{id}")
     @Observed(name = "account.getAccountById", contextualName = "account-get-account-by-id")
-    @Operation(
-        summary = "查询账户详情",
-        description = "根据账户ID查询账户的完整信息，包括余额、状态、账户类型、创建时间等详细信息。",
-        tags = {"账户管理"}
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "查询成功",
-        content = @io.swagger.v3.oas.annotations.media.Content(
-            mediaType = "application/json",
-            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = AccountEntity.class)
-        )
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "404",
-        description = "账户不存在"
-    )
-    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
+    @Operation(summary = "查询账户详情", description = "根据账户ID查询账户的完整信息，包括余额、状态、账户类型、创建时间等详细信息。", tags = { "账户管理" })
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = AccountEntity.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "账户不存在")
+    @PermissionCheck(value = { "CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE" }, description = "账户管理和使用操作")
     public ResponseDTO<AccountEntity> getAccountById(
-            @Parameter(description = "账户ID", required = true, example = "2001")
-            @PathVariable Long id) {
+            @Parameter(description = "账户ID", required = true, example = "2001") @PathVariable Long id) {
         log.info("[账户管理] 查询账户详情，accountId={}", id);
         try {
             AccountEntity account = accountService.getById(id);
@@ -216,7 +190,7 @@ public class AccountController {
     @GetMapping("/user/{userId}")
     @Observed(name = "account.getAccountByUserId", contextualName = "account-get-account-by-user-id")
     @Operation(summary = "根据用户ID查询账户", description = "根据用户ID查询账户信息")
-    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
+    @PermissionCheck(value = { "CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE" }, description = "账户管理和使用操作")
     public ResponseDTO<AccountEntity> getAccountByUserId(@PathVariable Long userId) {
         log.info("[账户管理] 根据用户ID查询账户，userId={}", userId);
         try {
@@ -246,12 +220,12 @@ public class AccountController {
      * 严格遵循RESTful规范：查询操作使用GET方法
      * </p>
      *
-     * @param pageNum 页码（从1开始）
-     * @param pageSize 每页大小
-     * @param keyword 关键词（可选）
-     * @param userId 用户ID（可选）
+     * @param pageNum       页码（从1开始）
+     * @param pageSize      每页大小
+     * @param keyword       关键词（可选）
+     * @param userId        用户ID（可选）
      * @param accountKindId 账户类别ID（可选）
-     * @param status 账户状态（可选）
+     * @param status        账户状态（可选）
      * @return 账户列表
      */
     @GetMapping("/query")
@@ -259,18 +233,12 @@ public class AccountController {
     @Operation(summary = "分页查询账户列表", description = "分页查询账户列表，支持多条件筛选")
     @PermissionCheck(value = "CONSUME_ACCOUNT_MANAGE", description = "账户管理操作")
     public ResponseDTO<PageResult<AccountEntity>> queryAccounts(
-            @Parameter(description = "页码（从1开始）")
-            @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "每页大小")
-            @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "关键词（账户名称、用户名称）")
-            @RequestParam(required = false) String keyword,
-            @Parameter(description = "用户ID（可选）")
-            @RequestParam(required = false) Long userId,
-            @Parameter(description = "账户类别ID（可选）")
-            @RequestParam(required = false) Long accountKindId,
-            @Parameter(description = "账户状态（可选）")
-            @RequestParam(required = false) Integer status) {
+            @Parameter(description = "页码（从1开始）") @RequestParam(defaultValue = "1") Integer pageNum,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "20") Integer pageSize,
+            @Parameter(description = "关键词（账户名称、用户名称）") @RequestParam(required = false) String keyword,
+            @Parameter(description = "用户ID（可选）") @RequestParam(required = false) Long userId,
+            @Parameter(description = "账户类别ID（可选）") @RequestParam(required = false) Long accountKindId,
+            @Parameter(description = "账户状态（可选）") @RequestParam(required = false) Integer status) {
         log.info("[账户管理] 分页查询账户列表，pageNum={}, pageSize={}, keyword={}, userId={}, accountKindId={}, status={}",
                 pageNum, pageSize, keyword, userId, accountKindId, status);
         try {
@@ -282,10 +250,12 @@ public class AccountController {
             log.warn("[账户管理] 分页查询账户列表参数错误: pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[账户管理] 分页查询账户列表业务异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
+            log.warn("[账户管理] 分页查询账户列表业务异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize,
+                    e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[账户管理] 分页查询账户列表系统异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
+            log.error("[账户管理] 分页查询账户列表系统异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize,
+                    e.getCode(), e.getMessage(), e);
             return ResponseDTO.error("QUERY_ACCOUNTS_SYSTEM_ERROR", "查询账户列表失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("[账户管理] 分页查询账户列表未知异常: pageNum={}, pageSize={}", pageNum, pageSize, e);
@@ -330,8 +300,8 @@ public class AccountController {
      * 增加账户余额
      *
      * @param accountId 账户ID
-     * @param amount 增加金额（单位：元）
-     * @param remark 备注
+     * @param amount    增加金额（单位：元）
+     * @param remark    备注
      * @return 是否成功
      */
     @PostMapping("/balance/add")
@@ -350,10 +320,12 @@ public class AccountController {
             log.warn("[账户管理] 增加账户余额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[账户管理] 增加账户余额业务异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage());
+            log.warn("[账户管理] 增加账户余额业务异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[账户管理] 增加账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            log.error("[账户管理] 增加账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("ADD_BALANCE_SYSTEM_ERROR", "增加账户余额失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("[账户管理] 增加账户余额未知异常，accountId={}, amount={}", accountId, amount, e);
@@ -365,8 +337,8 @@ public class AccountController {
      * 扣减账户余额
      *
      * @param accountId 账户ID
-     * @param amount 扣减金额（单位：元）
-     * @param remark 备注
+     * @param amount    扣减金额（单位：元）
+     * @param remark    备注
      * @return 是否成功
      */
     @PostMapping("/balance/deduct")
@@ -385,10 +357,12 @@ public class AccountController {
             log.warn("[账户管理] 扣减账户余额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[账户管理] 扣减账户余额业务异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage());
+            log.warn("[账户管理] 扣减账户余额业务异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[账户管理] 扣减账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            log.error("[账户管理] 扣减账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("DEDUCT_BALANCE_SYSTEM_ERROR", "扣减账户余额失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("[账户管理] 扣减账户余额未知异常，accountId={}, amount={}", accountId, amount, e);
@@ -403,8 +377,8 @@ public class AccountController {
      * </p>
      *
      * @param accountId 账户ID
-     * @param amount 冻结金额（单位：元）
-     * @param remark 备注
+     * @param amount    冻结金额（单位：元）
+     * @param remark    备注
      * @return 是否成功
      */
     @PutMapping("/balance/freeze")
@@ -423,10 +397,12 @@ public class AccountController {
             log.warn("[账户管理] 冻结账户余额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[账户管理] 冻结账户余额业务异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage());
+            log.warn("[账户管理] 冻结账户余额业务异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[账户管理] 冻结账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            log.error("[账户管理] 冻结账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("FREEZE_BALANCE_SYSTEM_ERROR", "冻结账户余额失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("[账户管理] 冻结账户余额未知异常，accountId={}, amount={}", accountId, amount, e);
@@ -441,8 +417,8 @@ public class AccountController {
      * </p>
      *
      * @param accountId 账户ID
-     * @param amount 解冻金额（单位：元）
-     * @param remark 备注
+     * @param amount    解冻金额（单位：元）
+     * @param remark    备注
      * @return 是否成功
      */
     @PutMapping("/balance/unfreeze")
@@ -461,10 +437,12 @@ public class AccountController {
             log.warn("[账户管理] 解冻账户余额参数错误，accountId={}, amount={}, error={}", accountId, amount, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[账户管理] 解冻账户余额业务异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage());
+            log.warn("[账户管理] 解冻账户余额业务异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[账户管理] 解冻账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(), e.getMessage(), e);
+            log.error("[账户管理] 解冻账户余额系统异常，accountId={}, amount={}, code={}, message={}", accountId, amount, e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("UNFREEZE_BALANCE_SYSTEM_ERROR", "解冻账户余额失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("[账户管理] 解冻账户余额未知异常，accountId={}, amount={}", accountId, amount, e);
@@ -650,7 +628,7 @@ public class AccountController {
     @GetMapping("/balance/{accountId}")
     @Observed(name = "account.getAccountBalance", contextualName = "account-get-account-balance")
     @Operation(summary = "获取账户余额", description = "获取指定账户的余额")
-    @PermissionCheck(value = {"CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE"}, description = "账户管理和使用操作")
+    @PermissionCheck(value = { "CONSUME_ACCOUNT_MANAGE", "CONSUME_ACCOUNT_USE" }, description = "账户管理和使用操作")
     public ResponseDTO<BigDecimal> getAccountBalance(@PathVariable Long accountId) {
         log.info("[账户管理] 获取账户余额，accountId={}", accountId);
         try {
@@ -680,32 +658,18 @@ public class AccountController {
      * @param userId 用户ID
      * @return 账户余额（单位：元）
      * @apiNote 示例请求：
-     * <pre>
-     * GET /api/v1/consume/account/balance/user/1001
-     * </pre>
+     * 
+     *          <pre>
+     *          GET / api / v1 / consume / account / balance / user / 1001
+     *          </pre>
      */
     @GetMapping("/balance/user/{userId}")
     @Observed(name = "account.getAccountBalanceByUserId", contextualName = "account-get-account-balance-by-user-id")
-    @Operation(
-        summary = "通过用户ID获取账户余额",
-        description = "用于设备协议推送余额查询，根据用户ID查询账户余额",
-        tags = {"账户管理", "设备协议"}
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "查询成功",
-        content = @io.swagger.v3.oas.annotations.media.Content(
-            mediaType = "application/json",
-            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = BigDecimal.class)
-        )
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "400",
-        description = "参数错误或账户不存在"
-    )
+    @Operation(summary = "通过用户ID获取账户余额", description = "用于设备协议推送余额查询，根据用户ID查询账户余额", tags = { "账户管理", "设备协议" })
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = BigDecimal.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "参数错误或账户不存在")
     public ResponseDTO<BigDecimal> getAccountBalanceByUserId(
-            @Parameter(description = "用户ID", required = true, example = "1001")
-            @PathVariable Long userId) {
+            @Parameter(description = "用户ID", required = true, example = "1001") @PathVariable Long userId) {
         log.info("[账户管理] 通过用户ID获取账户余额，userId={}", userId);
 
         try {
@@ -763,7 +727,8 @@ public class AccountController {
             log.warn("[账户管理] 批量查询账户信息业务异常，accountIds={}, code={}, message={}", accountIds, e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[账户管理] 批量查询账户信息系统异常，accountIds={}, code={}, message={}", accountIds, e.getCode(), e.getMessage(), e);
+            log.error("[账户管理] 批量查询账户信息系统异常，accountIds={}, code={}, message={}", accountIds, e.getCode(), e.getMessage(),
+                    e);
             return ResponseDTO.error("BATCH_QUERY_ACCOUNTS_SYSTEM_ERROR", "批量查询账户信息失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("[账户管理] 批量查询账户信息未知异常，accountIds={}", accountIds, e);
@@ -771,7 +736,3 @@ public class AccountController {
         }
     }
 }
-
-
-
-

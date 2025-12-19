@@ -25,7 +25,8 @@ public class SupplementApplicationQueryRequest {
     @Schema(description = "用户ID", example = "1001")
     private Long userId;
 
-    @Schema(description = "申请状态", example = "pending", allowableValues = {"pending", "approved", "rejected", "cancelled"})
+    @Schema(description = "申请状态", example = "pending", allowableValues = { "pending", "approved", "rejected",
+            "cancelled" })
     private String applicationStatus;
 
     @Schema(description = "开始日期", example = "2025-12-01")
@@ -34,4 +35,3 @@ public class SupplementApplicationQueryRequest {
     @Schema(description = "结束日期", example = "2025-12-31")
     private String endDate;
 }
-

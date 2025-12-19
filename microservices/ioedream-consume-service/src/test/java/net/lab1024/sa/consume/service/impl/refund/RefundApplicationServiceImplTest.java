@@ -79,14 +79,16 @@ class RefundApplicationServiceImplTest {
         mockEntity.setDeletedFlag(0);  // 修复：deletedFlag是Integer类型，0表示未删除
 
         mockPaymentRecord = new PaymentRecordEntity();
-        mockPaymentRecord.setPaymentId("PAY001");
+        // paymentId 为 Long（DB主键），测试使用可解析的数值
+        mockPaymentRecord.setPaymentId(1L);
+        mockPaymentRecord.setPaymentNo("PAY001");
         mockPaymentRecord.setOrderNo("ORDER001");
         mockPaymentRecord.setTransactionNo("TXN001");
         mockPaymentRecord.setPaymentAmount(new BigDecimal("100.00"));
         mockPaymentRecord.setActualAmount(new BigDecimal("100.00"));
         mockPaymentRecord.setPaymentStatus(3); // 3=支付成功
-        mockPaymentRecord.setPaymentMethod(3); // 3=支付宝
-        mockPaymentRecord.setPaymentChannel(3); // 3=移动端
+        mockPaymentRecord.setPaymentMethod("ALIPAY"); // 支付宝
+        mockPaymentRecord.setPaymentChannel("MOBILE"); // 移动端
         mockPaymentRecord.setBusinessType(1); // 1=消费
         mockPaymentRecord.setDeviceId("DEV001");
         mockPaymentRecord.setUserId(1001L);
@@ -152,7 +154,7 @@ class RefundApplicationServiceImplTest {
         String approvalComment = "Approved";
 
         when(refundApplicationDao.selectByRefundNo(refundNo)).thenReturn(mockEntity);
-        when(paymentRecordDao.selectById(anyString())).thenReturn(mockPaymentRecord);
+        when(paymentRecordDao.selectById(any())).thenReturn(mockPaymentRecord);
         when(refundApplicationDao.updateById(any(RefundApplicationEntity.class))).thenReturn(1);
 
         // When

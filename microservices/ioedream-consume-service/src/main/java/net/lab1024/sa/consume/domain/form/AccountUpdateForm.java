@@ -43,8 +43,25 @@ public class AccountUpdateForm {
      * 备注
      */
     private String remark;
+
+    /**
+     * 获取账户ID
+     * <p>
+     * Lombok @Data 应该自动生成，但为了确保编译通过，手动添加
+     * </p>
+     *
+     * @return 账户ID
+     */
+    public Long getAccountId() {
+        return this.accountId;
+    }
+
+    /**
+     * 设置账户ID
+     *
+     * @param accountId 账户ID
+     */
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
 }
-
-
-
-

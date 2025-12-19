@@ -1,16 +1,16 @@
 package net.lab1024.sa.consume.manager;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.dao.MealOrderDao;
-import net.lab1024.sa.consume.dao.MealOrderItemDao;
-import net.lab1024.sa.consume.entity.MealOrderEntity;
-import net.lab1024.sa.consume.entity.MealOrderItemEntity;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.consume.dao.MealOrderDao;
+import net.lab1024.sa.consume.dao.MealOrderItemDao;
+import net.lab1024.sa.consume.entity.MealOrderEntity;
+import net.lab1024.sa.consume.entity.MealOrderItemEntity;
 
 /**
  * 订餐管理器
@@ -74,8 +74,8 @@ public class MealOrderManager {
         order.setAmount(totalAmount);
         order.setActualAmount(totalAmount);
 
-        // 设置默认值
-        order.setStatus("PENDING");
+        // 设置默认值（状态：1-待支付 2-已支付 3-已取餐 4-已取消）
+        order.setStatus(1); // 1-待支付
         order.setCreateTime(LocalDateTime.now());
         order.setUpdateTime(LocalDateTime.now());
         order.setDeleted(false);
@@ -109,16 +109,20 @@ public class MealOrderManager {
             return BigDecimal.ZERO;
         }
         return items.stream()
-                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(item -> {
+                    BigDecimal price = item.getPrice() != null ? item.getPrice() : BigDecimal.ZERO;
+                    Integer quantity = item.getQuantity() != null ? item.getQuantity() : 0;
+                    return price.multiply(BigDecimal.valueOf(quantity));
+                })
+                .reduce(BigDecimal.ZERO, (sum, amount) -> sum.add(amount));
     }
 
     /**
      * 核销订单（取餐）
      *
-     * @param orderId 订单ID
+     * @param orderId      订单ID
      * @param pickupMethod 取餐方式
-     * @param deviceId 设备ID
+     * @param deviceId     设备ID
      * @return 是否成功
      */
     public boolean verifyOrder(Long orderId, String pickupMethod, Long deviceId) {
@@ -131,8 +135,11 @@ public class MealOrderManager {
             return false;
         }
 
-        if (!"PENDING".equals(order.getStatus())) {
-            log.warn("[订餐管理] 订单状态不正确，orderId={}, status={}", orderId, order.getStatus());
+        // 订单状态：1-待支付 2-已支付 3-已取餐 4-已取消
+        // 只有状态为1（待支付）的订单才能核销
+        Integer orderStatus = order.getStatus();
+        if (orderStatus == null || !orderStatus.equals(1)) {
+            log.warn("[订餐管理] 订单状态不正确，orderId={}, status={}", orderId, orderStatus);
             return false;
         }
 
@@ -157,7 +164,7 @@ public class MealOrderManager {
      * 取消订单
      *
      * @param orderId 订单ID
-     * @param reason 取消原因
+     * @param reason  取消原因
      * @return 是否成功
      */
     public boolean cancelOrder(Long orderId, String reason) {
@@ -169,7 +176,7 @@ public class MealOrderManager {
             return false;
         }
 
-        if (!"PENDING".equals(order.getStatus())) {
+        if (order.getStatus() == null || order.getStatus() != 1) { // 1-待支付
             log.warn("[订餐管理] 订单状态不正确，无法取消，orderId={}, status={}", orderId, order.getStatus());
             return false;
         }
@@ -200,9 +207,9 @@ public class MealOrderManager {
     /**
      * 获取订餐统计
      *
-     * @param areaId 区域ID
+     * @param areaId     区域ID
      * @param mealTypeId 餐别ID
-     * @param orderDate 订餐日期
+     * @param orderDate  订餐日期
      * @return 订餐数量
      */
     public int getOrderCount(Long areaId, Long mealTypeId, LocalDateTime orderDate) {

@@ -14,14 +14,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileFaceForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileNfcForm;
-import net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm;
-import net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileQuickForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileScanForm;
+import net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm;
+import net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeDeviceConfigVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileMealVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileResultVO;
@@ -33,15 +37,11 @@ import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeSyncDataVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeSyncResultVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeValidateResultVO;
-import net.lab1024.sa.consume.service.ConsumeMobileService;
-import net.lab1024.sa.consume.dao.ConsumeRecordDao;
-import net.lab1024.sa.consume.dao.PaymentRecordDao;
-import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
-import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.domain.vo.MobileBillDetailVO;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
+import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.service.ConsumeMobileService;
 
 /**
  * 消费移动端服务实现类
@@ -248,7 +248,8 @@ public class ConsumeMobileServiceImpl implements ConsumeMobileService {
             stats.setMonthCount(monthCount);
             stats.setMonthAmount(monthAmount);
 
-            log.info("[消费移动端] 获取用户统计成功，userId={}, totalCount={}, totalAmount={}, todayCount={}, todayAmount={}, monthCount={}, monthAmount={}",
+            log.info(
+                    "[消费移动端] 获取用户统计成功，userId={}, totalCount={}, totalAmount={}, todayCount={}, todayAmount={}, monthCount={}, monthAmount={}",
                     userId, totalCount, totalAmount, todayCount, todayAmount, monthCount, monthAmount);
 
             return stats;
@@ -327,20 +328,24 @@ public class ConsumeMobileServiceImpl implements ConsumeMobileService {
         MobileBillDetailVO billDetail = new MobileBillDetailVO();
 
         // 基本信息
-        billDetail.setOrderId(consumeRecord.getOrderNo() != null ? consumeRecord.getOrderNo() : consumeRecord.getTransactionNo());
+        billDetail.setOrderId(
+                consumeRecord.getOrderNo() != null ? consumeRecord.getOrderNo() : consumeRecord.getTransactionNo());
         billDetail.setBillNumber(consumeRecord.getTransactionNo());
         billDetail.setTransactionNumber(consumeRecord.getTransactionNo());
 
         // 金额信息
         billDetail.setAmount(consumeRecord.getAmount() != null ? consumeRecord.getAmount() : BigDecimal.ZERO);
         billDetail.setOriginalAmount(consumeRecord.getAmount() != null ? consumeRecord.getAmount() : BigDecimal.ZERO);
-        billDetail.setDiscountAmount(consumeRecord.getDiscountAmount() != null ? consumeRecord.getDiscountAmount() : BigDecimal.ZERO);
-        billDetail.setActualAmount(consumeRecord.getActualAmount() != null ? consumeRecord.getActualAmount() : consumeRecord.getAmount());
+        billDetail.setDiscountAmount(
+                consumeRecord.getDiscountAmount() != null ? consumeRecord.getDiscountAmount() : BigDecimal.ZERO);
+        billDetail.setActualAmount(
+                consumeRecord.getActualAmount() != null ? consumeRecord.getActualAmount() : consumeRecord.getAmount());
 
         // 如果有支付记录，使用支付记录的金额信息
         if (paymentRecord != null) {
             billDetail.setFee(paymentRecord.getPaymentFee() != null ? paymentRecord.getPaymentFee() : BigDecimal.ZERO);
-            billDetail.setActualAmount(paymentRecord.getPaymentAmount() != null ? paymentRecord.getPaymentAmount() : billDetail.getActualAmount());
+            billDetail.setActualAmount(paymentRecord.getPaymentAmount() != null ? paymentRecord.getPaymentAmount()
+                    : billDetail.getActualAmount());
             // PaymentRecordEntity没有discountAmount字段，保持原有值
         } else {
             billDetail.setFee(BigDecimal.ZERO);
@@ -355,13 +360,18 @@ public class ConsumeMobileServiceImpl implements ConsumeMobileService {
         billDetail.setLocation(consumeRecord.getAreaName() != null ? consumeRecord.getAreaName() : "未知位置");
 
         // 时间信息
-        billDetail.setConsumeTime(consumeRecord.getConsumeTime() != null ? consumeRecord.getConsumeTime() : consumeRecord.getCreateTime());
+        billDetail.setConsumeTime(consumeRecord.getConsumeTime() != null ? consumeRecord.getConsumeTime()
+                : consumeRecord.getCreateTime());
         if (paymentRecord != null) {
-            billDetail.setPaymentTime(paymentRecord.getPaymentTime() != null ? paymentRecord.getPaymentTime() : paymentRecord.getCreateTime());
-            billDetail.setCompleteTime(paymentRecord.getCompleteTime() != null ? paymentRecord.getCompleteTime() : paymentRecord.getUpdateTime());
+            billDetail.setPaymentTime(paymentRecord.getPaymentTime() != null ? paymentRecord.getPaymentTime()
+                    : paymentRecord.getCreateTime());
+            billDetail.setCompleteTime(paymentRecord.getCompleteTime() != null ? paymentRecord.getCompleteTime()
+                    : paymentRecord.getUpdateTime());
         } else {
-            billDetail.setPaymentTime(consumeRecord.getPayTime() != null ? consumeRecord.getPayTime() : consumeRecord.getCreateTime());
-            billDetail.setCompleteTime(consumeRecord.getConsumeTime() != null ? consumeRecord.getConsumeTime() : consumeRecord.getCreateTime());
+            billDetail.setPaymentTime(
+                    consumeRecord.getPayTime() != null ? consumeRecord.getPayTime() : consumeRecord.getCreateTime());
+            billDetail.setCompleteTime(consumeRecord.getConsumeTime() != null ? consumeRecord.getConsumeTime()
+                    : consumeRecord.getCreateTime());
         }
 
         // 账户信息
@@ -373,8 +383,11 @@ public class ConsumeMobileServiceImpl implements ConsumeMobileService {
         // 支付方式
         String paymentMethod = consumeRecord.getPayMethod() != null ? consumeRecord.getPayMethod() : "BALANCE";
         if (paymentRecord != null && paymentRecord.getPaymentMethod() != null) {
-            // 将Integer支付方式转换为String
-            paymentMethod = convertPaymentMethodToString(paymentRecord.getPaymentMethod());
+            // 修复类型：PaymentRecordEntity.paymentMethod 为 String（可能是数字/枚举）
+            Integer paymentMethodCode = parsePaymentMethodCode(paymentRecord.getPaymentMethod());
+            paymentMethod = paymentMethodCode != null
+                    ? convertPaymentMethodToString(paymentMethodCode)
+                    : paymentRecord.getPaymentMethod();
         }
         billDetail.setPaymentMethod(paymentMethod);
 
@@ -382,7 +395,9 @@ public class ConsumeMobileServiceImpl implements ConsumeMobileService {
         String status = consumeRecord.getStatus() != null ? consumeRecord.getStatus() : "SUCCESS";
         if (paymentRecord != null) {
             // 将Integer支付状态转换为String
-            status = paymentRecord.getPaymentStatus() != null ? convertPaymentStatusToString(paymentRecord.getPaymentStatus()) : status;
+            status = paymentRecord.getPaymentStatus() != null
+                    ? convertPaymentStatusToString(paymentRecord.getPaymentStatus())
+                    : status;
         }
         billDetail.setStatus(status);
 
@@ -444,6 +459,41 @@ public class ConsumeMobileServiceImpl implements ConsumeMobileService {
     }
 
     /**
+     * 解析支付方式编码（String -> Integer）
+     *
+     * @param paymentMethod 支付方式（可能为数字字符串或枚举字符串）
+     * @return 支付方式编码；无法解析返回 null
+     */
+    private Integer parsePaymentMethodCode(String paymentMethod) {
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+            return null;
+        }
+        String trimmed = paymentMethod.trim();
+        try {
+            return Integer.valueOf(trimmed);
+        } catch (NumberFormatException ignore) {
+            // fall through
+        }
+
+        switch (trimmed.toUpperCase()) {
+            case "BALANCE":
+                return 1;
+            case "WECHAT":
+            case "WECHAT_PAY":
+                return 2;
+            case "ALIPAY":
+                return 3;
+            case "BANK":
+            case "BANK_CARD":
+                return 4;
+            case "CASH":
+                return 5;
+            default:
+                return null;
+        }
+    }
+
+    /**
      * 将Integer支付状态转换为String
      *
      * @param paymentStatus 支付状态整数
@@ -473,7 +523,3 @@ public class ConsumeMobileServiceImpl implements ConsumeMobileService {
         }
     }
 }
-
-
-
-

@@ -52,7 +52,10 @@ class PaymentRecordServiceImplTest {
     void setUp() {
         // Prepare test data
         mockPaymentRecord = new PaymentRecordEntity();
-        mockPaymentRecord.setPaymentId("PAY001");
+        // paymentId 为 Long（DB主键），测试使用可解析的数值
+        mockPaymentRecord.setPaymentId(1L);
+        // paymentNo 为业务侧编号（可读字符串）
+        mockPaymentRecord.setPaymentNo("PAY001");
         mockPaymentRecord.setTransactionNo("TXN001");
         mockPaymentRecord.setOrderNo("ORDER001");
         mockPaymentRecord.setUserId(100L);
@@ -60,8 +63,8 @@ class PaymentRecordServiceImplTest {
         mockPaymentRecord.setPaymentAmount(new BigDecimal("100.00"));
         mockPaymentRecord.setActualAmount(new BigDecimal("100.00"));
         mockPaymentRecord.setPaymentStatus(1); // 1=待支付
-        mockPaymentRecord.setPaymentMethod(3); // 3=支付宝
-        mockPaymentRecord.setPaymentChannel(3); // 3=移动端
+        mockPaymentRecord.setPaymentMethod("ALIPAY"); // 支付宝
+        mockPaymentRecord.setPaymentChannel("MOBILE"); // 移动端
         mockPaymentRecord.setBusinessType(1); // 1=消费
         mockPaymentRecord.setDeviceId("DEV001");
         mockPaymentRecord.setCreateTime(LocalDateTime.now());
@@ -72,7 +75,7 @@ class PaymentRecordServiceImplTest {
     @DisplayName("Test getPaymentRecord - Success Scenario")
     void test_getPaymentRecord_Success() {
         // Given
-        String paymentId = "PAY001";
+        String paymentId = "1";
         when(paymentRecordDao.selectByPaymentId(paymentId)).thenReturn(mockPaymentRecord);
 
         // When
@@ -80,7 +83,7 @@ class PaymentRecordServiceImplTest {
 
         // Then
         assertNotNull(result);
-        assertEquals(paymentId, result.getPaymentId());
+        assertEquals(1L, result.getPaymentId());
         verify(paymentRecordDao, times(1)).selectByPaymentId(paymentId);
     }
 
@@ -104,14 +107,15 @@ class PaymentRecordServiceImplTest {
     void test_savePaymentRecord_Success() {
         // Given
         PaymentRecordEntity newRecord = new PaymentRecordEntity();
-        newRecord.setPaymentId("PAY002");
+        newRecord.setPaymentId(2L);
+        newRecord.setPaymentNo("PAY002");
         newRecord.setTransactionNo("TXN002");
         newRecord.setOrderNo("ORDER002");
         newRecord.setPaymentAmount(new BigDecimal("50.00"));
         newRecord.setActualAmount(new BigDecimal("50.00"));
         newRecord.setPaymentStatus(1); // 1=待支付
-        newRecord.setPaymentMethod(3); // 3=支付宝
-        newRecord.setPaymentChannel(3); // 3=移动端
+        newRecord.setPaymentMethod("ALIPAY"); // 支付宝
+        newRecord.setPaymentChannel("MOBILE"); // 移动端
         newRecord.setBusinessType(1); // 1=消费
         newRecord.setDeviceId("DEV001");
         newRecord.setUserId(1001L);
@@ -127,7 +131,7 @@ class PaymentRecordServiceImplTest {
 
         // Then
         assertNotNull(result);
-        assertEquals("PAY002", result.getPaymentId());
+        assertEquals(2L, result.getPaymentId());
         verify(paymentRecordDao, times(1)).insert(any(PaymentRecordEntity.class));
     }
 

@@ -2,9 +2,17 @@ package net.lab1024.sa.consume.service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +23,10 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.cache.CacheService;
 import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.recommend.RecommendationEngine;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
-import org.springframework.data.redis.core.RedisTemplate;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.entity.ConsumeAreaEntity;
 import net.lab1024.sa.consume.entity.ConsumeProductEntity;
@@ -33,15 +40,15 @@ import net.lab1024.sa.consume.manager.ConsumeAreaManager;
  * @Date 2025-12-05
  * @Copyright IOE-DREAM智慧园区一卡通管理平台
  *
- * 推荐功能：
- * - 菜品推荐（基于历史消费）
- * - 餐厅推荐（基于位置和偏好）
- * - 消费金额预测
- * - 优惠活动推荐
+ *            推荐功能：
+ *            - 菜品推荐（基于历史消费）
+ *            - 餐厅推荐（基于位置和偏好）
+ *            - 消费金额预测
+ *            - 优惠活动推荐
  */
 @Slf4j
 @Service
-@Transactional(readOnly = true)  // 推荐服务主要是查询操作，使用只读事务
+@Transactional(readOnly = true) // 推荐服务主要是查询操作，使用只读事务
 public class ConsumeRecommendService {
 
     @Resource
@@ -69,7 +76,7 @@ public class ConsumeRecommendService {
      * 推荐菜品
      *
      * @param userId 用户ID
-     * @param topN 推荐数量
+     * @param topN   推荐数量
      * @return 推荐菜品ID列表（带置信度）
      */
     public List<DishRecommendation> recommendDishes(Long userId, int topN) {
@@ -86,22 +93,19 @@ public class ConsumeRecommendService {
             Map<Long, Double> dishScores = loadDishPopularity();
 
             // 4. 混合推荐
-            List<RecommendationEngine.RecommendationResult> results =
-                recommendationEngine.hybridRecommendation(
+            List<RecommendationEngine.RecommendationResult> results = recommendationEngine.hybridRecommendation(
                     userId,
                     userDishBehaviors,
                     dishFeatures,
                     dishScores,
-                    topN
-                );
+                    topN);
 
             // 5. 转换为业务对象
             return results.stream()
                     .map(r -> new DishRecommendation(
                             r.getItemId(),
                             r.getConfidence(),
-                            "基于您的消费偏好推荐"
-                    ))
+                            "基于您的消费偏好推荐"))
                     .collect(Collectors.toList());
 
         } catch (IllegalArgumentException | net.lab1024.sa.common.exception.ParamException e) {
@@ -122,9 +126,9 @@ public class ConsumeRecommendService {
     /**
      * 推荐餐厅
      *
-     * @param userId 用户ID
+     * @param userId       用户ID
      * @param userLocation 用户位置（可选）
-     * @param topN 推荐数量
+     * @param topN         推荐数量
      * @return 推荐餐厅列表
      */
     public List<RestaurantRecommendation> recommendRestaurants(
@@ -145,21 +149,19 @@ public class ConsumeRecommendService {
             Map<Long, Double> restaurantScores = loadRestaurantRatings();
 
             // 4. 混合推荐
-            List<RecommendationEngine.RecommendationResult> results =
-                recommendationEngine.hybridRecommendation(
+            List<RecommendationEngine.RecommendationResult> results = recommendationEngine.hybridRecommendation(
                     userId,
                     userRestaurantBehaviors,
                     restaurantFeatures,
                     restaurantScores,
-                    topN * 2  // 先获取更多候选
-                );
+                    topN * 2 // 先获取更多候选
+            );
 
             // 5. 如果有位置信息，按距离排序
             if (userLocation != null) {
                 results = results.stream()
-                        .sorted(Comparator.comparing(r ->
-                            calculateDistance(userLocation, getRestaurantLocation(r.getItemId()))
-                        ))
+                        .sorted(Comparator
+                                .comparing(r -> calculateDistance(userLocation, getRestaurantLocation(r.getItemId()))))
                         .limit(topN)
                         .collect(Collectors.toList());
             } else {
@@ -170,8 +172,7 @@ public class ConsumeRecommendService {
                     .map(r -> new RestaurantRecommendation(
                             r.getItemId(),
                             r.getConfidence(),
-                            "综合评分推荐"
-                    ))
+                            "综合评分推荐"))
                     .collect(Collectors.toList());
 
         } catch (IllegalArgumentException | ParamException e) {
@@ -192,7 +193,7 @@ public class ConsumeRecommendService {
     /**
      * 预测消费金额
      *
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @param timeOfDay 时间段（早餐/午餐/晚餐）
      * @return 预测金额
      */
@@ -373,14 +374,14 @@ public class ConsumeRecommendService {
                         features.put("category", Math.abs(categoryHash % 100) / 100.0);
                     }
 
-                    // 是否推荐商品
-                    features.put("recommended", product.getIsRecommended() != null && product.getIsRecommended() ? 1.0 : 0.0);
+                    // 是否推荐商品（字段为0/1整型）
+                    features.put("recommended", Integer.valueOf(1).equals(product.getIsRecommended()) ? 1.0 : 0.0);
 
-                    // 是否热销商品
-                    features.put("hotSale", product.getIsHotSale() != null && product.getIsHotSale() ? 1.0 : 0.0);
+                    // 是否热销商品（字段为0/1整型）
+                    features.put("hotSale", Integer.valueOf(1).equals(product.getIsHotSale()) ? 1.0 : 0.0);
 
-                    // 是否新品
-                    features.put("isNew", product.getIsNew() != null && product.getIsNew() ? 1.0 : 0.0);
+                    // 是否新品（字段为0/1整型）
+                    features.put("isNew", Integer.valueOf(1).equals(product.getIsNew()) ? 1.0 : 0.0);
 
                     dishFeatures.put(productId, features);
 
@@ -490,7 +491,7 @@ public class ConsumeRecommendService {
      * 从数据库加载用户历史消费金额数据
      * 根据时间段（早餐/午餐/晚餐）查询用户的历史消费金额
      *
-     * @param userId   用户ID
+     * @param userId    用户ID
      * @param timeOfDay 时间段（BREAKFAST/LUNCH/DINNER）
      * @return 历史消费金额列表（按时间倒序）
      */
@@ -564,10 +565,12 @@ public class ConsumeRecommendService {
             log.error("[推荐服务] 加载用户历史消费金额参数错误: userId={}, timeOfDay={}, error={}", userId, timeOfDay, e.getMessage(), e);
             return new ArrayList<>();
         } catch (BusinessException e) {
-            log.error("[推荐服务] 加载用户历史消费金额业务异常: userId={}, timeOfDay={}, code={}, message={}", userId, timeOfDay, e.getCode(), e.getMessage(), e);
+            log.error("[推荐服务] 加载用户历史消费金额业务异常: userId={}, timeOfDay={}, code={}, message={}", userId, timeOfDay,
+                    e.getCode(), e.getMessage(), e);
             return new ArrayList<>();
         } catch (SystemException e) {
-            log.error("[推荐服务] 加载用户历史消费金额系统异常: userId={}, timeOfDay={}, code={}, message={}", userId, timeOfDay, e.getCode(), e.getMessage(), e);
+            log.error("[推荐服务] 加载用户历史消费金额系统异常: userId={}, timeOfDay={}, code={}, message={}", userId, timeOfDay,
+                    e.getCode(), e.getMessage(), e);
             return new ArrayList<>();
         } catch (Exception e) {
             log.error("[推荐服务] 加载用户历史消费金额未知异常: userId={}, timeOfDay={}", userId, timeOfDay, e);
@@ -637,10 +640,12 @@ public class ConsumeRecommendService {
             log.error("[推荐服务] 查询餐厅位置参数错误: restaurantId={}, error={}", restaurantId, e.getMessage(), e);
             return new Location(0.0, 0.0);
         } catch (BusinessException e) {
-            log.error("[推荐服务] 查询餐厅位置业务异常: restaurantId={}, code={}, message={}", restaurantId, e.getCode(), e.getMessage(), e);
+            log.error("[推荐服务] 查询餐厅位置业务异常: restaurantId={}, code={}, message={}", restaurantId, e.getCode(),
+                    e.getMessage(), e);
             return new Location(0.0, 0.0);
         } catch (SystemException e) {
-            log.error("[推荐服务] 查询餐厅位置系统异常: restaurantId={}, code={}, message={}", restaurantId, e.getCode(), e.getMessage(), e);
+            log.error("[推荐服务] 查询餐厅位置系统异常: restaurantId={}, code={}, message={}", restaurantId, e.getCode(),
+                    e.getMessage(), e);
             return new Location(0.0, 0.0);
         } catch (Exception e) {
             log.error("[推荐服务] 查询餐厅位置未知异常: restaurantId={}", restaurantId, e);
@@ -715,9 +720,17 @@ public class ConsumeRecommendService {
             this.reason = reason;
         }
 
-        public Long getDishId() { return dishId; }
-        public Double getConfidence() { return confidence; }
-        public String getReason() { return reason; }
+        public Long getDishId() {
+            return dishId;
+        }
+
+        public Double getConfidence() {
+            return confidence;
+        }
+
+        public String getReason() {
+            return reason;
+        }
     }
 
     public static class RestaurantRecommendation {
@@ -731,9 +744,17 @@ public class ConsumeRecommendService {
             this.reason = reason;
         }
 
-        public Long getRestaurantId() { return restaurantId; }
-        public Double getConfidence() { return confidence; }
-        public String getReason() { return reason; }
+        public Long getRestaurantId() {
+            return restaurantId;
+        }
+
+        public Double getConfidence() {
+            return confidence;
+        }
+
+        public String getReason() {
+            return reason;
+        }
     }
 
     public static class Location {
@@ -745,11 +766,12 @@ public class ConsumeRecommendService {
             this.longitude = longitude;
         }
 
-        public Double getLatitude() { return latitude; }
-        public Double getLongitude() { return longitude; }
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public Double getLongitude() {
+            return longitude;
+        }
     }
 }
-
-
-
-

@@ -1,10 +1,5 @@
 package net.lab1024.sa.consume.manager;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.domain.vo.MobileConsumeStatisticsVO;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.exception.SystemException;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,13 +9,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.consume.domain.vo.MobileConsumeStatisticsVO;
+
 /**
  * 移动端消费统计Manager
  *
- * <p>按照四层架构规范，Manager层负责复杂业务流程编排和多DAO数据组装</p>
- * <p>严格遵循CLAUDE.md全局架构规范：</p>
- * <p>- microservices-common中的Manager类为纯Java类，不使用Spring注解</p>
- * <p>- 通过构造函数注入依赖，保持为纯Java类</p>
+ * <p>
+ * 按照四层架构规范，Manager层负责复杂业务流程编排和多DAO数据组装
+ * </p>
+ * <p>
+ * 严格遵循CLAUDE.md全局架构规范：
+ * </p>
+ * <p>
+ * - microservices-common中的Manager类为纯Java类，不使用Spring注解
+ * </p>
+ * <p>
+ * - 通过构造函数注入依赖，保持为纯Java类
+ * </p>
  *
  * @author IOE-DREAM架构团队
  * @version 1.0.0
@@ -28,6 +39,8 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 public class MobileConsumeStatisticsManager {
+
+    private static final Logger log = LoggerFactory.getLogger(MobileConsumeStatisticsManager.class);
 
     private final GatewayServiceClient gatewayServiceClient;
 
@@ -39,14 +52,14 @@ public class MobileConsumeStatisticsManager {
     /**
      * 获取移动端消费统计数据
      *
-     * @param userId 用户ID
+     * @param userId         用户ID
      * @param statisticsType 统计类型：daily(日)、weekly(周)、monthly(月)
-     * @param startDate 开始日期
-     * @param endDate 结束日期
+     * @param startDate      开始日期
+     * @param endDate        结束日期
      * @return 消费统计数据
      */
     public MobileConsumeStatisticsVO getConsumeStatistics(Long userId, String statisticsType,
-                                                        LocalDateTime startDate, LocalDateTime endDate) {
+            LocalDateTime startDate, LocalDateTime endDate) {
         log.info("[消费统计Manager] 开始统计, userId={}, statisticsType={}, startDate={}, endDate={}",
                 userId, statisticsType, startDate, endDate);
 
@@ -61,14 +74,14 @@ public class MobileConsumeStatisticsManager {
             TimeRange timeRange = getTimeRange(statisticsType, startDate, endDate);
 
             // 4. 并行查询消费数据（通过网关调用consume-service）
-            CompletableFuture<List<Map<String, Object>>> todayFuture = CompletableFuture.supplyAsync(() ->
-                    getConsumeRecordsByDateRange(userId, timeRange.getTodayStart(), timeRange.getTodayEnd()));
+            CompletableFuture<List<Map<String, Object>>> todayFuture = CompletableFuture.supplyAsync(
+                    () -> getConsumeRecordsByDateRange(userId, timeRange.getTodayStart(), timeRange.getTodayEnd()));
 
-            CompletableFuture<List<Map<String, Object>>> weekFuture = CompletableFuture.supplyAsync(() ->
-                    getConsumeRecordsByDateRange(userId, timeRange.getWeekStart(), timeRange.getWeekEnd()));
+            CompletableFuture<List<Map<String, Object>>> weekFuture = CompletableFuture.supplyAsync(
+                    () -> getConsumeRecordsByDateRange(userId, timeRange.getWeekStart(), timeRange.getWeekEnd()));
 
-            CompletableFuture<List<Map<String, Object>>> monthFuture = CompletableFuture.supplyAsync(() ->
-                    getConsumeRecordsByDateRange(userId, timeRange.getMonthStart(), timeRange.getMonthEnd()));
+            CompletableFuture<List<Map<String, Object>>> monthFuture = CompletableFuture.supplyAsync(
+                    () -> getConsumeRecordsByDateRange(userId, timeRange.getMonthStart(), timeRange.getMonthEnd()));
 
             // 5. 等待所有查询完成并计算统计数据
             List<Map<String, Object>> todayRecords = todayFuture.join();
@@ -92,7 +105,8 @@ public class MobileConsumeStatisticsManager {
     /**
      * 验证参数并设置默认值
      */
-    private void validateAndSetDefaultParameters(String statisticsType, LocalDateTime startDate, LocalDateTime endDate) {
+    private void validateAndSetDefaultParameters(String statisticsType, LocalDateTime startDate,
+            LocalDateTime endDate) {
         if (statisticsType == null || statisticsType.trim().isEmpty()) {
             throw new IllegalArgumentException("统计类型不能为空");
         }
@@ -132,8 +146,7 @@ public class MobileConsumeStatisticsManager {
                     "/api/v1/user/info/" + userId,
                     org.springframework.http.HttpMethod.GET,
                     null,
-                    String.class
-            ).getData();
+                    String.class).getData();
         } catch (Exception e) {
             log.warn("[消费统计Manager] 获取用户信息失败, userId={}, error={}", userId, e.getMessage());
             // 降级处理：用户信息获取失败不影响统计功能
@@ -214,7 +227,8 @@ public class MobileConsumeStatisticsManager {
      * 根据时间范围获取消费记录（通过网关调用consume-service）
      */
     @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> getConsumeRecordsByDateRange(Long userId, LocalDateTime startTime, LocalDateTime endTime) {
+    private List<Map<String, Object>> getConsumeRecordsByDateRange(Long userId, LocalDateTime startTime,
+            LocalDateTime endTime) {
         try {
             // 构建查询参数
             Map<String, Object> params = new HashMap<>();
@@ -227,8 +241,7 @@ public class MobileConsumeStatisticsManager {
                     "/api/v1/consume/records/query",
                     org.springframework.http.HttpMethod.POST,
                     params,
-                    List.class
-            ).getData();
+                    List.class).getData();
         } catch (Exception e) {
             log.error("[消费统计Manager] 查询消费记录失败, userId={}, startTime={}, endTime={}, error={}",
                     userId, startTime, endTime, e.getMessage(), e);
@@ -241,15 +254,16 @@ public class MobileConsumeStatisticsManager {
      * 构建统计数据
      */
     private MobileConsumeStatisticsVO buildStatistics(List<Map<String, Object>> todayRecords,
-                                                    List<Map<String, Object>> weekRecords,
-                                                    List<Map<String, Object>> monthRecords) {
+            List<Map<String, Object>> weekRecords,
+            List<Map<String, Object>> monthRecords) {
         MobileConsumeStatisticsVO statistics = new MobileConsumeStatisticsVO();
 
         // 今日统计
         @SuppressWarnings("null")
         BigDecimal todayAmount = todayRecords.stream()
                 .map(record -> new BigDecimal(record.getOrDefault("consumeAmount", "0").toString()))
-                .reduce(BigDecimal.ZERO, (a, b) -> a != null && b != null ? a.add(b) : (a != null ? a : (b != null ? b : BigDecimal.ZERO)));
+                .reduce(BigDecimal.ZERO, (a, b) -> a != null && b != null ? a.add(b)
+                        : (a != null ? a : (b != null ? b : BigDecimal.ZERO)));
         statistics.setTodayConsumeCount(todayRecords.size());
         statistics.setTodayConsumeAmount(todayAmount);
 
@@ -257,7 +271,8 @@ public class MobileConsumeStatisticsManager {
         @SuppressWarnings("null")
         BigDecimal weekAmount = weekRecords.stream()
                 .map(record -> new BigDecimal(record.getOrDefault("consumeAmount", "0").toString()))
-                .reduce(BigDecimal.ZERO, (a, b) -> a != null && b != null ? a.add(b) : (a != null ? a : (b != null ? b : BigDecimal.ZERO)));
+                .reduce(BigDecimal.ZERO, (a, b) -> a != null && b != null ? a.add(b)
+                        : (a != null ? a : (b != null ? b : BigDecimal.ZERO)));
         statistics.setWeekConsumeCount(weekRecords.size());
         statistics.setWeekConsumeAmount(weekAmount);
 
@@ -265,7 +280,8 @@ public class MobileConsumeStatisticsManager {
         @SuppressWarnings("null")
         BigDecimal monthAmount = monthRecords.stream()
                 .map(record -> new BigDecimal(record.getOrDefault("consumeAmount", "0").toString()))
-                .reduce(BigDecimal.ZERO, (a, b) -> a != null && b != null ? a.add(b) : (a != null ? a : (b != null ? b : BigDecimal.ZERO)));
+                .reduce(BigDecimal.ZERO, (a, b) -> a != null && b != null ? a.add(b)
+                        : (a != null ? a : (b != null ? b : BigDecimal.ZERO)));
         statistics.setMonthConsumeCount(monthRecords.size());
         statistics.setMonthConsumeAmount(monthAmount);
 
@@ -286,7 +302,3 @@ public class MobileConsumeStatisticsManager {
         private LocalDateTime monthEnd;
     }
 }
-
-
-
-

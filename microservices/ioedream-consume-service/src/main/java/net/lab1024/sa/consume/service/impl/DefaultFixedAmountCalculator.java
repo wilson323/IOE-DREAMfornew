@@ -5,6 +5,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.lab1024.sa.consume.entity.AccountEntity;
 
 /**
@@ -20,6 +22,8 @@ import net.lab1024.sa.consume.entity.AccountEntity;
  */
 @Slf4j
 public class DefaultFixedAmountCalculator {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultFixedAmountCalculator.class);
 
     /**
      * 计算定值消费金额

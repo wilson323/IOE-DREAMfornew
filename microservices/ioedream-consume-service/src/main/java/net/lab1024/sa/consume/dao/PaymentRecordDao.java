@@ -1,17 +1,19 @@
 package net.lab1024.sa.consume.dao;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.lab1024.sa.consume.entity.PaymentRecordEntity;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 
 /**
  * 支付记录数据访问层
@@ -31,12 +33,25 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
 
     /**
      * 根据支付订单号查询支付记录（主键查询的别名方法）
+     * <p>
+     * 根据chonggou.txt要求修复：PaymentRecordEntity主键id是Long类型，需要类型转换
+     * </p>
      *
-     * @param paymentId 支付订单号（主键）
+     * @param paymentId 支付订单号（String格式，需要转换为Long）
      * @return 支付记录
      */
     default PaymentRecordEntity selectByPaymentId(String paymentId) {
-        return selectById(paymentId);
+        if (paymentId == null || paymentId.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            // 类型转换：String转Long
+            Long paymentIdLong = Long.parseLong(paymentId);
+            return selectById(paymentIdLong);
+        } catch (NumberFormatException e) {
+            // 如果转换失败，返回null
+            return null;
+        }
     }
 
     /**
@@ -61,7 +76,7 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
      * 根据用户ID查询支付记录
      *
      * @param userId 用户ID
-     * @param limit 限制数量
+     * @param limit  限制数量
      * @return 支付记录列表
      */
     @Select("SELECT * FROM t_consume_payment_record WHERE user_id = #{userId} AND deleted_flag = 0 " +
@@ -71,38 +86,38 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
     /**
      * 根据用户ID和时间范围查询支付记录
      *
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return 支付记录列表
      */
     @Select("SELECT * FROM t_consume_payment_record WHERE user_id = #{userId} AND " +
             "create_time >= #{startTime} AND create_time <= #{endTime} AND deleted_flag = 0 " +
             "ORDER BY create_time DESC")
     List<PaymentRecordEntity> selectByUserIdAndTime(@Param("userId") Long userId,
-                                                    @Param("startTime") LocalDateTime startTime,
-                                                    @Param("endTime") LocalDateTime endTime);
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime);
 
     /**
      * 根据商户ID查询支付记录
      *
      * @param merchantId 商户ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param startTime  开始时间
+     * @param endTime    结束时间
      * @return 支付记录列表
      */
     @Select("SELECT * FROM t_consume_payment_record WHERE merchant_id = #{merchantId} AND " +
             "create_time >= #{startTime} AND create_time <= #{endTime} AND deleted_flag = 0 " +
             "ORDER BY create_time DESC")
     List<PaymentRecordEntity> selectByMerchantId(@Param("merchantId") Long merchantId,
-                                                 @Param("startTime") LocalDateTime startTime,
-                                                 @Param("endTime") LocalDateTime endTime);
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime);
 
     /**
      * 查询对账记录
      *
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param startTime  开始时间
+     * @param endTime    结束时间
      * @param merchantId 商户ID（可选）
      * @return 对账记录列表
      */
@@ -112,41 +127,41 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
             "AND (#{merchantId} IS NULL OR merchant_id = #{merchantId}) " +
             "ORDER BY create_time DESC")
     List<PaymentRecordEntity> selectForReconciliation(@Param("startTime") LocalDateTime startTime,
-                                                    @Param("endTime") LocalDateTime endTime,
-                                                    @Param("merchantId") Long merchantId);
+            @Param("endTime") LocalDateTime endTime,
+            @Param("merchantId") Long merchantId);
 
     /**
      * 分页查询支付记录
      *
-     * @param page 分页对象
-     * @param userId 用户ID（可选）
-     * @param merchantId 商户ID（可选）
+     * @param page          分页对象
+     * @param userId        用户ID（可选）
+     * @param merchantId    商户ID（可选）
      * @param paymentStatus 支付状态（可选）
-     * @param businessType 业务类型（可选）
+     * @param businessType  业务类型（可选）
      * @param paymentMethod 支付方式（可选）
-     * @param startTime 开始时间（可选）
-     * @param endTime 结束时间（可选）
+     * @param startTime     开始时间（可选）
+     * @param endTime       结束时间（可选）
      * @return 分页结果
      */
     default IPage<PaymentRecordEntity> selectPageByCondition(Page<PaymentRecordEntity> page,
-                                                           @Param("userId") Long userId,
-                                                           @Param("merchantId") Long merchantId,
-                                                           @Param("paymentStatus") Integer paymentStatus,
-                                                           @Param("businessType") Integer businessType,
-                                                           @Param("paymentMethod") Integer paymentMethod,
-                                                           @Param("startTime") LocalDateTime startTime,
-                                                           @Param("endTime") LocalDateTime endTime) {
+            @Param("userId") Long userId,
+            @Param("merchantId") Long merchantId,
+            @Param("paymentStatus") Integer paymentStatus,
+            @Param("businessType") Integer businessType,
+            @Param("paymentMethod") Integer paymentMethod,
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime) {
         LambdaQueryWrapper<PaymentRecordEntity> wrapper = new LambdaQueryWrapper<>();
 
         wrapper.eq(userId != null, PaymentRecordEntity::getUserId, userId)
-               .eq(merchantId != null, PaymentRecordEntity::getMerchantId, merchantId)
-               .eq(paymentStatus != null, PaymentRecordEntity::getPaymentStatus, paymentStatus)
-               .eq(businessType != null, PaymentRecordEntity::getBusinessType, businessType)
-               .eq(paymentMethod != null, PaymentRecordEntity::getPaymentMethod, paymentMethod)
-               .ge(startTime != null, PaymentRecordEntity::getCreateTime, startTime)
-               .le(endTime != null, PaymentRecordEntity::getCreateTime, endTime)
-               .eq(PaymentRecordEntity::getDeletedFlag, 0)
-               .orderByDesc(PaymentRecordEntity::getCreateTime);
+                .eq(merchantId != null, PaymentRecordEntity::getMerchantId, merchantId)
+                .eq(paymentStatus != null, PaymentRecordEntity::getPaymentStatus, paymentStatus)
+                .eq(businessType != null, PaymentRecordEntity::getBusinessType, businessType)
+                .eq(paymentMethod != null, PaymentRecordEntity::getPaymentMethod, paymentMethod)
+                .ge(startTime != null, PaymentRecordEntity::getCreateTime, startTime)
+                .le(endTime != null, PaymentRecordEntity::getCreateTime, endTime)
+                .eq(PaymentRecordEntity::getDeletedFlag, 0)
+                .orderByDesc(PaymentRecordEntity::getCreateTime);
 
         return selectPage(page, wrapper);
     }
@@ -154,24 +169,24 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
     /**
      * 查询用户支付统计
      *
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return 支付记录列表
      */
     @Select("SELECT * FROM t_consume_payment_record WHERE user_id = #{userId} AND " +
             "create_time >= #{startTime} AND create_time <= #{endTime} AND deleted_flag = 0 " +
             "ORDER BY create_time DESC")
     List<PaymentRecordEntity> selectUserPaymentStatistics(@Param("userId") Long userId,
-                                                          @Param("startTime") LocalDateTime startTime,
-                                                          @Param("endTime") LocalDateTime endTime);
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime);
 
     /**
      * 查询商户结算统计
      *
      * @param merchantId 商户ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param startTime  开始时间
+     * @param endTime    结束时间
      * @return 支付记录列表
      */
     @Select("SELECT * FROM t_consume_payment_record WHERE merchant_id = #{merchantId} AND " +
@@ -179,8 +194,8 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
             "payment_status = 3 AND deleted_flag = 0 " +
             "ORDER BY create_time DESC")
     List<PaymentRecordEntity> selectMerchantSettlementStatistics(@Param("merchantId") Long merchantId,
-                                                               @Param("startTime") LocalDateTime startTime,
-                                                               @Param("endTime") LocalDateTime endTime);
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime);
 
     /**
      * 查询待结算记录
@@ -220,8 +235,8 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
     /**
      * 统计支付记录
      *
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param startTime  开始时间
+     * @param endTime    结束时间
      * @param merchantId 商户ID（可选）
      * @return 统计结果
      */
@@ -237,14 +252,14 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
             "create_time >= #{startTime} AND create_time <= #{endTime} AND " +
             "(#{merchantId} IS NULL OR merchant_id = #{merchantId}) AND deleted_flag = 0")
     Map<String, Object> selectPaymentStatistics(@Param("startTime") LocalDateTime startTime,
-                                               @Param("endTime") LocalDateTime endTime,
-                                               @Param("merchantId") Long merchantId);
+            @Param("endTime") LocalDateTime endTime,
+            @Param("merchantId") Long merchantId);
 
     /**
      * 按支付方式统计
      *
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return 统计结果
      */
     @Select("SELECT " +
@@ -257,13 +272,13 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
             "payment_status = 3 AND deleted_flag = 0 " +
             "GROUP BY payment_method ORDER BY count DESC")
     List<Map<String, Object>> selectStatisticsByPaymentMethod(@Param("startTime") LocalDateTime startTime,
-                                                             @Param("endTime") LocalDateTime endTime);
+            @Param("endTime") LocalDateTime endTime);
 
     /**
      * 按业务类型统计
      *
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return 统计结果
      */
     @Select("SELECT " +
@@ -276,7 +291,7 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
             "payment_status = 3 AND deleted_flag = 0 " +
             "GROUP BY business_type ORDER BY count DESC")
     List<Map<String, Object>> selectStatisticsByBusinessType(@Param("startTime") LocalDateTime startTime,
-                                                             @Param("endTime") LocalDateTime endTime);
+            @Param("endTime") LocalDateTime endTime);
 
     /**
      * 按小时统计支付量
@@ -295,19 +310,39 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
 
     /**
      * 批量更新结算状态
+     * <p>
+     * 根据chonggou.txt要求修复：paymentIds是List<String>，需要转换为List<Long>
+     * </p>
      *
-     * @param paymentIds 支付记录ID列表
+     * @param paymentIds       支付记录ID列表（String格式，需要转换为Long）
      * @param settlementStatus 结算状态
      * @return 更新行数
      */
     default int updateSettlementStatusBatch(@Param("paymentIds") List<String> paymentIds,
-                                           @Param("settlementStatus") Integer settlementStatus) {
+            @Param("settlementStatus") Integer settlementStatus) {
         if (paymentIds == null || paymentIds.isEmpty()) {
             return 0;
         }
 
+        // 类型转换：List<String>转换为List<Long>
+        List<Long> paymentIdLongList = paymentIds.stream()
+                .filter(id -> id != null && !id.trim().isEmpty())
+                .map(id -> {
+                    try {
+                        return Long.parseLong(id);
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                })
+                .filter(id -> id != null)
+                .collect(java.util.stream.Collectors.toList());
+
+        if (paymentIdLongList.isEmpty()) {
+            return 0;
+        }
+
         LambdaQueryWrapper<PaymentRecordEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(PaymentRecordEntity::getPaymentId, paymentIds);
+        wrapper.in(PaymentRecordEntity::getPaymentId, paymentIdLongList);
 
         PaymentRecordEntity updateEntity = new PaymentRecordEntity();
         updateEntity.setSettlementStatus(settlementStatus);
@@ -320,19 +355,34 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
 
     /**
      * 软删除支付记录
+     * <p>
+     * 根据chonggou.txt要求修复：PaymentRecordEntity主键id是Long类型
+     * </p>
      *
-     * @param paymentId 支付记录ID
+     * @param paymentId 支付记录ID（String格式，需要转换为Long）
      * @return 删除行数
      */
+
     default int softDeleteById(@Param("paymentId") String paymentId) {
-        PaymentRecordEntity updateEntity = new PaymentRecordEntity();
-        updateEntity.setPaymentId(paymentId);
-        updateEntity.setDeletedFlag(1);
+        if (paymentId == null || paymentId.trim().isEmpty()) {
+            return 0;
+        }
 
-        LambdaQueryWrapper<PaymentRecordEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(PaymentRecordEntity::getPaymentId, paymentId);
+        try {
+            // 类型转换：String转Long
+            Long paymentIdLong = Long.parseLong(paymentId);
+            PaymentRecordEntity updateEntity = new PaymentRecordEntity();
+            updateEntity.setPaymentId(paymentIdLong);
+            updateEntity.setDeletedFlag(1);
 
-        return update(updateEntity, wrapper);
+            LambdaQueryWrapper<PaymentRecordEntity> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(PaymentRecordEntity::getPaymentId, paymentIdLong);
+
+            return update(updateEntity, wrapper);
+        } catch (NumberFormatException e) {
+            // 如果转换失败，返回0
+            return 0;
+        }
     }
 
     /**
@@ -353,7 +403,3 @@ public interface PaymentRecordDao extends BaseMapper<PaymentRecordEntity> {
     @Select("SELECT COUNT(1) FROM t_consume_payment_record WHERE transaction_no = #{transactionNo} AND deleted_flag = 0")
     int checkTransactionNoExists(@Param("transactionNo") String transactionNo);
 }
-
-
-
-

@@ -130,3 +130,7 @@ microservices/video-compile-result.txt
 microservices/ioedream-access-service/ioedream-access-service-backup/err2.txt
 microservices/ioedream-access-service-backup/compile-access.txt
 microservices/ioedream-access-service-backup/err2.txt
+chonggou.txt
+.gitignore
+.trae/documents/修复考勤服务缺失文件.md
+docs/IOE-DREAM全面企业级实施计划/ALIGNMENT_IOE-DREAM全面企业级实施计划.md

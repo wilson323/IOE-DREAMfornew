@@ -1,5 +1,24 @@
 package net.lab1024.sa.consume.controller;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,31 +32,30 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.consume.domain.vo.MobileConsumeStatisticsVO;
-import net.lab1024.sa.consume.domain.vo.MobileAccountInfoVO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.util.SmartRequestUtil;
-import net.lab1024.sa.consume.domain.dto.*;
-import net.lab1024.sa.consume.domain.vo.*;
-import net.lab1024.sa.consume.service.ConsumeService;
+import net.lab1024.sa.consume.domain.dto.ConsumeQueryDTO;
+import net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO;
+import net.lab1024.sa.consume.domain.dto.MobileQuickConsumeRequestDTO;
+import net.lab1024.sa.consume.domain.dto.MobileRechargeRequestDTO;
+import net.lab1024.sa.consume.domain.dto.MobileScanConsumeRequestDTO;
+import net.lab1024.sa.consume.domain.dto.RechargeRequestDTO;
+import net.lab1024.sa.consume.domain.vo.ConsumeRecordVO;
+import net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO;
+import net.lab1024.sa.consume.domain.vo.MobileAccountInfoVO;
+import net.lab1024.sa.consume.domain.vo.MobileBillDetailVO;
+import net.lab1024.sa.consume.domain.vo.MobileConsumeRecordVO;
+import net.lab1024.sa.consume.domain.vo.MobileConsumeResultVO;
+import net.lab1024.sa.consume.domain.vo.MobileConsumeStatisticsVO;
+import net.lab1024.sa.consume.domain.vo.MobileConsumeTypeVO;
+import net.lab1024.sa.consume.domain.vo.MobileDeviceInfoVO;
+import net.lab1024.sa.consume.domain.vo.MobileRechargeResultVO;
 import net.lab1024.sa.consume.service.ConsumeMobileService;
-import net.lab1024.sa.consume.service.MobileConsumeStatisticsService;
+import net.lab1024.sa.consume.service.ConsumeService;
 import net.lab1024.sa.consume.service.MobileAccountInfoService;
+import net.lab1024.sa.consume.service.MobileConsumeStatisticsService;
 import net.lab1024.sa.consume.util.PageResultConverter;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.http.HttpMethod;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 移动端消费控制器
@@ -101,10 +119,12 @@ public class MobileConsumeController {
             log.warn("[移动端快捷消费] 参数错误: orderId={}, error={}", request.getOrderId(), e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[移动端快捷消费] 业务异常: orderId={}, code={}, message={}", request.getOrderId(), e.getCode(), e.getMessage());
+            log.warn("[移动端快捷消费] 业务异常: orderId={}, code={}, message={}", request.getOrderId(), e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[移动端快捷消费] 系统异常: orderId={}, code={}, message={}", request.getOrderId(), e.getCode(), e.getMessage(), e);
+            log.error("[移动端快捷消费] 系统异常: orderId={}, code={}, message={}", request.getOrderId(), e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("MOBILE_CONSUME_SYSTEM_ERROR", "消费处理异常：" + e.getMessage());
         } catch (Exception e) {
             log.error("[移动端快捷消费] 未知异常: orderId={}", request.getOrderId(), e);
@@ -147,10 +167,12 @@ public class MobileConsumeController {
             log.warn("[移动端消费记录] 参数错误: pageNum={}, pageSize={}, error={}", pageNum, pageSize, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[移动端消费记录] 业务异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage());
+            log.warn("[移动端消费记录] 业务异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[移动端消费记录] 系统异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(), e.getMessage(), e);
+            log.error("[移动端消费记录] 系统异常: pageNum={}, pageSize={}, code={}, message={}", pageNum, pageSize, e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("MOBILE_QUERY_SYSTEM_ERROR", "查询消费记录异常：" + e.getMessage());
         } catch (Exception e) {
             log.error("[移动端消费记录] 未知异常: pageNum={}, pageSize={}", pageNum, pageSize, e);
@@ -188,10 +210,12 @@ public class MobileConsumeController {
             log.warn("[移动端消费统计] 参数错误: statisticsType={}, error={}", statisticsType, e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[移动端消费统计] 业务异常: statisticsType={}, code={}, message={}", statisticsType, e.getCode(), e.getMessage());
+            log.warn("[移动端消费统计] 业务异常: statisticsType={}, code={}, message={}", statisticsType, e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[移动端消费统计] 系统异常: statisticsType={}, code={}, message={}", statisticsType, e.getCode(), e.getMessage(), e);
+            log.error("[移动端消费统计] 系统异常: statisticsType={}, code={}, message={}", statisticsType, e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("MOBILE_STATISTICS_SYSTEM_ERROR", "获取消费统计异常：" + e.getMessage());
         } catch (Exception e) {
             log.error("[移动端消费统计] 未知异常: statisticsType={}", statisticsType, e);
@@ -260,13 +284,16 @@ public class MobileConsumeController {
                 return ResponseDTO.error(result.getCode(), result.getMessage());
             }
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[移动端账户充值] 参数错误: accountId={}, amount={}, error={}", request.getAccountId(), request.getAmount(), e.getMessage());
+            log.warn("[移动端账户充值] 参数错误: accountId={}, amount={}, error={}", request.getAccountId(), request.getAmount(),
+                    e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[移动端账户充值] 业务异常: accountId={}, amount={}, code={}, message={}", request.getAccountId(), request.getAmount(), e.getCode(), e.getMessage());
+            log.warn("[移动端账户充值] 业务异常: accountId={}, amount={}, code={}, message={}", request.getAccountId(),
+                    request.getAmount(), e.getCode(), e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[移动端账户充值] 系统异常: accountId={}, amount={}, code={}, message={}", request.getAccountId(), request.getAmount(), e.getCode(), e.getMessage(), e);
+            log.error("[移动端账户充值] 系统异常: accountId={}, amount={}, code={}, message={}", request.getAccountId(),
+                    request.getAmount(), e.getCode(), e.getMessage(), e);
             return ResponseDTO.error("MOBILE_RECHARGE_SYSTEM_ERROR", "充值处理异常：" + e.getMessage());
         } catch (Exception e) {
             log.error("[移动端账户充值] 未知异常: accountId={}, amount={}", request.getAccountId(), request.getAmount(), e);
@@ -310,7 +337,7 @@ public class MobileConsumeController {
     @Observed(name = "mobileConsume.getDeviceInfo", contextualName = "mobile-consume-get-device-info")
     @Operation(summary = "获取设备信息", description = "获取设备识别信息")
     public ResponseDTO<MobileDeviceInfoVO> getDeviceInfo(
-            @Parameter(description = "设备ID", required = false) @RequestParam(required = false) String deviceId) {
+            @Parameter(description = "设备ID或设备编码", required = false) @RequestParam(required = false) String deviceId) {
         log.info("[移动端设备信息] deviceId={}", deviceId);
 
         try {
@@ -347,8 +374,7 @@ public class MobileConsumeController {
                     apiPath,
                     HttpMethod.GET,
                     null,
-                    DeviceEntity.class
-            );
+                    DeviceEntity.class);
 
             if (deviceResponse != null && deviceResponse.isSuccess() && deviceResponse.getData() != null) {
                 DeviceEntity device = deviceResponse.getData();
@@ -359,10 +385,16 @@ public class MobileConsumeController {
                 deviceInfo.setDeviceType(device.getDeviceType() != null ? device.getDeviceType() : "UNKNOWN");
                 deviceInfo.setDeviceTypeDescription(getDeviceTypeDescription(device.getDeviceType()));
                 deviceInfo.setLocation(device.getAreaId() != null ? "区域ID: " + device.getAreaId() : "未知位置");
-                deviceInfo.setStatus(device.getDeviceStatus() != null ? device.getDeviceStatus() : "UNKNOWN");
-                deviceInfo.setStatusDescription(getDeviceStatusDescription(device.getDeviceStatus()));
+                // 修复类型错误：deviceStatus是Integer类型，需要转换为String
+                String deviceStatusStr = device.getDeviceStatus() != null
+                        ? String.valueOf(device.getDeviceStatus())
+                        : "UNKNOWN";
+                deviceInfo.setStatus(deviceStatusStr);
+                // 类型转换：Integer转String
+                deviceInfo.setStatusDescription(getDeviceStatusDescription(deviceStatusStr));
                 deviceInfo.setIpAddress(device.getIpAddress());
-                deviceInfo.setLastActiveTime(device.getLastOnlineTime() != null ? device.getLastOnlineTime() : LocalDateTime.now());
+                deviceInfo.setLastActiveTime(
+                        device.getLastOnlineTime() != null ? device.getLastOnlineTime() : LocalDateTime.now());
 
                 // 从扩展属性中获取额外信息
                 if (device.getExtendedAttributes() != null && !device.getExtendedAttributes().trim().isEmpty()) {
@@ -370,8 +402,8 @@ public class MobileConsumeController {
                         // ✅ 使用注入的Spring配置的ObjectMapper bean，而非创建新实例
                         Map<String, Object> extendedAttrs = objectMapper.readValue(
                                 device.getExtendedAttributes(),
-                                new TypeReference<Map<String, Object>>() {}
-                        );
+                                new TypeReference<Map<String, Object>>() {
+                                });
                         if (extendedAttrs != null) {
                             deviceInfo.setDeviceBrand((String) extendedAttrs.get("manufacturer"));
                             deviceInfo.setDeviceModel((String) extendedAttrs.get("model"));
@@ -425,7 +457,9 @@ public class MobileConsumeController {
             // 解析二维码获取消费信息
             ConsumeRequestDTO consumeRequest = parseQRCode(request.getQrCode());
             consumeRequest.setAmount(request.getAmount());
-            consumeRequest.setDeviceId("QR_SCANNER");
+            // 修复类型错误：deviceId是Long类型，不能直接设置String
+            // 使用null或默认设备ID，实际设备ID应该从二维码解析或请求参数中获取
+            consumeRequest.setDeviceId((Long) null); // 设备ID将从二维码解析或请求参数中获取
 
             ResponseDTO<ConsumeTransactionResultVO> response = consumeService.consume(consumeRequest);
 
@@ -440,10 +474,12 @@ public class MobileConsumeController {
             log.warn("[移动端扫码消费] 参数错误: qrCode={}, error={}", request.getQrCode(), e.getMessage());
             return ResponseDTO.error("INVALID_PARAMETER", "参数错误：" + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[移动端扫码消费] 业务异常: qrCode={}, code={}, message={}", request.getQrCode(), e.getCode(), e.getMessage());
+            log.warn("[移动端扫码消费] 业务异常: qrCode={}, code={}, message={}", request.getQrCode(), e.getCode(),
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[移动端扫码消费] 系统异常: qrCode={}, code={}, message={}", request.getQrCode(), e.getCode(), e.getMessage(), e);
+            log.error("[移动端扫码消费] 系统异常: qrCode={}, code={}, message={}", request.getQrCode(), e.getCode(),
+                    e.getMessage(), e);
             return ResponseDTO.error("MOBILE_SCAN_CONSUME_SYSTEM_ERROR", "扫码消费异常：" + e.getMessage());
         } catch (Exception e) {
             log.error("[移动端扫码消费] 未知异常: qrCode={}", request.getQrCode(), e);
@@ -492,7 +528,15 @@ public class MobileConsumeController {
         request.setOrderId(mobileRequest.getOrderId());
         request.setAccountId(mobileRequest.getAccountId());
         request.setAmount(mobileRequest.getAmount());
-        request.setDeviceId(mobileRequest.getDeviceId());
+        // 类型转换：String转Long
+        if (mobileRequest.getDeviceId() != null) {
+            try {
+                request.setDeviceId(Long.valueOf(mobileRequest.getDeviceId()));
+            } catch (NumberFormatException e) {
+                log.warn("[移动端消费] 设备ID格式错误: {}", mobileRequest.getDeviceId());
+                request.setDeviceId((Long) null);
+            }
+        }
         request.setAreaId(mobileRequest.getAreaId());
         request.setConsumeType(mobileRequest.getConsumeType());
         return request;
@@ -568,12 +612,11 @@ public class MobileConsumeController {
      */
     private List<MobileConsumeTypeVO> getMobileConsumeTypes() {
         List<MobileConsumeTypeVO> consumeTypes = java.util.Arrays.asList(
-            createConsumeType("DINING", "餐饮", "🍽️"),
-            createConsumeType("SHOPPING", "购物", "🛍️"),
-            createConsumeType("TRANSPORT", "交通", "🚗"),
-            createConsumeType("ENTERTAINMENT", "娱乐", "🎮"),
-            createConsumeType("OTHER", "其他", "📦")
-        );
+                createConsumeType("DINING", "餐饮", "🍽️"),
+                createConsumeType("SHOPPING", "购物", "🛍️"),
+                createConsumeType("TRANSPORT", "交通", "🚗"),
+                createConsumeType("ENTERTAINMENT", "娱乐", "🎮"),
+                createConsumeType("OTHER", "其他", "📦"));
         return consumeTypes;
     }
 
@@ -603,7 +646,8 @@ public class MobileConsumeController {
             // 1. 尝试解析为JSON格式
             Map<String, Object> qrContent = null;
             try {
-                qrContent = objectMapper.readValue(qrCode, new TypeReference<Map<String, Object>>() {});
+                qrContent = objectMapper.readValue(qrCode, new TypeReference<Map<String, Object>>() {
+                });
                 log.debug("[移动端二维码解析] 成功解析为JSON格式");
             } catch (Exception jsonException) {
                 log.debug("[移动端二维码解析] 不是JSON格式，尝试简单字符串解析: {}", jsonException.getMessage());
@@ -659,7 +703,16 @@ public class MobileConsumeController {
                 if (qrContent.containsKey("deviceId")) {
                     Object deviceIdObj = qrContent.get("deviceId");
                     if (deviceIdObj != null) {
-                        request.setDeviceId(String.valueOf(deviceIdObj));
+                        // 类型转换：Object转Long
+                        if (deviceIdObj instanceof Number) {
+                            request.setDeviceId(((Number) deviceIdObj).longValue());
+                        } else if (deviceIdObj instanceof String) {
+                            try {
+                                request.setDeviceId(Long.valueOf((String) deviceIdObj));
+                            } catch (NumberFormatException e) {
+                                log.debug("[移动端二维码解析] 设备ID格式无效: {}", deviceIdObj);
+                            }
+                        }
                     }
                 }
 
@@ -727,7 +780,12 @@ public class MobileConsumeController {
                             // 提取设备ID
                             String devicePart = part.replace("DEVICE", "").replace("MERCHANT", "");
                             if (!devicePart.isEmpty()) {
-                                request.setDeviceId(devicePart);
+                                // 类型转换：String转Long
+                                try {
+                                    request.setDeviceId(Long.valueOf(devicePart));
+                                } catch (NumberFormatException e) {
+                                    log.debug("[移动端二维码解析] 设备ID格式无效: {}", devicePart);
+                                }
                             }
                         } else if (part.startsWith("AREA")) {
                             // 提取区域ID
@@ -865,6 +923,3 @@ public class MobileConsumeController {
     }
 
 }
-
-
-

@@ -1,13 +1,13 @@
 package net.lab1024.sa.attendance.openapi.domain.response;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 月度考勤统计响应
@@ -56,4 +56,3 @@ public class MonthlyAttendanceStatisticsResponse {
     @Schema(description = "异常记录列表")
     private List<AbnormalAttendanceResponse> abnormalRecords;
 }
-

@@ -255,7 +255,19 @@ class ConsumeMobileControllerTest {
     @DisplayName("测试离线交易同步")
     void testSyncOfflineTransactions() throws Exception {
         net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm form = new net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm();
+        form.setDeviceNo("DEV2001");
         form.setDeviceId(2001L);
+        form.setSyncTime(java.time.LocalDateTime.now());
+
+        net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm.OfflineConsumeRecord record =
+                new net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm.OfflineConsumeRecord();
+        record.setTransactionNo("OFFLINE_TX_001");
+        record.setUserId(1001L);
+        record.setAccountNo("ACC_1001");
+        record.setAmount(new BigDecimal("10.00"));
+        record.setConsumeTime(java.time.LocalDateTime.now());
+
+        form.setRecords(java.util.Collections.singletonList(record));
 
         ConsumeSyncResultVO result = new ConsumeSyncResultVO();
         result.setSuccess(true);

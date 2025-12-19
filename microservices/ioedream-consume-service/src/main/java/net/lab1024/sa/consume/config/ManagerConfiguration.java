@@ -2,6 +2,8 @@ package net.lab1024.sa.consume.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.dao.AccountDao;
@@ -47,6 +49,8 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @Configuration
 public class ManagerConfiguration {
+
+    private static final Logger log = LoggerFactory.getLogger(ManagerConfiguration.class);
 
     /**
      * 注册 AccountManager Bean

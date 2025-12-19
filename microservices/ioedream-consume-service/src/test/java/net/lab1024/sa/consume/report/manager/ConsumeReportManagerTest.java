@@ -70,7 +70,7 @@ class ConsumeReportManagerTest {
 
         // 准备模拟交易数据
         mockTransaction = new ConsumeTransactionEntity();
-        mockTransaction.setId("1");
+        mockTransaction.setId(1L);
         mockTransaction.setUserId(100L);
         mockTransaction.setFinalMoney(new BigDecimal("10.00"));
         mockTransaction.setConsumeTime(LocalDateTime.now());

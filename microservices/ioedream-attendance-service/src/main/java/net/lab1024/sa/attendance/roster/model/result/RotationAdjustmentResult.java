@@ -24,3 +24,4 @@ public class RotationAdjustmentResult {
     private String errorCode;
     private LocalDateTime adjustmentTime;
 }
+
