@@ -165,7 +165,7 @@ public class QrCodeEntity extends BaseEntity {
     @Schema(description = "已使用次数")
     private Integer usedCount;
 
-    /**
+      /**
      * 金额限制
      */
     @TableField("amount_limit")
