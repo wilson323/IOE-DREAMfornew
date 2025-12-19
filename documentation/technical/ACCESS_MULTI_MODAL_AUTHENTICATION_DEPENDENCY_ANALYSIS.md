@@ -1,9 +1,11 @@
 # 多模态认证模块依赖关系分析报告
 
 > **分析日期**: 2025-01-30
+> **更新日期**: 2025-01-30
 > **模块名称**: 多模态认证管理模块
 > **服务名称**: ioedream-access-service
 > **分析范围**: 9种认证策略 + Manager + Service + Controller
+> **集成状态**: ✅ 已完成
 
 ---
 
@@ -240,40 +242,42 @@ Config → Manager → Strategy
 
 ## 🔗 与现有系统的集成点
 
-### 1. 与AccessVerificationManager的集成
+### 1. 与BackendVerificationStrategy的集成
 
-**当前状态**: ⚠️ **未集成**
+**当前状态**: ✅ **已完成**
 
 **⚠️ 重要说明：多模态认证的正确作用**:
 - ❌ **不是进行人员识别**（设备端已完成人员识别，并发送了pin）
 - ✅ **是验证用户是否允许使用该认证方式**（例如：某些区域只允许人脸，不允许密码）
 
-**集成建议**:
-- 在 `BackendVerificationStrategy` 中，调用 `MultiModalAuthenticationManager.authenticate()` 验证认证方式是否允许
-- 在 `EdgeVerificationStrategy` 中，只记录认证方式，不验证（设备端已完成验证）
+**集成内容**:
+- 在 `BackendVerificationStrategy.verify()` 方法开始时调用 `MultiModalAuthenticationManager.authenticate()`
+- 验证用户是否允许使用该认证方式（不是识别用户）
+- 如果不允许，返回失败，不继续后续验证
 
-**集成代码示例**:
+**集成代码**:
 ```java
-// 在BackendVerificationStrategy中（后台验证模式）
+// 在BackendVerificationStrategy中（已实现）
 @Resource
 private MultiModalAuthenticationManager multiModalAuthenticationManager;
 
+@Override
 public VerificationResult verify(AccessVerificationRequest request) {
-    // 1. 验证用户是否允许使用该认证方式（不是识别用户）
+    // 1. 多模态认证验证（验证用户是否允许使用该认证方式）
+    // ⚠️ 注意：不是进行人员识别，设备端已完成人员识别并发送了pin
     VerificationResult authMethodResult = multiModalAuthenticationManager.authenticate(request);
     if (!authMethodResult.isSuccess()) {
-        // 用户不允许使用该认证方式（例如：该区域只允许人脸，不允许密码）
-        return VerificationResult.failed("AUTH_METHOD_NOT_ALLOWED", "不允许使用该认证方式");
+        return VerificationResult.failed("AUTH_METHOD_NOT_ALLOWED",
+                "不允许使用该认证方式: " + authMethodResult.getErrorMessage());
     }
     
-    // 2. 其他验证（反潜回、互锁、时间段等）
+    // 2. 反潜验证
+    // 3. 互锁验证
+    // 4. 时间段验证
+    // 5. 黑名单验证
+    // 6. 多人验证（如需要）
     // ...
 }
-
-// 在EdgeVerificationStrategy中（边缘验证模式）
-// 只记录认证方式，不验证（设备端已完成验证）
-VerifyTypeEnum verifyTypeEnum = VerifyTypeEnum.getByCode(request.getVerifyType());
-log.info("[设备端验证] 认证方式: {}", verifyTypeEnum.getDescription());
 ```
 
 ### 2. 与EdgeVerificationStrategy的集成
@@ -298,11 +302,28 @@ if (verifyTypeEnum != null) {
 
 ### 3. 与AccessRecordBatchService的集成
 
-**当前状态**: ⚠️ **未集成**
+**当前状态**: ✅ **已完成**
 
-**集成建议**:
-- `AccessRecordBatchService` 在批量上传时，可以使用 `VerifyTypeEnum` 进行认证方式转换
-- 当前代码中的 `convertVerifyMethodToType()` 方法可以优化为使用 `VerifyTypeEnum`
+**集成内容**:
+- `AccessRecordBatchService` 在批量上传时，使用 `VerifyTypeEnum.getByName()` 进行认证方式转换
+- 统一管理所有9种认证方式的转换逻辑
+
+**集成代码**:
+```java
+// 在AccessRecordBatchServiceImpl中（已实现）
+private Integer convertVerifyMethodToType(String verifyMethod) {
+    if (verifyMethod == null) {
+        return VerifyTypeEnum.CARD.getCode();
+    }
+    // 使用VerifyTypeEnum统一管理
+    VerifyTypeEnum verifyTypeEnum = VerifyTypeEnum.getByName(verifyMethod);
+    if (verifyTypeEnum != null) {
+        return verifyTypeEnum.getCode();
+    }
+    log.warn("[批量上传] 不支持的验证方式: verifyMethod={}, 使用默认值CARD", verifyMethod);
+    return VerifyTypeEnum.CARD.getCode();
+}
+```
 
 ---
 
