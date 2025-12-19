@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -144,6 +142,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
 
                 // 2. 检查缓存
                 String cacheKey = APPROVAL_CACHE_PREFIX + appointmentId;
+                @SuppressWarnings("unchecked")
                 List<ApprovalRecordVO> cachedResult = (List<ApprovalRecordVO>) redisTemplate.opsForValue()
                         .get(cacheKey);
                 if (cachedResult != null) {
@@ -211,11 +210,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
                         ? new ArrayList<>()
                         : pendingApprovals.subList(start, end);
 
-                Page<PendingApprovalVO> page = new PageImpl<>(
-                        pageList,
-                        pageRequest,
-                        pendingApprovals.size());
-
+                // 构建分页结果
                 PageResult<PendingApprovalVO> pageResult = new PageResult<>();
                 pageResult.setList(pageList);
                 pageResult.setTotal((long) pendingApprovals.size());

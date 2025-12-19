@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -57,7 +55,6 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
-    private static final String BLACKLIST_CACHE_PREFIX = "visitor:blacklist:";
     private static final String BLACKLIST_STATUS_PREFIX = "visitor:blacklist:status:";
     private static final Duration CACHE_DURATION = Duration.ofMinutes(30);
 
@@ -206,11 +203,7 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
                         ? new ArrayList<>()
                         : blacklistVOs.subList(start, end);
 
-                Page<BlacklistVO> page = new PageImpl<>(
-                        pageList,
-                        pageRequest,
-                        blacklistVOs.size());
-
+                // 构建分页结果
                 PageResult<BlacklistVO> pageResult = new PageResult<>();
                 pageResult.setList(pageList);
                 pageResult.setTotal((long) blacklistVOs.size());
@@ -620,7 +613,9 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
 
     /**
      * 清理过期黑名单降级处理
+     * 注：此方法作为Resilience4j的fallback方法，尽管IDE显示未使用，但是在运行时会被调用
      */
+    @SuppressWarnings("unused")
     private CompletableFuture<ResponseDTO<Integer>> cleanExpiredBlacklistFallback(Exception e) {
         log.warn("[黑名单管理] 清理过期黑名单降级", e);
         return CompletableFuture.completedFuture(
