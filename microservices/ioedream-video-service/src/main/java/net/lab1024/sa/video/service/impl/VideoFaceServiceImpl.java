@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import net.lab1024.sa.video.domain.form.VideoFaceAddForm;
 import net.lab1024.sa.video.domain.form.VideoFaceSearchForm;
 import net.lab1024.sa.video.domain.vo.VideoFaceVO;

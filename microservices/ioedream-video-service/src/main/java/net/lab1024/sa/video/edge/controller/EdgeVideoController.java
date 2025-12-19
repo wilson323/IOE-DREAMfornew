@@ -22,6 +22,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.video.edge.EdgeDeviceStatus;
+import net.lab1024.sa.video.edge.EdgeStatistics;
 import net.lab1024.sa.video.edge.EdgeVideoProcessor;
 import net.lab1024.sa.video.edge.model.EdgeDevice;
 import net.lab1024.sa.video.edge.model.InferenceRequest;

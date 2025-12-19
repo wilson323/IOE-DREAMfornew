@@ -6,7 +6,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.video.edge.EdgeConfig;
 import net.lab1024.sa.video.edge.model.EdgeDevice;
+import net.lab1024.sa.video.edge.model.HardwareSpec;
 import net.lab1024.sa.video.edge.model.InferenceRequest;
 import net.lab1024.sa.video.edge.model.InferenceResult;
 import net.lab1024.sa.video.edge.ai.model.ModelInfo;
@@ -290,6 +292,28 @@ public class EdgeAIEngine {
     }
 
     /**
+     * 获取推理次数（用于边缘统计聚合）
+     *
+     * @return 推理次数
+     */
+    public int getInferenceCount() {
+        return inferenceCount.get();
+    }
+
+    /**
+     * 获取平均推理耗时（毫秒）
+     *
+     * @return 平均推理耗时
+     */
+    public double getAverageInferenceTime() {
+        int count = inferenceCount.get();
+        if (count <= 0) {
+            return 0.0;
+        }
+        return (double) totalInferenceTime.get() / (double) count;
+    }
+
+    /**
      * 获取推理统计信息
      *
      * @return 统计信息
@@ -337,7 +361,13 @@ public class EdgeAIEngine {
 
     private boolean checkHardwareCompatibility() {
         HardwareSpec spec = device.getHardwareSpec();
-        return spec.getCpuCores() >= 2 && spec.getMemoryMB() >= 4096 && spec.hasGPU();
+        if (spec == null) {
+            // 未上报硬件规格时，不阻断初始化（由后续设备能力上报完善）
+            return true;
+        }
+        Integer cpu = spec.getCpuCores();
+        Integer mem = spec.getMemoryMB();
+        return cpu != null && cpu >= 2 && mem != null && mem >= 4096 && spec.hasGPU();
     }
 
     private boolean loadDefaultModels() {
@@ -400,7 +430,11 @@ public class EdgeAIEngine {
 
     private boolean checkMemoryAvailability(long modelSize) {
         HardwareSpec spec = device.getHardwareSpec();
-        long availableMemory = spec.getMemoryMB() * 1024 * 1024;
+        if (spec == null || spec.getMemoryMB() == null) {
+            // 未上报内存规格时，默认允许加载（避免初始化直接失败）
+            return true;
+        }
+        long availableMemory = (long) spec.getMemoryMB() * 1024 * 1024;
         long usedMemory = calculateUsedMemory();
 
         return (availableMemory - usedMemory) > modelSize * 2; // 预留2倍空间

@@ -16,6 +16,7 @@ import net.lab1024.sa.video.domain.vo.VideoRecordingPlaybackVO;
 import net.lab1024.sa.video.service.VideoRecordingService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;

@@ -5,6 +5,8 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.video.dao.VideoDecoderDao;
 import net.lab1024.sa.video.dao.VideoWallDao;
+import net.lab1024.sa.video.dao.VideoWallPresetDao;
+import net.lab1024.sa.video.dao.VideoWallTourDao;
 import net.lab1024.sa.video.domain.form.VideoDecoderAddForm;
 import net.lab1024.sa.video.domain.form.VideoDecoderUpdateForm;
 import net.lab1024.sa.video.domain.form.VideoDisplayTaskAddForm;

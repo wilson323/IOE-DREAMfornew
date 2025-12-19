@@ -503,6 +503,15 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
         }
     }
 
+    @Override
+    public AiSystemStatus getAiSystemStatus() {
+        AiSystemStatus status = new AiSystemStatus();
+        status.setStatus("RUNNING");
+        status.setRunningRealtimeTasks(realtimeAnalysisTasks.size());
+        status.setReportTime(LocalDateTime.now());
+        return status;
+    }
+
     // ==================== 私有方法 ====================
 
     /**

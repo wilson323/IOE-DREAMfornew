@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.edge.model.EdgeDevice;
+import net.lab1024.sa.video.edge.model.InferenceRequest;
 import net.lab1024.sa.video.edge.model.InferenceResult;
 import net.lab1024.sa.video.edge.model.EdgeCapability;
 import net.lab1024.sa.video.edge.ai.EdgeAIEngine;

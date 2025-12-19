@@ -255,7 +255,271 @@ public interface VideoAiAnalysisService {
      */
     AiAnalysisReport generateAnalysisReport(String cameraId, String reportType, LocalDateTime startTime, LocalDateTime endTime);
 
+    /**
+     * 生成分析报告（多摄像头聚合版本，供Controller直接调用）
+     * <p>
+     * 说明：最小可交付版本默认选取第一个cameraId生成报告；后续可扩展为真正的多摄像头聚合报表。
+     * </p>
+     *
+     * @param cameraIds 摄像头ID列表
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @param reportType 报告类型
+     * @return 分析报告
+     */
+    default AnalysisReport generateAnalysisReport(
+            List<String> cameraIds,
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            String reportType) {
+        String cameraId = (cameraIds != null && !cameraIds.isEmpty()) ? cameraIds.get(0) : null;
+        AiAnalysisReport report = generateAnalysisReport(cameraId, reportType, startTime, endTime);
+        AnalysisReport wrapper = new AnalysisReport();
+        if (report != null) {
+            wrapper.setReportId(report.getReportId());
+            wrapper.setCameraId(report.getCameraId());
+            wrapper.setReportType(report.getReportType());
+            wrapper.setStartTime(report.getStartTime());
+            wrapper.setEndTime(report.getEndTime());
+            wrapper.setReportContent(report.getReportContent());
+            wrapper.setStatistics(report.getStatistics());
+            wrapper.setRecommendations(report.getRecommendations());
+            wrapper.setGeneratedTime(report.getGeneratedTime());
+        }
+        return wrapper;
+    }
+
+    /**
+     * 获取AI系统状态
+     *
+     * @return AI系统状态
+     */
+    AiSystemStatus getAiSystemStatus();
+
     // ==================== 内部类 ====================
+
+    /**
+     * 跌倒检测请求
+     */
+    class FallDetectionRequest {
+        private String cameraId;
+        private byte[] imageData;
+
+        public String getCameraId() { return cameraId; }
+        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+        public byte[] getImageData() { return imageData; }
+        public void setImageData(byte[] imageData) { this.imageData = imageData; }
+    }
+
+    /**
+     * 跌倒检测结果
+     */
+    class FallDetectionResult {
+        private boolean detected;
+        private double confidence;
+        private String location;
+        private LocalDateTime timestamp;
+
+        public boolean isDetected() { return detected; }
+        public void setDetected(boolean detected) { this.detected = detected; }
+        public double getConfidence() { return confidence; }
+        public void setConfidence(double confidence) { this.confidence = confidence; }
+        public String getLocation() { return location; }
+        public void setLocation(String location) { this.location = location; }
+        public LocalDateTime getTimestamp() { return timestamp; }
+        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    }
+
+    /**
+     * 行为分析请求
+     */
+    class BehaviorAnalysisRequest {
+        private String cameraId;
+        private byte[] imageData;
+        private List<String> analysisTypes;
+
+        public String getCameraId() { return cameraId; }
+        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+        public byte[] getImageData() { return imageData; }
+        public void setImageData(byte[] imageData) { this.imageData = imageData; }
+        public List<String> getAnalysisTypes() { return analysisTypes; }
+        public void setAnalysisTypes(List<String> analysisTypes) { this.analysisTypes = analysisTypes; }
+    }
+
+    /**
+     * 密度计算请求
+     */
+    class DensityCalculationRequest {
+        private String cameraId;
+        private byte[] imageData;
+        private int gridSize;
+
+        public String getCameraId() { return cameraId; }
+        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+        public byte[] getImageData() { return imageData; }
+        public void setImageData(byte[] imageData) { this.imageData = imageData; }
+        public int getGridSize() { return gridSize; }
+        public void setGridSize(int gridSize) { this.gridSize = gridSize; }
+    }
+
+    /**
+     * 密度结果
+     */
+    class DensityResult {
+        private int totalCount;
+        private double density;
+        private String cameraId;
+
+        public int getTotalCount() { return totalCount; }
+        public void setTotalCount(int totalCount) { this.totalCount = totalCount; }
+        public double getDensity() { return density; }
+        public void setDensity(double density) { this.density = density; }
+        public String getCameraId() { return cameraId; }
+        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+    }
+
+    /**
+     * 热力图请求
+     */
+    class HeatmapRequest {
+        private String cameraId;
+        private int width;
+        private int height;
+        private int gridSize;
+
+        public String getCameraId() { return cameraId; }
+        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+        public int getWidth() { return width; }
+        public void setWidth(int width) { this.width = width; }
+        public int getHeight() { return height; }
+        public void setHeight(int height) { this.height = height; }
+        public int getGridSize() { return gridSize; }
+        public void setGridSize(int gridSize) { this.gridSize = gridSize; }
+    }
+
+    /**
+     * 热力图数据
+     */
+    class HeatmapData {
+        private int width;
+        private int height;
+        private double[][] data;
+
+        public int getWidth() { return width; }
+        public void setWidth(int width) { this.width = width; }
+        public int getHeight() { return height; }
+        public void setHeight(int height) { this.height = height; }
+        public double[][] getData() { return data; }
+        public void setData(double[][] data) { this.data = data; }
+    }
+
+    /**
+     * 人群预警
+     */
+    class CrowdWarning {
+        private String cameraId;
+        private String level;
+        private int count;
+        private String message;
+
+        public String getCameraId() { return cameraId; }
+        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+        public String getLevel() { return level; }
+        public void setLevel(String level) { this.level = level; }
+        public int getCount() { return count; }
+        public void setCount(int count) { this.count = count; }
+        public String getMessage() { return message; }
+        public void setMessage(String message) { this.message = message; }
+    }
+
+    /**
+     * 综合分析请求
+     */
+    class ComprehensiveAnalysisRequest {
+        private String cameraId;
+        private byte[] imageData;
+
+        public String getCameraId() { return cameraId; }
+        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+        public byte[] getImageData() { return imageData; }
+        public void setImageData(byte[] imageData) { this.imageData = imageData; }
+    }
+
+    /**
+     * 启动实时分析请求
+     */
+    class RealtimeAnalysisStartRequest {
+        private String cameraId;
+        private String streamUrl;
+        private RealtimeAnalysisConfig analysisConfig;
+
+        public String getCameraId() { return cameraId; }
+        public void setCameraId(String cameraId) { this.cameraId = cameraId; }
+        public String getStreamUrl() { return streamUrl; }
+        public void setStreamUrl(String streamUrl) { this.streamUrl = streamUrl; }
+        public RealtimeAnalysisConfig getAnalysisConfig() { return analysisConfig; }
+        public void setAnalysisConfig(RealtimeAnalysisConfig analysisConfig) { this.analysisConfig = analysisConfig; }
+    }
+
+    /**
+     * 历史分析请求
+     */
+    class HistoricalAnalysisRequest {
+        private String videoId;
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+        private List<String> analysisTypes;
+
+        public String getVideoId() { return videoId; }
+        public void setVideoId(String videoId) { this.videoId = videoId; }
+        public LocalDateTime getStartTime() { return startTime; }
+        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
+        public LocalDateTime getEndTime() { return endTime; }
+        public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
+        public List<String> getAnalysisTypes() { return analysisTypes; }
+        public void setAnalysisTypes(List<String> analysisTypes) { this.analysisTypes = analysisTypes; }
+    }
+
+    /**
+     * 报告生成请求
+     */
+    class ReportGenerationRequest {
+        private List<String> cameraIds;
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+        private String reportType;
+
+        public List<String> getCameraIds() { return cameraIds; }
+        public void setCameraIds(List<String> cameraIds) { this.cameraIds = cameraIds; }
+        public LocalDateTime getStartTime() { return startTime; }
+        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
+        public LocalDateTime getEndTime() { return endTime; }
+        public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
+        public String getReportType() { return reportType; }
+        public void setReportType(String reportType) { this.reportType = reportType; }
+    }
+
+    /**
+     * 报告响应（兼容Controller使用的类型名）
+     */
+    class AnalysisReport extends AiAnalysisReport {
+    }
+
+    /**
+     * AI系统状态
+     */
+    class AiSystemStatus {
+        private String status;
+        private int runningRealtimeTasks;
+        private LocalDateTime reportTime;
+
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+        public int getRunningRealtimeTasks() { return runningRealtimeTasks; }
+        public void setRunningRealtimeTasks(int runningRealtimeTasks) { this.runningRealtimeTasks = runningRealtimeTasks; }
+        public LocalDateTime getReportTime() { return reportTime; }
+        public void setReportTime(LocalDateTime reportTime) { this.reportTime = reportTime; }
+    }
 
     /**
      * 批量人脸检测结果

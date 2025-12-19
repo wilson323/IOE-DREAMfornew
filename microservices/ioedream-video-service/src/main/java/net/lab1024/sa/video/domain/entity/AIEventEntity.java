@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.lab1024.sa.common.entity.BaseEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
