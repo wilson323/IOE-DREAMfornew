@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -216,7 +217,7 @@ public class VisitorApprovalController {
         try {
             // 这里可以调用统计服务获取审批统计数据
             // 简化实现，返回基本统计信息
-            CompletableFuture<ResponseDTO<List<PendingApprovalVO>>> pendingResult =
+            CompletableFuture<ResponseDTO<PageResult<PendingApprovalVO>>> pendingResult =
                 visitorApprovalService.getPendingApprovals(approverId, 1, 1);
 
             return pendingResult.thenApply(pending -> {

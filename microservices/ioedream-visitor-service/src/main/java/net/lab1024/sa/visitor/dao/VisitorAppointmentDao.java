@@ -3,7 +3,7 @@ package net.lab1024.sa.visitor.dao;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.common.visitor.entity.VisitorAppointmentEntity;
+import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
 
 /**
  * 访客预约DAO
@@ -21,5 +21,4 @@ import net.lab1024.sa.common.visitor.entity.VisitorAppointmentEntity;
 @Mapper
 public interface VisitorAppointmentDao extends BaseMapper<VisitorAppointmentEntity> {
 }
-
 

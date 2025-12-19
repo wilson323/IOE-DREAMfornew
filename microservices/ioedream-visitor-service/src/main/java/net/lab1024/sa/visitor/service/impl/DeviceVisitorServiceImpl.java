@@ -3,10 +3,10 @@ package net.lab1024.sa.visitor.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.service.DeviceVisitorService;
-import net.lab1024.sa.visitor.visitor.dao.ElectronicPassDao;
-import net.lab1024.sa.visitor.visitor.dao.VisitorApprovalRecordDao;
-import net.lab1024.sa.visitor.visitor.entity.ElectronicPassEntity;
-import net.lab1024.sa.visitor.visitor.entity.VisitorApprovalRecordEntity;
+import net.lab1024.sa.visitor.dao.ElectronicPassDao;
+import net.lab1024.sa.visitor.dao.VisitorApprovalRecordDao;
+import net.lab1024.sa.visitor.entity.ElectronicPassEntity;
+import net.lab1024.sa.visitor.entity.VisitorApprovalRecordEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -126,4 +126,16 @@ public class VisitorApprovalRecordEntity {
     @TableField("deleted_flag")
     @Schema(description = "删除标记", example = "0")
     private Integer deletedFlag;
+
+    /**
+     * 兼容历史代码：获取访问结束时间
+     *
+     * <p>审批记录本身不包含预约的访问时间窗口，该字段用于兼容设备侧“临时访客”流程。
+     * 当前以审批时间作为近似返回值，后续应调整为从预约记录（Appointment）中获取真实的访问结束时间。</p>
+     *
+     * @return 访问结束时间（近似值）
+     */
+    public LocalDateTime getVisitEndTime() {
+        return this.approvalTime;
+    }
 }

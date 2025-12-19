@@ -17,4 +17,3 @@ import net.lab1024.sa.visitor.entity.VehicleEntity;
 public interface VehicleDao extends BaseMapper<VehicleEntity> {
 }
 
-

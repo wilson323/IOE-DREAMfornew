@@ -18,7 +18,7 @@ import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
-import net.lab1024.sa.common.visitor.entity.VisitorAppointmentEntity;
+import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
 import net.lab1024.sa.visitor.service.VisitorStatisticsService;
 
 /**
@@ -258,5 +258,4 @@ public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
         }
     }
 }
-
 

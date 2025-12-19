@@ -1,4 +1,4 @@
-package net.lab1024.sa.common.visitor.entity;
+package net.lab1024.sa.visitor.entity;
 
 import java.time.LocalDateTime;
 
@@ -125,5 +125,4 @@ public class VisitorAppointmentEntity extends BaseEntity {
     @TableField("workflow_instance_id")
     private Long workflowInstanceId;
 }
-
 

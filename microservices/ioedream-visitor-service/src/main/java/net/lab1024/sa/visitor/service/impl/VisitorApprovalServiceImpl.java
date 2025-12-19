@@ -90,7 +90,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
 
                 // 2. 检查审批权限（缓存优化）
                 Long approverId = getCurrentUserId();
-                ResponseDTO<Boolean> permissionCheck = checkApprovalPermission(approvalId, appointmentId).join();
+                ResponseDTO<Boolean> permissionCheck = checkApprovalPermission(appointmentId, approverId).join();
                 if (!permissionCheck.isSuccess() || !Boolean.TRUE.equals(permissionCheck.getData())) {
                     log.warn("[访客审批] 无审批权限, appointmentId={}, approverId={}", appointmentId, approverId);
                     return ResponseDTO.error("NO_APPROVAL_PERMISSION", "无审批权限");
@@ -194,9 +194,9 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 1. 参数验证和默认值处理
-                pageNum = pageNum == null || pageNum <= 0 ? 1 : pageNum;
-                pageSize = pageSize == null || pageSize <= 0 ? 20 : pageSize;
-                pageSize = Math.min(pageSize, 100); // 限制最大页面大小
+                final int safePageNum = (pageNum == null || pageNum <= 0) ? 1 : pageNum;
+                int safePageSize = (pageSize == null || pageSize <= 0) ? 20 : pageSize;
+                safePageSize = Math.min(safePageSize, 100); // 限制最大页面大小
 
                 // 2. 查询待审批记录
                 List<VisitorApprovalRecordEntity> pendingRecords = approvalRecordDao.selectPendingApprovals(approverId);
@@ -209,9 +209,9 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
                 }
 
                 // 4. 分页处理
-                PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
+                PageRequest pageRequest = PageRequest.of(safePageNum - 1, safePageSize);
                 int start = (int) pageRequest.getOffset();
-                int end = Math.min(start + pageSize, pendingApprovals.size());
+                int end = Math.min(start + safePageSize, pendingApprovals.size());
                 List<PendingApprovalVO> pageList = start >= pendingApprovals.size()
                         ? new ArrayList<>()
                         : pendingApprovals.subList(start, end);
@@ -225,9 +225,9 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
                 PageResult<PendingApprovalVO> pageResult = new PageResult<>();
                 pageResult.setList(pageList);
                 pageResult.setTotal((long) pendingApprovals.size());
-                pageResult.setPageNum(pageNum);
-                pageResult.setPageSize(pageSize);
-                pageResult.setPages((int) Math.ceil((double) pendingApprovals.size() / pageSize));
+                pageResult.setPageNum(safePageNum);
+                pageResult.setPageSize(safePageSize);
+                pageResult.setPages((int) Math.ceil((double) pendingApprovals.size() / safePageSize));
 
                 log.info("[访客审批] 获取待审批列表成功, approverId={}, total={}",
                         approverId, pageResult.getTotal());

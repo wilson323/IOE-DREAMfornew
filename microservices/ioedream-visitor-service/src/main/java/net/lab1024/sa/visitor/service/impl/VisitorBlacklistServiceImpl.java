@@ -183,24 +183,28 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 1. 参数验证和默认值处理
-                if (form == null) {
-                    form = new BlacklistQueryForm();
-                }
+                final BlacklistQueryForm safeForm = (form == null) ? new BlacklistQueryForm() : form;
+                final int safePageNum = (safeForm.getPageNum() == null || safeForm.getPageNum() <= 0)
+                        ? 1
+                        : safeForm.getPageNum();
+                int safePageSize = (safeForm.getPageSize() == null || safeForm.getPageSize() <= 0)
+                        ? 20
+                        : safeForm.getPageSize();
+                safePageSize = Math.min(safePageSize, 100); // 限制最大页面大小
 
-                form.setPageNum(form.getPageNum() == null || form.getPageNum() <= 0 ? 1 : form.getPageNum());
-                form.setPageSize(form.getPageSize() == null || form.getPageSize() <= 0 ? 20 : form.getPageSize());
-                form.setPageSize(Math.min(form.getPageSize(), 100)); // 限制最大页面大小
+                safeForm.setPageNum(safePageNum);
+                safeForm.setPageSize(safePageSize);
 
                 // 2. 查询黑名单记录
-                PageRequest pageRequest = PageRequest.of(form.getPageNum() - 1, form.getPageSize());
-                List<VisitorBlacklistEntity> blacklistRecords = blacklistDao.selectByCondition(form);
+                PageRequest pageRequest = PageRequest.of(safeForm.getPageNum() - 1, safeForm.getPageSize());
+                List<VisitorBlacklistEntity> blacklistRecords = blacklistDao.selectByCondition(safeForm);
 
                 // 3. 转换为VO
                 List<BlacklistVO> blacklistVOs = convertToBlacklistVOs(blacklistRecords);
 
                 // 4. 分页处理
                 int start = (int) pageRequest.getOffset();
-                int end = Math.min(start + form.getPageSize(), blacklistVOs.size());
+                int end = Math.min(start + safeForm.getPageSize(), blacklistVOs.size());
                 List<BlacklistVO> pageList = start >= blacklistVOs.size()
                         ? new ArrayList<>()
                         : blacklistVOs.subList(start, end);
@@ -214,9 +218,9 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
                 PageResult<BlacklistVO> pageResult = new PageResult<>();
                 pageResult.setList(pageList);
                 pageResult.setTotal((long) blacklistVOs.size());
-                pageResult.setPageNum(form.getPageNum());
-                pageResult.setPageSize(form.getPageSize());
-                pageResult.setPages((int) Math.ceil((double) blacklistVOs.size() / form.getPageSize()));
+                pageResult.setPageNum(safeForm.getPageNum());
+                pageResult.setPageSize(safeForm.getPageSize());
+                pageResult.setPages((int) Math.ceil((double) blacklistVOs.size() / safeForm.getPageSize()));
 
                 log.info("[黑名单管理] 查询黑名单成功, total={}", pageResult.getTotal());
                 return ResponseDTO.ok(pageResult);
@@ -377,8 +381,11 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
                 log.info("[黑名单管理] 更新黑名单状态成功, blacklistId={}, status={}", blacklistId, status);
                 return ResponseDTO.ok();
 
-            } catch (ParamException | BusinessException e) {
-                log.warn("[黑名单管理] 更新状态异常, blacklistId={}, error={}", blacklistId, e.getMessage());
+            } catch (ParamException e) {
+                log.warn("[黑名单管理] 更新状态参数异常, blacklistId={}, error={}", blacklistId, e.getMessage());
+                return ResponseDTO.error(e.getCode(), e.getMessage());
+            } catch (BusinessException e) {
+                log.warn("[黑名单管理] 更新状态业务异常, blacklistId={}, error={}", blacklistId, e.getMessage());
                 return ResponseDTO.error(e.getCode(), e.getMessage());
             } catch (Exception e) {
                 log.error("[黑名单管理] 更新黑名单状态异常, blacklistId={}", blacklistId, e);
@@ -439,17 +446,17 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 1. 参数验证
-                if (startTime == null) {
-                    startTime = LocalDateTime.now().minusDays(30);
-                }
-                if (endTime == null) {
-                    endTime = LocalDateTime.now();
-                }
+                final LocalDateTime safeStartTime = (startTime == null)
+                        ? LocalDateTime.now().minusDays(30)
+                        : startTime;
+                final LocalDateTime safeEndTime = (endTime == null)
+                        ? LocalDateTime.now()
+                        : endTime;
 
                 // 2. 查询统计数据
-                Object statistics = blacklistDao.selectStatistics(startTime, endTime);
+                Object statistics = blacklistDao.selectStatistics(safeStartTime, safeEndTime);
 
-                log.info("[黑名单管理] 获取统计数据成功, startTime={}, endTime={}", startTime, endTime);
+                log.info("[黑名单管理] 获取统计数据成功, startTime={}, endTime={}", safeStartTime, safeEndTime);
                 return ResponseDTO.ok(statistics);
 
             } catch (Exception e) {

@@ -17,7 +17,7 @@ import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
-import net.lab1024.sa.common.visitor.entity.VisitorAppointmentEntity;
+import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.visitor.domain.form.VisitorAppointmentQueryForm;
 import net.lab1024.sa.visitor.domain.form.VisitorMobileForm;
@@ -541,5 +541,4 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
         return vo;
     }
 }
-
 

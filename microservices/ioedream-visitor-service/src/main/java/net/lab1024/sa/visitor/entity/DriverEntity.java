@@ -1,5 +1,6 @@
 package net.lab1024.sa.visitor.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
@@ -13,7 +14,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 访客车辆实体
+ * 访客司机实体
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
@@ -21,48 +22,54 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("t_visitor_vehicle")
-public class VehicleEntity {
+@TableName("t_visitor_driver")
+public class DriverEntity {
 
     /**
-     * 车辆ID（主键）
+     * 司机ID（主键）
      * <p>
-     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列vehicle_id
+     * 统一使用id作为主键字段名，通过@TableId的value属性映射到数据库列driver_id
      * 符合实体类主键命名规范：统一使用id，避免方法引用错误
      * </p>
      */
-    @TableId(value = "vehicle_id", type = IdType.ASSIGN_ID)
+    @TableId(value = "driver_id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 车牌号
+     * 司机姓名
      */
-    @TableField("vehicle_number")
-    private String vehicleNumber;
+    @TableField("driver_name")
+    private String driverName;
 
     /**
-     * 车辆类型（1-小型车 2-中型车 3-大型车）
+     * 手机号
      */
-    @TableField("vehicle_type")
-    private Integer vehicleType;
+    @TableField("phone")
+    private String phone;
 
     /**
-     * 车辆颜色
+     * 身份证号
      */
-    @TableField("vehicle_color")
-    private String vehicleColor;
+    @TableField("id_card")
+    private String idCard;
 
     /**
-     * 车辆品牌
+     * 驾照类型（A1/A2/B1/B2/C1等）
      */
-    @TableField("vehicle_brand")
-    private String vehicleBrand;
+    @TableField("license_type")
+    private String licenseType;
 
     /**
-     * 车辆型号
+     * 驾照号
      */
-    @TableField("vehicle_model")
-    private String vehicleModel;
+    @TableField("license_number")
+    private String licenseNumber;
+
+    /**
+     * 驾照有效期
+     */
+    @TableField("license_expiry_date")
+    private LocalDate licenseExpiryDate;
 
     /**
      * 所属公司
@@ -71,10 +78,10 @@ public class VehicleEntity {
     private String companyName;
 
     /**
-     * 司机ID
+     * 司机照片URL
      */
-    @TableField("driver_id")
-    private Long driverId;
+    @TableField("photo_url")
+    private String photoUrl;
 
     /**
      * 状态（1-正常 0-禁用）
@@ -119,5 +126,4 @@ public class VehicleEntity {
     @TableField("deleted_flag")
     private Integer deletedFlag;
 }
-
 

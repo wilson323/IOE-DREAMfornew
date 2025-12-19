@@ -18,7 +18,7 @@ import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.visitor.service.VisitorCheckInService;
-import net.lab1024.sa.common.visitor.entity.VisitorAppointmentEntity;
+import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
 
 /**
@@ -182,4 +182,3 @@ public class VisitorCheckInServiceImpl implements VisitorCheckInService {
         return ResponseDTO.error("CHECKOUT_DEGRADED", "系统繁忙，请稍后重试");
     }
 }
-

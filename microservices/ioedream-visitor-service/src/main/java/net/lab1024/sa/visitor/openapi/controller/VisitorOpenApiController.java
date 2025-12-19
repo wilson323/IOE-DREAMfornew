@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.visitor.openapi.domain.request.*;
 import net.lab1024.sa.visitor.openapi.domain.response.*;
 import net.lab1024.sa.visitor.openapi.service.VisitorOpenApiService;
@@ -48,8 +48,8 @@ public class VisitorOpenApiController {
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
 
-        log.info("[开放API] 访客预约申请: appointmentType={}, visitorName={}, clientIp={}",
-                request.getAppointmentType(), request.getVisitorName(), clientIp);
+        log.info("[开放API] 访客预约申请: visitorName={}, visitorPhone={}, clientIp={}",
+                request.getVisitorName(), request.getVisitorPhone(), clientIp);
 
         VisitorAppointmentResponse response = visitorOpenApiService.createAppointment(request, token, clientIp);
         return ResponseDTO.ok(response);
@@ -329,8 +329,8 @@ public class VisitorOpenApiController {
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
 
-        log.info("[开放API] 添加访客黑名单: visitorId={}, reason={}, clientIp={}",
-                request.getVisitorId(), request.getReason(), clientIp);
+        log.info("[开放API] 添加访客黑名单: visitorName={}, visitorPhone={}, reason={}, clientIp={}",
+                request.getVisitorName(), request.getVisitorPhone(), request.getBlacklistReason(), clientIp);
 
         visitorOpenApiService.addToBlacklist(request, token, clientIp);
         return ResponseDTO.ok();
@@ -368,8 +368,8 @@ public class VisitorOpenApiController {
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
 
-        log.info("[开放API] 发送访客邀请: appointmentId={}, invitationType={}, clientIp={}",
-                request.getAppointmentId(), request.getInvitationType(), clientIp);
+        log.info("[开放API] 发送访客邀请: visitId={}, invitationMethod={}, clientIp={}",
+                request.getVisitId(), request.getInvitationMethod(), clientIp);
 
         InvitationResponse response = visitorOpenApiService.sendInvitation(request, token, clientIp);
         return ResponseDTO.ok(response);

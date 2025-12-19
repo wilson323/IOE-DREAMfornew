@@ -17,4 +17,3 @@ import net.lab1024.sa.visitor.entity.DriverEntity;
 public interface DriverDao extends BaseMapper<DriverEntity> {
 }
 
-

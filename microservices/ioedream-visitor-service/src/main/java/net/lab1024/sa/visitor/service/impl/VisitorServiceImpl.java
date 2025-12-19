@@ -11,7 +11,7 @@ import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.visitor.service.VisitorService;
 import net.lab1024.sa.visitor.domain.vo.VisitorVO;
-import net.lab1024.sa.common.visitor.entity.VisitorAppointmentEntity;
+import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
 import jakarta.annotation.Resource;
 
