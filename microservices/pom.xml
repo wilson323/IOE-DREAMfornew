@@ -94,18 +94,24 @@
 
     <modules>
         <!-- 公共库模块（按依赖顺序排列） -->
+        <!-- 第1层：最底层模块，无内部依赖 -->
         <module>microservices-common-core</module>
-        <module>microservices-common-security</module>
-        <module>microservices-common-permission</module>
         <module>microservices-common-data</module>
         <module>microservices-common-cache</module>
+        <!-- 第2层：依赖第1层 -->
+        <module>microservices-common-security</module>
         <module>microservices-common-export</module>
         <module>microservices-common-workflow</module>
-        <module>microservices-common-monitor</module>
-        <module>microservices-common-business</module>
         <module>microservices-common-storage</module>
+        <!-- 第3层：依赖security和cache -->
+        <module>microservices-common-permission</module>
+        <module>microservices-common-monitor</module>
+        <!-- 第4层：依赖多个common模块 -->
+        <module>microservices-common-business</module>
         <module>microservices-common</module>
+        <!-- 数据库初始化模块 -->
         <module>ioedream-db-init</module>
+        <!-- 业务微服务模块 -->
         <module>ioedream-gateway-service</module>
         <module>ioedream-common-service</module>
         <module>ioedream-device-comm-service</module>
