@@ -295,7 +295,6 @@ public class SpaceCapacityManager {
         List<String> recommendations = new ArrayList<>();
 
         int status = analysis.getCapacityStatus();
-        double utilizationRate = analysis.getUtilizationRate();
 
         switch (status) {
             case CapacityStatus.LOW_USAGE:
@@ -314,6 +313,9 @@ public class SpaceCapacityManager {
                 recommendations.add("区域已超负荷，建议立即进行空间优化");
                 recommendations.add("优先处理设备布局调整，必要时增加新区域");
                 recommendations.add("评估当前设备配置的必要性，移除非关键设备");
+                break;
+            default:
+                recommendations.add("容量状态未知，建议检查区域配置并重新计算容量指标");
                 break;
         }
 

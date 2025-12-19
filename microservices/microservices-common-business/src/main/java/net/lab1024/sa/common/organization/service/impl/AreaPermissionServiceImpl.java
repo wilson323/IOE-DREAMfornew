@@ -503,7 +503,7 @@ public class AreaPermissionServiceImpl implements AreaPermissionService {
             // 创建权限变更事件（使用Spring的ApplicationEvent作为基类）
             PermissionChangeEvent event = new PermissionChangeEvent(this, userId, areaId, changeType);
             eventPublisher.publishEvent(event);
-            
+
             log.debug("[区域权限服务] 权限变更事件已发布: userId={}, areaId={}, changeType={}",
                     userId, areaId, changeType);
         } catch (Exception e) {
@@ -520,6 +520,8 @@ public class AreaPermissionServiceImpl implements AreaPermissionService {
      * </p>
      */
     public static class PermissionChangeEvent extends org.springframework.context.ApplicationEvent {
+        private static final long serialVersionUID = 1L;
+
         private final Long userId;
         private final Long areaId;
         private final String changeType;

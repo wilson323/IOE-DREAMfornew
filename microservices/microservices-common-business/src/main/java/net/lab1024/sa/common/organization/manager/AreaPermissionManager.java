@@ -556,12 +556,12 @@ public class AreaPermissionManager {
      * 权限检查结果
      */
     public static class PermissionCheckResult {
-        private boolean granted;
+        private boolean permissionGranted;
         private String reason;
         private AreaUserEntity permission;
 
-        private PermissionCheckResult(boolean granted, String reason, AreaUserEntity permission) {
-            this.granted = granted;
+        private PermissionCheckResult(boolean permissionGranted, String reason, AreaUserEntity permission) {
+            this.permissionGranted = permissionGranted;
             this.reason = reason;
             this.permission = permission;
         }
@@ -575,7 +575,7 @@ public class AreaPermissionManager {
         }
 
         // getters
-        public boolean isGranted() { return granted; }
+        public boolean isGranted() { return permissionGranted; }
         public String getReason() { return reason; }
         public AreaUserEntity getPermission() { return permission; }
     }

@@ -259,7 +259,7 @@ public class LogisticsReservationManager {
                         int sequence = Integer.parseInt(sequenceStr);
                         maxSequence = Math.max(maxSequence, sequence);
                     } catch (NumberFormatException e) {
-                        // 忽略格式错误的编号
+                        log.debug("[物流预约] 忽略格式错误的预约编号: reservationCode={}", reservation.getReservationCode(), e);
                     }
                 }
             }

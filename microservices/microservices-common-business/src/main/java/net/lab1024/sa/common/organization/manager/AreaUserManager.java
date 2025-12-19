@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 区域人员关联管理器
@@ -183,9 +184,9 @@ public class AreaUserManager {
         Integer retryCount = areaUser.getRetryCount();
 
         return syncStatus == null
-                || syncStatus == AreaUserEntity.DeviceSyncStatus.NOT_SYNCED      // 未下发
-                || syncStatus == AreaUserEntity.DeviceSyncStatus.SYNC_FAILED     // 同步失败
-                || (syncStatus == AreaUserEntity.DeviceSyncStatus.CANCELED     // 已撤销
+                || Objects.equals(syncStatus, AreaUserEntity.DeviceSyncStatus.NOT_SYNCED)      // 未下发
+                || Objects.equals(syncStatus, AreaUserEntity.DeviceSyncStatus.SYNC_FAILED)     // 同步失败
+                || (Objects.equals(syncStatus, AreaUserEntity.DeviceSyncStatus.CANCELED)     // 已撤销
                     && retryCount != null && retryCount < 3);  // 已撤销但可重试
     }
 
