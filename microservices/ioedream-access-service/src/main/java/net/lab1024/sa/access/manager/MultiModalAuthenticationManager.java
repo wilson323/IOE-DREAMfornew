@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * </p>
  * <ul>
  * <li><strong>边缘验证模式（Edge）</strong>：设备端已完成验证，软件端只记录认证方式</li>
- * <li><strong>后台验证模式（Backend）</strong>：设备端已识别人员，软件端验证认证方式是否允许</li>
+ * <li><strong>后台验证模式（Backend）</strong>：设备端已识别人员和验证认证方式，软件端只记录认证方式</li>
  * </ul>
  *
  * @author IOE-DREAM Team
