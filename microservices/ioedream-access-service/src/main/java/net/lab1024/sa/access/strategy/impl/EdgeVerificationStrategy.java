@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
+import net.lab1024.sa.access.domain.enumeration.VerifyTypeEnum;
 import net.lab1024.sa.access.manager.AntiPassbackManager;
 import net.lab1024.sa.access.strategy.VerificationModeStrategy;
 import net.lab1024.sa.access.util.AccessRecordIdempotencyUtil;
@@ -287,23 +288,14 @@ public class EdgeVerificationStrategy implements VerificationModeStrategy {
             entity.setAccessType("IN"); // 默认进入
         }
 
-        // 验证方式（根据verifyType判断）
+        // 验证方式（使用VerifyTypeEnum统一管理）
         if (request.getVerifyType() != null) {
-            switch (request.getVerifyType()) {
-                case 0:
-                    entity.setVerifyMethod("PASSWORD");
-                    break;
-                case 1:
-                    entity.setVerifyMethod("FINGERPRINT");
-                    break;
-                case 2:
-                    entity.setVerifyMethod("CARD");
-                    break;
-                case 11:
-                    entity.setVerifyMethod("FACE");
-                    break;
-                default:
-                    entity.setVerifyMethod("CARD");
+            VerifyTypeEnum verifyTypeEnum = VerifyTypeEnum.getByCode(request.getVerifyType());
+            if (verifyTypeEnum != null) {
+                entity.setVerifyMethod(verifyTypeEnum.getName());
+            } else {
+                log.warn("[设备端验证] 不支持的认证方式: verifyType={}, 使用默认值CARD", request.getVerifyType());
+                entity.setVerifyMethod("CARD"); // 默认卡片
             }
         } else {
             entity.setVerifyMethod("CARD"); // 默认刷卡

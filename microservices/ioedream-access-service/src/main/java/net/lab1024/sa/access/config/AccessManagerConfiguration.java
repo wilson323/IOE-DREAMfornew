@@ -68,6 +68,23 @@ public class AccessManagerConfiguration {
     @Resource
     private AccessVerificationProperties verificationProperties;
 
+    @Resource
+    private java.util.List<net.lab1024.sa.access.strategy.MultiModalAuthenticationStrategy> multiModalAuthenticationStrategyList;
+
+    /**
+     * 注册MultiModalAuthenticationManager为Spring Bean
+     *
+     * @return MultiModalAuthenticationManager实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(net.lab1024.sa.access.manager.MultiModalAuthenticationManager.class)
+    public net.lab1024.sa.access.manager.MultiModalAuthenticationManager multiModalAuthenticationManager() {
+        log.info("[Manager配置] 注册MultiModalAuthenticationManager Bean");
+        return new net.lab1024.sa.access.manager.MultiModalAuthenticationManager(
+                multiModalAuthenticationStrategyList
+        );
+    }
+
     /**
      * 注册AntiPassbackManager为Spring Bean
      * <p>

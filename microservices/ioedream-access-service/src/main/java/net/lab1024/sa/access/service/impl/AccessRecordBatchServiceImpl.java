@@ -3,6 +3,7 @@ package net.lab1024.sa.access.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.access.domain.dto.AccessRecordBatchUploadRequest;
+import net.lab1024.sa.access.domain.enumeration.VerifyTypeEnum;
 import net.lab1024.sa.access.manager.AntiPassbackManager;
 import net.lab1024.sa.access.service.AccessRecordBatchService;
 import net.lab1024.sa.access.util.AccessRecordIdempotencyUtil;
@@ -366,27 +367,26 @@ public class AccessRecordBatchServiceImpl implements AccessRecordBatchService {
 
     /**
      * 将验证方式字符串转换为验证类型整数
+     * <p>
+     * 使用VerifyTypeEnum统一管理，支持所有9种认证方式
+     * </p>
      *
      * @param verifyMethod 验证方式（FACE/FINGERPRINT/CARD/PASSWORD等）
-     * @return 验证类型（0=密码, 1=指纹, 2=卡片, 11=人脸）
+     * @return 验证类型代码（VerifyTypeEnum.code）
      */
     private Integer convertVerifyMethodToType(String verifyMethod) {
         if (verifyMethod == null) {
-            return 2; // 默认卡片
+            return VerifyTypeEnum.CARD.getCode(); // 默认卡片
         }
 
-        switch (verifyMethod.toUpperCase()) {
-            case "PASSWORD":
-                return 0;
-            case "FINGERPRINT":
-                return 1;
-            case "CARD":
-                return 2;
-            case "FACE":
-                return 11;
-            default:
-                return 2; // 默认卡片
+        // 使用VerifyTypeEnum统一管理
+        VerifyTypeEnum verifyTypeEnum = VerifyTypeEnum.getByName(verifyMethod);
+        if (verifyTypeEnum != null) {
+            return verifyTypeEnum.getCode();
         }
+
+        log.warn("[批量上传] 不支持的验证方式: verifyMethod={}, 使用默认值CARD", verifyMethod);
+        return VerifyTypeEnum.CARD.getCode(); // 默认卡片
     }
 
     /**

@@ -55,3 +55,4 @@ public @interface StrategyMarker {
      */
     int priority() default 100;
 }
+
