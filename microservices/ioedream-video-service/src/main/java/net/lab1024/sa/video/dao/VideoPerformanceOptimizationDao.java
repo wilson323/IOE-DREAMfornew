@@ -11,9 +11,9 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.lab1024.sa.common.video.entity.VideoDeviceEntity;
-import net.lab1024.sa.common.video.entity.VideoStreamEntity;
-import net.lab1024.sa.common.video.entity.VideoRecordingEntity;
+import net.lab1024.sa.video.entity.VideoDeviceEntity;
+import net.lab1024.sa.video.entity.VideoStreamEntity;
+import net.lab1024.sa.video.entity.VideoRecordEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

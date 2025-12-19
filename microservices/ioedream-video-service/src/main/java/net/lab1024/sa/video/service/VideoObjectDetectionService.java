@@ -5,8 +5,8 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.domain.form.VideoObjectDetectionForm;
 import net.lab1024.sa.video.domain.vo.VideoObjectDetectionVO;
-import net.lab1024.sa.common.video.entity.VideoObjectDetectionEntity;
-import net.lab1024.sa.common.video.entity.VideoObjectTrackingEntity;
+import net.lab1024.sa.video.entity.VideoObjectDetectionEntity;
+import net.lab1024.sa.video.entity.VideoObjectTrackingEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -26,7 +26,7 @@ import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.common.video.manager.VideoStreamManager;
+import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.domain.form.VideoDeviceAddForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceUpdateForm;

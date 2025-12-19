@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.organization.entity.UserAreaPermissionEntity;
+import net.lab1024.sa.common.security.entity.UserEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
@@ -117,7 +119,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                     "/api/v1/organization/area/query",
                     HttpMethod.POST,
                     queryParams,
-                    PageResult.class
+                    new TypeReference<ResponseDTO<PageResult<AreaEntity>>>() {}
             );
 
             if (areaResponse == null || !areaResponse.isSuccess() || areaResponse.getData() == null) {
@@ -126,7 +128,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
             }
 
             // 转换为VO列表（需要补充统计信息）
-            PageResult<AreaEntity> areaPageResult = (PageResult<AreaEntity>) areaResponse.getData();
+            PageResult<AreaEntity> areaPageResult = areaResponse.getData();
             List<AccessAreaOverviewVO> voList = areaPageResult.getRecords().stream()
                     .map(this::convertToAreaOverviewVO)
                     .collect(Collectors.toList());
@@ -302,7 +304,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
             }
 
             // 逻辑删除权限
-            permission.setDeletedFlag(true);
+            permission.setDeletedFlag(1);
             userAreaPermissionDao.updateById(permission);
 
             log.info("[区域管理] 移除区域人员成功: areaId={}, userId={}", areaId, userId);
@@ -353,12 +355,12 @@ public class AccessAreaServiceImpl implements AccessAreaService {
 
                 // 查询用户信息
                 try {
-                    ResponseDTO<net.lab1024.sa.common.organization.entity.UserEntity> userResponse =
+                    ResponseDTO<UserEntity> userResponse =
                             gatewayServiceClient.callCommonService(
                                     "/api/v1/organization/user/" + permission.getUserId(),
                                     HttpMethod.GET,
                                     null,
-                                    net.lab1024.sa.common.organization.entity.UserEntity.class
+                                    UserEntity.class
                             );
 
                     if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
@@ -389,12 +391,12 @@ public class AccessAreaServiceImpl implements AccessAreaService {
 
                 // 查询用户名称
                 try {
-                    ResponseDTO<net.lab1024.sa.common.organization.entity.UserEntity> userResponse =
+                    ResponseDTO<UserEntity> userResponse =
                             gatewayServiceClient.callCommonService(
                                     "/api/v1/organization/user/" + permission.getUserId(),
                                     HttpMethod.GET,
                                     null,
-                                    net.lab1024.sa.common.organization.entity.UserEntity.class
+                                    UserEntity.class
                             );
 
                     if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
@@ -504,7 +506,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
             for (Long userId : targetUserIds) {
                 UserAreaPermissionEntity permission = userAreaPermissionDao.selectByUserAndArea(userId, areaId);
                 if (permission != null) {
-                    permission.setDeletedFlag(true);
+                    permission.setDeletedFlag(1);
                     userAreaPermissionDao.updateById(permission);
                 }
             }
@@ -765,16 +767,16 @@ public class AccessAreaServiceImpl implements AccessAreaService {
 
         // 查询用户信息
         try {
-            ResponseDTO<net.lab1024.sa.common.organization.entity.UserEntity> userResponse =
+            ResponseDTO<UserEntity> userResponse =
                     gatewayServiceClient.callCommonService(
                             "/api/v1/organization/user/" + permission.getUserId(),
                             HttpMethod.GET,
                             null,
-                            net.lab1024.sa.common.organization.entity.UserEntity.class
+                            UserEntity.class
                     );
 
             if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
-                net.lab1024.sa.common.organization.entity.UserEntity user = userResponse.getData();
+                UserEntity user = userResponse.getData();
                 vo.setUserName(user.getUserName());
                 vo.setUserNo(user.getUserNo());
                 vo.setDepartmentId(user.getDepartmentId());
@@ -870,12 +872,12 @@ public class AccessAreaServiceImpl implements AccessAreaService {
         // 查询用户名称
         if (record.getUserId() != null) {
             try {
-                ResponseDTO<net.lab1024.sa.common.organization.entity.UserEntity> userResponse =
+                ResponseDTO<UserEntity> userResponse =
                         gatewayServiceClient.callCommonService(
                                 "/api/v1/organization/user/" + record.getUserId(),
                                 HttpMethod.GET,
                                 null,
-                                net.lab1024.sa.common.organization.entity.UserEntity.class
+                                UserEntity.class
                         );
 
                 if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
