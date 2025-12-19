@@ -16,7 +16,7 @@ import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.AntiPassbackRecordEntity;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.common.organization.entity.UserEntity;
+import net.lab1024.sa.common.security.entity.UserEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
