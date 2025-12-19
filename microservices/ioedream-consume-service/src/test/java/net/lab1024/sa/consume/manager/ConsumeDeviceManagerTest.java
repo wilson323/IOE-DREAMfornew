@@ -1,8 +1,13 @@
 package net.lab1024.sa.consume.manager;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
@@ -79,8 +85,8 @@ class ConsumeDeviceManagerTest {
         DeviceEntity device = new DeviceEntity();
         device.setDeviceId(deviceId);
         device.setDeviceCode("DEV001");
-        // DeviceEntity.deviceStatus 为 String 类型，保持与公共模块定义一致
-        device.setDeviceStatus("1");
+        // ConsumeDeviceManagerImpl 以 "ONLINE" 判断在线状态
+        device.setDeviceStatus("ONLINE");
 
         when(gatewayServiceClient.callCommonService(
                 eq("/api/v1/device/" + deviceId),
@@ -133,5 +139,3 @@ class ConsumeDeviceManagerTest {
         assertTrue(true);
     }
 }
-
-

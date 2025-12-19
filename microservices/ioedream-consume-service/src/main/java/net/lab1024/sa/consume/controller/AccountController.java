@@ -72,7 +72,7 @@ public class AccountController {
      * @param form 账户创建表单
      * @return 账户ID
      * @apiNote 示例请求：
-     * 
+     *
      *          <pre>
      * {
      *   "userId": 1001,
@@ -658,7 +658,7 @@ public class AccountController {
      * @param userId 用户ID
      * @return 账户余额（单位：元）
      * @apiNote 示例请求：
-     * 
+     *
      *          <pre>
      *          GET / api / v1 / consume / account / balance / user / 1001
      *          </pre>

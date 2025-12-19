@@ -179,33 +179,6 @@ public class ConsumeProductEntity extends BaseEntity {
     // ==================== 测试/旧代码兼容方法 ====================
 
     /**
-     * 设置产品名称（兼容：name字段）
-     *
-     * @param name 产品名称
-     */
-    public void setName(String name) {
-        this.productName = name;
-    }
-
-    /**
-     * 设置是否推荐（兼容：boolean -> recommended）
-     *
-     * @param isRecommended 是否推荐
-     */
-    public void setIsRecommended(boolean isRecommended) {
-        this.recommended = isRecommended;
-    }
-
-    /**
-     * 设置是否热销（兼容：boolean -> hotSale）
-     *
-     * @param isHotSale 是否热销
-     */
-    public void setIsHotSale(boolean isHotSale) {
-        this.hotSale = isHotSale;
-    }
-
-    /**
      * 设置产品ID（兼容：int -> Long）
      *
      * @param productId 产品ID

@@ -6,7 +6,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.lab1024.sa.consume.dao.MealOrderDao;
 import net.lab1024.sa.consume.dao.MealOrderItemDao;
 import net.lab1024.sa.consume.entity.MealOrderEntity;
@@ -26,8 +28,9 @@ import net.lab1024.sa.consume.entity.MealOrderItemEntity;
  * @version 1.0.0
  * @since 2025-12-14
  */
-@Slf4j
 public class MealOrderManager {
+
+    private static final Logger log = LoggerFactory.getLogger(MealOrderManager.class);
 
     private final MealOrderDao mealOrderDao;
     private final MealOrderItemDao mealOrderItemDao;

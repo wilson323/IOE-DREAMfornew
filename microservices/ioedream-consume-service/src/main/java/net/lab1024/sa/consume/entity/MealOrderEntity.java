@@ -127,33 +127,6 @@ public class MealOrderEntity extends BaseEntity {
     // 注意：createTime, updateTime, createUserId, updateUserId, deletedFlag, version
     // 已由BaseEntity提供，无需重复定义
 
-    /**
-     * 设置账户ID（兼容：long）
-     *
-     * @param accountId 账户ID
-     */
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
-     * 设置账户ID
-     *
-     * @param accountId 账户ID
-     */
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
-     * 获取账户ID（兼容）
-     *
-     * @return 账户ID
-     */
-    public Long getAccountId() {
-        return this.accountId;
-    }
-
     // 兼容性方法
     public void setDeleted(boolean deleted) {
         // 与BaseEntity的deletedFlag字段兼容

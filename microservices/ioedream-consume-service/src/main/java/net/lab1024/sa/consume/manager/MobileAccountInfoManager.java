@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
@@ -25,8 +27,9 @@ import net.lab1024.sa.consume.domain.vo.MobileAccountInfoVO;
  * @version 1.0.0
  * @since 2025-12-09
  */
-@Slf4j
 public class MobileAccountInfoManager {
+
+    private static final Logger log = LoggerFactory.getLogger(MobileAccountInfoManager.class);
 
     private final GatewayServiceClient gatewayServiceClient;
 
@@ -148,16 +151,14 @@ public class MobileAccountInfoManager {
                 return createDefaultStats();
             }
 
-            return AccountConsumeStats.builder()
-                    .todayConsumeCount((Integer) stats.getOrDefault("todayConsumeCount", 0))
-                    .todayConsumeAmount(new BigDecimal(stats.getOrDefault("todayConsumeAmount", "0").toString()))
-                    .monthConsumeCount((Integer) stats.getOrDefault("monthConsumeCount", 0))
-                    .monthConsumeAmount(new BigDecimal(stats.getOrDefault("monthConsumeAmount", "0").toString()))
-                    .lastConsumeTime(stats.get("lastConsumeTime") != null
-                            ? LocalDateTime.parse(stats.get("lastConsumeTime").toString())
-                            : null)
-                    .lastConsumeAmount(new BigDecimal(stats.getOrDefault("lastConsumeAmount", "0").toString()))
-                    .build();
+            return new AccountConsumeStats(
+                    (Integer) stats.getOrDefault("todayConsumeCount", 0),
+                    new BigDecimal(stats.getOrDefault("todayConsumeAmount", "0").toString()),
+                    (Integer) stats.getOrDefault("monthConsumeCount", 0),
+                    new BigDecimal(stats.getOrDefault("monthConsumeAmount", "0").toString()),
+                    stats.get("lastConsumeTime") != null ? LocalDateTime.parse(stats.get("lastConsumeTime").toString())
+                            : null,
+                    new BigDecimal(stats.getOrDefault("lastConsumeAmount", "0").toString()));
 
         } catch (Exception e) {
             log.warn("[账户信息Manager] 获取消费统计失败, accountId={}, error={}", accountId, e.getMessage());
@@ -170,14 +171,7 @@ public class MobileAccountInfoManager {
      * 创建默认统计信息
      */
     private AccountConsumeStats createDefaultStats() {
-        return AccountConsumeStats.builder()
-                .todayConsumeCount(0)
-                .todayConsumeAmount(BigDecimal.ZERO)
-                .monthConsumeCount(0)
-                .monthConsumeAmount(BigDecimal.ZERO)
-                .lastConsumeTime(null)
-                .lastConsumeAmount(BigDecimal.ZERO)
-                .build();
+        return new AccountConsumeStats(0, BigDecimal.ZERO, 0, BigDecimal.ZERO, null, BigDecimal.ZERO);
     }
 
     /**
@@ -312,8 +306,6 @@ public class MobileAccountInfoManager {
     /**
      * 账户消费统计内部类
      */
-    @lombok.Data
-    @lombok.Builder
     private static class AccountConsumeStats {
         private Integer todayConsumeCount;
         private BigDecimal todayConsumeAmount;
@@ -321,6 +313,20 @@ public class MobileAccountInfoManager {
         private BigDecimal monthConsumeAmount;
         private LocalDateTime lastConsumeTime;
         private BigDecimal lastConsumeAmount;
+
+        private AccountConsumeStats(Integer todayConsumeCount,
+                BigDecimal todayConsumeAmount,
+                Integer monthConsumeCount,
+                BigDecimal monthConsumeAmount,
+                LocalDateTime lastConsumeTime,
+                BigDecimal lastConsumeAmount) {
+            this.todayConsumeCount = todayConsumeCount;
+            this.todayConsumeAmount = todayConsumeAmount;
+            this.monthConsumeCount = monthConsumeCount;
+            this.monthConsumeAmount = monthConsumeAmount;
+            this.lastConsumeTime = lastConsumeTime;
+            this.lastConsumeAmount = lastConsumeAmount;
+        }
 
         /**
          * 获取最近消费时间

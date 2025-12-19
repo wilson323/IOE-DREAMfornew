@@ -1,9 +1,13 @@
 package net.lab1024.sa.consume.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.dao.AccountDao;
@@ -17,8 +21,8 @@ import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 import net.lab1024.sa.consume.manager.ConsumeDeviceManager;
 import net.lab1024.sa.consume.manager.ConsumeExecutionManager;
 import net.lab1024.sa.consume.manager.ConsumeTransactionManager;
-import net.lab1024.sa.consume.manager.MobileConsumeStatisticsManager;
 import net.lab1024.sa.consume.manager.MobileAccountInfoManager;
+import net.lab1024.sa.consume.manager.MobileConsumeStatisticsManager;
 import net.lab1024.sa.consume.manager.MultiPaymentManager;
 import net.lab1024.sa.consume.manager.impl.AccountManagerImpl;
 import net.lab1024.sa.consume.manager.impl.ConsumeAreaManagerImpl;
@@ -28,9 +32,6 @@ import net.lab1024.sa.consume.manager.impl.MultiPaymentManagerImpl;
 import net.lab1024.sa.consume.service.ConsumeAreaCacheService;
 import net.lab1024.sa.consume.service.impl.DefaultFixedAmountCalculator;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculatorFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Manager Bean配置类
@@ -46,7 +47,6 @@ import org.springframework.web.client.RestTemplate;
  * @since 2025-12-14
  * @updated 2025-12-17 添加ConsumeTransactionManager Bean注册，修复Manager注解违规
  */
-@Slf4j
 @Configuration
 public class ManagerConfiguration {
 
@@ -120,9 +120,9 @@ public class ManagerConfiguration {
      * 注册 DefaultFixedAmountCalculator Bean
      */
     @Bean
-    public DefaultFixedAmountCalculator defaultFixedAmountCalculator() {
+    public DefaultFixedAmountCalculator defaultFixedAmountCalculator(ConsumeAreaManager consumeAreaManager) {
         log.info("[ManagerConfiguration] 初始化DefaultFixedAmountCalculator");
-        return new DefaultFixedAmountCalculator();
+        return new DefaultFixedAmountCalculator(consumeAreaManager);
     }
 
     /**
@@ -159,9 +159,11 @@ public class ManagerConfiguration {
         String bankGatewayUrl = System.getenv().getOrDefault("BANK_GATEWAY_URL", "https://api.bank.com/payment");
         String bankMerchantId = System.getenv().getOrDefault("BANK_MERCHANT_ID", "test_merchant_001");
         String bankApiKey = System.getenv().getOrDefault("BANK_API_KEY", "test_api_key_001");
-        Boolean bankPaymentEnabled = Boolean.parseBoolean(System.getenv().getOrDefault("BANK_PAYMENT_ENABLED", "false"));
+        Boolean bankPaymentEnabled = Boolean
+                .parseBoolean(System.getenv().getOrDefault("BANK_PAYMENT_ENABLED", "false"));
         Boolean creditLimitEnabled = Boolean.parseBoolean(System.getenv().getOrDefault("CREDIT_LIMIT_ENABLED", "true"));
-        java.math.BigDecimal defaultCreditLimit = new java.math.BigDecimal(System.getenv().getOrDefault("DEFAULT_CREDIT_LIMIT", "1000.00"));
+        java.math.BigDecimal defaultCreditLimit = new java.math.BigDecimal(
+                System.getenv().getOrDefault("DEFAULT_CREDIT_LIMIT", "1000.00"));
 
         return new MultiPaymentManagerImpl(
                 accountManager,
@@ -184,8 +186,8 @@ public class ManagerConfiguration {
      * 负责复杂的消费事务编排：账户验证、余额扣减、记录创建等
      * </p>
      *
-     * @param consumeRecordDao 消费记录DAO
-     * @param accountDao 账户DAO
+     * @param consumeRecordDao     消费记录DAO
+     * @param accountDao           账户DAO
      * @param gatewayServiceClient 网关服务客户端
      * @return ConsumeTransactionManager实例
      */

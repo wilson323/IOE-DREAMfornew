@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -72,7 +73,10 @@ class ConsumeMobileControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(consumeMobileController).build();
+        // 使用与序列化一致的 ObjectMapper，避免 LocalDateTime 等类型反序列化失败导致 400
+        mockMvc = MockMvcBuilders.standaloneSetup(consumeMobileController)
+                .setMessageConverters(new MappingJackson2HttpMessageConverter(OBJECT_MAPPER))
+                .build();
         // 性能优化：使用JsonUtil统一ObjectMapper实例，避免重复创建
         objectMapper = OBJECT_MAPPER;
     }

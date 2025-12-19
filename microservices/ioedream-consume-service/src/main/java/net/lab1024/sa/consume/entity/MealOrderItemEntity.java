@@ -137,15 +137,7 @@ public class MealOrderItemEntity extends BaseEntity {
         this.itemId = dishId;
     }
 
-    /**
-     * 设置菜品名称（兼容：映射到 productName）
-     *
-     * @param dishName 菜品名称
-     */
-    public void setDishName(String dishName) {
-        this.dishName = dishName;
-        this.productName = dishName;
-    }
+    // ==================== Lombok @Data 未生效时的手动 getter/setter ====================
 
     /**
      * 设置菜品ID（兼容性方法）
@@ -158,8 +150,6 @@ public class MealOrderItemEntity extends BaseEntity {
     public void setDishId(Long dishId) {
         this.itemId = dishId;
     }
-
-    // ==================== Lombok @Data 未生效时的手动 getter/setter ====================
 
     public Long getId() {
         return this.id;

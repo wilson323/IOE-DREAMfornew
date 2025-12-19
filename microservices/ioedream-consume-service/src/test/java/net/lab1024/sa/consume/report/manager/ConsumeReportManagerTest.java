@@ -90,10 +90,8 @@ class ConsumeReportManagerTest {
         transactions.add(mockTransaction);
 
         when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-        // 使用@SuppressWarnings消除类型转换警告
-        @SuppressWarnings("unchecked")
-        TypeReference<Map<String, Object>> typeRef = any(TypeReference.class);
-        when(objectMapper.readValue(anyString(), typeRef))
+        // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
+        when(objectMapper.readValue(anyString(), any(TypeReference.class)))
                 .thenReturn(Map.of("includeDetails", false));
         when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(transactions);
@@ -118,10 +116,8 @@ class ConsumeReportManagerTest {
         transactions.add(mockTransaction);
 
         when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-        // 使用@SuppressWarnings消除类型转换警告
-        @SuppressWarnings("unchecked")
-        TypeReference<Map<String, Object>> typeRef = any(TypeReference.class);
-        when(objectMapper.readValue(anyString(), typeRef))
+        // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
+        when(objectMapper.readValue(anyString(), any(TypeReference.class)))
                 .thenReturn(Map.of("includeDetails", false));
         when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(transactions);
@@ -151,10 +147,8 @@ class ConsumeReportManagerTest {
         transactions.add(mockTransaction);
 
         when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-        // 使用@SuppressWarnings消除类型转换警告
-        @SuppressWarnings("unchecked")
-        TypeReference<Map<String, Object>> typeRef = any(TypeReference.class);
-        when(objectMapper.readValue(anyString(), typeRef))
+        // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
+        when(objectMapper.readValue(anyString(), any(TypeReference.class)))
                 .thenReturn(Map.of("includeDetails", false));
         when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(transactions);
@@ -178,10 +172,8 @@ class ConsumeReportManagerTest {
         transactions.add(mockTransaction);
 
         when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-        // 使用@SuppressWarnings消除类型转换警告
-        @SuppressWarnings("unchecked")
-        TypeReference<Map<String, Object>> typeRef = any(TypeReference.class);
-        when(objectMapper.readValue(anyString(), typeRef))
+        // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
+        when(objectMapper.readValue(anyString(), any(TypeReference.class)))
                 .thenReturn(Map.of("includeDetails", false));
         when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(transactions);
@@ -205,10 +197,8 @@ class ConsumeReportManagerTest {
         transactions.add(mockTransaction);
 
         when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-        // 使用@SuppressWarnings消除类型转换警告
-        @SuppressWarnings("unchecked")
-        TypeReference<Map<String, Object>> typeRef = any(TypeReference.class);
-        when(objectMapper.readValue(anyString(), typeRef))
+        // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
+        when(objectMapper.readValue(anyString(), any(TypeReference.class)))
                 .thenReturn(Map.of("includeDetails", false));
         when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(transactions);
@@ -232,10 +222,8 @@ class ConsumeReportManagerTest {
         transactions.add(mockTransaction);
 
         when(reportTemplateDao.selectById(mockTemplate.getId())).thenReturn(mockTemplate);
-        // 使用@SuppressWarnings消除类型转换警告
-        @SuppressWarnings("unchecked")
-        TypeReference<Map<String, Object>> typeRef = any(TypeReference.class);
-        when(objectMapper.readValue(anyString(), typeRef))
+        // 正确的 Mockito Matcher 用法：直接在 stubbing 中使用 any(TypeReference.class)
+        when(objectMapper.readValue(anyString(), any(TypeReference.class)))
                 .thenReturn(Map.of("includeDetails", false));
         when(consumeTransactionDao.selectByTimeRange(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(transactions);

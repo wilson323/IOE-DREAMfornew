@@ -9,7 +9,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.seata.spring.annotation.GlobalTransactional;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.dao.AccountDao;
@@ -30,8 +31,9 @@ import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
  * @since 2025-01-30
  * @updated 2025-12-17 移除@Component注解，改为纯Java类，使用构造函数注入
  */
-@Slf4j
 public class ConsumeTransactionManager {
+
+    private static final Logger log = LoggerFactory.getLogger(ConsumeTransactionManager.class);
 
     private final ConsumeRecordDao consumeRecordDao;
     private final AccountDao accountDao;

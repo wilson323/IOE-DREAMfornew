@@ -48,12 +48,18 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
      * </p>
      *
      * @param gatewayServiceClient 网关服务客户端
-     * @param objectMapper JSON解析器（Spring Boot ObjectMapper Bean，推荐使用）
+     * @param objectMapper         JSON解析器（Spring Boot ObjectMapper Bean，推荐使用）
      */
     public ConsumeDeviceManagerImpl(GatewayServiceClient gatewayServiceClient, ObjectMapper objectMapper) {
         this.gatewayServiceClient = gatewayServiceClient;
-        // 优先使用Spring Boot的ObjectMapper Bean，如果没有则使用JsonUtil作为fallback（向后兼容）
-        this.objectMapper = objectMapper != null ? objectMapper : JsonUtil.getObjectMapper();
+        // 优先使用Spring Boot的ObjectMapper Bean，如果不可用则使用JsonUtil作为fallback（向后兼容）
+        // 说明：单元测试可能传入 Mockito mock 的 ObjectMapper（getTypeFactory() 为 null），此时需要降级为真实
+        // ObjectMapper。
+        if (objectMapper == null || objectMapper.getTypeFactory() == null) {
+            this.objectMapper = JsonUtil.getObjectMapper();
+        } else {
+            this.objectMapper = objectMapper;
+        }
     }
 
     /**
@@ -75,8 +81,7 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
                     "/api/v1/device/" + deviceId,
                     org.springframework.http.HttpMethod.GET,
                     null,
-                    DeviceEntity.class
-            );
+                    DeviceEntity.class);
             if (response != null && response.isSuccess()) {
                 return response.getData();
             }
@@ -97,11 +102,13 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
     public boolean isDeviceOnline(String deviceId) {
         log.debug("[设备管理] 验证设备是否在线，deviceId={}", deviceId);
         try {
-            DeviceEntity device = getConsumeDeviceById(Long.parseLong(deviceId));
+            // DeviceEntity#deviceId 为 String（ASSIGN_ID），不可假设可解析为 Long
+            DeviceEntity device = getDeviceById(deviceId);
             if (device == null) {
                 return false;
             }
-            return "ONLINE".equals(device.getDeviceStatus());
+            // DeviceEntity.deviceStatus：1-在线 2-离线 3-故障 4-维护 5-停用
+            return Integer.valueOf(1).equals(device.getDeviceStatus());
         } catch (Exception e) {
             log.error("[设备管理] 验证设备在线状态失败，deviceId={}", deviceId, e);
             return false;
@@ -111,7 +118,7 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
     /**
      * 验证设备是否支持指定的消费模式
      *
-     * @param deviceId 设备ID
+     * @param deviceId    设备ID
      * @param consumeMode 消费模式（FIXED/AMOUNT/PRODUCT/COUNT）
      * @return 是否支持
      */
@@ -119,7 +126,8 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
     public boolean isConsumeModeSupported(String deviceId, String consumeMode) {
         log.debug("[设备管理] 验证设备是否支持消费模式，deviceId={}, consumeMode={}", deviceId, consumeMode);
         try {
-            DeviceEntity device = getConsumeDeviceById(Long.parseLong(deviceId));
+            // DeviceEntity#deviceId 为 String（ASSIGN_ID），不可假设可解析为 Long
+            DeviceEntity device = getDeviceById(deviceId);
             if (device == null) {
                 return false;
             }
@@ -191,8 +199,7 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
                     "/api/v1/device/" + deviceId,
                     org.springframework.http.HttpMethod.GET,
                     null,
-                    DeviceEntity.class
-            );
+                    DeviceEntity.class);
             if (response != null && response.isSuccess()) {
                 return response.getData();
             }
@@ -226,8 +233,7 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
                     url,
                     org.springframework.http.HttpMethod.GET,
                     null,
-                    Object.class
-            );
+                    Object.class);
             if (response != null && response.isSuccess() && response.getData() != null) {
                 Object data = response.getData();
                 if (data instanceof List) {
@@ -263,6 +269,3 @@ public class ConsumeDeviceManagerImpl implements ConsumeDeviceManager {
         }
     }
 }
-
-
-

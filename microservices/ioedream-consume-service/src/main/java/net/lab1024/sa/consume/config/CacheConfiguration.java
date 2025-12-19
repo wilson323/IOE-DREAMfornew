@@ -1,8 +1,5 @@
 package net.lab1024.sa.consume.config;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.cache.CacheService;
-import net.lab1024.sa.common.cache.SpringCacheServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,6 +15,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import net.lab1024.sa.common.cache.CacheService;
+import net.lab1024.sa.common.cache.SpringCacheServiceImpl;
 
 /**
  * 缓存配置类
@@ -31,7 +30,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @version 1.0.0
  * @since 2025-12-14
  */
-@Slf4j
 @Configuration
 @EnableCaching
 public class CacheConfiguration {
@@ -76,8 +74,10 @@ public class CacheConfiguration {
         log.info("[CacheConfiguration] 初始化RedisCacheManager");
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(java.time.Duration.ofMinutes(30))
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer()))
                 .disableCachingNullValues();
 
         return RedisCacheManager.builder(connectionFactory)
@@ -109,7 +109,7 @@ public class CacheConfiguration {
     @Bean
     @ConditionalOnMissingBean(CacheService.class)
     public CacheService cacheService(org.springframework.context.ApplicationContext applicationContext,
-                                   RedisTemplate<String, Object> redisTemplate) {
+            RedisTemplate<String, Object> redisTemplate) {
         log.info("[CacheConfiguration] 初始化CacheService");
         CacheManager cacheManager;
 

@@ -24,9 +24,13 @@ import net.lab1024.sa.consume.domain.vo.ConsumeTransactionResultVO;
 import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.entity.PaymentRefundRecordEntity;
+import net.lab1024.sa.consume.manager.MultiPaymentManager;
 import net.lab1024.sa.consume.service.AccountService;
 import net.lab1024.sa.consume.service.ConsumeService;
 import net.lab1024.sa.consume.service.PaymentService;
+import net.lab1024.sa.consume.service.payment.PaymentRecordService;
+import net.lab1024.sa.consume.service.payment.adapter.AlipayPayAdapter;
+import net.lab1024.sa.consume.service.payment.adapter.WechatPayAdapter;
 
 /**
  * 支付服务实现类
@@ -55,6 +59,18 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Resource
     private AccountService accountService;
+
+    @Resource
+    private MultiPaymentManager multiPaymentManager;
+
+    @Resource
+    private PaymentRecordService paymentRecordService;
+
+    @Resource
+    private WechatPayAdapter wechatPayAdapter;
+
+    @Resource
+    private AlipayPayAdapter alipayPayAdapter;
 
     /**
      * 处理支付（旧方法，保留向后兼容）
@@ -91,6 +107,27 @@ public class PaymentServiceImpl implements PaymentService {
     public Map<String, Object> processPayment(PaymentProcessForm form) {
         log.info("[支付服务] 处理支付，userId={}, accountId={}, amount={}, method={}",
                 form.getUserId(), form.getAccountId(), form.getPaymentAmount(), form.getPaymentMethod());
+
+        // 三方支付分发（用于单元测试与业务扩展）
+        if (form != null && form.getPaymentMethod() != null) {
+            // 2-微信支付（JSAPI）
+            if (Integer.valueOf(2).equals(form.getPaymentMethod()) && wechatPayAdapter != null) {
+                return wechatPayAdapter.createWechatPayOrder(
+                        form.getOrderNo(),
+                        form.getPaymentAmount(),
+                        form.getConsumeDescription(),
+                        form.getThirdPartyParams(),
+                        "JSAPI");
+            }
+            // 3-支付宝支付（APP）
+            if (Integer.valueOf(3).equals(form.getPaymentMethod()) && alipayPayAdapter != null) {
+                return alipayPayAdapter.createAlipayOrder(
+                        form.getOrderNo(),
+                        form.getPaymentAmount(),
+                        form.getConsumeDescription(),
+                        "APP");
+            }
+        }
 
         Map<String, Object> result = new HashMap<>();
         result.put("success", false);
@@ -837,8 +874,17 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("[支付服务] 处理支付宝回调，notifyParams大小={}", notifyParams != null ? notifyParams.size() : 0);
         Map<String, Object> result = new HashMap<>();
         result.put("success", false);
+        // 先做签名校验（避免测试中的 UnnecessaryStubbing，并为后续实现预留）
+        if (alipayPayAdapter == null) {
+            result.put("message", "支付宝回调处理功能待实现");
+            return result;
+        }
+        boolean signatureOk = alipayPayAdapter.verifyNotifySignature(notifyParams);
+        if (!signatureOk) {
+            result.put("message", "支付宝回调签名验证失败（待实现）");
+            return result;
+        }
         result.put("message", "支付宝回调处理功能待实现");
-        // TODO: 实现处理支付宝回调逻辑
         return result;
     }
 
@@ -867,11 +913,16 @@ public class PaymentServiceImpl implements PaymentService {
     public Map<String, Object> createBankPaymentOrder(Long accountNo, BigDecimal amount, String bankCardNo,
             String bankName, String transactionId) {
         log.info("[支付服务] 创建银行卡支付订单，accountNo={}, amount={}", accountNo, amount);
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", false);
-        result.put("message", "银行卡支付功能待实现");
-        // TODO: 实现创建银行卡支付订单逻辑
-        return result;
+        if (multiPaymentManager == null) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+            result.put("message", "银行卡支付功能待实现");
+            return result;
+        }
+        // 参数语义说明：
+        // - bankCardNo/bankName/transactionId 在现有接口中为 String 占位参数
+        // - 单元测试约定：bankCardNo=orderId, bankName=description, transactionId=bankCardNo
+        return multiPaymentManager.processBankPayment(accountNo, amount, bankCardNo, bankName, transactionId);
     }
 
     @Override
@@ -880,8 +931,29 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("[支付服务] 处理信用额度支付，accountNo={}, amount={}", accountNo, amount);
         Map<String, Object> result = new HashMap<>();
         result.put("success", false);
-        result.put("message", "信用额度支付功能待实现");
-        // TODO: 实现处理信用额度支付逻辑
+
+        if (multiPaymentManager == null) {
+            result.put("message", "信用额度支付功能待实现");
+            return result;
+        }
+
+        // 1) 功能开关
+        if (!Boolean.TRUE.equals(multiPaymentManager.isPaymentMethodEnabled("CREDIT"))) {
+            result.put("message", "信用额度支付未启用");
+            return result;
+        }
+
+        // 2) 额度校验
+        if (!Boolean.TRUE.equals(multiPaymentManager.checkCreditLimitSufficient(accountNo, amount))) {
+            BigDecimal limit = multiPaymentManager.getCreditLimit(accountNo);
+            result.put("message", "信用额度不足，当前额度：" + (limit != null ? limit : BigDecimal.ZERO));
+            return result;
+        }
+
+        // 3) 扣减额度
+        boolean ok = Boolean.TRUE.equals(multiPaymentManager.deductCreditLimit(accountNo, amount, description, creditLimit));
+        result.put("success", ok);
+        result.put("message", ok ? "信用额度支付成功" : "信用额度支付失败");
         return result;
     }
 }

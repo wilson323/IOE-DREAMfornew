@@ -42,6 +42,116 @@ public class MobileConsumeStatisticsVO {
 
     @Schema(description = "统计更新时间")
     private String statisticsTime;
+
+    // ==================== 显式 Getter/Setter（避免 Lombok 在构建时未生效） ====================
+
+    /**
+     * 获取今日消费次数
+     *
+     * @return 今日消费次数
+     */
+    public Integer getTodayConsumeCount() {
+        return this.todayConsumeCount;
+    }
+
+    /**
+     * 设置今日消费次数
+     *
+     * @param todayConsumeCount 今日消费次数
+     */
+    public void setTodayConsumeCount(Integer todayConsumeCount) {
+        this.todayConsumeCount = todayConsumeCount;
+    }
+
+    /**
+     * 获取今日消费金额
+     *
+     * @return 今日消费金额
+     */
+    public BigDecimal getTodayConsumeAmount() {
+        return this.todayConsumeAmount;
+    }
+
+    /**
+     * 设置今日消费金额
+     *
+     * @param todayConsumeAmount 今日消费金额
+     */
+    public void setTodayConsumeAmount(BigDecimal todayConsumeAmount) {
+        this.todayConsumeAmount = todayConsumeAmount;
+    }
+
+    /**
+     * 获取本周消费次数
+     *
+     * @return 本周消费次数
+     */
+    public Integer getWeekConsumeCount() {
+        return this.weekConsumeCount;
+    }
+
+    /**
+     * 设置本周消费次数
+     *
+     * @param weekConsumeCount 本周消费次数
+     */
+    public void setWeekConsumeCount(Integer weekConsumeCount) {
+        this.weekConsumeCount = weekConsumeCount;
+    }
+
+    /**
+     * 获取本周消费金额
+     *
+     * @return 本周消费金额
+     */
+    public BigDecimal getWeekConsumeAmount() {
+        return this.weekConsumeAmount;
+    }
+
+    /**
+     * 设置本周消费金额
+     *
+     * @param weekConsumeAmount 本周消费金额
+     */
+    public void setWeekConsumeAmount(BigDecimal weekConsumeAmount) {
+        this.weekConsumeAmount = weekConsumeAmount;
+    }
+
+    /**
+     * 获取本月消费次数
+     *
+     * @return 本月消费次数
+     */
+    public Integer getMonthConsumeCount() {
+        return this.monthConsumeCount;
+    }
+
+    /**
+     * 设置本月消费次数
+     *
+     * @param monthConsumeCount 本月消费次数
+     */
+    public void setMonthConsumeCount(Integer monthConsumeCount) {
+        this.monthConsumeCount = monthConsumeCount;
+    }
+
+    /**
+     * 获取本月消费金额
+     *
+     * @return 本月消费金额
+     */
+    public BigDecimal getMonthConsumeAmount() {
+        return this.monthConsumeAmount;
+    }
+
+    /**
+     * 设置本月消费金额
+     *
+     * @param monthConsumeAmount 本月消费金额
+     */
+    public void setMonthConsumeAmount(BigDecimal monthConsumeAmount) {
+        this.monthConsumeAmount = monthConsumeAmount;
+    }
 }
 
 

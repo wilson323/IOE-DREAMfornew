@@ -12,7 +12,6 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.domain.vo.MobileConsumeStatisticsVO;
@@ -37,7 +36,6 @@ import net.lab1024.sa.consume.domain.vo.MobileConsumeStatisticsVO;
  * @version 1.0.0
  * @since 2025-12-09
  */
-@Slf4j
 public class MobileConsumeStatisticsManager {
 
     private static final Logger log = LoggerFactory.getLogger(MobileConsumeStatisticsManager.class);
@@ -163,59 +161,54 @@ public class MobileConsumeStatisticsManager {
 
         switch (statisticsType) {
             case "daily":
-                return TimeRange.builder()
-                        .todayStart(today.atStartOfDay())
-                        .todayEnd(today.atTime(LocalTime.MAX))
-                        .weekStart(today.minusDays(today.getDayOfWeek().getValue() - 1).atStartOfDay())
-                        .weekEnd(today.plusDays(7 - today.getDayOfWeek().getValue()).atTime(LocalTime.MAX))
-                        .monthStart(today.withDayOfMonth(1).atStartOfDay())
-                        .monthEnd(today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX))
-                        .build();
+                return new TimeRange(
+                        today.atStartOfDay(),
+                        today.atTime(LocalTime.MAX),
+                        today.minusDays(today.getDayOfWeek().getValue() - 1).atStartOfDay(),
+                        today.plusDays(7 - today.getDayOfWeek().getValue()).atTime(LocalTime.MAX),
+                        today.withDayOfMonth(1).atStartOfDay(),
+                        today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX));
 
             case "weekly":
                 // 自定义周范围或当前周
                 if (startDate != null && endDate != null) {
-                    return TimeRange.builder()
-                            .todayStart(startDate)
-                            .todayEnd(endDate)
-                            .weekStart(startDate)
-                            .weekEnd(endDate)
-                            .monthStart(today.withDayOfMonth(1).atStartOfDay())
-                            .monthEnd(today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX))
-                            .build();
+                    return new TimeRange(
+                            startDate,
+                            endDate,
+                            startDate,
+                            endDate,
+                            today.withDayOfMonth(1).atStartOfDay(),
+                            today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX));
                 } else {
                     LocalDate weekStart = today.minusDays(today.getDayOfWeek().getValue() - 1);
                     LocalDate weekEnd = weekStart.plusDays(6);
-                    return TimeRange.builder()
-                            .todayStart(weekStart.atStartOfDay())
-                            .todayEnd(weekEnd.atTime(LocalTime.MAX))
-                            .weekStart(weekStart.atStartOfDay())
-                            .weekEnd(weekEnd.atTime(LocalTime.MAX))
-                            .monthStart(today.withDayOfMonth(1).atStartOfDay())
-                            .monthEnd(today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX))
-                            .build();
+                    return new TimeRange(
+                            weekStart.atStartOfDay(),
+                            weekEnd.atTime(LocalTime.MAX),
+                            weekStart.atStartOfDay(),
+                            weekEnd.atTime(LocalTime.MAX),
+                            today.withDayOfMonth(1).atStartOfDay(),
+                            today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX));
                 }
 
             case "monthly":
                 // 自定义月范围或当前月
                 if (startDate != null && endDate != null) {
-                    return TimeRange.builder()
-                            .todayStart(startDate)
-                            .todayEnd(endDate)
-                            .weekStart(today.minusDays(today.getDayOfWeek().getValue() - 1).atStartOfDay())
-                            .weekEnd(today.plusDays(7 - today.getDayOfWeek().getValue()).atTime(LocalTime.MAX))
-                            .monthStart(startDate)
-                            .monthEnd(endDate)
-                            .build();
+                    return new TimeRange(
+                            startDate,
+                            endDate,
+                            today.minusDays(today.getDayOfWeek().getValue() - 1).atStartOfDay(),
+                            today.plusDays(7 - today.getDayOfWeek().getValue()).atTime(LocalTime.MAX),
+                            startDate,
+                            endDate);
                 } else {
-                    return TimeRange.builder()
-                            .todayStart(today.withDayOfMonth(1).atStartOfDay())
-                            .todayEnd(today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX))
-                            .weekStart(today.minusDays(today.getDayOfWeek().getValue() - 1).atStartOfDay())
-                            .weekEnd(today.plusDays(7 - today.getDayOfWeek().getValue()).atTime(LocalTime.MAX))
-                            .monthStart(today.withDayOfMonth(1).atStartOfDay())
-                            .monthEnd(today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX))
-                            .build();
+                    return new TimeRange(
+                            today.withDayOfMonth(1).atStartOfDay(),
+                            today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX),
+                            today.minusDays(today.getDayOfWeek().getValue() - 1).atStartOfDay(),
+                            today.plusDays(7 - today.getDayOfWeek().getValue()).atTime(LocalTime.MAX),
+                            today.withDayOfMonth(1).atStartOfDay(),
+                            today.withDayOfMonth(today.lengthOfMonth()).atTime(LocalTime.MAX));
                 }
 
             default:
@@ -291,14 +284,50 @@ public class MobileConsumeStatisticsManager {
     /**
      * 时间范围内部类
      */
-    @lombok.Data
-    @lombok.Builder
-    private static class TimeRange {
-        private LocalDateTime todayStart;
-        private LocalDateTime todayEnd;
-        private LocalDateTime weekStart;
-        private LocalDateTime weekEnd;
-        private LocalDateTime monthStart;
-        private LocalDateTime monthEnd;
+    private static final class TimeRange {
+        private final LocalDateTime todayStart;
+        private final LocalDateTime todayEnd;
+        private final LocalDateTime weekStart;
+        private final LocalDateTime weekEnd;
+        private final LocalDateTime monthStart;
+        private final LocalDateTime monthEnd;
+
+        private TimeRange(LocalDateTime todayStart,
+                LocalDateTime todayEnd,
+                LocalDateTime weekStart,
+                LocalDateTime weekEnd,
+                LocalDateTime monthStart,
+                LocalDateTime monthEnd) {
+            this.todayStart = todayStart;
+            this.todayEnd = todayEnd;
+            this.weekStart = weekStart;
+            this.weekEnd = weekEnd;
+            this.monthStart = monthStart;
+            this.monthEnd = monthEnd;
+        }
+
+        private LocalDateTime getTodayStart() {
+            return todayStart;
+        }
+
+        private LocalDateTime getTodayEnd() {
+            return todayEnd;
+        }
+
+        private LocalDateTime getWeekStart() {
+            return weekStart;
+        }
+
+        private LocalDateTime getWeekEnd() {
+            return weekEnd;
+        }
+
+        private LocalDateTime getMonthStart() {
+            return monthStart;
+        }
+
+        private LocalDateTime getMonthEnd() {
+            return monthEnd;
+        }
     }
 }

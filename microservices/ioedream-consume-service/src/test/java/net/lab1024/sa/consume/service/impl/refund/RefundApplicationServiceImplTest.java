@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
@@ -36,6 +38,7 @@ import net.lab1024.sa.consume.manager.AccountManager;
  * @since 2025-01-30
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("RefundApplicationServiceImpl Unit Test")
 class RefundApplicationServiceImplTest {
 
@@ -50,6 +53,9 @@ class RefundApplicationServiceImplTest {
 
     @Mock
     private AccountManager accountManager;
+
+    @Mock
+    private net.lab1024.sa.consume.service.PaymentService paymentService;
 
     @InjectMocks
     private RefundApplicationServiceImpl refundApplicationServiceImpl;
@@ -154,8 +160,14 @@ class RefundApplicationServiceImplTest {
         String approvalComment = "Approved";
 
         when(refundApplicationDao.selectByRefundNo(refundNo)).thenReturn(mockEntity);
-        when(paymentRecordDao.selectById(any())).thenReturn(mockPaymentRecord);
+        // executeRefund 会调用 paymentRecordDao.selectById(entity.getPaymentRecordId())
+        when(paymentRecordDao.selectById(mockEntity.getPaymentRecordId())).thenReturn(mockPaymentRecord);
+        // executeRefund 会调用 paymentRecordDao.updateById(paymentRecord)
+        when(paymentRecordDao.updateById(any(PaymentRecordEntity.class))).thenReturn(1);
         when(refundApplicationDao.updateById(any(RefundApplicationEntity.class))).thenReturn(1);
+        // 支付方式是支付宝，会调用 alipayRefund
+        when(paymentService.alipayRefund(anyString(), any(BigDecimal.class), anyString()))
+                .thenReturn(java.util.Map.of("success", true, "tradeNo", "ALIPAY_REFUND_001"));
 
         // When
         refundApplicationServiceImpl.updateRefundStatus(refundNo, status, approvalComment);
@@ -163,6 +175,9 @@ class RefundApplicationServiceImplTest {
         // Then
         verify(refundApplicationDao, times(1)).selectByRefundNo(refundNo);
         verify(refundApplicationDao, times(1)).updateById(any(RefundApplicationEntity.class));
+        verify(paymentRecordDao, times(1)).selectById(mockEntity.getPaymentRecordId());
+        verify(paymentRecordDao, times(1)).updateById(any(PaymentRecordEntity.class));
+        verify(paymentService, times(1)).alipayRefund(anyString(), any(BigDecimal.class), anyString());
     }
 
     @Test

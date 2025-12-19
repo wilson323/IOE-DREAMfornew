@@ -110,6 +110,33 @@ public class MobileAccountInfoVO {
     // ==================== 显式 Getter/Setter（避免 Lombok 在构建时未生效） ====================
 
     /**
+     * 设置账户ID
+     *
+     * @param accountId 账户ID
+     */
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    /**
+     * 设置账户ID（兼容long）
+     *
+     * @param accountId 账户ID
+     */
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
+    }
+
+    /**
+     * 设置账户编号
+     *
+     * @param accountNumber 账户编号
+     */
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    /**
      * 获取账户余额
      *
      * @return 账户余额
@@ -289,5 +316,3 @@ public class MobileAccountInfoVO {
         this.todayConsumeAmount = todayConsumeAmount;
     }
 }
-
-
