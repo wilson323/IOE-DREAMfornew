@@ -195,7 +195,7 @@ public class EdgeVideoProcessor {
 
                 // 1. 先尝试边缘推理
                 Future<InferenceResult> edgeResult = performInference(inferenceRequest);
-                InferenceResult result = edgeResult.get(config.getEdgeInferenceTimeout());
+                InferenceResult result = edgeResult.get(config.getEdgeInferenceTimeout(), java.util.concurrent.TimeUnit.MILLISECONDS);
 
                 // 2. 判断是否需要云端协同
                 if (result.isSuccess() && result.getConfidence() < config.getCloudCollaborationThreshold()) {

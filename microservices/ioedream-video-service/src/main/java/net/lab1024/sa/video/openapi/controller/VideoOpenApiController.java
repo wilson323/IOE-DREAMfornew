@@ -203,8 +203,8 @@ public class VideoOpenApiController {
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
 
-        log.info("[开放API] 行为分析检测: deviceId={}, analysisType={}, clientIp={}",
-                request.getDeviceId(), request.getAnalysisType(), clientIp);
+        log.info("[开放API] 行为分析检测: deviceId={}, analysisTypes={}, clientIp={}",
+                request.getDeviceId(), request.getAnalysisTypes(), clientIp);
 
         BehaviorAnalysisResponse response = videoOpenApiService.behaviorAnalysis(request, token, clientIp);
         return ResponseDTO.ok(response);
@@ -223,8 +223,8 @@ public class VideoOpenApiController {
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
 
-        log.info("[开放API] 目标跟踪分析: deviceId={}, trackingType={}, clientIp={}",
-                request.getDeviceId(), request.getTrackingType(), clientIp);
+        log.info("[开放API] 目标跟踪分析: objectId={}, trackingMode={}, clientIp={}",
+                request.getObjectId(), request.getTrackingMode(), clientIp);
 
         ObjectTrackingResponse response = videoOpenApiService.objectTracking(request, token, clientIp);
         return ResponseDTO.ok(response);
@@ -252,8 +252,8 @@ public class VideoOpenApiController {
                 .pageSize(pageSize)
                 .deviceId(deviceId)
                 .analysisType(analysisType)
-                .startTime(startTime)
-                .endTime(endTime)
+                .startTimeStr(startTime)
+                .endTimeStr(endTime)
                 .confidenceThreshold(confidenceThreshold)
                 .build();
 
@@ -284,7 +284,7 @@ public class VideoOpenApiController {
                 .pageNum(pageNum)
                 .pageSize(pageSize)
                 .deviceName(deviceName)
-                .deviceStatus(deviceStatus)
+                .status(deviceStatus)
                 .deviceType(deviceType)
                 .areaId(areaId)
                 .build();
@@ -326,8 +326,8 @@ public class VideoOpenApiController {
         String clientIp = getClientIpAddress(httpRequest);
         String token = extractTokenFromAuthorization(authorization);
 
-        log.info("[开放API] 云台控制: deviceId={}, command={}, pan={}, tilt={}, zoom={}, clientIp={}",
-                deviceId, request.getCommand(), request.getPan(), request.getTilt(), request.getZoom(), clientIp);
+        log.info("[开放API] 云台控制: deviceId={}, action={}, speed={}, clientIp={}",
+                deviceId, request.getAction(), request.getSpeed(), clientIp);
 
         videoOpenApiService.ptzControl(deviceId, request, token, clientIp);
         return ResponseDTO.ok();

@@ -172,4 +172,26 @@ public interface VideoStreamService {
      * @return 录制列表
      */
     ResponseDTO<List<Map<String, Object>>> getRecordings(Long deviceId);
+
+    /**
+     * 获取流播放地址
+     * <p>
+     * 获取指定视频流的多种协议播放地址（RTSP、RTMP、HLS、WebRTC等）
+     * </p>
+     *
+     * @param streamId 流ID
+     * @return 播放地址Map（协议名 -> URL）
+     */
+    ResponseDTO<Map<String, String>> getStreamPlayUrls(Long streamId);
+
+    /**
+     * 重连失败的流
+     * <p>
+     * 尝试重新连接断开的视频流
+     * </p>
+     *
+     * @param streamId 流ID
+     * @return 操作结果
+     */
+    ResponseDTO<Void> reconnectStream(Long streamId);
 }

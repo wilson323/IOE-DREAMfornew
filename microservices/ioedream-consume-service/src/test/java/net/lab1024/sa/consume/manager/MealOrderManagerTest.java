@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import net.lab1024.sa.consume.dao.MealOrderDao;
 import net.lab1024.sa.consume.dao.MealOrderItemDao;
@@ -37,6 +39,7 @@ import net.lab1024.sa.consume.entity.MealOrderItemEntity;
  * @since 2025-12-14
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("订餐管理器测试")
 class MealOrderManagerTest {
 

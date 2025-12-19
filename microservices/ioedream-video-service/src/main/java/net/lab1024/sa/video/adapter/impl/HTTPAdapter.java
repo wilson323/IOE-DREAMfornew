@@ -62,8 +62,8 @@ public class HTTPAdapter implements IVideoStreamAdapter {
     private String buildHTTPUrl (DeviceEntity device) {
         // TODO: 根据设备类型和配置构建HTTP URL
         // 示例：http://ip:port/video/stream.m3u8
-        String ip = device.getDeviceIp () != null ? device.getDeviceIp () : "127.0.0.1";
-        Integer port = device.getDevicePort () != null ? device.getDevicePort () : 80;
+        String ip = device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1";
+        Integer port = device.getPort() != null ? device.getPort() : 80;
 
         return String.format ("http://%s:%d/video/%s/stream.m3u8", ip, port, device.getDeviceId ());
     }

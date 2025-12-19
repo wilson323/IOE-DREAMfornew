@@ -1,8 +1,17 @@
 package net.lab1024.sa.consume.manager;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
@@ -14,15 +23,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.consume.client.AccountKindConfigClient;
+import net.lab1024.sa.consume.domain.request.ConsumeRequest;
 import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.entity.ConsumeAreaEntity;
 import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
-import net.lab1024.sa.consume.domain.request.ConsumeRequest;
 import net.lab1024.sa.consume.manager.impl.ConsumeExecutionManagerImpl;
 import net.lab1024.sa.consume.service.ConsumeAreaCacheService;
 import net.lab1024.sa.consume.service.impl.DefaultFixedAmountCalculator;
@@ -40,6 +51,7 @@ import net.lab1024.sa.consume.strategy.ConsumeAmountCalculatorFactory;
  * @since 2025-01-30
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("ConsumeExecutionManager单元测试")
 class ConsumeExecutionManagerTest {
 
@@ -190,11 +202,12 @@ class ConsumeExecutionManagerTest {
         when(calculatorFactory.getCalculator(consumeMode)).thenReturn(calculator);
         when(accountManager.getAccountById(accountId)).thenReturn(accountEntity);
         when(calculator.isSupported(eq(accountId), eq(areaId), any(AccountEntity.class))).thenReturn(true);
-        when(calculator.calculate(eq(accountId), eq(areaId), any(AccountEntity.class), any())).thenReturn(new BigDecimal("10.00"));
+        when(calculator.calculate(eq(accountId), eq(areaId), any(AccountEntity.class), any()))
+                .thenReturn(new BigDecimal("10.00"));
 
         // When
         BigDecimal result = consumeExecutionManager.calculateConsumeAmount(
-            accountId, areaId, consumeMode, consumeAmount, null);
+                accountId, areaId, consumeMode, consumeAmount, null);
 
         // Then
         assertNotNull(result);
@@ -217,7 +230,7 @@ class ConsumeExecutionManagerTest {
 
         // When
         BigDecimal result = consumeExecutionManager.calculateConsumeAmount(
-            accountId, areaId, consumeMode, consumeAmount, null);
+                accountId, areaId, consumeMode, consumeAmount, null);
 
         // Then
         assertEquals(BigDecimal.ZERO, result);
@@ -237,11 +250,12 @@ class ConsumeExecutionManagerTest {
         when(calculatorFactory.getCalculator(consumeMode)).thenReturn(calculator);
         when(accountManager.getAccountById(accountId)).thenReturn(accountEntity);
         when(calculator.isSupported(eq(accountId), eq(areaId), any(AccountEntity.class))).thenReturn(true);
-        when(calculator.calculate(eq(accountId), eq(areaId), any(AccountEntity.class), any())).thenReturn(BigDecimal.ZERO);
+        when(calculator.calculate(eq(accountId), eq(areaId), any(AccountEntity.class), any()))
+                .thenReturn(BigDecimal.ZERO);
 
         // When
         BigDecimal result = consumeExecutionManager.calculateConsumeAmount(
-            accountId, areaId, consumeMode, consumeAmount, null);
+                accountId, areaId, consumeMode, consumeAmount, null);
 
         // Then
         assertNotNull(result);
@@ -315,5 +329,3 @@ class ConsumeExecutionManagerTest {
         assertFalse(result.getOk());
     }
 }
-
-

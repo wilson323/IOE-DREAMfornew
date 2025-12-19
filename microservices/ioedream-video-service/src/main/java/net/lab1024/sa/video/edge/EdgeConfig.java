@@ -64,5 +64,69 @@ public class EdgeConfig {
     public void setCloudCollaborationThreshold(Double cloudCollaborationThreshold) {
         this.cloudCollaborationThreshold = cloudCollaborationThreshold;
     }
-}
 
+    /**
+     * 模型同步是否启用
+     */
+    private Boolean modelSyncEnabled = true;
+
+    /**
+     * 模型同步超时时间（毫秒）
+     */
+    private Long modelSyncTimeout = 30000L;
+
+    /**
+     * 心跳检测间隔（毫秒）
+     */
+    private Long heartbeatInterval = 10000L;
+
+    /**
+     * 连接重试次数
+     */
+    private Integer connectionRetryCount = 3;
+
+    /**
+     * 连接重试间隔（毫秒）
+     */
+    private Long connectionRetryInterval = 5000L;
+
+    public Boolean getModelSyncEnabled() {
+        return modelSyncEnabled;
+    }
+
+    public void setModelSyncEnabled(Boolean modelSyncEnabled) {
+        this.modelSyncEnabled = modelSyncEnabled;
+    }
+
+    public Long getModelSyncTimeout() {
+        return modelSyncTimeout;
+    }
+
+    public void setModelSyncTimeout(Long modelSyncTimeout) {
+        this.modelSyncTimeout = modelSyncTimeout;
+    }
+
+    public Long getHeartbeatInterval() {
+        return heartbeatInterval;
+    }
+
+    public void setHeartbeatInterval(Long heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
+    }
+
+    public Integer getConnectionRetryCount() {
+        return connectionRetryCount;
+    }
+
+    public void setConnectionRetryCount(Integer connectionRetryCount) {
+        this.connectionRetryCount = connectionRetryCount;
+    }
+
+    public Long getConnectionRetryInterval() {
+        return connectionRetryInterval;
+    }
+
+    public void setConnectionRetryInterval(Long connectionRetryInterval) {
+        this.connectionRetryInterval = connectionRetryInterval;
+    }
+}

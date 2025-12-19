@@ -65,10 +65,11 @@ public class RTSPAdapter implements IVideoStreamAdapter {
     private String buildRTSPUrl(DeviceEntity device) {
         // TODO: 根据设备类型和配置构建RTSP URL
         // 示例：rtsp://username:password@ip:port/Streaming/Channels/101
-        String username = device.getDeviceUsername() != null ? device.getDeviceUsername() : "admin";
-        String password = device.getDevicePassword() != null ? device.getDevicePassword() : "admin";
-        String ip = device.getDeviceIp() != null ? device.getDeviceIp() : "127.0.0.1";
-        Integer port = device.getDevicePort() != null ? device.getDevicePort() : 554;
+        // 注意：username和password应从extendedAttributes JSON字段中解析，此处使用默认值
+        String username = "admin"; // TODO: 从device.getExtendedAttributes()解析
+        String password = "admin"; // TODO: 从device.getExtendedAttributes()解析
+        String ip = device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1";
+        Integer port = device.getPort() != null ? device.getPort() : 554;
 
         return String.format("rtsp://%s:%s@%s:%d/Streaming/Channels/101", username, password, ip, port);
     }

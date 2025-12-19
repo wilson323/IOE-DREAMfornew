@@ -5,13 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.video.manager.AIEventManager;
+import net.lab1024.sa.video.manager.BehaviorDetectionManager;
+import net.lab1024.sa.video.manager.CrowdAnalysisManager;
+import net.lab1024.sa.video.manager.FaceRecognitionManager;
 import net.lab1024.sa.video.manager.VideoDeviceManager;
 import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.manager.VideoSystemIntegrationManager;
-import net.lab1024.sa.video.manager.AIEventManager;
-import net.lab1024.sa.video.manager.FaceRecognitionManager;
-import net.lab1024.sa.video.manager.BehaviorDetectionManager;
-import net.lab1024.sa.video.manager.CrowdAnalysisManager;
+import net.lab1024.sa.video.sdk.AiSdkConfig;
+import net.lab1024.sa.video.sdk.AiSdkProvider;
+import net.lab1024.sa.video.sdk.impl.LocalAiSdkProvider;
 
 /**
  * Manager配置类
@@ -78,18 +81,38 @@ public class ManagerConfiguration {
     }
 
     /**
+     * 注册AiSdkProvider为Spring Bean
+     * <p>
+     * AI SDK提供者，用于Manager类的依赖注入
+     * </p>
+     *
+     * @return AI SDK提供者实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(AiSdkProvider.class)
+    public AiSdkProvider aiSdkProvider() {
+        log.info("[AiSdkProvider] 初始化AI SDK提供者");
+        LocalAiSdkProvider provider = new LocalAiSdkProvider();
+        // 初始化配置（可根据实际需求配置）
+        AiSdkConfig config = new AiSdkConfig();
+        provider.initialize(config);
+        return provider;
+    }
+
+    /**
      * 注册FaceRecognitionManager为Spring Bean
      * <p>
      * 人脸识别管理器，负责人脸识别算法的调用、结果处理和模型管理
      * </p>
      *
+     * @param aiSdkProvider AI SDK提供者
      * @return 人脸识别管理器实例
      */
     @Bean
     @ConditionalOnMissingBean(FaceRecognitionManager.class)
-    public FaceRecognitionManager faceRecognitionManager() {
+    public FaceRecognitionManager faceRecognitionManager(AiSdkProvider aiSdkProvider) {
         log.info("[FaceRecognitionManager] 初始化人脸识别管理器");
-        return new FaceRecognitionManager();
+        return new FaceRecognitionManager(aiSdkProvider);
     }
 
     /**
@@ -113,13 +136,14 @@ public class ManagerConfiguration {
      * 人群分析管理器，负责人群密度分析、人数统计、异常聚集检测等
      * </p>
      *
+     * @param aiSdkProvider AI SDK提供者
      * @return 人群分析管理器实例
      */
     @Bean
     @ConditionalOnMissingBean(CrowdAnalysisManager.class)
-    public CrowdAnalysisManager crowdAnalysisManager() {
+    public CrowdAnalysisManager crowdAnalysisManager(AiSdkProvider aiSdkProvider) {
         log.info("[CrowdAnalysisManager] 初始化人群分析管理器");
-        return new CrowdAnalysisManager();
+        return new CrowdAnalysisManager(aiSdkProvider);
     }
 
     /**

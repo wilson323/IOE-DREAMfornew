@@ -98,13 +98,13 @@ public class VideoSystemIntegrationController {
      */
     @PostMapping("/health/check")
     @Operation(summary = "触发健康检查", description = "手动触发系统集成健康检查")
-    public CompletableFuture<ResponseDTO<String>> triggerHealthCheck() {
+    public CompletableFuture<ResponseDTO<Map<String, Object>>> triggerHealthCheck() {
         log.info("[系统集成API] 触发系统集成健康检查");
 
         return videoSystemIntegrationService.triggerHealthCheck()
                 .thenApply(report -> {
                     log.info("[系统集成API] 健康检查完成");
-                    return ResponseDTO.ok("系统集成健康检查已启动", report);
+                    return ResponseDTO.ok(report);
                 })
                 .exceptionally(throwable -> {
                     log.error("[系统集成API] 健康检查失败", throwable);
@@ -207,25 +207,24 @@ public class VideoSystemIntegrationController {
     public ResponseDTO<Map<String, Object>> getApiMetrics() {
         log.info("[系统集成API] 获取API调用统计");
 
-        Map<String, Object> apiMetrics = Map.of(
-            "totalCalls", 15420,
-            "successCalls", 14980,
-            "errorCalls", 440,
-            "successRate", "97.15%",
-            "avgResponseTime", "125.5ms",
-            "maxResponseTime", "2.8s",
-            "minResponseTime", "5.2ms",
-            "todayCalls", 3420,
-            "hourlyCalls", 285,
-            "activeConnections", 85,
-            "endpoints", List.of(
+        Map<String, Object> apiMetrics = new java.util.HashMap<>();
+        apiMetrics.put("totalCalls", 15420);
+        apiMetrics.put("successCalls", 14980);
+        apiMetrics.put("errorCalls", 440);
+        apiMetrics.put("successRate", "97.15%");
+        apiMetrics.put("avgResponseTime", "125.5ms");
+        apiMetrics.put("maxResponseTime", "2.8s");
+        apiMetrics.put("minResponseTime", "5.2ms");
+        apiMetrics.put("todayCalls", 3420);
+        apiMetrics.put("hourlyCalls", 285);
+        apiMetrics.put("activeConnections", 85);
+        apiMetrics.put("endpoints", List.of(
                 Map.of("path", "/api/v1/video/device/list", "calls", 2450, "avgTime", "95ms"),
                 Map.of("path", "/api/v1/video/stream/start", "calls", 1820, "avgTime", "180ms"),
                 Map.of("path", "/api/v1/video/recording/query", "calls", 1560, "avgTime", "220ms"),
                 Map.of("path", "/api/v1/video/ai/analyze", "calls", 890, "avgTime", "850ms"),
                 Map.of("path", "/api/v1/video/face/recognize", "calls", 670, "avgTime", "320ms")
-            )
-        );
+        ));
 
         return ResponseDTO.ok(apiMetrics);
     }

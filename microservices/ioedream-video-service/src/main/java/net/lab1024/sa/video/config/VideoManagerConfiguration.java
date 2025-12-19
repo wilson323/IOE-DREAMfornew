@@ -1,18 +1,14 @@
 package net.lab1024.sa.video.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import lombok.extern.slf4j.Slf4j;
-
-import net.lab1024.sa.video.dao.VideoStreamDao;
 import net.lab1024.sa.video.dao.VideoMonitorDao;
-import net.lab1024.sa.video.dao.VideoPTZDao;
-import net.lab1024.sa.video.dao.VideoAlarmRuleDao;
-import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.manager.VideoMonitorManager;
 // import net.lab1024.sa.video.manager.VideoPTZManager; // 已移除
+import net.lab1024.sa.video.manager.VideoStreamManager;
 
 /**
  * 视频模块Manager配置类
@@ -37,9 +33,9 @@ public class VideoManagerConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(VideoStreamManager.class)
-    public VideoStreamManager videoStreamManager(VideoStreamDao videoStreamDao) {
+    public VideoStreamManager videoStreamManager() {
         log.info("[视频配置] 注册VideoStreamManager Bean");
-        return new VideoStreamManager(videoStreamDao);
+        return new VideoStreamManager();
     }
 
     /**
@@ -66,13 +62,16 @@ public class VideoManagerConfiguration {
      * @return 告警规则管理器实例（如果需要的话）
      */
     /*
-    @Bean
-    @ConditionalOnMissingBean(VideoAlarmRuleManager.class)
-    @ConditionalOnProperty(name = "video.alarm.rule.manager.enabled", havingValue = "true", matchIfMissing = false)
-    public VideoAlarmRuleManager videoAlarmRuleManager(VideoAlarmRuleDao videoAlarmRuleDao) {
-        log.info("[视频配置] 注册VideoAlarmRuleManager Bean");
-        return new VideoAlarmRuleManager(videoAlarmRuleDao);
-    }
-    */
+     * @Bean
+     *
+     * @ConditionalOnMissingBean(VideoAlarmRuleManager.class)
+     *
+     * @ConditionalOnProperty(name = "video.alarm.rule.manager.enabled", havingValue
+     * = "true", matchIfMissing = false)
+     * public VideoAlarmRuleManager videoAlarmRuleManager(VideoAlarmRuleDao
+     * videoAlarmRuleDao) {
+     * log.info("[视频配置] 注册VideoAlarmRuleManager Bean");
+     * return new VideoAlarmRuleManager(videoAlarmRuleDao);
+     * }
+     */
 }
-

@@ -1,13 +1,13 @@
 package net.lab1024.sa.video.openapi.domain.request;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * AI分析查询请求
@@ -29,8 +29,8 @@ public class AIAnalysisQueryRequest {
     @Schema(description = "设备ID列表")
     private List<String> deviceIds;
 
-    @Schema(description = "分析类型", example = "face_detection", 
-            allowableValues = {"face_detection", "object_detection", "behavior_analysis", "plate_recognition"})
+    @Schema(description = "分析类型", example = "face_detection", allowableValues = { "face_detection", "object_detection",
+            "behavior_analysis", "plate_recognition" })
     private String analysisType;
 
     @Schema(description = "分析类型列表")
@@ -42,7 +42,8 @@ public class AIAnalysisQueryRequest {
     @Schema(description = "结束时间", example = "2025-12-16T23:59:59")
     private LocalDateTime endTime;
 
-    @Schema(description = "状态", example = "completed", allowableValues = {"pending", "processing", "completed", "failed"})
+    @Schema(description = "状态", example = "completed", allowableValues = { "pending", "processing", "completed",
+            "failed" })
     private String status;
 
     @Schema(description = "对象类型", example = "person")
@@ -54,6 +55,15 @@ public class AIAnalysisQueryRequest {
     @Schema(description = "最低置信度", example = "0.8")
     private Double minConfidence;
 
+    @Schema(description = "最低置信度（兼容字段）", example = "0.8")
+    private Double confidenceThreshold;
+
+    @Schema(description = "开始时间字符串（兼容字段）", example = "2025-12-16T00:00:00")
+    private String startTimeStr;
+
+    @Schema(description = "结束时间字符串（兼容字段）", example = "2025-12-16T23:59:59")
+    private String endTimeStr;
+
     @Schema(description = "页码", example = "1")
     private Integer pageNum;
 
@@ -63,6 +73,6 @@ public class AIAnalysisQueryRequest {
     @Schema(description = "排序字段", example = "analysisTime")
     private String sortField;
 
-    @Schema(description = "排序方向", example = "desc", allowableValues = {"asc", "desc"})
+    @Schema(description = "排序方向", example = "desc", allowableValues = { "asc", "desc" })
     private String sortOrder;
 }

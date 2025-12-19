@@ -1,10 +1,11 @@
 package net.lab1024.sa.video.adapter.impl;
 
+import org.springframework.stereotype.Component;
+
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.video.adapter.IVideoStreamAdapter;
 import net.lab1024.sa.video.domain.vo.VideoStream;
-import org.springframework.stereotype.Component;
 
 /**
  * RTMP视频流适配器
@@ -65,8 +66,8 @@ public class RTMPAdapter implements IVideoStreamAdapter {
     private String buildRTMPUrl(DeviceEntity device) {
         // TODO: 根据设备类型和配置构建RTMP URL
         // 示例：rtmp://ip:port/live/stream
-        String ip = device.getDeviceIp() != null ? device.getDeviceIp() : "127.0.0.1";
-        Integer port = device.getDevicePort() != null ? device.getDevicePort() : 1935;
+        String ip = device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1";
+        Integer port = device.getPort() != null ? device.getPort() : 1935;
 
         return String.format("rtmp://%s:%d/live/%s", ip, port, device.getDeviceId());
     }

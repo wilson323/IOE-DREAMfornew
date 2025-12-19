@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -529,7 +530,7 @@ public class AIEventManager {
     private void classifyObjectDetectionEvent(AIEvent event) {
         log.debug("[AI事件管理器] 分类目标检测事件: eventId={}", event.getEventId());
         event.setEventTitle("目标检测事件");
-        event.setEventDescription("设备 " + event.getDeviceId() + + " 检测到目标对象");
+        event.setEventDescription("设备 " + event.getDeviceId() + " 检测到目标对象");
     }
 
     private void classifyAnomalyDetectionEvent(AIEvent event) {
@@ -574,7 +575,7 @@ public class AIEventManager {
         }
 
         // 根据置信度调整分数
-        if (event.getEventData().contains("confidence")) {
+        if (event.getEventData().containsKey("confidence")) {
             Double confidence = (Double) event.getEventData().get("confidence");
             baseScore *= confidence;
         }
@@ -587,15 +588,15 @@ public class AIEventManager {
 
         alertData.put("eventId", event.getEventId());
         alertData.put("eventType", event.getEventType().getDescription());
-        alertData("alertLevel", event.getAlertLevel().getDescription());
-        alertData("alertLevelCode", event.getAlertLevel().getLevel());
-        alertData("eventTitle", event.getEventTitle());
-        alertData("eventDescription", event.getEventDescription());
-        alertData("deviceId", event.getDeviceId());
-        alertData("streamId", event.getStreamId());
-        alertData("eventTime", event.getEventTime());
-        alertData("severityScore", calculateSeverityScore(event));
-        alertData("eventData", event.getEventData());
+        alertData.put("alertLevel", event.getAlertLevel().getDescription());
+        alertData.put("alertLevelCode", event.getAlertLevel().getLevel());
+        alertData.put("eventTitle", event.getEventTitle());
+        alertData.put("eventDescription", event.getEventDescription());
+        alertData.put("deviceId", event.getDeviceId());
+        alertData.put("streamId", event.getStreamId());
+        alertData.put("eventTime", event.getEventTime());
+        alertData.put("severityScore", calculateSeverityScore(event));
+        alertData.put("eventData", event.getEventData());
 
         return alertData;
     }

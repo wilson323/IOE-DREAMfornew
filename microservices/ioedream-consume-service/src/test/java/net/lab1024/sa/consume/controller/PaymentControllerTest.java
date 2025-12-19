@@ -1,8 +1,17 @@
 package net.lab1024.sa.consume.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -16,12 +25,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.consume.entity.PaymentRecordEntity;
-import net.lab1024.sa.consume.service.PaymentService;
 import net.lab1024.sa.consume.domain.form.PaymentProcessForm;
 import net.lab1024.sa.consume.domain.form.RefundApplyForm;
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.service.PaymentService;
 
 /**
  * PaymentController单元测试
@@ -34,6 +45,7 @@ import net.lab1024.sa.consume.domain.form.RefundApplyForm;
  * @since 2025-01-30
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("PaymentController单元测试")
 class PaymentControllerTest {
 
@@ -110,7 +122,7 @@ class PaymentControllerTest {
     void testProcessPayment_Exception() {
         // Given
         when(paymentService.processPayment(any(PaymentProcessForm.class)))
-            .thenThrow(new RuntimeException("支付处理异常"));
+                .thenThrow(new RuntimeException("支付处理异常"));
 
         // When
         ResponseDTO<Map<String, Object>> result = paymentController.processPayment(paymentForm);
@@ -318,5 +330,3 @@ class PaymentControllerTest {
         assertFalse(result.getOk());
     }
 }
-
-

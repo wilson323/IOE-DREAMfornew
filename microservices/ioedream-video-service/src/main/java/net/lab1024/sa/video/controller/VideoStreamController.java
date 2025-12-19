@@ -1,5 +1,17 @@
 package net.lab1024.sa.video.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,19 +19,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-
-import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
-import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
-import net.lab1024.sa.video.domain.vo.VideoStreamVO;
-import net.lab1024.sa.video.domain.vo.VideoStreamSessionVO;
-import net.lab1024.sa.video.service.VideoStreamService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.MediaType;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
+import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
+import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
+import net.lab1024.sa.video.domain.vo.VideoStreamSessionVO;
+import net.lab1024.sa.video.domain.vo.VideoStreamVO;
+import net.lab1024.sa.video.service.VideoStreamService;
 
 /**
  * 视频流管理控制器
@@ -54,10 +59,10 @@ public class VideoStreamController {
      */
     @PostMapping("/start")
     @Operation(summary = "启动视频流", description = "启动指定设备的视频流")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<VideoStreamSessionVO> startStream(@Valid @RequestBody VideoStreamStartForm startForm) {
         log.info("[视频流] 收到启动流请求: {}", startForm);
-        return SmartResponseUtil.smartResponse(videoStreamService.startStream(startForm));
+        return videoStreamService.startStream(startForm);
     }
 
     /**
@@ -68,10 +73,9 @@ public class VideoStreamController {
      */
     @PostMapping("/{streamId}/stop")
     @Operation(summary = "停止视频流", description = "停止指定的视频流")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<Void> stopStream(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到停止流请求: streamId={}", streamId);
         return SmartResponseUtil.smartResponse(videoStreamService.stopStream(streamId));
     }
@@ -84,12 +88,11 @@ public class VideoStreamController {
      */
     @PostMapping("/{streamId}/pause")
     @Operation(summary = "暂停视频流", description = "暂停指定的视频流")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<Void> pauseStream(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到暂停流请求: streamId={}", streamId);
-        return SmartResponseUtil.smartResponse(videoStreamService.pauseStream(streamId));
+        return videoStreamService.pauseStream(streamId);
     }
 
     /**
@@ -100,10 +103,9 @@ public class VideoStreamController {
      */
     @PostMapping("/{streamId}/resume")
     @Operation(summary = "恢复视频流", description = "恢复暂停的视频流")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<Void> resumeStream(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到恢复流请求: streamId={}", streamId);
         return SmartResponseUtil.smartResponse(videoStreamService.resumeStream(streamId));
     }
@@ -117,14 +119,12 @@ public class VideoStreamController {
      */
     @PostMapping("/{streamId}/quality")
     @Operation(summary = "切换流质量", description = "动态调整视频流质量")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<Void> switchStreamQuality(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId,
-            @Parameter(description = "视频质量", required = true)
-            @RequestParam String quality) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId,
+            @Parameter(description = "视频质量", required = true) @RequestParam String quality) {
         log.info("[视频流] 收到切换质量请求: streamId={}, quality={}", streamId, quality);
-        return SmartResponseUtil.smartResponse(videoStreamService.switchStreamQuality(streamId, quality));
+        return videoStreamService.switchStreamQuality(streamId, quality);
     }
 
     /**
@@ -135,10 +135,9 @@ public class VideoStreamController {
      */
     @GetMapping("/{streamId}")
     @Operation(summary = "获取视频流信息", description = "获取指定视频流的详细信息")
-    @PermissionCheck(value = {"VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频查看、操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
     public ResponseDTO<VideoStreamVO> getStreamById(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到获取流信息请求: streamId={}", streamId);
         return SmartResponseUtil.smartResponse(videoStreamService.getStreamById(streamId));
     }
@@ -151,12 +150,11 @@ public class VideoStreamController {
      */
     @GetMapping("/device/{deviceId}")
     @Operation(summary = "根据设备查询视频流", description = "获取指定设备的所有视频流")
-    @PermissionCheck(value = {"VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频查看、操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
     public ResponseDTO<List<VideoStreamVO>> getStreamsByDevice(
-            @Parameter(description = "设备ID", required = true)
-            @PathVariable Long deviceId) {
+            @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId) {
         log.info("[视频流] 收到根据设备查询流请求: deviceId={}", deviceId);
-        return SmartResponseUtil.smartResponse(videoStreamService.getStreamsByDevice(deviceId));
+        return videoStreamService.getStreamsByDeviceId(deviceId);
     }
 
     /**
@@ -166,7 +164,7 @@ public class VideoStreamController {
      */
     @GetMapping("/active")
     @Operation(summary = "获取活跃视频流", description = "获取当前所有活跃的视频流")
-    @PermissionCheck(value = {"VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频查看、操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
     public ResponseDTO<List<VideoStreamVO>> getActiveStreams() {
         log.info("[视频流] 收到获取活跃流请求");
         return SmartResponseUtil.smartResponse(videoStreamService.getActiveStreams());
@@ -180,10 +178,11 @@ public class VideoStreamController {
      */
     @PostMapping("/query")
     @Operation(summary = "分页查询视频流", description = "根据条件分页查询视频流")
-    @PermissionCheck(value = {"VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频查看、操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
     public ResponseDTO<Map<String, Object>> queryStreams(@Valid @RequestBody VideoStreamQueryForm queryForm) {
         log.info("[视频流] 收到分页查询请求: {}", queryForm);
-        return SmartResponseUtil.smartResponse(videoStreamService.queryStreams(queryForm));
+        PageResult<VideoStreamVO> pageResult = videoStreamService.queryStreams(queryForm);
+        return ResponseDTO.ok(pageResult);
     }
 
     /**
@@ -195,14 +194,12 @@ public class VideoStreamController {
      */
     @PostMapping("/capture")
     @Operation(summary = "视频流截图", description = "对指定视频流进行截图")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<Map<String, Object>> captureSnapshot(
-            @Parameter(description = "设备ID", required = true)
-            @RequestParam Long deviceId,
-            @Parameter(description = "通道ID")
-            @RequestParam(required = false) Long channelId) {
+            @Parameter(description = "设备ID", required = true) @RequestParam Long deviceId,
+            @Parameter(description = "通道ID") @RequestParam(required = false) Long channelId) {
         log.info("[视频流] 收到截图请求: deviceId={}, channelId={}", deviceId, channelId);
-        return SmartResponseUtil.smartResponse(videoStreamService.captureSnapshot(deviceId, channelId));
+        return videoStreamService.captureSnapshot(deviceId, channelId);
     }
 
     /**
@@ -214,14 +211,12 @@ public class VideoStreamController {
      */
     @PostMapping("/{streamId}/record/start")
     @Operation(summary = "启用流录制", description = "开始录制指定的视频流")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<Void> startStreamRecording(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId,
-            @Parameter(description = "录制时长（分钟）")
-            @RequestParam(required = false) Integer duration) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId,
+            @Parameter(description = "录制时长（分钟）") @RequestParam(required = false) Integer duration) {
         log.info("[视频流] 收到启用录制请求: streamId={}, duration={}", streamId, duration);
-        return SmartResponseUtil.smartResponse(videoStreamService.startStreamRecording(streamId, duration));
+        return videoStreamService.startStreamRecording(streamId, duration);
     }
 
     /**
@@ -232,10 +227,9 @@ public class VideoStreamController {
      */
     @PostMapping("/{streamId}/record/stop")
     @Operation(summary = "停止流录制", description = "停止录制指定的视频流")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<Void> stopStreamRecording(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到停止录制请求: streamId={}", streamId);
         return SmartResponseUtil.smartResponse(videoStreamService.stopStreamRecording(streamId));
     }
@@ -248,10 +242,9 @@ public class VideoStreamController {
      */
     @GetMapping("/recordings/{deviceId}")
     @Operation(summary = "获取录制列表", description = "获取指定设备的录制文件列表")
-    @PermissionCheck(value = {"VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频查看、操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
     public ResponseDTO<List<Map<String, Object>>> getRecordings(
-            @Parameter(description = "设备ID", required = true)
-            @PathVariable Long deviceId) {
+            @Parameter(description = "设备ID", required = true) @PathVariable Long deviceId) {
         log.info("[视频流] 收到获取录制列表请求: deviceId={}", deviceId);
         return SmartResponseUtil.smartResponse(videoStreamService.getRecordings(deviceId));
     }
@@ -264,10 +257,9 @@ public class VideoStreamController {
      */
     @GetMapping("/{streamId}/status")
     @Operation(summary = "检测流状态", description = "检测指定视频流的实时状态")
-    @PermissionCheck(value = {"VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频查看、操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
     public ResponseDTO<Map<String, Object>> checkStreamStatus(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到检测流状态请求: streamId={}", streamId);
         return SmartResponseUtil.smartResponse(videoStreamService.checkStreamStatus(streamId));
     }
@@ -293,12 +285,11 @@ public class VideoStreamController {
      */
     @GetMapping("/{streamId}/play-urls")
     @Operation(summary = "获取流播放地址", description = "获取指定视频流的多种协议播放地址")
-    @PermissionCheck(value = {"VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频查看、操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
     public ResponseDTO<Map<String, String>> getStreamPlayUrls(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到获取播放地址请求: streamId={}", streamId);
-        return SmartResponseUtil.smartResponse(videoStreamService.getStreamPlayUrls(streamId));
+        return videoStreamService.getStreamPlayUrls(streamId);
     }
 
     /**
@@ -309,11 +300,10 @@ public class VideoStreamController {
      */
     @PostMapping("/{streamId}/reconnect")
     @Operation(summary = "重连失败的流", description = "尝试重新连接断开的视频流")
-    @PermissionCheck(value = {"VIDEO_OPERATOR", "VIDEO_MANAGER"}, description = "视频操作或管理权限")
+    @PermissionCheck(value = { "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频操作或管理权限")
     public ResponseDTO<Void> reconnectStream(
-            @Parameter(description = "流ID", required = true)
-            @PathVariable Long streamId) {
+            @Parameter(description = "流ID", required = true) @PathVariable Long streamId) {
         log.info("[视频流] 收到重连流请求: streamId={}", streamId);
-        return SmartResponseUtil.smartResponse(videoStreamService.reconnectStream(streamId));
+        return videoStreamService.reconnectStream(streamId);
     }
 }

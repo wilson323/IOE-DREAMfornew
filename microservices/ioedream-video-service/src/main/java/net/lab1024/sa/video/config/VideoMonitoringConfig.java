@@ -1,7 +1,6 @@
 package net.lab1024.sa.video.config;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -10,9 +9,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 视频服务监控配置
@@ -66,7 +65,8 @@ public class VideoMonitoringConfig {
                         .withDetail("offlineDevices", offlineDevices)
                         .withDetail("faultDevices", faultDevices)
                         .withDetail("onlineRate", String.format("%.2f%%", (double) onlineDevices / totalDevices * 100))
-                        .withDetail("offlineRate", String.format("%.2f%%", (double) offlineDevices / totalDevices * 100));
+                        .withDetail("offlineRate",
+                                String.format("%.2f%%", (double) offlineDevices / totalDevices * 100));
 
                 // 如果在线率低于80%，标记为降级
                 if ((double) onlineDevices / totalDevices < 0.8) {
@@ -113,7 +113,8 @@ public class VideoMonitoringConfig {
                 builder
                         .withDetail("activeStreams", activeStreams)
                         .withDetail("totalStreams", totalStreams)
-                        .withDetail("streamUtilization", String.format("%.2f%%", (double) activeStreams / totalStreams * 100))
+                        .withDetail("streamUtilization",
+                                String.format("%.2f%%", (double) activeStreams / totalStreams * 100))
                         .withDetail("avgLatency", avgLatency + "ms")
                         .withDetail("avgFrameRate", avgFrameRate + "fps")
                         .withDetail("bandwidthUsage", formatBytes(bandwidthUsage));
@@ -167,14 +168,15 @@ public class VideoMonitoringConfig {
                 builder
                         .withDetail("loadedModels", loadedModels)
                         .withDetail("totalModels", totalModels)
-                        .withDetail("modelLoadingRate", String.format("%.2f%%", (double) loadedModels / totalModels * 100))
+                        .withDetail("modelLoadingRate",
+                                String.format("%.2f%%", (double) loadedModels / totalModels * 100))
                         .withDetail("pendingTasks", pendingTasks)
                         .withDetail("avgProcessingTime", avgProcessingTime + "ms")
                         .withDetail("accuracyRate", accuracyRate + "%");
 
                 // 检查关键指标
                 if (loadedModels < totalModels) {
-                    builder.status(Status.WARNING); // 部分模型未加载，警告但不降级
+                    builder.status(Status.UP); // 部分模型未加载，但服务仍可用
                 }
 
                 if (pendingTasks > 100) { // 任务积压过多
