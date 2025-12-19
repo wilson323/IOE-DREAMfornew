@@ -1,0 +1,553 @@
+[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[44,51] 找不到符号
+  符号:   类 FaceDetectResult
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[61,55] 找不到符号
+  符号:   类 FaceCompareRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[59,46] 找不到符号
+  符号:   类 FaceCompareResult
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[76,55] 找不到符号
+  符号:   类 FaceRecognizeRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[74,46] 找不到符号
+  符号:   类 FaceRecognitionResult
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[89,46] 找不到符号
+  符号:   类 FaceStatistics
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[112,55] 找不到符号
+  符号:   类 FallDetectionRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[110,46] 找不到符号
+  符号:   类 FallDetectionResult
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[127,55] 找不到符号
+  符号:   类 BehaviorAnalysisRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[158,55] 找不到符号
+  符号:   类 DensityCalculationRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[156,46] 找不到符号
+  符号:   类 DensityResult
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[173,55] 找不到符号
+  符号:   类 HeatmapRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[171,46] 找不到符号
+  符号:   类 HeatmapData
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[186,46] 找不到符号
+  符号:   类 CrowdWarning
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[204,55] 找不到符号
+  符号:   类 ComprehensiveAnalysisRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[219,55] 找不到符号
+  符号:   类 RealtimeAnalysisStartRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[264,55] 找不到符号
+  符号:   类 HistoricalAnalysisRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[281,55] 找不到符号
+  符号:   类 ReportGenerationRequest
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[279,46] 找不到符号
+  符号:   类 AnalysisReport
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[328,46] 找不到符号
+  符号:   类 AiSystemStatus
+  位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[411,13] 找不到符号
+  符号:   类 Map
+  位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[525,18] 找不到符号
+  符号:   类 Map
+  位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[411,33] 找不到符号
+  符号:   类 Map
+  位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[525,39] 找不到符号
+  符号:   类 Map
+  位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[18,1] 找不到符号
+  符号:   类 Map
+  位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/entity/AIEventEntity.java:[29,36] 找不到符号
+  符号: 类 BaseEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[4,35] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 程序包 net.lab1024.sa.video.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[19,61] 找不到符号
+  符号: 类 VideoObjectDetectionEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[25,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[31,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[37,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[43,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[49,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[55,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[61,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[67,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[73,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[79,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[85,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[91,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[97,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[103,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[139,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[145,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[151,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[193,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[217,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[223,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[235,10] 找不到符号
+  符号:   类 VideoObjectDetectionEntity
+  位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[12,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[13,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[14,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[16,47] 程序包net.lab1024.sa.video.edge.communication不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[36,31] 找不到符号
+  符号:   类 EdgeDevice
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[9,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[10,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[11,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[12,42] 程序包net.lab1024.sa.video.edge.ai.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[13,46] 程序包net.lab1024.sa.video.edge.ai.inference不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[39,19] 找不到符号
+  符号:   类 EdgeCommunicationManager
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[42,19] 找不到符号
+  符号:   类 EdgeConfig
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[50,31] 找不到符号
+  符号:   类 EdgeConfig
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[50,50] 找不到符号
+  符号:   类 EdgeCommunicationManager
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[67,39] 找不到符号
+  符号:   类 EdgeDevice
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[123,53] 找不到符号
+  符号:   类 InferenceRequest
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[123,19] 找不到符号
+  符号:   类 InferenceResult
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[161,76] 找不到符号
+  符号:   类 InferenceRequest
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[161,31] 找不到符号
+  符号:   类 InferenceResult
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[183,71] 找不到符号
+  符号:   类 InferenceRequest
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[183,19] 找不到符号
+  符号:   类 InferenceResult
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[260,12] 找不到符号
+  符号:   类 EdgeDeviceStatus
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[279,12] 找不到符号
+  符号:   类 EdgeStatistics
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[361,46] 找不到符号
+  符号:   类 EdgeDevice
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[367,45] 找不到符号
+  符号:   类 EdgeDevice
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[371,40] 找不到符号
+  符号:   类 EdgeDevice
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[413,51] 找不到符号
+  符号:   类 InferenceRequest
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[413,13] 找不到符号
+  符号:   类 InferenceResult
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[426,13] 找不到符号
+  符号:   类 InferenceResult
+  位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[33,19] 找不到符号
+  符号:   类 EdgeDevice
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[34,19] 找不到符号
+  符号:   类 EdgeConfig
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[35,31] 找不到符号
+  符号:   类 ModelInfo
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[36,19] 找不到符号
+  符号:   类 LocalInferenceEngine
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[54,25] 找不到符号
+  符号:   类 EdgeDevice
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[54,44] 找不到符号
+  符号:   类 EdgeConfig
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[112,38] 找不到符号
+  符号:   类 InferenceRequest
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[112,12] 找不到符号
+  符号:   类 InferenceResult
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[270,12] 找不到符号
+  符号:   类 ModelInfo
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[279,24] 找不到符号
+  符号:   类 ModelInfo
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[297,12] 找不到符号
+  符号:   类 InferenceStatistics
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[389,13] 找不到符号
+  符号:   类 InferenceRequest
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[418,13] 找不到符号
+  符号:   类 ModelInfo
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[427,36] 找不到符号
+  符号:   类 InferenceRequest
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[427,62] 找不到符号
+  符号:   类 ModelInfo
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[432,71] 找不到符号
+  符号:   类 InferenceRequest
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[432,13] 找不到符号
+  符号:   类 InferenceResult
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[445,13] 找不到符号
+  符号:   类 InferenceResult
+  位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/controller/EdgeVideoController.java:[26,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/controller/EdgeVideoController.java:[27,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/controller/EdgeVideoController.java:[28,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/controller/EdgeVideoController.java:[29,38] 程序包net.lab1024.sa.video.edge.form不存在
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-video-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[44,51] 找不到符号
+[ERROR]   符号:   类 FaceDetectResult
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[61,55] 找不到符号
+[ERROR]   符号:   类 FaceCompareRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[59,46] 找不到符号
+[ERROR]   符号:   类 FaceCompareResult
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[76,55] 找不到符号
+[ERROR]   符号:   类 FaceRecognizeRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[74,46] 找不到符号
+[ERROR]   符号:   类 FaceRecognitionResult
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[89,46] 找不到符号
+[ERROR]   符号:   类 FaceStatistics
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[112,55] 找不到符号
+[ERROR]   符号:   类 FallDetectionRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[110,46] 找不到符号
+[ERROR]   符号:   类 FallDetectionResult
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[127,55] 找不到符号
+[ERROR]   符号:   类 BehaviorAnalysisRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[158,55] 找不到符号
+[ERROR]   符号:   类 DensityCalculationRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[156,46] 找不到符号
+[ERROR]   符号:   类 DensityResult
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[173,55] 找不到符号
+[ERROR]   符号:   类 HeatmapRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[171,46] 找不到符号
+[ERROR]   符号:   类 HeatmapData
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[186,46] 找不到符号
+[ERROR]   符号:   类 CrowdWarning
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[204,55] 找不到符号
+[ERROR]   符号:   类 ComprehensiveAnalysisRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[219,55] 找不到符号
+[ERROR]   符号:   类 RealtimeAnalysisStartRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[264,55] 找不到符号
+[ERROR]   符号:   类 HistoricalAnalysisRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[281,55] 找不到符号
+[ERROR]   符号:   类 ReportGenerationRequest
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[279,46] 找不到符号
+[ERROR]   符号:   类 AnalysisReport
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/controller/VideoAiAnalysisController.java:[328,46] 找不到符号
+[ERROR]   符号:   类 AiSystemStatus
+[ERROR]   位置: 接口 net.lab1024.sa.video.service.VideoAiAnalysisService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[411,13] 找不到符号
+[ERROR]   符号:   类 Map
+[ERROR]   位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[525,18] 找不到符号
+[ERROR]   符号:   类 Map
+[ERROR]   位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[411,33] 找不到符号
+[ERROR]   符号:   类 Map
+[ERROR]   位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[525,39] 找不到符号
+[ERROR]   符号:   类 Map
+[ERROR]   位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/vo/VideoBehaviorVO.java:[18,1] 找不到符号
+[ERROR]   符号:   类 Map
+[ERROR]   位置: 类 net.lab1024.sa.video.domain.vo.VideoBehaviorVO
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/domain/entity/AIEventEntity.java:[29,36] 找不到符号
+[ERROR]   符号: 类 BaseEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[4,35] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.video.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[19,61] 找不到符号
+[ERROR]   符号: 类 VideoObjectDetectionEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[25,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[31,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[37,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[43,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[49,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[55,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[61,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[67,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[73,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[79,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[85,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[91,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[97,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[103,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[139,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[145,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[151,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[193,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[217,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[223,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/dao/VideoObjectDetectionDao.java:[235,10] 找不到符号
+[ERROR]   符号:   类 VideoObjectDetectionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.video.dao.VideoObjectDetectionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[12,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[13,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[14,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[16,47] 程序包net.lab1024.sa.video.edge.communication不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[36,31] 找不到符号
+[ERROR]   符号:   类 EdgeDevice
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[9,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[10,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[11,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[12,42] 程序包net.lab1024.sa.video.edge.ai.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[13,46] 程序包net.lab1024.sa.video.edge.ai.inference不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[39,19] 找不到符号
+[ERROR]   符号:   类 EdgeCommunicationManager
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[42,19] 找不到符号
+[ERROR]   符号:   类 EdgeConfig
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[50,31] 找不到符号
+[ERROR]   符号:   类 EdgeConfig
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[50,50] 找不到符号
+[ERROR]   符号:   类 EdgeCommunicationManager
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[67,39] 找不到符号
+[ERROR]   符号:   类 EdgeDevice
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[123,53] 找不到符号
+[ERROR]   符号:   类 InferenceRequest
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[123,19] 找不到符号
+[ERROR]   符号:   类 InferenceResult
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[161,76] 找不到符号
+[ERROR]   符号:   类 InferenceRequest
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[161,31] 找不到符号
+[ERROR]   符号:   类 InferenceResult
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[183,71] 找不到符号
+[ERROR]   符号:   类 InferenceRequest
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[183,19] 找不到符号
+[ERROR]   符号:   类 InferenceResult
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[260,12] 找不到符号
+[ERROR]   符号:   类 EdgeDeviceStatus
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[279,12] 找不到符号
+[ERROR]   符号:   类 EdgeStatistics
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[361,46] 找不到符号
+[ERROR]   符号:   类 EdgeDevice
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[367,45] 找不到符号
+[ERROR]   符号:   类 EdgeDevice
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[371,40] 找不到符号
+[ERROR]   符号:   类 EdgeDevice
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[413,51] 找不到符号
+[ERROR]   符号:   类 InferenceRequest
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[413,13] 找不到符号
+[ERROR]   符号:   类 InferenceResult
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/EdgeVideoProcessor.java:[426,13] 找不到符号
+[ERROR]   符号:   类 InferenceResult
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.EdgeVideoProcessor
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[33,19] 找不到符号
+[ERROR]   符号:   类 EdgeDevice
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[34,19] 找不到符号
+[ERROR]   符号:   类 EdgeConfig
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[35,31] 找不到符号
+[ERROR]   符号:   类 ModelInfo
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[36,19] 找不到符号
+[ERROR]   符号:   类 LocalInferenceEngine
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[54,25] 找不到符号
+[ERROR]   符号:   类 EdgeDevice
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[54,44] 找不到符号
+[ERROR]   符号:   类 EdgeConfig
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[112,38] 找不到符号
+[ERROR]   符号:   类 InferenceRequest
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[112,12] 找不到符号
+[ERROR]   符号:   类 InferenceResult
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[270,12] 找不到符号
+[ERROR]   符号:   类 ModelInfo
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[279,24] 找不到符号
+[ERROR]   符号:   类 ModelInfo
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[297,12] 找不到符号
+[ERROR]   符号:   类 InferenceStatistics
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[389,13] 找不到符号
+[ERROR]   符号:   类 InferenceRequest
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[418,13] 找不到符号
+[ERROR]   符号:   类 ModelInfo
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[427,36] 找不到符号
+[ERROR]   符号:   类 InferenceRequest
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[427,62] 找不到符号
+[ERROR]   符号:   类 ModelInfo
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[432,71] 找不到符号
+[ERROR]   符号:   类 InferenceRequest
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[432,13] 找不到符号
+[ERROR]   符号:   类 InferenceResult
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/ai/EdgeAIEngine.java:[445,13] 找不到符号
+[ERROR]   符号:   类 InferenceResult
+[ERROR]   位置: 类 net.lab1024.sa.video.edge.ai.EdgeAIEngine
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/controller/EdgeVideoController.java:[26,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/controller/EdgeVideoController.java:[27,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/controller/EdgeVideoController.java:[28,39] 程序包net.lab1024.sa.video.edge.model不存在
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-video-service/src/main/java/net/lab1024/sa/video/edge/controller/EdgeVideoController.java:[29,38] 程序包net.lab1024.sa.video.edge.form不存在
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

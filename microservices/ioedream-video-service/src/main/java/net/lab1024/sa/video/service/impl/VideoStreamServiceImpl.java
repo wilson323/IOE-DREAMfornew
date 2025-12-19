@@ -72,11 +72,11 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             LambdaQueryWrapper<VideoStreamEntity> wrapper = new LambdaQueryWrapper<VideoStreamEntity>()
                     .eq(VideoStreamEntity::getDeletedFlag, 0);
 
-            // 关键词搜索（流名称、设备名称）
+            // 关键词搜索（流名称、设备编码）
             if (StringUtils.hasText(queryForm.getKeyword())) {
                 wrapper.and(w -> w.like(VideoStreamEntity::getStreamName, queryForm.getKeyword())
                         .or()
-                        .like(VideoStreamEntity::getDeviceName, queryForm.getKeyword()));
+                        .like(VideoStreamEntity::getDeviceCode, queryForm.getKeyword()));
             }
 
             // 设备筛选
@@ -106,27 +106,12 @@ public class VideoStreamServiceImpl implements VideoStreamService {
 
             // 视频质量筛选
             if (StringUtils.hasText(queryForm.getQuality())) {
-                wrapper.eq(VideoStreamEntity::getQuality, queryForm.getQuality());
+                wrapper.eq(VideoStreamEntity::getStreamQuality, queryForm.getQuality());
             }
 
-            // 区域筛选
-            if (queryForm.getAreaId() != null) {
-                wrapper.eq(VideoStreamEntity::getAreaId, queryForm.getAreaId());
-            }
-
-            // 音频启用筛选
-            if (queryForm.getAudioEnabled() != null) {
-                wrapper.eq(VideoStreamEntity::getAudioEnabled, queryForm.getAudioEnabled());
-            }
-
-            // 录制状态筛选
+            // 音频录制筛选
             if (queryForm.getRecording() != null) {
-                wrapper.eq(VideoStreamEntity::getRecording, queryForm.getRecording());
-            }
-
-            // 客户端IP筛选
-            if (StringUtils.hasText(queryForm.getClientIp())) {
-                wrapper.like(VideoStreamEntity::getClientIp, queryForm.getClientIp());
+                wrapper.eq(VideoStreamEntity::getRecordEnabled, queryForm.getRecording());
             }
 
             // 观看人数范围筛选

@@ -1,5 +1,7 @@
 package net.lab1024.sa.oa.workflow.entity;
 
+import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
+
 /**
  * 审批任务实体（别名）
  * <p>

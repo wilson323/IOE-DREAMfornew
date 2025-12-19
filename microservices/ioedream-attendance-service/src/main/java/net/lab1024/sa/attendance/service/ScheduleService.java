@@ -7,6 +7,16 @@ import net.lab1024.sa.attendance.domain.vo.ScheduleRecordVO;
 import net.lab1024.sa.attendance.domain.vo.ScheduleTemplateVO;
 import net.lab1024.sa.attendance.domain.vo.SchedulingResultVO;
 import net.lab1024.sa.attendance.domain.vo.SchedulingStatisticsVO;
+import net.lab1024.sa.attendance.engine.model.ScheduleRequest;
+import net.lab1024.sa.attendance.engine.model.ScheduleResult;
+import net.lab1024.sa.attendance.engine.model.SchedulePlan;
+import net.lab1024.sa.attendance.engine.model.ConflictDetectionResult;
+import net.lab1024.sa.attendance.engine.model.ConflictResolution;
+import net.lab1024.sa.attendance.engine.model.OptimizedSchedule;
+import net.lab1024.sa.attendance.engine.model.ScheduleConflict;
+import net.lab1024.sa.attendance.engine.model.ScheduleStatistics;
+import net.lab1024.sa.attendance.engine.model.SchedulePrediction;
+import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.manager.SmartSchedulingEngine;
 
 import java.time.LocalDate;
@@ -105,4 +115,46 @@ public interface ScheduleService {
      * 冲突检测
      */
     List<String> detectScheduleConflicts(List<Long> employeeIds, LocalDate date);
+
+    // ==================== 引擎能力业务包装方法 ====================
+
+    /**
+     * 执行智能排班（引擎能力业务包装）
+     */
+    ScheduleResult executeIntelligentSchedule(ScheduleRequest request);
+
+    /**
+     * 生成排班计划（引擎能力业务包装）
+     */
+    SchedulePlan generateSchedulePlan(Long planId, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * 验证排班冲突（引擎能力业务包装）
+     */
+    ConflictDetectionResult validateScheduleConflicts(ScheduleData scheduleData);
+
+    /**
+     * 解决排班冲突（引擎能力业务包装）
+     */
+    ConflictResolution resolveScheduleConflicts(List<ScheduleConflict> conflicts, String strategy);
+
+    /**
+     * 优化排班结果（引擎能力业务包装）
+     */
+    OptimizedSchedule optimizeSchedule(ScheduleData scheduleData, String optimizationTarget);
+
+    /**
+     * 获取排班统计（引擎能力业务包装）
+     */
+    ScheduleStatistics getScheduleStatistics(Long planId);
+
+    /**
+     * 预测排班需求（引擎能力业务包装）
+     */
+    SchedulePrediction predictScheduleDemand(Long departmentId, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * 预测排班效果（引擎能力业务包装）
+     */
+    SchedulePrediction predictScheduleEffect(ScheduleData scheduleData);
 }

@@ -8,6 +8,7 @@ import net.lab1024.sa.attendance.rule.model.result.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -574,7 +575,7 @@ public class AttendanceRuleEngineImpl implements AttendanceRuleEngine {
             List<Map.Entry<String, AttendanceRuleConfig>> sortedRules = new ArrayList<>(rules.entrySet());
             sortedRules.sort(Comparator.comparingLong(e ->
                 e.getValue().getCreateTime() != null ?
-                e.getValue().getCreateTime().toEpochSecond(ZoneOffset.UTC) : 0));
+                e.getValue().getCreateTime().toEpochSecond(java.time.ZoneOffset.UTC) : 0));
 
             int toRemove = rules.size() - targetSize;
             for (int i = 0; i < toRemove; i++) {

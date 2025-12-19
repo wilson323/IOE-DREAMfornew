@@ -55,6 +55,11 @@ public class WorkHourConflict {
     private Long shiftId;
 
     /**
+     * 工作日期（yyyy-MM-dd）
+     */
+    private String workDate;
+
+    /**
      * 实际工作时长（小时）
      */
     private Double actualWorkHours;
@@ -73,6 +78,11 @@ public class WorkHourConflict {
      * 冲突严重程度（1-5，5最严重）
      */
     private Integer severity;
+
+    /**
+     * 冲突状态
+     */
+    private TimeConflict.ConflictStatus status;
 
     /**
      * 冲突原因

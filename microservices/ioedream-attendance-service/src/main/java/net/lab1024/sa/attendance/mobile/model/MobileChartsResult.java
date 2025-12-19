@@ -27,6 +27,12 @@ import java.util.Map;
 public class MobileChartsResult {
 
     /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "12345")
+    private Long employeeId;
+
+    /**
      * 图表类型
      */
     @Schema(description = "图表类型", example = "ATTENDANCE_TREND")
@@ -38,3 +44,5 @@ public class MobileChartsResult {
     @Schema(description = "图表数据")
     private Map<String, Object> chartData;
 }
+
+

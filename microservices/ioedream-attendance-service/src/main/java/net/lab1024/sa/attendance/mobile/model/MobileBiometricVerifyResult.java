@@ -24,13 +24,13 @@ import java.util.Map;
 @Schema(description = "移动端生物识别验证结果")
 public class MobileBiometricVerifyResult {
 
-    @Schema(description = "是否验证成功", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+    @Schema(description = "是否验证成功", required = true, example = "true")
     private Boolean success;
 
-    @Schema(description = "验证分数", requiredMode = Schema.RequiredMode.REQUIRED, example = "0.95")
+    @Schema(description = "验证分数", required = true, example = "0.95")
     private Double verificationScore;
 
-    @Schema(description = "生物识别类型", requiredMode = Schema.RequiredMode.REQUIRED,
+    @Schema(description = "生物识别类型", required = true,
             example = "FACE", allowableValues = {"FACE", "FINGERPRINT", "IRIS", "VOICE"})
     private String biometricType;
 
@@ -40,7 +40,7 @@ public class MobileBiometricVerifyResult {
     @Schema(description = "匹配的模板ID", example = "TEMPLATE_001")
     private String matchedTemplateId;
 
-    @Schema(description = "验证状态", requiredMode = Schema.RequiredMode.REQUIRED,
+    @Schema(description = "验证状态", required = true,
             example = "VERIFIED", allowableValues = {"VERIFIED", "NOT_VERIFIED", "TEMPLATE_NOT_FOUND", "QUALITY_POOR"})
     private String verificationStatus;
 

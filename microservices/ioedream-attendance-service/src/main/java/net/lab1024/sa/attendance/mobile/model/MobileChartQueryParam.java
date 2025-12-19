@@ -38,3 +38,5 @@ public class MobileChartQueryParam {
     @Schema(description = "图表类型", example = "ATTENDANCE_TREND", allowableValues = {"ATTENDANCE_TREND", "STATUS_DISTRIBUTION", "OVERTIME_TREND"})
     private String chartType;
 }
+
+

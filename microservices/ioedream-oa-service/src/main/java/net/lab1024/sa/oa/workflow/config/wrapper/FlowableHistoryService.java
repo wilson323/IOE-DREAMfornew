@@ -22,6 +22,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class FlowableHistoryService {
+
     private final HistoryService historyService;
 
     public FlowableHistoryService(HistoryService historyService) {

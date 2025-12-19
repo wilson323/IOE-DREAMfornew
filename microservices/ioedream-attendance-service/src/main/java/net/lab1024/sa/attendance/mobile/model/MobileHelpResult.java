@@ -39,3 +39,5 @@ public class MobileHelpResult {
     @Schema(description = "帮助内容列表")
     private List<Map<String, Object>> helpContent;
 }
+
+

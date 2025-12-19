@@ -3,8 +3,8 @@ package net.lab1024.sa.consume.manager;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.dao.MealOrderDao;
 import net.lab1024.sa.consume.dao.MealOrderItemDao;
-import net.lab1024.sa.common.consume.entity.MealOrderEntity;
-import net.lab1024.sa.common.consume.entity.MealOrderItemEntity;
+import net.lab1024.sa.consume.entity.MealOrderEntity;
+import net.lab1024.sa.consume.entity.MealOrderItemEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -1,6 +1,10 @@
 package net.lab1024.sa.common.organization.service;
 
 import net.lab1024.sa.common.organization.manager.AreaPermissionManager;
+import net.lab1024.sa.common.organization.domain.vo.AreaUserPermissionVO;
+import net.lab1024.sa.common.organization.domain.vo.AreaPermissionHistoryVO;
+import net.lab1024.sa.common.organization.domain.vo.BatchGrantResult;
+import net.lab1024.sa.common.organization.domain.vo.AreaPermissionValidationResult;
 
 import java.time.LocalDateTime;
 import java.util.List;

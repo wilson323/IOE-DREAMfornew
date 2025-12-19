@@ -10,7 +10,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.util.DateTimeUtils;
 import net.lab1024.sa.common.util.SmartBeanUtil;
 import net.lab1024.sa.common.util.SmartEnumUtil;
-import net.lab1024.sa.common.util.StringUtil;
+import net.lab1024.sa.common.util.StringUtilss;
 import net.lab1024.sa.video.domain.form.VideoRecordingQueryForm;
 import net.lab1024.sa.video.domain.form.VideoRecordingSearchForm;
 import net.lab1024.sa.video.domain.vo.VideoRecordingVO;
@@ -523,7 +523,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
         log.info("[录像回放] 获取转码任务状态，taskId={}", taskId);
 
         try {
-            if (!StringUtil.hasText(taskId)) {
+            if (!StringUtils.hasText(taskId)) {
                 return ResponseDTO.error("PARAM_ERROR", "任务ID不能为空");
             }
 
@@ -549,7 +549,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
         log.info("[录像回放] 取消转码任务，taskId={}", taskId);
 
         try {
-            if (!StringUtil.hasText(taskId)) {
+            if (!StringUtils.hasText(taskId)) {
                 return ResponseDTO.error("PARAM_ERROR", "任务ID不能为空");
             }
 
@@ -595,7 +595,7 @@ public class VideoRecordingServiceImpl implements VideoRecordingService {
         log.info("[录像回放] 获取备份任务状态，taskId={}", taskId);
 
         try {
-            if (!StringUtil.hasText(taskId)) {
+            if (!StringUtils.hasText(taskId)) {
                 return ResponseDTO.error("PARAM_ERROR", "任务ID不能为空");
             }
 

@@ -1,15 +1,21 @@
 package net.lab1024.sa.attendance.realtime.event.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.realtime.event.*;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.realtime.event.AttendanceEvent;
+import net.lab1024.sa.attendance.realtime.event.BatchEventProcessingResult;
+import net.lab1024.sa.attendance.realtime.event.EventProcessingResult;
+import net.lab1024.sa.attendance.realtime.event.EventProcessor;
+import net.lab1024.sa.attendance.realtime.event.EventValidationResult;
+import net.lab1024.sa.attendance.realtime.event.ProcessorStatus;
 
 /**
  * 考勤事件处理器实现类
@@ -44,7 +50,7 @@ public class AttendanceEventProcessor implements EventProcessor {
             try {
                 // 1. 验证事件
                 EventValidationResult validation = validateEvent(event);
-                if (!validation.isValid()) {
+                if (validation.getValid() == null || !validation.getValid()) {
                     return createFailedResult(event, validation.getErrorMessage());
                 }
 
@@ -56,7 +62,7 @@ public class AttendanceEventProcessor implements EventProcessor {
 
                 // 4. 计算处理耗时
                 long processingTime = System.currentTimeMillis() - startTime;
-                result.setProcessingTime(processingTime);
+                result.setDuration(processingTime);
 
                 log.debug("[事件处理] 事件处理完成: {}, 耗时: {}ms", event.getEventId(), processingTime);
 
@@ -99,7 +105,7 @@ public class AttendanceEventProcessor implements EventProcessor {
                     EventProcessingResult result = future.get();
                     batchResult.getResults().add(result);
 
-                    if (result.isSuccess()) {
+                    if (result.getSuccess() != null && result.getSuccess()) {
                         successCount++;
                     } else {
                         failureCount++;
@@ -143,8 +149,7 @@ public class AttendanceEventProcessor implements EventProcessor {
                 AttendanceEvent.AttendanceEventType.EARLY_DEPARTURE,
                 AttendanceEvent.AttendanceEventType.SCHEDULE_CHANGE,
                 AttendanceEvent.AttendanceEventType.DEVICE_MALFUNCTION,
-                AttendanceEvent.AttendanceEventType.EXCEPTION
-        );
+                AttendanceEvent.AttendanceEventType.EXCEPTION);
     }
 
     @Override
@@ -723,7 +728,7 @@ public class AttendanceEventProcessor implements EventProcessor {
     private void updateProcessingStatistics(AttendanceEvent event, EventProcessingResult result) {
         totalProcessedEvents.incrementAndGet();
 
-        if (result.isSuccess()) {
+        if (result.getSuccess() != null && result.getSuccess()) {
             successfulProcessedEvents.incrementAndGet();
         } else {
             failedProcessedEvents.incrementAndGet();

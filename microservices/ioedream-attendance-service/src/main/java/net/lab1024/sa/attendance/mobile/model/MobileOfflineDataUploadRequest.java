@@ -28,3 +28,5 @@ public class MobileOfflineDataUploadRequest {
     @Schema(description = "离线记录列表")
     private List<MobileOfflineRecord> offlineRecords;
 }
+
+

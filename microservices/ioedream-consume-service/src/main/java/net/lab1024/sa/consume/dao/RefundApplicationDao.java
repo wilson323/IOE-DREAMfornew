@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.common.consume.entity.RefundApplicationEntity;
+import net.lab1024.sa.consume.entity.RefundApplicationEntity;
 
 /**
  * 退款申请DAO

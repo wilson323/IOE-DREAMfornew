@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.domain.form.PaymentProcessForm;
 import net.lab1024.sa.consume.template.AbstractConsumeFlowTemplate;
-import net.lab1024.sa.common.consume.dao.AccountDao;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
-import net.lab1024.sa.common.consume.entity.ConsumeRecordEntity;
+import net.lab1024.sa.consume.dao.AccountDao;
+import net.lab1024.sa.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import org.springframework.stereotype.Component;
 

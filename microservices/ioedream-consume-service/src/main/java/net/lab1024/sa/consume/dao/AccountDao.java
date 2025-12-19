@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 
 /**
  * 账户DAO接口

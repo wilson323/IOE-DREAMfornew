@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.common.consume.entity.ConsumeRecordEntity;
+import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
 
 /**
  * 消费记录DAO接口

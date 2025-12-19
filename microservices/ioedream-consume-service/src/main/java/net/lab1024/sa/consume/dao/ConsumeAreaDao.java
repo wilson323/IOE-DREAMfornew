@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.common.consume.entity.ConsumeAreaEntity;
+import net.lab1024.sa.consume.entity.ConsumeAreaEntity;
 
 /**
  * 消费区域DAO接口

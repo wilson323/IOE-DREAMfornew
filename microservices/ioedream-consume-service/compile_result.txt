@@ -1,0 +1,613 @@
+[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRecordDao.java:[144,42] 方法引用无效
+  找不到符号
+    符号:   方法 getBusinessType()
+    位置: 类 net.lab1024.sa.consume.entity.PaymentRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRecordDao.java:[313,21] 找不到符号
+  符号:   方法 setSettlementStatus(java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.entity.PaymentRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRecordDao.java:[315,25] 找不到符号
+  符号:   方法 setSettlementTime(java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.consume.entity.PaymentRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRecordDao.java:[329,35] 不兼容的类型: java.lang.String无法转换为java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[72,31] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[88,35] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[93,35] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[96,67] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[162,41] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[167,44] 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[178,45] 找不到符号
+  符号:   方法 getConsumeType()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[188,31] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[201,76] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[207,35] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[217,62] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[229,39] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[234,35] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[65,41] 找不到符号
+  符号:   方法 getAreaId()
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[65,60] 找不到符号
+  符号:   方法 getMealTypeId()
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[74,14] 找不到符号
+  符号:   方法 setAmount(java.math.BigDecimal)
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[75,14] 找不到符号
+  符号:   方法 setActualAmount(java.math.BigDecimal)
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[78,25] 不兼容的类型: java.lang.String无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[81,14] 找不到符号
+  符号:   方法 setDeleted(boolean)
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[112,34] 找不到符号
+  符号:   方法 getPrice()
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderItemEntity的变量 item
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[113,42] 不兼容的类型: 方法引用无效
+    对于add(java.lang.Object,java.lang.Object), 找不到合适的方法
+        方法 java.math.BigDecimal.add(java.math.BigDecimal,java.math.MathContext)不适用
+          (参数不匹配; java.lang.Object无法转换为java.math.BigDecimal)
+        方法 java.math.BigDecimal.add(long,long)不适用
+          (参数不匹配; java.lang.Object无法转换为long)
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[140,31] 找不到符号
+  符号:   方法 getPickupStartTime()
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[140,74] 找不到符号
+  符号:   方法 getPickupEndTime()
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[142,40] 找不到符号
+  符号:   方法 getPickupStartTime()
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[142,68] 找不到符号
+  符号:   方法 getPickupEndTime()
+  位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[43,23] 找不到符号
+  符号:   方法 getOfflineTransNo()
+  位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[43,51] 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[46,100] 找不到符号
+  符号:   方法 getOfflineTransNo()
+  位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[48,64] 找不到符号
+  符号:   方法 getOfflineTransNo()
+  位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[52,15] 找不到符号
+  符号:   方法 setSyncStatus(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[53,15] 找不到符号
+  符号:   方法 setRetryCount(int)
+  位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[102,82] 找不到符号
+  符号:   方法 getOfflineTransNo()
+  位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[105,61] 找不到符号
+  符号:   方法 getAccountId()
+  位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/DeviceConsumeController.java:[61,56] 无法将接口 net.lab1024.sa.consume.service.PaymentService中的方法 processPayment应用到给定类型;
+  需要: java.lang.String,java.math.BigDecimal,java.lang.String
+  找到:    @jakarta.validation.Valid net.lab1024.sa.consume.domain.form.PaymentProcessForm
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[362,95] 不兼容的类型: 条件表达式中的类型错误
+    java.lang.Integer无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[363,98] 不兼容的类型: java.lang.Integer无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[428,27] 找不到符号
+  符号:   方法 setDeviceId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[492,16] 找不到符号
+  符号:   方法 setOrderId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[495,16] 找不到符号
+  符号:   方法 setDeviceId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[497,16] 找不到符号
+  符号:   方法 setConsumeType(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[616,28] 找不到符号
+  符号:   方法 setOrderId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[618,28] 找不到符号
+  符号:   方法 setOrderId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[620,28] 找不到符号
+  符号:   方法 setOrderId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[662,32] 找不到符号
+  符号:   方法 setDeviceId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[682,28] 找不到符号
+  符号:   方法 setConsumeType(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[687,32] 找不到符号
+  符号:   方法 setConsumeType(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[689,32] 找不到符号
+  符号:   方法 setConsumeType(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[713,32] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[713,75] 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[722,28] 找不到符号
+  符号:   方法 setOrderId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[730,40] 找不到符号
+  符号:   方法 setDeviceId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[746,32] 找不到符号
+  符号:   方法 getConsumeType()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[747,32] 找不到符号
+  符号:   方法 setConsumeType(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[751,36] 找不到符号
+  符号:   方法 getOrderId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[751,58] 找不到符号
+  符号:   方法 getDeviceId()
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[758,20] 找不到符号
+  符号:   方法 setOrderId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[759,20] 找不到符号
+  符号:   方法 setConsumeType(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[773,20] 找不到符号
+  符号:   方法 setOrderId(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[774,20] 找不到符号
+  符号:   方法 setConsumeType(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[58,56] 无法将接口 net.lab1024.sa.consume.service.PaymentService中的方法 processPayment应用到给定类型;
+  需要: java.lang.String,java.math.BigDecimal,java.lang.String
+  找到:    @jakarta.validation.Valid net.lab1024.sa.consume.domain.form.PaymentProcessForm
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[87,56] 找不到符号
+  符号:   方法 applyRefund(@jakarta.validation.Valid net.lab1024.sa.consume.domain.form.RefundApplyForm)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[119,56] 找不到符号
+  符号:   方法 auditRefund(java.lang.String,java.lang.Integer,java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[149,56] 找不到符号
+  符号:   方法 executeRefund(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[175,56] 找不到符号
+  符号:   方法 getPaymentRecord(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[204,63] 找不到符号
+  符号:   方法 getUserPaymentRecords(java.lang.Long,java.lang.Integer,java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[230,62] 找不到符号
+  符号:   方法 getRefundRecord(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[259,69] 找不到符号
+  符号:   方法 getUserRefundRecords(java.lang.Long,java.lang.Integer,java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[296,60] 找不到符号
+  符号:   方法 getUserPaymentStatistics(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[333,60] 找不到符号
+  符号:   方法 getUserRefundStatistics(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[361,56] 找不到符号
+  符号:   方法 performReconciliation(java.time.LocalDateTime,java.time.LocalDateTime,java.lang.Long)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[402,60] 找不到符号
+  符号:   方法 getMerchantSettlementStatistics(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[426,69] 找不到符号
+  符号:   方法 getPendingAuditRefunds()
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[450,69] 找不到符号
+  符号:   方法 getPendingProcessRefunds()
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[476,64] 找不到符号
+  符号:   方法 getHighRiskPayments(java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[502,69] 找不到符号
+  符号:   方法 getHighRiskRefunds(java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[528,64] 找不到符号
+  符号:   方法 getAbnormalPayments(java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[563,56] 找不到符号
+  符号:   方法 createWechatPayOrder(@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[613,56] 找不到符号
+  符号:   方法 handleWechatPayNotify(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[650,56] 找不到符号
+  符号:   方法 createAlipayOrder(@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[680,43] 找不到符号
+  符号:   方法 handleAlipayNotify(java.util.Map<java.lang.String,java.lang.String>)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[718,56] 找不到符号
+  符号:   方法 wechatRefund(@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotNull java.lang.Integer,@jakarta.validation.constraints.NotNull java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[754,56] 找不到符号
+  符号:   方法 alipayRefund(@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotNull java.math.BigDecimal,java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[793,56] 找不到符号
+  符号:   方法 createBankPaymentOrder(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[831,56] 找不到符号
+  符号:   方法 processCreditLimitPayment(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/ConsumeSubsidyIssueRecordDao.java:[39,20] 方法引用无效
+  找不到符号
+    符号:   方法 getSubsidyAccountId()
+    位置: 类 net.lab1024.sa.consume.entity.ConsumeSubsidyIssueRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[124,36] 方法引用无效
+  找不到符号
+    符号:   方法 getUserId()
+    位置: 类 net.lab1024.sa.consume.entity.PaymentRefundRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[126,42] 方法引用无效
+  找不到符号
+    符号:   方法 getRefundStatus()
+    位置: 类 net.lab1024.sa.consume.entity.PaymentRefundRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[127,40] 方法引用无效
+  找不到符号
+    符号:   方法 getRefundType()
+    位置: 类 net.lab1024.sa.consume.entity.PaymentRefundRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[128,41] 方法引用无效
+  找不到符号
+    符号:   方法 getApplicantId()
+    位置: 类 net.lab1024.sa.consume.entity.PaymentRefundRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[240,21] 找不到符号
+  符号:   方法 setRefundStatus(java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[242,25] 找不到符号
+  符号:   方法 setCompleteTime(java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[262,34] 不兼容的类型: java.lang.String无法转换为java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[263,21] 找不到符号
+  符号:   方法 setRefundStatus(java.lang.Integer)
+  位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[264,21] 找不到符号
+  符号:   方法 setAuditorId(java.lang.Long)
+  位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[265,21] 找不到符号
+  符号:   方法 setAuditTime(java.time.LocalDateTime)
+  位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[266,21] 找不到符号
+  符号:   方法 setAuditComment(java.lang.String)
+  位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-consume-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRecordDao.java:[144,42] 方法引用无效
+[ERROR]   找不到符号
+[ERROR]     符号:   方法 getBusinessType()
+[ERROR]     位置: 类 net.lab1024.sa.consume.entity.PaymentRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRecordDao.java:[313,21] 找不到符号
+[ERROR]   符号:   方法 setSettlementStatus(java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.PaymentRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRecordDao.java:[315,25] 找不到符号
+[ERROR]   符号:   方法 setSettlementTime(java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.PaymentRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRecordDao.java:[329,35] 不兼容的类型: java.lang.String无法转换为java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[72,31] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[88,35] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[93,35] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[96,67] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[162,41] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[167,44] 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[178,45] 找不到符号
+[ERROR]   符号:   方法 getConsumeType()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[188,31] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[201,76] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[207,35] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[217,62] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[229,39] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/ConsumeTransactionManager.java:[234,35] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[65,41] 找不到符号
+[ERROR]   符号:   方法 getAreaId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[65,60] 找不到符号
+[ERROR]   符号:   方法 getMealTypeId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[74,14] 找不到符号
+[ERROR]   符号:   方法 setAmount(java.math.BigDecimal)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[75,14] 找不到符号
+[ERROR]   符号:   方法 setActualAmount(java.math.BigDecimal)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[78,25] 不兼容的类型: java.lang.String无法转换为java.lang.Integer
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[81,14] 找不到符号
+[ERROR]   符号:   方法 setDeleted(boolean)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[112,34] 找不到符号
+[ERROR]   符号:   方法 getPrice()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderItemEntity的变量 item
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[113,42] 不兼容的类型: 方法引用无效
+[ERROR]     对于add(java.lang.Object,java.lang.Object), 找不到合适的方法
+[ERROR]         方法 java.math.BigDecimal.add(java.math.BigDecimal,java.math.MathContext)不适用
+[ERROR]           (参数不匹配; java.lang.Object无法转换为java.math.BigDecimal)
+[ERROR]         方法 java.math.BigDecimal.add(long,long)不适用
+[ERROR]           (参数不匹配; java.lang.Object无法转换为long)
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[140,31] 找不到符号
+[ERROR]   符号:   方法 getPickupStartTime()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[140,74] 找不到符号
+[ERROR]   符号:   方法 getPickupEndTime()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[142,40] 找不到符号
+[ERROR]   符号:   方法 getPickupStartTime()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/MealOrderManager.java:[142,68] 找不到符号
+[ERROR]   符号:   方法 getPickupEndTime()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.MealOrderEntity的变量 order
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[43,23] 找不到符号
+[ERROR]   符号:   方法 getOfflineTransNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[43,51] 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[46,100] 找不到符号
+[ERROR]   符号:   方法 getOfflineTransNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[48,64] 找不到符号
+[ERROR]   符号:   方法 getOfflineTransNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[52,15] 找不到符号
+[ERROR]   符号:   方法 setSyncStatus(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[53,15] 找不到符号
+[ERROR]   符号:   方法 setRetryCount(int)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[102,82] 找不到符号
+[ERROR]   符号:   方法 getOfflineTransNo()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/manager/OfflineSyncManager.java:[105,61] 找不到符号
+[ERROR]   符号:   方法 getAccountId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity的变量 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/DeviceConsumeController.java:[61,56] 无法将接口 net.lab1024.sa.consume.service.PaymentService中的方法 processPayment应用到给定类型;
+[ERROR]   需要: java.lang.String,java.math.BigDecimal,java.lang.String
+[ERROR]   找到:    @jakarta.validation.Valid net.lab1024.sa.consume.domain.form.PaymentProcessForm
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[362,95] 不兼容的类型: 条件表达式中的类型错误
+[ERROR]     java.lang.Integer无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[363,98] 不兼容的类型: java.lang.Integer无法转换为java.lang.String
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[428,27] 找不到符号
+[ERROR]   符号:   方法 setDeviceId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 consumeRequest
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[492,16] 找不到符号
+[ERROR]   符号:   方法 setOrderId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[495,16] 找不到符号
+[ERROR]   符号:   方法 setDeviceId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[497,16] 找不到符号
+[ERROR]   符号:   方法 setConsumeType(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[616,28] 找不到符号
+[ERROR]   符号:   方法 setOrderId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[618,28] 找不到符号
+[ERROR]   符号:   方法 setOrderId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[620,28] 找不到符号
+[ERROR]   符号:   方法 setOrderId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[662,32] 找不到符号
+[ERROR]   符号:   方法 setDeviceId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[682,28] 找不到符号
+[ERROR]   符号:   方法 setConsumeType(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[687,32] 找不到符号
+[ERROR]   符号:   方法 setConsumeType(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[689,32] 找不到符号
+[ERROR]   符号:   方法 setConsumeType(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[713,32] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[713,75] 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[722,28] 找不到符号
+[ERROR]   符号:   方法 setOrderId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[730,40] 找不到符号
+[ERROR]   符号:   方法 setDeviceId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[746,32] 找不到符号
+[ERROR]   符号:   方法 getConsumeType()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[747,32] 找不到符号
+[ERROR]   符号:   方法 setConsumeType(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[751,36] 找不到符号
+[ERROR]   符号:   方法 getOrderId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[751,58] 找不到符号
+[ERROR]   符号:   方法 getDeviceId()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[758,20] 找不到符号
+[ERROR]   符号:   方法 setOrderId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[759,20] 找不到符号
+[ERROR]   符号:   方法 setConsumeType(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[773,20] 找不到符号
+[ERROR]   符号:   方法 setOrderId(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/MobileConsumeController.java:[774,20] 找不到符号
+[ERROR]   符号:   方法 setConsumeType(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO的变量 request
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[58,56] 无法将接口 net.lab1024.sa.consume.service.PaymentService中的方法 processPayment应用到给定类型;
+[ERROR]   需要: java.lang.String,java.math.BigDecimal,java.lang.String
+[ERROR]   找到:    @jakarta.validation.Valid net.lab1024.sa.consume.domain.form.PaymentProcessForm
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[87,56] 找不到符号
+[ERROR]   符号:   方法 applyRefund(@jakarta.validation.Valid net.lab1024.sa.consume.domain.form.RefundApplyForm)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[119,56] 找不到符号
+[ERROR]   符号:   方法 auditRefund(java.lang.String,java.lang.Integer,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[149,56] 找不到符号
+[ERROR]   符号:   方法 executeRefund(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[175,56] 找不到符号
+[ERROR]   符号:   方法 getPaymentRecord(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[204,63] 找不到符号
+[ERROR]   符号:   方法 getUserPaymentRecords(java.lang.Long,java.lang.Integer,java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[230,62] 找不到符号
+[ERROR]   符号:   方法 getRefundRecord(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[259,69] 找不到符号
+[ERROR]   符号:   方法 getUserRefundRecords(java.lang.Long,java.lang.Integer,java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[296,60] 找不到符号
+[ERROR]   符号:   方法 getUserPaymentStatistics(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[333,60] 找不到符号
+[ERROR]   符号:   方法 getUserRefundStatistics(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[361,56] 找不到符号
+[ERROR]   符号:   方法 performReconciliation(java.time.LocalDateTime,java.time.LocalDateTime,java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[402,60] 找不到符号
+[ERROR]   符号:   方法 getMerchantSettlementStatistics(java.lang.Long,java.time.LocalDateTime,java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[426,69] 找不到符号
+[ERROR]   符号:   方法 getPendingAuditRefunds()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[450,69] 找不到符号
+[ERROR]   符号:   方法 getPendingProcessRefunds()
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[476,64] 找不到符号
+[ERROR]   符号:   方法 getHighRiskPayments(java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[502,69] 找不到符号
+[ERROR]   符号:   方法 getHighRiskRefunds(java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[528,64] 找不到符号
+[ERROR]   符号:   方法 getAbnormalPayments(java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[563,56] 找不到符号
+[ERROR]   符号:   方法 createWechatPayOrder(@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[613,56] 找不到符号
+[ERROR]   符号:   方法 handleWechatPayNotify(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[650,56] 找不到符号
+[ERROR]   符号:   方法 createAlipayOrder(@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[680,43] 找不到符号
+[ERROR]   符号:   方法 handleAlipayNotify(java.util.Map<java.lang.String,java.lang.String>)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[718,56] 找不到符号
+[ERROR]   符号:   方法 wechatRefund(@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotNull java.lang.Integer,@jakarta.validation.constraints.NotNull java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[754,56] 找不到符号
+[ERROR]   符号:   方法 alipayRefund(@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotNull java.math.BigDecimal,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[793,56] 找不到符号
+[ERROR]   符号:   方法 createBankPaymentOrder(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/controller/PaymentController.java:[831,56] 找不到符号
+[ERROR]   符号:   方法 processCreditLimitPayment(@jakarta.validation.constraints.NotNull java.lang.Long,@jakarta.validation.constraints.NotNull java.math.BigDecimal,@jakarta.validation.constraints.NotBlank java.lang.String,java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.service.PaymentService的变量 paymentService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/ConsumeSubsidyIssueRecordDao.java:[39,20] 方法引用无效
+[ERROR]   找不到符号
+[ERROR]     符号:   方法 getSubsidyAccountId()
+[ERROR]     位置: 类 net.lab1024.sa.consume.entity.ConsumeSubsidyIssueRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[124,36] 方法引用无效
+[ERROR]   找不到符号
+[ERROR]     符号:   方法 getUserId()
+[ERROR]     位置: 类 net.lab1024.sa.consume.entity.PaymentRefundRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[126,42] 方法引用无效
+[ERROR]   找不到符号
+[ERROR]     符号:   方法 getRefundStatus()
+[ERROR]     位置: 类 net.lab1024.sa.consume.entity.PaymentRefundRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[127,40] 方法引用无效
+[ERROR]   找不到符号
+[ERROR]     符号:   方法 getRefundType()
+[ERROR]     位置: 类 net.lab1024.sa.consume.entity.PaymentRefundRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[128,41] 方法引用无效
+[ERROR]   找不到符号
+[ERROR]     符号:   方法 getApplicantId()
+[ERROR]     位置: 类 net.lab1024.sa.consume.entity.PaymentRefundRecordEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[240,21] 找不到符号
+[ERROR]   符号:   方法 setRefundStatus(java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[242,25] 找不到符号
+[ERROR]   符号:   方法 setCompleteTime(java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[262,34] 不兼容的类型: java.lang.String无法转换为java.lang.Long
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[263,21] 找不到符号
+[ERROR]   符号:   方法 setRefundStatus(java.lang.Integer)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[264,21] 找不到符号
+[ERROR]   符号:   方法 setAuditorId(java.lang.Long)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[265,21] 找不到符号
+[ERROR]   符号:   方法 setAuditTime(java.time.LocalDateTime)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-consume-service/src/main/java/net/lab1024/sa/consume/dao/PaymentRefundRecordDao.java:[266,21] 找不到符号
+[ERROR]   符号:   方法 setAuditComment(java.lang.String)
+[ERROR]   位置: 类型为net.lab1024.sa.consume.entity.PaymentRefundRecordEntity的变量 updateEntity
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -1,22 +1,51 @@
 package net.lab1024.sa.attendance.realtime.impl;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.realtime.RealtimeCalculationEngine;
 import net.lab1024.sa.attendance.realtime.event.AttendanceEvent;
 import net.lab1024.sa.attendance.realtime.event.CalculationTriggerEvent;
+import net.lab1024.sa.attendance.realtime.event.EventProcessingResult;
 import net.lab1024.sa.attendance.realtime.event.EventProcessor;
 import net.lab1024.sa.attendance.realtime.event.impl.AttendanceEventProcessor;
-import net.lab1024.sa.attendance.realtime.model.*;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
+import net.lab1024.sa.attendance.realtime.model.AnomalyDetectionResult;
+import net.lab1024.sa.attendance.realtime.model.AnomalyFilterParameters;
+import net.lab1024.sa.attendance.realtime.model.BatchCalculationResult;
+import net.lab1024.sa.attendance.realtime.model.CalculationRule;
+import net.lab1024.sa.attendance.realtime.model.CompanyRealtimeOverview;
+import net.lab1024.sa.attendance.realtime.model.DepartmentRealtimeStatistics;
+import net.lab1024.sa.attendance.realtime.model.EmployeeRealtimeStatus;
+import net.lab1024.sa.attendance.realtime.model.EnginePerformanceMetrics;
+import net.lab1024.sa.attendance.realtime.model.EngineShutdownResult;
+import net.lab1024.sa.attendance.realtime.model.EngineStartupResult;
+import net.lab1024.sa.attendance.realtime.model.EngineStatus;
+import net.lab1024.sa.attendance.realtime.model.RealtimeAlertResult;
+import net.lab1024.sa.attendance.realtime.model.RealtimeCalculationResult;
+import net.lab1024.sa.attendance.realtime.model.RealtimeMonitoringParameters;
+import net.lab1024.sa.attendance.realtime.model.RealtimeStatisticsResult;
+import net.lab1024.sa.attendance.realtime.model.RuleRegistrationResult;
+import net.lab1024.sa.attendance.realtime.model.RuleUnregistrationResult;
+import net.lab1024.sa.attendance.realtime.model.ScheduleIntegrationParameters;
+import net.lab1024.sa.attendance.realtime.model.ScheduleIntegrationResult;
+import net.lab1024.sa.attendance.realtime.model.StatisticsQueryParameters;
+import net.lab1024.sa.attendance.realtime.model.TimeRange;
 
 /**
  * 考勤实时计算引擎实现类
@@ -177,7 +206,8 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
             EventProcessingResult processingResult = processingFuture.get(10, TimeUnit.SECONDS);
 
             // 5. 触发相关计算
-            CompletableFuture<RealtimeCalculationResult> calculationFuture = triggerCalculations(preprocessedEvent, processingResult);
+            CompletableFuture<RealtimeCalculationResult> calculationFuture = triggerCalculations(preprocessedEvent,
+                    processingResult);
 
             // 6. 等待计算完成
             RealtimeCalculationResult calculationResult = calculationFuture.get(30, TimeUnit.SECONDS);
@@ -219,10 +249,12 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
                     .results(new ArrayList<>())
                     .build();
 
-            // 并行处理事件
+            // 并行处理事件（使用计算线程池异步执行）
             List<CompletableFuture<RealtimeCalculationResult>> futures = attendanceEvents.stream()
-                    .map(this::processAttendanceEvent)
-                    .collect(Collectors.toList());
+                    .map(event -> CompletableFuture.supplyAsync(
+                            () -> processAttendanceEvent(event),
+                            calculationExecutor))
+                    .toList();
 
             // 等待所有事件处理完成
             CompletableFuture<Void> allFutures = CompletableFuture.allOf(
@@ -243,7 +275,7 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
                     RealtimeCalculationResult result = future.get();
                     batchResult.getResults().add(result);
 
-                    if (result.isCalculationSuccessful()) {
+                    if (Boolean.TRUE.equals(result.getCalculationSuccessful())) {
                         successCount++;
                     } else {
                         failureCount++;
@@ -376,7 +408,7 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
             log.error("[实时计算引擎] 获取员工实时状态失败", e);
             return EmployeeRealtimeStatus.builder()
                     .employeeId(employeeId)
-                    .status(AttendanceStatus.UNKNOWN)
+                    .currentStatus(EmployeeRealtimeStatus.AttendanceStatus.UNKNOWN_STATUS)
                     .build();
         }
     }
@@ -439,7 +471,8 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
     }
 
     @Override
-    public AnomalyDetectionResult calculateAttendanceAnomalies(TimeRange timeRange, AnomalyFilterParameters filterParameters) {
+    public AnomalyDetectionResult calculateAttendanceAnomalies(TimeRange timeRange,
+            AnomalyFilterParameters filterParameters) {
         log.debug("[实时计算引擎] 计算考勤异常，时间范围: {} - {}",
                 timeRange.getStartTime(), timeRange.getEndTime());
 
@@ -493,7 +526,8 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
     }
 
     @Override
-    public ScheduleIntegrationResult integrateWithScheduleEngine(ScheduleData scheduleData, ScheduleIntegrationParameters integrationParameters) {
+    public ScheduleIntegrationResult integrateWithScheduleEngine(ScheduleData scheduleData,
+            ScheduleIntegrationParameters integrationParameters) {
         log.debug("[实时计算引擎] 与排班引擎集成");
 
         try {
@@ -737,13 +771,14 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
     /**
      * 更新统计信息
      */
-    private void updateStatistics(AttendanceEvent event, EventProcessingResult processingResult, RealtimeCalculationResult calculationResult) {
+    private void updateStatistics(AttendanceEvent event, EventProcessingResult processingResult,
+            RealtimeCalculationResult calculationResult) {
         totalEventsProcessed.incrementAndGet();
 
-        long processingTime = processingResult.getProcessingTime() != null ?
-                processingResult.getProcessingTime() : 0;
-        long calculationTime = calculationResult.getCalculationTime() != null ?
-                ChronoUnit.MILLIS.between(calculationResult.getCalculationTime(), LocalDateTime.now()) : 0;
+        long processingTime = processingResult.getProcessingTime() != null ? processingResult.getProcessingTime() : 0;
+        long calculationTime = calculationResult.getCalculationTime() != null
+                ? ChronoUnit.MILLIS.between(calculationResult.getCalculationTime(), LocalDateTime.now())
+                : 0;
 
         averageProcessingTime.set((averageProcessingTime.get() + processingTime + calculationTime) / 2);
     }
@@ -827,7 +862,7 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
     private EmployeeRealtimeStatus calculateEmployeeRealtimeStatus(Long employeeId, TimeRange timeRange) {
         return EmployeeRealtimeStatus.builder()
                 .employeeId(employeeId)
-                .status(AttendanceStatus.PRESENT)
+                .currentStatus(EmployeeRealtimeStatus.AttendanceStatus.NORMAL_WORKING)
                 .build();
     }
 

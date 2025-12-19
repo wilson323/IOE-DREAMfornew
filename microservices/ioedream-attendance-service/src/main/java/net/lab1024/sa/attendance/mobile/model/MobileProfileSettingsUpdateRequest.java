@@ -26,3 +26,5 @@ public class MobileProfileSettingsUpdateRequest {
     @Schema(description = "配置信息")
     private Map<String, Object> settings;
 }
+
+

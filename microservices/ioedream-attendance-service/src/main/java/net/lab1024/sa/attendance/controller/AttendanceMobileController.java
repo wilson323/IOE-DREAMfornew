@@ -4,7 +4,7 @@ import io.micrometer.observation.annotation.Observed;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import net.lab1024.sa.common.permission.PermissionCheck;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

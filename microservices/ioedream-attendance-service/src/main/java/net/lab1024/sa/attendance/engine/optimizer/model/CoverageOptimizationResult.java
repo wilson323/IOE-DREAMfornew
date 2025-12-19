@@ -27,6 +27,36 @@ import java.util.Map;
 public class CoverageOptimizationResult {
 
     /**
+     * 优化ID
+     */
+    private String optimizationId;
+
+    /**
+     * 覆盖率目标
+     */
+    private CoverageTargets coverageTargets;
+
+    /**
+     * 原始覆盖率
+     */
+    private Map<String, Double> originalCoverageRates;
+
+    /**
+     * 优化后覆盖率
+     */
+    private Map<String, Double> optimizedCoverageRates;
+
+    /**
+     * 覆盖率提升
+     */
+    private Double coverageImprovement;
+
+    /**
+     * 优化是否成功
+     */
+    private Boolean optimizationSuccessful;
+
+    /**
      * 优化后的排班记录
      */
     private List<ScheduleRecord> optimizedRecords;
@@ -45,4 +75,17 @@ public class CoverageOptimizationResult {
      * 覆盖率改进率
      */
     private Double improvementRate;
+
+    /**
+     * 优化指标
+     */
+    private Map<String, Object> optimizedMetrics;
+
+    public boolean isOptimizationSuccessful() {
+        return Boolean.TRUE.equals(optimizationSuccessful);
+    }
+
+    public Map<String, Object> getOptimizedMetrics() {
+        return optimizedMetrics;
+    }
 }

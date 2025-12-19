@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.common.consume.entity.ConsumeProductEntity;
+import net.lab1024.sa.consume.entity.ConsumeProductEntity;
 
 /**
  * 商品DAO接口

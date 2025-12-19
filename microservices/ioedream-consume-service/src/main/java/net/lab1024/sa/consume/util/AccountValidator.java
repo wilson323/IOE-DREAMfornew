@@ -1,7 +1,7 @@
 package net.lab1024.sa.consume.util;
 
 import net.lab1024.sa.consume.dao.AccountDao;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.common.exception.BusinessException;
 
 /**

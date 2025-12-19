@@ -37,4 +37,12 @@ public class MobileSecuritySettingsResult {
      */
     @Schema(description = "安全设置")
     private Map<String, Object> securitySettings;
+
+    /**
+     * 通用设置
+     */
+    @Schema(description = "通用设置")
+    private Map<Object, Object> settings;
 }
+
+

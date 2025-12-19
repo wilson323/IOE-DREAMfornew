@@ -24,7 +24,7 @@ import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.util.CursorPagination;
 import net.lab1024.sa.common.util.PageHelper;
 import net.lab1024.sa.consume.dao.AccountDao;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.AccountAddForm;
 import net.lab1024.sa.consume.domain.form.AccountUpdateForm;
 import net.lab1024.sa.consume.manager.AccountManager;

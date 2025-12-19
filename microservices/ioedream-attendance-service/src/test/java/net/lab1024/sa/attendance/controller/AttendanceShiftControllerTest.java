@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.attendance.entity.AttendanceShiftEntity;
+import net.lab1024.sa.attendance.entity.AttendanceShiftEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceShiftForm;
 import net.lab1024.sa.attendance.service.AttendanceShiftService;
 

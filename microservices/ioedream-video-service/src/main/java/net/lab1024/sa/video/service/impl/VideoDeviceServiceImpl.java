@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
@@ -437,7 +438,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
             // 批量软删除
             LambdaUpdateWrapper<DeviceEntity> wrapper = new LambdaUpdateWrapper<>();
-            wrapper.in(DeviceEntity::getId, deviceIds)
+            wrapper.in(DeviceEntity::getDeviceId, deviceIds.stream().map(String::valueOf).collect(Collectors.toList()))
                     .set(DeviceEntity::getDeletedFlag, 1)
                     .set(DeviceEntity::getUpdateTime, LocalDateTime.now());
 
@@ -463,8 +464,8 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
             // 更新设备启用状态
             LambdaUpdateWrapper<DeviceEntity> wrapper = new LambdaUpdateWrapper<>();
-            wrapper.eq(DeviceEntity::getId, deviceId)
-                    .set(DeviceEntity::getEnabledFlag, enabledFlag)
+            wrapper.eq(DeviceEntity::getDeviceId, deviceId)
+                    .set(DeviceEntity::getDeviceStatus, enabledFlag == 1 ? 1 : 5)
                     .set(DeviceEntity::getUpdateTime, LocalDateTime.now());
 
             int result = deviceDao.update(null, wrapper);
@@ -731,7 +732,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             // 启用设备数
             LambdaQueryWrapper<DeviceEntity> enabledWrapper = new LambdaQueryWrapper<>();
             enabledWrapper.eq(DeviceEntity::getDeviceType, "CAMERA")
-                    .eq(DeviceEntity::getEnabledFlag, 1)
+                    .eq(DeviceEntity::getDeviceStatus, 1)
                     .eq(DeviceEntity::getDeletedFlag, 0);
             long enabledDevices = deviceDao.selectCount(enabledWrapper);
             statistics.put("enabledDevices", enabledDevices);
@@ -739,7 +740,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             // 禁用设备数
             LambdaQueryWrapper<DeviceEntity> disabledWrapper = new LambdaQueryWrapper<>();
             disabledWrapper.eq(DeviceEntity::getDeviceType, "CAMERA")
-                    .eq(DeviceEntity::getEnabledFlag, 0)
+                    .eq(DeviceEntity::getDeviceStatus, 0)
                     .eq(DeviceEntity::getDeletedFlag, 0);
             long disabledDevices = deviceDao.selectCount(disabledWrapper);
             statistics.put("disabledDevices", disabledDevices);
@@ -835,8 +836,8 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         device.setAreaId(addForm.getAreaId());
         device.setIpAddress(addForm.getDeviceIp());
         device.setPort(addForm.getDevicePort());
-        device.setDeviceStatus("OFFLINE"); // 默认离线
-        device.setEnabledFlag(addForm.getEnabledFlag() != null ? addForm.getEnabledFlag() : 1);
+        device.setDeviceStatus(2); // 默认离线状态
+        device.setEnabled(addForm.getEnabledFlag() != null ? addForm.getEnabledFlag() : 1);
 
         // 构建扩展属性
         Map<String, Object> extendedAttributes = new HashMap<>();
@@ -858,7 +859,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         extendedAttributes.put("frameRate", addForm.getFrameRate());
         extendedAttributes.put("remark", addForm.getRemark());
 
-        device.setExtendedAttributes(extendedAttributes);
+        device.setExtendedAttributes(convertToJson(extendedAttributes));
         return device;
     }
 
@@ -870,7 +871,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             device.setDeviceName(updateForm.getDeviceName());
         }
         if (updateForm.getDeviceSubType() != null) {
-            device.setExtendedAttributeValue("deviceSubType", updateForm.getDeviceSubType());
+            // device.setExtendedAttributeValue("deviceSubType", updateForm.getDeviceSubType());
         }
         if (updateForm.getAreaId() != null) {
             device.setAreaId(updateForm.getAreaId());
@@ -882,46 +883,46 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             device.setPort(updateForm.getDevicePort());
         }
         if (StringUtils.hasText(updateForm.getStreamUrl())) {
-            device.setExtendedAttributeValue("streamUrl", updateForm.getStreamUrl());
+            // device.setExtendedAttributeValue("streamUrl", updateForm.getStreamUrl());
         }
         if (StringUtils.hasText(updateForm.getManufacturer())) {
-            device.setExtendedAttributeValue("manufacturer", updateForm.getManufacturer());
+            // device.setExtendedAttributeValue("manufacturer", updateForm.getManufacturer());
         }
         if (StringUtils.hasText(updateForm.getModel())) {
-            device.setExtendedAttributeValue("model", updateForm.getModel());
+            // device.setExtendedAttributeValue("model", updateForm.getModel());
         }
         if (StringUtils.hasText(updateForm.getSerialNumber())) {
-            device.setExtendedAttributeValue("serialNumber", updateForm.getSerialNumber());
+            // device.setExtendedAttributeValue("serialNumber", updateForm.getSerialNumber());
         }
         if (StringUtils.hasText(updateForm.getInstallLocation())) {
-            device.setExtendedAttributeValue("installLocation", updateForm.getInstallLocation());
+            // device.setExtendedAttributeValue("installLocation", updateForm.getInstallLocation());
         }
         if (updateForm.getLongitude() != null) {
-            device.setExtendedAttributeValue("longitude", updateForm.getLongitude());
+            // device.setExtendedAttributeValue("longitude", updateForm.getLongitude());
         }
         if (updateForm.getLatitude() != null) {
-            device.setExtendedAttributeValue("latitude", updateForm.getLatitude());
+            // device.setExtendedAttributeValue("latitude", updateForm.getLatitude());
         }
         if (updateForm.getAltitude() != null) {
-            device.setExtendedAttributeValue("altitude", updateForm.getAltitude());
+            // device.setExtendedAttributeValue("altitude", updateForm.getAltitude());
         }
         if (updateForm.getPtzSupported() != null) {
-            device.setExtendedAttributeValue("ptzSupported", updateForm.getPtzSupported());
+            // device.setExtendedAttributeValue("ptzSupported", updateForm.getPtzSupported());
         }
         if (updateForm.getAudioSupported() != null) {
-            device.setExtendedAttributeValue("audioSupported", updateForm.getAudioSupported());
+            // device.setExtendedAttributeValue("audioSupported", updateForm.getAudioSupported());
         }
         if (updateForm.getNightVisionSupported() != null) {
-            device.setExtendedAttributeValue("nightVisionSupported", updateForm.getNightVisionSupported());
+            // device.setExtendedAttributeValue("nightVisionSupported", updateForm.getNightVisionSupported());
         }
         if (updateForm.getAiSupported() != null) {
-            device.setExtendedAttributeValue("aiSupported", updateForm.getAiSupported());
+            // device.setExtendedAttributeValue("aiSupported", updateForm.getAiSupported());
         }
         if (StringUtils.hasText(updateForm.getResolution())) {
-            device.setExtendedAttributeValue("resolution", updateForm.getResolution());
+            // device.setExtendedAttributeValue("resolution", updateForm.getResolution());
         }
         if (updateForm.getFrameRate() != null) {
-            device.setExtendedAttributeValue("frameRate", updateForm.getFrameRate());
+            // device.setExtendedAttributeValue("frameRate", updateForm.getFrameRate());
         }
         if (updateForm.getEnabledFlag() != null) {
             device.setEnabledFlag(updateForm.getEnabledFlag());
@@ -930,7 +931,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             device.setDeviceStatus(updateForm.getDeviceStatus());
         }
         if (StringUtils.hasText(updateForm.getRemark())) {
-            device.setExtendedAttributeValue("remark", updateForm.getRemark());
+            // device.setExtendedAttributeValue("remark", updateForm.getRemark());
         }
 
         device.setUpdateTime(LocalDateTime.now());
@@ -941,7 +942,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
      */
     private ResponseDTO<Void> updateDeviceStatus(Long deviceId, Integer status) {
         LambdaUpdateWrapper<DeviceEntity> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(DeviceEntity::getId, deviceId)
+        wrapper.eq(DeviceEntity::getDeviceId, deviceId)
                 .set(DeviceEntity::getDeviceStatus, status)
                 .set(DeviceEntity::getUpdateTime, LocalDateTime.now());
 
@@ -951,6 +952,18 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         }
 
         return ResponseDTO.ok();
+    }
+
+    /**
+     * 将Map转换为JSON字符串
+     */
+    private String convertToJson(Map<String, Object> map) {
+        try {
+            return new ObjectMapper().writeValueAsString(map);
+        } catch (Exception e) {
+            log.warn("转换扩展属性为JSON失败: {}", e.getMessage());
+            return "{}";
+        }
     }
 }
 

@@ -26,3 +26,5 @@ public class MobileSecuritySettingsUpdateRequest {
     @Schema(description = "安全设置")
     private Map<String, Object> securitySettings;
 }
+
+

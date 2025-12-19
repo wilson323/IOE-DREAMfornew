@@ -1,7 +1,10 @@
 package net.lab1024.sa.attendance.mobile.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 移动端班次查询参数
@@ -15,6 +18,9 @@ import lombok.Data;
  * @since 2025-12-16
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "移动端班次查询参数")
 public class MobileShiftQueryParam {
 
@@ -23,4 +29,12 @@ public class MobileShiftQueryParam {
      */
     @Schema(description = "班次类型", example = "1")
     private Integer shiftType;
+
+    /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
 }
+
+

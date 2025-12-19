@@ -15,8 +15,8 @@ import net.lab1024.sa.oa.workflow.domain.vo.ApprovalStatisticsVO;
 import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
 import net.lab1024.sa.oa.workflow.dao.ApprovalInstanceDao;
 import net.lab1024.sa.oa.workflow.dao.ApprovalStatisticsDao;
-import net.lab1024.sa.oa.workflow.entity.WorkflowTaskEntity;
-import net.lab1024.sa.oa.workflow.entity.WorkflowInstanceEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;

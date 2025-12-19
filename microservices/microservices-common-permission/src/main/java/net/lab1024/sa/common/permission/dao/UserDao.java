@@ -1,7 +1,7 @@
 package net.lab1024.sa.common.permission.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.common.permission.entity.UserEntity;
+import net.lab1024.sa.common.security.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

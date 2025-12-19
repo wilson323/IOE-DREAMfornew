@@ -1,0 +1,11 @@
+[ERROR] Failed to execute goal on project ioedream-biometric-service: Could not resolve dependencies for project net.lab1024.sa:ioedream-biometric-service:jar:1.0.0
+[ERROR] dependency: org.bytedeco:opencv-platform:jar:4.8.0-1.21 (compile)
+[ERROR] 	org.bytedeco:opencv-platform:jar:4.8.0-1.21 was not found in https://repo.maven.apache.org/maven2 during a previous attempt. This failure was cached in the local repository and resolution is not reattempted until the update interval of central has elapsed or updates are forced
+[ERROR] 
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/DependencyResolutionException

@@ -1,9 +1,9 @@
 package net.lab1024.sa.visitor.domain.vo;
 
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 /**
  * 待审批访客记录VO

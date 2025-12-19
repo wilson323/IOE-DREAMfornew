@@ -247,7 +247,7 @@ public interface ConsumeAccountService {
      * @param accountEntity 账户实体
      * @return 账户ID
      */
-    Long createAccount(net.lab1024.sa.common.consume.entity.AccountEntity accountEntity);
+    Long createAccount(net.lab1024.sa.consume.entity.AccountEntity accountEntity);
 
     /**
      * 更新账户
@@ -255,7 +255,7 @@ public interface ConsumeAccountService {
      * @param accountEntity 账户实体
      * @return 是否成功
      */
-    boolean updateAccount(net.lab1024.sa.common.consume.entity.AccountEntity accountEntity);
+    boolean updateAccount(net.lab1024.sa.consume.entity.AccountEntity accountEntity);
 
     /**
      * 删除账户

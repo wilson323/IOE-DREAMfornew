@@ -113,6 +113,15 @@ public class ManagerConfiguration {
     }
 
     /**
+     * 注册 DefaultFixedAmountCalculator Bean
+     */
+    @Bean
+    public DefaultFixedAmountCalculator defaultFixedAmountCalculator() {
+        log.info("[ManagerConfiguration] 初始化DefaultFixedAmountCalculator");
+        return new DefaultFixedAmountCalculator();
+    }
+
+    /**
      * 注册 MobileConsumeStatisticsManager Bean
      */
     @Bean

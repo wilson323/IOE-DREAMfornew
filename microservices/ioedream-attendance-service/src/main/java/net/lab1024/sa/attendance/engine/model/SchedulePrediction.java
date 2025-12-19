@@ -52,6 +52,26 @@ public class SchedulePrediction {
     private Double confidence;
 
     /**
+     * 预测出勤率（0-1，兼容简化引擎实现字段名）
+     */
+    private Double predictedAttendanceRate;
+
+    /**
+     * 预测加班率（0-1，兼容简化引擎实现字段名）
+     */
+    private Double predictedOvertimeRate;
+
+    /**
+     * 预测成本（兼容简化引擎实现字段名）
+     */
+    private Double predictedCost;
+
+    /**
+     * 预测效率（0-1，兼容简化引擎实现字段名）
+     */
+    private Double predictedEfficiency;
+
+    /**
      * 预测时间
      */
     private LocalDateTime predictionTime;
@@ -75,6 +95,16 @@ public class SchedulePrediction {
      * 预测指标
      */
     private Map<String, Object> predictionMetrics;
+
+    /**
+     * 是否成功（兼容简化引擎实现）
+     */
+    private Boolean success;
+
+    /**
+     * 预测消息（兼容简化引擎实现）
+     */
+    private String predictionMessage;
 
     /**
      * 建议

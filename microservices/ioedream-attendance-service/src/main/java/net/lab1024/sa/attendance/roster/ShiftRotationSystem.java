@@ -3,6 +3,30 @@ package net.lab1024.sa.attendance.roster;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import net.lab1024.sa.attendance.roster.model.RotationSystemConfig;
+import net.lab1024.sa.attendance.roster.model.result.RotationSystemCreationResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationSystemUpdateResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationSystemDeletionResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationSystemDetail;
+import net.lab1024.sa.attendance.roster.model.result.RotationSystemQueryParam;
+import net.lab1024.sa.attendance.roster.model.result.RotationSystemListResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationPlanRequest;
+import net.lab1024.sa.attendance.roster.model.result.RotationPlanResult;
+import net.lab1024.sa.attendance.roster.model.result.EmployeeRotationSchedule;
+import net.lab1024.sa.attendance.roster.model.result.RotationOptimizationRequest;
+import net.lab1024.sa.attendance.roster.model.result.RotationOptimizationResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationConflictValidationRequest;
+import net.lab1024.sa.attendance.roster.model.result.RotationConflictValidationResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationAdjustmentRequest;
+import net.lab1024.sa.attendance.roster.model.result.RotationAdjustmentResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationStatisticsRequest;
+import net.lab1024.sa.attendance.roster.model.result.RotationStatisticsResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationHandoverRequest;
+import net.lab1024.sa.attendance.roster.model.result.RotationHandoverResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationLeaveManagementRequest;
+import net.lab1024.sa.attendance.roster.model.result.RotationLeaveManagementResult;
+import net.lab1024.sa.attendance.roster.model.result.RotationAlertRequest;
+import net.lab1024.sa.attendance.roster.model.result.RotationAlertResult;
 
 /**
  * 轮班系统接口

@@ -2,7 +2,7 @@ package net.lab1024.sa.attendance.controller;
 
 import io.micrometer.observation.annotation.Observed;
 import org.springframework.format.annotation.DateTimeFormat;
-import net.lab1024.sa.common.permission.PermissionCheck;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

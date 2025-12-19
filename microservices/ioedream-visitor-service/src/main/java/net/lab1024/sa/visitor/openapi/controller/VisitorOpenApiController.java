@@ -1,21 +1,50 @@
 package net.lab1024.sa.visitor.openapi.controller;
 
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.visitor.openapi.domain.request.*;
-import net.lab1024.sa.visitor.openapi.domain.response.*;
+import net.lab1024.sa.visitor.openapi.domain.request.AddToBlacklistRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.AppointmentQueryRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.ApprovalRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.BlacklistQueryRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.CancelAppointmentRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.CheckInRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.CheckOutRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.SendInvitationRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.UpdateAppointmentRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.VisitorAppointmentRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.VisitorQueryRequest;
+import net.lab1024.sa.visitor.openapi.domain.response.ApprovalResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.BlacklistVisitorResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.CheckInResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.CheckOutResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.InvitationResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.RealtimeVisitorStatusResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorAppointmentDetailResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorAppointmentResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorDetailResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorInfoResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorStatisticsResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorTrackingResponse;
 import net.lab1024.sa.visitor.openapi.service.VisitorOpenApiService;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import java.util.List;
 
 /**
  * 开放平台访客管理API控制器
@@ -71,7 +100,8 @@ public class VisitorOpenApiController {
 
         log.info("[开放API] 更新访客预约: appointmentId={}, clientIp={}", appointmentId, clientIp);
 
-        VisitorAppointmentResponse response = visitorOpenApiService.updateAppointment(appointmentId, request, token, clientIp);
+        VisitorAppointmentResponse response = visitorOpenApiService.updateAppointment(appointmentId, request, token,
+                clientIp);
         return ResponseDTO.ok(response);
     }
 
@@ -240,7 +270,8 @@ public class VisitorOpenApiController {
         String token = extractTokenFromAuthorization(authorization);
         log.info("[开放API] 获取实时访客状态: areaId={}, visitorStatus={}", areaId, visitorStatus);
 
-        RealtimeVisitorStatusResponse response = visitorOpenApiService.getRealtimeVisitorStatus(areaId, visitorStatus, token);
+        RealtimeVisitorStatusResponse response = visitorOpenApiService.getRealtimeVisitorStatus(areaId, visitorStatus,
+                token);
         return ResponseDTO.ok(response);
     }
 

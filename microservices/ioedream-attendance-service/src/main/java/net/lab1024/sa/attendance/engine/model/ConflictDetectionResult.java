@@ -93,7 +93,6 @@ public class ConflictDetectionResult {
 
     // 内部冲突类型
     @Data
-    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ScheduleConflict {

@@ -25,6 +25,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class HistoricalData {
     private List<Map<String, Object>> records;
-    private Integer dataPoints;
+    private List<DataPoint> dataPoints;
     private String dataSource;
 }

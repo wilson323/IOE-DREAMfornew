@@ -1,20 +1,26 @@
 package net.lab1024.sa.attendance.engine.algorithm.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithm;
-import net.lab1024.sa.attendance.engine.model.ScheduleData;
-import net.lab1024.sa.attendance.engine.model.ScheduleResult;
-import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
-
-import org.springframework.util.StopWatch;
-
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+
+import org.springframework.util.StopWatch;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.engine.algorithm.AlgorithmMetadata;
+import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithm;
+import net.lab1024.sa.attendance.engine.model.ScheduleData;
+import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
+import net.lab1024.sa.attendance.engine.model.ScheduleResult;
 
 /**
  * 遗传算法实现类
@@ -111,7 +117,7 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
                 Chromosome currentBest = findBestChromosome(population);
                 if (bestChromosome == null || currentBest.getFitness() > bestChromosome.getFitness()) {
                     bestChromosome = currentBest;
-                    bestFitness.set(currentBest.getFitness());
+                    bestFitness.set((int) currentBest.getFitness());
                 }
 
                 // 选择操作
@@ -134,10 +140,15 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
             List<ScheduleRecord> scheduleRecords = convertChromosomeToSchedule(bestChromosome, scheduleData);
 
             // 6. 构建结果
+            List<ScheduleResult.ScheduleRecord> resultRecords = new ArrayList<>();
+            for (ScheduleRecord record : scheduleRecords) {
+                resultRecords.add(convertToResultScheduleRecord(record));
+            }
+
             ScheduleResult result = ScheduleResult.builder()
                     .status("SUCCESS")
                     .message("遗传算法排班完成")
-                    .scheduleRecords(scheduleRecords)
+                    .scheduleRecords(resultRecords)
                     .executionTime(stopWatch.getTotalTimeMillis())
                     .algorithmUsed(getAlgorithmType())
                     .qualityScore(calculateQualityScore(bestChromosome))
@@ -152,7 +163,7 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
             statistics.put("mutationRate", mutationRate);
             statistics.put("eliteRate", eliteRate);
             statistics.put("convergenceGeneration", generation);
-            result.setStatistics(createScheduleStatistics(statistics));
+            result.setOptimizationMetrics(statistics);
 
             stopWatch.stop();
             status = AlgorithmStatus.COMPLETED;
@@ -303,8 +314,8 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
      * 获取算法复杂度
      */
     @Override
-    public AlgorithmComplexity getComplexity() {
-        return new AlgorithmComplexity("O(G*P*N)", "O(G*P)", "O(G*P*N)", "O(G*P)", "O(G*P*N)");
+    public ScheduleAlgorithm.AlgorithmComplexity getComplexity() {
+        return new ScheduleAlgorithm.AlgorithmComplexity("O(G*P*N)", "O(G*P)");
     }
 
     /**
@@ -314,8 +325,8 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
     public boolean isApplicable(int employeeCount, int shiftCount, int timeRange) {
         // 遗传算法适用于中小规模数据，能找到较优解
         return employeeCount >= 20 && employeeCount <= 500 &&
-               shiftCount >= 1 && shiftCount <= 50 &&
-               timeRange >= 1 && timeRange <= 90;
+                shiftCount >= 1 && shiftCount <= 50 &&
+                timeRange >= 1 && timeRange <= 90;
     }
 
     /**
@@ -328,8 +339,7 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
                 "多目标优化",
                 "大规模排班问题",
                 "质量敏感排班",
-                "长期排班规划"
-        );
+                "长期排班规划");
     }
 
     /**
@@ -400,6 +410,61 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
     @Override
     public String getAlgorithmDescription() {
         return "使用遗传算法模拟自然选择过程，通过选择、交叉、变异操作逐步优化排班方案";
+    }
+
+    /**
+     * 获取算法元数据
+     */
+    @Override
+    public AlgorithmMetadata getMetadata() {
+        return AlgorithmMetadata.builder()
+                .name(getAlgorithmName())
+                .version("1.0.0")
+                .description(getAlgorithmDescription())
+                .author("IOE-DREAM架构团队")
+                .createdDate(LocalDateTime.now())
+                .parameters(Arrays.asList(
+                        AlgorithmMetadata.AlgorithmParameter.builder()
+                                .name("populationSize")
+                                .displayName("种群大小")
+                                .type("Integer")
+                                .defaultValue(DEFAULT_POPULATION_SIZE)
+                                .minValue(10)
+                                .maxValue(1000)
+                                .description("遗传算法种群大小")
+                                .required(false)
+                                .build(),
+                        AlgorithmMetadata.AlgorithmParameter.builder()
+                                .name("maxGenerations")
+                                .displayName("最大进化代数")
+                                .type("Integer")
+                                .defaultValue(DEFAULT_MAX_GENERATIONS)
+                                .minValue(1)
+                                .maxValue(10000)
+                                .description("最大进化代数")
+                                .required(false)
+                                .build(),
+                        AlgorithmMetadata.AlgorithmParameter.builder()
+                                .name("crossoverRate")
+                                .displayName("交叉率")
+                                .type("Double")
+                                .defaultValue(DEFAULT_CROSSOVER_RATE)
+                                .minValue(0.0)
+                                .maxValue(1.0)
+                                .description("交叉概率")
+                                .required(false)
+                                .build(),
+                        AlgorithmMetadata.AlgorithmParameter.builder()
+                                .name("mutationRate")
+                                .displayName("变异率")
+                                .type("Double")
+                                .defaultValue(DEFAULT_MUTATION_RATE)
+                                .minValue(0.0)
+                                .maxValue(1.0)
+                                .description("变异概率")
+                                .required(false)
+                                .build()))
+                .build();
     }
 
     /**
@@ -514,8 +579,8 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
 
         // 生成随机基因序列
         List<Gene> genes = new ArrayList<>();
-        List<Object> employees = scheduleData.getEmployees();
-        List<Object> shifts = scheduleData.getAvailableShifts();
+        List<ScheduleData.EmployeeData> employees = scheduleData.getEmployees();
+        List<ScheduleData.ShiftData> shifts = scheduleData.getAvailableShifts();
 
         // TODO: 根据实际业务需求生成随机基因
         for (int i = 0; i < employees.size(); i++) {
@@ -826,17 +891,50 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
     /**
      * 获取员工ID
      */
-    private Long getEmployeeId(Object employee) {
-        // TODO: 根据实际数据结构获取员工ID
-        return 1L;
+    private Long getEmployeeId(ScheduleData.EmployeeData employee) {
+        if (employee == null) {
+            return null;
+        }
+        return employee.getEmployeeId();
     }
 
     /**
      * 获取班次ID
      */
-    private Long getShiftId(Object shift) {
-        // TODO: 根据实际数据结构获取班次ID
-        return 1L;
+    private Long getShiftId(ScheduleData.ShiftData shift) {
+        if (shift == null) {
+            return null;
+        }
+        return shift.getShiftId();
+    }
+
+    /**
+     * 转换排班记录为ScheduleResult内部记录类型
+     *
+     * @param record 排班记录
+     * @return 排班结果内部记录
+     */
+    private ScheduleResult.ScheduleRecord convertToResultScheduleRecord(ScheduleRecord record) {
+        if (record == null) {
+            return null;
+        }
+        return ScheduleResult.ScheduleRecord.builder()
+                .recordId(record.getRecordId())
+                .userId(record.getEmployeeId())
+                .departmentId(record.getDepartmentId())
+                .shiftId(record.getShiftId())
+                .scheduleDate(record.getScheduleDate())
+                .startTime(record.getStartTime() != null ? record.getStartTime().toString() : null)
+                .endTime(record.getEndTime() != null ? record.getEndTime().toString() : null)
+                .workLocation(record.getWorkLocation())
+                .priority(record.getPriority())
+                .autoGenerated(record.getAutoGenerated())
+                .source(record.getSource())
+                .status(record.getStatus())
+                .assignedTime(record.getAssignedTime())
+                .algorithmUsed(record.getAlgorithmUsed())
+                .fitnessScore(record.getFitnessScore())
+                .build();
     }
 
     /**
@@ -852,14 +950,29 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
         }
 
         // Getters and Setters
-        public int getId() { return id; }
-        public void setId(int id) { this.id = id; }
+        public int getId() {
+            return id;
+        }
 
-        public List<Gene> getGenes() { return genes; }
-        public void setGenes(List<Gene> genes) { this.genes = genes; }
+        public void setId(int id) {
+            this.id = id;
+        }
 
-        public double getFitness() { return fitness; }
-        public void setFitness(double fitness) { this.fitness = fitness; }
+        public List<Gene> getGenes() {
+            return genes;
+        }
+
+        public void setGenes(List<Gene> genes) {
+            this.genes = genes;
+        }
+
+        public double getFitness() {
+            return fitness;
+        }
+
+        public void setFitness(double fitness) {
+            this.fitness = fitness;
+        }
 
         @Override
         public Chromosome clone() {
@@ -886,10 +999,20 @@ public class GeneticAlgorithmImpl implements ScheduleAlgorithm {
         private Long shiftId;
 
         // Getters and Setters
-        public Long getEmployeeId() { return employeeId; }
-        public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
+        public Long getEmployeeId() {
+            return employeeId;
+        }
 
-        public Long getShiftId() { return shiftId; }
-        public void setShiftId(Long shiftId) { this.shiftId = shiftId; }
+        public void setEmployeeId(Long employeeId) {
+            this.employeeId = employeeId;
+        }
+
+        public Long getShiftId() {
+            return shiftId;
+        }
+
+        public void setShiftId(Long shiftId) {
+            this.shiftId = shiftId;
+        }
     }
 }

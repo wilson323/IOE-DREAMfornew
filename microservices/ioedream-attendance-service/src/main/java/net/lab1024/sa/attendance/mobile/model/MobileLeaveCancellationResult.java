@@ -36,3 +36,5 @@ public class MobileLeaveCancellationResult {
     @Schema(description = "消息", example = "销假申请已提交")
     private String message;
 }
+
+

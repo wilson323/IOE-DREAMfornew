@@ -36,3 +36,5 @@ public class MobileNotificationQueryParam {
     @Schema(description = "是否已读", example = "false")
     private Boolean read;
 }
+
+

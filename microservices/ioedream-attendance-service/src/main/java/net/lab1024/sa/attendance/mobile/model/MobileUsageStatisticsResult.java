@@ -44,3 +44,5 @@ public class MobileUsageStatisticsResult {
     @Schema(description = "使用统计（别名）")
     private Map<String, Object> statistics;
 }
+
+

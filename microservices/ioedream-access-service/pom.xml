@@ -77,6 +77,14 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- ==================== 公共模块聚合 ==================== -->
+        <!-- Common (完整公共模块) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Boot AMQP (消息队列) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

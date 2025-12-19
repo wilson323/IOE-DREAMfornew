@@ -86,6 +86,16 @@ public class ScheduleData {
     private OptimizationTarget optimizationTarget;
 
     /**
+     * 排班记录列表
+     */
+    private List<ScheduleRecord> scheduleRecords;
+
+    /**
+     * 统计信息
+     */
+    private Map<String, Object> statistics;
+
+    /**
      * 历史排班数据
      */
     private List<ScheduleRecord> historyRecords;

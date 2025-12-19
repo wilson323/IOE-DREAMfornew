@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.common.factory.StrategyMarker;
 import net.lab1024.sa.consume.client.AccountKindConfigClient;
 import net.lab1024.sa.consume.manager.AccountManager;

@@ -138,7 +138,7 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
                 updateApplicationStatus(application, approvalRequest);
 
                 // 如果最终审批通过，执行销假生效
-                if (isFinalApproval(application, approvalRequest.getApprovalResult())) {
+                if (isFinalApproval(application, LeaveCancellationApplication.ApprovalResult.valueOf(approvalRequest.getApprovalResult()))) {
                     executeCancellationEffect(application);
                 }
 
@@ -151,7 +151,7 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
                 return LeaveCancellationApprovalResult.builder()
                         .success(true)
                         .cancellationId(application.getCancellationId())
-                        .newStatus(application.getStatus())
+                        .newStatus(application.getStatus().name())
                         .message("审批完成")
                         .approvalTime(LocalDateTime.now())
                         .build();

@@ -46,3 +46,5 @@ public class MobileLocationReportRequest {
     @Schema(description = "精度（米）", example = "10.5")
     private Double accuracy;
 }
+
+

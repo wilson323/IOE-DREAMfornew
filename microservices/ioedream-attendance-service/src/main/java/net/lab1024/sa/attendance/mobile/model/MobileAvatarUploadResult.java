@@ -42,3 +42,5 @@ public class MobileAvatarUploadResult {
     @Schema(description = "消息", example = "头像上传成功")
     private String message;
 }
+
+

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -246,12 +247,12 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
         AttendanceSummaryReport report = AttendanceSummaryReport.builder()
                 .reportId(generateReportId())
                 .reportName(request.getReportName())
-                .reportType(ReportType.DAILY)
+                .reportType(AttendanceSummaryReport.ReportType.DAILY)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .generatedTime(LocalDateTime.now())
-                .generatedBy(request.getGeneratedBy())
-                .generatedByName(request.getGeneratedByName())
+                .generatedBy(null) // TODO: 从请求上下文获取用户ID
+                .generatedByName(null) // TODO: 从请求上下文获取用户姓名
                 .status(AttendanceSummaryReport.ReportStatus.COMPLETED)
                 .totalEmployees(calculationResult.getTotalEmployees())
                 .presentEmployees(calculationResult.getPresentEmployees())
@@ -331,7 +332,9 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
 
         return AttendanceSummaryReport.TrendAnalysisData.builder()
                 .dailyTrends(dailyTrends)
-                .trendDirection(AttendanceSummaryReport.TrendDirection.STABLE)
+                .attendanceTrend(AttendanceSummaryReport.TrendDirection.STABLE)
+                .punctualityTrend(AttendanceSummaryReport.TrendDirection.STABLE)
+                .productivityTrend(AttendanceSummaryReport.TrendDirection.STABLE)
                 .build();
     }
 

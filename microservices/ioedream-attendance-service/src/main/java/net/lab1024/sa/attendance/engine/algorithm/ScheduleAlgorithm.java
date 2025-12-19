@@ -108,6 +108,13 @@ public interface ScheduleAlgorithm {
     AlgorithmStatus getStatus();
 
     /**
+     * 获取算法元数据
+     *
+     * @return 算法元数据
+     */
+    AlgorithmMetadata getMetadata();
+
+    /**
      * 停止算法执行
      */
     void stop();

@@ -1,7 +1,10 @@
 package net.lab1024.sa.attendance.mobile.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -17,6 +20,9 @@ import jakarta.validation.constraints.NotNull;
  * @since 2025-12-16
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "移动端提醒设置请求")
 public class MobileReminderSettingsRequest {
 
@@ -45,4 +51,12 @@ public class MobileReminderSettingsRequest {
      */
     @Schema(description = "下班提醒时间（分钟）", example = "30")
     private Integer clockOutReminderMinutes;
+
+    /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
 }
+
+

@@ -6,7 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import io.micrometer.core.instrument.MeterRegistry;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.lab1024.sa.oa.workflow.cache.WorkflowCacheManager;
 
 /**
@@ -26,9 +27,10 @@ import net.lab1024.sa.oa.workflow.cache.WorkflowCacheManager;
  * @updated 2025-12-14 移除重复的公共Bean定义，改用统一自动装配
  * @updated 2025-01-30 添加WorkflowCacheManager Bean注册
  */
-@Slf4j
 @Configuration("oaManagerConfiguration")
 public class ManagerConfiguration {
+
+    private static final Logger log = LoggerFactory.getLogger(ManagerConfiguration.class);
 
     /**
      * 注册WorkflowCacheManager（cache包）为Spring Bean

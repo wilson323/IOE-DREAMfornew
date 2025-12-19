@@ -1,6 +1,7 @@
 package net.lab1024.sa.oa.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -72,9 +73,9 @@ public class WorkflowInstanceEntity {
     private String currentNodeName;
 
     /**
-     * 实例状态：RUNNING-运行中, APPROVED-已通过, REJECTED-已拒绝, CANCELLED-已取消, TIMEOUT-已超时
+     * 实例状态：1-运行中, 2-已完成, 3-已终止, 4-已挂起
      */
-    private String status;
+    private Integer status;
 
     /**
      * 发起时间
@@ -100,4 +101,77 @@ public class WorkflowInstanceEntity {
      * 更新时间
      */
     private LocalDateTime updateTime;
+
+    // --- Added Fields for Service Compatibility ---
+
+    /**
+     * Flowable 实例ID
+     */
+    private String flowableInstanceId;
+
+    /**
+     * Flowable 流程定义ID
+     */
+    private String flowableProcessDefId;
+
+    /**
+     * 流程变量 (JSON)
+     */
+    private String variables;
+
+    /**
+     * 当前审批人ID
+     */
+    private Long currentApproverId;
+
+    /**
+     * 当前审批人姓名
+     */
+    private String currentApproverName;
+
+    /**
+     * 优先级
+     */
+    private Integer priority;
+
+    /**
+     * 耗时(分钟)
+     */
+    private Long duration;
+
+    /**
+     * 结束原因
+     */
+    private String reason;
+
+    /**
+     * 删除标记
+     */
+    private Integer deletedFlag;
+
+    // --- Compatibility Methods ---
+
+    public String getProcessName() {
+        return this.title;
+    }
+
+    public void setProcessName(String processName) {
+        this.title = processName;
+    }
+
+    public Long getProcessDefinitionId() {
+        return this.definitionId;
+    }
+
+    public void setProcessDefinitionId(Long processDefinitionId) {
+        this.definitionId = processDefinitionId;
+    }
+
+    public String getProcessKey() {
+        return this.definitionCode;
+    }
+
+    public void setProcessKey(String processKey) {
+        this.definitionCode = processKey;
+    }
 }

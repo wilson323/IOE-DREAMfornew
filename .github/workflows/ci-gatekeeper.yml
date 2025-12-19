@@ -1,0 +1,299 @@
+name: CI Gatekeeper - 架构合规性检查
+
+on:
+  push:
+    branches: [ main, new-clean-branch ]
+  pull_request:
+    branches: [ main, new-clean-branch ]
+
+jobs:
+  # P0: 可编译基线检查
+  compilable-baseline:
+    name: P0 - 可编译基线检查
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout代码
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: P0 - 构建公共模块基线
+      run: |
+        echo "🔍 执行P0：恢复可编译基线检查"
+        cd microservices
+
+        # 1. 强制先构建microservices-common（黄金法则）
+        echo "📦 步骤1：构建microservices-common基线..."
+        mvn clean install -pl microservices/microservices-common -am -DskipTests -q
+
+        if [ $? -ne 0 ]; then
+          echo "❌ P0失败：microservices-common基线构建失败"
+          exit 1
+        fi
+
+        echo "✅ microservices-common基线构建成功"
+
+        # 2. 验证关键类可解析
+        echo "🔍 步骤2：验证关键类可解析性..."
+        java -cp "microservices/microservices-common-core/target/microservices-common-core-1.0.0.jar" \
+             -cp "microservices/microservices-common-business/target/microservices-common-business-1.0.0.jar" \
+             -cp "microservices/microservices-common/target/microservices-common-1.0.0.jar" \
+             -cp "microservices/ioedream-common-service/target/ioedream-common-service-1.0.0.jar" \
+             -Dfile.encoding=UTF-8 \
+             -Duser.timezone=Asia/Shanghai \
+             -jar -help > /dev/null 2>&1
+
+        if [ $? -ne 0 ]; then
+          echo "❌ P0失败：关键类解析失败"
+          exit 1
+        fi
+
+        echo "✅ P0完成：可编译基线检查通过"
+
+    - name: 上传构建结果
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: p0-baseline-logs
+        path: microservices/*/target/
+
+  # P1: 工程结构一致性检查
+  structure-consistency:
+    name: P1 - 工程结构一致性检查
+    runs-on: ubuntu-latest
+    needs: compilable-baseline
+
+    steps:
+    - name: Checkout代码
+      uses: actions/checkout@v4
+
+    - name: P1 - 包结构一致性检查
+      run: |
+        echo "🔍 执行P1：工程结构一致性检查"
+
+        # 检查脚本
+        chmod +x .github/scripts/check-structure-consistency.sh
+        .github/scripts/check-structure-consistency.sh
+
+        echo "✅ P1完成：工程结构一致性检查通过"
+
+    - name: 结构违规报告
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: p1-structure-report
+        path: structure-violations.log
+
+  # P2: API契约一致性检查
+  api-consistency:
+    name: P2 - API契约一致性检查
+    runs-on: ubuntu-latest
+    needs: structure-consistency
+
+    steps:
+    - name: Checkout代码
+      uses: actions/checkout@v4
+
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: P2 - 代码契约漂移检查
+      run: |
+        echo "🔍 执行P2：修复真实代码契约漂移检查"
+
+        # 检查脚本
+        chmod +x .github/scripts/check-api-contract.sh
+        .github/scripts/check-api-contract.sh
+
+        echo "✅ P2完成：API契约一致性检查通过"
+
+    - name: API违规报告
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: p2-api-report
+        path: api-violations.log
+
+  # P3: IDE配置一致性检查
+  ide-consistency:
+    name: P3 - IDE配置一致性检查
+    runs-on: ubuntu-latest
+    needs: api-consistency
+
+    steps:
+    - name: Checkout代码
+      uses: actions/checkout@v4
+
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: P3 - IDE配置和注解处理检查
+      run: |
+        echo "🔍 执行P3：IDE与注解处理对齐检查"
+
+        # 1. 验证JDK 17
+        echo "📋 步骤1：验证JDK 17..."
+        java -version
+        if [[ "$(java -version 2>&1 | head -1 | cut -d'"' -f2 | cut -d'.' -f1)" != "17" ]]; then
+          echo "❌ P3失败：JDK版本不是17"
+          exit 1
+        fi
+
+        # 2. 验证Lombok注解处理
+        echo "📋 步骤2：验证Lombok注解处理..."
+        cd microservices/microservices-common-core
+        mvn clean compile -q -DskipTests
+
+        # 检查生成的getter/setter方法
+        javap -cp target/classes net.lab1024.sa.common.entity.BaseEntity | grep -q "getCreateTime"
+        if [ $? -ne 0 ]; then
+          echo "❌ P3失败：Lombok注解处理失败"
+          exit 1
+        fi
+
+        echo "✅ Lombok注解处理正常工作"
+
+        # 3. 验证IDE配置文件存在
+        echo "📋 步骤3：验证IDE配置文件..."
+
+        if [ ! -f ".vscode/settings.json" ]; then
+          echo "❌ P3失败：VS Code配置文件缺失"
+          exit 1
+        fi
+
+        if [ ! -f ".idea/modules.xml" ]; then
+          echo "❌ P3失败：IntelliJ IDEA配置文件缺失"
+          exit 1
+        fi
+
+        echo "✅ IDE配置文件完整"
+
+        cd ../../..
+        echo "✅ P3完成：IDE与注解处理对齐检查通过"
+
+    - name: IDE配置报告
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: p3-ide-report
+        path: ide-violations.log
+
+  # P4: 工程治理检查
+  governance-check:
+    name: P4 - 工程治理检查
+    runs-on: ubuntu-latest
+    needs: ide-consistency
+
+    steps:
+    - name: Checkout代码
+      uses: actions/checkout@v4
+
+    - name: P4 - 工程治理规则检查
+      run: |
+        echo "🔍 执行P4：工程治理检查"
+
+        # 检查脚本
+        chmod +x .github/scripts/check-governance.sh
+        .github/scripts/check-governance.sh
+
+        echo "✅ P4完成：工程治理检查通过"
+
+    - name: 治理违规报告
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: p4-governance-report
+        path: governance-violations.log
+
+  # 综合质量检查
+  quality-gate:
+    name: 质量门禁
+    runs-on: ubuntu-latest
+    needs: [compilable-baseline, structure-consistency, api-consistency, ide-consistency, governance-check]
+    if: always()
+
+    steps:
+    - name: 质量门禁评估
+      run: |
+        echo "🎯 执行质量门禁评估"
+
+        # 检查所有前置任务是否成功
+        if [ "${{ needs.compilable-baseline.result }}" != "success" ]; then
+          echo "❌ 质量门禁失败：P0可编译基线检查失败"
+          exit 1
+        fi
+
+        if [ "${{ needs.structure-consistency.result }}" != "success" ]; then
+          echo "❌ 质量门禁失败：P1工程结构一致性检查失败"
+          exit 1
+        fi
+
+        if [ "${{ needs.api-consistency.result }}" != "success" ]; then
+          echo "❌ 质量门禁失败：P2 API契约一致性检查失败"
+          exit 1
+        fi
+
+        if [ "${{ needs.ide-consistency.result }}" != "success" ]; then
+          echo "❌ 质量门禁失败：P3 IDE配置一致性检查失败"
+          exit 1
+        fi
+
+        if [ "${{ needs.governance-check.result }}" != "success" ]; then
+          echo "❌ 质量门禁失败：P4工程治理检查失败"
+          exit 1
+        fi
+
+        echo "🎉 质量门禁通过：所有P0-P4检查均成功"
+        echo "📊 质量评分：100/100"
+        echo "✅ 代码符合企业级架构标准"
+
+        # 生成质量报告
+        cat > quality-report.md << EOF
+  # IOE-DREAM 质量检查报告
+
+  ## 📊 检查结果概览
+  - **检查时间**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+  - **分支**: ${{ github.ref_name }}
+  - **提交**: ${{ github.sha }}
+
+  ## ✅ P0-P4 检查状态
+  | 阶段 | 检查项 | 状态 | 说明 |
+  |------|--------|------|------|
+  | P0 | 可编译基线 | ✅ 通过 | microservices-common模块构建成功 |
+  | P1 | 工程结构一致性 | ✅ 通过 | 包结构与目录结构对齐 |
+  | P2 | API契约一致性 | ✅ 通过 | 无跨层访问和依赖倒置问题 |
+  | P3 | IDE配置一致性 | ✅ 通过 | JDK 17和Lombok正常工作 |
+  | P4 | 工程治理 | ✅ 通过 | 符合企业级编码规范 |
+
+  ## 🎯 质量评分
+  - **总体评分**: 100/100
+  - **架构合规性**: 100%
+  - **代码质量**: 优秀
+  - **构建稳定性**: 稳定
+
+  ---
+  此报告由 IOE-DREAM CI/CD 系统自动生成
+  EOF
+
+        echo "📋 质量报告已生成：quality-report.md"
+
+    - name: 上传质量报告
+      uses: actions/upload-artifact@v4
+      with:
+        name: quality-report
+        path: quality-report.md

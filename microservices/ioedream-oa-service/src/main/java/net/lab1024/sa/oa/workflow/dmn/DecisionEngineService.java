@@ -1,7 +1,8 @@
 package net.lab1024.sa.oa.workflow.dmn;
 
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.flowable.dmn.api.DmnDecisionQuery;
 import org.flowable.dmn.api.DmnDeployment;
 import org.flowable.dmn.api.DmnRepositoryService;
@@ -27,10 +28,11 @@ import java.util.*;
  * @version 2.0.0
  * @since 2025-01-17
  */
-@Slf4j
 @Service
 @ConditionalOnBean(DmnDecisionService.class)
 public class DecisionEngineService {
+
+    private static final Logger log = LoggerFactory.getLogger(DecisionEngineService.class);
 
     @Resource
     private DmnRepositoryService dmnRepositoryService;

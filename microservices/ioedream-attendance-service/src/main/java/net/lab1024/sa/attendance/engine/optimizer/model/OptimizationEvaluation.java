@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -23,6 +24,41 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OptimizationEvaluation {
+
+    /**
+     * 评估ID
+     */
+    private String evaluationId;
+
+    /**
+     * 评估时间
+     */
+    private LocalDateTime evaluationTime;
+
+    /**
+     * 原始指标
+     */
+    private Map<String, Double> originalMetrics;
+
+    /**
+     * 优化后指标
+     */
+    private Map<String, Double> optimizedMetrics;
+
+    /**
+     * 改进率
+     */
+    private Map<String, Double> improvementRates;
+
+    /**
+     * 综合改进评分
+     */
+    private Double overallImprovementScore;
+
+    /**
+     * 评估是否成功
+     */
+    private boolean evaluationSuccessful;
 
     /**
      * 优化改进指标

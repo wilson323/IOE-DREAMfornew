@@ -41,4 +41,26 @@ public class MobileAppVersionResult {
      */
     @Schema(description = "是否需要更新", example = "false")
     private Boolean updateRequired;
+
+    /**
+     * 操作是否成功
+     */
+    @Schema(description = "操作是否成功")
+    private Boolean success;
+
+    /**
+     * 操作消息
+     */
+    @Schema(description = "操作消息")
+    private String message;
+
+    public boolean isSuccess() {
+        return Boolean.TRUE.equals(success);
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
+
+

@@ -2,8 +2,8 @@ package net.lab1024.sa.consume.template;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.domain.form.PaymentProcessForm;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
-import net.lab1024.sa.common.consume.entity.ConsumeRecordEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 

@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
  * 内部转调 OA 工作流引擎的标准入口。
  * </p>
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/workflow")
 @Tag(name = "工作流兼容入口", description = "兼容旧版工作流启动接口")
 @PermissionCheck(value = "OA_WORKFLOW", description = "工作流引擎管理模块权限")
 @Validated
+@Slf4j
 public class WorkflowStartCompatController {
 
     @Resource

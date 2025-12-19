@@ -62,6 +62,41 @@ public class ScheduleStatistics {
     private Integer totalScheduleRecords;
 
     /**
+     * 总排班数（兼容简化引擎实现字段名）
+     */
+    private Integer totalSchedules;
+
+    /**
+     * 正常排班数（兼容简化引擎实现字段名）
+     */
+    private Integer normalSchedules;
+
+    /**
+     * 临时排班数（兼容简化引擎实现字段名）
+     */
+    private Integer temporarySchedules;
+
+    /**
+     * 存在冲突的排班数（兼容简化引擎实现字段名）
+     */
+    private Integer conflictSchedules;
+
+    /**
+     * 覆盖率（兼容简化引擎实现字段名）
+     */
+    private Double coverageRate;
+
+    /**
+     * 效率评分（兼容简化引擎实现字段名）
+     */
+    private Double efficiencyScore;
+
+    /**
+     * 成本估算（兼容简化引擎实现字段名）
+     */
+    private Double costEstimate;
+
+    /**
      * 平均每人排班天数
      */
     private Double averageDaysPerEmployee;

@@ -31,4 +31,12 @@ public class MobileShiftsResult {
      */
     @Schema(description = "班次列表")
     private List<WorkShiftInfo> shifts;
+
+    /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
 }
+
+

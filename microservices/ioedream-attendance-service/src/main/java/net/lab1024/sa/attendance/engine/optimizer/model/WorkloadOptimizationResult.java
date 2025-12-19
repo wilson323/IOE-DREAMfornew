@@ -27,6 +27,36 @@ import java.util.Map;
 public class WorkloadOptimizationResult {
 
     /**
+     * 优化ID
+     */
+    private String optimizationId;
+
+    /**
+     * 原始工作负载分布
+     */
+    private Map<Long, Double> originalWorkloadDistribution;
+
+    /**
+     * 优化后工作负载分布
+     */
+    private Map<Long, Double> optimizedWorkloadDistribution;
+
+    /**
+     * 原始标准差
+     */
+    private Double originalStdDeviation;
+
+    /**
+     * 优化后标准差
+     */
+    private Double optimizedStdDeviation;
+
+    /**
+     * 优化是否成功
+     */
+    private Boolean optimizationSuccessful;
+
+    /**
      * 优化后的排班记录
      */
     private List<ScheduleRecord> optimizedRecords;
@@ -45,4 +75,17 @@ public class WorkloadOptimizationResult {
      * 负载改进率
      */
     private Double improvementRate;
+
+    /**
+     * 优化指标
+     */
+    private Map<String, Object> optimizedMetrics;
+
+    public boolean isOptimizationSuccessful() {
+        return Boolean.TRUE.equals(optimizationSuccessful);
+    }
+
+    public Map<String, Object> getOptimizedMetrics() {
+        return optimizedMetrics;
+    }
 }

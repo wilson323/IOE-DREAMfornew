@@ -1,21 +1,12 @@
 package net.lab1024.sa.visitor.service.impl;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.enumeration.ResultCode;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.ParamException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.visitor.domain.form.BlacklistAddForm;
-import net.lab1024.sa.visitor.domain.form.BlacklistQueryForm;
-import net.lab1024.sa.visitor.domain.vo.BlacklistVO;
-import net.lab1024.sa.visitor.service.VisitorBlacklistService;
-import net.lab1024.sa.visitor.dao.VisitorBlacklistDao;
-import net.lab1024.sa.visitor.entity.VisitorBlacklistEntity;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -25,14 +16,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.Resource;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.visitor.dao.VisitorBlacklistDao;
+import net.lab1024.sa.visitor.domain.form.BlacklistAddForm;
+import net.lab1024.sa.visitor.domain.form.BlacklistQueryForm;
+import net.lab1024.sa.visitor.domain.vo.BlacklistVO;
+import net.lab1024.sa.visitor.entity.VisitorBlacklistEntity;
+import net.lab1024.sa.visitor.service.VisitorBlacklistService;
 
 /**
  * 访客黑名单管理服务实现
@@ -212,8 +209,7 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
                 Page<BlacklistVO> page = new PageImpl<>(
                         pageList,
                         pageRequest,
-                        blacklistVOs.size()
-                );
+                        blacklistVOs.size());
 
                 PageResult<BlacklistVO> pageResult = new PageResult<>();
                 pageResult.setList(pageList);
@@ -239,8 +235,7 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
     public CompletableFuture<ResponseDTO<Boolean>> checkBlacklistStatus(
             Long visitorId,
             String idCard,
-            String phone
-    ) {
+            String phone) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 1. 优先使用visitorId查询
@@ -441,8 +436,7 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
     @Override
     public CompletableFuture<ResponseDTO<Object>> getBlacklistStatistics(
             LocalDateTime startTime,
-            LocalDateTime endTime
-    ) {
+            LocalDateTime endTime) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 1. 参数验证
@@ -630,8 +624,7 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
     private CompletableFuture<ResponseDTO<Integer>> cleanExpiredBlacklistFallback(Exception e) {
         log.warn("[黑名单管理] 清理过期黑名单降级", e);
         return CompletableFuture.completedFuture(
-                ResponseDTO.error("CLEAN_EXPIRED_BLACKLIST_UNAVAILABLE", "清理过期黑名单服务暂时不可用")
-        );
+                ResponseDTO.error("CLEAN_EXPIRED_BLACKLIST_UNAVAILABLE", "清理过期黑名单服务暂时不可用"));
     }
 
     // ==================== 辅助方法 ====================
@@ -666,9 +659,12 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
      */
     private String getBlacklistTypeName(String type) {
         switch (type) {
-            case "PERMANENT": return "永久黑名单";
-            case "TEMPORARY": return "临时黑名单";
-            default: return "未知类型";
+            case "PERMANENT":
+                return "永久黑名单";
+            case "TEMPORARY":
+                return "临时黑名单";
+            default:
+                return "未知类型";
         }
     }
 
@@ -677,10 +673,14 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
      */
     private String getStatusName(Integer status) {
         switch (status) {
-            case 0: return "停用";
-            case 1: return "生效";
-            case 2: return "过期";
-            default: return "未知状态";
+            case 0:
+                return "停用";
+            case 1:
+                return "生效";
+            case 2:
+                return "过期";
+            default:
+                return "未知状态";
         }
     }
 

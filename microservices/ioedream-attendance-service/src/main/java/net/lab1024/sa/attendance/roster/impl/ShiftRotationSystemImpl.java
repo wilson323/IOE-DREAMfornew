@@ -3,6 +3,8 @@ package net.lab1024.sa.attendance.roster.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.roster.ShiftRotationSystem;
 import net.lab1024.sa.attendance.roster.model.*;
+import net.lab1024.sa.attendance.roster.model.result.*;
+import net.lab1024.sa.attendance.roster.model.result.RotationScheduleStats;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -64,16 +66,18 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
     @Override
     public CompletableFuture<RotationSystemCreationResult> createRotationSystem(RotationSystemConfig rotationSystem) {
         return CompletableFuture.supplyAsync(() -> {
+            RotationSystemCreationResult result;
             try {
                 log.info("[轮班系统] 创建轮班制度: {}", rotationSystem.getSystemName());
 
                 // 验证配置
                 if (!rotationSystem.isValid()) {
-                    return RotationSystemCreationResult.builder()
+                    result = RotationSystemCreationResult.builder()
                             .success(false)
                             .errorMessage("轮班制度配置无效")
                             .errorCode("INVALID_CONFIG")
                             .build();
+                    return result;
                 }
 
                 // 生成系统ID
@@ -88,7 +92,7 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
 
                 log.info("[轮班系统] 轮班制度创建成功: systemId={}, name={}", systemId, rotationSystem.getSystemName());
 
-                return RotationSystemCreationResult.builder()
+                result = RotationSystemCreationResult.builder()
                         .success(true)
                         .systemId(systemId)
                         .message("轮班制度创建成功")
@@ -97,17 +101,20 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
 
             } catch (Exception e) {
                 log.error("[轮班系统] 创建轮班制度失败", e);
-                return RotationSystemCreationResult.builder()
+                result = RotationSystemCreationResult.builder()
                         .success(false)
                         .errorMessage("创建轮班制度时发生异常: " + e.getMessage())
                         .errorCode("SYSTEM_ERROR")
                         .build();
             }
+
+            return result;
         }, executorService);
     }
 
     @Override
-    public CompletableFuture<RotationSystemUpdateResult> updateRotationSystem(String systemId, RotationSystemConfig rotationSystem) {
+    public CompletableFuture<RotationSystemUpdateResult> updateRotationSystem(String systemId,
+            RotationSystemConfig rotationSystem) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 log.info("[轮班系统] 更新轮班制度: systemId={}", systemId);
@@ -248,7 +255,8 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
                     RotationSystemConfig config = entry.getValue();
 
                     // 应用查询过滤条件
-                    if (queryParam.getSystemType() != null && !queryParam.getSystemType().equals(config.getSystemType())) {
+                    if (queryParam.getSystemType() != null
+                            && !queryParam.getSystemType().equals(config.getSystemType())) {
                         continue;
                     }
 
@@ -256,7 +264,8 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
                         continue;
                     }
 
-                    List<RotationSchedule> schedules = rotationSchedules.getOrDefault(systemId, Collections.emptyList());
+                    List<RotationSchedule> schedules = rotationSchedules.getOrDefault(systemId,
+                            Collections.emptyList());
 
                     RotationSystemSummary summary = RotationSystemSummary.builder()
                             .systemId(systemId)
@@ -282,17 +291,20 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
 
                 // 分页
                 int total = summaries.size();
-                int start = queryParam.getPageNum() * queryParam.getPageSize();
-                int end = Math.min(start + queryParam.getPageSize(), total);
+                int pageNum = queryParam.getPageNum() != null ? queryParam.getPageNum() : 1;
+                int pageSize = queryParam.getPageSize() != null ? queryParam.getPageSize() : 20;
+                int start = Math.max(pageNum - 1, 0) * pageSize;
+                int end = Math.min(start + pageSize, total);
 
-                List<RotationSystemSummary> pageData = start < total ? summaries.subList(start, end) : Collections.emptyList();
+                List<RotationSystemSummary> pageData = start < total ? summaries.subList(start, end)
+                        : Collections.emptyList();
 
                 return RotationSystemListResult.builder()
                         .success(true)
                         .data(pageData)
-                        .total(total)
-                        .pageNum(queryParam.getPageNum())
-                        .pageSize(queryParam.getPageSize())
+                        .total((long) total)
+                        .pageNum(pageNum)
+                        .pageSize(pageSize)
                         .build();
 
             } catch (Exception e) {
@@ -339,7 +351,8 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
                 }
 
                 // 存储生成的安排
-                List<RotationSchedule> existingSchedules = rotationSchedules.getOrDefault(planRequest.getSystemId(), new ArrayList<>());
+                List<RotationSchedule> existingSchedules = rotationSchedules.getOrDefault(planRequest.getSystemId(),
+                        new ArrayList<>());
                 existingSchedules.addAll(generatedSchedules);
                 rotationSchedules.put(planRequest.getSystemId(), existingSchedules);
 
@@ -368,18 +381,21 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
     }
 
     @Override
-    public CompletableFuture<EmployeeRotationSchedule> getEmployeeRotationSchedule(Long employeeId, LocalDate startDate, LocalDate endDate) {
+    public CompletableFuture<EmployeeRotationSchedule> getEmployeeRotationSchedule(Long employeeId, LocalDate startDate,
+            LocalDate endDate) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                List<RotationSchedule> employeeSchedules = employeeScheduleIndex.getOrDefault(employeeId, Collections.emptyList());
+                List<RotationSchedule> employeeSchedules = employeeScheduleIndex.getOrDefault(employeeId,
+                        Collections.emptyList());
 
                 List<RotationSchedule> filteredSchedules = employeeSchedules.stream()
-                        .filter(schedule -> !schedule.getScheduleDate().isBefore(startDate) && !schedule.getScheduleDate().isAfter(endDate))
+                        .filter(schedule -> !schedule.getScheduleDate().isBefore(startDate)
+                                && !schedule.getScheduleDate().isAfter(endDate))
                         .sorted(Comparator.comparing(RotationSchedule::getScheduleDate))
                         .collect(Collectors.toList());
 
                 // 统计信息
-                RotationScheduleStats stats = calculateScheduleStats(filteredSchedules);
+                EmployeeRotationSchedule.RotationScheduleStats stats = calculateScheduleStats(filteredSchedules);
 
                 return EmployeeRotationSchedule.builder()
                         .employeeId(employeeId)
@@ -404,13 +420,15 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
     }
 
     @Override
-    public CompletableFuture<List<EmployeeRotationSchedule>> getBatchEmployeeRotationSchedules(List<Long> employeeIds, LocalDate startDate, LocalDate endDate) {
+    public CompletableFuture<List<EmployeeRotationSchedule>> getBatchEmployeeRotationSchedules(List<Long> employeeIds,
+            LocalDate startDate, LocalDate endDate) {
         return CompletableFuture.supplyAsync(() -> {
             List<EmployeeRotationSchedule> results = new ArrayList<>();
 
             for (Long employeeId : employeeIds) {
                 try {
-                    EmployeeRotationSchedule schedule = getEmployeeRotationSchedule(employeeId, startDate, endDate).get();
+                    EmployeeRotationSchedule schedule = getEmployeeRotationSchedule(employeeId, startDate, endDate)
+                            .get();
                     results.add(schedule);
                 } catch (Exception e) {
                     log.error("[轮班系统] 获取批量员工轮班安排失败: employeeId={}", employeeId, e);
@@ -431,47 +449,47 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
 
     // 其他接口方法的实现...
     @Override
-    public CompletableFuture<RotationOptimizationResult> optimizeRotationPlan(RotationOptimizationRequest optimizationRequest) {
+    public CompletableFuture<RotationOptimizationResult> optimizeRotationPlan(
+            RotationOptimizationRequest optimizationRequest) {
         return CompletableFuture.completedFuture(
                 RotationOptimizationResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<RotationConflictValidationResult> validateRotationConflict(RotationConflictValidationRequest validationRequest) {
+    public CompletableFuture<RotationConflictValidationResult> validateRotationConflict(
+            RotationConflictValidationRequest validationRequest) {
         return CompletableFuture.completedFuture(
                 RotationConflictValidationResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<RotationAdjustmentResult> adjustEmployeeRotation(RotationAdjustmentRequest adjustmentRequest) {
+    public CompletableFuture<RotationAdjustmentResult> adjustEmployeeRotation(
+            RotationAdjustmentRequest adjustmentRequest) {
         return CompletableFuture.completedFuture(
                 RotationAdjustmentResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<RotationStatisticsResult> getRotationStatistics(RotationStatisticsRequest statisticsRequest) {
+    public CompletableFuture<RotationStatisticsResult> getRotationStatistics(
+            RotationStatisticsRequest statisticsRequest) {
         return CompletableFuture.completedFuture(
                 RotationStatisticsResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -481,19 +499,18 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<RotationLeaveManagementResult> manageRotationLeave(RotationLeaveManagementRequest leaveRequest) {
+    public CompletableFuture<RotationLeaveManagementResult> manageRotationLeave(
+            RotationLeaveManagementRequest leaveRequest) {
         return CompletableFuture.completedFuture(
                 RotationLeaveManagementResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -503,8 +520,7 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     /**
@@ -570,7 +586,8 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
     /**
      * 计算员工在指定日期的班次类型
      */
-    private RotationSystemConfig.ShiftType calculateShiftType(RotationSystemConfig config, Long employeeId, LocalDate date) {
+    private RotationSystemConfig.ShiftType calculateShiftType(RotationSystemConfig config, Long employeeId,
+            LocalDate date) {
         // 简化的轮班算法，实际实现需要更复杂的逻辑
 
         if (config.getSystemType() == RotationSystemConfig.RotationSystemType.THREE_SHIFT) {
@@ -579,10 +596,14 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
             int cycleDay = (int) (daysSinceStart % 3);
 
             switch (cycleDay) {
-                case 0: return RotationSystemConfig.ShiftType.MORNING;
-                case 1: return RotationSystemConfig.ShiftType.AFTERNOON;
-                case 2: return RotationSystemConfig.ShiftType.NIGHT;
-                default: return null;
+                case 0:
+                    return RotationSystemConfig.ShiftType.MORNING;
+                case 1:
+                    return RotationSystemConfig.ShiftType.AFTERNOON;
+                case 2:
+                    return RotationSystemConfig.ShiftType.NIGHT;
+                default:
+                    return null;
             }
         } else if (config.getSystemType() == RotationSystemConfig.RotationSystemType.FOUR_SHIFT) {
             // 四班三倒：三天工作，一天休息
@@ -590,11 +611,16 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
             int cycleDay = (int) (daysSinceStart % 4);
 
             switch (cycleDay) {
-                case 0: return RotationSystemConfig.ShiftType.MORNING;
-                case 1: return RotationSystemConfig.ShiftType.AFTERNOON;
-                case 2: return RotationSystemConfig.ShiftType.NIGHT;
-                case 3: return null; // 休息日
-                default: return null;
+                case 0:
+                    return RotationSystemConfig.ShiftType.MORNING;
+                case 1:
+                    return RotationSystemConfig.ShiftType.AFTERNOON;
+                case 2:
+                    return RotationSystemConfig.ShiftType.NIGHT;
+                case 3:
+                    return null; // 休息日
+                default:
+                    return null;
             }
         }
 
@@ -617,7 +643,7 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
     /**
      * 计算安排统计信息
      */
-    private RotationScheduleStats calculateScheduleStats(List<RotationSchedule> schedules) {
+    private EmployeeRotationSchedule.RotationScheduleStats calculateScheduleStats(List<RotationSchedule> schedules) {
         int totalSchedules = schedules.size();
         long workDays = schedules.stream()
                 .filter(s -> s.getShiftType() != null)
@@ -628,11 +654,40 @@ public class ShiftRotationSystemImpl implements ShiftRotationSystem {
                 .filter(s -> s.getShiftType() != null)
                 .collect(Collectors.groupingBy(RotationSchedule::getShiftType, Collectors.counting()));
 
-        return RotationScheduleStats.builder()
+        double totalWorkHours = schedules.stream()
+                .filter(s -> s.getWorkStartTime() != null && s.getWorkEndTime() != null)
+                .mapToLong(s -> java.time.Duration.between(s.getWorkStartTime(), s.getWorkEndTime()).toMinutes())
+                .sum() / 60.0;
+
+        int nightShiftCount = (int) schedules.stream()
+                .filter(s -> s.getShiftType() == RotationSystemConfig.ShiftType.NIGHT
+                        || s.getShiftType() == RotationSystemConfig.ShiftType.GRAVEYARD)
+                .count();
+
+        int overnightShiftCount = (int) schedules.stream()
+                .filter(s -> s.getWorkStartTime() != null && s.getWorkEndTime() != null)
+                .filter(s -> s.getWorkEndTime().toLocalDate().isAfter(s.getWorkStartTime().toLocalDate()))
+                .count();
+
+        int weekendShiftCount = (int) schedules.stream()
+                .filter(s -> s.getScheduleDate() != null)
+                .filter(s -> {
+                    java.time.DayOfWeek dayOfWeek = s.getScheduleDate().getDayOfWeek();
+                    return dayOfWeek == java.time.DayOfWeek.SATURDAY || dayOfWeek == java.time.DayOfWeek.SUNDAY;
+                })
+                .count();
+
+        return EmployeeRotationSchedule.RotationScheduleStats.builder()
                 .totalDays(totalSchedules)
                 .workDays((int) workDays)
                 .restDays((int) restDays)
                 .shiftTypeDistribution(shiftTypeCount)
+                .totalWorkHours(totalWorkHours)
+                .averageDailyWorkHours(workDays > 0 ? totalWorkHours / workDays : 0.0)
+                .nightShiftCount(nightShiftCount)
+                .overnightShiftCount(overnightShiftCount)
+                .weekendShiftCount(weekendShiftCount)
+                .holidayShiftCount(0)
                 .build();
     }
 

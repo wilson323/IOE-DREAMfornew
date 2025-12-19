@@ -26,4 +26,13 @@ public class TimeRange {
     private LocalDate startDate;
     private LocalDate endDate;
     private String timeUnit;
+
+    // 添加缺失的getter方法
+    public LocalDate getStartTime() {
+        return this.startDate;
+    }
+
+    public LocalDate getEndTime() {
+        return this.endDate;
+    }
 }

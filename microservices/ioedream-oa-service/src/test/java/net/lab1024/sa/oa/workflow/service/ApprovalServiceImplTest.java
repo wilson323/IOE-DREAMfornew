@@ -27,8 +27,8 @@ import net.lab1024.sa.oa.workflow.domain.form.ApprovalTaskQueryForm;
 import net.lab1024.sa.oa.workflow.domain.vo.ApprovalInstanceVO;
 import net.lab1024.sa.oa.workflow.domain.vo.ApprovalStatisticsVO;
 import net.lab1024.sa.oa.workflow.domain.vo.ApprovalTaskVO;
-import net.lab1024.sa.oa.workflow.entity.WorkflowInstanceEntity;
-import net.lab1024.sa.oa.workflow.entity.WorkflowTaskEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
 import net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl;
 
 /**

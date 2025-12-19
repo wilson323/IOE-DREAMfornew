@@ -36,8 +36,9 @@ import java.util.Set;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 public class WorkflowCacheManager {
+
+    private static final Logger log = LoggerFactory.getLogger(WorkflowCacheManager.class);
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final MeterRegistry meterRegistry;
@@ -114,85 +115,6 @@ public class WorkflowCacheManager {
         public Long getMaximumSize() { return maximumSize; }
         public Boolean getRecordStats() { return recordStats; }
         public Boolean getAllowNullValues() { return allowNullValues; }
-    }
-
-    /**
-     * 初始化缓存配置
-     */
-    private void initializeCacheConfigs() {
-        // 流程定义缓存配置
-        cacheConfigs.put("processDefinition", new CacheConfig(
-            Duration.ofMinutes(30),  // 写入后30分钟过期
-            Duration.ofMinutes(15),  // 访问后15分钟过期
-            1000L,                  // 最大1000个条目
-            true,                   // 记录统计
-            false                   // 不允许null值
-        ));
-
-        // 流程实例缓存配置
-        cacheConfigs.put("processInstance", new CacheConfig(
-            Duration.ofMinutes(60),
-            Duration.ofMinutes(30),
-            5000L,
-            true,
-            false
-        ));
-
-        // 任务缓存配置
-        cacheConfigs.put("task", new CacheConfig(
-            Duration.ofMinutes(20),
-            Duration.ofMinutes(10),
-            10000L,
-            true,
-            false
-        ));
-
-        // 用户任务缓存配置
-        cacheConfigs.put("userTask", new CacheConfig(
-            Duration.ofMinutes(15),
-            Duration.ofMinutes(8),
-            2000L,
-            true,
-            false
-        ));
-
-        // 审批记录缓存配置
-        cacheConfigs.put("approvalRecord", new CacheConfig(
-            Duration.ofMinutes(45),
-            Duration.ofMinutes(20),
-            3000L,
-            true,
-            false
-        ));
-
-        log.info("[工作流缓存管理器] 缓存配置初始化完成，配置数量: {}", cacheConfigs.size());
-    }
-
-    /**
-     * 初始化本地缓存池
-     */
-    private void initializeLocalCachePool() {
-        for (Map.Entry<String, CacheConfig> entry : cacheConfigs.entrySet()) {
-            String cacheName = entry.getKey();
-            CacheConfig config = entry.getValue();
-
-            Caffeine<Object, Object> caffeineBuilder = Caffeine.newBuilder()
-                    .maximumSize(config.getMaximumSize())
-                    .recordStats();
-
-            if (config.getExpireAfterWrite() != null) {
-                caffeineBuilder.expireAfterWrite(config.getExpireAfterWrite());
-            }
-
-            if (config.getExpireAfterAccess() != null) {
-                caffeineBuilder.expireAfterAccess(config.getExpireAfterAccess());
-            }
-
-            Cache<String, Object> cache = caffeineBuilder.build();
-            localCachePool.put(cacheName, cache);
-
-            log.debug("[工作流缓存管理器] 初始化本地缓存: {} 配置: {}", cacheName, config);
-        }
     }
 
     /**

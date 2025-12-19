@@ -1,6 +1,6 @@
 package net.lab1024.sa.consume.service.refund;
 
-import net.lab1024.sa.common.consume.entity.RefundApplicationEntity;
+import net.lab1024.sa.consume.entity.RefundApplicationEntity;
 import net.lab1024.sa.consume.domain.form.RefundApplicationForm;
 
 /**

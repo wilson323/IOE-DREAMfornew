@@ -24,6 +24,16 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StaffingPredictionResult {
+    private String predictionId;
+    private TimeRange timeRange;
+    private List<SkillRequirement> skillRequirements;
+    private Map<String, Integer> staffingDemands;
+    private Map<String, Integer> baseStaffingDemand;
+    private Map<String, SkillBasedStaffing> skillBasedStaffing;
+    private Map<String, SeasonalAdjustment> seasonalAdjustments;
+    private Double staffingSufficiencyRate;
+    private Boolean predictionSuccessful;
+
     private Integer requiredCount;
     private Integer recommendedCount;
     private List<Map<String, Object>> details;

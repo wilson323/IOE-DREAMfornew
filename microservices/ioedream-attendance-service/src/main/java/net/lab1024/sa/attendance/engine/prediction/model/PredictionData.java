@@ -25,6 +25,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class PredictionData {
     private List<Map<String, Object>> historicalRecords;
+    private HistoricalData historicalData;
     private Map<String, Object> currentState;
     private Map<String, Object> parameters;
 }

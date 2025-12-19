@@ -8,6 +8,7 @@ import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * 成本优化结果
@@ -25,6 +26,21 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CostOptimizationResult {
+
+    /**
+     * 优化ID
+     */
+    private String optimizationId;
+
+    /**
+     * 优化是否成功
+     */
+    private Boolean optimizationSuccessful;
+
+    /**
+     * 优化描述
+     */
+    private String optimizationDescription;
 
     /**
      * 优化后的排班记录
@@ -55,4 +71,38 @@ public class CostOptimizationResult {
      * 成本明细
      */
     private Map<String, Double> costBreakdown;
+
+    /**
+     * 优化指标
+     */
+    private Map<String, Object> optimizedMetrics;
+
+    /**
+     * 预算约束
+     */
+    private BudgetConstraint budgetConstraint;
+
+    /**
+     * 成本节省详情
+     */
+    private Map<String, Double> costSavings;
+
+    public boolean isOptimizationSuccessful() {
+        return Boolean.TRUE.equals(optimizationSuccessful);
+    }
+
+    public Map<String, Object> getOptimizedMetrics() {
+        return optimizedMetrics;
+    }
+
+    public void setCostSavings(double costSavings) {
+        if (this.costSavings == null) {
+            this.costSavings = new HashMap<>();
+        }
+        this.costSavings.put("total", costSavings);
+    }
+
+    public Map<String, Double> getCostSavings() {
+        return costSavings;
+    }
 }

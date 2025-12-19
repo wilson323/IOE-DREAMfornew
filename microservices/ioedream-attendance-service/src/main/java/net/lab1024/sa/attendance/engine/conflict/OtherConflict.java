@@ -61,6 +61,11 @@ public class OtherConflict {
     private Integer severity;
 
     /**
+     * 冲突状态
+     */
+    private TimeConflict.ConflictStatus status;
+
+    /**
      * 冲突原因
      */
     private String conflictReason;

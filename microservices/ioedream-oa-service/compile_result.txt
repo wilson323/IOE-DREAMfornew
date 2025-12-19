@@ -1,0 +1,449 @@
+[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[27,41] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[28,41] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[29,41] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[9,41] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[10,41] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[11,41] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[71,35] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[87,24] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[173,35] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[190,24] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[235,35] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[252,35] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[270,35] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[286,24] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[47,28] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[55,17] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[107,28] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[115,17] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[164,28] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[177,28] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[188,28] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[196,17] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[15,41] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[30,57] 找不到符号
+  符号: 类 WorkflowInstanceEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[47,18] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[46,11] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[170,5] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[12,41] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[27,59] 找不到符号
+  符号: 类 WorkflowDefinitionEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[52,18] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[51,11] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[68,5] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[16,41] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[31,53] 找不到符号
+  符号: 类 WorkflowTaskEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[54,18] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[53,11] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[78,18] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[77,11] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[218,10] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[253,10] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[276,10] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[300,10] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[319,10] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[329,5] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/entity/ApprovalInstanceEntity.java:[15,45] 找不到符号
+  符号: 类 WorkflowInstanceEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/entity/ApprovalTaskEntity.java:[15,41] 找不到符号
+  符号: 类 WorkflowTaskEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[24,41] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[147,40] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[201,39] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[248,41] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[281,36] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[315,39] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[395,30] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[431,31] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[518,43] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[18,41] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[19,41] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1301,44] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1373,52] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1482,43] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1540,43] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1574,43] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1608,43] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1645,36] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[21,41] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[22,41] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[23,41] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[204,35] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[239,24] 找不到符号
+  符号:   类 WorkflowDefinitionEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[552,35] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[599,24] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[786,35] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[822,35] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[858,35] 找不到符号
+  符号:   类 WorkflowInstanceEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[904,24] 找不到符号
+  符号:   类 WorkflowTaskEntity
+  位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-oa-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[27,41] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[28,41] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[29,41] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[9,41] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[10,41] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[11,41] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[71,35] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[87,24] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[173,35] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[190,24] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[235,35] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[252,35] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[270,35] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/controller/WorkflowEngineController.java:[286,24] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.controller.WorkflowEngineController
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[47,28] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[55,17] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[107,28] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[115,17] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[164,28] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[177,28] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[188,28] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/WorkflowEngineService.java:[196,17] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.service.WorkflowEngineService
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[15,41] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[30,57] 找不到符号
+[ERROR]   符号: 类 WorkflowInstanceEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[47,18] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[46,11] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowInstanceDao.java:[170,5] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[12,41] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[27,59] 找不到符号
+[ERROR]   符号: 类 WorkflowDefinitionEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[52,18] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[51,11] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowDefinitionDao.java:[68,5] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[16,41] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[31,53] 找不到符号
+[ERROR]   符号: 类 WorkflowTaskEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[54,18] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[53,11] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[78,18] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[77,11] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[218,10] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[253,10] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[276,10] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[300,10] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[319,10] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/dao/WorkflowTaskDao.java:[329,5] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 接口 net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/entity/ApprovalInstanceEntity.java:[15,45] 找不到符号
+[ERROR]   符号: 类 WorkflowInstanceEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/entity/ApprovalTaskEntity.java:[15,41] 找不到符号
+[ERROR]   符号: 类 WorkflowTaskEntity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[24,41] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[147,40] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[201,39] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[248,41] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[281,36] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[315,39] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[395,30] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[431,31] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/job/WorkflowTimeoutReminderJob.java:[518,43] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.job.WorkflowTimeoutReminderJob
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[18,41] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[19,41] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1301,44] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1373,52] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1482,43] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1540,43] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1574,43] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1608,43] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/ApprovalServiceImpl.java:[1645,36] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[21,41] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[22,41] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[23,41] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 程序包 net.lab1024.sa.oa.workflow.entity
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[204,35] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[239,24] 找不到符号
+[ERROR]   符号:   类 WorkflowDefinitionEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[552,35] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[599,24] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[786,35] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[822,35] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[858,35] 找不到符号
+[ERROR]   符号:   类 WorkflowInstanceEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-oa-service/src/main/java/net/lab1024/sa/oa/workflow/service/impl/WorkflowEngineServiceImpl.java:[904,24] 找不到符号
+[ERROR]   符号:   类 WorkflowTaskEntity
+[ERROR]   位置: 类 net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -48,3 +48,5 @@ public class MobileDataSyncResult {
     @Schema(description = "消息", example = "数据同步成功")
     private String message;
 }
+
+

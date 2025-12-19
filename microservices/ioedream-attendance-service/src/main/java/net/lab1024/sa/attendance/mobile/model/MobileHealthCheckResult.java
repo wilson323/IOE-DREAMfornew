@@ -50,3 +50,5 @@ public class MobileHealthCheckResult {
     @Schema(description = "健康信息")
     private Map<String, Object> healthInfo;
 }
+
+

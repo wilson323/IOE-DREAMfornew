@@ -37,6 +37,16 @@ public class ScheduleResult {
     private Long planId;
 
     /**
+     * 计划名称（兼容简化引擎实现字段名）
+     */
+    private String planName;
+
+    /**
+     * 是否成功（兼容简化引擎实现字段名）
+     */
+    private Boolean success;
+
+    /**
      * 排班状态：SUCCESS-成功 FAILED-失败 PARTIAL-部分成功
      */
     private String status;
@@ -59,7 +69,7 @@ public class ScheduleResult {
     /**
      * 排班统计信息
      */
-    private ScheduleStatistics statistics;
+    private Map<String, Object> statistics;
 
     /**
      * 排班执行时间（毫秒）
@@ -100,6 +110,21 @@ public class ScheduleResult {
      * 扩展属性
      */
     private Map<String, Object> extendedAttributes;
+
+    /**
+     * 排班数据（兼容简化引擎实现字段名）
+     */
+    private ScheduleData scheduleData;
+
+    /**
+     * 冲突数量（兼容简化引擎实现字段名）
+     */
+    private Integer conflictCount;
+
+    /**
+     * 优化得分（兼容简化引擎实现字段名）
+     */
+    private Double optimizationScore;
 
     /**
      * 排班记录内部类
@@ -163,6 +188,26 @@ public class ScheduleResult {
          * 排班来源
          */
         private String source;
+
+        /**
+         * 排班状态
+         */
+        private String status;
+
+        /**
+         * 分配时间
+         */
+        private LocalDateTime assignedTime;
+
+        /**
+         * 使用的算法
+         */
+        private String algorithmUsed;
+
+        /**
+         * 适应度评分（用于遗传算法等）
+         */
+        private Double fitnessScore;
     }
 
     /**
@@ -253,7 +298,7 @@ public class ScheduleResult {
         private Double shiftCoverage;
 
         /**
-         * 约束满足率
+         * 约束满足度
          */
         private Double constraintSatisfaction;
 
@@ -262,4 +307,5 @@ public class ScheduleResult {
          */
         private Double costSaving;
     }
+
 }

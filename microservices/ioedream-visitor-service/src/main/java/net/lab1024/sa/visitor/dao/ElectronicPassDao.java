@@ -20,7 +20,9 @@ public interface ElectronicPassDao extends BaseMapper<ElectronicPassEntity> {
     /**
      * 根据出门单ID查询（兼容历史代码）
      *
-     * <p>历史逻辑使用 String passId，这里做一次兼容转换并复用 MyBatis-Plus 的 {@code selectById}。</p>
+     * <p>
+     * 历史逻辑使用 String passId，这里做一次兼容转换并复用 MyBatis-Plus 的 {@code selectById}。
+     * </p>
      *
      * @param passId 出门单ID（字符串形式）
      * @return 出门单实体（可能为空）
@@ -36,5 +38,3 @@ public interface ElectronicPassDao extends BaseMapper<ElectronicPassEntity> {
         }
     }
 }
-
-

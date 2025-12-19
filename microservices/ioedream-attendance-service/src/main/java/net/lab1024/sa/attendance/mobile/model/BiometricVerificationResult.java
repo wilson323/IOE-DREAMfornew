@@ -48,4 +48,8 @@ public class BiometricVerificationResult {
      * 失败原因
      */
     private String failureReason;
+
+    public boolean isVerified() {
+        return Boolean.TRUE.equals(verified);
+    }
 }

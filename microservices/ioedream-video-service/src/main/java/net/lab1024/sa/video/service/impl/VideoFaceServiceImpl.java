@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.util.SmartStringUtil;
+import net.lab1024.sa.common.util.StringUtils;
 import net.lab1024.sa.video.domain.form.VideoFaceAddForm;
 import net.lab1024.sa.video.domain.form.VideoFaceSearchForm;
 import net.lab1024.sa.video.domain.vo.VideoFaceVO;
@@ -247,10 +247,10 @@ public class VideoFaceServiceImpl implements VideoFaceService {
             // 构建查询条件
             LambdaQueryWrapper<VideoFaceEntity> queryWrapper = new LambdaQueryWrapper<>();
 
-            if (SmartStringUtil.isNotBlank(personCode)) {
+            if (StringUtils.isNotBlank(personCode)) {
                 queryWrapper.like(VideoFaceEntity::getPersonCode, personCode);
             }
-            if (SmartStringUtil.isNotBlank(personName)) {
+            if (StringUtils.isNotBlank(personName)) {
                 queryWrapper.like(VideoFaceEntity::getPersonName, personName);
             }
             if (personType != null) {
@@ -276,9 +276,9 @@ public class VideoFaceServiceImpl implements VideoFaceService {
             PageResult<VideoFaceVO> pageResult = new PageResult<>();
             pageResult.setList(faceVOs);
             pageResult.setTotal(page.getTotal());
-            pageResult.setPageNum(page.getCurrent());
-            pageResult.setPageSize(page.getSize());
-            pageResult.setPages(page.getPages());
+            pageResult.setPageNum((int) page.getCurrent());
+            pageResult.setPageSize((int) page.getSize());
+            pageResult.setPages((int) page.getPages());
 
             return ResponseDTO.ok(pageResult);
 
@@ -307,7 +307,7 @@ public class VideoFaceServiceImpl implements VideoFaceService {
         log.info("[人脸识别] 搜索人脸，keyword={}, limit={}", keyword, limit);
 
         try {
-            if (SmartStringUtil.isBlank(keyword)) {
+            if (StringUtils.isBlank(keyword)) {
                 return ResponseDTO.error("PARAM_ERROR", "搜索关键词不能为空");
             }
 
@@ -519,7 +519,7 @@ public class VideoFaceServiceImpl implements VideoFaceService {
         log.info("[人脸识别] 人脸比对，threshold={}", similarityThreshold);
 
         try {
-            if (SmartStringUtil.isBlank(sourceFaceUrl) || SmartStringUtil.isBlank(targetFaceUrl)) {
+            if (StringUtils.isBlank(sourceFaceUrl) || StringUtils.isBlank(targetFaceUrl)) {
                 return ResponseDTO.error("PARAM_ERROR", "人脸图片URL不能为空");
             }
 
@@ -683,14 +683,14 @@ public class VideoFaceServiceImpl implements VideoFaceService {
 
     // 脱敏处理
     private String maskIdCardNumber(String idCardNumber) {
-        if (SmartStringUtil.isBlank(idCardNumber) || idCardNumber.length() < 8) {
+        if (StringUtils.isBlank(idCardNumber) || idCardNumber.length() < 8) {
             return idCardNumber;
         }
         return idCardNumber.substring(0, 3) + "***********" + idCardNumber.substring(idCardNumber.length() - 4);
     }
 
     private String maskPhoneNumber(String phoneNumber) {
-        if (SmartStringUtil.isBlank(phoneNumber) || phoneNumber.length() < 7) {
+        if (StringUtils.isBlank(phoneNumber) || phoneNumber.length() < 7) {
             return phoneNumber;
         }
         return phoneNumber.substring(0, 3) + "****" + phoneNumber.substring(phoneNumber.length() - 4);

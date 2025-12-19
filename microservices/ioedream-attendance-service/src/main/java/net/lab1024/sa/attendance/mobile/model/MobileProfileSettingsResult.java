@@ -37,4 +37,26 @@ public class MobileProfileSettingsResult {
      */
     @Schema(description = "配置信息")
     private Map<String, Object> settings;
+
+    /**
+     * 操作是否成功
+     */
+    @Schema(description = "操作是否成功")
+    private Boolean success;
+
+    /**
+     * 操作消息
+     */
+    @Schema(description = "操作消息")
+    private String message;
+
+    public boolean isSuccess() {
+        return Boolean.TRUE.equals(success);
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
+
+

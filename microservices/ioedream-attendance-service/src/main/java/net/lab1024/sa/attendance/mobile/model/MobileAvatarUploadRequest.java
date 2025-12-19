@@ -33,3 +33,5 @@ public class MobileAvatarUploadRequest {
     @Schema(description = "文件类型", example = "image/jpeg")
     private String fileType;
 }
+
+

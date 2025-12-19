@@ -399,7 +399,7 @@ public class SmartSchedulingEngine {
         return employeeDao.selectList(null).stream()
                 .filter(e -> e.getStatus() == 1)
                 .filter(e -> includeDepartmentIds.contains(e.getDepartmentId()))
-                .filter(e -> !excludeEmployeeIds.contains(e.getEmployeeId()))
+                .filter(e -> !excludeEmployeeIds.contains(e.getId()))
                 .collect(Collectors.toList());
     }
 
@@ -580,7 +580,7 @@ public class SmartSchedulingEngine {
         public void setExcludeEmployees(List<Long> excludeEmployees) { this.excludeEmployees = excludeEmployees; }
     }
 
-    private static class SchedulingStatistics {
+    public static class SchedulingStatistics {
         private int totalSchedules;
         private int totalEmployees;
         private int totalShifts;
@@ -636,7 +636,7 @@ public class SmartSchedulingEngine {
     private ScheduleRecordEntity createScheduleRecord(EmployeeEntity employee, WorkShiftEntity shift,
                                                     LocalDate date, SchedulePattern pattern) {
         ScheduleRecordEntity record = new ScheduleRecordEntity();
-        record.setEmployeeId(employee.getEmployeeId());
+        record.setEmployeeId(employee.getId());
         record.setScheduleDate(date);
         record.setShiftId(shift.getShiftId());
         record.setScheduleType("正常排班");

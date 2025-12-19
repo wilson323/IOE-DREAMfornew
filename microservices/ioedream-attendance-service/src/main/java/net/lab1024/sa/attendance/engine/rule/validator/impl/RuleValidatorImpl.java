@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
 import net.lab1024.sa.attendance.engine.rule.model.RuleValidationResult;
 import net.lab1024.sa.attendance.engine.rule.validator.RuleValidator;
-import net.lab1024.sa.common.attendance.dao.AttendanceRuleDao;
-import net.lab1024.sa.common.attendance.entity.AttendanceRuleEntity;
+import net.lab1024.sa.attendance.dao.AttendanceRuleDao;
+import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -450,8 +450,10 @@ public class RuleValidatorImpl implements RuleValidator {
                 return RuleValidationResult.failure("RULE_NOT_FOUND", "规则不存在");
             }
 
-            LocalDateTime effectiveTime = rule.getEffectiveStartTime();
-            LocalDateTime expireTime = rule.getEffectiveEndTime();
+            LocalDateTime effectiveTime = rule.getEffectiveStartTime() != null ?
+                LocalDateTime.parse(rule.getEffectiveStartTime()) : null;
+            LocalDateTime expireTime = rule.getEffectiveEndTime() != null ?
+                LocalDateTime.parse(rule.getEffectiveEndTime()) : null;
 
             // 检查生效时间
             if (effectiveTime != null && checkTime.isBefore(effectiveTime)) {

@@ -25,16 +25,16 @@ import java.util.Map;
 @Schema(description = "移动端生物识别验证请求")
 public class MobileBiometricVerifyRequest {
 
-    @Schema(description = "用户ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1001")
+    @Schema(description = "用户ID", required = true, example = "1001")
     @NotNull(message = "用户ID不能为空")
     private Long userId;
 
-    @Schema(description = "生物识别类型", requiredMode = Schema.RequiredMode.REQUIRED,
+    @Schema(description = "生物识别类型", required = true,
             example = "FACE", allowableValues = {"FACE", "FINGERPRINT", "IRIS", "VOICE"})
     @NotBlank(message = "生物识别类型不能为空")
     private String biometricType;
 
-    @Schema(description = "生物识别数据", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "生物识别数据", required = true)
     @NotNull(message = "生物识别数据不能为空")
     private BiometricData biometricData;
 

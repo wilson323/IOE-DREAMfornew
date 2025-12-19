@@ -70,6 +70,21 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Common Storage (文件存储组件) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- ==================== 公共模块聚合 ==================== -->
+        <!-- Common (完整公共模块) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Common Permission (权限验证) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
@@ -112,6 +127,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
             <optional>true</optional>
         </dependency>
 

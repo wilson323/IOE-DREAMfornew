@@ -16,7 +16,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.consume.entity.RefundApplicationEntity;
+import net.lab1024.sa.consume.entity.RefundApplicationEntity;
 import net.lab1024.sa.consume.domain.form.RefundApplicationForm;
 import net.lab1024.sa.consume.service.refund.RefundApplicationService;
 

@@ -99,6 +99,10 @@ public class ApprovalInstanceVO {
      * 原因/备注
      */
     private String reason;
+
+    public String getProcessName() {
+        return processName;
+    }
 }
 
 

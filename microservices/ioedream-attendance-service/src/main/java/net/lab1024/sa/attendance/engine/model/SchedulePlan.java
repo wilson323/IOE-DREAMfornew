@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,11 @@ public class SchedulePlan {
      * 计划名称
      */
     private String planName;
+
+    /**
+     * 计划类型（兼容简化引擎实现字段名）
+     */
+    private Integer planType;
 
     /**
      * 计划描述
@@ -122,9 +128,24 @@ public class SchedulePlan {
     private List<ScheduleRecord> scheduleRecords;
 
     /**
+     * 排班数据（兼容简化引擎实现字段名）
+     */
+    private ScheduleData scheduleData;
+
+    /**
      * 统计信息
      */
     private Map<String, Object> statistics;
+
+    /**
+     * 生效日期（兼容简化引擎实现字段名）
+     */
+    private LocalDate effectiveDate;
+
+    /**
+     * 失效日期（兼容简化引擎实现字段名）
+     */
+    private LocalDate expiryDate;
 
     /**
      * 扩展属性

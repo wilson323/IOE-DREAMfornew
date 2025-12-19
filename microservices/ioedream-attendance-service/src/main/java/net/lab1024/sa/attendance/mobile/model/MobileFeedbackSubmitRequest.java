@@ -48,3 +48,5 @@ public class MobileFeedbackSubmitRequest {
     @Schema(description = "附件URL列表")
     private java.util.List<String> attachments;
 }
+
+

@@ -39,3 +39,5 @@ public class MobileScheduleResult {
     @Schema(description = "排班列表")
     private List<Map<String, Object>> schedules;
 }
+
+

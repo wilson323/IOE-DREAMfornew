@@ -44,3 +44,5 @@ public class MobileOfflineDataResult {
     @Schema(description = "离线数据（别名）")
     private List<MobileOfflineRecord> offlineData;
 }
+
+

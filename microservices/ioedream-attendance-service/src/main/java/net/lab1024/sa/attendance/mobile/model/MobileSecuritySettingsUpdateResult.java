@@ -36,3 +36,5 @@ public class MobileSecuritySettingsUpdateResult {
     @Schema(description = "消息", example = "安全设置更新成功")
     private String message;
 }
+
+

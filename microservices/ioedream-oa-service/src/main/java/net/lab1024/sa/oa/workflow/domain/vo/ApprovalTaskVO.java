@@ -144,6 +144,10 @@ public class ApprovalTaskVO {
      * 发起人姓名
      */
     private String initiatorName;
+
+    public String getTaskName() {
+        return taskName;
+    }
 }
 
 

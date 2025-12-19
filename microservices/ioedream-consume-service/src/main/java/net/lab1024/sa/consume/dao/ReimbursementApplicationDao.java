@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.common.consume.entity.ReimbursementApplicationEntity;
+import net.lab1024.sa.consume.entity.ReimbursementApplicationEntity;
 
 /**
  * 报销申请DAO

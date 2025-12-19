@@ -113,6 +113,16 @@ public class RotationSystemConfig {
     private Long updatedBy;
 
     /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updateTime;
+
+    /**
      * 扩展属性
      */
     private Map<String, Object> extendedAttributes;

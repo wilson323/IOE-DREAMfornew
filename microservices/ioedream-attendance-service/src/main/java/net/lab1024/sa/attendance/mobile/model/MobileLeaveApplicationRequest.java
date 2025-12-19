@@ -62,3 +62,5 @@ public class MobileLeaveApplicationRequest {
     @Schema(description = "附件URL列表")
     private java.util.List<String> attachments;
 }
+
+

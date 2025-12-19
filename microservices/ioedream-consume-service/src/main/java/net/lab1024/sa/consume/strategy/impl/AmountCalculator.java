@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionForm;
 import net.lab1024.sa.consume.domain.request.ConsumeRequest;
 import net.lab1024.sa.consume.strategy.ConsumeAmountCalculator;

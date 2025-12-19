@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
-import net.lab1024.sa.common.attendance.dao.AttendanceRuleDao;
-import net.lab1024.sa.common.attendance.entity.AttendanceRuleEntity;
+import net.lab1024.sa.attendance.dao.AttendanceRuleDao;
+import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -307,13 +307,13 @@ public class RuleLoaderImpl implements RuleLoader {
             Map<String, Object> statistics = new HashMap<>();
 
             // 总规则数
-            int totalRules = attendanceRuleDao.selectCount(
+            long totalRules = attendanceRuleDao.selectCount(
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
                     .eq(AttendanceRuleEntity::getDeletedFlag, 0)
             );
 
             // 启用规则数
-            int activeRules = attendanceRuleDao.selectCount(
+            long activeRules = attendanceRuleDao.selectCount(
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
                     .eq(AttendanceRuleEntity::getRuleStatus, 1)
                     .eq(AttendanceRuleEntity::getDeletedFlag, 0)
@@ -359,8 +359,10 @@ public class RuleLoaderImpl implements RuleLoader {
             }
 
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime effectiveTime = rule.getEffectiveStartTime();
-            LocalDateTime expireTime = rule.getEffectiveEndTime();
+            LocalDateTime effectiveTime = rule.getEffectiveStartTime() != null ?
+                LocalDateTime.parse(rule.getEffectiveStartTime()) : null;
+            LocalDateTime expireTime = rule.getEffectiveEndTime() != null ?
+                LocalDateTime.parse(rule.getEffectiveEndTime()) : null;
 
             // 检查生效时间
             if (effectiveTime != null && now.isBefore(effectiveTime)) {

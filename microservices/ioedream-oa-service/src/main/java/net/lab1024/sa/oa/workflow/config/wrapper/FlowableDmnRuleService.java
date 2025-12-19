@@ -21,6 +21,7 @@ import java.util.Map;
 @Slf4j
 @SuppressWarnings("deprecation")
 public class FlowableDmnRuleService {
+
     private final DmnDecisionService dmnDecisionService;
 
     public FlowableDmnRuleService(DmnDecisionService dmnDecisionService) {

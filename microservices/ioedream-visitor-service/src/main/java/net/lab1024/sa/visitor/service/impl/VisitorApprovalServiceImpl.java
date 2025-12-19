@@ -1,21 +1,12 @@
 package net.lab1024.sa.visitor.service.impl;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.enumeration.ResultCode;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.ParamException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.visitor.domain.form.ApprovalDecisionForm;
-import net.lab1024.sa.visitor.domain.vo.ApprovalRecordVO;
-import net.lab1024.sa.visitor.domain.vo.PendingApprovalVO;
-import net.lab1024.sa.visitor.service.VisitorApprovalService;
-import net.lab1024.sa.visitor.dao.VisitorApprovalRecordDao;
-import net.lab1024.sa.visitor.entity.VisitorApprovalRecordEntity;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,13 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import jakarta.annotation.Resource;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.visitor.dao.VisitorApprovalRecordDao;
+import net.lab1024.sa.visitor.domain.form.ApprovalDecisionForm;
+import net.lab1024.sa.visitor.domain.vo.ApprovalRecordVO;
+import net.lab1024.sa.visitor.domain.vo.PendingApprovalVO;
+import net.lab1024.sa.visitor.entity.VisitorApprovalRecordEntity;
+import net.lab1024.sa.visitor.service.VisitorApprovalService;
 
 /**
  * 访客预约审批服务实现
@@ -78,8 +74,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
     @Async
     public CompletableFuture<ResponseDTO<Void>> approveAppointment(
             Long appointmentId,
-            ApprovalDecisionForm form
-    ) {
+            ApprovalDecisionForm form) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 log.info("[访客审批] 开始处理预约审批, appointmentId={}, result={}",
@@ -149,7 +144,8 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
 
                 // 2. 检查缓存
                 String cacheKey = APPROVAL_CACHE_PREFIX + appointmentId;
-                List<ApprovalRecordVO> cachedResult = (List<ApprovalRecordVO>) redisTemplate.opsForValue().get(cacheKey);
+                List<ApprovalRecordVO> cachedResult = (List<ApprovalRecordVO>) redisTemplate.opsForValue()
+                        .get(cacheKey);
                 if (cachedResult != null) {
                     log.debug("[访客审批] 从缓存获取审批历史, appointmentId={}", appointmentId);
                     return ResponseDTO.ok(cachedResult);
@@ -189,8 +185,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
     public CompletableFuture<ResponseDTO<PageResult<PendingApprovalVO>>> getPendingApprovals(
             Long approverId,
             Integer pageNum,
-            Integer pageSize
-    ) {
+            Integer pageSize) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 1. 参数验证和默认值处理
@@ -219,8 +214,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
                 Page<PendingApprovalVO> page = new PageImpl<>(
                         pageList,
                         pageRequest,
-                        pendingApprovals.size()
-                );
+                        pendingApprovals.size());
 
                 PageResult<PendingApprovalVO> pageResult = new PageResult<>();
                 pageResult.setList(pageList);
@@ -247,8 +241,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
     @Async
     public CompletableFuture<ResponseDTO<List<Long>>> batchApproveAppointments(
             List<Long> appointmentIds,
-            ApprovalDecisionForm form
-    ) {
+            ApprovalDecisionForm form) {
         return CompletableFuture.supplyAsync(() -> {
             List<Long> successIds = new ArrayList<>();
             List<Long> failedIds = new ArrayList<>();
@@ -303,8 +296,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
     @Override
     public CompletableFuture<ResponseDTO<Boolean>> checkApprovalPermission(
             Long appointmentId,
-            Long approverId
-    ) {
+            Long approverId) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 1. 参数验证
@@ -354,7 +346,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
         }
 
         if (!"APPROVED".equals(form.getApprovalResult()) &&
-            !"REJECTED".equals(form.getApprovalResult())) {
+                !"REJECTED".equals(form.getApprovalResult())) {
             throw new ParamException("INVALID_APPROVAL_RESULT", "无效的审批结果");
         }
 
@@ -369,8 +361,7 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
     private VisitorApprovalRecordEntity buildApprovalRecord(
             Long appointmentId,
             ApprovalDecisionForm form,
-            Long approverId
-    ) {
+            Long approverId) {
         VisitorApprovalRecordEntity record = new VisitorApprovalRecordEntity();
         record.setAppointmentId(appointmentId);
         record.setApproverId(approverId);
@@ -484,10 +475,14 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
      */
     private String getApprovalLevelName(Integer level) {
         switch (level) {
-            case 1: return "一级审批";
-            case 2: return "二级审批";
-            case 3: return "三级审批";
-            default: return "未知级别";
+            case 1:
+                return "一级审批";
+            case 2:
+                return "二级审批";
+            case 3:
+                return "三级审批";
+            default:
+                return "未知级别";
         }
     }
 
@@ -496,10 +491,14 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
      */
     private String getApprovalResultName(String result) {
         switch (result) {
-            case "PENDING": return "待审批";
-            case "APPROVED": return "已通过";
-            case "REJECTED": return "已拒绝";
-            default: return "未知状态";
+            case "PENDING":
+                return "待审批";
+            case "APPROVED":
+                return "已通过";
+            case "REJECTED":
+                return "已拒绝";
+            default:
+                return "未知状态";
         }
     }
 }

@@ -2,9 +2,30 @@ package net.lab1024.sa.visitor.openapi.service;
 
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.visitor.openapi.domain.request.*;
-import net.lab1024.sa.visitor.openapi.domain.response.*;
+import net.lab1024.sa.visitor.openapi.domain.request.AddToBlacklistRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.AppointmentQueryRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.ApprovalRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.BlacklistQueryRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.CancelAppointmentRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.CheckInRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.CheckOutRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.SendInvitationRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.UpdateAppointmentRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.VisitorAppointmentRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.VisitorQueryRequest;
+import net.lab1024.sa.visitor.openapi.domain.request.VisitorStatisticsRequest;
+import net.lab1024.sa.visitor.openapi.domain.response.ApprovalResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.BlacklistVisitorResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.CheckInResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.CheckOutResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.InvitationResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.RealtimeVisitorStatusResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorAppointmentDetailResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorAppointmentResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorDetailResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorInfoResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorStatisticsResponse;
+import net.lab1024.sa.visitor.openapi.domain.response.VisitorTrackingResponse;
 
 /**
  * 访客OpenAPI服务接口
@@ -68,7 +89,8 @@ public interface VisitorOpenApiService {
     /**
      * 更新访客预约（开放API鉴权token透传）
      */
-    VisitorAppointmentResponse updateAppointment(Long appointmentId, UpdateAppointmentRequest request, String token, String clientIp);
+    VisitorAppointmentResponse updateAppointment(Long appointmentId, UpdateAppointmentRequest request, String token,
+            String clientIp);
 
     /**
      * 取消访客预约（开放API鉴权token透传）

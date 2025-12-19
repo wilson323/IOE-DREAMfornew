@@ -39,6 +39,9 @@ public class VendorSupportController {
 
     @Resource
     private VendorSupportService vendorSupportService;
+    
+    @Resource
+    private DeviceVendorSupportManager deviceVendorSupportManager;
 
     /**
      * 获取所有支持的厂商信息

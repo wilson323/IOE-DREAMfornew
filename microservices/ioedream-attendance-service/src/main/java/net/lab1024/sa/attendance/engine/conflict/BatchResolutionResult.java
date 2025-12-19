@@ -51,6 +51,26 @@ public class BatchResolutionResult {
     private Integer totalCount;
 
     /**
+     * 检测次数（用于兼容实现层字段名）
+     */
+    private Integer totalDetections;
+
+    /**
+     * 成功解决数量（用于兼容实现层字段名）
+     */
+    private Integer successfulResolutions;
+
+    /**
+     * 总冲突数量（用于兼容实现层字段名）
+     */
+    private Integer totalConflicts;
+
+    /**
+     * 成功率（0-1）
+     */
+    private Double successRate;
+
+    /**
      * 解决结果列表
      */
     private List<ConflictResolutionResult> resolutionResults;

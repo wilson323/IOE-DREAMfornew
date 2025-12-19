@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.dao.AccountDao;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.manager.AccountManager;
 
 /**

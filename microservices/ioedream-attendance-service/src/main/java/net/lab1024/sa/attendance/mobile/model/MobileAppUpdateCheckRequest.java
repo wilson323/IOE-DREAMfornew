@@ -33,3 +33,5 @@ public class MobileAppUpdateCheckRequest {
     @Schema(description = "平台类型", example = "ANDROID", allowableValues = {"ANDROID", "IOS"})
     private String platform;
 }
+
+

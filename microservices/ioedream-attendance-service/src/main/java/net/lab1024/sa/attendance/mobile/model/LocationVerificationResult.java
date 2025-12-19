@@ -43,4 +43,8 @@ public class LocationVerificationResult {
      * 失败原因
      */
     private String failureReason;
+
+    public boolean isValid() {
+        return Boolean.TRUE.equals(valid);
+    }
 }

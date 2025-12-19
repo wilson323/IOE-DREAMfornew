@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.AccountQueryForm;
 import net.lab1024.sa.consume.domain.vo.AccountVO;
 import net.lab1024.sa.consume.service.ConsumeAccountService;

@@ -71,7 +71,7 @@ public class FaceFeatureExtractionStrategy implements IBiometricFeatureExtractio
      * TODO: 待模型文件准备完成后，在配置类中初始化
      * </p>
      */
-    @Resource(required = false)
+    @Resource
     private FaceNetModel faceNetModel;
 
     @Override

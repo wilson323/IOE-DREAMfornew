@@ -1,7 +1,10 @@
 package net.lab1024.sa.attendance.mobile.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -17,6 +20,9 @@ import java.time.LocalDate;
  * @since 2025-12-16
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "移动端考勤记录查询参数")
 public class MobileRecordQueryParam {
 
@@ -43,4 +49,12 @@ public class MobileRecordQueryParam {
      */
     @Schema(description = "每页大小", example = "20")
     private Integer pageSize;
+
+    /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
 }
+
+

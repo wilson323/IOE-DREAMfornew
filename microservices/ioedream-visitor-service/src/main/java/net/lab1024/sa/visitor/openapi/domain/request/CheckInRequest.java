@@ -1,9 +1,8 @@
 package net.lab1024.sa.visitor.openapi.domain.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
 /**
  * 签到请求
@@ -41,7 +40,9 @@ public class CheckInRequest {
     /**
      * 兼容历史字段名：checkinType
      *
-     * <p>根据是否携带设备ID做一个可解释的推断。</p>
+     * <p>
+     * 根据是否携带设备ID做一个可解释的推断。
+     * </p>
      *
      * @return 签到类型（DEVICE / MANUAL）
      */

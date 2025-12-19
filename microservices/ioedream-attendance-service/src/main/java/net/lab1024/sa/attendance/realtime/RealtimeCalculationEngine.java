@@ -3,10 +3,29 @@ package net.lab1024.sa.attendance.realtime;
 import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.realtime.event.AttendanceEvent;
 import net.lab1024.sa.attendance.realtime.event.CalculationTriggerEvent;
+import net.lab1024.sa.attendance.realtime.model.AnomalyDetectionResult;
+import net.lab1024.sa.attendance.realtime.model.AnomalyFilterParameters;
+import net.lab1024.sa.attendance.realtime.model.BatchCalculationResult;
+import net.lab1024.sa.attendance.realtime.model.CalculationRule;
+import net.lab1024.sa.attendance.realtime.model.CompanyRealtimeOverview;
+import net.lab1024.sa.attendance.realtime.model.DepartmentRealtimeStatistics;
+import net.lab1024.sa.attendance.realtime.model.EmployeeRealtimeStatus;
+import net.lab1024.sa.attendance.realtime.model.EnginePerformanceMetrics;
+import net.lab1024.sa.attendance.realtime.model.EngineShutdownResult;
+import net.lab1024.sa.attendance.realtime.model.EngineStartupResult;
+import net.lab1024.sa.attendance.realtime.model.EngineStatus;
+import net.lab1024.sa.attendance.realtime.model.RealtimeAlertResult;
 import net.lab1024.sa.attendance.realtime.model.RealtimeCalculationResult;
+import net.lab1024.sa.attendance.realtime.model.RealtimeMonitoringParameters;
+import net.lab1024.sa.attendance.realtime.model.RealtimeStatisticsResult;
+import net.lab1024.sa.attendance.realtime.model.RuleRegistrationResult;
+import net.lab1024.sa.attendance.realtime.model.RuleUnregistrationResult;
+import net.lab1024.sa.attendance.realtime.model.ScheduleIntegrationParameters;
+import net.lab1024.sa.attendance.realtime.model.ScheduleIntegrationResult;
+import net.lab1024.sa.attendance.realtime.model.StatisticsQueryParameters;
+import net.lab1024.sa.attendance.realtime.model.TimeRange;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 考勤实时计算引擎接口

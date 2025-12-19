@@ -41,4 +41,11 @@ public class MobileLeaveApplicationResult {
      */
     @Schema(description = "消息", example = "请假申请已提交")
     private String message;
+
+    /**
+     * 申请状态
+     */
+    @Schema(description = "申请状态", example = "PENDING", allowableValues = {"PENDING", "APPROVED", "REJECTED", "CANCELLED"})
+    private String status;
 }
+

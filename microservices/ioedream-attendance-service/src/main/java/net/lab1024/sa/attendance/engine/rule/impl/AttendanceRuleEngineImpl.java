@@ -9,7 +9,6 @@ import net.lab1024.sa.attendance.engine.rule.cache.RuleCacheManager;
 import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
 import net.lab1024.sa.attendance.engine.rule.validator.RuleValidator;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 考勤规则引擎实现类
  * <p>
  * 考勤规则引擎的核心实现，支持灵活的规则配置和执行
- * 严格遵循CLAUDE.md全局架构规范，不使用Spring注解
+ * 严格遵循CLAUDE.md全局架构规范，Manager类为纯Java类
  * </p>
  *
  * @author IOE-DREAM架构团队
@@ -28,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2025-12-16
  */
 @Slf4j
-@Component("attendanceRuleEngine")
 public class AttendanceRuleEngineImpl implements AttendanceRuleEngine {
 
     private final RuleLoader ruleLoader;
@@ -145,11 +143,8 @@ public class AttendanceRuleEngineImpl implements AttendanceRuleEngine {
                 return createNotFoundResult(ruleId);
             }
 
-            // 4. 创建规则评估器
-            Object evaluator = evaluatorFactory.createEvaluator(ruleConfig.get("ruleType").toString());
-
-            // 5. 执行规则评估
-            RuleEvaluationResult result = ((net.lab1024.sa.attendance.engine.rule.evaluator.RuleEvaluator) evaluator)
+            // 4. 创建规则评估器并执行规则评估
+            RuleEvaluationResult result = evaluatorFactory.createEvaluator(ruleConfig.get("ruleType").toString())
                     .evaluate(ruleId, ruleConfig, context);
 
             // 6. 缓存结果

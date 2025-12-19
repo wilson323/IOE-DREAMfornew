@@ -9,6 +9,7 @@ import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +39,7 @@ public class MemoryOptimizer {
     private static final int MAX_CACHE_SIZE = 1000;
 
     // 对象池
-    private final Map<String, ObjectPool> objectPools = new ConcurrentHashMap<>();
+    private final Map<String, ObjectPool<Object>> objectPools = new ConcurrentHashMap<>();
 
     // LRU缓存
     private final Map<String, Object> lruCache = Collections.synchronizedMap(
@@ -111,12 +112,18 @@ public class MemoryOptimizer {
         }
 
         // 初始化常用对象池
-        objectPools.put("StringBuffer", new ObjectPool<>(() -> new StringBuffer(256), obj -> ((StringBuffer) obj).setLength(0)));
-        objectPools.put("StringBuilder", new ObjectPool<>(() -> new StringBuilder(256), obj -> ((StringBuilder) obj).setLength(0)));
-        objectPools.put("ArrayList", new ObjectPool<>(() -> new ArrayList<>(16), List::clear));
-        objectPools.put("HashMap", new ObjectPool<>(() -> new HashMap<>(16), Map::clear));
-        objectPools.put("ConcurrentHashMap", new ObjectPool<>(() -> new ConcurrentHashMap<>(16), Map::clear));
-        objectPools.put("LinkedHashMap", new ObjectPool<>(() -> new LinkedHashMap<>(16), Map::clear));
+        objectPools.put("StringBuffer",
+                new ObjectPool<>(() -> new StringBuffer(256), obj -> ((StringBuffer) obj).setLength(0)));
+        objectPools.put("StringBuilder",
+                new ObjectPool<>(() -> new StringBuilder(256), obj -> ((StringBuilder) obj).setLength(0)));
+        objectPools.put("ArrayList",
+                new ObjectPool<>(() -> new ArrayList<>(16), obj -> ((List<?>) obj).clear()));
+        objectPools.put("HashMap",
+                new ObjectPool<>(() -> new HashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
+        objectPools.put("ConcurrentHashMap",
+                new ObjectPool<>(() -> new ConcurrentHashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
+        objectPools.put("LinkedHashMap",
+                new ObjectPool<>(() -> new LinkedHashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
 
         log.info("初始化对象池完成，池数量: {}", objectPools.size());
     }
@@ -295,7 +302,7 @@ public class MemoryOptimizer {
             return createNewInstance(type);
         }
 
-        ObjectPool<?> pool = objectPools.get(poolName);
+        ObjectPool<Object> pool = objectPools.get(poolName);
         if (pool != null) {
             try {
                 return (T) pool.borrowObject();
@@ -315,7 +322,7 @@ public class MemoryOptimizer {
             return;
         }
 
-        ObjectPool<?> pool = objectPools.get(poolName);
+        ObjectPool<Object> pool = objectPools.get(poolName);
         if (pool != null) {
             try {
                 pool.returnObject(object);

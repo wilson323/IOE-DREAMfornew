@@ -11,9 +11,9 @@ import net.lab1024.sa.common.menu.dao.MenuDao;
 import net.lab1024.sa.common.permission.dao.RoleDao;
 // UserRoleDao moved to rbac package, importing via full path
 import net.lab1024.sa.common.rbac.dao.UserRoleDao;
-import net.lab1024.sa.common.permission.entity.UserEntity;
+import net.lab1024.sa.common.security.entity.UserEntity;
 import net.lab1024.sa.common.menu.entity.MenuEntity;
-import net.lab1024.sa.common.permission.entity.RoleEntity;
+import net.lab1024.sa.common.rbac.domain.entity.RoleEntity;
 import net.lab1024.sa.common.permission.domain.entity.PermissionEntity;
 import net.lab1024.sa.common.permission.service.AuthService;
 import net.lab1024.sa.common.permission.dao.PermissionDao;

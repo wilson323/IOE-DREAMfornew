@@ -42,3 +42,5 @@ public class MobileFeedbackSubmitResult {
     @Schema(description = "消息", example = "反馈提交成功")
     private String message;
 }
+
+

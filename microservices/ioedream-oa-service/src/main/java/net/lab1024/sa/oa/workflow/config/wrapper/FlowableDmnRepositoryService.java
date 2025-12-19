@@ -21,6 +21,7 @@ import java.io.InputStream;
  */
 @Slf4j
 public class FlowableDmnRepositoryService {
+
     private final DmnRepositoryService dmnRepositoryService;
 
     public FlowableDmnRepositoryService(DmnRepositoryService dmnRepositoryService) {

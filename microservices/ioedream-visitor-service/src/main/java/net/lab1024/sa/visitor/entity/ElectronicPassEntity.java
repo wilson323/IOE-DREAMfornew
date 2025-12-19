@@ -189,7 +189,9 @@ public class ElectronicPassEntity {
     /**
      * 兼容历史代码：获取出门单ID
      *
-     * <p>部分历史逻辑使用 passId 概念，这里提供兼容方法，等价于 {@link #getId()}。</p>
+     * <p>
+     * 部分历史逻辑使用 passId 概念，这里提供兼容方法，等价于 {@link #getId()}。
+     * </p>
      *
      * @return 出门单ID
      */
@@ -200,7 +202,9 @@ public class ElectronicPassEntity {
     /**
      * 兼容历史代码：获取出门单状态
      *
-     * <p>部分历史逻辑使用 status 概念，这里提供兼容方法，等价于 {@link #getPassStatus()}。</p>
+     * <p>
+     * 部分历史逻辑使用 status 概念，这里提供兼容方法，等价于 {@link #getPassStatus()}。
+     * </p>
      *
      * @return 出门单状态
      */
@@ -211,7 +215,9 @@ public class ElectronicPassEntity {
     /**
      * 兼容历史代码：获取过期时间
      *
-     * <p>开放API/设备验证场景中通常需要“有效期”概念，这里使用预计返回时间作为过期时间的近似值。</p>
+     * <p>
+     * 开放API/设备验证场景中通常需要“有效期”概念，这里使用预计返回时间作为过期时间的近似值。
+     * </p>
      *
      * @return 过期时间（可能为空）
      */
@@ -219,4 +225,3 @@ public class ElectronicPassEntity {
         return this.scheduledReturnTime;
     }
 }
-

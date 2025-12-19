@@ -1,14 +1,20 @@
 package net.lab1024.sa.visitor.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.time.LocalDateTime;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 访客预约审批记录实体
@@ -130,8 +136,10 @@ public class VisitorApprovalRecordEntity {
     /**
      * 兼容历史代码：获取访问结束时间
      *
-     * <p>审批记录本身不包含预约的访问时间窗口，该字段用于兼容设备侧“临时访客”流程。
-     * 当前以审批时间作为近似返回值，后续应调整为从预约记录（Appointment）中获取真实的访问结束时间。</p>
+     * <p>
+     * 审批记录本身不包含预约的访问时间窗口，该字段用于兼容设备侧“临时访客”流程。
+     * 当前以审批时间作为近似返回值，后续应调整为从预约记录（Appointment）中获取真实的访问结束时间。
+     * </p>
      *
      * @return 访问结束时间（近似值）
      */

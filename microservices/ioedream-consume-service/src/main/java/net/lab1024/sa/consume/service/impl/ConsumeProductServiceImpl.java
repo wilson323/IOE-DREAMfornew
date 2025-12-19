@@ -15,7 +15,7 @@ import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
-import net.lab1024.sa.common.consume.entity.ConsumeProductEntity;
+import net.lab1024.sa.consume.entity.ConsumeProductEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeProductQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeProductVO;
 import net.lab1024.sa.consume.service.ConsumeProductService;

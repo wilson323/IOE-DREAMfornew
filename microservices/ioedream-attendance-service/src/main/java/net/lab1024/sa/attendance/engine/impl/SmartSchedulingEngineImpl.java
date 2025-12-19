@@ -107,9 +107,10 @@ public class SmartSchedulingEngineImpl implements ScheduleEngine {
             // 构建冲突检测结果
             ConflictDetectionResult detectionResult = new ConflictDetectionResult();
             detectionResult.setHasConflicts(!CollectionUtils.isEmpty(conflicts));
-            detectionResult.setConflictCount(conflicts.size());
+            detectionResult.setTotalConflicts(conflicts.size());
             detectionResult.setConflicts(conflicts.stream().map(conflict -> {
-                ScheduleConflict scheduleConflict = new ScheduleConflict();
+                ConflictDetectionResult.ScheduleConflict scheduleConflict =
+                        new ConflictDetectionResult.ScheduleConflict();
                 scheduleConflict.setConflictType("SCHEDULE_CONFLICT");
                 scheduleConflict.setDescription(conflict);
                 scheduleConflict.setSeverity("HIGH");
@@ -122,7 +123,7 @@ public class SmartSchedulingEngineImpl implements ScheduleEngine {
             log.error("[智能排班引擎] 验证排班冲突失败", e);
             ConflictDetectionResult errorResult = new ConflictDetectionResult();
             errorResult.setHasConflicts(true);
-            errorResult.setConflictCount(1);
+            errorResult.setTotalConflicts(1);
             errorResult.setConflicts(Collections.singletonList(createErrorConflict(e.getMessage())));
             return errorResult;
         }
@@ -330,8 +331,9 @@ public class SmartSchedulingEngineImpl implements ScheduleEngine {
     /**
      * 创建错误冲突
      */
-    private ScheduleConflict createErrorConflict(String errorMessage) {
-        ScheduleConflict conflict = new ScheduleConflict();
+    private ConflictDetectionResult.ScheduleConflict createErrorConflict(String errorMessage) {
+        ConflictDetectionResult.ScheduleConflict conflict =
+                new ConflictDetectionResult.ScheduleConflict();
         conflict.setConflictType("SYSTEM_ERROR");
         conflict.setDescription("系统错误: " + errorMessage);
         conflict.setSeverity("HIGH");

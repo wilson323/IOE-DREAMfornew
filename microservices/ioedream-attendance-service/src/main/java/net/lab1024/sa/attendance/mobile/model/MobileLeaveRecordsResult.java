@@ -45,3 +45,5 @@ public class MobileLeaveRecordsResult {
     @Schema(description = "总记录数", example = "10")
     private Integer totalCount;
 }
+
+

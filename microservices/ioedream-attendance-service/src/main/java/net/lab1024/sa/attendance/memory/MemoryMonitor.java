@@ -320,7 +320,7 @@ public class MemoryMonitor {
         double lastValue = valueExtractor.apply(samples.get(samples.size() - 1));
         double change = lastValue - firstValue;
         double avgValue = samples.stream()
-            .mapToDouble(valueExtractor)
+            .mapToDouble(sample -> valueExtractor.apply(sample))
             .average()
             .orElse(0.0);
 

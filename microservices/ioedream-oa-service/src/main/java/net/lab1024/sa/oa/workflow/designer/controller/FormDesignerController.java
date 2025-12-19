@@ -1,17 +1,28 @@
 package net.lab1024.sa.oa.workflow.designer.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.Map;
+
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.oa.workflow.designer.domain.FormDefinitionDTO;
 import net.lab1024.sa.oa.workflow.designer.service.FormDesignerService;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * 表单设计器控制器
@@ -23,11 +34,12 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-01-17
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/workflow/form-designer")
 @Tag(name = "表单设计器", description = "低代码表单设计器API")
 public class FormDesignerController {
+
+    private static final Logger log = LoggerFactory.getLogger (FormDesignerController.class);
 
     @Resource
     private FormDesignerService formDesignerService;
@@ -37,10 +49,10 @@ public class FormDesignerController {
      */
     @PostMapping("/definition")
     @Operation(summary = "保存表单定义", description = "创建或更新表单定义")
-    public ResponseDTO<Long> saveFormDefinition(@Valid @RequestBody FormDefinitionDTO formDefinition) {
-        log.info("[表单设计器] 保存表单定义: key={}", formDefinition.getFormKey());
-        Long id = formDesignerService.saveFormDefinition(formDefinition);
-        return ResponseDTO.ok(id);
+    public ResponseDTO<Long> saveFormDefinition (@Valid @RequestBody FormDefinitionDTO formDefinition) {
+        log.info ("[表单设计器] 保存表单定义: key={}", formDefinition.getFormKey ());
+        Long id = formDesignerService.saveFormDefinition (formDefinition);
+        return ResponseDTO.ok (id);
     }
 
     /**
@@ -48,10 +60,10 @@ public class FormDesignerController {
      */
     @GetMapping("/definition/{formKey}")
     @Operation(summary = "获取表单定义", description = "根据formKey获取最新版本表单定义")
-    public ResponseDTO<FormDefinitionDTO> getFormDefinition(@PathVariable String formKey) {
-        log.info("[表单设计器] 获取表单定义: key={}", formKey);
-        FormDefinitionDTO formDefinition = formDesignerService.getFormDefinition(formKey);
-        return ResponseDTO.ok(formDefinition);
+    public ResponseDTO<FormDefinitionDTO> getFormDefinition (@PathVariable String formKey) {
+        log.info ("[表单设计器] 获取表单定义: key={}", formKey);
+        FormDefinitionDTO formDefinition = formDesignerService.getFormDefinition (formKey);
+        return ResponseDTO.ok (formDefinition);
     }
 
     /**
@@ -59,11 +71,10 @@ public class FormDesignerController {
      */
     @GetMapping("/definitions")
     @Operation(summary = "获取表单定义列表", description = "获取所有启用的表单定义")
-    public ResponseDTO<List<FormDefinitionDTO>> listFormDefinitions(
-            @RequestParam(required = false) String category) {
-        log.info("[表单设计器] 获取表单定义列表: category={}", category);
-        List<FormDefinitionDTO> formDefinitions = formDesignerService.listFormDefinitions(category);
-        return ResponseDTO.ok(formDefinitions);
+    public ResponseDTO<List<FormDefinitionDTO>> listFormDefinitions (@RequestParam(required = false) String category) {
+        log.info ("[表单设计器] 获取表单定义列表: category={}", category);
+        List<FormDefinitionDTO> formDefinitions = formDesignerService.listFormDefinitions (category);
+        return ResponseDTO.ok (formDefinitions);
     }
 
     /**
@@ -71,10 +82,10 @@ public class FormDesignerController {
      */
     @DeleteMapping("/definition/{formKey}")
     @Operation(summary = "删除表单定义", description = "逻辑删除表单定义")
-    public ResponseDTO<Boolean> deleteFormDefinition(@PathVariable String formKey) {
-        log.info("[表单设计器] 删除表单定义: key={}", formKey);
-        boolean result = formDesignerService.deleteFormDefinition(formKey);
-        return ResponseDTO.ok(result);
+    public ResponseDTO<Boolean> deleteFormDefinition (@PathVariable String formKey) {
+        log.info ("[表单设计器] 删除表单定义: key={}", formKey);
+        boolean result = formDesignerService.deleteFormDefinition (formKey);
+        return ResponseDTO.ok (result);
     }
 
     /**
@@ -82,10 +93,10 @@ public class FormDesignerController {
      */
     @PostMapping("/preview")
     @Operation(summary = "预览表单", description = "根据Schema预览表单渲染效果")
-    public ResponseDTO<Map<String, Object>> previewForm(@RequestBody Map<String, Object> formSchema) {
-        log.info("[表单设计器] 预览表单");
-        Map<String, Object> previewData = formDesignerService.previewForm(formSchema);
-        return ResponseDTO.ok(previewData);
+    public ResponseDTO<Map<String, Object>> previewForm (@RequestBody Map<String, Object> formSchema) {
+        log.info ("[表单设计器] 预览表单");
+        Map<String, Object> previewData = formDesignerService.previewForm (formSchema);
+        return ResponseDTO.ok (previewData);
     }
 
     /**
@@ -93,9 +104,9 @@ public class FormDesignerController {
      */
     @PostMapping("/validate-schema")
     @Operation(summary = "验证表单Schema", description = "验证JSON Schema格式是否正确")
-    public ResponseDTO<Map<String, Object>> validateSchema(@RequestBody String schemaJson) {
-        log.info("[表单设计器] 验证表单Schema");
-        Map<String, Object> validationResult = formDesignerService.validateSchema(schemaJson);
-        return ResponseDTO.ok(validationResult);
+    public ResponseDTO<Map<String, Object>> validateSchema (@RequestBody String schemaJson) {
+        log.info ("[表单设计器] 验证表单Schema");
+        Map<String, Object> validationResult = formDesignerService.validateSchema (schemaJson);
+        return ResponseDTO.ok (validationResult);
     }
 }

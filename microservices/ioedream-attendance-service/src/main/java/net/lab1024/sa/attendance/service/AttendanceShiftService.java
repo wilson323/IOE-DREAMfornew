@@ -1,6 +1,6 @@
 package net.lab1024.sa.attendance.service;
 
-import net.lab1024.sa.common.attendance.entity.AttendanceShiftEntity;
+import net.lab1024.sa.attendance.entity.AttendanceShiftEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceShiftForm;
 
 public interface AttendanceShiftService {

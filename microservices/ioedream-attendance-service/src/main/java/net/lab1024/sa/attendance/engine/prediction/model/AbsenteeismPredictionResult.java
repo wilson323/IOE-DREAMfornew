@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 缺勤率预测结果模型
  * <p>
@@ -21,6 +24,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AbsenteeismPredictionResult {
+    private String predictionId;
+    private TimeRange timeRange;
+    private AbsenteeismPatternAnalysis patternAnalysis;
+    private Double baseAbsenteeismRate;
+    private List<AbsenteeismFactor> influencingFactors;
+    private Double adjustedAbsenteeismRate;
+    private Map<String, Double> departmentAbsenteeismRates;
+    private ConfidenceInterval confidenceInterval;
+    private Boolean predictionSuccessful;
+    private String errorMessage;
+
     private Double predictedRate;
     private Double confidence;
     private String riskLevel;

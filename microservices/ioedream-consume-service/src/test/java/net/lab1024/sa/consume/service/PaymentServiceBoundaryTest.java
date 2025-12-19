@@ -21,11 +21,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.util.CursorPagination;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
-import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.manager.MultiPaymentManager;
 import net.lab1024.sa.consume.domain.form.PaymentProcessForm;
 import net.lab1024.sa.consume.domain.form.RefundApplyForm;
-import net.lab1024.sa.common.consume.entity.PaymentRefundRecordEntity;
+import net.lab1024.sa.consume.entity.PaymentRefundRecordEntity;
 
 /**
  * PaymentService边界和异常测试
@@ -275,7 +275,7 @@ class PaymentServiceBoundaryTest {
         when(paymentRecordDao.selectList(any())).thenReturn(java.util.Collections.emptyList());
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, null, null);
 
         // Then
@@ -290,7 +290,7 @@ class PaymentServiceBoundaryTest {
         when(paymentRecordDao.selectList(any())).thenReturn(java.util.Collections.emptyList());
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, 200, null);
 
         // Then
@@ -549,7 +549,7 @@ class PaymentServiceBoundaryTest {
         when(paymentRecordDao.selectList(any())).thenReturn(records);
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, 20, null);
 
         // Then
@@ -584,7 +584,7 @@ class PaymentServiceBoundaryTest {
         when(paymentRecordDao.selectList(any())).thenReturn(records);
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, 20, null);
 
         // Then
@@ -600,7 +600,7 @@ class PaymentServiceBoundaryTest {
         when(paymentRecordDao.selectList(any())).thenReturn(java.util.Collections.emptyList());
 
         // When
-        CursorPagination.CursorPageResult<net.lab1024.sa.common.consume.entity.PaymentRecordEntity> result =
+        CursorPagination.CursorPageResult<net.lab1024.sa.consume.entity.PaymentRecordEntity> result =
             paymentService.cursorPageUserPaymentRecords(1001L, 20, null);
 
         // Then

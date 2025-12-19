@@ -38,3 +38,5 @@ public class MobileLeaderboardQueryParam {
     @Schema(description = "排行榜类型", example = "ATTENDANCE", allowableValues = {"ATTENDANCE", "PUNCTUALITY", "OVERTIME"})
     private String leaderboardType;
 }
+
+

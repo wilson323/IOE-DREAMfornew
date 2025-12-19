@@ -19,61 +19,49 @@
     <description>消费管理微服务，提供消费、账户、报表等业务API</description>
 
     <dependencies>
-        <!-- ==================== 核心基础模块 ==================== -->
-        <!-- Common Core (必需) -->
+        <!-- ==================== 核心公共模块 ==================== -->
+        <!-- 按需使用细粒度模块，确保依赖清晰 -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- ==================== 细粒度公共模块 ==================== -->
-        <!-- Common Data (数据访问层) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-data</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Common Security (安全认证) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-security</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Common Cache (缓存管理) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-business</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-cache</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Common Export (导出功能 - consume需要报表) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-export</artifactId>
+            <artifactId>microservices-common-permission</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Common Monitor (监控模块) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
             <artifactId>microservices-common-monitor</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Common Business (业务公共组件) -->
+        <!-- ==================== 公共模块聚合 ==================== -->
+        <!-- Common (完整公共模块) -->
         <dependency>
             <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-business</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- Common Permission (权限验证) -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-permission</artifactId>
+            <artifactId>microservices-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

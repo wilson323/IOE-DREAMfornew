@@ -1,8 +1,10 @@
 package net.lab1024.sa.attendance.mobile.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 移动端登录结果
@@ -17,6 +19,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "移动端登录结果")
 public class MobileLoginResult {
 
@@ -24,10 +28,16 @@ public class MobileLoginResult {
      * 是否成功
      */
     @Schema(description = "是否成功", example = "true")
-    private boolean success;
+    private Boolean success;
 
     /**
      * 访问令牌
+     */
+    @Schema(description = "访问令牌", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    private String accessToken;
+
+    /**
+     * 访问令牌（兼容字段）
      */
     @Schema(description = "访问令牌", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     private String token;
@@ -39,10 +49,58 @@ public class MobileLoginResult {
     private String refreshToken;
 
     /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
+
+    /**
+     * 部门ID
+     */
+    @Schema(description = "部门ID", example = "10")
+    private Long departmentId;
+
+    /**
+     * 部门名称
+     */
+    @Schema(description = "部门名称", example = "技术部")
+    private String departmentName;
+
+    /**
      * 用户ID
      */
     @Schema(description = "用户ID", example = "1001")
     private Long userId;
+
+    /**
+     * 员工姓名
+     */
+    @Schema(description = "员工姓名", example = "张三")
+    private String employeeName;
+
+    /**
+     * 职位
+     */
+    @Schema(description = "职位", example = "软件工程师")
+    private String position;
+
+    /**
+     * 头像URL
+     */
+    @Schema(description = "头像URL", example = "https://example.com/avatar.jpg")
+    private String avatarUrl;
+
+    /**
+     * 权限列表
+     */
+    @Schema(description = "权限列表")
+    private java.util.List<String> permissions;
+
+    /**
+     * 设置信息
+     */
+    @Schema(description = "设置信息")
+    private java.util.Map<String, Object> settings;
 
     /**
      * 用户信息

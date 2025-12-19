@@ -30,3 +30,5 @@ public class MobileReminderQueryParam {
     @Schema(description = "每页大小", example = "20")
     private Integer pageSize;
 }
+
+

@@ -38,3 +38,5 @@ public class MobileDeviceInfoResult {
     @Schema(description = "设备信息")
     private Map<String, Object> deviceInfo;
 }
+
+

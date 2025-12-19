@@ -23,11 +23,11 @@ import java.time.LocalDate;
 @Schema(description = "移动端考勤状态查询请求")
 public class MobileAttendanceStatusRequest {
 
-    @Schema(description = "用户ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1001")
+    @Schema(description = "用户ID", required = true, example = "1001")
     @NotNull(message = "用户ID不能为空")
     private Long userId;
 
-    @Schema(description = "查询日期", requiredMode = Schema.RequiredMode.REQUIRED, example = "2025-12-16")
+    @Schema(description = "查询日期", required = true, example = "2025-12-16")
     @NotNull(message = "查询日期不能为空")
     private LocalDate queryDate;
 

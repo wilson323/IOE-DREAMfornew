@@ -38,3 +38,5 @@ public class MobileAnomalyQueryParam {
     @Schema(description = "异常类型", example = "LATE")
     private String anomalyType;
 }
+
+

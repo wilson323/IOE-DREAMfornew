@@ -21,7 +21,7 @@ import net.lab1024.sa.common.monitor.dao.NotificationDao;
 import net.lab1024.sa.common.monitor.domain.entity.NotificationEntity;
 import net.lab1024.sa.common.monitor.manager.NotificationManager;
 import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
-import net.lab1024.sa.oa.workflow.entity.WorkflowTaskEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 
 /**

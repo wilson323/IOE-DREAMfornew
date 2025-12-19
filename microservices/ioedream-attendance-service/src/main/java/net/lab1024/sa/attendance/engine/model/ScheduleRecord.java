@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * 排班记录模型
@@ -57,17 +58,27 @@ public class ScheduleRecord {
     /**
      * 工作开始时间
      */
-    private String startTime;
+    private LocalDateTime startTime;
 
     /**
      * 工作结束时间
      */
-    private String endTime;
+    private LocalDateTime endTime;
 
     /**
      * 工作地点
      */
     private String workLocation;
+
+    /**
+     * 工作类型（兼容优化器字段名）
+     */
+    private String workType;
+
+    /**
+     * 扩展属性（兼容优化器字段名）
+     */
+    private Map<String, Object> attributes;
 
     /**
      * 排班优先级
@@ -88,6 +99,21 @@ public class ScheduleRecord {
      * 排班状态
      */
     private String status;
+
+    /**
+     * 分配时间
+     */
+    private LocalDateTime assignedTime;
+
+    /**
+     * 使用的算法
+     */
+    private String algorithmUsed;
+
+    /**
+     * 适应度评分（用于遗传算法等）
+     */
+    private Double fitnessScore;
 
     /**
      * 实际工作时长（分钟）

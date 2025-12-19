@@ -30,3 +30,5 @@ public class MobilePerformanceTestRequest {
     @Schema(description = "测试次数", example = "10")
     private Integer testCount;
 }
+
+

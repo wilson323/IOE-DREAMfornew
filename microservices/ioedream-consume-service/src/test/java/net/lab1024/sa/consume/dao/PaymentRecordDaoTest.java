@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
-import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 
 /**
  * PaymentRecordDao单元测试

@@ -1,12 +1,14 @@
 package net.lab1024.sa.attendance.config;
 
 import net.lab1024.sa.attendance.engine.ScheduleEngine;
+import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithm;
 import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithmFactory;
 import net.lab1024.sa.attendance.engine.algorithm.impl.*;
 import net.lab1024.sa.attendance.engine.conflict.ConflictDetector;
 import net.lab1024.sa.attendance.engine.conflict.ConflictResolver;
 import net.lab1024.sa.attendance.engine.conflict.impl.ConflictDetectorImpl;
 import net.lab1024.sa.attendance.engine.conflict.impl.ConflictResolverImpl;
+import net.lab1024.sa.attendance.engine.impl.ScheduleEngineImpl;
 import net.lab1024.sa.attendance.engine.optimizer.ScheduleOptimizer;
 import net.lab1024.sa.attendance.engine.optimizer.impl.ScheduleOptimizerImpl;
 import net.lab1024.sa.attendance.engine.prediction.SchedulePredictor;

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.service.VideoAiAnalysisService;
+import net.lab1024.sa.video.manager.FaceRecognitionManager;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,12 +42,12 @@ public class VideoAiAnalysisController {
 
     @PostMapping("/face/detect")
     @Operation(summary = "人脸检测", description = "检测图像中的人脸信息")
-    public ResponseDTO<List<VideoAiAnalysisService.FaceDetectResult>> detectFaces(
+    public ResponseDTO<List<FaceRecognitionManager.FaceDetectResult>> detectFaces(
             @Parameter(description = "图像文件", required = true)
             @RequestParam("file") MultipartFile file) {
         try {
             byte[] imageData = file.getBytes();
-            List<VideoAiAnalysisService.FaceDetectResult> results = videoAiAnalysisService.detectFaces(imageData);
+            List<FaceRecognitionManager.FaceDetectResult> results = videoAiAnalysisService.detectFaces(imageData);
             return ResponseDTO.ok(results);
         } catch (Exception e) {
             log.error("[视频AI分析] 人脸检测失败", e);
@@ -56,50 +57,56 @@ public class VideoAiAnalysisController {
 
     @PostMapping("/face/compare")
     @Operation(summary = "人脸比对", description = "比对待识别人脸与人脸库中的人脸")
-    public ResponseDTO<VideoAiAnalysisService.FaceCompareResult> compareFaces(
-            @Parameter(description = "人脸比对请求", required = true)
-            @Valid @RequestBody VideoAiAnalysisService.FaceCompareRequest request) {
+    public ResponseDTO<Double> compareFaces(
+            @Parameter(description = "人脸图像1", required = true)
+            @RequestParam("file1") MultipartFile file1,
+            @Parameter(description = "人脸图像2", required = true)
+            @RequestParam("file2") MultipartFile file2) {
         try {
-            VideoAiAnalysisService.FaceCompareResult result = videoAiAnalysisService.compareFaces(
-                    request.getFaceImage1(), request.getFaceImage2());
-            return ResponseDTO.ok(result);
+            byte[] faceImage1 = file1.getBytes();
+            byte[] faceImage2 = file2.getBytes();
+            byte[] feature1 = videoAiAnalysisService.extractFaceFeature(faceImage1);
+            byte[] feature2 = videoAiAnalysisService.extractFaceFeature(faceImage2);
+            double similarity = videoAiAnalysisService.compareFaces(feature1, feature2);
+            return ResponseDTO.ok(similarity);
         } catch (Exception e) {
             log.error("[视频AI分析] 人脸比对失败", e);
             return ResponseDTO.error("FACE_COMPARE_ERROR", "人脸比对失败: " + e.getMessage());
         }
     }
 
-    @PostMapping("/face/recognize")
-    @Operation(summary = "人脸识别", description = "识别人脸并返回身份信息")
-    public ResponseDTO<VideoAiAnalysisService.FaceRecognitionResult> recognizeFace(
-            @Parameter(description = "人脸识别请求", required = true)
-            @Valid @RequestBody VideoAiAnalysisService.FaceRecognizeRequest request) {
+    @PostMapping("/face/search")
+    @Operation(summary = "人脸搜索", description = "在人脸库中搜索相似人脸")
+    public ResponseDTO<List<FaceRecognitionManager.FaceMatchResult>> searchFaces(
+            @Parameter(description = "人脸图像", required = true)
+            @RequestParam("file") MultipartFile file,
+            @Parameter(description = "相似度阈值")
+            @RequestParam(defaultValue = "0.7") double threshold) {
         try {
-            VideoAiAnalysisService.FaceRecognitionResult result = videoAiAnalysisService.recognizeFace(
-                    request.getFaceImage(), request.getGroupId());
-            return ResponseDTO.ok(result);
+            byte[] faceImage = file.getBytes();
+            byte[] feature = videoAiAnalysisService.extractFaceFeature(faceImage);
+            List<FaceRecognitionManager.FaceMatchResult> results = videoAiAnalysisService.searchFaces(feature, threshold);
+            return ResponseDTO.ok(results);
         } catch (Exception e) {
-            log.error("[视频AI分析] 人脸识别失败", e);
-            return ResponseDTO.error("FACE_RECOGNIZE_ERROR", "人脸识别失败: " + e.getMessage());
+            log.error("[视频AI分析] 人脸搜索失败", e);
+            return ResponseDTO.error("FACE_SEARCH_ERROR", "人脸搜索失败: " + e.getMessage());
         }
     }
 
-    @GetMapping("/face/statistics/{cameraId}")
-    @Operation(summary = "获取人脸识别统计", description = "获取指定摄像头的人脸识别统计信息")
-    public ResponseDTO<VideoAiAnalysisService.FaceStatistics> getFaceStatistics(
+    @GetMapping("/statistics/{cameraId}")
+    @Operation(summary = "获取摄像头分析统计", description = "获取指定摄像头的分析统计信息")
+    public ResponseDTO<VideoAiAnalysisService.CameraAnalysisStatistics> getCameraAnalysisStatistics(
             @Parameter(description = "摄像头ID", required = true)
             @PathVariable @NotNull String cameraId,
-            @Parameter(description = "开始时间")
-            @RequestParam(required = false) LocalDateTime startTime,
-            @Parameter(description = "结束时间")
-            @RequestParam(required = false) LocalDateTime endTime) {
+            @Parameter(description = "统计时间范围（分钟）")
+            @RequestParam(defaultValue = "60") int minutes) {
         try {
-            VideoAiAnalysisService.FaceStatistics statistics = videoAiAnalysisService.getFaceStatistics(
-                    cameraId, startTime, endTime);
+            VideoAiAnalysisService.CameraAnalysisStatistics statistics = videoAiAnalysisService.getCameraAnalysisStatistics(
+                    cameraId, minutes);
             return ResponseDTO.ok(statistics);
         } catch (Exception e) {
-            log.error("[视频AI分析] 获取人脸识别统计失败，cameraId={}", cameraId, e);
-            return ResponseDTO.error("GET_FACE_STATISTICS_ERROR", "获取人脸识别统计失败: " + e.getMessage());
+            log.error("[视频AI分析] 获取摄像头分析统计失败，cameraId={}", cameraId, e);
+            return ResponseDTO.error("GET_CAMERA_STATISTICS_ERROR", "获取摄像头分析统计失败: " + e.getMessage());
         }
     }
 

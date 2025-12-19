@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.lab1024.sa.oa.workflow.entity.WorkflowDefinitionEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowDefinitionEntity;
 
 /**
  * 工作流定义DAO接口

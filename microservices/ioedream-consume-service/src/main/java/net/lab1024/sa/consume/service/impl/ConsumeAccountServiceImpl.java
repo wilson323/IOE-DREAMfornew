@@ -22,7 +22,7 @@ import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.consume.dao.AccountDao;
 import net.lab1024.sa.consume.domain.dto.RechargeRequestDTO;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import net.lab1024.sa.consume.domain.form.AccountQueryForm;
 import net.lab1024.sa.consume.domain.vo.AccountVO;
 import net.lab1024.sa.consume.service.ConsumeAccountService;

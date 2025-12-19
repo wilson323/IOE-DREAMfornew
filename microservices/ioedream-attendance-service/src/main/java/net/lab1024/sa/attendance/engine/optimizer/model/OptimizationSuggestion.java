@@ -23,14 +23,24 @@ import lombok.NoArgsConstructor;
 public class OptimizationSuggestion {
 
     /**
+     * 建议ID
+     */
+    private String suggestionId;
+
+    /**
      * 建议类型
      */
     private String suggestionType;
 
     /**
+     * 建议标题
+     */
+    private String suggestionTitle;
+
+    /**
      * 建议描述
      */
-    private String description;
+    private String suggestionDescription;
 
     /**
      * 建议优先级
@@ -46,4 +56,9 @@ public class OptimizationSuggestion {
      * 建议详情
      */
     private Object suggestionDetails;
+
+    /**
+     * 建议描述（兼容字段）
+     */
+    private String description;
 }

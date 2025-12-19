@@ -28,6 +28,12 @@ import java.util.Map;
 public class MobileNotificationsResult {
 
     /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "12345")
+    private Long employeeId;
+
+    /**
      * 通知列表
      */
     @Schema(description = "通知列表")
@@ -45,3 +51,5 @@ public class MobileNotificationsResult {
     @Schema(description = "未读数量", example = "5")
     private Integer unreadCount;
 }
+
+

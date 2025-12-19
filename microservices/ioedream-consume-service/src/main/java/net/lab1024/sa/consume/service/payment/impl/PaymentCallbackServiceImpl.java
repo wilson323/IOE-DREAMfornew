@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.service.payment.PaymentCallbackService;
 import net.lab1024.sa.consume.service.payment.PaymentRecordService;
 import net.lab1024.sa.consume.service.payment.adapter.AlipayPayAdapter;

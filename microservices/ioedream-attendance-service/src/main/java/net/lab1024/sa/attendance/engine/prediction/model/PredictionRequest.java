@@ -23,6 +23,9 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PredictionRequest {
+    private PredictionData predictionData;
+    private PredictionScope predictionScope;
+
     private String predictionType;
     private Map<String, Object> parameters;
 }

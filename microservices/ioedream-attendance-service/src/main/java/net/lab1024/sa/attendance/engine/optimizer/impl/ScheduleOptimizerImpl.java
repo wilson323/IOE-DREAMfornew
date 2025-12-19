@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
 import net.lab1024.sa.attendance.engine.optimizer.*;
+import net.lab1024.sa.attendance.engine.optimizer.model.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -70,8 +71,28 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             if (multiObjectiveResult.isOptimizationSuccessful()) {
                 result.setOptimizedRecords(createSnapshots(multiObjectiveResult.getOptimizedRecords()));
                 result.setModifications(createModifications(scheduleRecords, multiObjectiveResult.getOptimizedRecords()));
-                result.setAfterMetrics(multiObjectiveResult.getOptimizedMetrics());
-                result.setGoalAchievements(multiObjectiveResult.getGoalAchievements());
+                // 类型转换：从Map<String, Object>到Map<String, Double>
+                Map<String, Double> afterMetrics = new HashMap<>();
+                for (Map.Entry<String, Object> entry : multiObjectiveResult.getOptimizedMetrics().entrySet()) {
+                    if (entry.getValue() instanceof Double) {
+                        afterMetrics.put(entry.getKey(), (Double) entry.getValue());
+                    } else if (entry.getValue() instanceof Integer) {
+                        afterMetrics.put(entry.getKey(), ((Integer) entry.getValue()).doubleValue());
+                    }
+                }
+                result.setAfterMetrics(afterMetrics);
+                // 类型转换：从Map<String, Double>到Map<String, OptimizationResult.GoalAchievement>
+                Map<String, OptimizationResult.GoalAchievement> goalAchievements = new HashMap<>();
+                for (Map.Entry<String, Double> entry : multiObjectiveResult.getGoalAchievements().entrySet()) {
+                    OptimizationResult.GoalAchievement achievement = OptimizationResult.GoalAchievement.builder()
+                            .goalName(entry.getKey())
+                            .targetValue(1.0)
+                            .achievedValue(entry.getValue())
+                            .achievementRate(entry.getValue())
+                            .build();
+                    goalAchievements.put(entry.getKey(), achievement);
+                }
+                result.setGoalAchievements(goalAchievements);
             }
 
             // 3. 计算改进幅度
@@ -224,7 +245,7 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             result.setOptimizationSuccessful(optimizedSatisfaction > currentSatisfaction);
 
             log.debug("[排班优化] 满意度优化完成，改进: {:.2f}，成功: {}",
-                    result.getSatisfactionImprovement(), result.getOptimizationSuccessful());
+                    result.getSatisfactionImprovement(), result.isOptimizationSuccessful());
 
         } catch (Exception e) {
             log.error("[排班优化] 满意度优化失败", e);
@@ -529,13 +550,13 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     private List<OptimizationResult.ScheduleRecordSnapshot> createSnapshots(List<ScheduleRecord> records) {
         return records.stream()
                 .map(record -> OptimizationResult.ScheduleRecordSnapshot.builder()
-                        .recordId(record.getId())
+                        .recordId(record.getRecordId())
                         .employeeId(record.getEmployeeId())
                         .shiftId(record.getShiftId())
                         .startTime(record.getStartTime())
                         .endTime(record.getEndTime())
                         .workLocation(record.getWorkLocation())
-                        .workType(record.getWorkType())
+                        .workType(null)
                         .attributes(record.getAttributes())
                         .build())
                 .collect(Collectors.toList());

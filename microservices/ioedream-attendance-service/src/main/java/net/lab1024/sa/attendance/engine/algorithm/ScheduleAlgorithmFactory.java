@@ -1,5 +1,10 @@
 package net.lab1024.sa.attendance.engine.algorithm;
 
+import net.lab1024.sa.attendance.engine.algorithm.impl.BacktrackAlgorithmImpl;
+import net.lab1024.sa.attendance.engine.algorithm.impl.GeneticAlgorithmImpl;
+import net.lab1024.sa.attendance.engine.algorithm.impl.GreedyAlgorithmImpl;
+import net.lab1024.sa.attendance.engine.algorithm.impl.HeuristicAlgorithmImpl;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

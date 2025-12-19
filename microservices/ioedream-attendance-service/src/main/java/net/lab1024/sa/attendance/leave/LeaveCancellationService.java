@@ -4,6 +4,21 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import net.lab1024.sa.attendance.leave.model.request.*;
+import net.lab1024.sa.attendance.leave.model.result.AutoLeaveCancellationApprovalResult;
+import net.lab1024.sa.attendance.leave.model.result.BatchLeaveCancellationApprovalResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationApplicationResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationApprovalResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationDetail;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationExportResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationHistoryRecord;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationImpactAnalysisResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationListResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationRejectionResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationStatisticsResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationValidationResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationWithdrawalResult;
+
 /**
  * 销假服务接口
  * <p>

@@ -46,3 +46,5 @@ public class MobileDeviceRegisterRequest {
     @Schema(description = "推送Token", example = "push_token_123")
     private String pushToken;
 }
+
+

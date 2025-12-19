@@ -16,10 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.attendance.attendance.manager.AttendanceManager;
+import net.lab1024.sa.attendance.manager.AttendanceManager;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.attendance.dao.AttendanceShiftDao;
-import net.lab1024.sa.common.attendance.entity.AttendanceShiftEntity;
+import net.lab1024.sa.attendance.entity.AttendanceShiftEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceShiftForm;
 import net.lab1024.sa.attendance.service.impl.AttendanceShiftServiceImpl;
 

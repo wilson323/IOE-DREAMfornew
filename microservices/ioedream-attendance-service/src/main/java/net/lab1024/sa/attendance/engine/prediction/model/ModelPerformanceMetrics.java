@@ -5,6 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 模型性能指标模型
  * <p>
@@ -21,8 +25,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ModelPerformanceMetrics {
+    private String predictionType;
+    private Integer totalPredictions;
+    private Double averageAccuracy;
+    private Double averagePredictionTime;
+    private LocalDateTime lastUpdated;
+    private Map<String, Double> specificMetrics;
+
     private Double accuracy;
     private Double precision;
     private Double recall;
     private String modelVersion;
+
+    public void setSpecificMetric(String key, Double value) {
+        if (specificMetrics == null) {
+            specificMetrics = new HashMap<>();
+        }
+        specificMetrics.put(key, value);
+    }
 }

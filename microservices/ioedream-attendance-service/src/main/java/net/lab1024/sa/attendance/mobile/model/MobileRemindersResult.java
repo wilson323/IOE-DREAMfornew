@@ -38,4 +38,12 @@ public class MobileRemindersResult {
      */
     @Schema(description = "总记录数", example = "10")
     private Integer totalCount;
+
+    /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
 }
+
+

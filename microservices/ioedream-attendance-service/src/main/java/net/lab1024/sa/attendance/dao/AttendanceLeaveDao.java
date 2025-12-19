@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.common.attendance.entity.AttendanceLeaveEntity;
+import net.lab1024.sa.attendance.domain.entity.AttendanceLeaveEntity;
 
 /**
  * 考勤请假DAO

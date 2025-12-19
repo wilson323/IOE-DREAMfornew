@@ -5,13 +5,13 @@ import io.seata.spring.annotation.GlobalTransactional;
 // Seata官方建议继续使用此注解，未来版本会提供新的替代方案
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.consume.entity.ConsumeRecordEntity;
+import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.dao.AccountDao;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.domain.dto.ConsumeRequestDTO;
-import net.lab1024.sa.common.consume.entity.AccountEntity;
+import net.lab1024.sa.consume.entity.AccountEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.transaction.annotation.Transactional;
 

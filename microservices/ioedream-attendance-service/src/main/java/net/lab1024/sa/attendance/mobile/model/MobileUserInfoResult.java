@@ -74,3 +74,5 @@ public class MobileUserInfoResult {
     @Schema(description = "权限列表")
     private List<String> permissions;
 }
+
+

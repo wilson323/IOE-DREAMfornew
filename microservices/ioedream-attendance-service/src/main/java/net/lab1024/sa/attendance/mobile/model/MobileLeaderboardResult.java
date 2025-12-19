@@ -28,6 +28,12 @@ import java.util.Map;
 public class MobileLeaderboardResult {
 
     /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "12345")
+    private Long employeeId;
+
+    /**
      * 排行榜类型
      */
     @Schema(description = "排行榜类型", example = "ATTENDANCE")
@@ -40,8 +46,15 @@ public class MobileLeaderboardResult {
     private List<Map<String, Object>> leaderboard;
 
     /**
+     * 排行榜列表（兼容字段）
+     */
+    @Schema(description = "排行榜列表")
+    private List<Object> rankings;
+
+    /**
      * 当前用户排名
      */
     @Schema(description = "当前用户排名", example = "10")
     private Integer userRank;
 }
+

@@ -21,7 +21,7 @@ import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.consume.service.payment.PaymentRecordService;
 import net.lab1024.sa.consume.service.AccountService;
-import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 import net.lab1024.sa.consume.dao.PaymentRecordDao;
 
 /**

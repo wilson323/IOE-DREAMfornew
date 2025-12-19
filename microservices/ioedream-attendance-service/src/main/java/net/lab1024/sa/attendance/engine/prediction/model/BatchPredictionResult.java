@@ -1,18 +1,16 @@
 package net.lab1024.sa.attendance.engine.prediction.model;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * 批量预测结果模型
  * <p>
- * 封装批量预测的结果数据
- * 严格遵循CLAUDE.md全局架构规范
+ * 封装批量预测的结果数据 严格遵循CLAUDE.md全局架构规范
  * </p>
  *
  * @author IOE-DREAM架构团队
@@ -24,7 +22,13 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BatchPredictionResult {
-    private List<Map<String, Object>> results;
+    private String batchId;
+    private Integer totalRequests;
+    private Integer successfulPredictions;
+    private Integer failedPredictions;
+    private Double successRate;
+
+    private List<SchedulePredictionResult> results;
     private Integer totalCount;
     private Integer successCount;
 }

@@ -42,6 +42,26 @@ public class ConflictResolution {
     private String resolutionStrategy;
 
     /**
+     * 是否成功（兼容简化引擎实现）
+     */
+    private Boolean success;
+
+    /**
+     * 解决消息（兼容简化引擎实现）
+     */
+    private String resolutionMessage;
+
+    /**
+     * 已解决数量（兼容简化引擎实现）
+     */
+    private Integer resolvedCount;
+
+    /**
+     * 剩余冲突列表（兼容简化引擎实现）
+     */
+    private List<Object> remainingConflicts;
+
+    /**
      * 原始冲突数
      */
     private Integer originalConflictCount;

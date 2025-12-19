@@ -21,11 +21,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.lab1024.sa.common.consume.entity.ConsumeRecordEntity;
+import net.lab1024.sa.consume.entity.ConsumeRecordEntity;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.dao.RefundApplicationDao;
-import net.lab1024.sa.common.consume.entity.RefundApplicationEntity;
+import net.lab1024.sa.consume.entity.RefundApplicationEntity;
 import net.lab1024.sa.consume.domain.form.RefundQueryForm;
 import net.lab1024.sa.consume.domain.form.RefundRequestForm;
 import net.lab1024.sa.consume.domain.vo.RefundRecordVO;

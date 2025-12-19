@@ -1,6 +1,6 @@
 package net.lab1024.sa.consume.manager;
 
-import net.lab1024.sa.common.consume.entity.ConsumeAreaEntity;
+import net.lab1024.sa.consume.entity.ConsumeAreaEntity;
 
 /**
  * 消费区域管理Manager接口

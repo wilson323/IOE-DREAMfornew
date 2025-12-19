@@ -239,4 +239,11 @@ public class RuleValidationResult {
         }
         this.validationDetails.put(key, value);
     }
+
+    /**
+     * 检查是否验证通过
+     */
+    public boolean isValid() {
+        return Boolean.TRUE.equals(valid);
+    }
 }

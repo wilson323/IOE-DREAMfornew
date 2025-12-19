@@ -21,9 +21,9 @@ import net.lab1024.sa.common.recommend.RecommendationEngine;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
 import org.springframework.data.redis.core.RedisTemplate;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
-import net.lab1024.sa.common.consume.entity.ConsumeAreaEntity;
-import net.lab1024.sa.common.consume.entity.ConsumeProductEntity;
-import net.lab1024.sa.common.consume.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.consume.entity.ConsumeAreaEntity;
+import net.lab1024.sa.consume.entity.ConsumeProductEntity;
+import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.manager.ConsumeAreaManager;
 
 /**

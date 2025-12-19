@@ -2,6 +2,10 @@ package net.lab1024.sa.attendance.engine.rule;
 
 import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext;
 import net.lab1024.sa.attendance.engine.rule.model.RuleEvaluationResult;
+import net.lab1024.sa.attendance.engine.rule.model.RuleValidationResult;
+import net.lab1024.sa.attendance.engine.rule.model.CompiledRule;
+import net.lab1024.sa.attendance.engine.rule.model.CompiledAction;
+import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionStatistics;
 
 import java.util.List;
 import java.util.Map;

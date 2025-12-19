@@ -42,3 +42,5 @@ public class MobileDeviceRegisterResult {
     @Schema(description = "消息", example = "设备注册成功")
     private String message;
 }
+
+

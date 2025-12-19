@@ -7,6 +7,7 @@ import net.lab1024.sa.attendance.mobile.model.*;
 import net.lab1024.sa.attendance.realtime.RealtimeCalculationEngine;
 import net.lab1024.sa.attendance.rule.AttendanceRuleEngine;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @ActiveProfiles("test")
 @RequiredArgsConstructor
 @DirtiesContext(classMode = DirtiesContext.ClassMode)
+@Disabled("性能压力测试需独立环境执行，默认不在单元测试阶段运行")
 public class AttendancePerformanceTest {
 
     // ==================== 核心服务依赖 ====================

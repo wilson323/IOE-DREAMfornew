@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 满意度预测结果模型
  * <p>
@@ -21,6 +24,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SatisfactionPredictionResult {
+    private String predictionId;
+    private Double baseSatisfactionScore;
+    private List<SatisfactionFactor> influencingFactors;
+    private Map<String, Double> departmentSatisfactionScores;
+    private List<SatisfactionRisk> satisfactionRisks;
+    private List<SatisfactionImprovementSuggestion> improvementSuggestions;
+    private Boolean predictionSuccessful;
+
     private Double predictedSatisfaction;
     private Double confidence;
     private String satisfactionLevel;

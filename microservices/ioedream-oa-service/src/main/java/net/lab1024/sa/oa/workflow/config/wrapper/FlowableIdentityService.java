@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 public class FlowableIdentityService {
 
     private static final Logger log = LoggerFactory.getLogger(FlowableIdentityService.class);
+
     private final IdentityService identityService;
 
     public FlowableIdentityService(IdentityService identityService) {

@@ -25,6 +25,12 @@ import lombok.NoArgsConstructor;
 public class MobileNotificationReadResult {
 
     /**
+     * 通知ID
+     */
+    @Schema(description = "通知ID", example = "12345")
+    private String notificationId;
+
+    /**
      * 是否成功
      */
     @Schema(description = "是否成功", example = "true")
@@ -36,3 +42,5 @@ public class MobileNotificationReadResult {
     @Schema(description = "消息", example = "标记已读成功")
     private String message;
 }
+
+

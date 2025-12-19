@@ -35,4 +35,20 @@ public class MobileProfileSettingsUpdateResult {
      */
     @Schema(description = "消息", example = "配置更新成功")
     private String message;
+
+    /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
+
+    public boolean isSuccess() {
+        return Boolean.TRUE.equals(success);
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
+
+

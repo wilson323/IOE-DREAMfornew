@@ -1,8 +1,8 @@
 package net.lab1024.sa.attendance.template;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.attendance.domain.form.AttendancePunchForm;
-import net.lab1024.sa.attendance.attendance.domain.vo.AttendanceResultVO;
+import net.lab1024.sa.attendance.domain.form.AttendancePunchForm;
+import net.lab1024.sa.attendance.domain.vo.AttendanceResultVO;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 

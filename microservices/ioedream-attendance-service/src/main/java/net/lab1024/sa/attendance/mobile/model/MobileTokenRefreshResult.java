@@ -35,4 +35,10 @@ public class MobileTokenRefreshResult {
      */
     @Schema(description = "刷新令牌", example = "refresh_token_123")
     private String refreshToken;
+
+    /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
 }

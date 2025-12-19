@@ -42,3 +42,5 @@ public class MobileBiometricVerificationResult {
     @Schema(description = "生物识别类型", example = "FACE")
     private String biometricType;
 }
+
+

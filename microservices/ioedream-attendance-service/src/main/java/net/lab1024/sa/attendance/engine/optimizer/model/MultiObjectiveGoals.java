@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.lab1024.sa.attendance.engine.optimizer.OptimizationGoal;
 
 import java.util.List;
+
+import java.util.Map;
 
 /**
  * 多目标优化配置
@@ -28,6 +31,11 @@ public class MultiObjectiveGoals {
      * 优化目标列表
      */
     private List<OptimizationGoal> goals;
+
+    /**
+     * 目标权重
+     */
+    private Map<String, Double> weights;
 
     /**
      * 优化算法类型

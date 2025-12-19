@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +29,21 @@ public class ResolutionStatistics {
      * 总冲突数量
      */
     private Integer totalConflicts;
+
+    /**
+     * 总解决次数（用于兼容实现层字段名）
+     */
+    private Integer totalResolutions;
+
+    /**
+     * 成功解决次数（用于兼容实现层字段名）
+     */
+    private Integer successfulResolutions;
+
+    /**
+     * 失败解决次数（用于兼容实现层字段名）
+     */
+    private Integer failedResolutions;
 
     /**
      * 已解决数量
@@ -73,4 +89,15 @@ public class ResolutionStatistics {
      * 解决策略使用统计
      */
     private Map<String, Integer> strategyUsageCount;
+
+    /**
+     * 解决类型统计（用于兼容实现层字段名）
+     */
+    @Builder.Default
+    private Map<String, Integer> resolutionTypeStatistics = new HashMap<>();
+
+    /**
+     * 平均质量得分（0-1）
+     */
+    private Double averageQualityScore;
 }

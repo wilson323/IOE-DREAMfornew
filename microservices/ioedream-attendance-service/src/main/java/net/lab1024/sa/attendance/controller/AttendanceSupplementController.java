@@ -16,7 +16,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.attendance.entity.AttendanceSupplementEntity;
+import net.lab1024.sa.attendance.domain.entity.AttendanceSupplementEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceSupplementForm;
 import net.lab1024.sa.attendance.service.AttendanceSupplementService;
 

@@ -36,3 +36,5 @@ public class MobileReminderSettingsResult {
     @Schema(description = "消息", example = "提醒设置已保存")
     private String message;
 }
+
+

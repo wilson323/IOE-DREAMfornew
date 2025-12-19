@@ -45,3 +45,5 @@ public class MobileAnomaliesResult {
     @Schema(description = "总记录数", example = "5")
     private Integer totalCount;
 }
+
+

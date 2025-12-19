@@ -35,3 +35,5 @@ public class MobileBiometricVerificationRequest {
     @Schema(description = "生物识别数据（Base64编码）", example = "base64_encoded_biometric_data")
     private String biometricData;
 }
+
+

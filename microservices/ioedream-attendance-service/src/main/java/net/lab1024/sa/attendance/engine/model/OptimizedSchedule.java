@@ -62,6 +62,26 @@ public class OptimizedSchedule {
     private Double optimizedScore;
 
     /**
+     * 优化得分（兼容简化引擎实现字段名）
+     */
+    private Double optimizationScore;
+
+    /**
+     * 优化后的排班数据（兼容简化引擎实现字段名）
+     */
+    private ScheduleData optimizedScheduleData;
+
+    /**
+     * 是否成功（兼容简化引擎实现）
+     */
+    private Boolean success;
+
+    /**
+     * 优化消息（兼容简化引擎实现）
+     */
+    private String optimizationMessage;
+
+    /**
      * 改进率
      */
     private Double improvementRate;

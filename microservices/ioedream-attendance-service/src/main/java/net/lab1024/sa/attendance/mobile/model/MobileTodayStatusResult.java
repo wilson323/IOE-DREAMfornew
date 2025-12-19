@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -31,6 +32,12 @@ public class MobileTodayStatusResult {
      */
     @Schema(description = "员工ID", example = "1001")
     private Long employeeId;
+
+    /**
+     * 今日日期（结构化字段）
+     */
+    @Schema(description = "今日日期", example = "2025-01-30")
+    private LocalDate date;
 
     /**
      * 今日日期
@@ -73,4 +80,11 @@ public class MobileTodayStatusResult {
      */
     @Schema(description = "考勤状态", example = "NORMAL", allowableValues = {"NORMAL", "LATE", "EARLY_LEAVE", "ABSENT"})
     private String attendanceStatus;
+
+    /**
+     * 当前班次信息
+     */
+    @Schema(description = "当前班次信息")
+    private WorkShiftInfo currentShift;
 }
+

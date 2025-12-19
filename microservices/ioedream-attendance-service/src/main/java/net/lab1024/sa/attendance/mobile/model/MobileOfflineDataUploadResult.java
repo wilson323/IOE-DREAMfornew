@@ -50,3 +50,5 @@ public class MobileOfflineDataUploadResult {
     @Schema(description = "上传时间", example = "2025-01-30T10:00:00")
     private java.time.LocalDateTime uploadTime;
 }
+
+

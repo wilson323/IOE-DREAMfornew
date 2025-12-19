@@ -401,7 +401,7 @@ public class ConflictResolverImpl implements ConflictResolver {
             // 3. 创建修改记录
 
             // 简化实现：假设我们可以移动第一个排班
-            ScheduleRecordModification modification = ConflictResolutionResult.ScheduleRecordModification.builder()
+            ConflictResolutionResult.ScheduleRecordModification modification = ConflictResolutionResult.ScheduleRecordModification.builder()
                     .recordId(timeConflict.getScheduleRecordId1())
                     .modificationType("UPDATE")
                     .modificationReason("时间调整解决冲突")
@@ -440,7 +440,7 @@ public class ConflictResolverImpl implements ConflictResolver {
     private boolean resolveByDeletion(TimeConflict timeConflict, ConflictResolutionResult result) {
         try {
             // 删除优先级较低的排班记录
-            ScheduleRecordModification modification = ConflictResolutionResult.ScheduleRecordModification.builder()
+            ConflictResolutionResult.ScheduleRecordModification modification = ConflictResolutionResult.ScheduleRecordModification.builder()
                     .recordId(timeConflict.getScheduleRecordId2())
                     .modificationType("DELETE")
                     .modificationReason("删除低优先级排班解决冲突")

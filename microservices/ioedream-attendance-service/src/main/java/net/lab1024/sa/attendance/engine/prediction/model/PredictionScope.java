@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 预测范围模型
@@ -27,4 +28,12 @@ public class PredictionScope {
     private LocalDate endDate;
     private String departmentId;
     private String shiftType;
+
+    public LocalDateTime getStartTime() {
+        return startDate != null ? startDate.atStartOfDay() : null;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endDate != null ? endDate.atTime(23, 59, 59) : null;
+    }
 }

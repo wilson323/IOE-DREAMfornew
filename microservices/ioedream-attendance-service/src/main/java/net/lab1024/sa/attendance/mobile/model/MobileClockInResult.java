@@ -1,8 +1,10 @@
 package net.lab1024.sa.attendance.mobile.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -19,14 +21,22 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "移动端上班打卡结果")
 public class MobileClockInResult {
+
+    /**
+     * 员工ID
+     */
+    @Schema(description = "员工ID", example = "1001")
+    private Long employeeId;
 
     /**
      * 是否成功
      */
     @Schema(description = "是否成功", example = "true")
-    private boolean success;
+    private Boolean success;
 
     /**
      * 打卡时间
@@ -81,4 +91,10 @@ public class MobileClockInResult {
      */
     @Schema(description = "考勤状态", example = "NORMAL", allowableValues = {"NORMAL", "LATE", "EARLY", "ABSENT"})
     private String attendanceStatus;
+
+    /**
+     * 打卡状态（兼容字段）
+     */
+    @Schema(description = "打卡状态", example = "SUCCESS")
+    private String clockInStatus;
 }

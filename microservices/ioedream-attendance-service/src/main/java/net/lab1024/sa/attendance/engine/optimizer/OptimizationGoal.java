@@ -55,6 +55,11 @@ public class OptimizationGoal {
     private Boolean isRequired;
 
     /**
+     * 容忍度
+     */
+    private Double tolerance;
+
+    /**
      * 目标参数
      */
     private Map<String, Object> parameters;

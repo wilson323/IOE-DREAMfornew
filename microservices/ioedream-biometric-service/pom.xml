@@ -77,6 +77,14 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- ==================== 公共模块聚合 ==================== -->
+        <!-- Common (完整公共模块) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Cloud Nacos Discovery (服务发现) -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -166,11 +174,11 @@
 
         <!-- ==================== 生物识别相关依赖 ==================== -->
         <!-- OpenCV Java绑定（用于图像处理和人脸检测） -->
-        <!-- 使用JavaCV (bytedeco) 提供的OpenCV Java绑定 -->
+        <!-- 使用标准OpenCV Maven依赖 -->
         <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>opencv-platform</artifactId>
-            <version>4.8.0-1.21</version>
+            <groupId>org.openpnp</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.5.1-2</version>
         </dependency>
 
         <!-- TensorFlow Java API（用于FaceNet模型推理） -->

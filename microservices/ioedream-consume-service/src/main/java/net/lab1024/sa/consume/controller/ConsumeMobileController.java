@@ -18,7 +18,6 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileFaceForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileNfcForm;
-import net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm;
 import net.lab1024.sa.consume.domain.form.ConsumePermissionValidateForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileQuickForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileScanForm;

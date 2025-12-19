@@ -1,17 +1,24 @@
 package net.lab1024.sa.visitor.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.service.AreaUnifiedService;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-
-import jakarta.annotation.Resource;
-import java.util.*;
 
 /**
  * AreaUnifiedService适配器配置
@@ -45,7 +52,8 @@ public class AreaUnifiedServiceAdapter {
     public AreaUnifiedService areaUnifiedService() {
         log.info("[区域统一服务适配器] 创建AreaUnifiedService适配器Bean");
         if (gatewayServiceClient == null) {
-            throw new IllegalStateException("GatewayServiceClient is not available. Please ensure CommonBeanAutoConfiguration is loaded.");
+            throw new IllegalStateException(
+                    "GatewayServiceClient is not available. Please ensure CommonBeanAutoConfiguration is loaded.");
         }
         return new AreaUnifiedServiceGatewayAdapter(gatewayServiceClient);
     }
@@ -76,8 +84,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/tree",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {}
-            );
+                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
@@ -88,8 +96,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/user/" + userId + "/accessible",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {}
-            );
+                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
@@ -100,8 +108,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/user/" + userId + "/area/" + areaId + "/has-access",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<Boolean>>() {}
-            );
+                    new TypeReference<ResponseDTO<Boolean>>() {
+                    });
             return response != null && response.isSuccess() && Boolean.TRUE.equals(response.getData());
         }
 
@@ -112,8 +120,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/code/" + areaCode,
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<AreaEntity>>() {}
-            );
+                    new TypeReference<ResponseDTO<AreaEntity>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : null;
         }
 
@@ -124,8 +132,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/" + areaId + "/path",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {}
-            );
+                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
@@ -136,8 +144,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/" + parentAreaId + "/children",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {}
-            );
+                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
@@ -148,8 +156,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/" + areaId + "/business/" + businessModule + "/attributes",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<Map<String, Object>>>() {}
-            );
+                    new TypeReference<ResponseDTO<Map<String, Object>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new HashMap<>();
         }
 
@@ -164,8 +172,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/business/attributes",
                     HttpMethod.POST,
                     request,
-                    new TypeReference<ResponseDTO<Boolean>>() {}
-            );
+                    new TypeReference<ResponseDTO<Boolean>>() {
+                    });
             return response != null && response.isSuccess() && Boolean.TRUE.equals(response.getData());
         }
 
@@ -180,8 +188,8 @@ public class AreaUnifiedServiceAdapter {
                     path,
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<Map<String, Object>>>>() {}
-            );
+                    new TypeReference<ResponseDTO<List<Map<String, Object>>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
@@ -192,8 +200,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/" + areaId + "/statistics",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<Map<String, Object>>>() {}
-            );
+                    new TypeReference<ResponseDTO<Map<String, Object>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new HashMap<>();
         }
 
@@ -204,8 +212,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/business-type/" + businessType,
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {}
-            );
+                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
@@ -216,8 +224,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/" + areaId + "/business/" + businessModule + "/support",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<Boolean>>() {}
-            );
+                    new TypeReference<ResponseDTO<Boolean>>() {
+                    });
             return response != null && response.isSuccess() && Boolean.TRUE.equals(response.getData());
         }
 
@@ -228,8 +236,8 @@ public class AreaUnifiedServiceAdapter {
                     "/api/v1/area/unified/" + areaId + "/supported-modules",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<Set<String>>>() {}
-            );
+                    new TypeReference<ResponseDTO<Set<String>>>() {
+                    });
             return response != null && response.isSuccess() ? response.getData() : new HashSet<>();
         }
     }

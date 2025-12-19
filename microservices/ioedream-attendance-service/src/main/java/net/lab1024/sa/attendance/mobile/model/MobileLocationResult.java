@@ -48,3 +48,5 @@ public class MobileLocationResult {
     @Schema(description = "地址", example = "北京市朝阳区")
     private String address;
 }
+
+

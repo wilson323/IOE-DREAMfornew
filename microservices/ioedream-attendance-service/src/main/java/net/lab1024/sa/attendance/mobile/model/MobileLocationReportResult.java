@@ -36,3 +36,5 @@ public class MobileLocationReportResult {
     @Schema(description = "消息", example = "位置上报成功")
     private String message;
 }
+
+

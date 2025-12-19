@@ -20,7 +20,7 @@ import net.lab1024.sa.consume.dao.PaymentRecordDao;
 import net.lab1024.sa.consume.manager.MultiPaymentManager;
 import net.lab1024.sa.consume.service.payment.adapter.AlipayPayAdapter;
 import net.lab1024.sa.consume.service.payment.adapter.WechatPayAdapter;
-import net.lab1024.sa.common.consume.entity.PaymentRecordEntity;
+import net.lab1024.sa.consume.entity.PaymentRecordEntity;
 import com.wechat.pay.java.service.payments.model.Transaction;
 
 /**

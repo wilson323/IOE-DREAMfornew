@@ -1,9 +1,8 @@
 package net.lab1024.sa.visitor.openapi.domain.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 /**
  * 审批请求
@@ -20,7 +19,7 @@ public class ApprovalRequest {
     @NotNull(message = "预约ID不能为空")
     private Long appointmentId;
 
-    @Schema(description = "审批结果", required = true, allowableValues = {"APPROVED", "REJECTED"})
+    @Schema(description = "审批结果", required = true, allowableValues = { "APPROVED", "REJECTED" })
     @NotNull(message = "审批结果不能为空")
     private String approvalResult;
 

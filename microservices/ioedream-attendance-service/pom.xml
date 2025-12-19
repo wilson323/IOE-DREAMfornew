@@ -70,6 +70,21 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Common Storage (文件存储) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- ==================== 公共模块聚合 ==================== -->
+        <!-- Common (完整公共模块) -->
+        <dependency>
+            <groupId>net.lab1024.sa</groupId>
+            <artifactId>microservices-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Cloud Nacos Discovery (服务发现) -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
