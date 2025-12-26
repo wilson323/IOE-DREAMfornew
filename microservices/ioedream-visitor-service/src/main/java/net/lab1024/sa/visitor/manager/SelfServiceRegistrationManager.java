@@ -1,9 +1,12 @@
 ﻿package net.lab1024.sa.visitor.manager;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.visitor.dao.SelfServiceRegistrationDao;
+import net.lab1024.sa.visitor.dao.*;
+import net.lab1024.sa.visitor.entity.*;
 import net.lab1024.sa.common.entity.visitor.SelfServiceRegistrationEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,13 +44,29 @@ import java.util.Random;
 public class SelfServiceRegistrationManager {
 
     private final SelfServiceRegistrationDao selfServiceRegistrationDao;
+    private final VisitorBiometricDao visitorBiometricDao;
+    private final VisitorApprovalDao visitorApprovalDao;
+    private final VisitRecordDao visitRecordDao;
+    private final TerminalInfoDao terminalInfoDao;
+    private final VisitorAdditionalInfoDao visitorAdditionalInfoDao;
     private final Random random = new Random();
 
     /**
-     * 构造函数注入依赖
+     * 构造函数注入依赖（支持6表关联操作）
      */
-    public SelfServiceRegistrationManager(SelfServiceRegistrationDao selfServiceRegistrationDao) {
+    public SelfServiceRegistrationManager(
+            SelfServiceRegistrationDao selfServiceRegistrationDao,
+            VisitorBiometricDao visitorBiometricDao,
+            VisitorApprovalDao visitorApprovalDao,
+            VisitRecordDao visitRecordDao,
+            TerminalInfoDao terminalInfoDao,
+            VisitorAdditionalInfoDao visitorAdditionalInfoDao) {
         this.selfServiceRegistrationDao = selfServiceRegistrationDao;
+        this.visitorBiometricDao = visitorBiometricDao;
+        this.visitorApprovalDao = visitorApprovalDao;
+        this.visitRecordDao = visitRecordDao;
+        this.terminalInfoDao = terminalInfoDao;
+        this.visitorAdditionalInfoDao = visitorAdditionalInfoDao;
     }
 
     /**
@@ -199,9 +218,9 @@ public class SelfServiceRegistrationManager {
     }
 
     /**
-     * 审批登记记录
+     * 审批登记记录（支持6表结构）
      * <p>
-     * 执行审批操作，更新审批状态和审批信息
+     * 执行审批操作，更新核心表审批状态和审批信息表
      * </p>
      *
      * @param registrationId 登记ID
@@ -209,8 +228,9 @@ public class SelfServiceRegistrationManager {
      * @param approverName 审批人姓名
      * @param approved 是否批准
      * @param approvalComment 审批意见
-     * @return 更新后的记录
+     * @return 更新后的完整记录（包含审批信息）
      */
+    @Transactional(rollbackFor = Exception.class)
     public SelfServiceRegistrationEntity approveRegistration(Long registrationId,
                                                             Long approverId,
                                                             String approverName,
@@ -219,109 +239,167 @@ public class SelfServiceRegistrationManager {
         log.info("[自助登记] 审批登记: registrationId={}, approver={}, approved={}",
                 registrationId, approverName, approved);
 
+        // 1. 查询核心登记信息
         SelfServiceRegistrationEntity registration = selfServiceRegistrationDao.selectById(registrationId);
         if (registration == null) {
             log.error("[自助登记] 登记记录不存在: registrationId={}", registrationId);
             throw new RuntimeException("登记记录不存在: " + registrationId);
         }
 
-        // 检查当前状态
+        // 2. 检查当前状态
         if (registration.getRegistrationStatus() != 0) {
             log.warn("[自助登记] 登记记录已审批，状态不符: currentStatus={}",
                     registration.getRegistrationStatus());
             throw new RuntimeException("登记记录已审批，无法重复审批");
         }
 
-        // 更新审批信息
-        registration.setApproverId(approverId);
-        registration.setApproverName(approverName);
-        registration.setApprovalTime(LocalDateTime.now());
-        registration.setApprovalComment(approvalComment);
-
-        // 更新状态：1-审批通过，2-审批拒绝
-        registration.setRegistrationStatus(approved ? 1 : 2);
-
-        // 更新数据库
+        // 3. 更新核心表审批状态
+        registration.setRegistrationStatus(approved ? 1 : 2); // 1-审批通过 2-审批拒绝
         selfServiceRegistrationDao.updateById(registration);
+
+        // 4. 插入或更新审批信息表
+        VisitorApprovalEntity approval = visitorApprovalDao.selectOne(
+                new LambdaQueryWrapper<VisitorApprovalEntity>()
+                        .eq(VisitorApprovalEntity::getRegistrationId, registrationId)
+        );
+
+        if (approval == null) {
+            // 新增审批记录
+            approval = VisitorApprovalEntity.builder()
+                    .registrationId(registrationId)
+                    .approverId(approverId)
+                    .approverName(approverName)
+                    .approvalTime(LocalDateTime.now())
+                    .approvalComment(approvalComment)
+                    .build();
+            visitorApprovalDao.insert(approval);
+            log.info("[自助登记] 新增审批记录: approvalId={}", approval.getApprovalId());
+        } else {
+            // 更新已有审批记录
+            approval.setApproverId(approverId);
+            approval.setApproverName(approverName);
+            approval.setApprovalTime(LocalDateTime.now());
+            approval.setApprovalComment(approvalComment);
+            visitorApprovalDao.updateById(approval);
+            log.info("[自助登记] 更新审批记录: approvalId={}", approval.getApprovalId());
+        }
 
         log.info("[自助登记] 审批完成: registrationId={}, newStatus={}", registrationId,
                 approved ? "审批通过" : "审批拒绝");
 
-        return registration;
+        // 5. 返回完整登记信息（包含审批信息）
+        return getRegistrationByVisitorCode(registration.getVisitorCode());
     }
 
     /**
-     * 访客签到
+     * 访客签到（支持6表结构）
      * <p>
-     * 记录访客签到时间和状态
+     * 记录访客签到时间和状态，同时创建访问记录
      * </p>
      *
      * @param visitorCode 访客码
-     * @return 签到后的记录
+     * @return 签到后的完整记录（包含访问记录信息）
      */
+    @Transactional(rollbackFor = Exception.class)
     public SelfServiceRegistrationEntity checkIn(String visitorCode) {
         log.info("[自助登记] 访客签到: visitorCode={}", visitorCode);
 
+        // 1. 查询核心登记信息
         SelfServiceRegistrationEntity registration = selfServiceRegistrationDao.selectByVisitorCode(visitorCode);
         if (registration == null) {
             log.error("[自助登记] 访客码不存在: visitorCode={}", visitorCode);
             throw new RuntimeException("访客码不存在: " + visitorCode);
         }
 
-        // 检查状态
+        // 2. 检查状态
         if (registration.getRegistrationStatus() != 1) {
             log.warn("[自助登记] 登记状态不允许签到: currentStatus={}",
                     registration.getRegistrationStatus());
             throw new RuntimeException("登记状态不允许签到");
         }
 
-        // 更新签到信息
-        registration.setCheckInTime(LocalDateTime.now());
-        registration.setRegistrationStatus(3); // 已签到
-
+        // 3. 更新核心登记状态为"已签到"
+        registration.setRegistrationStatus(3); // 3-已签到
         selfServiceRegistrationDao.updateById(registration);
 
-        log.info("[自助登记] 签到成功: registrationCode={}, checkInTime={}",
-                registration.getRegistrationCode(), registration.getCheckInTime());
+        // 4. 创建或更新访问记录
+        VisitRecordEntity record = visitRecordDao.selectOne(
+                new LambdaQueryWrapper<VisitRecordEntity>()
+                        .eq(VisitRecordEntity::getRegistrationId, registration.getRegistrationId())
+        );
 
-        return registration;
+        if (record == null) {
+            // 新增访问记录
+            record = VisitRecordEntity.builder()
+                    .registrationId(registration.getRegistrationId())
+                    .checkInTime(LocalDateTime.now())
+                    .build();
+            visitRecordDao.insert(record);
+            log.info("[自助登记] 新增访问记录: recordId={}", record.getRecordId());
+        } else {
+            // 更新已有访问记录的签到时间
+            record.setCheckInTime(LocalDateTime.now());
+            visitRecordDao.updateById(record);
+            log.info("[自助登记] 更新访问记录签到时间: recordId={}", record.getRecordId());
+        }
+
+        log.info("[自助登记] 签到成功: registrationCode={}, checkInTime={}",
+                registration.getRegistrationCode(), LocalDateTime.now());
+
+        // 5. 返回完整登记信息（包含访问记录）
+        return getRegistrationByVisitorCode(visitorCode);
     }
 
     /**
-     * 访客签离
+     * 访客签离（支持6表结构）
      * <p>
      * 记录访客签离时间并更新状态
      * </p>
      *
      * @param visitorCode 访客码
-     * @return 签离后的记录
+     * @return 签离后的完整记录（包含访问记录信息）
      */
+    @Transactional(rollbackFor = Exception.class)
     public SelfServiceRegistrationEntity checkOut(String visitorCode) {
         log.info("[自助登记] 访客签离: visitorCode={}", visitorCode);
 
+        // 1. 查询核心登记信息
         SelfServiceRegistrationEntity registration = selfServiceRegistrationDao.selectByVisitorCode(visitorCode);
         if (registration == null) {
             log.error("[自助登记] 访客码不存在: visitorCode={}", visitorCode);
             throw new RuntimeException("访客码不存在: " + visitorCode);
         }
 
-        // 检查状态
+        // 2. 检查状态
         if (registration.getRegistrationStatus() != 3) {
             log.warn("[自助登记] 访客未签到，无法签离: currentStatus={}",
                     registration.getRegistrationStatus());
             throw new RuntimeException("访客未签到，无法签离");
         }
 
-        // 更新签离信息
-        registration.setCheckOutTime(LocalDateTime.now());
-        registration.setRegistrationStatus(4); // 已完成
-
+        // 3. 更新核心登记状态为"已完成"
+        registration.setRegistrationStatus(4); // 4-已完成
         selfServiceRegistrationDao.updateById(registration);
 
-        log.info("[自助登记] 签离成功: registrationCode={}, checkOutTime={}",
-                registration.getRegistrationCode(), registration.getCheckOutTime());
+        // 4. 更新访问记录的签离时间
+        VisitRecordEntity record = visitRecordDao.selectOne(
+                new LambdaQueryWrapper<VisitRecordEntity>()
+                        .eq(VisitRecordEntity::getRegistrationId, registration.getRegistrationId())
+        );
 
-        return registration;
+        if (record != null) {
+            record.setCheckOutTime(LocalDateTime.now());
+            visitRecordDao.updateById(record);
+            log.info("[自助登记] 更新访问记录签离时间: recordId={}", record.getRecordId());
+        } else {
+            log.warn("[自助登记] 访问记录不存在: registrationId={}", registration.getRegistrationId());
+        }
+
+        log.info("[自助登记] 签离成功: registrationCode={}, checkOutTime={}",
+                registration.getRegistrationCode(), LocalDateTime.now());
+
+        // 5. 返回完整登记信息（包含访问记录）
+        return getRegistrationByVisitorCode(visitorCode);
     }
 
     /**
@@ -369,6 +447,157 @@ public class SelfServiceRegistrationManager {
     public List<SelfServiceRegistrationEntity> getOverdueVisitors() {
         log.debug("[自助登记] 查询超时访客");
         return selfServiceRegistrationDao.selectOverdueVisitors(LocalDateTime.now());
+    }
+
+    /**
+     * 创建自助登记记录（支持6表结构）
+     * <p>
+     * 核心登记方法，涉及6个表的插入操作
+     * 使用事务保证数据一致性
+     * </p>
+     *
+     * @param registration 登记信息
+     * @return 创建后的完整登记记录
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public SelfServiceRegistrationEntity createRegistration(SelfServiceRegistrationEntity registration) {
+        log.info("[自助登记] 创建自助登记: visitorName={}", registration.getVisitorName());
+
+        // 1. 初始化登记信息（生成访客码、登记编号等）
+        registration = initializeRegistration(registration);
+
+        // 2. 保存核心登记信息
+        selfServiceRegistrationDao.insert(registration);
+        log.info("[自助登记] 核心登记信息已保存: registrationId={}", registration.getRegistrationId());
+
+        // 3. 保存生物识别信息（如果有）
+        if (registration.getFacePhotoUrl() != null || registration.getFaceFeature() != null) {
+            VisitorBiometricEntity biometric = VisitorBiometricEntity.builder()
+                    .registrationId(registration.getRegistrationId())
+                    .facePhotoUrl(registration.getFacePhotoUrl())
+                    .faceFeature(registration.getFaceFeature())
+                    .idCardPhotoUrl(registration.getIdCardPhotoUrl())
+                    .build();
+            visitorBiometricDao.insert(biometric);
+            log.info("[自助登记] 生物识别信息已保存: biometricId={}", biometric.getBiometricId());
+        }
+
+        // 4. 保存终端信息（如果有）
+        if (registration.getTerminalId() != null) {
+            TerminalInfoEntity terminalInfo = TerminalInfoEntity.builder()
+                    .registrationId(registration.getRegistrationId())
+                    .terminalId(registration.getTerminalId())
+                    .terminalLocation(registration.getTerminalLocation())
+                    .visitorCard(registration.getVisitorCard())
+                    .cardPrintStatus(registration.getCardPrintStatus())
+                    .build();
+            terminalInfoDao.insert(terminalInfo);
+            log.info("[自助登记] 终端信息已保存: terminalInfoId={}", terminalInfo.getTerminalInfoId());
+        }
+
+        // 5. 保存附加信息（如果有）
+        if (registration.getBelongings() != null || registration.getLicensePlate() != null) {
+            VisitorAdditionalInfoEntity additionalInfo = VisitorAdditionalInfoEntity.builder()
+                    .registrationId(registration.getRegistrationId())
+                    .belongings(registration.getBelongings())
+                    .licensePlate(registration.getLicensePlate())
+                    .build();
+            visitorAdditionalInfoDao.insert(additionalInfo);
+            log.info("[自助登记] 附加信息已保存: additionalInfoId={}", additionalInfo.getAdditionalInfoId());
+        }
+
+        log.info("[自助登记] 自助登记创建成功: registrationId={}, visitorCode={}",
+                registration.getRegistrationId(), registration.getVisitorCode());
+
+        return registration;
+    }
+
+    /**
+     * 根据访客码查询登记信息（JOIN 6个表）
+     * <p>
+     * 从6个表中查询并组装完整的登记信息
+     * 包括：核心信息、生物识别、审批信息、访问记录、终端信息、附加信息
+     * </p>
+     *
+     * @param visitorCode 访客码
+     * @return 完整的登记信息（包含所有关联表数据）
+     */
+    public SelfServiceRegistrationEntity getRegistrationByVisitorCode(String visitorCode) {
+        log.info("[自助登记] 查询登记记录: visitorCode={}", visitorCode);
+
+        // 1. 查询核心登记信息
+        SelfServiceRegistrationEntity registration = selfServiceRegistrationDao.selectByVisitorCode(visitorCode);
+        if (registration == null) {
+            log.warn("[自助登记] 登记记录不存在: visitorCode={}", visitorCode);
+            return null;
+        }
+
+        // 2. 查询并组装生物识别信息
+        VisitorBiometricEntity biometric = visitorBiometricDao.selectOne(
+                new LambdaQueryWrapper<VisitorBiometricEntity>()
+                        .eq(VisitorBiometricEntity::getRegistrationId, registration.getRegistrationId())
+        );
+        if (biometric != null) {
+            registration.setFacePhotoUrl(biometric.getFacePhotoUrl());
+            registration.setFaceFeature(biometric.getFaceFeature());
+            registration.setIdCardPhotoUrl(biometric.getIdCardPhotoUrl());
+        }
+
+        // 3. 查询并组装审批信息
+        VisitorApprovalEntity approval = visitorApprovalDao.selectOne(
+                new LambdaQueryWrapper<VisitorApprovalEntity>()
+                        .eq(VisitorApprovalEntity::getRegistrationId, registration.getRegistrationId())
+        );
+        if (approval != null) {
+            registration.setApproverId(approval.getApproverId());
+            registration.setApproverName(approval.getApproverName());
+            registration.setApprovalTime(approval.getApprovalTime());
+            registration.setApprovalComment(approval.getApprovalComment());
+        }
+
+        // 4. 查询并组装访问记录信息
+        VisitRecordEntity record = visitRecordDao.selectOne(
+                new LambdaQueryWrapper<VisitRecordEntity>()
+                        .eq(VisitRecordEntity::getRegistrationId, registration.getRegistrationId())
+        );
+        if (record != null) {
+            registration.setCheckInTime(record.getCheckInTime());
+            registration.setCheckOutTime(record.getCheckOutTime());
+            registration.setEscortRequired(record.getEscortRequired());
+            registration.setEscortUser(record.getEscortUser());
+        }
+
+        // 5. 查询并组装终端信息
+        TerminalInfoEntity terminalInfo = terminalInfoDao.selectOne(
+                new LambdaQueryWrapper<TerminalInfoEntity>()
+                        .eq(TerminalInfoEntity::getRegistrationId, registration.getRegistrationId())
+        );
+        if (terminalInfo != null) {
+            registration.setTerminalId(terminalInfo.getTerminalId());
+            registration.setTerminalLocation(terminalInfo.getTerminalLocation());
+            registration.setVisitorCard(terminalInfo.getVisitorCard());
+            registration.setCardPrintStatus(terminalInfo.getCardPrintStatus());
+        }
+
+        // 6. 查询并组装附加信息
+        VisitorAdditionalInfoEntity additionalInfo = visitorAdditionalInfoDao.selectOne(
+                new LambdaQueryWrapper<VisitorAdditionalInfoEntity>()
+                        .eq(VisitorAdditionalInfoEntity::getRegistrationId, registration.getRegistrationId())
+        );
+        if (additionalInfo != null) {
+            registration.setBelongings(additionalInfo.getBelongings());
+            registration.setLicensePlate(additionalInfo.getLicensePlate());
+        }
+
+        log.info("[自助登记] 登记记录查询成功: registrationId={}, 包含{}个关联表数据",
+                registration.getRegistrationId(),
+                (biometric != null ? 1 : 0) +
+                (approval != null ? 1 : 0) +
+                (record != null ? 1 : 0) +
+                (terminalInfo != null ? 1 : 0) +
+                (additionalInfo != null ? 1 : 0));
+
+        return registration;
     }
 
     /**

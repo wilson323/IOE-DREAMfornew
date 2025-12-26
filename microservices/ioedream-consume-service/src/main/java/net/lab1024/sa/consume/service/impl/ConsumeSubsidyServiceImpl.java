@@ -78,14 +78,14 @@ public class ConsumeSubsidyServiceImpl implements ConsumeSubsidyService {
                 queryWrapper.eq(ConsumeSubsidyEntity::getSubsidyType, queryForm.getSubsidyType());
             }
             if (queryForm.getSubsidyStatus() != null) {
-                queryWrapper.eq(ConsumeSubsidyEntity::getSubsidyStatus, queryForm.getSubsidyStatus());
+                queryWrapper.eq(ConsumeSubsidyEntity::getStatus, queryForm.getSubsidyStatus()); // getSubsidyStatus
             }
             if (queryForm.hasAmountRange()) {
                 if (queryForm.getMinAmount() != null) {
-                    queryWrapper.ge(ConsumeSubsidyEntity::getSubsidyAmount, queryForm.getMinAmount());
+                    queryWrapper.ge(ConsumeSubsidyEntity::getTotalAmount, queryForm.getMinAmount()); // getSubsidyAmount
                 }
                 if (queryForm.getMaxAmount() != null) {
-                    queryWrapper.le(ConsumeSubsidyEntity::getSubsidyAmount, queryForm.getMaxAmount());
+                    queryWrapper.le(ConsumeSubsidyEntity::getTotalAmount, queryForm.getMaxAmount()); // getSubsidyAmount
                 }
             }
             if (queryForm.getAutoRenew() != null) {
@@ -95,7 +95,7 @@ public class ConsumeSubsidyServiceImpl implements ConsumeSubsidyService {
                 queryWrapper.and(wrapper -> wrapper
                         .like(ConsumeSubsidyEntity::getSubsidyCode, queryForm.getKeyword())
                         .or()
-                        .like(ConsumeSubsidyEntity::getSubsidyName, queryForm.getKeyword()));
+                        .like(ConsumeSubsidyEntity::getDescription, queryForm.getKeyword())); // getSubsidyName
             }
 
             // 添加排序

@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import net.lab1024.sa.common.entity.BaseEntity;
 
@@ -37,6 +38,7 @@ import net.lab1024.sa.common.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @TableName("t_consume_account_kind")
 @Schema(description = "消费账户类别实体")
 public class ConsumeAccountKindEntity extends BaseEntity {

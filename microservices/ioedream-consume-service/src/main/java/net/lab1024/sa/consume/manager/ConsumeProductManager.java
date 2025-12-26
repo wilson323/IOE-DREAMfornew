@@ -111,7 +111,7 @@ public class ConsumeProductManager {
             return false;
         }
 
-        return product.hasStock() && product.getStockQuantity() >= requiredQuantity;
+        return hasStock(product) && getStockQuantity(product) >= requiredQuantity; // hasStock, getStockQuantity
     }
 
     /**
@@ -127,25 +127,26 @@ public class ConsumeProductManager {
         }
 
         // 检查产品状态
-        if (!product.isOnSale()) {
+        if (!isOnSale(product)) { // isOnSale
             return false;
         }
 
         // 检查库存
-        if (!product.hasStock()) {
+        if (!hasStock(product)) { // hasStock
             return false;
         }
 
         // 检查销售时间段
-        if (product.getSaleTimePeriods() == null || product.getSaleTimePeriods().trim().isEmpty()) {
+        String timePeriods = getSaleTimePeriods(product); // getSaleTimePeriods
+        if (timePeriods == null || timePeriods.trim().isEmpty()) {
             return true; // 没有时间限制，一直可销售
         }
 
         try {
-            List<String> timePeriods = parseTimePeriods(product.getSaleTimePeriods());
+            List<String> timePeriodList = parseTimePeriods(timePeriods);
             String currentTimeStr = currentTime.toLocalTime().toString();
 
-            for (String timePeriod : timePeriods) {
+            for (String timePeriod : timePeriodList) {
                 if (isTimeInRange(currentTimeStr, timePeriod)) {
                     return true;
                 }
@@ -154,7 +155,7 @@ public class ConsumeProductManager {
             return false;
         } catch (Exception e) {
             log.error("解析销售时间段失败: product={}, timePeriods={}, error={}",
-                product.getProductId(), product.getSaleTimePeriods(), e.getMessage(), e);
+                product.getProductId(), timePeriods, e.getMessage(), e);
             return true; // 解析失败时默认可销售，避免影响业务
         }
     }
@@ -167,16 +168,16 @@ public class ConsumeProductManager {
      * @return 实际售价
      */
     public BigDecimal calculateActualPrice(ConsumeProductEntity product, BigDecimal discountRate) {
-        if (product == null || product.getSalePrice() == null) {
+        if (product == null || getSalePrice(product) == null) { // getSalePrice
             return BigDecimal.ZERO;
         }
 
-        BigDecimal actualPrice = product.getSalePrice();
+        BigDecimal actualPrice = getSalePrice(product); // getSalePrice
 
         // 检查是否允许折扣
-        if (discountRate != null && product.canDiscount()) {
+        if (discountRate != null && canDiscount(product)) { // canDiscount
             // 不能超过最大折扣比例
-            BigDecimal maxDiscount = product.getMaxDiscountRate();
+            BigDecimal maxDiscount = getMaxDiscountRate(product); // getMaxDiscountRate
             if (maxDiscount != null && discountRate.compareTo(maxDiscount) > 0) {
                 discountRate = maxDiscount;
             }
@@ -260,7 +261,7 @@ public class ConsumeProductManager {
         }
 
         // 上架产品不能删除
-        if (product.isOnSale()) {
+        if (isOnSale(product)) { // isOnSale
             result.put("canDelete", false);
             result.put("reason", "上架产品不能删除，请先下架");
             return result;
@@ -292,8 +293,8 @@ public class ConsumeProductManager {
         }
 
         // 检查库存是否足够（减少库存时）
-        if (quantity < 0 && product.getStockQuantity() + quantity < 0) {
-            throw ConsumeProductException.insufficientStock(productId, product.getStockQuantity());
+        if (quantity < 0 && getStockQuantity(product) + quantity < 0) { // getStockQuantity
+            throw ConsumeProductException.insufficientStock(productId, getStockQuantity(product)); // getStockQuantity
         }
 
         int updatedRows = consumeProductDao.updateStock(productId, quantity);
@@ -339,7 +340,7 @@ public class ConsumeProductManager {
                 }
 
                 // 检查库存是否足够（减少库存时）
-                if (quantity < 0 && !product.hasStock() && product.getStockQuantity() + quantity < 0) {
+                if (quantity < 0 && !hasStock(product) && getStockQuantity(product) + quantity < 0) { // hasStock, getStockQuantity
                     errors.add("库存不足: " + product.getProductName());
                     continue;
                 }
@@ -456,5 +457,174 @@ public class ConsumeProductManager {
      */
     public List<ConsumeProductVO> getLowStockProducts() {
         return consumeProductDao.selectLowStockProducts();
+    }
+
+    // ==================== 业务方法实现（Entity方法迁移） ====================
+
+    /**
+     * 检查产品是否有库存
+     *
+     * @param product 产品信息
+     * @return true-有库存，false-无库存
+     */
+    public boolean hasStock(ConsumeProductEntity product) {
+        if (product == null || product.getStock() == null) {
+            return false;
+        }
+        return product.getStock() > 0;
+    }
+
+    /**
+     * 获取产品库存数量
+     *
+     * @param product 产品信息
+     * @return 库存数量
+     */
+    public Integer getStockQuantity(ConsumeProductEntity product) {
+        if (product == null || product.getStock() == null) {
+            return 0;
+        }
+        return product.getStock();
+    }
+
+    /**
+     * 检查产品是否在售
+     *
+     * @param product 产品信息
+     * @return true-在售，false-未上架
+     */
+    public boolean isOnSale(ConsumeProductEntity product) {
+        if (product == null || product.getStatus() == null) {
+            return false;
+        }
+        return product.getStatus() == 1; // 1-上架
+    }
+
+    /**
+     * 获取产品售价
+     *
+     * @param product 产品信息
+     * @return 售价
+     */
+    public BigDecimal getSalePrice(ConsumeProductEntity product) {
+        if (product == null || product.getPrice() == null) {
+            return BigDecimal.ZERO;
+        }
+        return product.getPrice();
+    }
+
+    /**
+     * 获取产品基础价格（原价）
+     *
+     * @param product 产品信息
+     * @return 基础价格
+     */
+    public BigDecimal getBasePrice(ConsumeProductEntity product) {
+        if (product == null || product.getOriginalPrice() == null) {
+            return BigDecimal.ZERO;
+        }
+        return product.getOriginalPrice();
+    }
+
+    /**
+     * 检查产品是否允许折扣
+     *
+     * @param product 产品信息
+     * @return true-允许折扣，false-不允许
+     */
+    public boolean canDiscount(ConsumeProductEntity product) {
+        if (product == null || product.getStatus() == null) {
+            return false;
+        }
+        // 只有在售产品才允许折扣
+        return product.getStatus() == 1; // 1-上架
+    }
+
+    /**
+     * 获取最大折扣比例
+     * 默认30%最大折扣
+     *
+     * @param product 产品信息
+     * @return 最大折扣比例
+     */
+    public BigDecimal getMaxDiscountRate(ConsumeProductEntity product) {
+        if (product == null) {
+            return new BigDecimal("0.3"); // 默认30%
+        }
+        // TODO: 可以从扩展字段读取自定义最大折扣
+        return new BigDecimal("0.3"); // 默认30%
+    }
+
+    /**
+     * 获取库存警戒线
+     *
+     * @param product 产品信息
+     * @return 库存警戒线
+     */
+    public Integer getWarningStock(ConsumeProductEntity product) {
+        if (product == null || product.getMinStock() == null) {
+            return 10; // 默认10
+        }
+        return product.getMinStock();
+    }
+
+    /**
+     * 获取推荐排序序号
+     *
+     * @param product 产品信息
+     * @return 推荐序号
+     */
+    public Integer getRecommendSort(ConsumeProductEntity product) {
+        if (product == null || product.getRecommendOrder() == null) {
+            return 999; // 默认排在最后
+        }
+        return product.getRecommendOrder();
+    }
+
+    /**
+     * 获取销售时间段
+     * 默认返回空字符串（无时间限制）
+     *
+     * @param product 产品信息
+     * @return 销售时间段JSON
+     */
+    public String getSaleTimePeriods(ConsumeProductEntity product) {
+        if (product == null) {
+            return "";
+        }
+        // TODO: 可以从扩展字段读取自定义销售时间段
+        return ""; // 默认无时间限制
+    }
+
+    /**
+     * 验证产品业务规则
+     *
+     * @param product 产品信息
+     * @return 验证错误列表
+     */
+    public List<String> validateBusinessRules(ConsumeProductEntity product) {
+        List<String> errors = new ArrayList<>();
+
+        if (product == null) {
+            errors.add("产品信息不能为空");
+            return errors;
+        }
+
+        // 验证价格
+        if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            errors.add("产品售价必须大于0");
+        }
+
+        // 验证库存
+        if (product.getStock() == null || product.getStock() < 0) {
+            errors.add("库存数量不能为负数");
+        }
+
+        // 验证价格合理性
+        if (!validatePriceReasonable(product.getOriginalPrice(), product.getPrice(), product.getCostPrice())) {
+            errors.add("价格设置不合理：售价不能高于原价，成本价不能高于售价");
+        }
+
+        return errors;
     }
 }

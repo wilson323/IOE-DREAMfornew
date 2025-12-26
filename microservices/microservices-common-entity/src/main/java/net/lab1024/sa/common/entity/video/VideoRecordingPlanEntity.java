@@ -311,10 +311,10 @@ public class VideoRecordingPlanEntity extends BaseEntity {
      * @return true-优先级更高，false-优先级更低或相同
      */
     public boolean hasHigherPriorityThan(VideoRecordingPlanEntity other) {
-        if (other == null || other.getPriority() == null) {
+        if (other == null || other.priority == null) {
             return true;
         }
-        return priority != null && priority > other.getPriority();
+        return priority != null && priority > other.priority;
     }
 
     /**

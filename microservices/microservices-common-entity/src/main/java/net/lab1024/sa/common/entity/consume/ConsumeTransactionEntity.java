@@ -44,7 +44,7 @@ public class ConsumeTransactionEntity extends BaseEntity {
     /**
      * 交易ID（主键）
      */
-    @TableId(type = IdType.AUTO_INCREMENT)
+    @TableId(type = IdType.AUTO)
     @Schema(description = "交易ID")
     private Long transactionId;
 

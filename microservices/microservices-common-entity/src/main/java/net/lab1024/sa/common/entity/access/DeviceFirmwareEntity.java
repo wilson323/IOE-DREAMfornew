@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.common.entity.access;
+package net.lab1024.sa.common.entity.access;
 
 import java.time.LocalDateTime;
 
@@ -293,7 +293,7 @@ public class DeviceFirmwareEntity extends BaseEntity {
 
         // 检查最小版本要求
         if (minFirmwareVersion != null && !minFirmwareVersion.isEmpty()) {
-            if (!compareVersion(currentVersion, minFirmwareVersion) >= 0) {
+            if (compareVersion(currentVersion, minFirmwareVersion) < 0) {
                 return false;
             }
         }

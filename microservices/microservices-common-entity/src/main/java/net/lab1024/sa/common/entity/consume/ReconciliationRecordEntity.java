@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import net.lab1024.sa.common.entity.BaseEntity;
 
@@ -40,6 +41,7 @@ import net.lab1024.sa.common.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @TableName("t_consume_reconciliation_record")
 @Schema(description = "对账记录实体")
 public class ReconciliationRecordEntity extends BaseEntity {

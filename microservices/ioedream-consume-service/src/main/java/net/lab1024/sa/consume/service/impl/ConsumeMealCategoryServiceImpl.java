@@ -357,9 +357,12 @@ public class ConsumeMealCategoryServiceImpl implements ConsumeMealCategoryServic
                 throw ConsumeMealCategoryException.notFound(categoryId);
             }
 
-            entity.setBasePrice(basePrice);
-            entity.setStaffPrice(staffPrice);
-            entity.setStudentPrice(studentPrice);
+            // TODO: 价格字段需要从extendedAttributes读取或添加到Entity
+            // entity.setBasePrice(basePrice);
+            // entity.setStaffPrice(staffPrice);
+            // entity.setStudentPrice(studentPrice);
+            log.warn("[餐类服务] [餐次分类] 价格字段设置暂未实现: categoryId={}, basePrice={}, staffPrice={}, studentPrice={}",
+                    categoryId, basePrice, staffPrice, studentPrice);
             consumeMealCategoryDao.updateById(entity);
 
             log.info("[餐类服务] [餐次分类] 设置分类价格成功: categoryId={}", categoryId);
@@ -409,16 +412,21 @@ public class ConsumeMealCategoryServiceImpl implements ConsumeMealCategoryServic
             newEntity.setStatus(0); // 默认禁用
             newEntity.setIsSystem(0); // 非系统预设
             newEntity.setDescription(sourceEntity.getDescription());
-            newEntity.setBasePrice(sourceEntity.getBasePrice());
-            newEntity.setStaffPrice(sourceEntity.getStaffPrice());
-            newEntity.setStudentPrice(sourceEntity.getStudentPrice());
-            newEntity.setMaxAmountLimit(sourceEntity.getMaxAmountLimit());
-            newEntity.setMinAmountLimit(sourceEntity.getMinAmountLimit());
-            newEntity.setDailyLimitCount(sourceEntity.getDailyLimitCount());
-            newEntity.setAllowDiscount(sourceEntity.getAllowDiscount());
-            newEntity.setDiscountRate(sourceEntity.getDiscountRate());
-            newEntity.setAvailableTimePeriods(sourceEntity.getAvailableTimePeriods());
-            newEntity.setIsDefault(0); // 非默认
+
+            // TODO: 以下字段需要从extendedAttributes读取或添加到Entity
+            // newEntity.setBasePrice(sourceEntity.getBasePrice());
+            // newEntity.setStaffPrice(sourceEntity.getStaffPrice());
+            // newEntity.setStudentPrice(sourceEntity.getStudentPrice());
+            // newEntity.setMaxAmountLimit(sourceEntity.getMaxAmountLimit());
+            // newEntity.setMinAmountLimit(sourceEntity.getMinAmountLimit());
+            // newEntity.setDailyLimitCount(sourceEntity.getDailyLimitCount());
+            // newEntity.setAllowDiscount(sourceEntity.getAllowDiscount());
+            // newEntity.setDiscountRate(sourceEntity.getDiscountRate());
+            // newEntity.setAvailableTimePeriods(sourceEntity.getAvailableTimePeriods());
+            // newEntity.setIsDefault(0); // 非默认
+            log.warn("[餐类服务] [餐次分类] 扩展字段复制暂未实现，部分字段未复制: categoryId={}", categoryId);
+
+            // newEntity.setIsDefault(0); // 非默认 - Entity不存在此字段
 
             consumeMealCategoryDao.insert(newEntity);
 

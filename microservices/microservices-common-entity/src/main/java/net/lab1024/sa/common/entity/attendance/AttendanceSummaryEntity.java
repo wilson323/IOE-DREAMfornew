@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.common.entity.attendance;
+package net.lab1024.sa.common.entity.attendance;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

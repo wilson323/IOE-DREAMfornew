@@ -768,13 +768,13 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
                     }
 
                     // 验证价格合理性
-                    if (!consumeProductManager.validatePriceReasonable(product.getBasePrice(), salePrice, product.getCostPrice())) {
+                    if (!consumeProductManager.validatePriceReasonable(product.getOriginalPrice(), salePrice, product.getCostPrice())) {
                         errors.add("价格设置不合理: " + product.getProductName());
                         continue;
                     }
 
                     // 更新价格
-                    product.setSalePrice(salePrice);
+                    product.setPrice(salePrice);
                     consumeProductDao.updateById(product);
                     successCount++;
 
@@ -1150,17 +1150,17 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
         entity.setProductType(addForm.getProductType());
         entity.setSpecification(addForm.getSpecification());
         entity.setUnit(addForm.getUnit());
-        entity.setBasePrice(addForm.getBasePrice());
-        entity.setSalePrice(addForm.getSalePrice());
+        entity.setOriginalPrice(addForm.getBasePrice());
+        entity.setPrice(addForm.getSalePrice());
         entity.setCostPrice(addForm.getCostPrice());
-        entity.setStockQuantity(addForm.getStockQuantity());
-        entity.setWarningStock(addForm.getWarningStock());
+        entity.setStock(addForm.getStockQuantity());
+        entity.setMinStock(addForm.getWarningStock());
         entity.setImageUrl(addForm.getImageUrl());
         entity.setDescription(addForm.getDescription());
         entity.setNutritionInfo(addForm.getNutritionInfo());
         entity.setAllergenInfo(addForm.getAllergenInfo());
         entity.setIsRecommended(addForm.getIsRecommended());
-        entity.setRecommendSort(addForm.getRecommendSort());
+        entity.setRecommendOrder(addForm.getRecommendSort());
         entity.setStatus(addForm.getStatus());
         entity.setAllowDiscount(addForm.getAllowDiscount());
         entity.setMaxDiscountRate(addForm.getMaxDiscountRate());
@@ -1179,17 +1179,17 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
         entity.setProductType(updateForm.getProductType());
         entity.setSpecification(updateForm.getSpecification());
         entity.setUnit(updateForm.getUnit());
-        entity.setBasePrice(updateForm.getBasePrice());
-        entity.setSalePrice(updateForm.getSalePrice());
+        entity.setOriginalPrice(updateForm.getBasePrice());
+        entity.setPrice(updateForm.getSalePrice());
         entity.setCostPrice(updateForm.getCostPrice());
-        entity.setStockQuantity(updateForm.getStockQuantity());
-        entity.setWarningStock(updateForm.getWarningStock());
+        entity.setStock(updateForm.getStockQuantity());
+        entity.setMinStock(updateForm.getWarningStock());
         entity.setImageUrl(updateForm.getImageUrl());
         entity.setDescription(updateForm.getDescription());
         entity.setNutritionInfo(updateForm.getNutritionInfo());
         entity.setAllergenInfo(updateForm.getAllergenInfo());
         entity.setIsRecommended(updateForm.getIsRecommended());
-        entity.setRecommendSort(updateForm.getRecommendSort());
+        entity.setRecommendOrder(updateForm.getRecommendSort());
         entity.setStatus(updateForm.getStatus());
         entity.setAllowDiscount(updateForm.getAllowDiscount());
         entity.setMaxDiscountRate(updateForm.getMaxDiscountRate());
@@ -1208,17 +1208,17 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
         vo.setProductType(entity.getProductType());
         vo.setSpecification(entity.getSpecification());
         vo.setUnit(entity.getUnit());
-        vo.setBasePrice(entity.getBasePrice());
-        vo.setSalePrice(entity.getSalePrice());
+        vo.setBasePrice(entity.getOriginalPrice());
+        vo.setSalePrice(entity.getPrice());
         vo.setCostPrice(entity.getCostPrice());
-        vo.setStockQuantity(entity.getStockQuantity());
-        vo.setWarningStock(entity.getWarningStock());
+        vo.setStockQuantity(entity.getStock());
+        vo.setWarningStock(entity.getMinStock());
         vo.setImageUrl(entity.getImageUrl());
         vo.setDescription(entity.getDescription());
         vo.setNutritionInfo(entity.getNutritionInfo());
         vo.setAllergenInfo(entity.getAllergenInfo());
         vo.setIsRecommended(entity.getIsRecommended());
-        vo.setRecommendSort(entity.getRecommendSort());
+        vo.setRecommendSort(entity.getRecommendOrder());
         vo.setSalesCount(entity.getSalesCount());
         vo.setRating(entity.getRating());
         vo.setStatus(entity.getStatus());
@@ -1235,12 +1235,12 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
      * 设置默认值
      */
     private void setDefaultValues(ConsumeProductEntity entity) {
-        if (entity.getStockQuantity() == null) {
-            entity.setStockQuantity(0);
+        if (entity.getStock() == null) {
+            entity.setStock(0);
         }
 
-        if (entity.getWarningStock() == null) {
-            entity.setWarningStock(10);
+        if (entity.getMinStock() == null) {
+            entity.setMinStock(10);
         }
 
         if (entity.getSalesCount() == null) {

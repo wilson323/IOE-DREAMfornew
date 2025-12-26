@@ -62,24 +62,46 @@ public class SelfServiceRegistrationServiceImpl implements SelfServiceRegistrati
             registration.setFaceFeature(faceFeature);
         }
 
-        // 4. 初始化登记记录
-        registration = selfServiceRegistrationManager.initializeRegistration(registration);
-
-        // 5. 保存到数据库
-        selfServiceRegistrationDao.insert(registration);
+        // 4. 通过Manager层创建登记记录（支持6表结构）
+        // Manager层会处理：
+        // - 核心登记信息
+        // - 生物识别信息（如果有）
+        // - 终端信息（如果有）
+        // - 附加信息（如果有）
+        // - 自动生成访客码和登记编号
+        // - 事务管理
+        SelfServiceRegistrationEntity result = selfServiceRegistrationManager.createRegistration(registration);
 
         log.info("[自助登记服务] 自助登记创建成功: registrationId={}, registrationCode={}, visitorCode={}",
-                registration.getRegistrationId(),
-                registration.getRegistrationCode(),
-                registration.getVisitorCode());
+                result.getRegistrationId(),
+                result.getRegistrationCode(),
+                result.getVisitorCode());
 
-        return registration;
+        return result;
     }
 
     @Override
     public SelfServiceRegistrationEntity getRegistrationByVisitorCode(String visitorCode) {
         log.info("[自助登记服务] 查询登记记录: visitorCode={}", visitorCode);
-        return selfServiceRegistrationDao.selectByVisitorCode(visitorCode);
+
+        // 通过Manager层查询完整登记信息（支持6表JOIN）
+        // Manager层会自动组装：
+        // - 核心登记信息
+        // - 生物识别信息（如果有）
+        // - 审批信息（如果有）
+        // - 访问记录信息（如果有）
+        // - 终端信息（如果有）
+        // - 附加信息（如果有）
+        SelfServiceRegistrationEntity result = selfServiceRegistrationManager.getRegistrationByVisitorCode(visitorCode);
+
+        if (result != null) {
+            log.info("[自助登记服务] 登记记录查询成功: registrationId={}, visitorCode={}",
+                    result.getRegistrationId(), visitorCode);
+        } else {
+            log.warn("[自助登记服务] 登记记录不存在: visitorCode={}", visitorCode);
+        }
+
+        return result;
     }
 
     @Override

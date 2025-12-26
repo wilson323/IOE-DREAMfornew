@@ -59,7 +59,7 @@ public class ConsumeProductPriceService {
                 throw ConsumeProductException.notFound (productId);
             }
 
-            BigDecimal salePrice = entity.getSalePrice ();
+            BigDecimal salePrice = entity.getPrice ();
             if (salePrice == null) {
                 salePrice = BigDecimal.ZERO;
             }
@@ -262,7 +262,7 @@ public class ConsumeProductPriceService {
             int validPriceCount = 0;
 
             for (ConsumeProductEntity product : products) {
-                BigDecimal salePrice = product.getSalePrice ();
+                BigDecimal salePrice = product.getPrice ();
                 if (salePrice != null && salePrice.compareTo (BigDecimal.ZERO) > 0) {
                     totalPrice = totalPrice.add (salePrice);
                     maxPrice = maxPrice.compareTo (salePrice) > 0 ? maxPrice : salePrice;
@@ -312,7 +312,7 @@ public class ConsumeProductPriceService {
 
             int count = 0;
             for (ConsumeProductEntity product : products) {
-                BigDecimal salePrice = product.getSalePrice ();
+                BigDecimal salePrice = product.getPrice ();
                 if (salePrice != null && salePrice.compareTo (BigDecimal.ZERO) > 0) {
                     if (maxValue.compareTo (BigDecimal.valueOf (Long.MAX_VALUE)) == 0) {
                         if (salePrice.compareTo (BigDecimal.valueOf (500)) > 0) {

@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.common.entity.attendance;
+package net.lab1024.sa.common.entity.attendance;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;

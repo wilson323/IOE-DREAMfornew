@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.common.entity.visitor;
+package net.lab1024.sa.common.entity.visitor;
 
 import java.time.LocalDateTime;
 

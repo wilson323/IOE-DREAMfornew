@@ -125,7 +125,7 @@ public class ConsumeMealCategoryManager {
         }
 
         // 系统预设分类不能删除
-        if (category.isSystem()) {
+        if (isSystem(category)) { // isSystem
             result.put("canDelete", false);
             result.put("reason", "系统预设分类不能删除");
             return result;
@@ -226,15 +226,16 @@ public class ConsumeMealCategoryManager {
             return false;
         }
 
-        if (category.getAvailableTimePeriods() == null || category.getAvailableTimePeriods().trim().isEmpty()) {
+        String timePeriods = getAvailableTimePeriods(category); // getAvailableTimePeriods
+        if (timePeriods == null || timePeriods.trim().isEmpty()) {
             return true; // 没有时间限制，一直可用
         }
 
         try {
-            List<String> timePeriods = parseTimePeriods(category.getAvailableTimePeriods());
+            List<String> periodList = parseTimePeriods(timePeriods);
             LocalTime currentLocalTime = currentTime.toLocalTime();
 
-            for (String timePeriod : timePeriods) {
+            for (String timePeriod : periodList) {
                 if (isTimeInRange(currentLocalTime, timePeriod)) {
                     return true;
                 }
@@ -243,7 +244,7 @@ public class ConsumeMealCategoryManager {
             return false;
         } catch (Exception e) {
             log.error("解析时间段失败: category={}, timePeriods={}, error={}",
-                category.getCategoryId(), category.getAvailableTimePeriods(), e.getMessage(), e);
+                category.getCategoryId(), timePeriods, e.getMessage(), e);
             return true; // 解析失败时默认可用，避免影响业务
         }
     }
@@ -364,5 +365,167 @@ public class ConsumeMealCategoryManager {
         statistics.put("customCategories", categories.size() - systemCategories);
 
         return statistics;
+    }
+
+    // ==================== 业务方法实现（Entity方法迁移） ====================
+
+    /**
+     * 检查是否为系统预设分类
+     *
+     * @param category 分类信息
+     * @return true-系统预设，false-自定义
+     */
+    public boolean isSystem(ConsumeMealCategoryEntity category) {
+        if (category == null || category.getIsSystem() == null) {
+            return false;
+        }
+        return category.getIsSystem() == 1;
+    }
+
+    /**
+     * 获取可用时间段
+     * 默认返回空字符串（全天可用）
+     *
+     * @param category 分类信息
+     * @return 可用时间段JSON
+     */
+    public String getAvailableTimePeriods(ConsumeMealCategoryEntity category) {
+        if (category == null) {
+            return "";
+        }
+        // 可以从 extendedAttributes 或其他字段读取
+        // 默认返回空，表示全天可用
+        return "";
+    }
+
+    /**
+     * 获取分类图标
+     *
+     * @param category 分类信息
+     * @return 图标URL
+     */
+    public String getCategoryIcon(ConsumeMealCategoryEntity category) {
+        if (category == null || category.getIcon() == null) {
+            return "";
+        }
+        return category.getIcon();
+    }
+
+    /**
+     * 获取分类颜色
+     *
+     * @param category 分类信息
+     * @return 颜色值
+     */
+    public String getCategoryColor(ConsumeMealCategoryEntity category) {
+        if (category == null || category.getColor() == null) {
+            return "#000000"; // 默认黑色
+        }
+        return category.getColor();
+    }
+
+    /**
+     * 检查是否允许折扣
+     * 默认允许折扣
+     *
+     * @param category 分类信息
+     * @return true-允许，false-不允许
+     */
+    public boolean getAllowDiscount(ConsumeMealCategoryEntity category) {
+        // 默认允许折扣
+        // 可以从 extendedAttributes 读取自定义设置
+        return true;
+    }
+
+    /**
+     * 获取最小金额限制
+     * 默认0（无限制）
+     *
+     * @param category 分类信息
+     * @return 最小金额
+     */
+    public Integer getMinAmountLimit(ConsumeMealCategoryEntity category) {
+        // 默认无限制
+        // 可以从 extendedAttributes 读取自定义设置
+        return 0;
+    }
+
+    /**
+     * 获取最大金额限制
+     * 默认0（无限制）
+     *
+     * @param category 分类信息
+     * @return 最大金额
+     */
+    public Integer getMaxAmountLimit(ConsumeMealCategoryEntity category) {
+        // 默认无限制
+        // 可以从 extendedAttributes 读取自定义设置
+        return 0;
+    }
+
+    /**
+     * 获取每日限次
+     * 默认0（无限制）
+     *
+     * @param category 分类信息
+     * @return 每日限次
+     */
+    public Integer getDailyLimitCount(ConsumeMealCategoryEntity category) {
+        // 默认无限制
+        // 可以从 extendedAttributes 读取自定义设置
+        return 0;
+    }
+
+    /**
+     * 获取折扣比例
+     *
+     * @param category 分类信息
+     * @return 折扣比例（字符串格式，如"0.9"表示9折）
+     */
+    public String getDiscountRate(ConsumeMealCategoryEntity category) {
+        if (category == null || category.getDiscountRate() == null) {
+            return "1.0"; // 默认无折扣
+        }
+        return category.getDiscountRate();
+    }
+
+    /**
+     * 验证分类业务规则
+     *
+     * @param category 分类信息
+     * @return 验证错误列表
+     */
+    public List<String> validateBusinessRules(ConsumeMealCategoryEntity category) {
+        List<String> errors = new ArrayList<>();
+
+        if (category == null) {
+            errors.add("分类信息不能为空");
+            return errors;
+        }
+
+        // 验证分类名称
+        if (category.getCategoryName() == null || category.getCategoryName().trim().isEmpty()) {
+            errors.add("分类名称不能为空");
+        }
+
+        // 验证分类编码
+        if (category.getCategoryCode() == null || category.getCategoryCode().trim().isEmpty()) {
+            errors.add("分类编码不能为空");
+        }
+
+        // 验证层级
+        if (category.getCategoryLevel() == null || category.getCategoryLevel() < 1 || category.getCategoryLevel() > 3) {
+            errors.add("分类层级必须在1-3之间");
+        }
+
+        // 验证父分类
+        if (category.getCategoryLevel() > 1) {
+            Long parentId = category.getParentId();
+            if (parentId == null || parentId == 0) {
+                errors.add("子分类必须指定父分类");
+            }
+        }
+
+        return errors;
     }
 }

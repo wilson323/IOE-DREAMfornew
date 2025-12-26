@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import net.lab1024.sa.common.entity.BaseEntity;
 
@@ -40,6 +41,7 @@ import net.lab1024.sa.common.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @TableName("t_consume_recharge")
 @Schema(description = "消费充值记录实体")
 public class ConsumeRechargeEntity extends BaseEntity {
