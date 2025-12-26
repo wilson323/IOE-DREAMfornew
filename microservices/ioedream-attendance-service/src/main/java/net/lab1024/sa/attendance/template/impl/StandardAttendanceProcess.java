@@ -2,6 +2,8 @@
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Comparator;
 import java.util.List;
 
@@ -14,9 +16,10 @@ import net.lab1024.sa.attendance.domain.vo.AttendanceResultVO;
 import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.strategy.IAttendanceRuleStrategy;
 import net.lab1024.sa.attendance.template.AbstractAttendanceProcessTemplate;
-import net.lab1024.sa.common.biometric.service.BiometricService;
 import net.lab1024.sa.common.factory.StrategyFactory;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.gateway.domain.response.DeviceResponse;
+import org.springframework.http.HttpMethod;
 
 /**
  * 标准考勤处理流程实现
@@ -39,7 +42,7 @@ public class StandardAttendanceProcess extends AbstractAttendanceProcessTemplate
     private StrategyFactory<IAttendanceRuleStrategy> strategyFactory;
 
     @Resource
-    private BiometricService biometricService;
+    private GatewayServiceClient gatewayServiceClient;
 
     @Override
     protected UserIdentityResult identifyUser(AttendancePunchForm punchForm) {
@@ -55,14 +58,22 @@ public class StandardAttendanceProcess extends AbstractAttendanceProcessTemplate
 
             try {
                 // 调用生物识别服务进行1:N人脸识别
-                Long recognizedUserId = biometricService.recognizeFace(
-                    punchForm.getBiometricData(),
-                    String.valueOf(punchForm.getDeviceId())
+                Map<String, Object> params = new HashMap<>();
+                params.put("faceImageData", punchForm.getBiometricData());
+                params.put("deviceId", String.valueOf(punchForm.getDeviceId()));
+                params.put("recognizeType", "1:N");
+
+                BiometricResult result = gatewayServiceClient.callCommonService(
+                    "/api/biometric/recognize-face",
+                    HttpMethod.POST,
+                    params,
+                    BiometricResult.class
                 );
 
-                if (recognizedUserId != null) {
-                    log.info("[标准考勤流程] 生物识别成功: userId={}", recognizedUserId);
-                    return UserIdentityResult.success(recognizedUserId);
+                if (result != null && result.getMatchedUserId() != null) {
+                    log.info("[标准考勤流程] 生物识别成功: userId={}, confidence={}",
+                        result.getMatchedUserId(), result.getConfidence());
+                    return UserIdentityResult.success(result.getMatchedUserId());
                 } else {
                     log.warn("[标准考勤流程] 生物识别失败: 无法识别用户");
                     return UserIdentityResult.failed("生物识别失败：无法识别用户");
@@ -142,5 +153,21 @@ public class StandardAttendanceProcess extends AbstractAttendanceProcessTemplate
         log.info("[标准考勤流程] 考勤事件通知: userId={}, status={}, date={}", identity.getUserId(),
                 attendanceResult.getStatus(), attendanceResult.getDate());
         // TODO: 实现WebSocket推送、RabbitMQ消息等
+    }
+
+    /**
+     * 生物识别结果内部类
+     */
+    @lombok.Data
+    public static class BiometricResult {
+        /**
+         * 匹配到的用户ID
+         */
+        private Long matchedUserId;
+
+        /**
+         * 置信度（0-100）
+         */
+        private Double confidence;
     }
 }

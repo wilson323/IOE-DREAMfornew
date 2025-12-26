@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.entity;
+package net.lab1024.sa.common.entity.visitor;
 
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;

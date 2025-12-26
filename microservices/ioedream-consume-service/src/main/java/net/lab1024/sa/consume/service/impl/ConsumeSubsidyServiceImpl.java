@@ -513,7 +513,7 @@ public class ConsumeSubsidyServiceImpl implements ConsumeSubsidyService {
                     }
 
                     // 2. 验证状态 - 只有待发放(1)状态可以审核
-                    if (!entity.isPending()) {
+                    if (!consumeSubsidyManager.isPending(entity)) {
                         throw new IllegalArgumentException("只有待发放状态的补贴可以审核: " + entity.getSubsidyCode());
                     }
 
@@ -522,12 +522,12 @@ public class ConsumeSubsidyServiceImpl implements ConsumeSubsidyService {
                     // 3. 更新审核状态
                     if (approved) {
                         // 审核通过 - 更新为已发放状态(2)
-                        entity.setSubsidyStatus(2);
+                        entity.setStatus(2);
                         entity.setIssueDate(auditTime);
                         log.info("[补贴服务] [批量审核] 补贴审核通过: subsidyId={}, subsidyCode={}", subsidyId, entity.getSubsidyCode());
                     } else {
                         // 审核拒绝 - 更新为已作废状态(5)
-                        entity.setSubsidyStatus(5);
+                        entity.setStatus(5);
                         log.info("[补贴服务] [批量审核] 补贴审核拒绝: subsidyId={}, subsidyCode={}", subsidyId, entity.getSubsidyCode());
                     }
 
@@ -595,19 +595,19 @@ public class ConsumeSubsidyServiceImpl implements ConsumeSubsidyService {
             }
 
             // 2. 验证状态 - 只有待发放(1)或已发放(2)状态可以拒绝
-            if (!entity.isPending() && !entity.isIssued()) {
+            if (!consumeSubsidyManager.isPending(entity) && !consumeSubsidyManager.isIssued(entity)) {
                 throw new IllegalArgumentException("只有待发放或已发放状态的补贴可以拒绝: " + entity.getSubsidyCode());
             }
 
             // 3. 如果已发放且有使用金额，不允许拒绝
-            if (entity.isIssued() && entity.getUsedAmount() != null && entity.getUsedAmount().compareTo(BigDecimal.ZERO) > 0) {
+            if (consumeSubsidyManager.isIssued(entity) && entity.getUsedAmount() != null && entity.getUsedAmount().compareTo(BigDecimal.ZERO) > 0) {
                 throw new IllegalArgumentException("补贴已使用，无法拒绝: " + entity.getSubsidyCode());
             }
 
             LocalDateTime rejectTime = LocalDateTime.now();
 
             // 4. 更新补贴状态为已作废(5)
-            entity.setSubsidyStatus(5);
+            entity.setStatus(5);
             entity.setUpdateTime(rejectTime);
 
             // 5. 记录拒绝原因（在备注中追加）
@@ -649,14 +649,14 @@ public class ConsumeSubsidyServiceImpl implements ConsumeSubsidyService {
             }
 
             // 2. 验证状态 - 只有待发放(1)状态可以审批
-            if (!entity.isPending()) {
+            if (!consumeSubsidyManager.isPending(entity)) {
                 throw new IllegalArgumentException("只有待发放状态的补贴可以审批: " + entity.getSubsidyCode());
             }
 
             LocalDateTime approveTime = LocalDateTime.now();
 
             // 3. 更新补贴状态为已发放(2)
-            entity.setSubsidyStatus(2);
+            entity.setStatus(2);
             entity.setIssueDate(approveTime);
             entity.setUpdateTime(approveTime);
 
