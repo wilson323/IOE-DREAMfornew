@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service;
+﻿package net.lab1024.sa.access.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.access.controller.AccessOfflineSyncController.SyncStatusVO;
@@ -10,7 +10,7 @@ import net.lab1024.sa.access.domain.vo.AccessPermissionStatisticsVO;
 import net.lab1024.sa.access.domain.vo.AccessPermissionVO;
 import net.lab1024.sa.access.domain.vo.OfflineRecordUploadResultVO;
 import net.lab1024.sa.access.domain.vo.OfflineSyncDataVO;
-import net.lab1024.sa.access.domain.entity.AccessUserPermissionEntity;
+import net.lab1024.sa.common.entity.access.AccessUserPermissionEntity;
 
 import java.util.List;
 import java.util.Map;

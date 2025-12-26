@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.FirmwareUpgradeTaskDao;
 import net.lab1024.sa.access.dao.FirmwareUpgradeDeviceDao;
 import net.lab1024.sa.access.dao.DeviceFirmwareDao;
-import net.lab1024.sa.access.domain.entity.FirmwareUpgradeTaskEntity;
-import net.lab1024.sa.access.domain.entity.FirmwareUpgradeDeviceEntity;
-import net.lab1024.sa.access.domain.entity.DeviceFirmwareEntity;
+import net.lab1024.sa.common.entity.access.FirmwareUpgradeTaskEntity;
+import net.lab1024.sa.common.entity.access.FirmwareUpgradeDeviceEntity;
+import net.lab1024.sa.common.entity.device.DeviceFirmwareEntity;
 import net.lab1024.sa.access.domain.form.FirmwareUpgradeTaskForm;
 import net.lab1024.sa.access.domain.form.FirmwareUpgradeTaskQueryForm;
 import net.lab1024.sa.access.domain.vo.FirmwareUpgradeDeviceVO;

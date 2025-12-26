@@ -1,7 +1,7 @@
-package net.lab1024.sa.video.dao;
+﻿package net.lab1024.sa.video.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.video.entity.VideoObjectTrackingEntity;
+import net.lab1024.sa.common.entity.video.VideoObjectTrackingEntity;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.Select;
 

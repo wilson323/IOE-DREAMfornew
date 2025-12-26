@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.video.dao.VideoMonitorDao;
-import net.lab1024.sa.video.entity.VideoMonitorEntity;
+import net.lab1024.sa.common.entity.video.VideoMonitorEntity;
 
 /**
  * 视频监控管理器

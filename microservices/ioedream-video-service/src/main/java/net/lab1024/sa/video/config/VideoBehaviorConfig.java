@@ -19,7 +19,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.annotation.Resource;
 import net.lab1024.sa.video.dao.VideoBehaviorDao;
 import net.lab1024.sa.video.dao.VideoBehaviorPatternDao;
-import net.lab1024.sa.video.entity.VideoBehaviorPatternEntity;
 import net.lab1024.sa.video.manager.VideoBehaviorManager;
 
 /**

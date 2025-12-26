@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.dao.AttendanceAnomalyApplyDao;
 import net.lab1024.sa.attendance.dao.AttendanceAnomalyDao;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyApplyEntity;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyApplyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.service.AttendanceAnomalyApprovalService;
 import net.lab1024.sa.common.exception.BusinessException;
 import org.springframework.stereotype.Service;

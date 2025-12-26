@@ -1,13 +1,13 @@
-package net.lab1024.sa.consume.controller;
+﻿package net.lab1024.sa.consume.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity;
-import net.lab1024.sa.consume.entity.OfflineSyncLogEntity;
-import net.lab1024.sa.consume.entity.OfflineWhitelistEntity;
+import net.lab1024.sa.common.entity.consume.OfflineConsumeRecordEntity;
+import net.lab1024.sa.common.entity.consume.OfflineSyncLogEntity;
+import net.lab1024.sa.common.entity.consume.OfflineWhitelistEntity;
 import net.lab1024.sa.consume.service.OfflineConsumeRecordService;
 import net.lab1024.sa.consume.service.OfflineSyncLogService;
 import net.lab1024.sa.consume.service.OfflineWhitelistService;

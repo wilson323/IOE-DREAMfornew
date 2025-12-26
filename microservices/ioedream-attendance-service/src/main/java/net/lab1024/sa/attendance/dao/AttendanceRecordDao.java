@@ -1,9 +1,9 @@
-package net.lab1024.sa.attendance.dao;
+﻿package net.lab1024.sa.attendance.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 
 /**
  * 考勤记录DAO

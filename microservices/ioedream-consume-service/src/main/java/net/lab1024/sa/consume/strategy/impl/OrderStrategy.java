@@ -2,8 +2,8 @@ package net.lab1024.sa.consume.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.domain.config.ModeConfig;
-import net.lab1024.sa.consume.entity.PosidAccountEntity;
-import net.lab1024.sa.consume.entity.PosidAreaEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountEntity;
+import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.consume.strategy.ConsumeModeStrategy;
 
 import java.math.BigDecimal;
@@ -32,8 +32,8 @@ public class OrderStrategy implements ConsumeModeStrategy {
     }
 
     @Override
-    public ConsumeResult calculateAmount(PosidAccountEntity account,
-                                         PosidAreaEntity area,
+    public ConsumeResult calculateAmount(ConsumeAccountEntity account,
+                                         AreaEntity area,
                                          ModeConfig modeConfig,
                                          Map<String, Object> params) {
         log.info("[订餐模式] 开始计算: accountId={}, areaId={}", account.getAccountId(), area.getAreaId());

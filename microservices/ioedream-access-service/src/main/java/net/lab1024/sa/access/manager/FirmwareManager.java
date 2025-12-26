@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.manager;
+﻿package net.lab1024.sa.access.manager;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.DeviceFirmwareDao;
 import net.lab1024.sa.access.dao.FirmwareUpgradeDeviceDao;
 import net.lab1024.sa.access.dao.FirmwareUpgradeTaskDao;
-import net.lab1024.sa.access.domain.entity.DeviceFirmwareEntity;
-import net.lab1024.sa.access.domain.entity.FirmwareUpgradeDeviceEntity;
-import net.lab1024.sa.access.domain.entity.FirmwareUpgradeTaskEntity;
+import net.lab1024.sa.common.entity.access.DeviceFirmwareEntity;
+import net.lab1024.sa.common.entity.access.FirmwareUpgradeDeviceEntity;
+import net.lab1024.sa.common.entity.access.FirmwareUpgradeTaskEntity;
 import net.lab1024.sa.access.domain.form.FirmwareUpgradeTaskForm;
 import net.lab1024.sa.access.domain.vo.FirmwareUpgradeDeviceVO;
 import net.lab1024.sa.access.domain.vo.FirmwareUpgradeTaskVO;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,9 +20,8 @@ import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.AttendanceSummaryDao;
 import net.lab1024.sa.attendance.dao.DepartmentStatisticsDao;
 import net.lab1024.sa.attendance.domain.vo.AttendanceStatisticsVO;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
-import net.lab1024.sa.attendance.entity.AttendanceSummaryEntity;
-import net.lab1024.sa.attendance.entity.DepartmentStatisticsEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.DepartmentStatisticsEntity;
 import net.lab1024.sa.attendance.service.AttendanceSummaryService;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.dto.ResponseDTO;

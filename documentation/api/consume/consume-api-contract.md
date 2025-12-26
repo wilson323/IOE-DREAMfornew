@@ -1,10 +1,49 @@
 # 消费模块API接口契约文档
 
-**生成时间**: 2025-01-30  
-**文档版本**: v1.1.0 - 中心实时验证模式  
-**模块**: 消费管理模块 (ioedream-consume-service)  
-**设备交互模式**: Mode 2 - 中心实时验证  
+**生成时间**: 2025-01-30
+**更新时间**: 2025-12-26
+**文档版本**: v1.2.0 - Entity统一管理与多补贴账户模型
+**模块**: 消费管理模块 (ioedream-consume-service)
+**设备交互模式**: Mode 2 - 中心实时验证
 **状态**: ✅ **已完成**
+
+---
+
+## 🔄 v1.2.0 更新内容
+
+**重大变更**: Entity统一管理与多补贴账户架构
+
+### Entity模块变更
+- ✅ **Entity统一管理**: 所有Entity移至`microservices-common-entity`模块
+- ✅ **表名标准化**: POSID_* → t_consume_*
+- ✅ **多补贴账户模型**: 支持用户拥有多个补贴账户(按补贴类型区分)
+
+### 字段映射变更
+| 旧字段 | 新字段 | 说明 |
+|--------|--------|------|
+| `personId` | `userId` | 用户ID字段统一 |
+| `accountId` (账户) | `accountId` | 保持不变 |
+| `id` (账户类别) | `kindId` | 账户类别ID |
+| `id` (补贴类型) | `subsidyTypeId` | 补贴类型ID |
+| `id` (补贴账户) | `subsidyAccountId` | 补贴账户ID |
+| `id` (交易) | `transactionId` | 交易ID |
+
+### 新增Entity
+- ✅ `ConsumeAccountKindEntity` - 账户类别实体
+- ✅ `ConsumeSubsidyTypeEntity` - 补贴类型实体
+- ✅ `ConsumeSubsidyAccountEntity` - 补贴账户实体
+
+### 数据库表变更
+| 旧表名 | 新表名 |
+|--------|--------|
+| POSID_ACCOUNTKIND | t_consume_account_kind |
+| POSID_SUBSIDY_TYPE | t_consume_subsidy_type |
+| POSID_SUBSIDY_ACCOUNT | t_consume_subsidy_account |
+| POSID_ACCOUNT | t_consume_account |
+| POSID_TRANSACTION | t_consume_transaction |
+| POSID_AREA | t_common_area |
+
+**迁移脚本**: `V3.0.0__MIGATE_FROM_POSID.sql`
 
 ---
 
@@ -421,9 +460,396 @@ interface ConsumeValidateResultVO {
 
 ---
 
-## 💻 二、PC端API接口（待补充）
+## 💰 二、补贴账户管理API接口（新增）
 
-### 2.1 消费管理接口
+### 2.1 补贴账户查询接口
+
+**基础路径**: `/api/v1/consume/subsidy`
+
+#### 2.1.1 获取用户补贴账户列表
+
+**接口**: `GET /api/v1/consume/subsidy/accounts/{userId}`
+
+**功能**: 获取指定用户的所有补贴账户信息
+
+**路径参数**:
+- `userId`: number - 用户ID
+
+**响应数据**:
+```typescript
+interface SubsidyAccountListVO {
+  userId: number;                      // 用户ID
+  userName: string;                    // 用户名称
+  accounts: SubsidyAccountVO[];        // 补贴账户列表
+  totalBalance: number;                // 补贴总余额（单位：元）
+  totalFrozen: number;                 // 冻结总金额（单位：元）
+}
+
+interface SubsidyAccountVO {
+  subsidyAccountId: number;            // 补贴账户ID ⭐ v1.2.0新字段
+  subsidyTypeId: number;               // 补贴类型ID ⭐ v1.2.0新字段
+  subsidyTypeName: string;             // 补贴类型名称
+  accountCode: string;                 // 账户编码
+  accountName: string;                 // 账户名称
+
+  // 余额信息
+  balance: number;                     // 补贴余额（单位：元）
+  frozenAmount: number;                // 冻结金额（单位：元）
+  availableBalance: number;            // 可用余额（单位：元）
+
+  // 统计信息
+  initialAmount: number;               // 初始金额（单位：元）
+  totalGranted: number;                // 累计发放金额（单位：元）
+  totalUsed: number;                   // 累计使用金额（单位：元）
+
+  // 时间信息
+  grantTime: string;                   // 发放时间
+  expireTime: string;                  // 过期时间
+  daysToExpire: number;                // 距离过期天数
+
+  // 状态信息
+  accountStatus: number;               // 账户状态（1-正常 2-冻结 3-已过期 4-已清零）
+  accountStatusDesc: string;           // 账户状态描述
+
+  // 扣款优先级
+  priority: number;                    // 扣款优先级（数字越小优先级越高）
+  sortIndex: number;                   // 排序索引（用于UI显示排序）
+}
+```
+
+**Controller**: `SubsidyAccountController.getUserSubsidyAccounts()`
+
+**业务逻辑**:
+- ✅ 按扣款优先级排序（即将过期优先、小金额优先）
+- ✅ 自动计算可用余额（balance - frozenAmount）
+- ✅ 自动计算距离过期天数
+- ✅ 过滤已清零的账户
+
+---
+
+#### 2.1.2 获取补贴账户详情
+
+**接口**: `GET /api/v1/consume/subsidy/account/{subsidyAccountId}`
+
+**功能**: 获取指定补贴账户的详细信息
+
+**路径参数**:
+- `subsidyAccountId`: number - 补贴账户ID ⭐ v1.2.0新字段
+
+**响应数据**:
+```typescript
+interface SubsidyAccountDetailVO extends SubsidyAccountVO {
+  // 发放信息
+  grantBatchNo: string;                // 发放批次号
+  grantUserId: number;                 // 发放人ID
+  grantUserName: string;               // 发放人姓名
+  grantRemark: string;                 // 发放备注
+
+  // 使用明细
+  recentTransactions: SubsidyTransactionVO[]; // 最近10笔交易
+
+  // 统计信息
+  usageRate: number;                   // 使用率（已用/总额）
+  remainingDays: number;               // 剩余天数
+  dailyAverage: number;                // 日均使用金额（单位：元）
+}
+
+interface SubsidyTransactionVO {
+  transactionId: number;               // 交易ID ⭐ v1.2.0新字段
+  transactionNo: string;               // 交易流水号
+  transactionType: string;             // 交易类型（CONSUME/REFUND/GRANT/CLEAR）
+  amount: number;                      // 交易金额（单位：元）
+  balanceBefore: number;               // 交易前余额（单位：元）
+  balanceAfter: number;                // 交易后余额（单位：元）
+  transactionTime: string;             // 交易时间
+  remark: string;                      // 备注
+}
+```
+
+**Controller**: `SubsidyAccountController.getSubsidyAccountDetail()`
+
+---
+
+#### 2.1.3 获取补贴类型列表
+
+**接口**: `GET /api/v1/consume/subsidy/types`
+
+**功能**: 获取所有补贴类型定义
+
+**响应数据**:
+```typescript
+interface SubsidyTypeListVO {
+  types: SubsidyTypeVO[];
+}
+
+interface SubsidyTypeVO {
+  subsidyTypeId: number;               // 补贴类型ID ⭐ v1.2.0新字段
+  typeCode: string;                    // 类型编码
+  typeName: string;                    // 类型名称
+  typeDescription: string;             // 类型描述
+
+  // 配置信息
+  priority: number;                    // 扣款优先级（数字越小优先级越高）
+  expireDays: number;                  // 有效期天数
+  transferable: boolean;               // 是否可转让
+  refundable: boolean;                 // 是否可退款
+
+  // 使用限制
+  dailyLimit: number;                  // 每日消费限额（单位：元，0表示不限制）
+  monthlyLimit: number;                // 每月消费限额（单位：元，0表示不限制）
+  singleLimit: number;                 // 单笔消费限额（单位：元，0表示不限制）
+
+  // 使用规则
+  applicableAreas: string[];           // 适用区域ID列表
+  applicableMeals: string[];           // 适用餐别列表
+  applicableTime: TimeRange[];         // 适用时间段
+
+  // 状态
+  enabled: boolean;                    // 是否启用
+}
+
+interface TimeRange {
+  startTime: string;                   // 开始时间（HH:mm）
+  endTime: string;                     // 结束时间（HH:mm）
+}
+```
+
+**Controller**: `SubsidyAccountController.getSubsidyTypes()`
+
+---
+
+### 2.2 补贴账户管理接口
+
+**基础路径**: `/api/v1/consume/subsidy/manage`
+
+#### 2.2.1 发放补贴
+
+**接口**: `POST /api/v1/consume/subsidy/manage/grant`
+
+**功能**: 向用户发放补贴
+
+**请求参数**:
+```typescript
+interface SubsidyGrantForm {
+  userIds: number[];                   // 用户ID列表
+  subsidyTypeId: number;               // 补贴类型ID ⭐ v1.2.0新字段
+  amount: number;                      // 发放金额（单位：元）
+  expireDays: number;                  // 有效期天数（可选，默认使用补贴类型配置）
+  grantBatchNo?: string;               // 批次号（可选，系统自动生成）
+  remark?: string;                     // 备注
+}
+```
+
+**响应数据**:
+```typescript
+interface SubsidyGrantResultVO {
+  grantBatchNo: string;                // 发放批次号
+  successCount: number;                // 成功发放数量
+  failedCount: number;                 // 失败发放数量
+  totalAmount: number;                 // 总发放金额（单位：元）
+  failedUsers?: FailedGrantUser[];     // 失败用户列表
+}
+
+interface FailedGrantUser {
+  userId: number;                      // 用户ID
+  userName: string;                    // 用户名称
+  reason: string;                      // 失败原因
+}
+```
+
+**Controller**: `SubsidyAccountController.grantSubsidy()`
+
+**业务逻辑**:
+- ✅ 批量发放支持
+- ✅ 自动创建补贴账户
+- ✅ 记录发放流水
+- ✅ 生成发放批次号
+
+---
+
+#### 2.2.2 补贴清零
+
+**接口**: `POST /api/v1/consume/subsidy/manage/clear`
+
+**功能**: 批量清零过期补贴账户
+
+**请求参数**:
+```typescript
+interface SubsidyClearForm {
+  subsidyAccountIds: number[];         // 补贴账户ID列表 ⭐ v1.2.0新字段
+  clearReason: string;                 // 清零原因
+  operatorId: number;                  // 操作人ID
+}
+```
+
+**响应数据**:
+```typescript
+interface SubsidyClearResultVO {
+  successCount: number;                // 成功清零数量
+  failedCount: number;                 // 失败清零数量
+  totalAmount: number;                 // 总清零金额（单位：元）
+}
+```
+
+**Controller**: `SubsidyAccountController.clearSubsidy()`
+
+**业务逻辑**:
+- ✅ 批量清零支持
+- ✅ 余额转至历史记录
+- ✅ 记录清零流水
+- ✅ 更新账户状态为"已清零"
+
+---
+
+#### 2.2.3 补贴扣款优先级模拟
+
+**接口**: `POST /api/v1/consume/subsidy/manage/simulate`
+
+**功能**: 模拟补贴扣款顺序和金额分配
+
+**请求参数**:
+```typescript
+interface SubsidyDeductionSimulateForm {
+  userId: number;                      // 用户ID
+  amount: number;                      // 需要扣款的总金额（单位：元）
+}
+```
+
+**响应数据**:
+```typescript
+interface SubsidyDeductionSimulationVO {
+  totalAmount: number;                 // 总扣款金额（单位：元）
+  canDeduct: boolean;                  // 是否可以扣款
+  shortAmount: number;                 // 不足金额（单位：元）
+
+  // 扣款明细（按优先级排序）
+  deductions: SubsidyDeductionDetailVO[];
+}
+
+interface SubsidyDeductionDetailVO {
+  subsidyAccountId: number;            // 补贴账户ID ⭐ v1.2.0新字段
+  subsidyTypeName: string;             // 补贴类型名称
+  accountName: string;                 // 账户名称
+
+  deductAmount: number;                // 扣款金额（单位：元）
+  balanceBefore: number;               // 扣款前余额（单位：元）
+  balanceAfter: number;                // 扣款后余额（单位：元）
+
+  // 扣款原因
+  deductionReason: string;             // 扣款原因说明
+
+  // 优先级信息
+  priority: number;                    // 优先级
+  expireTime: string;                  // 过期时间
+  daysToExpire: number;                // 距离过期天数
+}
+```
+
+**Controller**: `SubsidyAccountController.simulateDeduction()`
+
+**业务逻辑**:
+- ✅ 按扣款优先级排序（即将过期优先、小金额优先）
+- ✅ 计算每个补贴账户的扣款金额
+- ✅ 判断余额是否充足
+- ✅ 提供详细的扣款分配方案
+
+**扣款优先级规则**:
+1. 优先扣款即将过期的补贴（按expireTime升序）
+2. 同过期日期优先扣款金额较小的补贴（按balance升序）
+3. 同余额优先级按priority升序（数字越小优先级越高）
+4. 补贴不足时扣款现金账户
+5. 补贴和现金都不足时返回错误
+
+---
+
+### 2.3 补贴账户统计接口
+
+**基础路径**: `/api/v1/consume/subsidy/statistics`
+
+#### 2.3.1 补贴发放统计
+
+**接口**: `GET /api/v1/consume/subsidy/statistics/grant`
+
+**功能**: 统计补贴发放情况
+
+**请求参数**:
+- `subsidyTypeId`: number - 补贴类型ID（可选）
+- `startDate`: string - 开始日期（yyyy-MM-dd，可选）
+- `endDate`: string - 结束日期（yyyy-MM-dd，可选）
+
+**响应数据**:
+```typescript
+interface SubsidyGrantStatisticsVO {
+  totalAmount: number;                 // 总发放金额（单位：元）
+  totalCount: number;                  // 总发放次数
+  totalUsers: number;                  // 发放用户总数
+
+  // 按补贴类型统计
+  byType: SubsidyTypeStatistics[];
+
+  // 按日期统计
+  byDate: DailyStatistics[];
+}
+
+interface SubsidyTypeStatistics {
+  subsidyTypeId: number;               // 补贴类型ID ⭐ v1.2.0新字段
+  subsidyTypeName: string;             // 补贴类型名称
+  totalAmount: number;                 // 总发放金额（单位：元）
+  totalCount: number;                  // 发放次数
+  userCount: number;                   // 用户数
+}
+
+interface DailyStatistics {
+  date: string;                        // 日期（yyyy-MM-dd）
+  totalAmount: number;                 // 总发放金额（单位：元）
+  totalCount: number;                  // 发放次数
+}
+```
+
+**Controller**: `SubsidyAccountController.getGrantStatistics()`
+
+---
+
+#### 2.3.2 补贴使用统计
+
+**接口**: `GET /api/v1/consume/subsidy/statistics/usage`
+
+**功能**: 统计补贴使用情况
+
+**请求参数**: 同发放统计
+
+**响应数据**:
+```typescript
+interface SubsidyUsageStatisticsVO {
+  totalUsed: number;                   // 总使用金额（单位：元）
+  totalRemaining: number;              // 总剩余金额（单位：元）
+  usageRate: number;                   // 使用率（百分比）
+
+  // 即将过期提醒
+  expiringSoon: number;                // 7天内过期的账户数
+  expiredAmount: number;               // 过期未用金额（单位：元）
+
+  // 按补贴类型统计
+  byType: SubsidyTypeUsageStatistics[];
+}
+
+interface SubsidyTypeUsageStatistics {
+  subsidyTypeId: number;               // 补贴类型ID ⭐ v1.2.0新字段
+  subsidyTypeName: string;             // 补贴类型名称
+  totalUsed: number;                   // 总使用金额（单位：元）
+  totalRemaining: number;              // 总剩余金额（单位：元）
+  usageRate: number;                   // 使用率（百分比）
+  accountCount: number;                // 账户数量
+}
+```
+
+**Controller**: `SubsidyAccountController.getUsageStatistics()`
+
+---
+
+## 💻 三、PC端API接口（待补充）
+
+### 3.1 消费管理接口
 
 **基础路径**: `/api/v1/consume`
 
@@ -475,7 +901,7 @@ interface ConsumeTransactionVO {
 
 ---
 
-#### 2.1.2 账户管理接口
+#### 3.1.2 账户管理接口
 
 **基础路径**: `/api/v1/consume/account`
 
@@ -499,7 +925,7 @@ interface ConsumeTransactionVO {
 
 ---
 
-#### 2.1.3 报表统计接口
+#### 3.1.3 报表统计接口
 
 **基础路径**: `/api/v1/consume/report`
 
@@ -513,9 +939,9 @@ interface ConsumeTransactionVO {
 
 ---
 
-## 💳 三、支付相关API接口
+## 💳 四、支付相关API接口
 
-### 3.1 支付接口
+### 4.1 支付接口
 
 **基础路径**: `/api/v1/consume/payment`
 
@@ -617,13 +1043,13 @@ interface RefundResultVO {
 
 ---
 
-## 📊 四、对账相关API接口
+## 📊 五、对账相关API接口
 
-### 4.1 对账管理接口
+### 5.1 对账管理接口
 
 **基础路径**: `/api/v1/consume/reconciliation`
 
-#### 4.1.1 执行日终对账
+#### 5.1.1 执行日终对账
 
 **接口**: `POST /api/v1/consume/reconciliation/daily`
 
@@ -657,7 +1083,7 @@ interface ReconciliationDifference {
 
 ---
 
-#### 4.1.2 执行实时对账
+#### 5.1.2 执行实时对账
 
 **接口**: `POST /api/v1/consume/reconciliation/realtime`
 
@@ -672,7 +1098,7 @@ interface ReconciliationDifference {
 
 ---
 
-#### 4.1.3 查询对账历史
+#### 5.1.3 查询对账历史
 
 **接口**: `GET /api/v1/consume/reconciliation/history`
 
@@ -699,13 +1125,13 @@ interface PageResult<ReconciliationResult> {
 
 ---
 
-## 💰 五、退款/报销申请API接口
+## 💰 六、退款/报销申请API接口
 
-### 5.1 退款申请接口
+### 6.1 退款申请接口
 
 **基础路径**: `/api/v1/consume/refund`
 
-#### 5.1.1 提交退款申请
+#### 6.1.1 提交退款申请
 
 **接口**: `POST /api/v1/consume/refund/submit`
 
@@ -741,7 +1167,7 @@ interface RefundApplicationEntity {
 
 ---
 
-#### 5.1.2 更新退款申请状态
+#### 6.1.2 更新退款申请状态
 
 **接口**: `PUT /api/v1/consume/refund/{refundNo}/status`
 
@@ -764,11 +1190,11 @@ interface RefundStatusUpdateRequest {
 
 ---
 
-### 5.2 报销申请接口
+### 6.2 报销申请接口
 
 **基础路径**: `/api/v1/consume/reimbursement`
 
-#### 5.2.1 提交报销申请
+#### 6.2.1 提交报销申请
 
 **接口**: `POST /api/v1/consume/reimbursement/submit`
 
@@ -810,7 +1236,7 @@ interface ReimbursementApplicationEntity {
 
 ---
 
-#### 5.2.2 更新报销申请状态
+#### 6.2.2 更新报销申请状态
 
 **接口**: `PUT /api/v1/consume/reimbursement/{reimbursementNo}/status`
 
@@ -833,9 +1259,9 @@ interface ReimbursementStatusUpdateRequest {
 
 ---
 
-## 📝 六、API接口规范
+## 📝 七、API接口规范
 
-### 6.1 统一响应格式
+### 7.1 统一响应格式
 
 所有API接口统一使用`ResponseDTO<T>`格式：
 
@@ -848,7 +1274,7 @@ interface ResponseDTO<T> {
 }
 ```
 
-### 6.2 错误码规范
+### 7.2 错误码规范
 
 | 错误码范围 | 类型 | 说明 |
 |-----------|------|------|
@@ -857,21 +1283,21 @@ interface ResponseDTO<T> {
 | 500-599 | 服务端错误 | 服务器内部错误 |
 | 4000-4999 | 消费模块错误 | 消费相关业务错误 |
 
-### 6.3 认证授权
+### 7.3 认证授权
 
 - **移动端接口**: 使用`@SaCheckLogin`注解，需要登录认证
 - **PC端接口**: 使用`@PreAuthorize`注解，需要角色权限验证
 
-### 6.4 参数验证
+### 7.4 参数验证
 
 - 所有POST/PUT请求使用`@Valid`注解进行参数验证
 - 使用Jakarta Validation注解（`@NotNull`, `@NotBlank`, `@Size`等）
 
 ---
 
-## 📋 七、前端API接口文件
+## 📋 八、前端API接口文件
 
-### 7.1 移动端API文件
+### 8.1 移动端API文件
 
 **文件路径**: `smart-app/src/api/business/consume/consume-api.js`
 
@@ -886,7 +1312,7 @@ interface ResponseDTO<T> {
 - ✅ 权限验证接口（permissionApi）
 - ✅ 异常处理接口（exceptionApi）
 
-### 7.2 PC端API文件
+### 8.2 PC端API文件
 
 **文件路径**: `smart-admin-web-javascript/src/api/business/consumption/consumption-api.js`
 
@@ -902,16 +1328,16 @@ interface ResponseDTO<T> {
 
 ---
 
-## 🎯 八、下一步行动
+## 🎯 九、下一步行动
 
-### 8.1 立即执行
+### 9.1 立即执行
 
 1. 📋 创建PC端消费管理Controller
 2. 📋 完善PC端API接口文件
 3. 📋 创建支付相关Controller
 4. 📋 创建支付相关API接口文件
 
-### 8.2 本周完成
+### 9.2 本周完成
 
 1. 📋 梳理其他业务模块API接口契约
 2. 📋 创建完整的API接口契约文档
@@ -920,7 +1346,7 @@ interface ResponseDTO<T> {
 
 ---
 
-**文档生成**: IOE-DREAM 架构委员会  
-**审核状态**: 待审核  
+**文档生成**: IOE-DREAM 架构委员会
+**审核状态**: 待审核
 **下一步行动**: 继续梳理其他业务模块API接口契约
 

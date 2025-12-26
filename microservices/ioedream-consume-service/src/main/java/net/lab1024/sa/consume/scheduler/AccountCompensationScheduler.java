@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.scheduler;
+﻿package net.lab1024.sa.consume.scheduler;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,7 +9,7 @@ import net.lab1024.sa.consume.client.dto.BalanceChangeResult;
 import net.lab1024.sa.consume.client.dto.BalanceDecreaseRequest;
 import net.lab1024.sa.consume.client.dto.BalanceIncreaseRequest;
 import net.lab1024.sa.consume.dao.AccountCompensationDao;
-import net.lab1024.sa.consume.entity.AccountCompensationEntity;
+import net.lab1024.sa.common.entity.consume.AccountCompensationEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

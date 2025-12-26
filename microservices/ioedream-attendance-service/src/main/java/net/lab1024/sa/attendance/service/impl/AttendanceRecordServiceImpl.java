@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +26,7 @@ import net.lab1024.sa.attendance.domain.form.AttendanceRecordAddForm;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordQueryForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordStatisticsVO;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordVO;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.service.AttendanceRecordService;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;

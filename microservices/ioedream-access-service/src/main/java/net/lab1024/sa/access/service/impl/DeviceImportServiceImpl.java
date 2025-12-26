@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.context.AnalysisContext;
@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.DeviceImportBatchDao;
 import net.lab1024.sa.access.dao.DeviceImportErrorDao;
 import net.lab1024.sa.access.dao.DeviceImportSuccessDao;
-import net.lab1024.sa.access.domain.entity.DeviceImportBatchEntity;
-import net.lab1024.sa.access.domain.entity.DeviceImportErrorEntity;
-import net.lab1024.sa.access.domain.entity.DeviceImportSuccessEntity;
+import net.lab1024.sa.common.entity.access.DeviceImportBatchEntity;
+import net.lab1024.sa.common.entity.access.DeviceImportErrorEntity;
+import net.lab1024.sa.common.entity.access.DeviceImportSuccessEntity;
 import net.lab1024.sa.access.domain.form.DeviceImportQueryForm;
 import net.lab1024.sa.access.domain.vo.DeviceImportBatchVO;
 import net.lab1024.sa.access.domain.vo.DeviceImportErrorVO;

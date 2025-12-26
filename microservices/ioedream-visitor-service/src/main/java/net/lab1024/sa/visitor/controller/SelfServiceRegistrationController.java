@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.controller;
+﻿package net.lab1024.sa.visitor.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
-import net.lab1024.sa.visitor.entity.SelfServiceRegistrationEntity;
+import net.lab1024.sa.common.entity.visitor.SelfServiceRegistrationEntity;
 import net.lab1024.sa.visitor.service.SelfServiceRegistrationService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;

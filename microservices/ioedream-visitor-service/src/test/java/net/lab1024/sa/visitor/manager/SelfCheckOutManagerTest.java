@@ -1,10 +1,10 @@
-package net.lab1024.sa.visitor.manager;
+﻿package net.lab1024.sa.visitor.manager;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.visitor.dao.SelfCheckOutDao;
 import net.lab1024.sa.visitor.dao.SelfServiceRegistrationDao;
-import net.lab1024.sa.visitor.entity.SelfCheckOutEntity;
-import net.lab1024.sa.visitor.entity.SelfServiceRegistrationEntity;
+import net.lab1024.sa.common.entity.visitor.SelfCheckOutEntity;
+import net.lab1024.sa.common.entity.visitor.SelfServiceRegistrationEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

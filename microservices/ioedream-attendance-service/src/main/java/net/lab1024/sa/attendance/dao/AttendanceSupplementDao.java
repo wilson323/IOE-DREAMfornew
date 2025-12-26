@@ -1,10 +1,10 @@
-package net.lab1024.sa.attendance.dao;
+﻿package net.lab1024.sa.attendance.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.attendance.domain.entity.AttendanceSupplementEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceSupplementEntity;
 
 @Mapper
 public interface AttendanceSupplementDao extends BaseMapper<AttendanceSupplementEntity> {

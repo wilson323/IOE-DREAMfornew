@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,7 +10,7 @@ import net.lab1024.sa.access.domain.form.AccessPersonRestrictionAddForm;
 import net.lab1024.sa.access.domain.form.AccessPersonRestrictionQueryForm;
 import net.lab1024.sa.access.domain.form.AccessPersonRestrictionUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessPersonRestrictionVO;
-import net.lab1024.sa.access.domain.entity.AccessPersonRestrictionEntity;
+import net.lab1024.sa.common.entity.access.AccessPersonRestrictionEntity;
 import net.lab1024.sa.access.service.AccessPersonRestrictionService;
 import net.lab1024.sa.common.domain.PageResult;
 import org.springframework.data.redis.core.StringRedisTemplate;

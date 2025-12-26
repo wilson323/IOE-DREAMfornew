@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.dao;
+﻿package net.lab1024.sa.video.dao;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -11,9 +11,9 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.lab1024.sa.video.entity.VideoDeviceEntity;
-import net.lab1024.sa.video.entity.VideoStreamEntity;
-import net.lab1024.sa.video.entity.VideoRecordEntity;
+import net.lab1024.sa.common.entity.video.VideoDeviceEntity;
+import net.lab1024.sa.common.entity.video.VideoStreamEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

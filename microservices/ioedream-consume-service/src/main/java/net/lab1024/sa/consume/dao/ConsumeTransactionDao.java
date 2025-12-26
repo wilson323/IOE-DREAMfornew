@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeTransactionVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeTransactionEntity;
 
 /**
  * 消费交易数据访问对象

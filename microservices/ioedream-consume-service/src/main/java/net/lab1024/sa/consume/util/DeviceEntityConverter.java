@@ -3,7 +3,7 @@ package net.lab1024.sa.consume.util;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.entity.BaseEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeTransactionEntity;
 
 /**
  * 设备实体类型转换工具类

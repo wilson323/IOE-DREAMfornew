@@ -1,7 +1,7 @@
 package net.lab1024.sa.attendance.engine.rule.statistics;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.model.RuleExecutionStatistics;
+import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionStatistics;
 
 import java.time.LocalDateTime;
 import java.util.Map;

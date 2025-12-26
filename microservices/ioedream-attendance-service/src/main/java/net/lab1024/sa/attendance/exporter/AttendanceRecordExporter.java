@@ -1,11 +1,11 @@
-package net.lab1024.sa.attendance.exporter;
+﻿package net.lab1024.sa.attendance.exporter;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.exporter.template.ExportTemplateManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

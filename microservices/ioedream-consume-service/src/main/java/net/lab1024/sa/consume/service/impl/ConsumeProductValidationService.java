@@ -16,7 +16,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeProductEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeProductEntity;
 import net.lab1024.sa.consume.exception.ConsumeProductException;
 
 /**

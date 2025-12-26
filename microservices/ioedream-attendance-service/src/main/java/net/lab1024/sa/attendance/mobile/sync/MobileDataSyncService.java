@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.mobile.sync;
+﻿package net.lab1024.sa.attendance.mobile.sync;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -26,7 +26,7 @@ import net.lab1024.sa.attendance.mobile.model.MobilePerformanceTestResult;
 import net.lab1024.sa.attendance.mobile.model.MobileUserSession;
 import net.lab1024.sa.attendance.mobile.auth.MobileAuthenticationService;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**

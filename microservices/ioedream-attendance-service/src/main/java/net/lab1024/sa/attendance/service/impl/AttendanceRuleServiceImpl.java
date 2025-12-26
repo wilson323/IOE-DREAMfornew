@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import net.lab1024.sa.common.util.QueryBuilder;
@@ -16,7 +16,7 @@ import net.lab1024.sa.attendance.domain.form.AttendanceRuleAddForm;
 import net.lab1024.sa.attendance.domain.form.AttendanceRuleQueryForm;
 import net.lab1024.sa.attendance.domain.form.AttendanceRuleUpdateForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRuleVO;
-import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRuleEntity;
 import net.lab1024.sa.attendance.service.AttendanceRuleService;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;

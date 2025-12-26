@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import net.lab1024.sa.consume.domain.entity.ConsumeRechargeEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeRechargeEntity;
 
 /**
  * 消费充值记录数据访问层

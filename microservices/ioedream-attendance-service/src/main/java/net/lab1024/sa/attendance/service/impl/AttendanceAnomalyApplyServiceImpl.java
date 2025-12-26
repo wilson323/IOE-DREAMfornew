@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,9 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.dao.AttendanceAnomalyApplyDao;
 import net.lab1024.sa.attendance.dao.AttendanceAnomalyDao;
 import net.lab1024.sa.attendance.dao.AttendanceRuleConfigDao;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyApplyEntity;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
-import net.lab1024.sa.attendance.entity.AttendanceRuleConfigEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyApplyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRuleConfigEntity;
 import net.lab1024.sa.attendance.service.AttendanceAnomalyApplyService;
 import net.lab1024.sa.common.exception.BusinessException;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.engine.execution;
+﻿package net.lab1024.sa.attendance.engine.execution;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.ScheduleAlgorithm;
@@ -8,7 +8,7 @@ import net.lab1024.sa.attendance.engine.conflict.ConflictDetector;
 import net.lab1024.sa.attendance.engine.conflict.ConflictResolver;
 import net.lab1024.sa.attendance.engine.model.*;
 import net.lab1024.sa.attendance.engine.optimizer.ScheduleOptimizer;
-import net.lab1024.sa.attendance.entity.SmartSchedulePlanEntity;
+import net.lab1024.sa.common.entity.attendance.SmartSchedulePlanEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

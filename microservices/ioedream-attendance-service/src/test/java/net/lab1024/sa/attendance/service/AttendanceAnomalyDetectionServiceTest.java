@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service;
+﻿package net.lab1024.sa.attendance.service;
 
 import net.lab1024.sa.attendance.config.EnhancedTestConfiguration;
 import org.springframework.context.annotation.Import;
@@ -7,10 +7,10 @@ import net.lab1024.sa.attendance.dao.AttendanceAnomalyDao;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.AttendanceRuleConfigDao;
 import net.lab1024.sa.attendance.dao.WorkShiftDao;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
-import net.lab1024.sa.attendance.entity.AttendanceRuleConfigEntity;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRuleConfigEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 import net.lab1024.sa.attendance.service.impl.AttendanceAnomalyDetectionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

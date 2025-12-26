@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.job;
+﻿package net.lab1024.sa.video.job;
 
 import java.time.LocalDateTime;
 import java.time.DayOfWeek;
@@ -8,8 +8,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.dao.VideoRecordingPlanDao;
 import net.lab1024.sa.video.dao.VideoRecordingTaskDao;
-import net.lab1024.sa.video.domain.entity.VideoRecordingPlanEntity;
-import net.lab1024.sa.video.domain.entity.VideoRecordingTaskEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingPlanEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingTaskEntity;
 import net.lab1024.sa.video.service.VideoRecordingControlService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

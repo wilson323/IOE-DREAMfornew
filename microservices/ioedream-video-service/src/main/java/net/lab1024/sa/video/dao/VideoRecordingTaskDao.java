@@ -1,10 +1,10 @@
-package net.lab1024.sa.video.dao;
+﻿package net.lab1024.sa.video.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import net.lab1024.sa.video.domain.entity.VideoRecordingTaskEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingTaskEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

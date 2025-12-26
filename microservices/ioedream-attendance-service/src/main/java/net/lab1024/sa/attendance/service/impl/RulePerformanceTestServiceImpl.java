@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +13,7 @@ import net.lab1024.sa.attendance.domain.form.RuleTestRequest;
 import net.lab1024.sa.attendance.domain.vo.RulePerformanceTestDetailVO;
 import net.lab1024.sa.attendance.domain.vo.RulePerformanceTestResultVO;
 import net.lab1024.sa.attendance.engine.rule.AttendanceRuleEngine;
-import net.lab1024.sa.attendance.entity.RulePerformanceTestEntity;
+import net.lab1024.sa.common.entity.attendance.RulePerformanceTestEntity;
 import net.lab1024.sa.attendance.service.RulePerformanceTestService;
 import net.lab1024.sa.attendance.service.RuleTestService;
 

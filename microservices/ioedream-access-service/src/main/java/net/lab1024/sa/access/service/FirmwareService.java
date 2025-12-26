@@ -1,6 +1,6 @@
 package net.lab1024.sa.access.service;
 
-import net.lab1024.sa.access.domain.entity.DeviceFirmwareEntity;
+import net.lab1024.sa.common.entity.device.DeviceFirmwareEntity;
 import net.lab1024.sa.access.domain.form.FirmwareQueryForm;
 import net.lab1024.sa.access.domain.form.FirmwareUploadForm;
 import net.lab1024.sa.access.domain.vo.FirmwareDetailVO;

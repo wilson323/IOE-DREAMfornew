@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.consume.dao.ConsumeMealCategoryDao;
 import net.lab1024.sa.consume.domain.vo.ConsumeMealCategoryVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeMealCategoryEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeMealCategoryEntity;
 import net.lab1024.sa.consume.exception.ConsumeMealCategoryException;
 
 /**

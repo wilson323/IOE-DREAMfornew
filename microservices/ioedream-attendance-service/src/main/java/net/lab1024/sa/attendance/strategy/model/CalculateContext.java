@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.strategy.model;
+﻿package net.lab1024.sa.attendance.strategy.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 
 /**
  * 计算上下文

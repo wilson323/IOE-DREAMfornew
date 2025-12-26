@@ -1,8 +1,8 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.dao.DeviceHealthDao;
-import net.lab1024.sa.video.entity.DeviceHealthEntity;
+import net.lab1024.sa.common.entity.video.DeviceHealthEntity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

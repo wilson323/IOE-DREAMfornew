@@ -3,7 +3,7 @@ package net.lab1024.sa.consume.manager;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.domain.config.AreaConfig;
 import net.lab1024.sa.consume.domain.config.FixedValueConfig;
-import net.lab1024.sa.consume.entity.PosidAreaEntity;
+import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.exception.BusinessException;
 
 import java.math.BigDecimal;
@@ -46,7 +46,7 @@ public class AreaManageModeManager {
      * @param mealType 餐别类型（餐别制模式需要）
      * @return 是否有权消费
      */
-    public boolean checkConsumePermission(Long userId, PosidAreaEntity area, String mealType) {
+    public boolean checkConsumePermission(Long userId, AreaEntity area, String mealType) {
         Integer manageMode = area.getManageMode();
         log.info("[区域经营模式] 检查消费权限: userId={}, areaId={}, manageMode={}, mealType={}",
                 userId, area.getAreaId(), manageMode, mealType);
@@ -77,7 +77,7 @@ public class AreaManageModeManager {
      * @param amount 用户输入金额（超市制模式需要）
      * @return 消费金额
      */
-    public BigDecimal getConsumeAmount(PosidAreaEntity area, String mealType, BigDecimal amount) {
+    public BigDecimal getConsumeAmount(AreaEntity area, String mealType, BigDecimal amount) {
         Integer manageMode = area.getManageMode();
         log.info("[区域经营模式] 获取消费金额: areaId={}, manageMode={}, mealType={}, amount={}",
                 area.getAreaId(), manageMode, mealType, amount);
@@ -102,7 +102,7 @@ public class AreaManageModeManager {
     /**
      * 检查餐别制模式权限
      */
-    private boolean checkMealModePermission(Long userId, PosidAreaEntity area, String mealType) {
+    private boolean checkMealModePermission(Long userId, AreaEntity area, String mealType) {
         log.info("[餐别制模式] 检查权限: userId={}, areaId={}, mealType={}",
                 userId, area.getAreaId(), mealType);
 
@@ -139,7 +139,7 @@ public class AreaManageModeManager {
     /**
      * 获取餐别制模式金额
      */
-    private BigDecimal getMealModeAmount(PosidAreaEntity area, String mealType) {
+    private BigDecimal getMealModeAmount(AreaEntity area, String mealType) {
         log.info("[餐别制模式] 获取定值金额: areaId={}, mealType={}", area.getAreaId(), mealType);
 
         FixedValueConfig fixedValueConfig = area.getFixedValueConfig();
@@ -169,7 +169,7 @@ public class AreaManageModeManager {
     /**
      * 检查混合模式权限
      */
-    private boolean checkHybridModePermission(Long userId, PosidAreaEntity area, String mealType) {
+    private boolean checkHybridModePermission(Long userId, AreaEntity area, String mealType) {
         log.info("[混合模式] 检查权限: userId={}, areaId={}, mealType={}",
                 userId, area.getAreaId(), mealType);
 
@@ -188,7 +188,7 @@ public class AreaManageModeManager {
     /**
      * 获取混合模式金额
      */
-    private BigDecimal getHybridModeAmount(PosidAreaEntity area, String mealType, BigDecimal amount) {
+    private BigDecimal getHybridModeAmount(AreaEntity area, String mealType, BigDecimal amount) {
         log.info("[混合模式] 获取金额: areaId={}, mealType={}, amount={}",
                 area.getAreaId(), mealType, amount);
 
@@ -207,7 +207,7 @@ public class AreaManageModeManager {
      * @param area 区域信息
      * @return 是否在允许消费的时间段内
      */
-    public boolean checkTimePermission(PosidAreaEntity area) {
+    public boolean checkTimePermission(AreaEntity area) {
         LocalTime now = LocalTime.now();
         log.info("[区域经营模式] 检查时间段权限: areaId={}, currentTime={}", area.getAreaId(), now);
 
@@ -281,7 +281,7 @@ public class AreaManageModeManager {
      * @param dailyCount 今日已消费次数
      * @return 是否在限额内
      */
-    public boolean checkConsumeLimit(PosidAreaEntity area,
+    public boolean checkConsumeLimit(AreaEntity area,
                                     BigDecimal currentAmount,
                                     BigDecimal dailyAmount,
                                     int dailyCount) {

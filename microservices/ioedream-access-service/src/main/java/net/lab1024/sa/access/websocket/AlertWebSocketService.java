@@ -1,8 +1,8 @@
-package net.lab1024.sa.access.websocket;
+﻿package net.lab1024.sa.access.websocket;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.access.domain.entity.DeviceAlertEntity;
-import net.lab1024.sa.access.domain.entity.AlertNotificationEntity;
+import net.lab1024.sa.common.entity.access.DeviceAlertEntity;
+import net.lab1024.sa.common.entity.access.AlertNotificationEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.stereotype.Service;
 

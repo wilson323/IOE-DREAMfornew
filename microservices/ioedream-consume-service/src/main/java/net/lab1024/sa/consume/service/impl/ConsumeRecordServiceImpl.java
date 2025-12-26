@@ -15,7 +15,7 @@ import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeRecordEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeRecordQueryForm;
 import net.lab1024.sa.consume.domain.form.ConsumeRecordAddForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeRecordVO;

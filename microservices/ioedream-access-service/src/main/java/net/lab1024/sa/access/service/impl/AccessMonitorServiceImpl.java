@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -35,7 +35,7 @@ import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
 import net.lab1024.sa.common.organization.entity.AccessRecordEntity;
-import net.lab1024.sa.access.domain.entity.AccessAlarmEntity;
+import net.lab1024.sa.common.entity.access.AccessAlarmEntity;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.organization.entity.UserEntity;

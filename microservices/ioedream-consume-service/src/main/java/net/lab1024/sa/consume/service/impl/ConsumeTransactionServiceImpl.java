@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.dao.ReconciliationRecordDao;
-import net.lab1024.sa.consume.domain.entity.ReconciliationRecordEntity;
+import net.lab1024.sa.common.entity.consume.ReconciliationRecordEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeTransactionQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeTransactionStatisticsVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeTransactionVO;

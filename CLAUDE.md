@@ -821,6 +821,107 @@ smart-app/
 - ❌ 禁止依赖 `spring-boot-starter` / `spring-boot-starter-web` 等 Spring Boot/Web 框架（保持最小稳定内核）
 - ⚠️ **现状偏差说明**：若历史代码已在 `microservices-common-core` 中引入 Spring/框架依赖或 Spring 组件（例如调用客户端、Controller 基类等），应视为技术债，必须纳入 OpenSpec 提案逐步迁移与剥离；在完成剥离前，禁止继续向 `microservices-common-core` 新增任何 Spring/业务域代码。
 
+
+### Entity存储规范（P0级强制，2025-12-26更新）
+
+#### 核心原则
+
+**黄金法则**：所有Entity类必须统一存储在`microservices-common-entity`模块，业务服务中严格禁止存储Entity类。
+
+#### ✅ 正确：Entity统一存储
+
+```
+microservices-common-entity/src/main/java/net/lab1024/sa/common/entity/
+├── access/                    # 门禁Entity
+│   ├── AccessRecordEntity.java
+│   ├── AccessDeviceEntity.java
+│   └── ...
+├── attendance/                # 考勤Entity
+│   ├── AttendanceRecordEntity.java
+│   ├── AttendanceLeaveEntity.java
+│   ├── AttendanceOvertimeEntity.java
+│   ├── AttendanceSupplementEntity.java
+│   ├── AttendanceTravelEntity.java
+│   ├── ScheduleRecordEntity.java
+│   ├── ScheduleTemplateEntity.java
+│   └── ...
+├── consume/                   # 消费Entity
+│   ├── ConsumeRecordEntity.java
+│   ├── ConsumeAccountEntity.java
+│   └── ...
+├── video/                     # 视频Entity
+│   ├── VideoDeviceEntity.java
+│   └── ...
+├── visitor/                   # 访客Entity
+│   ├── VisitorRecordEntity.java
+│   └── ...
+└── organization/              # 组织架构Entity
+    ├── UserEntity.java
+    ├── DepartmentEntity.java
+    ├── AreaEntity.java
+    └── DeviceEntity.java
+```
+
+#### ❌ 禁止：业务服务中存储Entity
+
+```
+ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/entity/
+└── AttendanceLeaveEntity.java        # ❌ 严格禁止！
+
+ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/domain/entity/
+└── ScheduleRecordEntity.java         # ❌ 严格禁止！
+```
+
+#### 违规后果
+
+- **Git pre-commit钩子会拒绝提交**：.git/hooks/pre-commit自动检测并阻止
+- **CI/CD流水线会检测失败**：自动检查脚本验证Entity位置
+- **代码审查会被拒绝**：架构委员会审查时直接驳回
+- **技术债务标记**：违规代码会被标记为技术债，限期整改
+
+#### 正确导入方式
+
+```java
+// ✅ 正确：从common-entity导入
+import net.lab1024.sa.common.entity.attendance.AttendanceLeaveEntity;
+import net.lab1024.sa.common.entity.attendance.ScheduleRecordEntity;
+
+// ❌ 禁止：从业务服务导入
+import net.lab1024.sa.attendance.entity.AttendanceLeaveEntity;
+```
+
+#### 验证工具
+
+**1. Entity位置验证脚本**：
+```bash
+./scripts/verify-entity-locations.sh
+```
+
+**2. Git pre-commit钩子**（自动执行）：
+- 已安装到: `.git/hooks/pre-commit`
+- 每次提交自动运行
+
+#### 检查清单
+
+**代码提交前检查**：
+- [ ] Entity类在`microservices-common-entity`模块中
+- [ ] 导入语句使用`import net.lab1024.sa.common.entity.xxx.*`
+- [ ] 业务服务中无`entity`目录或`domain/entity`目录
+- [ ] 运行验证脚本通过
+
+**代码审查检查**：
+- [ ] 无Entity重复存储
+- [ ] 无错误导入语句
+- [ ] DAO/Service/Controller导入正确
+
+#### 执行状态
+
+- ✅ **2025-12-26**: 全局Entity重复清理完成（101+个Entity文件）
+- ✅ **2025-12-26**: 验证脚本创建完成
+- ✅ **2025-12-26**: Git pre-commit钩子安装完成
+- ✅ **2025-12-26**: 所有业务服务验证通过（0个错误）
+
+---
 ### 2. ioedream-common-service (公共业务微服务)
 
 **定位**: Spring Boot微服务，提供公共业务API

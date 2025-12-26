@@ -1,9 +1,9 @@
-package net.lab1024.sa.attendance.controller;
+﻿package net.lab1024.sa.attendance.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyApplyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyApplyEntity;
 import net.lab1024.sa.attendance.service.AttendanceAnomalyApplyService;
 import net.lab1024.sa.attendance.service.AttendanceAnomalyApprovalService;
 import net.lab1024.sa.common.dto.ResponseDTO;

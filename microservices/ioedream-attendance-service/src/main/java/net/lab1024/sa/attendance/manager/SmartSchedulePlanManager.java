@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.manager;
+﻿package net.lab1024.sa.attendance.manager;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.attendance.dao.SmartSchedulePlanDao;
@@ -8,8 +8,7 @@ import net.lab1024.sa.attendance.domain.form.smartSchedule.SmartSchedulePlanQuer
 import net.lab1024.sa.attendance.domain.vo.smartSchedule.SmartSchedulePlanDetailVO;
 import net.lab1024.sa.attendance.domain.vo.smartSchedule.SmartSchedulePlanVO;
 import net.lab1024.sa.attendance.domain.vo.smartSchedule.SmartScheduleResultVO;
-import net.lab1024.sa.attendance.entity.SmartSchedulePlanEntity;
-import net.lab1024.sa.attendance.entity.SmartScheduleResultEntity;
+import net.lab1024.sa.common.entity.attendance.SmartSchedulePlanEntity;
 import net.lab1024.sa.common.domain.PageResult;
 import org.springframework.stereotype.Component;
 

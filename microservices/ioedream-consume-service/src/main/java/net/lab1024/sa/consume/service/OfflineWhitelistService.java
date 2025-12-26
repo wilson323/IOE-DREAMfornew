@@ -1,7 +1,7 @@
-package net.lab1024.sa.consume.service;
+﻿package net.lab1024.sa.consume.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import net.lab1024.sa.consume.entity.OfflineWhitelistEntity;
+import net.lab1024.sa.common.entity.consume.OfflineWhitelistEntity;
 
 import java.util.List;
 

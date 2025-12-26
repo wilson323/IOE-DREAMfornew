@@ -1,11 +1,11 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.AlertNotificationDao;
-import net.lab1024.sa.access.domain.entity.AlertNotificationEntity;
-import net.lab1024.sa.access.domain.entity.AlertRuleEntity;
-import net.lab1024.sa.access.domain.entity.DeviceAlertEntity;
+import net.lab1024.sa.common.entity.access.AlertNotificationEntity;
+import net.lab1024.sa.common.entity.access.AlertRuleEntity;
+import net.lab1024.sa.common.entity.access.DeviceAlertEntity;
 import net.lab1024.sa.access.domain.vo.AlertRuleVO;
 import net.lab1024.sa.access.service.AlertNotificationService;
 import net.lab1024.sa.access.service.AlertRuleService;

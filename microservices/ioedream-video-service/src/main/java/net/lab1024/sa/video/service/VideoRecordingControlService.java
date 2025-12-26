@@ -1,8 +1,8 @@
-package net.lab1024.sa.video.service;
+﻿package net.lab1024.sa.video.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.video.domain.entity.VideoRecordingTaskEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingTaskEntity;
 import net.lab1024.sa.video.domain.form.VideoRecordingControlForm;
 import net.lab1024.sa.video.domain.form.VideoRecordingPlanQueryForm;
 import net.lab1024.sa.video.domain.vo.VideoRecordingTaskVO;

@@ -1,9 +1,9 @@
-package net.lab1024.sa.video.service.impl;
+﻿package net.lab1024.sa.video.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.dao.VideoMapHotspotDao;
-import net.lab1024.sa.video.entity.VideoMapHotspotEntity;
+import net.lab1024.sa.common.entity.video.VideoMapHotspotEntity;
 import net.lab1024.sa.video.service.VideoMapHotspotService;
 import org.springframework.stereotype.Service;
 

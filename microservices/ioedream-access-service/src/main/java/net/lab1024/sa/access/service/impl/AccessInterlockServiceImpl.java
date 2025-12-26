@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,7 +8,7 @@ import net.lab1024.sa.access.domain.form.AccessInterlockRuleAddForm;
 import net.lab1024.sa.access.domain.form.AccessInterlockRuleQueryForm;
 import net.lab1024.sa.access.domain.form.AccessInterlockRuleUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessInterlockRuleVO;
-import net.lab1024.sa.access.domain.entity.AccessInterlockRuleEntity;
+import net.lab1024.sa.common.entity.access.AccessInterlockRuleEntity;
 import net.lab1024.sa.access.service.AccessInterlockService;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;

@@ -1,7 +1,7 @@
-package net.lab1024.sa.attendance.engine.impl;
+﻿package net.lab1024.sa.attendance.engine.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.entity.SmartSchedulePlanEntity;
+import net.lab1024.sa.common.entity.attendance.SmartSchedulePlanEntity;
 import net.lab1024.sa.attendance.engine.ScheduleEngine;
 import net.lab1024.sa.attendance.engine.conflict.ScheduleConflictService;
 import net.lab1024.sa.attendance.engine.execution.ScheduleExecutionService;

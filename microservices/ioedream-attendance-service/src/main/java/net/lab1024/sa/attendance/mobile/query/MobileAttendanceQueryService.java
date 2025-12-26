@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.mobile.query;
+﻿package net.lab1024.sa.attendance.mobile.query;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +33,7 @@ import net.lab1024.sa.attendance.mobile.model.MobileUserSession;
 import net.lab1024.sa.attendance.mobile.model.MobileUsageStatisticsResult;
 import net.lab1024.sa.attendance.mobile.model.WorkShiftInfo;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.mobile.clockin.MobileClockInService;
 import net.lab1024.sa.common.dto.ResponseDTO;
 

@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.service.impl;
+﻿package net.lab1024.sa.visitor.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -6,7 +6,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.visitor.dao.SelfCheckOutDao;
-import net.lab1024.sa.visitor.entity.SelfCheckOutEntity;
+import net.lab1024.sa.common.entity.visitor.SelfCheckOutEntity;
 import net.lab1024.sa.visitor.manager.SelfCheckOutManager;
 import net.lab1024.sa.visitor.service.SelfCheckOutService;
 import org.springframework.stereotype.Service;

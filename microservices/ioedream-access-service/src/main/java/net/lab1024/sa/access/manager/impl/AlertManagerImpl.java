@@ -1,12 +1,12 @@
-package net.lab1024.sa.access.manager.impl;
+﻿package net.lab1024.sa.access.manager.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.DeviceAlertDao;
 import net.lab1024.sa.access.dao.AlertRuleDao;
-import net.lab1024.sa.access.domain.entity.DeviceAlertEntity;
-import net.lab1024.sa.access.domain.entity.AlertRuleEntity;
+import net.lab1024.sa.common.entity.access.DeviceAlertEntity;
+import net.lab1024.sa.common.entity.access.AlertRuleEntity;
 import net.lab1024.sa.access.domain.form.DeviceAlertHandleForm;
 import net.lab1024.sa.access.domain.form.DeviceAlertQueryForm;
 import net.lab1024.sa.access.domain.vo.AlertStatisticsVO;

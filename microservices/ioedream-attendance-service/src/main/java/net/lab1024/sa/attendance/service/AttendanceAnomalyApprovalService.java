@@ -1,6 +1,6 @@
-package net.lab1024.sa.attendance.service;
+﻿package net.lab1024.sa.attendance.service;
 
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyApplyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyApplyEntity;
 
 /**
  * 考勤异常审批服务接口

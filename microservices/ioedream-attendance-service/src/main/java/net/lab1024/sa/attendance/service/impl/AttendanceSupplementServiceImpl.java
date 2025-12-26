@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +20,7 @@ import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.attendance.dao.AttendanceSupplementDao;
-import net.lab1024.sa.attendance.domain.entity.AttendanceSupplementEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceSupplementEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceSupplementForm;
 import net.lab1024.sa.attendance.service.AttendanceSupplementService;
 @Service

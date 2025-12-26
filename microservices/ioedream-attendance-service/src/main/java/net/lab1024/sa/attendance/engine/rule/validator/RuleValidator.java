@@ -1,6 +1,6 @@
 package net.lab1024.sa.attendance.engine.rule.validator;
 
-import net.lab1024.sa.attendance.engine.rule.model.RuleValidationResult;
+import net.lab1024.sa.attendance.engine.model.RuleValidationResult;
 
 /**
  * 规则验证器接口

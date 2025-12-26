@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.service.impl;
+﻿package net.lab1024.sa.visitor.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +19,7 @@ import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.visitor.service.VisitorCheckInService;
-import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorAppointmentEntity;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
 
 /**

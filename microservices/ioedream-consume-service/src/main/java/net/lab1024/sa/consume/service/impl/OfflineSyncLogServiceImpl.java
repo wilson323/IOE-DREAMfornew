@@ -1,10 +1,10 @@
-package net.lab1024.sa.consume.service.impl;
+﻿package net.lab1024.sa.consume.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.dao.OfflineSyncLogDao;
-import net.lab1024.sa.consume.entity.OfflineSyncLogEntity;
+import net.lab1024.sa.common.entity.consume.OfflineSyncLogEntity;
 import net.lab1024.sa.consume.service.OfflineSyncLogService;
 import org.springframework.stereotype.Service;
 

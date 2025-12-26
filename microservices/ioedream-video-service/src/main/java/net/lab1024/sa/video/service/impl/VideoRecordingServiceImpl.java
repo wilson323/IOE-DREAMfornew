@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.service.impl;
+﻿package net.lab1024.sa.video.service.impl;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -39,7 +39,7 @@ import net.lab1024.sa.video.domain.form.VideoRecordingSearchForm;
 import net.lab1024.sa.video.domain.vo.VideoRecordingDetailVO;
 import net.lab1024.sa.video.domain.vo.VideoRecordingPlaybackVO;
 import net.lab1024.sa.video.domain.vo.VideoRecordingVO;
-import net.lab1024.sa.video.entity.VideoRecordEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordEntity;
 import net.lab1024.sa.video.manager.VideoRecordingManager;
 import net.lab1024.sa.video.service.VideoRecordingService;
 

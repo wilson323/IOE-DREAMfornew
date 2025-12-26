@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.AntiPassbackConfigDao;
 import net.lab1024.sa.access.dao.AntiPassbackRecordDao;
-import net.lab1024.sa.access.domain.entity.AntiPassbackConfigEntity;
-import net.lab1024.sa.access.domain.entity.AntiPassbackRecordEntity;
+import net.lab1024.sa.common.entity.access.AntiPassbackConfigEntity;
+import net.lab1024.sa.common.entity.access.AntiPassbackRecordEntity;
 import net.lab1024.sa.access.domain.form.AntiPassbackConfigForm;
 import net.lab1024.sa.access.domain.form.AntiPassbackDetectForm;
 import net.lab1024.sa.access.domain.vo.AntiPassbackConfigVO;

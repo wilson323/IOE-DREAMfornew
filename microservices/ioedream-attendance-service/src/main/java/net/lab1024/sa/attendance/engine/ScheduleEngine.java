@@ -1,7 +1,7 @@
-package net.lab1024.sa.attendance.engine;
+﻿package net.lab1024.sa.attendance.engine;
 
 import net.lab1024.sa.attendance.engine.model.*;
-import net.lab1024.sa.attendance.entity.SmartSchedulePlanEntity;
+import net.lab1024.sa.common.entity.attendance.SmartSchedulePlanEntity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;

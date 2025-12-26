@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.domain.form.ConsumeSubsidyQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeSubsidyVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeSubsidyEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeSubsidyEntity;
 
 /**
  * 消费补贴数据访问对象

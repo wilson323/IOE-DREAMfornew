@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.mobile.impl;
+﻿package net.lab1024.sa.attendance.mobile.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,10 +30,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import jakarta.annotation.Resource;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.ScheduleRecordDao;
-import net.lab1024.sa.attendance.domain.entity.ScheduleRecordEntity;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.ScheduleRecordEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 import net.lab1024.sa.attendance.engine.rule.AttendanceRuleEngine;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.leave.LeaveCancellationService;
 import net.lab1024.sa.attendance.mobile.AttendanceMobileService;
 import net.lab1024.sa.attendance.mobile.model.AttendanceClockInEvent;

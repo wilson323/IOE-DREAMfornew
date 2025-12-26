@@ -1,8 +1,8 @@
 package net.lab1024.sa.attendance.engine.optimization;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.rule.model.RuleEvaluationResult;
-import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext;
+import net.lab1024.sa.attendance.engine.model.RuleEvaluationResult;
+import net.lab1024.sa.attendance.engine.model.RuleExecutionContext;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

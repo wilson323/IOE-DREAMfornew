@@ -1,10 +1,10 @@
-package net.lab1024.sa.access.manager;
+﻿package net.lab1024.sa.access.manager;
 
 import java.time.LocalDateTime;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.AccessUserPermissionDao;
-import net.lab1024.sa.access.domain.entity.AccessUserPermissionEntity;
+import net.lab1024.sa.common.entity.access.AccessUserPermissionEntity;
 
 /**
  * 门禁设备权限管理器

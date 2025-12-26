@@ -1,12 +1,12 @@
-package net.lab1024.sa.video.service.impl;
+﻿package net.lab1024.sa.video.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.video.dao.DeviceHealthDao;
-import net.lab1024.sa.video.entity.DeviceHealthEntity;
-import net.lab1024.sa.video.entity.VideoDeviceEntity;
+import net.lab1024.sa.common.entity.video.DeviceHealthEntity;
+import net.lab1024.sa.common.entity.video.VideoDeviceEntity;
 import net.lab1024.sa.video.manager.DeviceHealthManager;
 import net.lab1024.sa.video.service.DeviceHealthService;
 import org.springframework.stereotype.Service;

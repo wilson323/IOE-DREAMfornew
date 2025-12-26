@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.dao;
+﻿package net.lab1024.sa.access.dao;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Update;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.access.domain.entity.AccessUserPermissionEntity;
+import net.lab1024.sa.common.entity.access.AccessUserPermissionEntity;
 
 /**
  * 门禁设备权限DAO

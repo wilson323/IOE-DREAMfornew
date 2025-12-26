@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import net.lab1024.sa.common.util.QueryBuilder;
@@ -19,8 +19,7 @@ import net.lab1024.sa.attendance.engine.model.OptimizationConfig;
 import net.lab1024.sa.attendance.engine.optimizer.OptimizationResult;
 import net.lab1024.sa.attendance.engine.optimizer.OptimizationAlgorithmFactory;
 import net.lab1024.sa.attendance.engine.optimizer.SimulatedAnnealingOptimizer;
-import net.lab1024.sa.attendance.entity.SmartSchedulePlanEntity;
-import net.lab1024.sa.attendance.entity.SmartScheduleResultEntity;
+import net.lab1024.sa.common.entity.attendance.SmartSchedulePlanEntity;
 import net.lab1024.sa.attendance.service.SmartScheduleService;
 
 import net.lab1024.sa.attendance.manager.SmartSchedulePlanManager;

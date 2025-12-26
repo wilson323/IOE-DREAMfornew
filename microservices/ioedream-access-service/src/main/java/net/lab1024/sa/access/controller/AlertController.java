@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.controller;
+﻿package net.lab1024.sa.access.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.domain.form.DeviceAlertHandleForm;
 import net.lab1024.sa.access.domain.form.DeviceAlertQueryForm;
-import net.lab1024.sa.access.domain.entity.DeviceAlertEntity;
+import net.lab1024.sa.common.entity.access.DeviceAlertEntity;
 import net.lab1024.sa.access.domain.vo.AlertStatisticsVO;
 import net.lab1024.sa.access.domain.vo.DeviceAlertVO;
 import net.lab1024.sa.access.manager.AlertManager;

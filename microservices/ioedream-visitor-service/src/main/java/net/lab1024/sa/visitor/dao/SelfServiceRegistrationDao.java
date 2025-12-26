@@ -1,7 +1,7 @@
-package net.lab1024.sa.visitor.dao;
+﻿package net.lab1024.sa.visitor.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.visitor.entity.SelfServiceRegistrationEntity;
+import net.lab1024.sa.common.entity.visitor.SelfServiceRegistrationEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

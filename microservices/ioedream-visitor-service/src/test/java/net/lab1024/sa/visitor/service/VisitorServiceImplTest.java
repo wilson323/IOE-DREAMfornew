@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.service;
+﻿package net.lab1024.sa.visitor.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,7 +25,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
-import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorAppointmentEntity;
 
 /**
  * VisitorServiceImpl Unit Test

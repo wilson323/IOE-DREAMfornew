@@ -1,9 +1,9 @@
-package net.lab1024.sa.visitor.manager;
+﻿package net.lab1024.sa.visitor.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.visitor.dao.VisitorDao;
-import net.lab1024.sa.visitor.entity.VisitorEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorEntity;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;

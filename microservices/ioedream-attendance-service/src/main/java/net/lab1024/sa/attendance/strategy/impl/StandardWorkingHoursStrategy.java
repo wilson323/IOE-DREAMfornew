@@ -1,12 +1,12 @@
-package net.lab1024.sa.attendance.strategy.impl;
+﻿package net.lab1024.sa.attendance.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 
 import net.lab1024.sa.attendance.domain.vo.AttendanceResultVO;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 import net.lab1024.sa.attendance.strategy.IAttendanceRuleStrategy;
 import net.lab1024.sa.common.factory.StrategyMarker;
 

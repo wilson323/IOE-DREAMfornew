@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.dao.ConsumeSubsidyDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeSubsidyEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeSubsidyEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeSubsidyAddForm;
 import net.lab1024.sa.consume.domain.form.ConsumeSubsidyQueryForm;
 import net.lab1024.sa.consume.domain.form.ConsumeSubsidyUpdateForm;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.engine.impl;
+﻿package net.lab1024.sa.attendance.engine.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.ScheduleEngine;
@@ -13,7 +13,7 @@ import net.lab1024.sa.attendance.engine.optimization.ScheduleOptimizationService
 import net.lab1024.sa.attendance.engine.optimizer.ScheduleOptimizer;
 import net.lab1024.sa.attendance.engine.prediction.SchedulePredictionService;
 import net.lab1024.sa.attendance.engine.quality.ScheduleQualityService;
-import net.lab1024.sa.attendance.entity.SmartSchedulePlanEntity;
+import net.lab1024.sa.common.entity.attendance.SmartSchedulePlanEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

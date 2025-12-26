@@ -1,9 +1,9 @@
-package net.lab1024.sa.attendance.strategy;
+﻿package net.lab1024.sa.attendance.strategy;
 
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 import net.lab1024.sa.attendance.strategy.impl.StandardWorkTimeStrategy;
 import net.lab1024.sa.attendance.strategy.impl.RotatingWorkTimeStrategy;
 import net.lab1024.sa.attendance.strategy.impl.FlexibleWorkTimeStrategy;

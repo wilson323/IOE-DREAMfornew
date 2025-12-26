@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.controller;
+﻿package net.lab1024.sa.attendance.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.attendance.domain.form.AttendanceShiftForm;
-import net.lab1024.sa.attendance.entity.AttendanceShiftEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceShiftEntity;
 import net.lab1024.sa.attendance.service.AttendanceShiftService;
 import net.lab1024.sa.common.dto.ResponseDTO;
 

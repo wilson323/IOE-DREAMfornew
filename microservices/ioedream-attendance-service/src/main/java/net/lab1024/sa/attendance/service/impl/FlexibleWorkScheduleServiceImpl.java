@@ -1,10 +1,10 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.domain.form.FlexibleWorkScheduleForm;
 import net.lab1024.sa.attendance.domain.vo.FlexibleWorkScheduleDetailVO;
 import net.lab1024.sa.attendance.domain.vo.FlexibleWorkScheduleVO;
-import net.lab1024.sa.attendance.entity.FlexibleWorkScheduleEntity;
+import net.lab1024.sa.common.entity.attendance.FlexibleWorkScheduleEntity;
 import net.lab1024.sa.attendance.service.FlexibleWorkScheduleService;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.video.dao.VideoDecoderDao;
-import net.lab1024.sa.video.entity.VideoDecoderEntity;
+import net.lab1024.sa.common.entity.video.VideoDecoderEntity;
 
 /**
  * 解码器管理器

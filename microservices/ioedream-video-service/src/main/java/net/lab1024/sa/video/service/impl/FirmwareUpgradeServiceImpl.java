@@ -1,10 +1,10 @@
-package net.lab1024.sa.video.service.impl;
+﻿package net.lab1024.sa.video.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.video.entity.FirmwareUpgradeEntity;
+import net.lab1024.sa.common.entity.video.FirmwareUpgradeEntity;
 import net.lab1024.sa.video.manager.FirmwareUpgradeManager;
 import net.lab1024.sa.video.service.FirmwareUpgradeService;
 import org.springframework.stereotype.Service;

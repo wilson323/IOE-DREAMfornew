@@ -1,10 +1,10 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.video.entity.VideoFaceEntity;
-import net.lab1024.sa.video.entity.VideoFaceDetectionEntity;
-import net.lab1024.sa.video.entity.VideoFaceCompareEntity;
-import net.lab1024.sa.video.entity.VideoFaceSearchEntity;
+import net.lab1024.sa.common.entity.video.VideoFaceEntity;
+import net.lab1024.sa.common.entity.video.VideoFaceDetectionEntity;
+import net.lab1024.sa.common.entity.video.VideoFaceCompareEntity;
+import net.lab1024.sa.common.entity.video.VideoFaceSearchEntity;
 import net.lab1024.sa.video.dao.VideoFaceDao;
 import net.lab1024.sa.video.dao.VideoFaceDetectionDao;
 

@@ -34,8 +34,6 @@ import net.lab1024.sa.video.dao.VideoBehaviorPatternDao;
 import net.lab1024.sa.video.domain.form.VideoBehaviorAnalysisForm;
 import net.lab1024.sa.video.domain.form.VideoBehaviorPatternForm;
 import net.lab1024.sa.video.domain.vo.VideoBehaviorVO;
-import net.lab1024.sa.video.entity.VideoBehaviorEntity;
-import net.lab1024.sa.video.entity.VideoBehaviorPatternEntity;
 import net.lab1024.sa.video.manager.VideoBehaviorManager;
 import net.lab1024.sa.video.service.VideoBehaviorService;
 

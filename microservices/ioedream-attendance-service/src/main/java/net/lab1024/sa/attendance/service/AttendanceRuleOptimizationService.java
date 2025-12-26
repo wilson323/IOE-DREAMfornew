@@ -9,7 +9,7 @@ import net.lab1024.sa.attendance.engine.optimization.AttendanceRulePerformanceMo
 import net.lab1024.sa.attendance.engine.optimization.AttendanceRuleVersionManager;
 import net.lab1024.sa.attendance.engine.optimization.AttendanceRuleVersionManager.RuleVersion;
 import net.lab1024.sa.attendance.engine.optimization.AttendanceRuleVersionManager.VersionPublishResult;
-import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext;
+import net.lab1024.sa.attendance.engine.model.RuleExecutionContext;
 
 import java.time.LocalDateTime;
 import java.util.List;

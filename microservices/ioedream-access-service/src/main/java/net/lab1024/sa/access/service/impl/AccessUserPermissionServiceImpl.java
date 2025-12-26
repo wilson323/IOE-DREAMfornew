@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import net.lab1024.sa.common.util.QueryBuilder;
@@ -11,7 +11,7 @@ import net.lab1024.sa.access.domain.form.OfflineRecordUploadForm.OfflineRecordIt
 import net.lab1024.sa.access.domain.form.PermissionQueryForm;
 import net.lab1024.sa.access.domain.form.PermissionRenewForm;
 import net.lab1024.sa.access.domain.vo.*;
-import net.lab1024.sa.access.domain.entity.AccessUserPermissionEntity;
+import net.lab1024.sa.common.entity.access.AccessUserPermissionEntity;
 import net.lab1024.sa.access.manager.AccessUserPermissionManager;
 import net.lab1024.sa.access.service.AccessUserPermissionService;
 import org.springframework.stereotype.Service;

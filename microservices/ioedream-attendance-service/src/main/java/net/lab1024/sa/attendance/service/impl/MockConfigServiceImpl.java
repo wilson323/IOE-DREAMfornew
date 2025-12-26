@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
@@ -10,7 +10,7 @@ import net.lab1024.sa.attendance.dao.MockConfigDao;
 import net.lab1024.sa.attendance.domain.form.MockConfigForm;
 import net.lab1024.sa.attendance.domain.vo.MockConfigVO;
 import net.lab1024.sa.attendance.domain.vo.MockDataVO;
-import net.lab1024.sa.attendance.entity.MockConfigEntity;
+import net.lab1024.sa.common.entity.attendance.MockConfigEntity;
 import net.lab1024.sa.attendance.service.MockConfigService;
 
 import java.time.LocalDateTime;

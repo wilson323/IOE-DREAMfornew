@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.video.dao.VideoDisplayTaskDao;
 import net.lab1024.sa.video.dao.VideoWallWindowDao;
-import net.lab1024.sa.video.entity.VideoDisplayTaskEntity;
-import net.lab1024.sa.video.entity.VideoWallWindowEntity;
+import net.lab1024.sa.common.entity.video.VideoDisplayTaskEntity;
+import net.lab1024.sa.common.entity.video.VideoWallWindowEntity;
 
 /**
  * 上墙任务管理器

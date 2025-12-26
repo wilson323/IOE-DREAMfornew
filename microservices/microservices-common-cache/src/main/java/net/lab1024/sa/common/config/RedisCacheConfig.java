@@ -67,7 +67,7 @@ public class RedisCacheConfig {
             JsonTypeInfo.As.PROPERTY
         );
 
-        jackson2JsonRedisSerializer.setObjectMapper(objectModel);
+        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
         // String序列化
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();

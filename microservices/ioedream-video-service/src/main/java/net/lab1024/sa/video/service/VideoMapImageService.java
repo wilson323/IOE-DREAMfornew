@@ -1,7 +1,7 @@
-package net.lab1024.sa.video.service;
+﻿package net.lab1024.sa.video.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import net.lab1024.sa.video.entity.VideoMapImageEntity;
+import net.lab1024.sa.common.entity.video.VideoMapImageEntity;
 
 import java.util.List;
 

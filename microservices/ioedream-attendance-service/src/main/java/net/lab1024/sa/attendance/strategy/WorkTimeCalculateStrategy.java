@@ -1,10 +1,10 @@
-package net.lab1024.sa.attendance.strategy;
+﻿package net.lab1024.sa.attendance.strategy;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 import net.lab1024.sa.attendance.strategy.model.CalculateContext;
 import net.lab1024.sa.attendance.strategy.model.CalculateResult;
 import net.lab1024.sa.attendance.strategy.model.PunchRecord;

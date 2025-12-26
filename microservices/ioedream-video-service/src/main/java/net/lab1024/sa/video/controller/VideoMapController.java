@@ -1,13 +1,13 @@
-package net.lab1024.sa.video.controller;
+﻿package net.lab1024.sa.video.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.video.entity.VideoDeviceMapEntity;
-import net.lab1024.sa.video.entity.VideoMapHotspotEntity;
-import net.lab1024.sa.video.entity.VideoMapImageEntity;
+import net.lab1024.sa.common.entity.video.VideoDeviceMapEntity;
+import net.lab1024.sa.common.entity.video.VideoMapHotspotEntity;
+import net.lab1024.sa.common.entity.video.VideoMapImageEntity;
 import net.lab1024.sa.video.service.VideoDeviceMapService;
 import net.lab1024.sa.video.service.VideoMapHotspotService;
 import net.lab1024.sa.video.service.VideoMapImageService;

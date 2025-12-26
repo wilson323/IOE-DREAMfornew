@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -12,10 +12,10 @@ import net.lab1024.sa.attendance.domain.form.AttendanceOvertimeApplyAddForm;
 import net.lab1024.sa.attendance.domain.form.AttendanceOvertimeApplyQueryForm;
 import net.lab1024.sa.attendance.domain.form.AttendanceOvertimeApplyUpdateForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceOvertimeApplyVO;
-import net.lab1024.sa.attendance.entity.AttendanceOvertimeApplyEntity;
-import net.lab1024.sa.attendance.entity.AttendanceOvertimeApprovalEntity;
-import net.lab1024.sa.attendance.entity.AttendanceOvertimeRecordEntity;
-import net.lab1024.sa.attendance.entity.AttendanceOvertimeRuleEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceOvertimeApplyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceOvertimeApprovalEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceOvertimeRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceOvertimeRuleEntity;
 import net.lab1024.sa.attendance.service.AttendanceOvertimeApplyService;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;

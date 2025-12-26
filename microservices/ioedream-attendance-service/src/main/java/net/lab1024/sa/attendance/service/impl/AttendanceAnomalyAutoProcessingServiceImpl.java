@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.lab1024.sa.attendance.dao.AttendanceAnomalyDao;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceAnomalyAutoProcessQueryForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceAnomalyAutoProcessVO;
 import net.lab1024.sa.attendance.service.AttendanceAnomalyAutoProcessingService;

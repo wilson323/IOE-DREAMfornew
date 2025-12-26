@@ -18,8 +18,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
 import net.lab1024.sa.attendance.engine.rule.cache.RuleCacheManager;
-import net.lab1024.sa.attendance.engine.rule.model.RuleEvaluationResult;
-import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext;
+import net.lab1024.sa.attendance.engine.model.RuleEvaluationResult;
+import net.lab1024.sa.attendance.engine.model.RuleExecutionContext;
 /**
  * 规则缓存管理器实现类 - 三级缓存架构
  * <p>

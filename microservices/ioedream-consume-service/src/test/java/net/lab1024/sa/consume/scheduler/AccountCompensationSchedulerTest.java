@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.scheduler;
+﻿package net.lab1024.sa.consume.scheduler;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -20,7 +20,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.client.AccountServiceClient;
 import net.lab1024.sa.consume.client.dto.BalanceChangeResult;
 import net.lab1024.sa.consume.dao.AccountCompensationDao;
-import net.lab1024.sa.consume.entity.AccountCompensationEntity;
+import net.lab1024.sa.common.entity.consume.AccountCompensationEntity;
 
 /**
  * AccountCompensationScheduler 集成测试

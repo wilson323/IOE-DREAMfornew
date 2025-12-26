@@ -1,7 +1,7 @@
-package net.lab1024.sa.attendance.service;
+﻿package net.lab1024.sa.attendance.service;
 
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 
 import java.time.LocalDate;
 import java.util.List;

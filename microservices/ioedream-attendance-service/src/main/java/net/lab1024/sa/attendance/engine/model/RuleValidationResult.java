@@ -1,6 +1,13 @@
 package net.lab1024.sa.attendance.engine.model;
 
 import lombok.Data;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 规则验证结果
@@ -54,6 +61,11 @@ public class RuleValidationResult {
     private String suggestion;
 
     /**
+     * 验证步骤列表
+     */
+    private List<ValidationStep> validationSteps = new ArrayList<>();
+
+    /**
      * 创建成功结果
      */
     public static RuleValidationResult success(String expression) {
@@ -86,5 +98,59 @@ public class RuleValidationResult {
         result.setMessage(errorMessage);
         result.setErrorDetails(errorDetails);
         return result;
+    }
+
+    /**
+     * 添加验证步骤
+     */
+    public void addValidationStep(ValidationStep step) {
+        if (this.validationSteps == null) {
+            this.validationSteps = new ArrayList<>();
+        }
+        this.validationSteps.add(step);
+    }
+
+    /**
+     * 验证步骤内部类
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ValidationStep {
+        /**
+         * 步骤ID
+         */
+        private Long stepId;
+
+        /**
+         * 步骤名称
+         */
+        private String stepName;
+
+        /**
+         * 步骤描述
+         */
+        private String stepDescription;
+
+        /**
+         * 是否通过
+         */
+        private Boolean passed;
+
+        /**
+         * 错误消息
+         */
+        private String errorMessage;
+
+        /**
+         * 执行时间
+         */
+        private LocalDateTime executionTime;
+
+        /**
+         * 步骤类型
+         */
+        private String stepType;
     }
 }

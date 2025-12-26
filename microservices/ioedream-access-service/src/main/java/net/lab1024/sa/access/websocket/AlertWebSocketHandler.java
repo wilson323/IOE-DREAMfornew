@@ -1,8 +1,8 @@
-package net.lab1024.sa.access.websocket;
+﻿package net.lab1024.sa.access.websocket;
 
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.access.domain.entity.DeviceAlertEntity;
+import net.lab1024.sa.common.entity.access.DeviceAlertEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;

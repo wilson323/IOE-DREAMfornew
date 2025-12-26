@@ -1,11 +1,11 @@
-package net.lab1024.sa.attendance.controller;
+﻿package net.lab1024.sa.attendance.controller;
 
 import net.lab1024.sa.attendance.config.EnhancedTestConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
 import net.lab1024.sa.attendance.service.AttendanceAnomalyDetectionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

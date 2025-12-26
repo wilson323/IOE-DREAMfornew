@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.engine.execution;
+﻿package net.lab1024.sa.attendance.engine.execution;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.ScheduleAlgorithm;
@@ -14,7 +14,7 @@ import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.engine.model.ScheduleRequest;
 import net.lab1024.sa.attendance.engine.model.ScheduleResult;
 import net.lab1024.sa.attendance.engine.optimizer.ScheduleOptimizer;
-import net.lab1024.sa.attendance.entity.SmartSchedulePlanEntity;
+import net.lab1024.sa.common.entity.attendance.SmartSchedulePlanEntity;
 import org.springframework.util.StopWatch;
 
 import java.time.LocalDate;

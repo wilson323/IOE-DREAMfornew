@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,7 +10,7 @@ import net.lab1024.sa.access.domain.form.AccessEvacuationPointAddForm;
 import net.lab1024.sa.access.domain.form.AccessEvacuationPointQueryForm;
 import net.lab1024.sa.access.domain.form.AccessEvacuationPointUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessEvacuationPointVO;
-import net.lab1024.sa.access.domain.entity.AccessEvacuationPointEntity;
+import net.lab1024.sa.common.entity.access.AccessEvacuationPointEntity;
 import net.lab1024.sa.access.service.AccessEvacuationService;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.domain.PageResult;

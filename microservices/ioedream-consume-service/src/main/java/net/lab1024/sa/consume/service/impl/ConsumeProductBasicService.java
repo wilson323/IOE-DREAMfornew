@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeProductEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeProductEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeProductAddForm;
 import net.lab1024.sa.consume.domain.form.ConsumeProductQueryForm;
 import net.lab1024.sa.consume.domain.form.ConsumeProductUpdateForm;
