@@ -9,7 +9,7 @@ import net.lab1024.sa.video.service.impl.FirmwareUpgradeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,13 +42,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("固件升级集成测试")
 class FirmwareUpgradeIntegrationTest {
 
-    @Autowired
+    @Resource
     private FirmwareUpgradeService firmwareUpgradeService;
 
-    @Autowired
+    @Resource
     private FirmwareUpgradeDao firmwareUpgradeDao;
 
-    @Autowired
+    @Resource
     private FirmwareUpgradeManager firmwareUpgradeManager;
 
     private FirmwareUpgradeEntity testUpgrade;

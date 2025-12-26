@@ -45,7 +45,7 @@ import net.lab1024.sa.video.domain.dto.EdgeAIEventDTO;
 @DisplayName("WebSocket事件推送集成测试")
 class WebSocketEventPushIntegrationTest {
 
-    @Autowired
+    @Resource
     private RestTemplateBuilder restTemplateBuilder;
 
     private TestRestTemplate restTemplate;
