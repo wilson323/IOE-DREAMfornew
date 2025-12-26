@@ -9,7 +9,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.dao.ConsumeDeviceDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeDeviceEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeDeviceEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeDeviceAddForm;
 import net.lab1024.sa.consume.domain.form.ConsumeDeviceQueryForm;
 import net.lab1024.sa.consume.domain.form.ConsumeDeviceUpdateForm;

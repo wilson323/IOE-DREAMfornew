@@ -2,7 +2,7 @@ package net.lab1024.sa.attendance.engine.rule.cache;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.cache.RuleCacheManager;
+import net.lab1024.sa.attendance.engine.rule.cache.RuleCacheManager;
 
 import java.util.List;
 

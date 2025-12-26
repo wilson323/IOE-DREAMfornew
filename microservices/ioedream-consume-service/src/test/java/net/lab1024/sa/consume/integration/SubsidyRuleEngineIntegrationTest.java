@@ -1,10 +1,10 @@
-package net.lab1024.sa.consume.integration;
+﻿package net.lab1024.sa.consume.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.lab1024.sa.consume.dao.*;
 import net.lab1024.sa.consume.domain.dto.SubsidyCalculationDTO;
 import net.lab1024.sa.consume.domain.dto.SubsidyResultDTO;
-import net.lab1024.sa.consume.entity.*;
+import net.lab1024.sa.common.entity.consume.*;
 import net.lab1024.sa.consume.service.SubsidyRuleEngineService;
 import net.lab1024.sa.consume.service.impl.SubsidyRuleEngineServiceImpl;
 import org.junit.jupiter.api.*;

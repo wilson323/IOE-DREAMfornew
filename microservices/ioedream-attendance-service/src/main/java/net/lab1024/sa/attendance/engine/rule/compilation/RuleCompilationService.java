@@ -229,12 +229,23 @@ public class RuleCompilationService {
     /**
      * 编译后的条件对象
      */
-    @Data
     public static class CompiledCondition {
         private String originalExpression;
         private String operator;
         private String leftOperand;
         private String rightOperand;
+
+        public String getOriginalExpression() { return originalExpression; }
+        public void setOriginalExpression(String originalExpression) { this.originalExpression = originalExpression; }
+
+        public String getOperator() { return operator; }
+        public void setOperator(String operator) { this.operator = operator; }
+
+        public String getLeftOperand() { return leftOperand; }
+        public void setLeftOperand(String leftOperand) { this.leftOperand = leftOperand; }
+
+        public String getRightOperand() { return rightOperand; }
+        public void setRightOperand(String rightOperand) { this.rightOperand = rightOperand; }
     }
 
     /**

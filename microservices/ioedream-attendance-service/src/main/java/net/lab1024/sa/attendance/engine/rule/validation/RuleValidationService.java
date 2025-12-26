@@ -1,8 +1,8 @@
 package net.lab1024.sa.attendance.engine.rule.validation;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.RuleLoader;
-import net.lab1024.sa.attendance.engine.RuleValidator;
+import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
+import net.lab1024.sa.attendance.engine.rule.validator.RuleValidator;
 import net.lab1024.sa.attendance.engine.model.RuleValidationResult;
 
 import java.util.ArrayList;

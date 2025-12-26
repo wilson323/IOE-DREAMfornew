@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.controller;
+﻿package net.lab1024.sa.consume.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.domain.dto.SubsidyCalculationDTO;
 import net.lab1024.sa.consume.domain.dto.SubsidyResultDTO;
-import net.lab1024.sa.consume.entity.SubsidyRuleEntity;
-import net.lab1024.sa.consume.entity.SubsidyRuleLogEntity;
-import net.lab1024.sa.consume.entity.UserSubsidyRecordEntity;
+import net.lab1024.sa.common.entity.consume.SubsidyRuleEntity;
+import net.lab1024.sa.common.entity.consume.SubsidyRuleLogEntity;
+import net.lab1024.sa.common.entity.consume.UserSubsidyRecordEntity;
 import net.lab1024.sa.consume.service.SubsidyRuleEngineService;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,10 +1,10 @@
-package net.lab1024.sa.visitor.dao;
+﻿package net.lab1024.sa.visitor.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import net.lab1024.sa.visitor.entity.ElectronicPassEntity;
+import net.lab1024.sa.common.entity.visitor.ElectronicPassEntity;
 import org.springframework.util.StringUtils;
 
 /**

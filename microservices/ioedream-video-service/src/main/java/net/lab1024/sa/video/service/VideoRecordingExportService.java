@@ -1,6 +1,6 @@
-package net.lab1024.sa.video.service;
+﻿package net.lab1024.sa.video.service;
 
-import net.lab1024.sa.video.domain.entity.VideoRecordingExportTaskEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingExportTaskEntity;
 import net.lab1024.sa.video.domain.form.VideoRecordingExportForm;
 import org.springframework.http.ResponseEntity;
 

@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.domain.form.ConsumeAccountQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeAccountVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeAccountEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountEntity;
 
 /**
  * 消费账户数据访问对象

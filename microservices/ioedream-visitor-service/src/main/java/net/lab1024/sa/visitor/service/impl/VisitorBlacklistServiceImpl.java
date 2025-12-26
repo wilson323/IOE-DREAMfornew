@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.service.impl;
+﻿package net.lab1024.sa.visitor.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +27,7 @@ import net.lab1024.sa.visitor.dao.VisitorBlacklistDao;
 import net.lab1024.sa.visitor.domain.form.BlacklistAddForm;
 import net.lab1024.sa.visitor.domain.form.BlacklistQueryForm;
 import net.lab1024.sa.visitor.domain.vo.BlacklistVO;
-import net.lab1024.sa.visitor.entity.VisitorBlacklistEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorBlacklistEntity;
 import net.lab1024.sa.visitor.service.VisitorBlacklistService;
 
 /**

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import net.lab1024.sa.video.domain.entity.VideoRecordingPlanEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingPlanEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

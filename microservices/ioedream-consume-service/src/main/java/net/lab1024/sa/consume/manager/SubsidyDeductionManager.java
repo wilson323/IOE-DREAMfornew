@@ -1,10 +1,10 @@
 package net.lab1024.sa.consume.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.consume.dao.PosidSubsidyAccountDao;
-import net.lab1024.sa.consume.entity.PosidAccountEntity;
-import net.lab1024.sa.consume.entity.PosidSubsidyAccountEntity;
-import net.lab1024.sa.consume.entity.PosidSubsidyTypeEntity;
+import net.lab1024.sa.consume.dao.ConsumeSubsidyAccountDao;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeSubsidyAccountEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeSubsidyTypeEntity;
 import net.lab1024.sa.common.exception.BusinessException;
 import org.springframework.stereotype.Component;
 
@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
 @Component
 public class SubsidyDeductionManager {
 
-    private final PosidSubsidyAccountDao subsidyAccountDao;
+    private final ConsumeSubsidyAccountDao subsidyAccountDao;
 
-    public SubsidyDeductionManager(PosidSubsidyAccountDao subsidyAccountDao) {
+    public SubsidyDeductionManager(ConsumeSubsidyAccountDao subsidyAccountDao) {
         this.subsidyAccountDao = subsidyAccountDao;
     }
 
@@ -44,11 +44,11 @@ public class SubsidyDeductionManager {
      * @param amount 需要扣款的金额
      * @return 扣款结果
      */
-    public SubsidyDeductionResult deduct(PosidAccountEntity account, BigDecimal amount) {
+    public SubsidyDeductionResult deduct(ConsumeAccountEntity account, BigDecimal amount) {
         log.info("[补贴扣款] 开始扣款: userId={}, amount={}", account.getUserId(), amount);
 
         // 获取用户所有有效的补贴账户
-        List<PosidSubsidyAccountEntity> subsidyAccounts =
+        List<ConsumeSubsidyAccountEntity> subsidyAccounts =
                 subsidyAccountDao.selectValidAccountsByUserId(account.getUserId());
 
         if (subsidyAccounts.isEmpty()) {
@@ -57,7 +57,7 @@ public class SubsidyDeductionManager {
         }
 
         // 按优先级排序补贴账户
-        List<PosidSubsidyAccountEntity> sortedAccounts = sortByPriority(subsidyAccounts);
+        List<ConsumeSubsidyAccountEntity> sortedAccounts = sortByPriority(subsidyAccounts);
 
         log.info("[补贴扣款] 找到有效补贴账户: count={}", sortedAccounts.size());
 
@@ -65,7 +65,7 @@ public class SubsidyDeductionManager {
         BigDecimal remainingAmount = amount;
         List<SubsidyDeduction> deductions = new ArrayList<>();
 
-        for (PosidSubsidyAccountEntity subsidyAccount : sortedAccounts) {
+        for (ConsumeSubsidyAccountEntity subsidyAccount : sortedAccounts) {
             if (remainingAmount.compareTo(BigDecimal.ZERO) <= 0) {
                 break;
             }
@@ -132,11 +132,11 @@ public class SubsidyDeductionManager {
      * 2. 同过期日期余额升序（小金额优先）
      * 3. 同余额优先级升序（priority数字越小优先级越高）
      */
-    private List<PosidSubsidyAccountEntity> sortByPriority(List<PosidSubsidyAccountEntity> accounts) {
+    private List<ConsumeSubsidyAccountEntity> sortByPriority(List<ConsumeSubsidyAccountEntity> accounts) {
         return accounts.stream()
                 .sorted(Comparator
-                        .comparing(PosidSubsidyAccountEntity::getExpireTime)
-                        .thenComparing(PosidSubsidyAccountEntity::getBalance)
+                        .comparing(ConsumeSubsidyAccountEntity::getExpireTime)
+                        .thenComparing(ConsumeSubsidyAccountEntity::getBalance)
                         .thenComparing(a -> {
                             // 这里需要获取补贴类型的priority，简化处理
                             return 0;
@@ -147,7 +147,7 @@ public class SubsidyDeductionManager {
     /**
      * 仅从现金账户扣款
      */
-    private SubsidyDeductionResult deductFromCashAccount(PosidAccountEntity account, BigDecimal amount) {
+    private SubsidyDeductionResult deductFromCashAccount(ConsumeAccountEntity account, BigDecimal amount) {
         if (account.getBalance().compareTo(amount) < 0) {
             return SubsidyDeductionResult.failure("现金账户余额不足");
         }

@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.domain.form.ConsumeMealCategoryQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeMealCategoryVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeMealCategoryEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeMealCategoryEntity;
 
 /**
  * 消费餐次分类数据访问对象

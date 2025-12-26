@@ -1,7 +1,7 @@
 package net.lab1024.sa.access.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.access.domain.entity.DeviceFirmwareEntity;
+import net.lab1024.sa.common.entity.device.DeviceFirmwareEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

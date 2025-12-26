@@ -1,0 +1,73 @@
+package net.lab1024.sa.attendance.entity;
+
+import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+/**
+ * 考勤请假实体
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-01-30
+ */
+@Data
+@TableName("t_attendance_leave")
+@Schema(description = "考勤请假")
+public class AttendanceLeaveEntity {
+
+    @TableId(type = IdType.AUTO)
+    @Schema(description = "请假ID")
+    private Long leaveId;
+
+    @Schema(description = "请假申请编号")
+    private String leaveNo;
+
+    @Schema(description = "员工ID")
+    private Long employeeId;
+
+    @Schema(description = "请假类型：1-事假 2-病假 3-年假 4-调休 5-婚假 6-产假 7-丧假 8-其他")
+    private String leaveType;
+
+    @Schema(description = "请假开始日期")
+    private LocalDate startDate;
+
+    @Schema(description = "请假结束日期")
+    private LocalDate endDate;
+
+    @Schema(description = "请假天数")
+    private Double leaveDays;
+
+    @Schema(description = "请假原因")
+    private String reason;
+
+    @Schema(description = "备注")
+    private String remark;
+
+    @Schema(description = "审批状态：0-待审批 1-已通过 2-已拒绝 3-已撤销")
+    private String approvalStatus;
+
+    @Schema(description = "审批意见")
+    private String approvalComment;
+
+    @Schema(description = "工作流实例ID")
+    private String workflowInstanceId;
+
+    @Schema(description = "创建人ID")
+    private Long createUserId;
+
+    @TableField(fill = FieldFill.INSERT)
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @Schema(description = "更新时间")
+    private LocalDateTime updateTime;
+
+    @TableLogic
+    @Schema(description = "删除标记：0-未删除 1-已删除")
+    private Integer deletedFlag;
+}

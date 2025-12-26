@@ -1,7 +1,7 @@
-package net.lab1024.sa.video.dao;
+﻿package net.lab1024.sa.video.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.video.entity.VideoWallPresetEntity;
+import net.lab1024.sa.common.entity.video.VideoWallPresetEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

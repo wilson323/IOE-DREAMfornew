@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 // import net.lab1024.sa.attendance.domain.form.AttendanceRuleTemplateUpdateForm;
 // import net.lab1024.sa.attendance.domain.vo.AttendanceRuleTemplateVO;
 // import net.lab1024.sa.common.domain.PageResult;
-// import net.lab1024.sa.attendance.entity.AttendanceRuleTemplateEntity;
+// import net.lab1024.sa.common.entity.attendance.AttendanceRuleTemplateEntity;
 import net.lab1024.sa.attendance.service.AttendanceRuleTemplateService;
 // import net.lab1024.sa.common.exception.BusinessException;
 // TODO: 取消注释（待创建相关VO类后）

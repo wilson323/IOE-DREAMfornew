@@ -1,9 +1,9 @@
-package net.lab1024.sa.attendance.manager;
+﻿package net.lab1024.sa.attendance.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.common.domain.PageResult;
 import org.springframework.stereotype.Component;
 

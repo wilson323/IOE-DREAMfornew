@@ -1,0 +1,1497 @@
+    110 Null type safety: The expression of type 'String' needs unchecked conversion to conform to '@NonNull String'
+     64 Null type safety: The expression of type 'Duration' needs unchecked conversion to conform to '@NonNull Duration'
+     55 The type MockBean has been deprecated since version 3.4.0 and marked for removal
+     50 The import java.time.LocalDateTime is never used
+     50 Null type safety: The expression of type 'String' needs unchecked conversion to conform to '@NonNull Object'
+     31 UserEntity cannot be resolved to a type
+     29 Unnecessary @SuppressWarnings(\
+     29 MobileTaskVO cannot be resolved to a type
+     27 The import net.lab1024.sa.common.dto.ResponseDTO is never used
+     26 UserEntity cannot be resolved
+     25 Newer patch version of Spring Boot available: 3.5.9
+     23 ReconciliationRecordEntity cannot be resolved to a type
+     22 Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+     20 The method getStock() from the type ConsumeProductEntity is deprecated
+     20 The field BigDecimal.ROUND_HALF_UP is deprecated since version 9
+     19 Null type safety: The expression of type 'MediaType' needs unchecked conversion to conform to '@NonNull MediaType'
+     18 The type UserAreaPermissionEntity is deprecated
+     18 The method divide(BigDecimal, int, int) from the type BigDecimal is deprecated since version 9
+     18 The import jakarta.validation.constraints.NotNull is never used
+     17 Type safety: The expression of type Map needs unchecked conversion to conform to Map<String,Object>
+     17 The import java.util.List is never used
+     17 The import com.baomidou.mybatisplus.extension.plugins.pagination.Page is never used
+     16 The method of(Class<T>) in the type QueryBuilder is not applicable for the arguments (Class<UserEntity>)
+     16 The method getEvaluationResult() is undefined for the type RuleEvaluationResult
+     15 TODO: P1阶段实现
+     15 The value of the local variable result is not used
+     15 Null type safety: The expression of type 'Object' needs unchecked conversion to conform to '@NonNull Object'
+     15 ConsumeTransactionEntity cannot be resolved to a type
+     14 The import java.time.LocalDate is never used
+     14 PageResult cannot be resolved to a type
+     14 Missing non-null annotation: inherited method from AbstractWebSocketHandler specifies this parameter as @NonNull
+     13 VisualWorkflowConfigForm cannot be resolved to a type
+     13 The type GlobalTransactional is deprecated
+     13 Null type safety: The expression of type 'TimeUnit' needs unchecked conversion to conform to '@NonNull TimeUnit'
+     12 Type safety: The expression of type TypeReference needs unchecked conversion to conform to TypeReference<Object>
+     12 The import org.slf4j.LoggerFactory is never used
+     12 The import org.slf4j.Logger is never used
+     12 The import java.util.Map is never used
+     12 The import java.math.BigDecimal is never used
+     12 RuleValidator cannot be resolved to a type
+     12 RuleLoader cannot be resolved to a type
+     12 Null type safety: The expression of type 'String' needs unchecked conversion to conform to '@NonNull CharSequence'
+     11 RuleExecutionStatistics cannot be resolved to a type
+     10 The method getRulePriority() is undefined for the type RuleEvaluationResult
+     10 The method evaluationResult(String) is undefined for the type RuleEvaluationResult.RuleEvaluationResultBuilder
+     10 The import net.lab1024.sa.common.util.QueryBuilder is never used
+     10 The import java.time.format.DateTimeFormatter is never used
+     10 Null type safety: parameter 2 provided via method descriptor BiFunction<Integer,Integer,Integer>.apply(Integer, Integer) needs unchecked conversion to conform to 'int'
+     10 Null type safety: parameter 1 provided via method descriptor BiFunction<Integer,Integer,Integer>.apply(Integer, Integer) needs unchecked conversion to conform to 'int'
+     10 @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+      9 The type UserAreaPermissionManager is deprecated
+      9 The import java.util.ArrayList is never used
+      9 The import java.time.LocalTime is never used
+      9 At least one of the problems in category 'null' is not analysed due to a compiler option being ignored
+      8 The method resolutionSuccessful(boolean) is undefined for the type ConflictResolution.ConflictResolutionBuilder
+      8 The import lombok.extern.slf4j.Slf4j is never used
+      8 The import java.util.stream.Collectors is never used
+      8 The import jakarta.annotation.Resource is never used
+      8 The import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper is never used
+      8 RuleExecutor cannot be resolved to a type
+      8 QuickApprovalResult cannot be resolved to a type
+      8 Null type safety: The expression of type 'Class<T>' needs unchecked conversion to conform to '@NonNull Class<T>'
+      8 CompletedTaskVO cannot be resolved to a type
+      7 Unlikely argument type for equals(): Integer seems to be unrelated to String
+      7 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<AlertRuleEntity>
+      7 The value of the local variable startTime is not used
+      7 The type UserAreaPermissionDao is deprecated
+      7 The method message(String) is undefined for the type ValidationError.ValidationErrorBuilder
+      7 The import java.util.HashMap is never used
+      7 NodeType cannot be resolved to a type
+      7 NodeConfigSchema cannot be resolved to a type
+      6 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<AccessEvacuationPointEntity>
+      6 Type safety: Unchecked invocation readValue(String, TypeReference) of the generic method readValue(String, TypeReference<T>) of type ObjectMapper
+      6 Type safety: Unchecked invocation callDeviceCommService(String, HttpMethod, Map<String,Object>, TypeReference) of the generic method callDeviceCommService(String, HttpMethod, Map<String,Object>, TypeReference<T>) of type GatewayServiceClient
+      6 Type safety: The expression of type QueryWrapper needs unchecked conversion to conform to Wrapper<AttendanceRecordEntity>
+      6 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<DeviceEntity>
+      6 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<DeviceAlertEntity>
+      6 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<ConsumeTransactionEntity>
+      6 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<AccessEvacuationPointEntity>
+      6 TODO: 取消注释当DAO准备好时
+      6 TODO: 取消注释（待创建相关VO类后）
+      6 TODO: 从数据库或缓存中查询指定时间范围内的打卡记录
+      6 The type SignatureAlgorithm is deprecated
+      6 The type MediaType is not generic; it cannot be parameterized with arguments <>
+      6 The type Content is not generic; it cannot be parameterized with arguments <>
+      6 The method success(String) in the type RuleValidationResult is not applicable for the arguments (String, Map<String,Object>)
+      6 The method signWith(Key, SignatureAlgorithm) from the type JwtBuilder is deprecated
+      6 The method setSubject(String) from the type ClaimsMutator<JwtBuilder> is deprecated
+      6 The method setIssuedAt(Date) from the type ClaimsMutator<JwtBuilder> is deprecated
+      6 The method setExpiration(Date) from the type ClaimsMutator<JwtBuilder> is deprecated
+      6 The method setClaims(Map<String,?>) from the type JwtBuilder is deprecated
+      6 The method getUpgradeProgress(Long) is undefined for the type FirmwareUpgradeService
+      6 The method getResolutionSuccessful() is undefined for the type ConflictResolution
+      6 The method getLastTaskTimeMillis() from the type StopWatch is deprecated since version 6.1
+      6 The method getAttendanceDate() is undefined for the type RuleExecutionContext
+      6 The method countByStatus(int, LocalDate, LocalDate) is undefined for the type FirmwareUpgradeDao
+      6 The method addValidationStep(RuleValidationResult, String, String, () -> {}) is undefined for the type RuleValidatorImpl
+      6 The import net.lab1024.sa.common.exception.BusinessException is never used
+      6 The import net.lab1024.sa.common.dto.PageResult cannot be resolved
+      6 The import net.lab1024.sa.attendance.engine.model.RuleExecutionStatistics cannot be resolved
+      6 The import java.util.concurrent.ConcurrentHashMap is never used
+      6 The import java.time.Duration is never used
+      6 RuleCacheManager cannot be resolved to a type
+      6 ResponseDTO is a raw type. References to generic type ResponseDTO<T> should be parameterized
+      6 ReconciliationRecordEntity cannot be resolved
+      6 QuickApprovalRequest cannot be resolved to a type
+      6 ProcessTemplate cannot be resolved to a type
+      6 Null type safety: The expression of type 'ParameterizedTypeReference<T>' needs unchecked conversion to conform to '@NonNull ParameterizedTypeReference<T>'
+      6 Null type safety: The expression of type 'HttpMethod' needs unchecked conversion to conform to '@NonNull HttpMethod'
+      6 MyApplicationVO cannot be resolved to a type
+      6 Missing non-null annotation: inherited method from WebSocketMessageBrokerConfigurer specifies this parameter as @NonNull
+      6 Missing non-null annotation: inherited method from HandlerInterceptor specifies this parameter as @NonNull
+      6 DeviceEntity cannot be resolved to a type
+      6 ConsumeTransactionEntity cannot be resolved
+      5 Type safety: Unchecked invocation selectPage(Page, Wrapper<AccessPersonRestrictionEntity>) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<AccessPersonRestrictionEntity>
+      5 Type safety: Unchecked cast from Object to T
+      5 Type safety: The expression of type LambdaUpdateWrapper needs unchecked conversion to conform to Wrapper<VideoRecordingPlanEntity>
+      5 TODO: 从数据库统计
+      5 The method success(String) in the type RuleValidationResult is not applicable for the arguments ()
+      5 The method optimizationSuccessful(boolean) is undefined for the type OptimizedSchedule.OptimizedScheduleBuilder
+      5 The method nodeId(String) is undefined for the type ValidationError.ValidationErrorBuilder
+      5 The method isRuleApplicable(Long, RuleExecutionContext) from the type RuleValidationService refers to the missing type RuleExecutionContext
+      5 The method isCompiled() is undefined for the type CompiledRule
+      5 The method getUserId() is undefined for the type RuleExecutionContext
+      5 The method getOptimizationSuccessful() is undefined for the type OptimizedSchedule
+      5 The method getLevel() is undefined for the type ValidationError
+      5 The import org.springframework.http.HttpMethod is never used
+      5 The import net.lab1024.sa.common.domain.PageResult is never used
+      5 The import net.lab1024.sa.attendance.engine.optimizer.OptimizationResult is never used
+      5 The import lombok.Data is never used
+      5 The import com.fasterxml.jackson.core.type.TypeReference is never used
+      5 The import com.baomidou.mybatisplus.annotation.TableField is never used
+      5 SchedulePredictor cannot be resolved to a type
+      5 ScheduleAlgorithm cannot be resolved to a type
+      5 RuleExecutionContext cannot be resolved to a type
+      5 RuleEvaluatorFactory cannot be resolved to a type
+      5 QuickApprovalResult cannot be resolved
+      5 PendingTaskStatistics cannot be resolved to a type
+      5 Null type safety: The expression of type 'RedisConnectionFactory' needs unchecked conversion to conform to '@NonNull RedisConnectionFactory'
+      5 MobileProcessDiagram cannot be resolved to a type
+      5 ApprovalHistoryItemVO cannot be resolved to a type
+      5 ApprovalDecision cannot be resolved to a type
+      5 Annotation cannot be resolved to a type
+      4 WorkflowSimulationResult cannot be resolved to a type
+      4 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<AccessLinkageRuleEntity>
+      4 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<AccessInterlockRuleEntity>
+      4 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<AccessCapacityControlEntity>
+      4 Type safety: Unchecked cast from Object to V
+      4 Type safety: Unchecked cast from Object to Map<String,Object>
+      4 Type safety: Unchecked cast from Object to List<String>
+      4 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<ReconciliationRecordEntity>
+      4 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<FirmwareUpgradeDeviceEntity>
+      4 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<DeviceImportBatchEntity>
+      4 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<AiModelEntity>
+      4 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<AccessLinkageRuleEntity>
+      4 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<AccessInterlockRuleEntity>
+      4 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<AccessCapacityControlEntity>
+      4 TODO: 实现实际的查询逻辑
+      4 TODO: 实现查询逻辑（待创建相关VO类后）
+      4 TODO: 实现查询逻辑
+      4 TODO: 集成Flowable引擎
+      4 TODO: 从SecurityContext获取当前登录用户ID
+      4 The method predictionSuccessful(boolean) is undefined for the type SchedulePrediction.SchedulePredictionBuilder
+      4 The method getWarningMessages() is undefined for the type RuleValidationResult
+      4 The method getSource() is undefined for the type ProcessEdge
+      4 The method getPredictionSuccessful() is undefined for the type SchedulePrediction
+      4 The method getMessage() is undefined for the type ValidationError
+      4 The method getCompiledCondition() is undefined for the type CompiledRule
+      4 The method getCategory() is undefined for the type ProcessTemplateDetail
+      4 The method failure(Long, String, String, String) in the type CompiledRule is not applicable for the arguments (null, String, String)
+      4 The method createUpgradeTask(Long, String, String, Long, String, Integer) in the type FirmwareUpgradeService is not applicable for the arguments (long, String, String, String, String, String, long, String, int)
+      4 The method countByDateRange(LocalDate, LocalDate) is undefined for the type FirmwareUpgradeDao
+      4 The method conditionExpression(String) is undefined for the type CompiledRule.CompiledRuleBuilder
+      4 The method any(Class<T>) in the type ArgumentMatchers is not applicable for the arguments (Class<ReconciliationRecordEntity>)
+      4 The import net.lab1024.sa.attendance.engine.SchedulePredictor cannot be resolved
+      4 The import java.util.UUID is never used
+      4 The import java.util.HashSet is never used
+      4 The import java.util.concurrent.TimeUnit is never used
+      4 The import java.util.Arrays is never used
+      4 The import java.io.ByteArrayOutputStream is never used
+      4 The import jakarta.validation.constraints.NotBlank is never used
+      4 The import com.fasterxml.jackson.annotation.JsonIgnore is never used
+      4 PageResult cannot be resolved
+      4 Null type safety: The expression of type 'K' needs unchecked conversion to conform to '@NonNull Object'
+      4 NodeConfig cannot be resolved to a type
+      4 MobileApprovalDetailVO cannot be resolved to a type
+      4 CommentVO cannot be resolved to a type
+      4 BatchApprovalResult cannot be resolved to a type
+      3 WorkflowSimulationRequest cannot be resolved to a type
+      3 Type safety: Unchecked cast from Object to List<Map<String,Object>>
+      3 Type safety: The expression of type ResponseDTO needs unchecked conversion to conform to ResponseDTO<Void>
+      3 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<VideoRecordingPlanEntity>
+      3 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<DeviceModelSyncEntity>
+      3 Type mismatch: cannot convert from net.lab1024.sa.attendance.engine.model.RuleValidationResult to net.lab1024.sa.attendance.engine.rule.model.RuleValidationResult
+      3 TODO: 需要实时统计当前人数，暂时设置为0
+      3 TODO: 添加必要的Mock行为
+      3 TODO: 实际查询
+      3 TODO: 调用规则引擎执行规则
+      3 TODO: 从数据库查询
+      3 TODO: 从部门表查询
+      3 The value of the local variable userId is not used
+      3 The value of the local variable now is not used
+      3 The method userId(Long) is undefined for the type RuleExecutionContext.Builder
+      3 The method setUserAttributes(Map.of(\
+      3 The method setSeverity(String) is undefined for the type RuleValidationResult
+      3 The method setObjectMapper(ObjectMapper) from the type Jackson2JsonRedisSerializer<Object> has been deprecated since version 3.0 and marked for removal
+      3 The method rulePriority(int) is undefined for the type RuleEvaluationResult.RuleEvaluationResultBuilder
+      3 The method resolve(List<ScheduleConflict>, String) is undefined for the type ConflictResolver
+      3 The method resolve(anyList(), String) is undefined for the type ConflictResolver
+      3 The method optimizeSchedule(List<ScheduleRecord>, ScheduleData, List<OptimizationGoal>) in the type ScheduleOptimizer is not applicable for the arguments (ScheduleData, String)
+      3 The method isCompiled() is undefined for the type CompiledAction
+      3 The method getTotalShifts() is undefined for the type ScheduleStatistics
+      3 The method getStatus() is undefined for the type DeviceEntity
+      3 The method getRuleFilters() is undefined for the type RuleExecutionContext
+      3 The method getPlanId() is undefined for the type ScheduleStatistics
+      3 The method getNodes() is undefined for the type VisualWorkflowConfig
+      3 The method getMissCount() is undefined for the type RuleCacheManager
+      3 The method getHitCount() is undefined for the type RuleCacheManager
+      3 The method getExecutionStatistics(long, long) from the type RuleStatisticsService refers to the missing type RuleExecutionStatistics
+      3 The method getErrorMessage() is undefined for the type RuleValidationResult
+      3 The method getConditionExpression() is undefined for the type CompiledRule
+      3 The method getCacheSize() is undefined for the type RuleCacheManager
+      3 The method edgeId(String) is undefined for the type ValidationError.ValidationErrorBuilder
+      3 The method deleteBatchIds(Collection<?>) from the type BaseMapper<VideoRecordingPlanEntity> is deprecated
+      3 The method checkIn(String) in the type SelfServiceRegistrationService is not applicable for the arguments (String, String, String)
+      3 The method calculateDiscrepancy(Map<String,Object>, Map<String,Object>) is undefined for the type ConsumeTransactionManager
+      3 The method applyResolution(ScheduleResult, ConflictResolution) in the type ScheduleConflictService is not applicable for the arguments (ScheduleData, ConflictResolution)
+      3 The import net.lab1024.sa.consume.entity.ReconciliationRecordEntity cannot be resolved
+      3 The import net.lab1024.sa.consume.entity.ConsumeTransactionEntity cannot be resolved
+      3 The import net.lab1024.sa.common.organization.entity.DeviceEntity is never used
+      3 The import net.lab1024.sa.attendance.engine.RuleValidator cannot be resolved
+      3 The import net.lab1024.sa.attendance.engine.RuleLoader cannot be resolved
+      3 The import net.lab1024.sa.attendance.engine.cache cannot be resolved
+      3 The import net.lab1024.sa.attendance.config.EnhancedTestConfiguration is never used
+      3 The import java.util.function.Function is never used
+      3 The import java.util.concurrent.CompletableFuture is never used
+      3 The import java.io.File is never used
+      3 The import jakarta.validation.constraints.Min is never used
+      3 The import com.fasterxml.jackson.databind.ObjectMapper is never used
+      3 The import com.fasterxml.jackson.core.JsonProcessingException is never used
+      3 The import com.baomidou.mybatisplus.core.metadata.IPage is never used
+      3 The import com.baomidou.mybatisplus.annotation.FieldFill is never used
+      3 The import com.alibaba.fastjson2.JSON is never used
+      3 RuleValidationResult.ValidationStep cannot be resolved to a type
+      3 RuleExecutionStatistics cannot be resolved
+      3 QuickApprovalRequest cannot be resolved
+      3 Potential null pointer access: The method getBody() may return null
+      3 Null type safety: The expression of type 'Object[]' needs unchecked conversion to conform to '@NonNull Object[]'
+      3 Null type safety: parameter 2 provided via method descriptor BiFunction<Long,Long,Long>.apply(Long, Long) needs unchecked conversion to conform to 'long'
+      3 Null type safety: parameter 1 provided via method descriptor BiFunction<Long,Long,Long>.apply(Long, Long) needs unchecked conversion to conform to 'long'
+      3 NodeExecutionResult cannot be resolved to a type
+      3 MobileTaskVO cannot be resolved
+      3 Missing non-null annotation: inherited method from AsyncUncaughtExceptionHandler specifies this parameter as @NonNull
+      3 BatchApprovalRequest cannot be resolved to a type
+      3 ApprovalNotificationSettings cannot be resolved to a type
+      2 WorkloadStatistics cannot be resolved to a type
+      2 VoiceApprovalResult cannot be resolved to a type
+      2 VoiceApprovalRequest cannot be resolved to a type
+      2 VisualWorkflowConfigForm cannot be resolved
+      2 ValidationStep cannot be resolved or is not a field
+      2 ValidationResult cannot be resolved to a type
+      2 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<FirmwareUpgradeTaskEntity>
+      2 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<DeviceImportBatchEntity>
+      2 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<DeviceFirmwareEntity>
+      2 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<DeviceAlertEntity>
+      2 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<AlertRuleEntity>
+      2 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<AiModelEntity>
+      2 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<FirmwareUpgradeTaskEntity>
+      2 Type safety: The expression of type LambdaQueryWrapper needs unchecked conversion to conform to Wrapper<DeviceFirmwareEntity>
+      2 Type mismatch: cannot convert from void to boolean
+      2 Type mismatch: cannot convert from net.lab1024.sa.attendance.engine.model.CompiledAction to net.lab1024.sa.attendance.engine.rule.model.CompiledAction
+      2 Type mismatch: cannot convert from List<ScheduleData.ScheduleRecord> to List<Object>
+      2 TODO: 验证设备是否有执行指定操作的权限
+      2 TODO: 需要实现报警表后完善）
+      2 TODO: 需要确认部门查询API和返回类型）
+      2 TODO: 添加设备配置数据
+      2 TODO: 添加NAK响应数据
+      2 TODO: 添加ACK响应数据
+      2 TODO: 实现心跳处理逻辑
+      2 TODO: 实现协议消息解析（十六进制）
+      2 TODO: 实现协议消息解析
+      2 TODO: 实现协议配置获取逻辑
+      2 TODO: 实现协议配置获取
+      2 TODO: 实现协议配置更新逻辑
+      2 TODO: 实现协议配置更新
+      2 TODO: 实现协议错误处理逻辑
+      2 TODO: 实现消息验证
+      2 TODO: 实现消费业务处理
+      2 TODO: 实现统计数据计算逻辑
+      2 TODO: 实现设备状态获取逻辑
+      2 TODO: 实现设备状态获取
+      2 TODO: 实现设备注册逻辑
+      2 TODO: 实现设备注册处理
+      2 TODO: 实现设备心跳处理
+      2 TODO: 实现设备响应构建（十六进制）
+      2 TODO: 实现设备响应构建
+      2 TODO: 实现设备权限验证
+      2 TODO: 实现设备初始化逻辑
+      2 TODO: 实现设备初始化
+      2 TODO: 实现门禁业务处理
+      2 TODO: 实现考勤业务处理
+      2 TODO: 实现具体的优化应用逻辑
+      2 TODO: 实现具体的冲突解决应用逻辑
+      2 TODO: 实现记录转换逻辑
+      2 TODO: 实现复杂条件评估逻辑
+      2 TODO: 实现分页查询逻辑
+      2 TODO: 实现错误代码映射逻辑
+      2 TODO: 实现变量替换
+      2 TODO: 实现Excel导出功能
+      2 TODO: 实现CRC32或其他校验算法
+      2 TODO: 取消注释（待创建相关Form类后）
+      2 TODO: 检查设备是否在线、是否被禁用等
+      2 TODO: 集成实际的通知服务
+      2 TODO: 集成OpenCV）
+      2 TODO: 调用设备服务验证设备状态
+      2 TODO: 存储心跳信息到数据库
+      2 TODO: 从用户服务获取
+      2 TODO: 从数据库查询设备信息
+      2 TODO: 从安全上下文获取当前用户ID
+      2 TODO: 查询通行记录
+      2 TODO: 查询权限变更历史
+      2 TODO: 保存通行记录到数据库
+      2 The value of the local variable uptime is not used
+      2 The value of the local variable totalAmount is not used
+      2 The value of the local variable temperature is not used
+      2 The value of the local variable storageSpace is not used
+      2 The value of the local variable signalStrength is not used
+      2 The value of the local variable onlineStatus is not used
+      2 The value of the local variable memoryUsage is not used
+      2 The value of the local variable iconIndex is not used
+      2 The value of the local variable humidity is not used
+      2 The value of the local variable heartbeatInterval is not used
+      2 The value of the local variable endTime is not used
+      2 The value of the local variable dateObj is not used
+      2 The value of the local variable cpuUsage is not used
+      2 The value of the local variable content is not used
+      2 The value of the local variable connectionStatus is not used
+      2 The value of the local variable batteryLevel is not used
+      2 The type VisualWorkflowConfigServiceImpl must implement the inherited abstract method VisualWorkflowConfigService.validateConfig(VisualWorkflowConfigForm)
+      2 The static method encrypt(String) from the type AESUtil should be accessed in a static way
+      2 The method warning(String, List<String>) is undefined for the type RuleValidationResult
+      2 The method verifyUpgradeResult(FirmwareUpgradeEntity) in the type FirmwareUpgradeManager is not applicable for the arguments (String, String)
+      2 The method verifyFirmwareIntegrity(FirmwareUpgradeEntity) in the type FirmwareUpgradeManager is not applicable for the arguments (String, String)
+      2 The method validateRequest(ScheduleRequest) from the type ScheduleExecutionService is not visible
+      2 The method templateId(Long) in the type ProcessTemplateDetail.ProcessTemplateDetailBuilder is not applicable for the arguments (String)
+      2 The method startUpgrade(Long) is undefined for the type FirmwareUpgradeManager
+      2 The method source(String) is undefined for the type ProcessEdge.ProcessEdgeBuilder
+      2 The method shouldRollback(FirmwareUpgradeEntity) is undefined for the type FirmwareUpgradeManager
+      2 The method setSigningKey(Key) from the type JwtParserBuilder is deprecated
+      2 The method setSeverity(String) in the type ConflictDetectionResult.ScheduleConflict is not applicable for the arguments (Integer)
+      2 The method setScale(int, int) from the type BigDecimal is deprecated since version 9
+      2 The method setExecutionTimestamp(LocalDateTime) is undefined for the type RuleEvaluationResult
+      2 The method setEvaluationDuration(long) is undefined for the type RuleEvaluationResult
+      2 The method setErrorMessage(String) is undefined for the type RuleValidationResult
+      2 The method setConflictType(String) in the type ConflictDetectionResult.ScheduleConflict is not applicable for the arguments (ScheduleConflict.ConflictType)
+      2 The method setConflictId(String) in the type ConflictDetectionResult.ScheduleConflict is not applicable for the arguments (Long)
+      2 The method selectByDeviceId(Long, int) is undefined for the type FirmwareUpgradeDao
+      2 The method selectBatchIds(Collection<? extends Serializable>) from the type BaseMapper<MealMenuEntity> is deprecated
+      2 The method resolveConflicts(ConflictDetectionResult, ScheduleData) in the type ConflictResolver is not applicable for the arguments (List<ScheduleConflict>, String)
+      2 The method predict(ScheduleData) is undefined for the type SchedulePredictor
+      2 The method predict(any(ScheduleData.class)) is undefined for the type SchedulePredictor
+      2 The method planId(Long) is undefined for the type ScheduleStatistics.ScheduleStatisticsBuilder
+      2 The method parseClaimsJws(CharSequence) from the type JwtParser is deprecated
+      2 The method nodeType(ProcessNode.NodeType) in the type ProcessNode.ProcessNodeBuilder is not applicable for the arguments (String)
+      2 The method leaveGroup(InetAddress) from the type MulticastSocket is deprecated since version 14
+      2 The method joinGroup(InetAddress) from the type MulticastSocket is deprecated since version 14
+      2 The method isValid() is undefined for the type RuleValidationResult
+      2 The method issueType(WorkflowIssue.IssueType) in the type WorkflowIssue.WorkflowIssueBuilder is not applicable for the arguments (String)
+      2 The method getValidationSteps() is undefined for the type RuleValidationResult
+      2 The method getTimeSlots() is undefined for the type ScheduleConflict
+      2 The method getStatistics(LocalDate, LocalDate) is undefined for the type FirmwareUpgradeServiceImpl
+      2 The method getSessionId() is undefined for the type RuleEvaluationResult
+      2 The method getRuleCategory() is undefined for the type RuleEvaluationResult
+      2 The method getReconciliationRecord(Long) is undefined for the type ConsumeTransactionServiceImpl
+      2 The method getProcessKey() is undefined for the type VisualWorkflowConfig
+      2 The method getNodeId() is undefined for the type ValidationError
+      2 The method getNodeConfigs() is undefined for the type ProcessTemplateDetail
+      2 The method getModelData() is undefined for the type AiModelVO
+      2 The method getEvaluationDuration() is undefined for the type RuleEvaluationResult
+      2 The method getEdges() is undefined for the type VisualWorkflowConfig
+      2 The method getEdgeId() is undefined for the type ValidationError
+      2 The method getConflicts() is undefined for the type ConflictDetectionResult
+      2 The method getConflictDate() is undefined for the type ScheduleConflict
+      2 The method getConflictCount() is undefined for the type ConflictDetectionResult
+      2 The method getConditionExpression() is undefined for the type ProcessEdge
+      2 The method getCompileDuration() is undefined for the type CompiledRule
+      2 The method getCompileDuration() is undefined for the type CompiledAction
+      2 The method getCompilationError() is undefined for the type CompiledRule
+      2 The method getCompilationError() is undefined for the type CompiledAction
+      2 The method getAffectedEmployees() is undefined for the type ScheduleConflict
+      2 The method getActionExpression() is undefined for the type CompiledAction
+      2 The method failure(Long, String, String, String) in the type CompiledAction is not applicable for the arguments (null, String, String)
+      2 The method determineAlarmLevel(BigDecimal, BigDecimal, int, BigDecimal) is undefined for the type DeviceHealthManager
+      2 The method detect(ScheduleData) is undefined for the type ConflictDetector
+      2 The method detect(any(ScheduleData.class)) is undefined for the type ConflictDetector
+      2 The method createUpgradeTask(Long, String, String, String, String, String, Long, String, Integer, Long, String) in the type FirmwareUpgradeManager is not applicable for the arguments (long, String, String, String, String, String, long, String, int)
+      2 The method createReconciliationRecord(String, String, Map<String,Object>, Map<String,Object>, Map<String,Object>) is undefined for the type ConsumeTransactionManager
+      2 The method createReconciliationRecord(any(), any(), any(), any(), any()) is undefined for the type ConsumeTransactionManager
+      2 The method conflictCount(int) is undefined for the type ConflictDetectionResult.ConflictDetectionResultBuilder
+      2 The method calculateDiscrepancy(any(), any()) is undefined for the type ConsumeTransactionManager
+      2 The method builder() is undefined for the type VisualWorkflowConfig
+      2 The method anyList() is undefined for the type AttendanceRuleEngineImplTest
+      2 The import org.springframework.validation.annotation.Validated is never used
+      2 The import org.springframework.util.StringUtils is never used
+      2 The import org.springframework.http.MediaType is never used
+      2 The import org.springframework.http.HttpHeaders is never used
+      2 The import org.springframework.format.annotation.DateTimeFormat is never used
+      2 The import org.springframework.cache.annotation.Caching is never used
+      2 The import org.springframework.cache.annotation.CacheEvict is never used
+      2 The import org.mockito.Mockito is never used
+      2 The import org.junit.jupiter.api.BeforeEach is never used
+      2 The import net.lab1024.sa.video.domain.entity.VideoRecordingTaskEntity is never used
+      2 The import net.lab1024.sa.consume.exception.ConsumeDeviceException is never used
+      2 The import net.lab1024.sa.common.organization.domain.dto.AreaDeviceHealthStatistics is never used
+      2 The import net.lab1024.sa.common.entity.organization cannot be resolved
+      2 The import net.lab1024.sa.common.dict.dao.DictTypeDao is never used
+      2 The import net.lab1024.sa.common.dict.dao.DictDataDao is never used
+      2 The import net.lab1024.sa.attendance.engine.ScheduleAlgorithm cannot be resolved
+      2 The import net.lab1024.sa.attendance.engine.RuleExecutor cannot be resolved
+      2 The import net.lab1024.sa.attendance.engine.RuleEvaluatorFactory cannot be resolved
+      2 The import net.lab1024.sa.access.domain.form.OfflineRecordUploadForm is never used
+      2 The import lombok.EqualsAndHashCode is never used
+      2 The import java.util.Set is never used
+      2 The import java.util.Date is never used
+      2 The import java.util.Collections is never used
+      2 The import java.time.temporal.ChronoUnit is never used
+      2 The import java.net.URL is never used
+      2 The import java.math.RoundingMode is never used
+      2 The import java.io.IOException is never used
+      2 The import io.swagger.v3.oas.annotations.Parameter is never used
+      2 The import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper is never used
+      2 The constructor JsonMappingException(String) is deprecated
+      2 The constructor AttendanceRuleEngineImpl(RuleExecutionService, RuleCompilationService, RuleValidationService, RuleCacheManagementService, RuleStatisticsService) is undefined
+      2 SubscriptionVO cannot be resolved to a type
+      2 SpeechToTextService cannot be resolved to a type
+      2 Schema is a raw type. References to generic type Schema<T> should be parameterized
+      2 Potential null pointer access: The variable userIds may be null at this location
+      2 Potential null pointer access: The variable amount may be null at this location
+      2 PersonalApprovalStatistics cannot be resolved to a type
+      2 Null type safety: The expression of type 'VideoBehaviorPatternEntity' needs unchecked conversion to conform to '@NonNull Object'
+      2 Null type safety: The expression of type 'T' needs unchecked conversion to conform to '@NonNull Object'
+      2 Null type safety: The expression of type 'Map<String,Object>' needs unchecked conversion to conform to '@NonNull Object'
+      2 Null type safety: The expression of type 'List<String>' needs unchecked conversion to conform to '@NonNull List<String>'
+      2 Null type safety: The expression of type 'List<String>' needs unchecked conversion to conform to '@NonNull Collection<String>'
+      2 Null type safety: The expression of type 'Cache<Object,Object>' needs unchecked conversion to conform to '@NonNull Cache<Object,Object>'
+      2 Null type safety: The expression of type 'byte[]' needs unchecked conversion to conform to '@NonNull byte[]'
+      2 Null type safety: The expression of type 'AccessRecordEntity' needs unchecked conversion to conform to '@NonNull Object'
+      2 Null type safety: parameter 2 provided via method descriptor BiFunction<Double,Double,Double>.apply(Double, Double) needs unchecked conversion to conform to 'double'
+      2 Null type safety: parameter 1 provided via method descriptor BiFunction<Double,Double,Double>.apply(Double, Double) needs unchecked conversion to conform to 'double'
+      2 Missing non-null annotation: inherited method from WebSocketConfigurer specifies this parameter as @NonNull
+      2 Missing non-null annotation: inherited method from ApplicationListener<ApplicationReadyEvent> specifies this parameter as @NonNull
+      2 Map is a raw type. References to generic type Map<K,V> should be parameterized
+      2 LocalDate cannot be resolved
+      2 FormTestData cannot be resolved to a type
+      2 FormLogicExecutionResult cannot be resolved to a type
+      2 DeviceDao cannot be resolved to a type
+      2 CompletedTaskVO cannot be resolved
+      2 ApprovalNotificationRequest cannot be resolved to a type
+      2 ApprovalDecision cannot be resolved
+      2 ApplyTemplateForm cannot be resolved to a type
+      2 AiModelManager cannot be resolved to a type
+      1 WorkflowSimulationResult cannot be resolved
+      1 VoiceApprovalResult cannot be resolved
+      1 ValidationError cannot be resolved to a type
+      1 Unlikely argument type for equals(): String seems to be unrelated to Long
+      1 Unlikely argument type ConsumeAccountEntity for indexOf(Object) on a List<ConsumeAccountAddForm>
+      1 Type safety: Unchecked invocation selectPage(Page, LambdaQueryWrapper) of the generic method selectPage(P, Wrapper<T>) of type BaseMapper<VideoRecordingPlanEntity>
+      1 Type safety: Unchecked cast from Object to List<Long>
+      1 Type safety: The expression of type List needs unchecked conversion to conform to List<String>
+      1 Type safety: The expression of type List needs unchecked conversion to conform to List<Long>
+      1 Type mismatch: cannot convert from void to List<RuleEvaluationResult>
+      1 TODO: 注入必要的DAO和Manager
+      1 TODO: 执行选择
+      1 TODO: 这些依赖在ioedream-common-service中，应通过GatewayServiceClient调用
+      1 TODO: 这里可以扩展更复杂的权限验证逻辑
+      1 TODO: 找到优先级最高的规则并执行
+      1 TODO: 在AccessMonitorQueryForm中添加processed字段后启用此过滤
+      1 TODO: 验证用户是否存在
+      1 TODO: 验证用户权限
+      1 TODO: 验证区域是否存在
+      1 TODO: 验证告警通知已发送
+      1 TODO: 需要统计故障设备
+      1 TODO: 需要实际测量，这里先返回0）
+      1 TODO: 需要实际测量
+      1 TODO: 推送告警通知
+      1 TODO: 通知服务模块未实现，暂时注释
+      1 TODO: 通知安保人员（高危报警）
+      1 TODO: 通过文件路径查询数据库
+      1 TODO: 通过departmentId查询DepartmentEntity获取部门名称
+      1 TODO: 停止轮巡任务调度
+      1 TODO: 添加账户信息响应数据
+      1 TODO: 添加消费失败响应数据
+      1 TODO: 添加消费成功响应数据
+      1 TODO: 添加权限响应数据
+      1 TODO: 添加更详细的验证逻辑
+      1 TODO: 添加SNMP4J依赖后实现完整SNMP发现
+      1 TODO: 添加clockIn和clockOut方法的测试用例
+      1 TODO: 提交异步任务到线程池执行
+      1 TODO: 使用RestTemplate调用API
+      1 TODO: 使用iText生成PDF文件
+      1 TODO: 使用EasyExcel生成错误记录Excel文件
+      1 TODO: 使用EasyExcel生成Excel文件
+      1 TODO: 使用EasyExcel解析Excel文件
+      1 TODO: 使用Apache POI生成Word文件
+      1 TODO: 使用Apache Commons CSV生成CSV文件
+      1 TODO: 实现最小剩余值检查
+      1 TODO: 实现自定义配置应用逻辑
+      1 TODO: 实现转码任务状态查询
+      1 TODO: 实现周趋势数据生成
+      1 TODO: 实现重要标记逻辑
+      1 TODO: 实现质量评估算法）
+      1 TODO: 实现指纹特征提取
+      1 TODO: 实现真正的特征提取
+      1 TODO: 实现账户余额检查逻辑
+      1 TODO: 实现账户查询处理逻辑
+      1 TODO: 实现掌纹特征提取
+      1 TODO: 实现增加使用次数逻辑（待创建相关VO类后）
+      1 TODO: 实现早退处理逻辑
+      1 TODO: 实现月度趋势
+      1 TODO: 实现约束违反计算逻辑
+      1 TODO: 实现余额扣减逻辑
+      1 TODO: 实现邮箱验证码发送逻辑
+      1 TODO: 实现用户在线状态检查
+      1 TODO: 实现用户统计逻辑
+      1 TODO: 实现用户权限验证逻辑
+      1 TODO: 实现用户权限检查逻辑
+      1 TODO: 实现应用模板逻辑（待创建相关VO类后）
+      1 TODO: 实现应用版本检查逻辑
+      1 TODO: 实现异常处理逻辑
+      1 TODO: 实现一致性检查逻辑
+      1 TODO: 实现休息开始处理逻辑
+      1 TODO: 实现休息结束处理逻辑
+      1 TODO: 实现行为趋势预测算法
+      1 TODO: 实现行为模式分析算法
+      1 TODO: 实现协议错误处理
+      1 TODO: 实现效率计算
+      1 TODO: 实现校验码验证逻辑
+      1 TODO: 实现消费数据验证逻辑
+      1 TODO: 实现详情转换
+      1 TODO: 实现完整的转换逻辑
+      1 TODO: 实现完整的质量评分计算逻辑
+      1 TODO: 实现完整的审核检查逻辑
+      1 TODO: 实现完整的建议生成逻辑
+      1 TODO: 实现完整的回滚逻辑
+      1 TODO: 实现完整的NSGA-II算法
+      1 TODO: 实现推送逻辑
+      1 TODO: 实现图像预处理
+      1 TODO: 实现图片搜索功能
+      1 TODO: 实现统计信息查询
+      1 TODO: 实现统计逻辑
+      1 TODO: 实现通讯日志记录
+      1 TODO: 实现算法推荐功能
+      1 TODO: 实现刷新逻辑
+      1 TODO: 实现数据库删除
+      1 TODO: 实现数据库更新
+      1 TODO: 实现数据库持久化
+      1 TODO: 实现事件数据验证逻辑
+      1 TODO: 实现实体到VO的转换
+      1 TODO: 实现实际的统计逻辑
+      1 TODO: 实现实际的数据同步逻辑
+      1 TODO: 实现实际的数据库导入逻辑
+      1 TODO: 实现实际的使用统计逻辑
+      1 TODO: 实现实际的取消逻辑
+      1 TODO: 实现实际的请假记录查询逻辑
+      1 TODO: 实现实际的排班查询逻辑
+      1 TODO: 实现实际的录制列表查询
+      1 TODO: 实现实际的离线数据获取逻辑
+      1 TODO: 实现实际的离线数据处理逻辑
+      1 TODO: 实现实际的健康检查逻辑
+      1 TODO: 实现实际的核销逻辑
+      1 TODO: 实现实际的分页查询逻辑
+      1 TODO: 实现实际的反馈保存逻辑
+      1 TODO: 实现实际的订单创建逻辑
+      1 TODO: 实现实际的帮助信息获取逻辑
+      1 TODO: 实现时间轴查询
+      1 TODO: 实现声纹特征提取
+      1 TODO: 实现生物特征二次验证
+      1 TODO: 实现设备故障处理逻辑
+      1 TODO: 实现删除逻辑（待创建相关VO类后）
+      1 TODO: 实现容量优先级逻辑
+      1 TODO: 实现容量调整逻辑
+      1 TODO: 实现人员替换逻辑
+      1 TODO: 实现热力图数据查询逻辑
+      1 TODO: 实现缺勤处理逻辑
+      1 TODO: 实现权限信息转换逻辑
+      1 TODO: 实现权限详情转换逻辑
+      1 TODO: 实现取消转码任务逻辑
+      1 TODO: 实现取消重要标记逻辑
+      1 TODO: 实现取消订阅逻辑
+      1 TODO: 实现趋势统计逻辑
+      1 TODO: 实现趋势数据查询逻辑
+      1 TODO: 实现区域统计逻辑
+      1 TODO: 实现请假开始处理逻辑
+      1 TODO: 实现请假结束处理逻辑
+      1 TODO: 实现前向检查逻辑
+      1 TODO: 实现企业近30天趋势数据生成
+      1 TODO: 实现批量删除逻辑（待创建相关VO类后）
+      1 TODO: 实现配置验证功能
+      1 TODO: 实现配置文件解析和导入
+      1 TODO: 实现排班变更处理逻辑
+      1 TODO: 实现门控操作逻辑
+      1 TODO: 实现门禁验证逻辑
+      1 TODO: 实现录像转码逻辑
+      1 TODO: 实现录像文件修复
+      1 TODO: 实现录像文件备份逻辑
+      1 TODO: 实现录像完整性检查
+      1 TODO: 实现录像统计查询
+      1 TODO: 实现历史视频分析逻辑
+      1 TODO: 实现离线同步处理逻辑
+      1 TODO: 实现考勤记录更新逻辑
+      1 TODO: 实现考勤记录的创建和更新逻辑
+      1 TODO: 实现具体的修改记录创建逻辑
+      1 TODO: 实现具体的时间调整逻辑
+      1 TODO: 实现具体的排班计划生成逻辑
+      1 TODO: 实现具体的满意度优化算法
+      1 TODO: 实现具体的满意度计算逻辑
+      1 TODO: 实现具体的局部改进计算逻辑
+      1 TODO: 实现具体的集成逻辑
+      1 TODO: 实现具体的工作负载重新平衡算法
+      1 TODO: 实现具体的覆盖率优化算法
+      1 TODO: 实现具体的覆盖率计算逻辑
+      1 TODO: 实现具体的范围筛选逻辑
+      1 TODO: 实现具体的范围内优化逻辑
+      1 TODO: 实现具体的成本优化算法
+      1 TODO: 实现近30天趋势数据生成
+      1 TODO: 实现结果列表查询
+      1 TODO: 实现结果查询
+      1 TODO: 实现角色信息转换逻辑
+      1 TODO: 实现角色详情转换逻辑
+      1 TODO: 实现健康检查逻辑
+      1 TODO: 实现加班开始处理逻辑
+      1 TODO: 实现加班结束处理逻辑
+      1 TODO: 实现基于热门度的推荐逻辑
+      1 TODO: 实现基于历史偏好的推荐逻辑
+      1 TODO: 实现获取搜索历史记录
+      1 TODO: 实现混合推荐逻辑
+      1 TODO: 实现虹膜特征提取
+      1 TODO: 实现海康威视SDK清理逻辑
+      1 TODO: 实现海康威视SDK初始化逻辑
+      1 TODO: 实现过期录像清理逻辑
+      1 TODO: 实现规则预加载逻辑
+      1 TODO: 实现规则依赖验证逻辑
+      1 TODO: 实现规则评估（待规则引擎API稳定后）
+      1 TODO: 实现规则匹配逻辑（简单条件、Aviator表达式、脚本条件）
+      1 TODO: 实现规则配置的持久化存储
+      1 TODO: 实现公平性计算
+      1 TODO: 实现工作时长计算逻辑
+      1 TODO: 实现更新逻辑（待创建相关Form类后）
+      1 TODO: 实现更多验证规则
+      1 TODO: 实现更多操作符
+      1 TODO: 实现告警通知
+      1 TODO: 实现告警发送逻辑
+      1 TODO: 实现复制逻辑（待创建相关VO类后）
+      1 TODO: 实现复杂条件编译逻辑
+      1 TODO: 实现服务器公钥获取逻辑
+      1 TODO: 实现分页查询逻辑（待创建相关Form和VO类后）
+      1 TODO: 实现分页查询
+      1 TODO: 实现分段处理逻辑
+      1 TODO: 实现二维码图片生成逻辑
+      1 TODO: 实现短信验证码认证逻辑
+      1 TODO: 实现订阅逻辑（存储用户的订阅偏好）
+      1 TODO: 实现导入逻辑（待创建相关VO类后）
+      1 TODO: 实现导出逻辑（使用EasyExcel）
+      1 TODO: 实现导出逻辑（待创建相关VO类后）
+      1 TODO: 实现大华设备错误代码映射
+      1 TODO: 实现大华SDK清理逻辑
+      1 TODO: 实现大华SDK初始化逻辑
+      1 TODO: 实现错误代码映射表
+      1 TODO: 实现错误代码映射
+      1 TODO: 实现存储使用情况查询
+      1 TODO: 实现创建逻辑（待创建相关Form类后）
+      1 TODO: 实现初始化逻辑
+      1 TODO: 实现出差开始处理逻辑
+      1 TODO: 实现出差结束处理逻辑
+      1 TODO: 实现充值记录处理逻辑
+      1 TODO: 实现迟到处理逻辑
+      1 TODO: 实现成本计算
+      1 TODO: 实现餐别统计逻辑
+      1 TODO: 实现部门排行数据生成
+      1 TODO: 实现部门近7天趋势数据生成
+      1 TODO: 实现部分删除逻辑
+      1 TODO: 实现补贴记录处理逻辑
+      1 TODO: 实现表单到实体的转换
+      1 TODO: 实现备份任务状态查询
+      1 TODO: 实现报警事件处理逻辑
+      1 TODO: 实现班次调整逻辑
+      1 TODO: 实现按时间范围查询录像
+      1 TODO: 实现OAuth认证逻辑
+      1 TODO: 实现HeatmapData的字段映射
+      1 TODO: 实现CSV写入逻辑
+      1 TODO: 实际应从权限系统查询
+      1 TODO: 实际应查询考勤记录表计算
+      1 TODO: 实际业务中根据需要预加载热点数据
+      1 TODO: 实际权限验证
+      1 TODO: 实际计算
+      1 TODO: 实际二维码生成逻辑
+      1 TODO: 实际的设备同步逻辑将在设备通讯模块中实现
+      1 TODO: 实际的报表导出逻辑
+      1 TODO: 实际从视频流获取帧数据
+      1 TODO: 实际查询出勤率
+      1 TODO: 生成图片URL
+      1 TODO: 生成Excel模板
+      1 TODO: 设置算法类型（需要添加algorithmVersion字段到OptimizationResult）
+      1 TODO: 设置实际的管理员ID
+      1 TODO: 取消注释以下方法（待创建相关VO类后）
+      1 TODO: 取消注释以下import（待创建相关Form和VO类后）
+      1 TODO: 取消注释当DAO和Manager准备好时
+      1 TODO: 取消注释（待创建相关DAO类后）
+      1 TODO: 取消异步任务
+      1 TODO: 启动轮巡任务调度（定时任务或异步任务）
+      1 TODO: 判断是否找到完整解
+      1 TODO: 年度统计
+      1 TODO: 临时注释 - AreaPermissionService实现类未完成，P1阶段恢复
+      1 TODO: 联动视频监控，抓拍或录像
+      1 TODO: 扣除余额（这里应该调用账户服务）
+      1 TODO: 可选：记录登录成功通知（如需要）
+      1 TODO: 解析预案配置（JSON格式），为每个窗口创建上墙任务
+      1 TODO: 解析其他详细字段
+      1 TODO: 解析BPMN XML生成节点和连线
+      1 TODO: 阶段1-3时注入RealtimeCacheManager
+      1 TODO: 阶段1-3时，调用cacheManager.clearAllCache()
+      1 TODO: 将MAC地址添加到extendedAttributes JSON中
+      1 TODO: 检查月工作天数是否超标（需要添加maxMonthlyWorkDays字段到OptimizationConfig）
+      1 TODO: 检查未解决冲突数量
+      1 TODO: 检查是否有关联的升级任务，如果有则禁止删除
+      1 TODO: 检查每日在岗人数是否过多（需要添加maxDailyStaff字段到OptimizationConfig）
+      1 TODO: 加载模型
+      1 TODO: 加载TensorFlow/PyTorch/ONNX模型
+      1 TODO: 记录审计日志
+      1 TODO: 计算异常次数
+      1 TODO: 集成邮件服务（如JavaMail、SendGrid）
+      1 TODO: 集成推送服务（如极光推送、个推、Firebase Cloud Messaging）
+      1 TODO: 集成通知服务，发送实时通知
+      1 TODO: 集成实际的通知服务（邮件、短信、钉钉等）
+      1 TODO: 集成生物识别服务后，通过GatewayServiceClient调用
+      1 TODO: 集成脚本引擎（如Groovy、JavaScript）进行验证
+      1 TODO: 集成短信服务（如阿里云短信、腾讯云短信）
+      1 TODO: 集成OpenCV和深度学习模型
+      1 TODO: 集成FaceNet模型）
+      1 TODO: 集成Aviator表达式引擎进行验证
+      1 TODO: 级联删除数据库记录
+      1 TODO: 获取下次排班
+      1 TODO: 获取当前可用的选择项
+      1 TODO: 工作日限制功能待扩展
+      1 TODO: 更新通行次数统计
+      1 TODO: 更新数据库
+      1 TODO: 根据组件类型构建详细的配置Schema
+      1 TODO: 根据子区域配置决定使用哪种模式的金额计算方式
+      1 TODO: 根据子区域类型决定使用哪种模式
+      1 TODO: 根据用户ID查询生成记录
+      1 TODO: 根据业务需求实现基因变异逻辑
+      1 TODO: 根据需要添加业务逻辑
+      1 TODO: 根据实际业务需求生成随机基因
+      1 TODO: 根据实际解决方案格式转换
+      1 TODO: 根据权重组合规则结果
+      1 TODO: 根据报告类型生成报告内容
+      1 TODO: 根据userId查询员工信息（需要修复EmployeeResponse缺少userId字段的问题）
+      1 TODO: 根据anomalyId查询异常实体
+      1 TODO: 分页查询
+      1 TODO: 反序列化JSON（简化处理，实际应使用ObjectMapper）
+      1 TODO: 发送通知给相关管理员
+      1 TODO: 发送升级通知
+      1 TODO: 发送告警通知（邮件、短信、钉钉等）
+      1 TODO: 发送告警通知（邮件、短信、WebSocket推送等）
+      1 TODO: 发送告警通知
+      1 TODO: 发送催办通知
+      1 TODO: 调用指纹识别服务
+      1 TODO: 调用通知服务发送通知（通知服务模块未实现）
+      1 TODO: 调用设备服务执行实际升级
+      1 TODO: 调用设备服务获取实时状态
+      1 TODO: 调用设备服务获取实时统计信息
+      1 TODO: 调用人脸质量评估算法
+      1 TODO: 调用人脸搜索算法服务
+      1 TODO: 调用人脸识别服务
+      1 TODO: 调用人脸比对算法服务
+      1 TODO: 调用二维码生成服务
+      1 TODO: 调用 DeviceService.batchAddDevices(successList);
+      1 TODO: 待实现具体的扫描器和检测器
+      1 TODO: 待实现setRecommendations方法）
+      1 TODO: 待实现getRecommendations方法）
+      1 TODO: 待WorkflowPerformanceOptimizer类实现后启用此控制器
+      1 TODO: 从员工表查询
+      1 TODO: 从系统配置中读取双因子认证开关
+      1 TODO: 从同步记录表查询最后同步时间
+      1 TODO: 从数据库获取用户的多因子认证配置
+      1 TODO: 从数据库获取考勤区域配置
+      1 TODO: 从数据库查询实际统计
+      1 TODO: 从数据库查询今日打卡记录
+      1 TODO: 从设备信息获取当前版本
+      1 TODO: 从设备服务获取设备信息
+      1 TODO: 从设备服务获取设备的当前固件版本
+      1 TODO: 从上下文获取当前用户
+      1 TODO: 从上下文获取当前会话ID
+      1 TODO: 从请求上下文获取用户姓名
+      1 TODO: 从请求上下文获取用户ID
+      1 TODO: 从请假服务获取请假天数
+      1 TODO: 从配置获取更新URL
+      1 TODO: 从配置或数据库获取最新版本
+      1 TODO: 从结果数据计算实际统计信息
+      1 TODO: 从加班记录统计
+      1 TODO: 从登录上下文获取操作人信息
+      1 TODO: 从部门总人数减去出勤人数
+      1 TODO: 从SecurityContext获取当前用户名
+      1 TODO: 从SecurityContext获取当前用户ID
+      1 TODO: 从optimizedRecords构建染色体
+      1 TODO: 从Flowable引擎获取审批历史
+      1 TODO: 从Flowable引擎获取流程图
+      1 TODO: 触发相关的实时计算
+      1 TODO: 触发设备告警
+      1 TODO: 触发门禁控制、视频联动等
+      1 TODO: 触发补贴使用、库存管理等
+      1 TODO: 处理其他审批人类型
+      1 TODO: 查询已删除的权限ID（需要软删除表或历史表）
+      1 TODO: 查询维护记录，计算维护频率和效果
+      1 TODO: 查询待上传记录数
+      1 TODO: 查询待处理异常
+      1 TODO: 保存消费记录到数据库
+      1 TODO: 保存同步记录
+      1 TODO: 保存到数据库
+      1 TODO: VideoDeviceDao不存在，暂时使用设备ID创建模拟设备信息
+      1 TODO: P1阶段完成AreaPermissionService实现后恢复此Controller
+      1 TODO: NotificationDao和NotificationManager在ioedream-common-service中，应通过GatewayServiceClient调用
+      1 TODO: JwtTokenUtil需要添加revokeAllUserTokens方法支持
+      1 The value of the local variable violationCount is not used
+      1 The value of the local variable upgradeSuccess is not used
+      1 The value of the local variable typeRef is not used
+      1 The value of the local variable twoMonthsAgo is not used
+      1 The value of the local variable transaction is not used
+      1 The value of the local variable totalWorkDays is not used
+      1 The value of the local variable totalMonitors is not used
+      1 The value of the local variable totalExported is not used
+      1 The value of the local variable todayStart is not used
+      1 The value of the local variable todayEnd is not used
+      1 The value of the local variable timestamp is not used
+      1 The value of the local variable timePeriod is not used
+      1 The value of the local variable time is not used
+      1 The value of the local variable thresholdTime is not used
+      1 The value of the local variable threadId is not used
+      1 The value of the local variable templatePath is not used
+      1 The value of the local variable successMonitors is not used
+      1 The value of the local variable startDateTime is not used
+      1 The value of the local variable spec is not used
+      1 The value of the local variable salePrice is not used
+      1 The value of the local variable ruleId is not used
+      1 The value of the local variable rollbackTaskId is not used
+      1 The value of the local variable redisTime is not used
+      1 The value of the local variable queryType is not used
+      1 The value of the local variable period is not used
+      1 The value of the local variable pendingCount is not used
+      1 The value of the local variable page is not used
+      1 The value of the local variable outputStream is not used
+      1 The value of the local variable message is not used
+      1 The value of the local variable matchScore is not used
+      1 The value of the local variable managerHeatmap is not used
+      1 The value of the local variable longitude is not used
+      1 The value of the local variable latitude is not used
+      1 The value of the local variable isWorkday is not used
+      1 The value of the local variable isOvernightSpan is not used
+      1 The value of the local variable inProgressDeviceIds is not used
+      1 The value of the local variable headerWritten is not used
+      1 The value of the local variable future is not used
+      1 The value of the local variable found is not used
+      1 The value of the local variable filePath is not used
+      1 The value of the local variable failureReason is not used
+      1 The value of the local variable extendedAttrs is not used
+      1 The value of the local variable expectedResult is not used
+      1 The value of the local variable entry is not used
+      1 The value of the local variable endDateTime is not used
+      1 The value of the local variable employeeId is not used
+      1 The value of the local variable deviceStatus is not used
+      1 The value of the local variable deviceAreas is not used
+      1 The value of the local variable dbQueryTime is not used
+      1 The value of the local variable dayOfWeek is not used
+      1 The value of the local variable date is not used
+      1 The value of the local variable currentTime is not used
+      1 The value of the local variable coreTimeSpan is not used
+      1 The value of the local variable conflicts is not used
+      1 The value of the local variable compiledRule is not used
+      1 The value of the local variable centerLongitude is not used
+      1 The value of the local variable centerLatitude is not used
+      1 The value of the local variable batchCaptor is not used
+      1 The value of the local variable baseStats is not used
+      1 The value of the local variable areaId is not used
+      1 The value of the local variable analysis is not used
+      1 The value of the local variable allowanceRate is not used
+      1 The value of the local variable addForm is not used
+      1 The value of the local variable account is not used
+      1 The value of the field XssFilter.ALLOWED_HTML_TAGS is not used
+      1 The value of the field WorkflowAsyncProcessor.asyncProcessTimer is not used
+      1 The value of the field VisitorQRCodeServiceImpl.CACHE_MAX_SIZE is not used
+      1 The value of the field VideoWallManager.videoWallPresetDao is not used
+      1 The value of the field VideoRecordingServiceImpl.transcodeTasks is not used
+      1 The value of the field VideoRecordingServiceImpl.backupTasks is not used
+      1 The value of the field VideoRecordingCacheManager.objectMapper is not used
+      1 The value of the field VideoMonitorManager.gatewayServiceClient is not used
+      1 The value of the field VideoMonitoringConfig.VideoBusinessMetrics.videoStreamTimer is not used
+      1 The value of the field VideoMonitoringConfig.VideoBusinessMetrics.apiCallTimer is not used
+      1 The value of the field VideoMonitoringConfig.VideoBusinessMetrics.aiAnalysisTimer is not used
+      1 The value of the field VideoAIModelOptimizationServiceImpl.INTRUSION_TARGET_FALSE_POSITIVE_RATE is not used
+      1 The value of the field UserLockServiceTest.testUsername is not used
+      1 The value of the field TracingUtils.propagator is not used
+      1 The value of the field ThreeLevelCacheService.CACHE_PREFIX_PERMISSION is not used
+      1 The value of the field ThreeLevelCacheService.CACHE_PREFIX_DICT is not used
+      1 The value of the field SystemPerformanceMonitor.metricsCache is not used
+      1 The value of the field SystemMonitorManager.systemMonitorDao is not used
+      1 The value of the field SubsidyRuleEngineOptimizedServiceImpl.CACHE_REFRESH_SECONDS is not used
+      1 The value of the field SubsidyRuleEngineIntegrationTest.objectMapper is not used
+      1 The value of the field SubsidyRuleEngineAdvancedOptimizedServiceImpl.lastRefreshTime is not used
+      1 The value of the field SmartScheduleIntegrationTest.testResultId is not used
+      1 The value of the field SmartScheduleIntegrationTest.testPlanId is not used
+      1 The value of the field ScheduleOptimizerImpl.optimizationStatistics is not used
+      1 The value of the field ScheduleOptimizerImpl.MAX_OPTIMIZATION_ITERATIONS is not used
+      1 The value of the field ScheduleOptimizerImpl.MAX_LOCAL_SEARCH_ATTEMPTS is not used
+      1 The value of the field ScheduleEngineImpl.scheduleQualityService is not used
+      1 The value of the field RulePerformanceTestServiceImpl.SlowRequest.success is not used
+      1 The value of the field RulePerformanceTestServiceImpl.SlowRequest.ruleName is not used
+      1 The value of the field RulePerformanceTestServiceImpl.SlowRequest.responseTime is not used
+      1 The value of the field RulePerformanceTestServiceImpl.PerformanceTestResult.testId is not used
+      1 The value of the field RuleExecutionService.ruleExecutor is not used
+      1 The value of the field RuleDependencyChecker.lastCacheUpdateTime is not used
+      1 The value of the field RuleCacheManagerImpl.objectMapper is not used
+      1 The value of the field RS485ProtocolManager.deviceCommLogDao is not used
+      1 The value of the field RS485PhysicalAdapter.RS485Connection.config is not used
+      1 The value of the field ResponseDTOSimpleTest.successResponse is not used
+      1 The value of the field ResponseDTOSimpleTest.errorResponse is not used
+      1 The value of the field ReconciliationControllerTest.objectMapper is not used
+      1 The value of the field ProtocolDiscoveryServiceImpl.taskCache is not used
+      1 The value of the field ProtocolCacheService.LOCK_EXPIRE_TIME is not used
+      1 The value of the field ProtocolAutoDiscoveryManager.vendorSupportManager is not used
+      1 The value of the field ProtocolAutoDiscoveryManager.deviceDao is not used
+      1 The value of the field PerformanceMonitorManager.systemMonitorDao is not used
+      1 The value of the field PerformanceMonitor.lastStatisticsTime is not used
+      1 The value of the field PerformanceMetricsCollector.MethodMetrics.method is not used
+      1 The value of the field PerformanceMetricsCollector.HttpMetrics.endpoint is not used
+      1 The value of the field PerformanceMetricsCollector.ExternalServiceMetrics.serviceName is not used
+      1 The value of the field PerformanceMetricsCollector.DatabaseMetrics.sql is not used
+      1 The value of the field PerformanceBenchmarkTest.TEST_PLAINTEXT is not used
+      1 The value of the field OptimizationResult.executionDurationMs is not used
+      1 The value of the field NotificationManager.notificationDao is not used
+      1 The value of the field NotificationManager.alertRuleDao is not used
+      1 The value of the field NotificationConfigManager.aesUtil is not used
+      1 The value of the field MultiObjectiveOptimizationResult.goalAchievements is not used
+      1 The value of the field MultiFactorAuthenticationServiceImpl.MIN_CONFIDENCE_THRESHOLD is not used
+      1 The value of the field MemoryMonitor.HISTORY_SIZE is not used
+      1 The value of the field LocalInferenceEngine.hardwareSpec is not used
+      1 The value of the field HighPrecisionMonitorValidator.gatewayServiceClient is not used
+      1 The value of the field HighPrecisionMonitorValidator.deviceDao is not used
+      1 The value of the field HealthCheckManager.restTemplate is not used
+      1 The value of the field HealthCheckManager.objectMapper is not used
+      1 The value of the field HealthCheckManager.discoveryClient is not used
+      1 The value of the field GreedyAlgorithmImpl.callback is not used
+      1 The value of the field GeneticAlgorithmOptimizer.ELITE_COUNT is not used
+      1 The value of the field GatewayServiceClient.objectMapper is not used
+      1 The value of the field FirmwareUpgradeManager.deviceProtocolAdapter is not used
+      1 The value of the field EnterpriseMonitoringManager.smtpUsername is not used
+      1 The value of the field EnterpriseMonitoringManager.smtpPort is not used
+      1 The value of the field EnterpriseMonitoringManager.smtpPassword is not used
+      1 The value of the field EnterpriseMonitoringManager.smtpHost is not used
+      1 The value of the field EnterpriseMonitoringManager.smsTemplateId is not used
+      1 The value of the field EnterpriseMonitoringManager.smsProvider is not used
+      1 The value of the field EnterpriseMonitoringManager.smsPhoneNumbers is not used
+      1 The value of the field EnterpriseMonitoringManager.smsApiUrl is not used
+      1 The value of the field EnterpriseMonitoringManager.smsApiSecret is not used
+      1 The value of the field EnterpriseMonitoringManager.smsApiKey is not used
+      1 The value of the field EnterpriseMonitoringManager.restTemplate is not used
+      1 The value of the field EnterpriseMonitoringManager.emailTo is not used
+      1 The value of the field EnterpriseMonitoringManager.emailProvider is not used
+      1 The value of the field EnterpriseMonitoringManager.emailFrom is not used
+      1 The value of the field EnterpriseMonitoringManager.emailApiUrl is not used
+      1 The value of the field EnterpriseMonitoringManager.emailApiKey is not used
+      1 The value of the field EdgeAIEngine.initialized is not used
+      1 The value of the field DeviceDiscoveryManager.restTemplate is not used
+      1 The value of the field DeviceDiscoveryManager.gatewayServiceClient is not used
+      1 The value of the field CsrfFilter.secureRandom is not used
+      1 The value of the field ConsumeZktecoV10Adapter.MSG_TYPE_DEVICE_CONFIG_REQUEST is not used
+      1 The value of the field ConsumeTransactionMonitorSimple.transactionTimer is not used
+      1 The value of the field ConsumeStatisticsService.transactionDao is not used
+      1 The value of the field ConsumeStatisticsService.consumeRecordDao is not used
+      1 The value of the field ConsumeRecordManagerTest.testAccount is not used
+      1 The value of the field ConsumeRecordManager.consumeAccountDao is not used
+      1 The value of the field ConsumeOfflineSyncManager.recordManager is not used
+      1 The value of the field ConsumeMealCategoryManagerTest.parentCategory is not used
+      1 The value of the field ConsumeMealCategoryManagerTest.childCategory is not used
+      1 The value of the field ConsumeAccountServiceImpl.recordDao is not used
+      1 The value of the field ConflictResolverImpl.MAX_RESOLUTION_ATTEMPTS is not used
+      1 The value of the field ConflictDetectorImpl.SEVERE_CONFLICT_THRESHOLD is not used
+      1 The value of the field ConflictDetectorImpl.MIN_REST_HOURS is not used
+      1 The value of the field ConflictDetectorImpl.detectionStatistics is not used
+      1 The value of the field BiometricTemplateManager.gatewayServiceClient is not used
+      1 The value of the field BiometricTemplateManager.deviceDao is not used
+      1 The value of the field BiometricServiceImpl.BIOMETRIC_SERVICE_BASE_URL is not used
+      1 The value of the field BehaviorDetectionManager.PersonTrack.personId is not used
+      1 The value of the field AttendanceRuleEngineImpl.ruleExecutor is not used
+      1 The value of the field AttendanceReportServiceImpl.reusableObjects is not used
+      1 The value of the field AttendanceReportServiceImpl.DepartmentSummaryBuilder.startDate is not used
+      1 The value of the field AttendanceReportServiceImpl.DepartmentSummaryBuilder.endDate is not used
+      1 The value of the field AttendanceAnomalyControllerTest.mockMvc is not used
+      1 The value of the field ApiPerformanceMonitor.meterRegistry is not used
+      1 The value of the field AntiPassbackServiceTest.TestRecentPassInfo.passTime is not used
+      1 The value of the field AntiPassbackServiceTest.TestRecentPassInfo.deviceName is not used
+      1 The value of the field AntiPassbackServiceTest.TestRecentPassInfo.areaName is not used
+      1 The value of the field AccountCompensationEntityTest.testTime is not used
+      1 The value of the field AccessAlarmManager.TAILGATING_DETECTION_WINDOW_SECONDS is not used
+      1 The type VisualWorkflowConfigServiceImpl must implement the inherited abstract method VisualWorkflowConfigService.updateProcessConfig(String, VisualWorkflowConfigForm)
+      1 The type VisualWorkflowConfigServiceImpl must implement the inherited abstract method VisualWorkflowConfigService.simulateWorkflow(WorkflowSimulationRequest)
+      1 The type VisualWorkflowConfigServiceImpl must implement the inherited abstract method VisualWorkflowConfigService.generateBpmnXml(VisualWorkflowConfigForm)
+      1 The type ScheduleEngineImpl must implement the inherited abstract method ScheduleEngine.resolveScheduleConflicts(List<ScheduleConflict>, String)
+      1 The type RuleEvaluationResult does not define getRulePriority(T) that is applicable here
+      1 The type of convertToProcessTemplate(ProcessTemplateDetail) from the type VisualWorkflowConfigServiceImpl is ProcessTemplate, this is incompatible with the descriptor's return type: R
+      1 The type MobileApprovalServiceImpl must implement the inherited abstract method MobileApprovalService.voiceApprove(VoiceApprovalRequest)
+      1 The type MobileApprovalServiceImpl must implement the inherited abstract method MobileApprovalService.setApprovalNotification(ApprovalNotificationRequest)
+      1 The type MobileApprovalServiceImpl must implement the inherited abstract method MobileApprovalService.quickApprove(QuickApprovalRequest)
+      1 The type MobileApprovalServiceImpl must implement the inherited abstract method MobileApprovalService.batchApprove(BatchApprovalRequest)
+      1 The type DeviceEntity does not define getStatus(DeviceEntity) that is applicable here
+      1 The type AttendanceRuleOptimizationServiceImpl must implement the inherited abstract method AttendanceRuleOptimizationService.executeRuleChain(AttendanceRuleChainOrchestrator.RuleChainConfig, RuleExecutionContext)
+      1 The type AttendanceRuleEngineImpl is already defined
+      1 The static method decrypt(String) from the type AESUtil should be accessed in a static way
+      1 The return type is incompatible with '@NonNull Type' returned from ParameterizedTypeReference<T>.getType() (mismatching null constraints)
+      1 The project cannot be built until build path errors are resolved
+      1 The method warmUpCache(List<Long>) is undefined for the type RuleCacheManager
+      1 The method warmUp(eq(ruleIds)) is undefined for the type RuleCacheManager
+      1 The method warmUp(anyList()) is undefined for the type RuleCacheManager
+      1 The method verifyLocation(Long, LocationInfo) from the type AttendanceMobileServiceImpl is never used locally
+      1 The method verifyFallback(AccessVerificationRequest, Exception) from the type EdgeVerificationStrategy is never used locally
+      1 The method verifyBiometric(Long, String, String) from the type AttendanceMobileServiceImpl is never used locally
+      1 The method uploadTemplate(String, String, String, String, byte[]) in the type VisualWorkflowConfigService is not applicable for the arguments (String, String, String, MultipartFile, MultipartFile)
+      1 The method updateExecutionStatistics(String) from the type AttendanceRuleEngineImpl is never used locally
+      1 The method unsubscribe(Long) is undefined for the type MobileApprovalService
+      1 The method toJsonString(Object) from the type DataMaskingUtil is never used locally
+      1 The method thenReturn(net.lab1024.sa.attendance.engine.model.RuleValidationResult) in the type OngoingStubbing<RuleValidationResult> is not applicable for the arguments (net.lab1024.sa.attendance.engine.rule.model.RuleValidationResult)
+      1 The method tcpVerification(List<DiscoveredDeviceVO>) from the type DeviceDiscoveryServiceImpl is never used locally
+      1 The method Tags(String...) from the type WorkflowAsyncProcessor is never used locally
+      1 The method startUpgrade(long) is undefined for the type FirmwareUpgradeManager
+      1 The method sortByPriority(List<RuleEvaluationResult>) from the type RuleExecutionService is not visible
+      1 The method size() from the type MemoryOptimizer.ObjectPool<T> is never used locally
+      1 The method setWarningMessages(List<String>) is undefined for the type RuleValidationResult
+      1 The method setValidationDuration(long) is undefined for the type RuleValidationResult
+      1 The method setUnresolvedConflictCount(Integer) is undefined for the type ScheduleStatistics
+      1 The method setTotalShifts(Integer) is undefined for the type ScheduleStatistics
+      1 The method setTotalCount(Integer) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setTotalAssignments(Integer) is undefined for the type ScheduleStatistics
+      1 The method setTaskId(String) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setTaskId(String) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setTargetQuality(String) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setTargetFormat(String) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setSuccessCount(Integer) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setStock(Integer) from the type ConsumeProductAddForm is deprecated
+      1 The method setStatus(String) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setStatus(String) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setStatisticsValue(String, Long) from the type AttendanceRuleEngineImpl is never used locally
+      1 The method setStartTime(String) from the type AccessVerificationManager.TimePeriodConfig is never used locally
+      1 The method setRecordingIds(List<Long>) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setRecordingId(Long) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setQualityScore(Double) is undefined for the type ScheduleStatistics
+      1 The method setProgress(Integer) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setProgress(Integer) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setOverridingRuleId(Long) is undefined for the type RuleEvaluationResult
+      1 The method setOverridden(boolean) is undefined for the type RuleEvaluationResult
+      1 The method setOutputFile(String) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setMaxWaitMillis(long) from the type BaseObjectPoolConfig<DeviceConnectionPoolManager.DeviceConnection> is deprecated
+      1 The method setFailCount(Integer) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setEvaluationTime(LocalDateTime) is undefined for the type RuleExecutionContext
+      1 The method setEndTime(String) from the type AccessVerificationManager.TimePeriodConfig is never used locally
+      1 The method setDays(List<Integer>) from the type AccessVerificationManager.TimePeriodConfig is never used locally
+      1 The method setCreateTime(LocalDateTime) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setCreateTime(LocalDateTime) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setCostSaving(Double) is undefined for the type ScheduleStatistics
+      1 The method setConflictCount(Integer) is undefined for the type ScheduleStatistics
+      1 The method setCompleteTime(LocalDateTime) from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method setCompleteTime(LocalDateTime) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method setBackupType(String) from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method ruleId(null) is undefined for the type CompiledAction.CompiledActionBuilder
+      1 The method resolve(any(), any()) is undefined for the type ConflictResolver
+      1 The method queryFormDesignPage(Integer, Integer, String) from the type EnhancedFormDesignerService refers to the missing type PageResult
+      1 The method queryApplicableRules(Integer) from the type QualityRuleEngine is never used locally
+      1 The method preprocessImage(BufferedImage) from the type FaceNetModel is never used locally
+      1 The method prepareData(ScheduleRequest) from the type ScheduleExecutionService is not visible
+      1 The method parseVerificationData(String) from the type TemporaryVisitorStrategy is never used locally
+      1 The method parseApprovalDecision(String) from the type MobileApprovalService refers to the missing type ApprovalDecision
+      1 The method optimizeSchedule(List<ScheduleRecord>, ScheduleData, List<OptimizationGoal>) in the type ScheduleOptimizer is not applicable for the arguments (List<ScheduleRecord>, String)
+      1 The method max(Comparator<? super Map.Entry<EdgeDevice,EdgeDeviceLoadBalancer.DeviceScore>>) in the type Stream<Map.Entry<EdgeDevice,EdgeDeviceLoadBalancer.DeviceScore>> is not applicable for the arguments (Comparator<Map.Entry<Object,Comparable<? super Comparable<? super V>>>>)
+      1 The method markUpgradeFailed(long, String) is undefined for the type FirmwareUpgradeManager
+      1 The method logConversion(String, String, Object, Object, String) from the type DeviceEntityConverter is never used locally
+      1 The method lockDevice(Long, Long) from the type AccessVerificationManager is never used locally
+      1 The method isValidMessageType(int) from the type ConsumeZktecoV10Adapter is never used locally
+      1 The method initializeMonitoring() from the type RealtimeCalculationEngineImpl is never used locally
+      1 The method initializeHikvisionSDK(Map<String,Object>) from the type VideoHikvisionV20Adapter is never used locally
+      1 The method initializeEventProcessors() from the type RealtimeCalculationEngineImpl is never used locally
+      1 The method initializeDahuaSDK(Map<String,Object>) from the type VideoDahuaV20Adapter is never used locally
+      1 The method initializeCalculationRules() from the type RealtimeCalculationEngineImpl is never used locally
+      1 The method initializeCache() from the type RealtimeCalculationEngineImpl is never used locally
+      1 The method inferenceCount(Long) in the type EnhancedAiModelManager.ModelPerformanceMetrics.ModelPerformanceMetricsBuilder is not applicable for the arguments (int)
+      1 The method getY() is undefined for the type ProcessNode
+      1 The method getY() from the type CrowdAnalysisManager.TrajectoryPoint is never used locally
+      1 The method getX() is undefined for the type ProcessNode
+      1 The method getX() from the type CrowdAnalysisManager.TrajectoryPoint is never used locally
+      1 The method getWorkload(String, String) is undefined for the type MobileApprovalService
+      1 The method getWarrantyDate() is undefined for the type DeviceEntity
+      1 The method getValidationDuration() is undefined for the type RuleValidationResult
+      1 The method getUserAttributes() is undefined for the type RuleExecutionContext
+      1 The method getUserAttribute(String) is undefined for the type RuleExecutionContext
+      1 The method getUpgradeProgress(Long) is undefined for the type FirmwareUpgradeServiceImpl
+      1 The method getUpgradeHistory(Long) is undefined for the type FirmwareUpgradeServiceImpl
+      1 The method getUpgradeHistory(long) is undefined for the type FirmwareUpgradeService
+      1 The method getUnresolvedConflicts() is undefined for the type ConflictResolution
+      1 The method getTraceId() from the type ConsumeBusinessLogger is never used locally
+      1 The method getTotalCount() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getTotalAssignments() is undefined for the type ScheduleStatistics
+      1 The method getToken() from the type VideoRecordingServiceImpl.PlaybackToken is never used locally
+      1 The method getTaskId() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getTaskId() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getTargetQuality() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getTargetFormat() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getTarget() is undefined for the type ProcessEdge
+      1 The method getTags() from the type SmartRequestUtilSimpleTest.TestData is never used locally
+      1 The method getSuccessCount() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getSubscriptions() is undefined for the type MobileApprovalService
+      1 The method getStreamUrl() from the type VideoAiAnalysisServiceImpl.RealtimeAnalysisTask is never used locally
+      1 The method getStatus() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getStatus() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getStatistics(LocalDate, LocalDate) is undefined for the type FirmwareUpgradeService
+      1 The method getStartTime() from the type BacktrackAlgorithmImpl.BacktrackState is never used locally
+      1 The method getSize() from the type MemoryMonitor.MemoryUsageHistory is never used locally
+      1 The method getSessionId() is undefined for the type RuleExecutionContext
+      1 The method getRightOperand() from the type AttendanceRuleEngineImpl.CompiledCondition is never used locally
+      1 The method getResolvedConflicts() is undefined for the type ConflictResolution
+      1 The method getRequestType() is undefined for the type InferenceRequest
+      1 The method getRefundStatistics(Long) from the type ConsumeRefundService is deprecated
+      1 The method getRecordTime() from the type AttendanceAnomalyProcessor.AnomalyRecord is never used locally
+      1 The method getRecordingIds() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getRecordingId() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getRecordingId() from the type VideoRecordingServiceImpl.PlaybackToken is never used locally
+      1 The method getRecord() from the type AttendanceAnomalyProcessor.AnomalyRecord is never used locally
+      1 The method getReconciliationStatistics(LocalDate, LocalDate) is undefined for the type ConsumeTransactionServiceImpl
+      1 The method getReconciliationStatistics(LocalDate, LocalDate) is undefined for the type ConsumeTransactionService
+      1 The method getReconciliationHistory(LocalDate, LocalDate) is undefined for the type ConsumeTransactionServiceImpl
+      1 The method getReconciliationHistory(LocalDate, LocalDate) is undefined for the type ConsumeTransactionService
+      1 The method getRechargeStatistics(Long) from the type ConsumeRechargeService is deprecated
+      1 The method getQualityScore() is undefined for the type ScheduleStatistics
+      1 The method getProgress() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getProgress() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getProcessTemplates(String) from the type VisualWorkflowConfigService refers to the missing type ProcessTemplate
+      1 The method getProcessDiagram(String) from the type MobileApprovalServiceImpl refers to the missing type MobileProcessDiagram
+      1 The method getProcessDiagram(String) from the type MobileApprovalService refers to the missing type MobileProcessDiagram
+      1 The method getProcessDescription() is undefined for the type VisualWorkflowConfig
+      1 The method getProcessCategory() is undefined for the type VisualWorkflowConfig
+      1 The method getPredictedQuality() is undefined for the type SchedulePrediction
+      1 The method getPersonalStatistics() is undefined for the type MobileApprovalService
+      1 The method getPendingTasks(Integer, Integer, String) from the type MobileApprovalService refers to the missing type PageResult
+      1 The method getPendingCount() from the type MobileApprovalService refers to the missing type PendingTaskStatistics
+      1 The method getParameters() from the type AttendanceRuleEngineImpl.CompiledActionObject is never used locally
+      1 The method getOutputFile() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getOriginalExpression() from the type AttendanceRuleEngineImpl.CompiledCondition is never used locally
+      1 The method getOriginalExpression() from the type AttendanceRuleEngineImpl.CompiledActionObject is never used locally
+      1 The method getOperator() from the type AttendanceRuleEngineImpl.CompiledCondition is never used locally
+      1 The method getOnlineDuration() is undefined for the type DeviceEntity
+      1 The method getNodeTypes() from the type VisualWorkflowConfigService refers to the missing type NodeType
+      1 The method getNodeConfigSchema(String) from the type VisualWorkflowConfigService refers to the missing type NodeConfigSchema
+      1 The method getNodeConfigs() is undefined for the type VisualWorkflowConfig
+      1 The method getName() is undefined for the type ProcessNode
+      1 The method getModelConfig() is undefined for the type AiModelVO
+      1 The method getManufacturer() is undefined for the type DeviceEntity
+      1 The method getMacAddress() is undefined for the type DeviceEntity
+      1 The method getLeftOperand() from the type AttendanceRuleEngineImpl.CompiledCondition is never used locally
+      1 The method getLastUpdateTime() from the type VideoAiAnalysisServiceImpl.RealtimeAnalysisTask is never used locally
+      1 The method getInstallDate() is undefined for the type DeviceEntity
+      1 The method getId() from the type GeneticAlgorithmImpl.Chromosome is never used locally
+      1 The method getFromCache(String) from the type RealtimeCalculationEngineImpl is never used locally
+      1 The method getFailCount() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getExpireTime() from the type RealtimeCalculationEngineImpl.CacheEntry is never used locally
+      1 The method getExecutionStatistics(long, long) from the type AttendanceRuleEngine refers to the missing type RuleExecutionStatistics
+      1 The method getExecutionId() is undefined for the type RuleExecutionContext
+      1 The method getEvaluationTime() is undefined for the type RuleExecutionContext
+      1 The method getErrorMessage() is undefined for the type ScheduleResult
+      1 The method getDeviceAddress() is undefined for the type DeviceEntity
+      1 The method getCurrentShift(Long) from the type AttendanceMobileServiceImpl is never used locally
+      1 The method getCreationTime() from the type WorkflowCacheManager.CacheEntry is never used locally
+      1 The method getCreateTime() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getCreateTime() from the type VideoRecordingServiceImpl.PlaybackToken is never used locally
+      1 The method getCreateTime() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getCreatedCount() from the type MemoryOptimizer.ObjectPool<T> is never used locally
+      1 The method getCompleteTime() from the type VideoRecordingServiceImpl.TranscodeTask is never used locally
+      1 The method getCompleteTime() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getCompletedTasks(Integer, Integer) from the type MobileApprovalService refers to the missing type PageResult
+      1 The method getClockOutStatus(List<AttendanceRecordEntity>) from the type AttendanceMobileServiceImpl is never used locally
+      1 The method getClockInStatus(List<AttendanceRecordEntity>) from the type AttendanceMobileServiceImpl is never used locally
+      1 The method getBorrowedCount() from the type MemoryOptimizer.ObjectPool<T> is never used locally
+      1 The method getBody() from the type Jwt<JwsHeader,Claims> is deprecated
+      1 The method getBackupType() from the type VideoRecordingServiceImpl.BackupTask is never used locally
+      1 The method getApprovalHistory(String) from the type MobileApprovalServiceImpl refers to the missing type ApprovalHistoryItemVO
+      1 The method getApprovalHistory(String) from the type MobileApprovalService refers to the missing type ApprovalHistoryItemVO
+      1 The method getApprovalDetail(String) from the type MobileApprovalService refers to the missing type MobileApprovalDetailVO
+      1 The method getAnomaly() from the type AttendanceAnomalyProcessor.AnomalyRecord is never used locally
+      1 The method getAge() from the type SmartRequestUtilSimpleTest.TestData is never used locally
+      1 The method generateStreamKey(Long, Long) from the type VideoStreamServiceImpl is never used locally
+      1 The method generateStatistics(ScheduleResult) in the type ScheduleExecutionService is not applicable for the arguments (ScheduleData)
+      1 The method generateProcessingRecommendations(VideoBehaviorEntity) from the type VideoBehaviorManager is never used locally
+      1 The method fields() from the type JsonNode is deprecated
+      1 The method executeRuleChain(AttendanceRuleChainOrchestrator.RuleChainConfig, RuleExecutionContext) of type AttendanceRuleOptimizationServiceImpl must override or implement a supertype method
+      1 The method executeChain(net.lab1024.sa.attendance.engine.optimization.AttendanceRuleChainOrchestrator.RuleChainConfig, net.lab1024.sa.attendance.engine.model.RuleExecutionContext) in the type AttendanceRuleChainOrchestrator is not applicable for the arguments (net.lab1024.sa.attendance.engine.optimization.AttendanceRuleChainOrchestrator.RuleChainConfig, net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext)
+      1 The method execute() from the type ExecuteDecisionBuilder is deprecated
+      1 The method evictOldestLocalEntry() from the type WorkflowCacheManager is never used locally
+      1 The method eq(SFunction<DeviceEntity,?>, Object) in the type Compare<LambdaQueryWrapper<DeviceEntity>,SFunction<DeviceEntity,?>> is not applicable for the arguments (DeviceEntity::getStatus, Integer)
+      1 The method detect(any()) is undefined for the type ConflictDetector
+      1 The method deleteBatchIds(Collection<?>) from the type BaseMapper<AttendanceRuleEntity> is deprecated
+      1 The method dbSize() from the type DefaultedRedisConnection is deprecated
+      1 The method createUpgradeTask(Long, String, String, String, String, String, Long, String, Integer, Long, String) in the type FirmwareUpgradeManager is not applicable for the arguments (Long, String, String, String, String, String, Long, String, Integer)
+      1 The method createUpgradeTask(Long, String, String, Long, String, Integer) in the type FirmwareUpgradeServiceImpl is not applicable for the arguments (Long, String, String, String, String, String, Long, String, Integer)
+      1 The method createUpgradeTask(Long, String, String, Long, String, Integer) in the type FirmwareUpgradeService is not applicable for the arguments (Long, String, String, String, String, String, Long, String, Integer)
+      1 The method createScheduleStatistics(Map<String,Object>) from the type GeneticAlgorithmImpl is never used locally
+      1 The method createReconciliationRecord(String, String, any(), any(), any()) is undefined for the type ConsumeTransactionManager
+      1 The method createRecentPassInfo(long) from the type AntiPassbackServiceTest is never used locally
+      1 The method createMockCategoryStats() from the type ConsumeExportServiceImplTest is never used locally
+      1 The method createMockAnalysis() from the type ConsumeExportServiceImplTest is never used locally
+      1 The method createLocationAnomaly(AttendanceEvent, String) from the type AttendanceAnomalyDetectionService is never used locally
+      1 The method createLateArrivalAnomaly(AttendanceEvent, Object) from the type AttendanceAnomalyDetectionService is never used locally
+      1 The method createFrequentPunchAnomaly(Long, AttendanceEvent, int) from the type AttendanceAnomalyDetectionService is never used locally
+      1 The method createEarlyLeaveAnomaly(AttendanceEvent, Object) from the type AttendanceAnomalyDetectionService is never used locally
+      1 The method createCrossDeviceAnomaly(Long, AttendanceEvent, AttendanceEvent, double) from the type AttendanceAnomalyDetectionService is never used locally
+      1 The method createContinuousAbsenceAnomaly(Long, LocalDate, int) from the type AttendanceAnomalyDetectionService is never used locally
+      1 The method createBasicConfig(String) from the type ProtocolAutoDiscoveryManager is never used locally
+      1 The method createAbnormalTimeAnomaly(AttendanceEvent, String) from the type AttendanceAnomalyDetectionService is never used locally
+      1 The method countStaffOnDay(LocalDate) from the type Chromosome is never used locally
+      1 The method countByStatus(int, any(), any()) is undefined for the type FirmwareUpgradeDao
+      1 The method convertToProcessTemplate(ProcessTemplateDetail) from the type VisualWorkflowConfigServiceImpl refers to the missing type ProcessTemplate
+      1 The method convertToModelRecords(List<Object>) in the type ScheduleExecutionService is not applicable for the arguments (((scheduleData.getHistoryRecords() != null) ? scheduleData.getHistoryRecords() : new ArrayList<>()))
+      1 The method convertToModelRecords(List<Object>) in the type ScheduleConflictService is not applicable for the arguments (((scheduleData.getHistoryRecords() != null) ? scheduleData.getHistoryRecords() : new ArrayList<>()))
+      1 The method convertToMobileRecords(List<AttendanceRecordEntity>) from the type AttendanceMobileServiceImpl is never used locally
+      1 The method convertToMobileRecord(AttendanceRecordEntity) from the type AttendanceMobileServiceImpl is never used locally
+      1 The method convertFromProtocolMessage(ProtocolMessage) from the type ConsumeZktecoV10Adapter is never used locally
+      1 The method convertAlertLevelToString(Integer) from the type MonitorServiceImpl is never used locally
+      1 The method convertAlertLevelToString(Integer) from the type AlertServiceImpl is never used locally
+      1 The method convertAlertLevelToInteger(String) from the type MonitorServiceImpl is never used locally
+      1 The method convertAlertLevelToInteger(String) from the type AlertServiceImpl is never used locally
+      1 The method comparing(Function<? super T,? extends U>) in the type Comparator is not applicable for the arguments (RuleEvaluationResult::getRulePriority)
+      1 The method cleanupHikvisionSDK() from the type VideoHikvisionV20Adapter is never used locally
+      1 The method cleanupDahuaSDK() from the type VideoDahuaV20Adapter is never used locally
+      1 The method cleanExpiredTokens() from the type VideoRecordingServiceImpl is never used locally
+      1 The method cleanExpiredLocks(List<InterlockRecordEntity>) from the type AccessVerificationManager is never used locally
+      1 The method checkUserAttributes(Map<String,Object>, RuleExecutionContext) from the type RuleValidationService refers to the missing type RuleExecutionContext
+      1 The method checkDepartmentScope(Map<String,Object>, RuleExecutionContext) from the type RuleValidationService refers to the missing type RuleExecutionContext
+      1 The method cancelRefund(Long) from the type ConsumeRefundService is deprecated
+      1 The method calculateWorkHours(Long) from the type AttendanceMobileServiceImpl is never used locally
+      1 The method calculateUpgradeDuration(LocalDateTime, LocalDateTime) is undefined for the type FirmwareUpgradeManager
+      1 The method calculateRiskLevel(BigDecimal, Integer) from the type VideoBehaviorManager is never used locally
+      1 The method calculatePacketLossScore(BigDecimal) from the type DeviceHealthManager is not visible
+      1 The method calculateNetworkScore(Integer) from the type DeviceHealthManager is not visible
+      1 The method calculateMemoryScore(BigDecimal) from the type DeviceHealthManager is not visible
+      1 The method calculateFlexibleEndTime(WorkShiftEntity) from the type FlexibleWorkTimeStrategy is never used locally
+      1 The method calculateDownloadProgress(long, long) is undefined for the type FirmwareUpgradeManager
+      1 The method calculateCpuScore(BigDecimal) from the type DeviceHealthManager is not visible
+      1 The method calculateChecksum(Path) from the type VideoRecordingServiceImpl is never used locally
+      1 The method cacheUserRelation(Long, String) from the type RuleCacheManagerImpl is never used locally
+      1 The method buildLockSmsContent(String, int, int) from the type NotificationServiceImpl is never used locally
+      1 The method buildLockEmailContent(String, int, int) from the type NotificationServiceImpl is never used locally
+      1 The method builder() is undefined for the type RuleValidationResult
+      1 The method addParameter(String, String) is undefined for the type RuleCompilationService.CompiledActionObject
+      1 The method actionId(Long) in the type CompiledAction.CompiledActionBuilder is not applicable for the arguments (String)
+      1 The method actionExpression(String) is undefined for the type CompiledAction.CompiledActionBuilder
+      1 The import org.springframework.web.socket.messaging.WebSocketStompClient is never used
+      1 The import org.springframework.web.socket.client.standard.StandardWebSocketClient is never used
+      1 The import org.springframework.web.servlet.mvc.method.annotation.SseEmitter is never used
+      1 The import org.springframework.web.bind.annotation.RequestParam is never used
+      1 The import org.springframework.web.bind.annotation.RequestHeader is never used
+      1 The import org.springframework.web.bind.annotation.DeleteMapping is never used
+      1 The import org.springframework.util.ReflectionUtils is never used
+      1 The import org.springframework.transaction.annotation.Transactional is never used
+      1 The import org.springframework.test.util.ReflectionTestUtils is never used
+      1 The import org.springframework.stereotype.Component is never used
+      1 The import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter is never used
+      1 The import org.springframework.messaging.simp.stomp.StompSession is never used
+      1 The import org.springframework.messaging.simp.stomp.StompHeaders is never used
+      1 The import org.springframework.messaging.simp.stomp.StompFrameHandler is never used
+      1 The import org.springframework.http.HttpStatus is never used
+      1 The import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder is never used
+      1 The import org.springframework.data.redis.core.StringRedisTemplate is never used
+      1 The import org.springframework.context.annotation.Bean is never used
+      1 The import org.springframework.cache.Cache is never used
+      1 The import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean is never used
+      1 The import org.springframework.beans.BeanUtils is never used
+      1 The import org.mockito.Mockito.doReturn is never used
+      1 The import org.mockito.MockedStatic is never used
+      1 The import org.mockito.ArgumentMatchers.isNull is never used
+      1 The import org.mockito.ArgumentMatchers.anyLong is never used
+      1 The import org.mockito.ArgumentMatchers.any is never used
+      1 The import org.mockito.ArgumentMatchers is never used
+      1 The import org.junit.jupiter.params.provider.ValueSource is never used
+      1 The import org.junit.jupiter.api.Disabled is never used
+      1 The import org.junit.jupiter.api.Assertions is never used
+      1 The import org.flowable.task.api.TaskQuery is never used
+      1 The import org.flowable.task.api.history.HistoricTaskInstance is never used
+      1 The import org.apache.poi.ss.usermodel.Workbook is never used
+      1 The import org.apache.ibatis.session.Configuration is never used
+      1 The import org.apache.ibatis.annotations.Param is never used
+      1 The import net.lab1024.sa.video.service.VideoBatchDeviceManagementService.DeviceOperationFailure is never used
+      1 The import net.lab1024.sa.video.service.VideoBatchDeviceManagementService.DeviceInspectionResult is never used
+      1 The import net.lab1024.sa.video.service.VideoBatchDeviceManagementService.BatchRebootResult is never used
+      1 The import net.lab1024.sa.video.service.VideoBatchDeviceManagementService.BatchInspectionResult is never used
+      1 The import net.lab1024.sa.video.service.VideoBatchDeviceManagementService.BatchFirmwareUpgradeResult is never used
+      1 The import net.lab1024.sa.video.service.VideoBatchDeviceManagementService.BatchConfigurationResult is never used
+      1 The import net.lab1024.sa.video.service.VideoAIModelOptimizationService.LoiteringDetectionOptimizationResult is never used
+      1 The import net.lab1024.sa.video.service.VideoAIModelOptimizationService.IntrusionDetectionOptimizationResult is never used
+      1 The import net.lab1024.sa.video.service.VideoAIModelOptimizationService.FalsePositiveAnalysis is never used
+      1 The import net.lab1024.sa.video.service.VideoAIModelOptimizationService.DetectionAccuracyStats is never used
+      1 The import net.lab1024.sa.video.manager.BehaviorDetectionManager is never used
+      1 The import net.lab1024.sa.video.manager.AiModelManager cannot be resolved
+      1 The import net.lab1024.sa.video.entity.VideoRecordEntity is never used
+      1 The import net.lab1024.sa.video.entity.VideoFaceSearchEntity is never used
+      1 The import net.lab1024.sa.video.entity.VideoFaceCompareEntity is never used
+      1 The import net.lab1024.sa.video.domain.form.VideoRecordingPlanQueryForm is never used
+      1 The import net.lab1024.sa.video.domain.entity.AiModelEntity cannot be resolved
+      1 The import net.lab1024.sa.video.constant.WebSocketConstants is never used
+      1 The import net.lab1024.sa.video.adapter.IVideoStreamAdapter is never used
+      1 The import net.lab1024.sa.oa.workflow.mobile.service.SpeechToTextService cannot be resolved
+      1 The import net.lab1024.sa.gateway.config.IoeDreamGatewayProperties is never used
+      1 The import net.lab1024.sa.consume.service.impl.SubsidyRuleEngineServiceImpl is never used
+      1 The import net.lab1024.sa.consume.exception.DualWriteException is never used
+      1 The import net.lab1024.sa.consume.exception.ConsumeAccountException is never used
+      1 The import net.lab1024.sa.consume.entity.PosidSubsidyTypeEntity is never used
+      1 The import net.lab1024.sa.consume.entity.OfflineSyncLogEntity is never used
+      1 The import net.lab1024.sa.consume.domain.vo.OfflineConsumeDTO is never used
+      1 The import net.lab1024.sa.consume.domain.vo.ConsumeDeviceVO is never used
+      1 The import net.lab1024.sa.consume.domain.vo.ConsumeAccountVO is never used
+      1 The import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity is never used
+      1 The import net.lab1024.sa.consume.domain.entity.ConsumeAccountEntity is never used
+      1 The import net.lab1024.sa.consume.domain.config.AreaConfig is never used
+      1 The import net.lab1024.sa.common.util.SmartRequestUtil is never used
+      1 The import net.lab1024.sa.common.util.SmartBeanUtil is never used
+      1 The import net.lab1024.sa.common.system.employee.domain.vo.EmployeeVO is never used
+      1 The import net.lab1024.sa.common.organization.entity.UserEntity is never used
+      1 The import net.lab1024.sa.common.organization.entity.AreaUserEntity is never used
+      1 The import net.lab1024.sa.common.organization.dao.DeviceDao is never used
+      1 The import net.lab1024.sa.common.organization.dao.AreaDao is never used
+      1 The import net.lab1024.sa.common.organization cannot be resolved
+      1 The import net.lab1024.sa.common.gateway.domain.response.UserInfoResponse is never used
+      1 The import net.lab1024.sa.common.export.domain.vo.ExportResult is never used
+      1 The import net.lab1024.sa.common.entity.video.AiModelEntity is never used
+      1 The import net.lab1024.sa.common.entity.device.DeviceQualityRecordEntity is never used
+      1 The import net.lab1024.sa.common.entity.BaseEntity is never used
+      1 The import net.lab1024.sa.common.auth.dao.UserSessionDao is never used
+      1 The import net.lab1024.sa.biometric.service.BiometricTemplateSyncService is never used
+      1 The import net.lab1024.sa.biometric.service.BiometricFeatureExtractionService is never used
+      1 The import net.lab1024.sa.biometric.manager.BiometricTemplateManager is never used
+      1 The import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity is never used
+      1 The import net.lab1024.sa.biometric.dao.BiometricTemplateDao is never used
+      1 The import net.lab1024.sa.attendance.realtime.event.EventProcessor is never used
+      1 The import net.lab1024.sa.attendance.realtime.event.EventProcessingResult is never used
+      1 The import net.lab1024.sa.attendance.realtime.event.CalculationTriggerEvent is never used
+      1 The import net.lab1024.sa.attendance.realtime.event.AttendanceEvent is never used
+      1 The import net.lab1024.sa.attendance.mobile.model.WorkShiftInfo is never used
+      1 The import net.lab1024.sa.attendance.mobile.model.MobileLeaveCancellationResult is never used
+      1 The import net.lab1024.sa.attendance.mobile.model.MobileLeaveApplicationResult is never used
+      1 The import net.lab1024.sa.attendance.mobile.model.MobileDeviceInfo is never used
+      1 The import net.lab1024.sa.attendance.mobile.model.AttendanceClockOutEvent is never used
+      1 The import net.lab1024.sa.attendance.mobile.model.AttendanceClockInEvent is never used
+      1 The import net.lab1024.sa.attendance.entity.SmartScheduleResultEntity is never used
+      1 The import net.lab1024.sa.attendance.entity.DepartmentStatisticsEntity is never used
+      1 The import net.lab1024.sa.attendance.entity.AttendanceSummaryEntity is never used
+      1 The import net.lab1024.sa.attendance.entity.AttendanceOvertimeRuleEntity is never used
+      1 The import net.lab1024.sa.attendance.entity.AttendanceOvertimeRecordEntity is never used
+      1 The import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity is never used
+      1 The import net.lab1024.sa.attendance.entity.AttendanceAnomalyApplyEntity is never used
+      1 The import net.lab1024.sa.attendance.engine.RuleEvaluator cannot be resolved
+      1 The import net.lab1024.sa.attendance.engine.rule.RuleExecutionContext is never used
+      1 The import net.lab1024.sa.attendance.engine.rule.model.CompiledActionObject cannot be resolved
+      1 The import net.lab1024.sa.attendance.engine.optimizer.SimulatedAnnealingOptimizer is never used
+      1 The import net.lab1024.sa.attendance.engine.optimization.AttendanceRuleVersionManager is never used
+      1 The import net.lab1024.sa.attendance.engine.optimization.AttendanceRulePerformanceMonitor is never used
+      1 The import net.lab1024.sa.attendance.engine.optimization.AttendanceRuleChainOrchestrator is never used
+      1 The import net.lab1024.sa.attendance.engine.model.ScheduleRecord is never used
+      1 The import net.lab1024.sa.attendance.engine.model.ScheduleData is never used
+      1 The import net.lab1024.sa.attendance.engine.model.Chromosome is never used
+      1 The import net.lab1024.sa.attendance.domain.form.RuleTestRequest is never used
+      1 The import net.lab1024.sa.attendance.domain.form.AttendanceStatisticsQueryForm is never used
+      1 The import net.lab1024.sa.access.manager.AntiPassbackManager is never used
+      1 The import net.lab1024.sa.access.domain.vo.AntiPassbackRecordVO is never used
+      1 The import net.lab1024.sa.access.domain.enumeration.VerifyTypeEnum is never used
+      1 The import net.lab1024.sa.access.domain.entity.DeviceImportSuccessEntity is never used
+      1 The import net.lab1024.sa.access.domain.entity.DeviceImportErrorEntity is never used
+      1 The import net.lab1024.sa.access.domain.entity.DeviceFirmwareEntity is never used
+      1 The import net.lab1024.sa.access.domain.entity.AlertRuleEntity is never used
+      1 The import net.lab1024.sa.access.domain.entity.AccessLinkageRuleEntity is never used
+      1 The import lombok.NoArgsConstructor is never used
+      1 The import lombok.Builder is never used
+      1 The import lombok.AllArgsConstructor is never used
+      1 The import javax.sql.DataSource is never used
+      1 The import java.util.concurrent.Executor is never used
+      1 The import java.util.concurrent.atomic.AtomicLong is never used
+      1 The import java.util.concurrent.atomic.AtomicInteger is never used
+      1 The import java.util.Collection is never used
+      1 The import java.time.DayOfWeek is never used
+      1 The import java.security.NoSuchAlgorithmException is never used
+      1 The import java.security.MessageDigest is never used
+      1 The import java.lang.reflect.Method is never used
+      1 The import java.io.InputStream is never used
+      1 The import java.io.FileInputStream is never used
+      1 The import java.io.ByteArrayInputStream is never used
+      1 The import java.awt.image.BufferedImage is never used
+      1 The import jakarta.validation.Valid is never used
+      1 The import jakarta.transaction.Transactional is never used
+      1 The import jakarta.annotation.PostConstruct is never used
+      1 The import io.swagger.v3.oas.annotations.tags.Tag is never used
+      1 The import io.seata.spring.annotation.GlobalTransactional is never used
+      1 The import io.micrometer.core.instrument.MeterRegistry is never used
+      1 The import io.jsonwebtoken.SignatureAlgorithm is never used
+      1 The import io.jsonwebtoken.security.Keys is never used
+      1 The import io.jsonwebtoken.Jwts is never used
+      1 The import io.jsonwebtoken.Claims is never used
+      1 The import io.github.resilience4j.core.ConfigurationNotFoundException is never used
+      1 The import com.github.benmanes.caffeine.cache.Ticker is never used
+      1 The import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler is never used
+      1 The import com.baomidou.mybatisplus.core.metadata.TableInfoHelper is never used
+      1 The import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper is never used
+      1 The import com.baomidou.mybatisplus.annotation.TableLogic is never used
+      1 The import com.alibaba.excel.write.metadata.WriteSheet is never used
+      1 The import com.alibaba.excel.ExcelWriter is never used
+      1 The import com.alibaba.excel.event.AnalysisEventListener is never used
+      1 The import com.alibaba.excel.EasyExcel is never used
+      1 The import com.alibaba.excel.context.AnalysisContext is never used
+      1 The enum constant TRANSFERRED needs a corresponding case label in this enum switch on LeaveCancellationApplication.ApprovalResult
+      1 The enum constant NORMAL needs a corresponding case label in this enum switch on MemoryMonitor.MemoryStatus
+      1 The container 'Maven Dependencies' references non existing library 'C:\\Users\\10201\\.m2\\repository\\mysql\\mysql-connector-java\\8.0.35\\mysql-connector-java-8.0.35.jar'
+      1 The constructor ScheduleEngineImpl(ScheduleAlgorithmFactory, ConflictDetector, ConflictResolver, ScheduleOptimizer, SchedulePredictor) is undefined
+      1 SubscribeRequest cannot be resolved to a type
+      1 RuleExecutionContext.RuleExecutionContextBuilder cannot be resolved to a type
+      1 Resource leak: 'files' is never closed
+      1 Redundant superinterface Serializable for the type EmployeeUpdateDTO, already defined by EmployeeAddDTO
+      1 Redundant superinterface Serializable for the type EmployeeQueryDTO, already defined by PageParam
+      1 Redundant superinterface Serializable for the type ConfigUpdateDTO, already defined by ConfigCreateDTO
+      1 Potential null pointer access: This expression of type Long may be null but requires auto-unboxing
+      1 Potential null pointer access: The variable discountRate may be null at this location
+      1 Potential null pointer access: The method getUri() may return null
+      1 Potential null pointer access: The method getSessionAttributes() may return null
+      1 PendingTaskStatistics cannot be resolved
+      1 Offline / Missing artifact mysql:mysql-connector-java:jar:8.0.35
+      1 Null type safety: The expression of type 'VideoRecordingTaskEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'VideoRecordingPlanEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'VideoFaceEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'VideoFaceAddForm' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'VideoBehaviorPatternForm' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'VideoBehaviorEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'V' needs unchecked conversion to conform to '@NonNull V'
+      1 Null type safety: The expression of type 'String[]' needs unchecked conversion to conform to '@NonNull String[]'
+      1 Null type safety: The expression of type 'RuleEvaluationResult' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'Mono<DataBuffer>' needs unchecked conversion to conform to '@NonNull Publisher<? extends DataBuffer>'
+      1 Null type safety: The expression of type 'MobileAuthInitForm' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'MessageConverter' needs unchecked conversion to conform to '@NonNull MessageConverter'
+      1 Null type safety: The expression of type 'Long' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'List<DiscoveredDeviceVO>' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'List<ConcurrentMapCache>' needs unchecked conversion to conform to '@NonNull Collection<? extends Cache>'
+      1 Null type safety: The expression of type 'List<ApprovalRecordVO>' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'List<AntiPassbackServiceImpl.RecentPassInfo>' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'K' needs unchecked conversion to conform to '@NonNull K'
+      1 Null type safety: The expression of type 'Jackson2JsonRedisSerializer<Object>' needs unchecked conversion to conform to '@NonNull RedisSerializer<Object>'
+      1 Null type safety: The expression of type 'HttpStatusCode' needs unchecked conversion to conform to '@NonNull HttpStatusCode'
+      1 Null type safety: The expression of type 'FirmwareUpgradeTaskEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'FirmwareUpgradeDeviceEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'DeviceImportErrorEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'DeviceImportBatchEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'DeviceFirmwareEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'DeviceEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'DeviceDiscoveryServiceImpl' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'DeviceDiscoveryResultVO' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'DeviceAlertEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'DataSource' needs unchecked conversion to conform to '@NonNull DataSource'
+      1 Null type safety: The expression of type 'ConsumeWebSocketHandler' needs unchecked conversion to conform to '@NonNull WebSocketHandler'
+      1 Null type safety: The expression of type 'ConsumeProductEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'ConsumeDeviceUpdateForm' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'ConsumeDeviceEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'ConnectionFactory' needs unchecked conversion to conform to '@NonNull ConnectionFactory'
+      1 Null type safety: The expression of type 'BiometricTemplateEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'AreaEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'ApiPerformanceInterceptor' needs unchecked conversion to conform to '@NonNull HandlerInterceptor'
+      1 Null type safety: The expression of type 'AlertWebSocketHandler' needs unchecked conversion to conform to '@NonNull WebSocketHandler'
+      1 Null type safety: The expression of type 'AccessRecordBatchUploadRequest.BatchUploadResult' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'AccessMobileController.QRCodeSession' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'AccessMobileController.DeviceHeartbeatInfo' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type safety: The expression of type 'AccessAlarmEntity' needs unchecked conversion to conform to '@NonNull Object'
+      1 Null type mismatch: required '@NonNull Object' but the provided value is inferred as @Nullable
+      1 NextTaskInfo cannot be resolved to a type
+      1 NextTaskInfo cannot be resolved
+      1 net.lab1024.sa.attendance.engine.conflict.ConflictResolution cannot be resolved to a type
+      1 MyApplicationVO cannot be resolved
+      1 Missing nullable annotation: inherited method from HandlerInterceptor specifies this parameter as @Nullable
+      1 Missing non-null annotation: inherited method from WebMvcConfigurer specifies this parameter as @NonNull
+      1 List cannot be resolved to a type
+      1 InitiatorInfo cannot be resolved to a type
+      1 InitiatorInfo cannot be resolved
+      1 Inference for this invocation of method map(Function<? super ProcessTemplateDetail,? extends R>) from the type Stream<ProcessTemplateDetail> refers to the missing type ProcessTemplate
+      1 CustomComponentForm cannot be resolved to a type
+      1 CurrentNodeInfo cannot be resolved to a type
+      1 CurrentNodeInfo cannot be resolved
+      1 CompiledActionObject cannot be resolved to a type
+      1 BatchApprovalResult cannot be resolved
+      1 BatchApprovalFailure cannot be resolved to a type
+      1 BatchApprovalFailure cannot be resolved
+      1 ActionButton cannot be resolved to a type

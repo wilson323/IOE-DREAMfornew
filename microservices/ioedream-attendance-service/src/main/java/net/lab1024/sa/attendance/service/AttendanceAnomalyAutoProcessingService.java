@@ -1,7 +1,7 @@
-package net.lab1024.sa.attendance.service;
+﻿package net.lab1024.sa.attendance.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceAnomalyAutoProcessQueryForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceAnomalyAutoProcessVO;
 import net.lab1024.sa.common.domain.PageResult;

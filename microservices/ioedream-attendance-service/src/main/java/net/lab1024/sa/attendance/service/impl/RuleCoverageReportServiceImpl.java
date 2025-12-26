@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,9 +14,9 @@ import net.lab1024.sa.attendance.domain.form.RuleCoverageReportForm;
 import net.lab1024.sa.attendance.domain.vo.RuleCoverageReportVO;
 import net.lab1024.sa.attendance.domain.vo.RuleCoverageTrendVO;
 import net.lab1024.sa.attendance.domain.vo.RuleCoverageDetailVO;
-import net.lab1024.sa.attendance.entity.RuleCoverageReportEntity;
-import net.lab1024.sa.attendance.entity.RuleTestHistoryEntity;
-import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
+import net.lab1024.sa.common.entity.attendance.RuleCoverageReportEntity;
+import net.lab1024.sa.common.entity.attendance.RuleTestHistoryEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRuleEntity;
 import net.lab1024.sa.attendance.service.RuleCoverageReportService;
 
 import java.time.LocalDate;

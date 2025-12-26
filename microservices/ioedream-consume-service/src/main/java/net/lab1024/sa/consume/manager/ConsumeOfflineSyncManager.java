@@ -9,9 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.dao.ConsumeAccountDao;
 import net.lab1024.sa.consume.dao.ConsumeAccountTransactionDao;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeAccountEntity;
-import net.lab1024.sa.consume.domain.entity.ConsumeAccountTransactionEntity;
-import net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountTransactionEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeRecordEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

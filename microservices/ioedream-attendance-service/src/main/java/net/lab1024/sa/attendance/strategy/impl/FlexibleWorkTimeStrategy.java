@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.strategy.impl;
+﻿package net.lab1024.sa.attendance.strategy.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 import net.lab1024.sa.attendance.strategy.WorkTimeCalculateStrategy;
 import net.lab1024.sa.attendance.strategy.WorkTimeCalculateStrategyFactory;
 import net.lab1024.sa.attendance.strategy.model.CalculateContext;

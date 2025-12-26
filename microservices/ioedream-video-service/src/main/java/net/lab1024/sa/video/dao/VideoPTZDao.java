@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.dao;
+﻿package net.lab1024.sa.video.dao;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import net.lab1024.sa.video.entity.VideoPTZEntity;
+import net.lab1024.sa.common.entity.video.VideoPTZEntity;
 
 /**
  * 视频云台控制数据访问层

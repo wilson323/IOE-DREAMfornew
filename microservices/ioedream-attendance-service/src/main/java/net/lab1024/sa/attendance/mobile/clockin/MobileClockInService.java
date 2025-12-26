@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.mobile.clockin;
+﻿package net.lab1024.sa.attendance.mobile.clockin;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,9 +33,9 @@ import net.lab1024.sa.attendance.mobile.auth.MobileAuthenticationService;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.ScheduleRecordDao;
 import net.lab1024.sa.attendance.dao.WorkShiftDao;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
-import net.lab1024.sa.attendance.domain.entity.ScheduleRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.ScheduleRecordEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.gateway.domain.response.EmployeeResponse;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.AccessLinkageLogDao;
 import net.lab1024.sa.access.dao.AccessLinkageRuleDao;
-import net.lab1024.sa.access.domain.entity.AccessLinkageLogEntity;
-import net.lab1024.sa.access.domain.entity.AccessLinkageRuleEntity;
+import net.lab1024.sa.common.entity.access.AccessLinkageLogEntity;
+import net.lab1024.sa.common.entity.access.AccessLinkageRuleEntity;
 import net.lab1024.sa.access.domain.form.AccessLinkageRuleAddForm;
 import net.lab1024.sa.access.domain.form.AccessLinkageRuleQueryForm;
 import net.lab1024.sa.access.domain.form.AccessLinkageRuleUpdateForm;

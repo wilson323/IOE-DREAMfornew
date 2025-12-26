@@ -1,7 +1,7 @@
-package net.lab1024.sa.access.service;
+﻿package net.lab1024.sa.access.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.lab1024.sa.access.domain.entity.AccessLinkageRuleEntity;
+import net.lab1024.sa.common.entity.access.AccessLinkageRuleEntity;
 import net.lab1024.sa.access.domain.form.AccessLinkageRuleAddForm;
 import net.lab1024.sa.access.domain.form.AccessLinkageRuleQueryForm;
 import net.lab1024.sa.access.domain.form.AccessLinkageRuleUpdateForm;

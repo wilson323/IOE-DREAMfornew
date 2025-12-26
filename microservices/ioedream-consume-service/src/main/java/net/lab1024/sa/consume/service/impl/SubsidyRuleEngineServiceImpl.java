@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.service.impl;
+﻿package net.lab1024.sa.consume.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -10,10 +10,10 @@ import net.lab1024.sa.consume.dao.SubsidyRuleLogDao;
 import net.lab1024.sa.consume.dao.UserSubsidyRecordDao;
 import net.lab1024.sa.consume.domain.dto.SubsidyCalculationDTO;
 import net.lab1024.sa.consume.domain.dto.SubsidyResultDTO;
-import net.lab1024.sa.consume.entity.SubsidyRuleConditionEntity;
-import net.lab1024.sa.consume.entity.SubsidyRuleEntity;
-import net.lab1024.sa.consume.entity.SubsidyRuleLogEntity;
-import net.lab1024.sa.consume.entity.UserSubsidyRecordEntity;
+import net.lab1024.sa.common.entity.consume.SubsidyRuleConditionEntity;
+import net.lab1024.sa.common.entity.consume.SubsidyRuleEntity;
+import net.lab1024.sa.common.entity.consume.SubsidyRuleLogEntity;
+import net.lab1024.sa.common.entity.consume.UserSubsidyRecordEntity;
 import net.lab1024.sa.consume.service.SubsidyRuleEngineService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

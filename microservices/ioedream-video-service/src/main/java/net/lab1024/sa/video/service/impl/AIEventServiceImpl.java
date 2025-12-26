@@ -21,7 +21,6 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.video.dao.AIEventDao;
-import net.lab1024.sa.video.domain.entity.AIEventEntity;
 import net.lab1024.sa.video.domain.form.AIEventAddForm;
 import net.lab1024.sa.video.domain.form.AIEventQueryForm;
 import net.lab1024.sa.video.domain.vo.AIEventStatisticsVO;

@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.controller;
+﻿package net.lab1024.sa.attendance.controller;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.attendance.domain.entity.AttendanceOvertimeEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceOvertimeEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceOvertimeForm;
 import net.lab1024.sa.attendance.service.AttendanceOvertimeService;
 @RestController

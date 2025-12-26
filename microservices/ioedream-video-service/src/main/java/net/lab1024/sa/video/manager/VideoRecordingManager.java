@@ -1,8 +1,8 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.video.domain.entity.VideoRecordingPlanEntity;
-import net.lab1024.sa.video.domain.entity.VideoRecordingTaskEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingPlanEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingTaskEntity;
 import net.lab1024.sa.video.domain.form.VideoRecordingControlForm;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

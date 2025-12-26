@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,9 +7,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.dao.AlarmRecordDao;
 import net.lab1024.sa.video.dao.AlarmRuleDao;
-import net.lab1024.sa.video.domain.entity.AlarmRecordEntity;
-import net.lab1024.sa.video.domain.entity.AlarmRuleEntity;
-import net.lab1024.sa.video.domain.entity.DeviceAIEventEntity;
+import net.lab1024.sa.common.entity.video.AlarmRecordEntity;
+import net.lab1024.sa.common.entity.video.AlarmRuleEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

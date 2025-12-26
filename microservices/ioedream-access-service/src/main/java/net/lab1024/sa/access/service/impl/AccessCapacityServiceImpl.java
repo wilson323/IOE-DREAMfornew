@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,7 +10,7 @@ import net.lab1024.sa.access.domain.form.AccessCapacityControlAddForm;
 import net.lab1024.sa.access.domain.form.AccessCapacityControlQueryForm;
 import net.lab1024.sa.access.domain.form.AccessCapacityControlUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessCapacityControlVO;
-import net.lab1024.sa.access.domain.entity.AccessCapacityControlEntity;
+import net.lab1024.sa.common.entity.access.AccessCapacityControlEntity;
 import net.lab1024.sa.access.service.AccessCapacityService;
 import net.lab1024.sa.common.domain.PageResult;
 import org.springframework.data.redis.core.StringRedisTemplate;

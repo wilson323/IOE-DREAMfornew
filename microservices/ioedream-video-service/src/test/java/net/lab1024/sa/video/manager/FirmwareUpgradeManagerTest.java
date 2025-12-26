@@ -1,8 +1,8 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.dao.FirmwareUpgradeDao;
-import net.lab1024.sa.video.entity.FirmwareUpgradeEntity;
+import net.lab1024.sa.common.entity.video.FirmwareUpgradeEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

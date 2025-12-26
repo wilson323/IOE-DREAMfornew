@@ -1,7 +1,7 @@
-package net.lab1024.sa.consume.dao;
+﻿package net.lab1024.sa.consume.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity;
+import net.lab1024.sa.common.entity.consume.OfflineConsumeRecordEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

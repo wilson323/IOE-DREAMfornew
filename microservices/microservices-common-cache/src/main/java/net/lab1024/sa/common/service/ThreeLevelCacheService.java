@@ -7,7 +7,7 @@ import net.lab1024.sa.common.domain.vo.DeviceInfoVO;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -229,7 +229,7 @@ public class ThreeLevelCacheService {
      * @param key 缓存键
      * @param caffeineCache Caffeine缓存实例
      */
-    public void evict(String cachePrefix, Object key, Cache<?, ?> caffeineCache) {
+    public void evict(String cachePrefix, Object key, Cache<String, ?> caffeineCache) {
         String cacheKey = cachePrefix + key;
 
         log.debug("[三级缓存] 删除缓存: key={}", cacheKey);

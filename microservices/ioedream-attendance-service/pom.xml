@@ -226,44 +226,6 @@
       <artifactId>spring-boot-starter-amqp</artifactId>
     </dependency>
 
-    <!-- OptaPlanner 9.x (智能排班约束求解器) -->
-    <dependency>
-      <groupId>org.optaplanner</groupId>
-      <artifactId>optaplanner-core</artifactId>
-      <version>9.44.0.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.optaplanner</groupId>
-      <artifactId>optaplanner-persistence-jpa</artifactId>
-      <version>9.44.0.Final</version>
-    </dependency>
-
-    <!-- TensorFlow 2.x (机器学习框架) -->
-    <dependency>
-      <groupId>org.tensorflow</groupId>
-      <artifactId>tensorflow-core-platform</artifactId>
-      <version>0.4.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.tensorflow</groupId>
-      <artifactId>tensorflow-core-api</artifactId>
-      <version>0.4.2</version>
-    </dependency>
-
-    <!-- ND4J (数值计算库) -->
-    <dependency>
-      <groupId>org.nd4j</groupId>
-      <artifactId>nd4j-native-platform</artifactId>
-      <version>1.0.0-beta7</version>
-    </dependency>
-
-    <!-- Smile Machine Learning (Java ML库) -->
-    <dependency>
-      <groupId>com.github.haifengl</groupId>
-      <artifactId>smile-core</artifactId>
-      <version>3.0.2</version>
-    </dependency>
-
     <!-- ============================================================= -->
     <!-- 测试依赖 -->
     <!-- ============================================================= -->

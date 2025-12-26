@@ -1,7 +1,7 @@
 package net.lab1024.sa.common.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import net.lab1024.sa.common.entity.UserEntity;
+import net.lab1024.sa.common.organization.entity.UserEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

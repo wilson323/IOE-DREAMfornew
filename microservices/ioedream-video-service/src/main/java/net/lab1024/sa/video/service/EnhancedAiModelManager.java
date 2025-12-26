@@ -1,7 +1,7 @@
 package net.lab1024.sa.video.service;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.video.domain.entity.AiModelEntity;
+import net.lab1024.sa.common.entity.video.AiModelEntity;
 import net.lab1024.sa.video.domain.form.AiModelUploadForm;
 import net.lab1024.sa.video.domain.vo.AiModelVO;
 import net.lab1024.sa.video.manager.AiModelManager;

@@ -1,8 +1,8 @@
 package net.lab1024.sa.consume.strategy;
 
 import net.lab1024.sa.consume.domain.config.ModeConfig;
-import net.lab1024.sa.consume.entity.PosidAccountEntity;
-import net.lab1024.sa.consume.entity.PosidAreaEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountEntity;
+import net.lab1024.sa.common.organization.entity.AreaEntity;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -41,8 +41,8 @@ public interface ConsumeModeStrategy {
      * @param params 业务参数（如用户输入金额、商品列表等）
      * @return 计算结果
      */
-    ConsumeResult calculateAmount(PosidAccountEntity account,
-                                  PosidAreaEntity area,
+    ConsumeResult calculateAmount(ConsumeAccountEntity account,
+                                  AreaEntity area,
                                   ModeConfig modeConfig,
                                   Map<String, Object> params);
 

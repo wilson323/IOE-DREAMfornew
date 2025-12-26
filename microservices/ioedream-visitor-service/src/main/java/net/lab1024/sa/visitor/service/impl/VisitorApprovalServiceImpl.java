@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.service.impl;
+﻿package net.lab1024.sa.visitor.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +26,7 @@ import net.lab1024.sa.visitor.dao.VisitorApprovalRecordDao;
 import net.lab1024.sa.visitor.domain.form.ApprovalDecisionForm;
 import net.lab1024.sa.visitor.domain.vo.ApprovalRecordVO;
 import net.lab1024.sa.visitor.domain.vo.PendingApprovalVO;
-import net.lab1024.sa.visitor.entity.VisitorApprovalRecordEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorApprovalRecordEntity;
 import net.lab1024.sa.visitor.service.VisitorApprovalService;
 
 /**

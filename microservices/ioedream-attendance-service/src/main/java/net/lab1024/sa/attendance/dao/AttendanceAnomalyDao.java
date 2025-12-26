@@ -1,10 +1,10 @@
-package net.lab1024.sa.attendance.dao;
+﻿package net.lab1024.sa.attendance.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
 
 import java.time.LocalDate;
 import java.util.List;

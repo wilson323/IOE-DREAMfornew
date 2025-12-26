@@ -1,9 +1,9 @@
-package net.lab1024.sa.consume.service.impl;
+﻿package net.lab1024.sa.consume.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.dao.OfflineWhitelistDao;
-import net.lab1024.sa.consume.entity.OfflineWhitelistEntity;
+import net.lab1024.sa.common.entity.consume.OfflineWhitelistEntity;
 import net.lab1024.sa.consume.service.OfflineWhitelistService;
 import org.springframework.stereotype.Service;
 

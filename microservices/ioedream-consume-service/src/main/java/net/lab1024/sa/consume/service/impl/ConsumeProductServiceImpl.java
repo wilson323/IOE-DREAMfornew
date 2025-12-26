@@ -24,7 +24,7 @@ import net.lab1024.sa.consume.domain.form.ConsumeProductAddForm;
 import net.lab1024.sa.consume.domain.form.ConsumeProductQueryForm;
 import net.lab1024.sa.consume.domain.form.ConsumeProductUpdateForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeProductVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeProductEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeProductEntity;
 import net.lab1024.sa.consume.exception.ConsumeProductException;
 import net.lab1024.sa.consume.manager.ConsumeProductManager;
 import net.lab1024.sa.consume.service.ConsumeProductService;

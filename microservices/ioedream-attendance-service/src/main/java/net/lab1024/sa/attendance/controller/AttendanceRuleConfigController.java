@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.controller;
+﻿package net.lab1024.sa.attendance.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.dao.AttendanceRuleConfigDao;
-import net.lab1024.sa.attendance.entity.AttendanceRuleConfigEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRuleConfigEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.web.bind.annotation.*;
 

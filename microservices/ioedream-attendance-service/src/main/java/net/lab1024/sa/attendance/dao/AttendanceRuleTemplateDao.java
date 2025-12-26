@@ -1,7 +1,7 @@
-package net.lab1024.sa.attendance.dao;
+﻿package net.lab1024.sa.attendance.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.attendance.entity.AttendanceRuleTemplateEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRuleTemplateEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,11 +21,11 @@ import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.AttendanceSupplementDao;
 import net.lab1024.sa.attendance.dao.AttendanceLeaveDao;
 import net.lab1024.sa.attendance.domain.vo.*;
-import net.lab1024.sa.attendance.domain.entity.AttendanceSupplementEntity;
-import net.lab1024.sa.attendance.domain.entity.AttendanceLeaveEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceSupplementEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceLeaveEntity;
 import net.lab1024.sa.attendance.service.AttendanceSummaryService;
 import net.lab1024.sa.attendance.service.DashboardService;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 
 /**
  * 考勤仪表中心服务实现类

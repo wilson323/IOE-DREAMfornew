@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.consume.dao.ConsumeMealCategoryDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeMealCategoryEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeMealCategoryEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeMealCategoryAddForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMealCategoryQueryForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMealCategoryUpdateForm;

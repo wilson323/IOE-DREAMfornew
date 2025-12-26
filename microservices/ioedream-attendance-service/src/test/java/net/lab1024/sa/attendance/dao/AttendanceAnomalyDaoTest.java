@@ -1,11 +1,11 @@
-package net.lab1024.sa.attendance.dao;
+﻿package net.lab1024.sa.attendance.dao;
 
 import net.lab1024.sa.attendance.config.EnhancedTestConfiguration;
 import net.lab1024.sa.attendance.config.IntegrationTestConfiguration;
 import org.springframework.context.annotation.Import;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.lab1024.sa.attendance.entity.AttendanceAnomalyEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceAnomalyEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

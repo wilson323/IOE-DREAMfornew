@@ -1,8 +1,8 @@
-package net.lab1024.sa.video.service;
+﻿package net.lab1024.sa.video.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.dao.FirmwareUpgradeDao;
-import net.lab1024.sa.video.entity.FirmwareUpgradeEntity;
+import net.lab1024.sa.common.entity.video.FirmwareUpgradeEntity;
 import net.lab1024.sa.video.manager.FirmwareUpgradeManager;
 import net.lab1024.sa.video.service.impl.FirmwareUpgradeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;

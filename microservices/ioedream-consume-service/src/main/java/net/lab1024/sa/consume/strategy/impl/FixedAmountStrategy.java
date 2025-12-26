@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.domain.config.AreaConfig;
 import net.lab1024.sa.consume.domain.config.FixedValueConfig;
 import net.lab1024.sa.consume.domain.config.ModeConfig;
-import net.lab1024.sa.consume.entity.PosidAccountEntity;
-import net.lab1024.sa.consume.entity.PosidAreaEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountEntity;
+import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.consume.strategy.ConsumeModeStrategy;
 
 import java.math.BigDecimal;
@@ -32,8 +32,8 @@ public class FixedAmountStrategy implements ConsumeModeStrategy {
     }
 
     @Override
-    public ConsumeResult calculateAmount(PosidAccountEntity account,
-                                         PosidAreaEntity area,
+    public ConsumeResult calculateAmount(ConsumeAccountEntity account,
+                                         AreaEntity area,
                                          ModeConfig modeConfig,
                                          Map<String, Object> params) {
         log.info("[固定金额模式] 开始计算: accountId={}, areaId={}", account.getAccountId(), area.getAreaId());
@@ -130,7 +130,7 @@ public class FixedAmountStrategy implements ConsumeModeStrategy {
      * 从区域定值配置获取金额
      * 三级优先级：账户类别 > 区域 > 全局默认
      */
-    private BigDecimal getAreaFixedAmount(PosidAreaEntity area, String mealType) {
+    private BigDecimal getAreaFixedAmount(AreaEntity area, String mealType) {
         FixedValueConfig fixedValueConfig = area.getFixedValueConfig();
         if (fixedValueConfig == null) {
             return null;

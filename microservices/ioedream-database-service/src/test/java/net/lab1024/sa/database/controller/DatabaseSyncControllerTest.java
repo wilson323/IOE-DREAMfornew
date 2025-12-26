@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.database.controller;
+package net.lab1024.sa.database.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

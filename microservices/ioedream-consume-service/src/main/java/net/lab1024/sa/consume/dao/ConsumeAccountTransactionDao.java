@@ -1,7 +1,7 @@
 package net.lab1024.sa.consume.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.consume.domain.entity.ConsumeAccountTransactionEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountTransactionEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

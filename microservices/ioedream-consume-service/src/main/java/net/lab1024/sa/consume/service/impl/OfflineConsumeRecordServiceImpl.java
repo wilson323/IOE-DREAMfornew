@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.service.impl;
+﻿package net.lab1024.sa.consume.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.Data;
@@ -7,8 +7,8 @@ import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.consume.dao.OfflineConsumeRecordDao;
 import net.lab1024.sa.consume.domain.vo.OfflineConsumeDTO;
 import net.lab1024.sa.consume.domain.vo.SyncResultVO;
-import net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity;
-import net.lab1024.sa.consume.entity.OfflineSyncLogEntity;
+import net.lab1024.sa.common.entity.consume.OfflineConsumeRecordEntity;
+import net.lab1024.sa.common.entity.consume.OfflineSyncLogEntity;
 import net.lab1024.sa.consume.service.OfflineConsumeRecordService;
 import net.lab1024.sa.consume.service.OfflineSyncLogService;
 import org.springframework.stereotype.Service;

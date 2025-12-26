@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.strategy.impl;
+﻿package net.lab1024.sa.attendance.strategy.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,8 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.attendance.domain.vo.AttendanceResultVO;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 
 /**
  * StandardWorkingHoursStrategy单元测试

@@ -1,7 +1,7 @@
-package net.lab1024.sa.visitor.service;
+﻿package net.lab1024.sa.visitor.service;
 
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.visitor.entity.SelfServiceRegistrationEntity;
+import net.lab1024.sa.common.entity.visitor.SelfServiceRegistrationEntity;
 
 import java.time.LocalDate;
 import java.util.List;

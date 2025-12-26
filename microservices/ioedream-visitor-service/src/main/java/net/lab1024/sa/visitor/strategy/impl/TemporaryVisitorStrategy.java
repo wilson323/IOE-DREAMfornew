@@ -1,11 +1,11 @@
-package net.lab1024.sa.visitor.strategy.impl;
+﻿package net.lab1024.sa.visitor.strategy.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
-import net.lab1024.sa.visitor.entity.VisitorEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorAppointmentEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorEntity;
 import net.lab1024.sa.visitor.manager.VisitorAppointmentManager;
 import net.lab1024.sa.visitor.strategy.IVisitorVerificationStrategy;
 import net.lab1024.sa.common.factory.StrategyMarker;

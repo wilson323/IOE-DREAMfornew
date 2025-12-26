@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import net.lab1024.sa.consume.domain.entity.ConsumeDeviceEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeDeviceEntity;
 
 /**
  * 消费设备数据访问层

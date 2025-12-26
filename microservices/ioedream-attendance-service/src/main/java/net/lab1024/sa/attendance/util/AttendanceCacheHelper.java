@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.util;
+﻿package net.lab1024.sa.attendance.util;
 
 import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
@@ -14,8 +14,8 @@ import jakarta.annotation.Resource;
 
 import net.lab1024.sa.attendance.dao.ScheduleRecordDao;
 import net.lab1024.sa.attendance.dao.WorkShiftDao;
-import net.lab1024.sa.attendance.domain.entity.ScheduleRecordEntity;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.ScheduleRecordEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 
 /**
  * 考勤缓存辅助类

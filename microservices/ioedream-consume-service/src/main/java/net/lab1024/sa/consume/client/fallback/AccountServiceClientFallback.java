@@ -1,4 +1,4 @@
-package net.lab1024.sa.consume.client.fallback;
+﻿package net.lab1024.sa.consume.client.fallback;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.Resource;
@@ -14,7 +14,7 @@ import net.lab1024.sa.consume.client.dto.BalanceDecreaseRequest;
 import net.lab1024.sa.consume.client.dto.BalanceIncreaseRequest;
 import net.lab1024.sa.consume.client.dto.BalanceCheckRequest;
 import net.lab1024.sa.consume.dao.AccountCompensationDao;
-import net.lab1024.sa.consume.entity.AccountCompensationEntity;
+import net.lab1024.sa.common.entity.consume.AccountCompensationEntity;
 
 /**
  * 账户服务Client降级工厂

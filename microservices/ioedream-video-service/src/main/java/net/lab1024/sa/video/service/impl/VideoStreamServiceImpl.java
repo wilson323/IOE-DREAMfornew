@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.service.impl;
+﻿package net.lab1024.sa.video.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
 import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
 import net.lab1024.sa.video.domain.vo.VideoStreamSessionVO;
 import net.lab1024.sa.video.domain.vo.VideoStreamVO;
-import net.lab1024.sa.video.entity.VideoStreamEntity;
+import net.lab1024.sa.common.entity.video.VideoStreamEntity;
 import net.lab1024.sa.video.manager.VideoStreamManager;
 import net.lab1024.sa.video.service.VideoStreamService;
 

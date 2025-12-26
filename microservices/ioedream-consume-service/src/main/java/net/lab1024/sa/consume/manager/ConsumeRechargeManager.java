@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.lab1024.sa.consume.dao.ConsumeRechargeDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeRechargeEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeRechargeEntity;
 import net.lab1024.sa.consume.domain.vo.ConsumeRechargeStatisticsVO;
 import net.lab1024.sa.consume.exception.ConsumeRechargeException;
 

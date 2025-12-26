@@ -12,7 +12,7 @@ import net.lab1024.sa.consume.dao.ConsumeTransactionDao;
 import net.lab1024.sa.consume.domain.form.ConsumeAccountQueryForm;
 import net.lab1024.sa.consume.domain.form.ConsumeAccountRechargeForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeAccountVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeTransactionEntity;
 import net.lab1024.sa.consume.exception.ConsumeAccountException;
 
 /**

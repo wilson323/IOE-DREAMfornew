@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.engine.algorithm.impl;
+﻿package net.lab1024.sa.attendance.engine.algorithm.impl;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 
-import net.lab1024.sa.attendance.domain.entity.ScheduleRecordEntity;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.ScheduleRecordEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 import net.lab1024.sa.common.system.employee.domain.entity.EmployeeEntity;
 
 /**

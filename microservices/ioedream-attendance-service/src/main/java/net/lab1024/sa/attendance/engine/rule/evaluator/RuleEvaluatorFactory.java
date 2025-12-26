@@ -1,7 +1,7 @@
 package net.lab1024.sa.attendance.engine.rule.evaluator;
 
-import net.lab1024.sa.attendance.engine.rule.model.RuleEvaluationResult;
-import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext;
+import net.lab1024.sa.attendance.engine.model.RuleEvaluationResult;
+import net.lab1024.sa.attendance.engine.model.RuleExecutionContext;
 
 import java.util.Map;
 

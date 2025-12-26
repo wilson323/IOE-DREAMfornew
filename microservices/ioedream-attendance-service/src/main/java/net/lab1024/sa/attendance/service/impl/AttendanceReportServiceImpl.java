@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import net.lab1024.sa.common.util.QueryBuilder;
@@ -16,9 +16,8 @@ import net.lab1024.sa.attendance.domain.vo.AttendanceReportExcelVO;
 import net.lab1024.sa.attendance.domain.vo.AttendanceReportVO;
 import net.lab1024.sa.attendance.domain.vo.AttendanceStatisticsExcelVO;
 import net.lab1024.sa.attendance.domain.vo.AttendanceStatisticsVO;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
-import net.lab1024.sa.attendance.entity.AttendanceSummaryEntity;
-import net.lab1024.sa.attendance.entity.DepartmentStatisticsEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
+import net.lab1024.sa.common.entity.attendance.DepartmentStatisticsEntity;
 import net.lab1024.sa.attendance.service.AttendanceReportService;
 import net.lab1024.sa.attendance.service.AttendanceSummaryService;
 import net.lab1024.sa.attendance.util.AttendanceExcelUtil;

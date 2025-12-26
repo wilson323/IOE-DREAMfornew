@@ -1,7 +1,7 @@
-package net.lab1024.sa.video.service;
+﻿package net.lab1024.sa.video.service;
 
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.video.entity.DeviceHealthEntity;
+import net.lab1024.sa.common.entity.video.DeviceHealthEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,7 +1,7 @@
-package net.lab1024.sa.video.service;
+﻿package net.lab1024.sa.video.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import net.lab1024.sa.video.entity.VideoMapHotspotEntity;
+import net.lab1024.sa.common.entity.video.VideoMapHotspotEntity;
 
 import java.math.BigDecimal;
 import java.util.List;

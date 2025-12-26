@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.service.impl;
+﻿package net.lab1024.sa.attendance.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -13,7 +13,7 @@ import net.lab1024.sa.attendance.domain.form.RuleTestHistoryQueryForm;
 import net.lab1024.sa.attendance.domain.vo.RuleTestHistoryDetailVO;
 import net.lab1024.sa.attendance.domain.vo.RuleTestHistoryVO;
 import net.lab1024.sa.attendance.domain.vo.RuleTestResultVO;
-import net.lab1024.sa.attendance.entity.RuleTestHistoryEntity;
+import net.lab1024.sa.common.entity.attendance.RuleTestHistoryEntity;
 import net.lab1024.sa.attendance.service.RuleTestHistoryService;
 import net.lab1024.sa.common.domain.PageResult;
 

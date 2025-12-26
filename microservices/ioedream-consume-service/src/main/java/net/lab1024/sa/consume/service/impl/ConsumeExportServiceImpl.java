@@ -10,7 +10,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeRecordEntity;
 import net.lab1024.sa.consume.domain.excel.ConsumeAnalysisExcelModel;
 import net.lab1024.sa.consume.domain.excel.ConsumeRecordExcelModel;
 import net.lab1024.sa.consume.domain.form.ConsumptionAnalysisQueryForm;

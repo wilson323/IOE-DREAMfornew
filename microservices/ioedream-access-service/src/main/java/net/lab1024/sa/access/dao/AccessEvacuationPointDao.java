@@ -1,7 +1,7 @@
-package net.lab1024.sa.access.dao;
+﻿package net.lab1024.sa.access.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.access.domain.entity.AccessEvacuationPointEntity;
+import net.lab1024.sa.common.entity.access.AccessEvacuationPointEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

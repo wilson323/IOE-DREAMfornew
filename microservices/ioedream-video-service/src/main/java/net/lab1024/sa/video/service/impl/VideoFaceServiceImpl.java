@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.service.impl;
+﻿package net.lab1024.sa.video.service.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,7 +29,7 @@ import net.lab1024.sa.video.dao.VideoFaceDetectionDao;
 import net.lab1024.sa.video.domain.form.VideoFaceAddForm;
 import net.lab1024.sa.video.domain.form.VideoFaceSearchForm;
 import net.lab1024.sa.video.domain.vo.VideoFaceVO;
-import net.lab1024.sa.video.entity.VideoFaceEntity;
+import net.lab1024.sa.common.entity.video.VideoFaceEntity;
 import net.lab1024.sa.video.manager.VideoFaceManager;
 import net.lab1024.sa.video.service.VideoFaceService;
 

@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.config;
+﻿package net.lab1024.sa.attendance.config;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,8 +20,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import net.lab1024.sa.attendance.dao.ScheduleRecordDao;
 import net.lab1024.sa.attendance.dao.WorkShiftDao;
-import net.lab1024.sa.attendance.domain.entity.ScheduleRecordEntity;
-import net.lab1024.sa.attendance.entity.WorkShiftEntity;
+import net.lab1024.sa.common.entity.attendance.ScheduleRecordEntity;
+import net.lab1024.sa.common.entity.attendance.WorkShiftEntity;
 
 /**
  * Redis缓存预热服务

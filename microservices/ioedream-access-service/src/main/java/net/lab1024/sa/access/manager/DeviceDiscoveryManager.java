@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.manager;
+﻿package net.lab1024.sa.access.manager;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.DeviceImportBatchDao;
 import net.lab1024.sa.access.dao.DeviceImportErrorDao;
 import net.lab1024.sa.access.dao.DeviceImportSuccessDao;
-import net.lab1024.sa.access.domain.entity.DeviceImportBatchEntity;
-import net.lab1024.sa.access.domain.entity.DeviceImportErrorEntity;
-import net.lab1024.sa.access.domain.entity.DeviceImportSuccessEntity;
+import net.lab1024.sa.common.entity.access.DeviceImportBatchEntity;
+import net.lab1024.sa.common.entity.access.DeviceImportErrorEntity;
+import net.lab1024.sa.common.entity.access.DeviceImportSuccessEntity;
 import net.lab1024.sa.access.domain.form.DeviceDiscoveryRequestForm;
 import net.lab1024.sa.access.domain.vo.DeviceDiscoveryResultVO;
 import net.lab1024.sa.access.domain.vo.DiscoveredDeviceVO;

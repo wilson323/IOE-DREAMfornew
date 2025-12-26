@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.controller;
+﻿package net.lab1024.sa.access.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,7 +8,7 @@ import net.lab1024.sa.access.domain.form.PermissionQueryForm;
 import net.lab1024.sa.access.domain.form.PermissionRenewForm;
 import net.lab1024.sa.access.domain.vo.AccessPermissionStatisticsVO;
 import net.lab1024.sa.access.domain.vo.AccessPermissionVO;
-import net.lab1024.sa.access.domain.entity.AccessUserPermissionEntity;
+import net.lab1024.sa.common.entity.access.AccessUserPermissionEntity;
 import net.lab1024.sa.access.service.AccessUserPermissionService;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;

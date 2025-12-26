@@ -1,4 +1,4 @@
-package net.lab1024.sa.video.manager;
+﻿package net.lab1024.sa.video.manager;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.video.dao.VideoPTZDao;
-import net.lab1024.sa.video.entity.VideoPTZEntity;
+import net.lab1024.sa.common.entity.video.VideoPTZEntity;
 
 /**
  * 视频云台控制管理器

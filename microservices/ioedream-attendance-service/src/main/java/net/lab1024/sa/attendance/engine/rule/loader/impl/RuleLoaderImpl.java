@@ -1,4 +1,4 @@
-package net.lab1024.sa.attendance.engine.rule.loader.impl;
+﻿package net.lab1024.sa.attendance.engine.rule.loader.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import net.lab1024.sa.attendance.dao.AttendanceRuleDao;
 import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
-import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRuleEntity;
 
 /**
  * 规则加载器实现类

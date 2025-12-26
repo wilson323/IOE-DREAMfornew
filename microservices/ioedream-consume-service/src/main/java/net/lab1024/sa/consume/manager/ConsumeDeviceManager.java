@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.consume.dao.ConsumeDeviceDao;
 import net.lab1024.sa.consume.domain.vo.ConsumeDeviceVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeDeviceEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeDeviceEntity;
 import net.lab1024.sa.consume.exception.ConsumeDeviceException;
 
 /**
@@ -110,19 +110,19 @@ public class ConsumeDeviceManager {
         }
 
         // 检查设备状态
-        if (device.isMaintenance()) {
+        if (isMaintenance(device)) {
             log.warn("设备维护中，无法执行操作: deviceId={}, operation={}", device.getDeviceId(), operation);
             return false;
         }
 
-        if (device.isDisabled()) {
+        if (isDisabled(device)) {
             log.warn("设备已停用，无法执行操作: deviceId={}, operation={}", device.getDeviceId(), operation);
             return false;
         }
 
         // 如果是重启、同步配置等操作，设备必须在线
         if ("restart".equals(operation) || "sync".equals(operation) || "upgrade".equals(operation)) {
-            if (!device.isOnline()) {
+            if (!isOnline(device)) {
                 log.warn("设备离线，无法执行操作: deviceId={}, operation={}", device.getDeviceId(), operation);
                 return false;
             }
@@ -169,7 +169,7 @@ public class ConsumeDeviceManager {
         }
 
         // 检查设备状态
-        if (device.isFault()) {
+        if (isFault(device)) {
             healthStatus = "故障";
             issues.add("设备故障");
         }
@@ -249,10 +249,10 @@ public class ConsumeDeviceManager {
         // 验证业务属性
         try {
             if (device.getBusinessAttributes() != null && !device.getBusinessAttributes().trim().isEmpty()) {
-                Map<String, Object> businessAttrs = parseBusinessAttributes(device.getBusinessAttributes());
+                Map<String, Object> businessAttrs = getBusinessAttributes(device);
 
                 // 验证离线模式配置
-                if (device.supportsOffline() && !businessAttrs.containsKey("offlineConfig")) {
+                if (supportsOffline(device) && !businessAttrs.containsKey("offlineConfig")) {
                     warnings.add("离线设备建议配置离线同步参数");
                 }
 
@@ -316,7 +316,7 @@ public class ConsumeDeviceManager {
         // 业务配置
         try {
             if (device.getBusinessAttributes() != null && !device.getBusinessAttributes().trim().isEmpty()) {
-                Map<String, Object> businessAttrs = parseBusinessAttributes(device.getBusinessAttributes());
+                Map<String, Object> businessAttrs = getBusinessAttributes(device);
                 config.putAll(businessAttrs);
             }
         } catch (JsonProcessingException e) {
@@ -569,9 +569,9 @@ public class ConsumeDeviceManager {
                 deviceReport.put("deviceName", device.getDeviceName());
                 deviceReport.put("deviceType", device.getDeviceType());
                 deviceReport.put("deviceStatus", device.getDeviceStatus());
-                deviceReport.put("deviceLocation", device.getDeviceLocation());
+                deviceReport.put("deviceLocation", getDeviceLocation(device));
                 deviceReport.put("lastCommunicationTime", device.getLastCommunicationTime());
-                deviceReport.put("healthStatus", device.getHealthStatus());
+                deviceReport.put("healthStatus", getHealthStatus(device));
                 deviceReport.put("reportType", reportType);
                 deviceReport.put("reportTime", LocalDateTime.now());
 
@@ -581,9 +581,9 @@ public class ConsumeDeviceManager {
                     deviceReport.put("deviceModel", device.getDeviceModel());
                     deviceReport.put("deviceManufacturer", device.getDeviceManufacturer());
                     deviceReport.put("firmwareVersion", device.getFirmwareVersion());
-                    deviceReport.put("supportsOffline", device.supportsOffline());
-                    deviceReport.put("businessAttributes", device.getBusinessAttributes());
-                    deviceReport.put("deviceDescription", device.getDeviceDescription());
+                    deviceReport.put("supportsOffline", supportsOffline(device));
+                    deviceReport.put("businessAttributes", getBusinessAttributes(device));
+                    deviceReport.put("deviceDescription", getDeviceDescription(device));
                     deviceReport.put("createTime", device.getCreateTime());
                     deviceReport.put("updateTime", device.getUpdateTime());
                 }

@@ -1,4 +1,4 @@
-package net.lab1024.sa.visitor.domain.service.impl;
+﻿package net.lab1024.sa.visitor.domain.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -11,7 +11,7 @@ import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.organization.service.AreaUnifiedService;
 import net.lab1024.sa.visitor.domain.dao.VisitorAreaDao;
-import net.lab1024.sa.visitor.domain.entity.VisitorAreaEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorAreaEntity;
 import net.lab1024.sa.visitor.domain.service.VisitorAreaService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;

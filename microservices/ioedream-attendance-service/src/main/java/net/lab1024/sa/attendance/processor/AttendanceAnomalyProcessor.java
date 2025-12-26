@@ -1,11 +1,10 @@
-package net.lab1024.sa.attendance.processor;
+﻿package net.lab1024.sa.attendance.processor;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
 import net.lab1024.sa.attendance.dao.SmartScheduleResultDao;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
-import net.lab1024.sa.attendance.entity.SmartScheduleResultEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.message.AttendanceAnomalyEventProducer;
 import org.springframework.stereotype.Component;
 
