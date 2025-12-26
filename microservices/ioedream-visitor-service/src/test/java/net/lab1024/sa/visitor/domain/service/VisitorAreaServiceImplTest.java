@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.visitor.domain.entity.VisitorAreaEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorAreaEntity;
 
 /**
  * VisitorAreaServiceImpl Unit Test

@@ -1,4 +1,4 @@
-package net.lab1024.sa.access.service.impl;
+﻿package net.lab1024.sa.access.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -95,14 +95,12 @@ public class FirmwareServiceImpl implements FirmwareService {
             // 5. 创建固件记录
             DeviceFirmwareEntity firmware = new DeviceFirmwareEntity();
             BeanUtils.copyProperties(uploadForm, firmware);
-            firmware.setFirmwareFilePath(relativePath);
-            firmware.setFirmwareFileName(file.getOriginalFilename());
-            firmware.setFirmwareFileSize(file.getSize());
-            firmware.setFirmwareFileMd5(fileMd5);
-            firmware.setUploadTime(LocalDateTime.now());
-            firmware.setUploaderId(operatorId);
-            firmware.setUploaderName(operatorName);
-            firmware.setIsEnabled(1); // 默认启用
+            firmware.setFirmwareFile(relativePath);
+            firmware.setFileSize(file.getSize());
+            firmware.setFileMd5(fileMd5);
+            firmware.setPublisherId(operatorId);
+            firmware.setPublisherName(operatorName);
+            firmware.setEnabled(1); // 默认启用
             firmware.setFirmwareStatus(1); // 默认测试中
             firmware.setDownloadCount(0);
             firmware.setUpgradeCount(0);
@@ -161,8 +159,8 @@ public class FirmwareServiceImpl implements FirmwareService {
 
         FirmwareDetailVO detailVO = new FirmwareDetailVO();
         BeanUtils.copyProperties(firmware, detailVO);
-        detailVO.setFirmwareFilePath(firmware.getFirmwareFilePath());
-        detailVO.setFirmwareFileSizeFormatted(formatFileSize(firmware.getFirmwareFileSize()));
+        detailVO.setFirmwareFile(firmware.getFirmwareFile());
+        detailVO.setFirmwareFileSizeFormatted(formatFileSize(firmware.getFileSize()));
 
         return detailVO;
     }
@@ -206,19 +204,19 @@ public class FirmwareServiceImpl implements FirmwareService {
         }
 
         // 检查最低版本
-        if (firmware.getMinVersion() != null && !firmware.getMinVersion().isEmpty()) {
-            if (compareVersion(currentVersion, firmware.getMinVersion()) < 0) {
+        if (firmware.getMinFirmwareVersion() != null && !firmware.getMinFirmwareVersion().isEmpty()) {
+            if (compareVersion(currentVersion, firmware.getMinFirmwareVersion()) < 0) {
                 log.debug("[固件管理] 版本过低: current={}, min={}",
-                        currentVersion, firmware.getMinVersion());
+                        currentVersion, firmware.getMinFirmwareVersion());
                 return false;
             }
         }
 
         // 检查最高版本
-        if (firmware.getMaxVersion() != null && !firmware.getMaxVersion().isEmpty()) {
-            if (compareVersion(currentVersion, firmware.getMaxVersion()) >= 0) {
+        if (firmware.getMaxHardwareVersion() != null && !firmware.getMaxHardwareVersion().isEmpty()) {
+            if (compareVersion(currentVersion, firmware.getMaxHardwareVersion()) >= 0) {
                 log.debug("[固件管理] 版本过高: current={}, max={}",
-                        currentVersion, firmware.getMaxVersion());
+                        currentVersion, firmware.getMaxHardwareVersion());
                 return false;
             }
         }
@@ -259,7 +257,7 @@ public class FirmwareServiceImpl implements FirmwareService {
             throw new BusinessException("FIRMWARE_NOT_FOUND", "固件不存在");
         }
 
-        firmware.setIsEnabled(isEnabled);
+        firmware.setEnabled(isEnabled);
         int rows = deviceFirmwareDao.updateById(firmware);
 
         log.info("[固件管理] 固件启用状态更新成功: firmwareId={}, enabled={}", firmwareId, isEnabled);
@@ -304,7 +302,7 @@ public class FirmwareServiceImpl implements FirmwareService {
 
         FirmwareDetailVO detailVO = new FirmwareDetailVO();
         BeanUtils.copyProperties(firmware, detailVO);
-        detailVO.setFirmwareFilePath(firmware.getFirmwareFilePath());
+        detailVO.setFirmwareFile(firmware.getFirmwareFile());
 
         log.info("[固件管理] 固件下载成功: firmwareId={}, downloadCount={}",
                 firmwareId, firmware.getDownloadCount() + 1);
@@ -346,7 +344,7 @@ public class FirmwareServiceImpl implements FirmwareService {
     @Override
     public String getFirmwareMd5(Long firmwareId) {
         DeviceFirmwareEntity firmware = deviceFirmwareDao.selectById(firmwareId);
-        return firmware != null ? firmware.getFirmwareFileMd5() : null;
+        return firmware != null ? firmware.getFileMd5() : null;
     }
 
     /**
@@ -438,8 +436,8 @@ public class FirmwareServiceImpl implements FirmwareService {
                 .eq(queryForm.getFirmwareStatus() != null,
                 DeviceFirmwareEntity::getFirmwareStatus, queryForm.getFirmwareStatus())
                 .eq(queryForm.getIsEnabled() != null,
-                DeviceFirmwareEntity::getIsEnabled, queryForm.getIsEnabled())
-                .orderByDesc(DeviceFirmwareEntity::getUploadTime);
+                DeviceFirmwareEntity::getEnabled, queryForm.getIsEnabled())
+                .orderByDesc(DeviceFirmwareEntity::getReleaseDate);
 
         return queryWrapper;
     }
@@ -450,7 +448,7 @@ public class FirmwareServiceImpl implements FirmwareService {
     private FirmwareVO convertToVO(DeviceFirmwareEntity entity) {
         FirmwareVO vo = new FirmwareVO();
         BeanUtils.copyProperties(entity, vo);
-        vo.setFirmwareFileSizeFormatted(formatFileSize(entity.getFirmwareFileSize()));
+        vo.setFirmwareFileSizeFormatted(formatFileSize(entity.getFileSize()));
         vo.setDeviceTypeName(getDeviceTypeName(entity.getDeviceType()));
         vo.setFirmwareStatusName(getFirmwareStatusName(entity.getFirmwareStatus()));
         return vo;
@@ -540,3 +538,4 @@ public class FirmwareServiceImpl implements FirmwareService {
         return 0;
     }
 }
+

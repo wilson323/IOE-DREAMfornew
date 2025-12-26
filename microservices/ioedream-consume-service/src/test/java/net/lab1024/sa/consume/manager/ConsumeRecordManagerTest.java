@@ -19,9 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import net.lab1024.sa.consume.dao.ConsumeAccountDao;
 import net.lab1024.sa.consume.dao.ConsumeAccountTransactionDao;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeAccountEntity;
-import net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity;
-import net.lab1024.sa.consume.domain.entity.ConsumeAccountTransactionEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeRecordEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeAccountTransactionEntity;
 
 /**
  * ConsumeRecordManager 单元测试

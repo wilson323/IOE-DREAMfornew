@@ -2,7 +2,7 @@ package net.lab1024.sa.biometric.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.biometric.dao.BiometricTemplateDao;
-import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity;
+import net.lab1024.sa.common.entity.biometric.BiometricTemplateEntity;
 import net.lab1024.sa.biometric.domain.dto.BiometricTemplateSyncRequest;
 import net.lab1024.sa.biometric.domain.vo.TemplateSyncRecordVO;
 import net.lab1024.sa.biometric.domain.vo.TemplateSyncResultVO;

@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.consume.dao.ConsumeRecordDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeRecordEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeRecordEntity;
 import net.lab1024.sa.consume.domain.form.ConsumeRecordAddForm;
 import net.lab1024.sa.consume.domain.form.ConsumeRecordQueryForm;
 import net.lab1024.sa.consume.domain.vo.ConsumeRecordVO;

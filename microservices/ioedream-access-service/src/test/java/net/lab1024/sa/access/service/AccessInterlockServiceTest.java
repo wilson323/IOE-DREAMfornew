@@ -8,7 +8,7 @@ import net.lab1024.sa.access.domain.form.AccessInterlockRuleAddForm;
 import net.lab1024.sa.access.domain.form.AccessInterlockRuleQueryForm;
 import net.lab1024.sa.access.domain.form.AccessInterlockRuleUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessInterlockRuleVO;
-import net.lab1024.sa.access.domain.entity.AccessInterlockRuleEntity;
+import net.lab1024.sa.common.entity.access.AccessInterlockRuleEntity;
 import net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.domain.PageResult;

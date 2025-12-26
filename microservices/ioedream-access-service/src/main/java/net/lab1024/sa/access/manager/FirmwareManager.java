@@ -135,7 +135,7 @@ public class FirmwareManager {
                 throw new RuntimeException("固件不存在");
             }
 
-            if (!firmware.getIsEnabled().equals(1)) {
+            if (!firmware.isEnabled()) {
                 throw new RuntimeException("固件未启用，无法升级");
             }
 
@@ -675,3 +675,4 @@ public class FirmwareManager {
         }
     }
 }
+

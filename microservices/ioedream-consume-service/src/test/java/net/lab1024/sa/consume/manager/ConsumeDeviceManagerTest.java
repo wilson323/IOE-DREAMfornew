@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.lab1024.sa.consume.dao.ConsumeDeviceDao;
-import net.lab1024.sa.consume.domain.entity.ConsumeDeviceEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeDeviceEntity;
 import net.lab1024.sa.consume.exception.ConsumeDeviceException;
 
 /**

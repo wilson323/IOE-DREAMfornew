@@ -1,6 +1,6 @@
 package net.lab1024.sa.biometric.strategy;
 
-import net.lab1024.sa.biometric.domain.entity.BiometricType;
+import net.lab1024.sa.common.entity.biometric.BiometricType;
 import net.lab1024.sa.biometric.domain.vo.BiometricSample;
 import net.lab1024.sa.biometric.domain.vo.FeatureVector;
 

@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.common.auth.domain.entity.UserSessionEntity;
+import net.lab1024.sa.common.entity.auth.UserSessionEntity;
 
 /**
  * 用户会话数据访问接口

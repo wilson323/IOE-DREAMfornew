@@ -1,7 +1,7 @@
 package net.lab1024.sa.biometric.config;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.biometric.domain.entity.BiometricType;
+import net.lab1024.sa.common.entity.biometric.BiometricType;
 import net.lab1024.sa.biometric.strategy.IBiometricFeatureExtractionStrategy;
 import net.lab1024.sa.biometric.strategy.impl.FaceFeatureExtractionStrategy;
 import org.springframework.context.annotation.Bean;

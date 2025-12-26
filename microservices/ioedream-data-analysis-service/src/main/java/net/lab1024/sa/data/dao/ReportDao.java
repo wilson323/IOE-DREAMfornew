@@ -1,7 +1,7 @@
 package net.lab1024.sa.data.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.data.domain.entity.ReportEntity;
+import net.lab1024.sa.common.entity.data.ReportEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

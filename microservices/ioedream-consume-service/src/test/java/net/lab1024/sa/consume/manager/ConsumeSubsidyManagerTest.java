@@ -27,7 +27,7 @@ import org.mockito.Spy;
 
 import net.lab1024.sa.consume.dao.ConsumeSubsidyDao;
 import net.lab1024.sa.consume.domain.vo.ConsumeSubsidyVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeSubsidyEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeSubsidyEntity;
 import net.lab1024.sa.consume.exception.ConsumeSubsidyException;
 
 /**

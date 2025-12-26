@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.access.dao.AccessUserPermissionDao;
-import net.lab1024.sa.access.domain.entity.AccessUserPermissionEntity;
+import net.lab1024.sa.common.entity.access.AccessUserPermissionEntity;
 
 /**
  * 门禁设备权限管理器单元测试

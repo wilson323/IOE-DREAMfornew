@@ -26,7 +26,7 @@ import org.mockito.Spy;
 
 import net.lab1024.sa.consume.dao.ConsumeProductDao;
 import net.lab1024.sa.consume.domain.vo.ConsumeProductVO;
-import net.lab1024.sa.consume.domain.entity.ConsumeProductEntity;
+import net.lab1024.sa.common.entity.consume.ConsumeProductEntity;
 import net.lab1024.sa.consume.exception.ConsumeProductException;
 
 /**

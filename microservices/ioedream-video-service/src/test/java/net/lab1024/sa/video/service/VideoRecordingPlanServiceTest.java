@@ -26,7 +26,7 @@ import org.apache.ibatis.session.Configuration;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.video.dao.VideoRecordingPlanDao;
-import net.lab1024.sa.video.domain.entity.VideoRecordingPlanEntity;
+import net.lab1024.sa.common.entity.video.VideoRecordingPlanEntity;
 import net.lab1024.sa.video.domain.form.VideoRecordingPlanAddForm;
 import net.lab1024.sa.video.domain.form.VideoRecordingPlanQueryForm;
 import net.lab1024.sa.video.domain.form.VideoRecordingPlanUpdateForm;

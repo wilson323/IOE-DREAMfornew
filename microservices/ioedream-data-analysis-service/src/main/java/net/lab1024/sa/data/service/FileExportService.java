@@ -20,7 +20,7 @@ import net.lab1024.sa.data.domain.DataAnalysisDomain.DataExportRequest;
 import net.lab1024.sa.data.domain.DataAnalysisDomain.DataExportResult;
 import net.lab1024.sa.data.domain.DataAnalysisDomain.ReportQueryRequest;
 import net.lab1024.sa.data.domain.DataAnalysisDomain.ReportQueryResult;
-import net.lab1024.sa.data.domain.entity.ExportTaskEntity;
+import net.lab1024.sa.common.entity.data.ExportTaskEntity;
 import net.lab1024.sa.data.service.excel.ReportDataExcelWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;

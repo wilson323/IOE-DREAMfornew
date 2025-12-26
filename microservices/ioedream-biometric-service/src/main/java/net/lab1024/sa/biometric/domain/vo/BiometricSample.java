@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.lab1024.sa.biometric.domain.entity.BiometricType;
+import net.lab1024.sa.common.entity.biometric.BiometricType;
 
 /**
  * 生物样本VO

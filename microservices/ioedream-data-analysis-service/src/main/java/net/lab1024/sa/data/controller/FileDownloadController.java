@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.data.dao.ExportTaskDao;
-import net.lab1024.sa.data.domain.entity.ExportTaskEntity;
+import net.lab1024.sa.common.entity.data.ExportTaskEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

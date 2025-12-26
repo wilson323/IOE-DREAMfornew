@@ -2,8 +2,8 @@ package net.lab1024.sa.biometric.manager;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.biometric.dao.BiometricTemplateDao;
-import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity;
-import net.lab1024.sa.biometric.domain.entity.BiometricType;
+import net.lab1024.sa.common.entity.biometric.BiometricTemplateEntity;
+import net.lab1024.sa.common.entity.biometric.BiometricType;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.dao.DeviceDao;

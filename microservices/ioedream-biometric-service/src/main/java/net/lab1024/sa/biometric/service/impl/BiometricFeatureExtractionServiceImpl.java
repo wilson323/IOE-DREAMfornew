@@ -1,7 +1,7 @@
 package net.lab1024.sa.biometric.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.biometric.domain.entity.BiometricType;
+import net.lab1024.sa.common.entity.biometric.BiometricType;
 import net.lab1024.sa.biometric.domain.vo.BiometricSample;
 import net.lab1024.sa.biometric.domain.vo.FeatureVector;
 import net.lab1024.sa.biometric.service.BiometricFeatureExtractionService;

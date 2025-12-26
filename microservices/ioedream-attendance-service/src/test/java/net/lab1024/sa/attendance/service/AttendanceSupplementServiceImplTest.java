@@ -27,7 +27,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.attendance.dao.AttendanceSupplementDao;
-import net.lab1024.sa.attendance.domain.entity.AttendanceSupplementEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceSupplementEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceSupplementForm;
 import net.lab1024.sa.attendance.manager.AttendanceManager;
 import net.lab1024.sa.common.dto.ResponseDTO;

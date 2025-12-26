@@ -3,7 +3,7 @@ package net.lab1024.sa.data.service;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.data.dao.ReportDao;
-import net.lab1024.sa.data.domain.entity.ReportEntity;
+import net.lab1024.sa.common.entity.data.ReportEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package net.lab1024.sa.biometric.service;
 
-import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity;
+import net.lab1024.sa.common.entity.biometric.BiometricTemplateEntity;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateAddForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateUpdateForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateQueryForm;

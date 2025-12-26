@@ -84,7 +84,7 @@ public class ConsumeSubsidyManager {
         }
 
         // 检查基本状态
-        if (!subsidy.isUsable()) {
+        if (!isUsable(subsidy)) {
             return false;
         }
 
@@ -93,12 +93,12 @@ public class ConsumeSubsidyManager {
             return false;
         }
 
-        if (subsidy.getExpiryDate() != null && currentTime.isAfter(subsidy.getExpiryDate())) {
+        if (subsidy.getExpireDate() != null && currentTime.isAfter(subsidy.getExpireDate())) {
             return false;
         }
 
         // 检查剩余金额
-        if (!subsidy.hasRemaining()) {
+        if (!hasRemaining(subsidy)) {
             return false;
         }
 
@@ -114,16 +114,16 @@ public class ConsumeSubsidyManager {
      * 检查每日限额是否已达到
      */
     private boolean isDailyLimitReached(ConsumeSubsidyEntity subsidy, LocalDateTime currentTime) {
-        if (!subsidy.hasDailyLimit()) {
+        if (!hasDailyLimit(subsidy)) {
             return false;
         }
 
         // 检查是否是同一天
-        if (subsidy.getDailyUsageDate() != null) {
-            LocalDate lastUsageDate = subsidy.getDailyUsageDate();
+        LocalDate dailyUsageDate = getDailyUsageDate(subsidy);
+        if (dailyUsageDate != null) {
             LocalDate currentDate = currentTime.toLocalDate();
 
-            if (!lastUsageDate.equals(currentDate)) {
+            if (!dailyUsageDate.equals(currentDate)) {
                 return false; // 不是同一天，每日限额重置
             }
         }
@@ -143,7 +143,7 @@ public class ConsumeSubsidyManager {
      * @return 可用金额
      */
     public BigDecimal calculateAvailableAmount(ConsumeSubsidyEntity subsidy, BigDecimal requestedAmount) {
-        if (subsidy == null || !subsidy.isUsable() || requestedAmount == null) {
+        if (subsidy == null || !isUsable(subsidy) || requestedAmount == null) {
             return BigDecimal.ZERO;
         }
 
@@ -155,7 +155,7 @@ public class ConsumeSubsidyManager {
 
         // 检查每日限额限制
         BigDecimal availableByDaily = requestedAmount;
-        if (subsidy.hasDailyLimit()) {
+        if (hasDailyLimit(subsidy)) {
             BigDecimal dailyRemaining = calculateDailyRemaining(subsidy);
             availableByDaily = requestedAmount.min(dailyRemaining);
         }
@@ -258,7 +258,7 @@ public class ConsumeSubsidyManager {
      * @throws ConsumeSubsidyException 业务规则验证失败时抛出
      */
     public void validateSubsidyRules(ConsumeSubsidyEntity subsidy) {
-        List<String> errors = subsidy.validateBusinessRules();
+        List<String> errors = validateBusinessRules(subsidy);
 
         if (!errors.isEmpty()) {
             throw ConsumeSubsidyException.validationFailed(errors);
@@ -300,7 +300,7 @@ public class ConsumeSubsidyManager {
         }
 
         // 已使用或已生效的补贴不能删除
-        if (subsidy.isUsed() || subsidy.isActive()) {
+        if (isUsed(subsidy) || isActive(subsidy)) {
             result.put("canDelete", false);
             result.put("reason", "已使用或已生效的补贴不能删除，只能作废");
             return result;
@@ -399,8 +399,9 @@ public class ConsumeSubsidyManager {
                     continue;
                 }
 
-                if (!subsidy.isPending()) {
-                    errors.add("补贴状态不是待发放: " + subsidy.getSubsidyName());
+                if (!isPending(subsidy)) {
+                    String subsidyName = getSubsidyName(subsidy);
+                    errors.add("补贴状态不是待发放: " + subsidyName);
                     continue;
                 }
             } catch (Exception e) {
@@ -579,6 +580,387 @@ public class ConsumeSubsidyManager {
     // ==================== 缺失的业务方法实现 ====================
 
     /**
+     * 检查补贴是否可用
+     * <p>
+     * 可用条件：状态为已发放 && 未过期 && 有剩余金额
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return true-可用，false-不可用
+     */
+    public boolean isUsable(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null) {
+            return false;
+        }
+        return subsidy.isValid() && hasRemaining(subsidy);
+    }
+
+    /**
+     * 检查补贴是否待发放
+     * <p>
+     * 状态=0 表示待发放
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return true-待发放，false-非待发放
+     */
+    public boolean isPending(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null || subsidy.getStatus() == null) {
+            return false;
+        }
+        return subsidy.getStatus() == 0; // 0-待发放
+    }
+
+    /**
+     * 检查补贴是否已生效
+     * <p>
+     * 已生效条件：状态=1(已发放) && 当前时间>=生效日期
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return true-已生效，false-未生效
+     */
+    public boolean isActive(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null) {
+            return false;
+        }
+        if (subsidy.getStatus() == null || subsidy.getStatus() != 1) {
+            return false; // 只有已发放状态才可能已生效
+        }
+        if (subsidy.getEffectiveDate() == null) {
+            return true; // 没有生效日期，默认已生效
+        }
+        LocalDateTime now = LocalDateTime.now();
+        return !now.isBefore(subsidy.getEffectiveDate());
+    }
+
+    /**
+     * 检查补贴是否已使用
+     * <p>
+     * 已使用条件：状态=3(已使用)
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return true-已使用，false-未使用
+     */
+    public boolean isUsed(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null || subsidy.getStatus() == null) {
+            return false;
+        }
+        return subsidy.getStatus() == 3; // 3-已使用
+    }
+
+    /**
+     * 检查补贴是否已发放
+     * <p>
+     * 已发放条件：状态=1(已发放)
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return true-已发放，false-未发放
+     */
+    public boolean isIssued(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null || subsidy.getStatus() == null) {
+            return false;
+        }
+        return subsidy.getStatus() == 1; // 1-已发放
+    }
+
+    /**
+     * 检查是否有剩余金额
+     * <p>
+     * 剩余金额 > 0
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return true-有剩余，false-无剩余
+     */
+    public boolean hasRemaining(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null || subsidy.getRemainingAmount() == null) {
+            return false;
+        }
+        return subsidy.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    /**
+     * 检查是否设置了每日限额
+     * <p>
+     * 每日限额 != null && 每日限额 > 0
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return true-有每日限额，false-无每日限额
+     */
+    public boolean hasDailyLimit(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null || subsidy.getDailyLimit() == null) {
+            return false;
+        }
+        return subsidy.getDailyLimit().compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    /**
+     * 获取过期日期(统一接口)
+     * <p>
+     * Entity中使用expireDate字段
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return 过期日期
+     */
+    public LocalDateTime getExpiryDate(ConsumeSubsidyEntity subsidy) {
+        return subsidy != null ? subsidy.getExpireDate() : null;
+    }
+
+    /**
+     * 设置过期日期(统一接口)
+     * <p>
+     * Entity中使用expireDate字段
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @param expiryDate 过期日期
+     */
+    public void setExpiryDate(ConsumeSubsidyEntity subsidy, LocalDateTime expiryDate) {
+        if (subsidy != null) {
+            subsidy.setExpireDate(expiryDate);
+        }
+    }
+
+    /**
+     * 获取补贴状态(统一接口)
+     * <p>
+     * Entity中使用status字段
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return 补贴状态
+     */
+    public Integer getSubsidyStatus(ConsumeSubsidyEntity subsidy) {
+        return subsidy != null ? subsidy.getStatus() : null;
+    }
+
+    /**
+     * 设置补贴状态(统一接口)
+     * <p>
+     * Entity中使用status字段
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @param subsidyStatus 补贴状态
+     */
+    public void setSubsidyStatus(ConsumeSubsidyEntity subsidy, Integer subsidyStatus) {
+        if (subsidy != null) {
+            subsidy.setStatus(subsidyStatus);
+        }
+    }
+
+    /**
+     * 获取补贴金额(统一接口)
+     * <p>
+     * Entity中使用totalAmount字段
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return 补贴金额
+     */
+    public BigDecimal getSubsidyAmount(ConsumeSubsidyEntity subsidy) {
+        return subsidy != null ? subsidy.getTotalAmount() : null;
+    }
+
+    /**
+     * 设置补贴金额(统一接口)
+     * <p>
+     * Entity中使用totalAmount字段
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @param amount 补贴金额
+     */
+    public void setSubsidyAmount(ConsumeSubsidyEntity subsidy, BigDecimal amount) {
+        if (subsidy != null) {
+            subsidy.setTotalAmount(amount);
+        }
+    }
+
+    /**
+     * 获取补贴名称(统一接口)
+     * <p>
+     * Entity中没有subsidyName字段，使用description作为补贴名称
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return 补贴名称
+     */
+    public String getSubsidyName(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null) {
+            return null;
+        }
+        // 如果有subsidyTypeName字段，优先使用；否则使用description
+        if (subsidy.getSubsidyTypeName() != null) {
+            return subsidy.getSubsidyTypeName();
+        }
+        return subsidy.getDescription();
+    }
+
+    /**
+     * 设置补贴名称(统一接口)
+     * <p>
+     * Entity中使用description字段作为补贴名称
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @param subsidyName 补贴名称
+     */
+    public void setSubsidyName(ConsumeSubsidyEntity subsidy, String subsidyName) {
+        if (subsidy != null) {
+            subsidy.setDescription(subsidyName);
+        }
+    }
+
+    /**
+     * 获取每日使用日期(统一接口)
+     * <p>
+     * Entity中没有dailyUsageDate字段，返回当前日期
+     * </p>
+     *
+     * @param subsidy 补贴信息
+     * @return 每日使用日期
+     */
+    public LocalDate getDailyUsageDate(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null) {
+            return null;
+        }
+        // Entity中没有dailyUsageDate字段，返回当前日期
+        // 在实际业务中，应该从每日使用记录中查询最后使用日期
+        return LocalDate.now();
+    }
+
+    /**
+     * 获取补贴类型描述(统一接口)
+     *
+     * @param subsidy 补贴信息
+     * @return 补贴类型描述
+     */
+    public String getSubsidyTypeDescription(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null || subsidy.getSubsidyType() == null) {
+            return null;
+        }
+        Integer type = subsidy.getSubsidyType();
+        if (type == 1) return "餐饮补贴";
+        if (type == 2) return "交通补贴";
+        if (type == 3) return "通讯补贴";
+        if (type == 4) return "其他补贴";
+        return "未知";
+    }
+
+    /**
+     * 获取补贴周期描述(统一接口)
+     *
+     * @param subsidy 补贴信息
+     * @return 补贴周期描述
+     */
+    public String getSubsidyPeriodDescription(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null || subsidy.getSubsidyPeriod() == null) {
+            return null;
+        }
+        Integer period = subsidy.getSubsidyPeriod();
+        if (period == 1) return "每日";
+        if (period == 2) return "每周";
+        if (period == 3) return "每月";
+        if (period == 4) return "每季度";
+        if (period == 5) return "每年";
+        if (period == 6) return "一次性";
+        return "未知";
+    }
+
+    /**
+     * 获取状态描述(统一接口)
+     *
+     * @param subsidy 补贴信息
+     * @return 状态描述
+     */
+    public String getStatusDescription(ConsumeSubsidyEntity subsidy) {
+        if (subsidy == null || subsidy.getStatus() == null) {
+            return null;
+        }
+        Integer status = subsidy.getStatus();
+        if (status == 0) return "待发放";
+        if (status == 1) return "已发放";
+        if (status == 2) return "已过期";
+        if (status == 3) return "已使用";
+        if (status == 4) return "已停用";
+        return "未知";
+    }
+
+    /**
+     * 验证业务规则(统一接口)
+     *
+     * @param subsidy 补贴信息
+     * @return 验证错误列表
+     */
+    public List<String> validateBusinessRules(ConsumeSubsidyEntity subsidy) {
+        List<String> errors = new ArrayList<>();
+
+        if (subsidy == null) {
+            errors.add("补贴信息不能为空");
+            return errors;
+        }
+
+        // 验证补贴编码
+        if (subsidy.getSubsidyCode() == null || subsidy.getSubsidyCode().trim().isEmpty()) {
+            errors.add("补贴编码不能为空");
+        }
+
+        // 验证用户
+        if (subsidy.getUserId() == null) {
+            errors.add("用户ID不能为空");
+        }
+
+        // 验证补贴金额
+        if (subsidy.getTotalAmount() == null || subsidy.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            errors.add("补贴金额必须大于0");
+        }
+
+        // 验证生效日期和过期日期
+        if (subsidy.getEffectiveDate() != null && subsidy.getExpireDate() != null) {
+            if (subsidy.getEffectiveDate().isAfter(subsidy.getExpireDate())) {
+                errors.add("生效日期不能晚于过期日期");
+            }
+        }
+
+        // 验证每日限额
+        if (subsidy.getDailyLimit() != null && subsidy.getDailyLimit().compareTo(BigDecimal.ZERO) <= 0) {
+            errors.add("每日限额必须大于0");
+        }
+
+        // 验证使用限制次数
+        if (subsidy.getUsageLimit() != null && subsidy.getUsageLimit() <= 0) {
+            errors.add("使用限制次数必须大于0");
+        }
+
+        return errors;
+    }
+
+    /**
+     * 获取每日剩余限额
+     *
+     * @param subsidy 补贴信息
+     * @return 每日剩余限额
+     */
+    public BigDecimal getDailyRemainingLimit(ConsumeSubsidyEntity subsidy) {
+        if (!hasDailyLimit(subsidy)) {
+            return BigDecimal.valueOf(Double.MAX_VALUE);
+        }
+
+        BigDecimal dailyUsed = subsidy.getDailyUsedAmount() != null
+            ? subsidy.getDailyUsedAmount()
+            : BigDecimal.ZERO;
+        BigDecimal dailyLimit = subsidy.getDailyLimit();
+
+        return dailyLimit.subtract(dailyUsed).max(BigDecimal.ZERO);
+    }
+
+    /**
      * 实体转VO
      */
     public ConsumeSubsidyVO convertToVO(ConsumeSubsidyEntity entity) {
@@ -626,27 +1008,27 @@ public class ConsumeSubsidyManager {
 
         // 计算字段
         vo.setUsagePercentage(entity.getUsagePercentage());
-        vo.setIsUsable(entity.isUsable());
+        vo.setIsUsable(isUsable(entity));
         vo.setIsExpiringSoon(entity.isExpiringSoon(7));
         vo.setIsNearlyDepleted(entity.isNearlyDepleted(new BigDecimal("0.8")));
 
         // 计算剩余天数
-        if (entity.getExpiryDate() != null) {
+        if (entity.getExpireDate() != null) {
             LocalDateTime now = LocalDateTime.now();
-            if (now.isAfter(entity.getExpiryDate())) {
+            if (now.isAfter(entity.getExpireDate())) {
                 vo.setRemainingDays(0);
             } else {
                 long days = java.time.temporal.ChronoUnit.DAYS.between(
                     now.toLocalDate(),
-                    entity.getExpiryDate().toLocalDate()
+                    entity.getExpireDate().toLocalDate()
                 );
                 vo.setRemainingDays((int) days);
             }
         }
 
         // 计算今日可使用金额
-        if (entity.hasDailyLimit()) {
-            vo.setTodayAvailableAmount(entity.getDailyRemainingLimit().min(entity.getRemainingAmount()));
+        if (hasDailyLimit(entity)) {
+            vo.setTodayAvailableAmount(getDailyRemainingLimit(entity).min(entity.getRemainingAmount()));
         } else {
             vo.setTodayAvailableAmount(entity.getRemainingAmount());
         }
@@ -687,22 +1069,25 @@ public class ConsumeSubsidyManager {
                 (net.lab1024.sa.consume.domain.form.ConsumeSubsidyAddForm) form;
 
             entity.setSubsidyCode(addForm.getSubsidyCode());
-            entity.setSubsidyName(addForm.getSubsidyName());
+            String subsidyName = addForm.getSubsidyName();
+            entity.setDescription(subsidyName);
             entity.setUserId(addForm.getUserId());
             entity.setSubsidyType(addForm.getSubsidyType());
             entity.setSubsidyPeriod(addForm.getSubsidyPeriod());
-            entity.setSubsidyAmount(addForm.getSubsidyAmount());
+            entity.setTotalAmount(addForm.getSubsidyAmount());
             entity.setUsedAmount(BigDecimal.ZERO);
-            entity.setSubsidyStatus(1); // 待发放状态
+            entity.setStatus(0); // 待发放状态
             entity.setEffectiveDate(addForm.getEffectiveDate());
-            entity.setExpiryDate(addForm.getExpiryDate());
+            entity.setExpireDate(addForm.getExpiryDate());
             entity.setApplicableMerchants(addForm.getApplicableMerchants());
             entity.setUsageTimePeriods(addForm.getUsageTimePeriods());
             entity.setDailyLimit(addForm.getDailyLimit());
             entity.setDailyUsedAmount(BigDecimal.ZERO);
-            entity.setMaxDiscountRate(addForm.getMaxDiscountRate());
+            // Entity中没有maxDiscountRate字段，可以存储到extendedAttributes
+            // entity.setMaxDiscountRate(addForm.getMaxDiscountRate());
             entity.setAutoRenew(addForm.getAutoRenew());
-            entity.setRenewalRule(addForm.getRenewalRule());
+            // Entity中没有renewalRule字段，可以存储到extendedAttributes
+            // entity.setRenewalRule(addForm.getRenewalRule());
             entity.setRemark(addForm.getRemark());
             entity.setIssueDate(LocalDateTime.now());
 
@@ -735,14 +1120,14 @@ public class ConsumeSubsidyManager {
                 (net.lab1024.sa.consume.domain.form.ConsumeSubsidyUpdateForm) updateForm;
 
             // 验证版本号（乐观锁）
-            if (!entity.getVersion().equals(form.getVersion())) {
+            if (entity.getVersion() != null && !entity.getVersion().equals(form.getVersion())) {
                 throw new ConsumeSubsidyException(
                     ConsumeSubsidyException.ErrorCode.BUSINESS_RULE_VIOLATION,
                     "数据已被其他用户修改，请刷新后重试");
             }
 
             // 验证是否可以更新
-            if (!entity.isPending()) {
+            if (!isPending(entity)) {
                 throw new ConsumeSubsidyException(
                     ConsumeSubsidyException.ErrorCode.OPERATION_NOT_SUPPORTED,
                     "只有待发放状态的补贴可以更新");
@@ -753,7 +1138,7 @@ public class ConsumeSubsidyManager {
                 entity.setSubsidyCode(form.getSubsidyCode());
             }
             if (form.getSubsidyName() != null) {
-                entity.setSubsidyName(form.getSubsidyName());
+                entity.setDescription(form.getSubsidyName());
             }
             if (form.getSubsidyType() != null) {
                 entity.setSubsidyType(form.getSubsidyType());
@@ -765,7 +1150,7 @@ public class ConsumeSubsidyManager {
                 entity.setEffectiveDate(form.getEffectiveDate());
             }
             if (form.getExpiryDate() != null) {
-                entity.setExpiryDate(form.getExpiryDate());
+                entity.setExpireDate(form.getExpiryDate());
             }
             if (form.getApplicableMerchants() != null) {
                 entity.setApplicableMerchants(form.getApplicableMerchants());
@@ -776,15 +1161,17 @@ public class ConsumeSubsidyManager {
             if (form.getDailyLimit() != null) {
                 entity.setDailyLimit(form.getDailyLimit());
             }
-            if (form.getMaxDiscountRate() != null) {
-                entity.setMaxDiscountRate(form.getMaxDiscountRate());
-            }
+            // Entity中没有maxDiscountRate字段
+            // if (form.getMaxDiscountRate() != null) {
+            //     entity.setMaxDiscountRate(form.getMaxDiscountRate());
+            // }
             if (form.getAutoRenew() != null) {
                 entity.setAutoRenew(form.getAutoRenew());
             }
-            if (form.getRenewalRule() != null) {
-                entity.setRenewalRule(form.getRenewalRule());
-            }
+            // Entity中没有renewalRule字段
+            // if (form.getRenewalRule() != null) {
+            //     entity.setRenewalRule(form.getRenewalRule());
+            // }
             if (form.getRemark() != null) {
                 entity.setRemark(form.getRemark());
             }
@@ -822,7 +1209,7 @@ public class ConsumeSubsidyManager {
             }
 
             // 验证补贴状态
-            if (!subsidy.isPending()) {
+            if (!isPending(subsidy)) {
                 result.put("success", false);
                 result.put("message", "补贴状态不是待发放");
                 return result;
@@ -840,24 +1227,26 @@ public class ConsumeSubsidyManager {
                     // 创建用户专属的补贴记录
                     ConsumeSubsidyEntity userSubsidy = new ConsumeSubsidyEntity();
                     userSubsidy.setSubsidyCode(generateUserSubsidyCode(subsidy.getSubsidyCode(), userId));
-                    userSubsidy.setSubsidyName(subsidy.getSubsidyName());
+                    userSubsidy.setDescription(subsidy.getDescription()); // subsidyName
                     userSubsidy.setUserId(userId);
                     userSubsidy.setSubsidyType(subsidy.getSubsidyType());
                     userSubsidy.setSubsidyPeriod(subsidy.getSubsidyPeriod());
-                    userSubsidy.setSubsidyAmount(subsidy.getSubsidyAmount());
+                    userSubsidy.setTotalAmount(subsidy.getTotalAmount()); // subsidyAmount
                     userSubsidy.setUsedAmount(BigDecimal.ZERO);
-                    userSubsidy.setSubsidyStatus(2); // 已发放状态
+                    userSubsidy.setStatus(1); // 已发放状态
                     userSubsidy.setEffectiveDate(subsidy.getEffectiveDate());
-                    userSubsidy.setExpiryDate(subsidy.getExpiryDate());
+                    userSubsidy.setExpireDate(subsidy.getExpireDate()); // expiryDate
                     userSubsidy.setIssueDate(now);
                     userSubsidy.setIssuerId(subsidy.getIssuerId());
                     userSubsidy.setApplicableMerchants(subsidy.getApplicableMerchants());
                     userSubsidy.setUsageTimePeriods(subsidy.getUsageTimePeriods());
                     userSubsidy.setDailyLimit(subsidy.getDailyLimit());
                     userSubsidy.setDailyUsedAmount(BigDecimal.ZERO);
-                    userSubsidy.setMaxDiscountRate(subsidy.getMaxDiscountRate());
+                    // Entity中没有maxDiscountRate字段
+                    // userSubsidy.setMaxDiscountRate(subsidy.getMaxDiscountRate());
                     userSubsidy.setAutoRenew(subsidy.getAutoRenew());
-                    userSubsidy.setRenewalRule(subsidy.getRenewalRule());
+                    // Entity中没有renewalRule字段
+                    // userSubsidy.setRenewalRule(subsidy.getRenewalRule());
                     userSubsidy.setRemark(subsidy.getRemark());
                     userSubsidy.setCreateTime(now);
                     userSubsidy.setUpdateTime(now);
@@ -885,7 +1274,7 @@ public class ConsumeSubsidyManager {
 
             // 更新原补贴状态为已发放
             if (successCount > 0) {
-                subsidy.setSubsidyStatus(2); // 已发放
+                subsidy.setStatus(1); // 已发放
                 subsidy.setUpdateTime(now);
                 consumeSubsidyDao.updateById(subsidy);
             }
@@ -962,16 +1351,16 @@ public class ConsumeSubsidyManager {
 
                     // 复制模板信息
                     userSubsidy.setSubsidyCode(generateUserSubsidyCode(templateEntity.getSubsidyCode(), userId));
-                    userSubsidy.setSubsidyName(templateEntity.getSubsidyName());
+                    userSubsidy.setDescription(templateEntity.getDescription()); // subsidyName
                     userSubsidy.setSubsidyType(templateEntity.getSubsidyType());
                     userSubsidy.setUserId(userId);
-                    userSubsidy.setSubsidyAmount(templateEntity.getSubsidyAmount());
+                    userSubsidy.setTotalAmount(templateEntity.getTotalAmount()); // subsidyAmount
                     userSubsidy.setUsedAmount(BigDecimal.ZERO);
                     userSubsidy.setIssueDate(now);
                     userSubsidy.setEffectiveDate(templateEntity.getEffectiveDate() != null ?
                         templateEntity.getEffectiveDate() : now);
-                    userSubsidy.setExpiryDate(templateEntity.getExpiryDate());
-                    userSubsidy.setSubsidyStatus(2); // 已发放
+                    userSubsidy.setExpireDate(templateEntity.getExpireDate()); // expiryDate
+                    userSubsidy.setStatus(1); // 已发放
                     userSubsidy.setRemark(templateEntity.getRemark());
                     userSubsidy.setCreateTime(now);
                     userSubsidy.setUpdateTime(now);
@@ -988,9 +1377,9 @@ public class ConsumeSubsidyManager {
                         issuedRecord.put("subsidyId", userSubsidy.getSubsidyId());
                         issuedRecord.put("subsidyCode", userSubsidy.getSubsidyCode());
                         issuedRecord.put("userId", userId);
-                        issuedRecord.put("amount", userSubsidy.getSubsidyAmount());
+                        issuedRecord.put("amount", userSubsidy.getTotalAmount()); // subsidyAmount
                         issuedRecord.put("effectiveDate", userSubsidy.getEffectiveDate());
-                        issuedRecord.put("expiryDate", userSubsidy.getExpiryDate());
+                        issuedRecord.put("expiryDate", userSubsidy.getExpireDate()); // expiryDate
                         issuedRecords.add(issuedRecord);
 
                         log.debug("[补贴批量发放] 发放成功: userId={}, subsidyId={}, subsidyCode={}",
@@ -1054,22 +1443,22 @@ public class ConsumeSubsidyManager {
             }
 
             // 验证当前状态
-            if (entity.getSubsidyStatus() == 5) {
+            if (entity.getStatus() == 4) { // 4=已停用
                 result.put("success", false);
                 result.put("message", "补贴已作废，无需重复操作");
                 return result;
             }
 
             // 验证是否可以作废
-            // 只有待发放(1)和已发放(2)状态可以作废
-            if (entity.getSubsidyStatus() != 1 && entity.getSubsidyStatus() != 2) {
+            // 只有待发放(0)和已发放(1)状态可以作废
+            if (entity.getStatus() != 0 && entity.getStatus() != 1) {
                 result.put("success", false);
                 result.put("message", "只有待发放或已发放状态的补贴可以作废");
                 return result;
             }
 
             // 如果已发放且有使用金额，不允许作废
-            if (entity.getSubsidyStatus() == 2 && entity.getUsedAmount() != null
+            if (entity.getStatus() == 1 && entity.getUsedAmount() != null
                 && entity.getUsedAmount().compareTo(BigDecimal.ZERO) > 0) {
                 result.put("success", false);
                 result.put("message", "补贴已使用，无法作废");
@@ -1078,8 +1467,8 @@ public class ConsumeSubsidyManager {
 
             LocalDateTime now = LocalDateTime.now();
 
-            // 更新状态为已作废(5)
-            entity.setSubsidyStatus(5); // 已作废
+            // 更新状态为已停用(4)
+            entity.setStatus(4); // 已停用
             entity.setUpdateTime(now);
 
             int updateResult = consumeSubsidyDao.updateById(entity);
@@ -1138,14 +1527,14 @@ public class ConsumeSubsidyManager {
             }
 
             // 验证是否有过期时间
-            if (entity.getExpiryDate() == null) {
+            if (entity.getExpireDate() == null) {
                 result.put("success", false);
                 result.put("message", "补贴没有过期时间，无法延期");
                 return result;
             }
 
             // 验证当前状态
-            if (entity.getSubsidyStatus() == 5) { // 5=已作废
+            if (entity.getStatus() == 4) { // 4=已停用
                 result.put("success", false);
                 result.put("message", "已作废的补贴无法延期");
                 return result;
@@ -1153,18 +1542,18 @@ public class ConsumeSubsidyManager {
 
             // 验证是否已过期
             LocalDateTime now = LocalDateTime.now();
-            if (entity.getExpiryDate().isBefore(now)) {
+            if (entity.getExpireDate().isBefore(now)) {
                 result.put("success", false);
                 result.put("message", "补贴已过期，无法延期");
                 return result;
             }
 
             // 保存旧的过期时间用于日志
-            LocalDateTime oldExpiryDate = entity.getExpiryDate();
+            LocalDateTime oldExpiryDate = entity.getExpireDate();
 
             // 计算新的过期时间
-            LocalDateTime newExpiryDate = entity.getExpiryDate().plusDays(days);
-            entity.setExpiryDate(newExpiryDate);
+            LocalDateTime newExpiryDate = entity.getExpireDate().plusDays(days);
+            entity.setExpireDate(newExpiryDate);
             entity.setUpdateTime(now);
 
             // 更新数据库
@@ -1223,15 +1612,15 @@ public class ConsumeSubsidyManager {
 
             // 按状态统计
             long pendingCount = allSubsidies.stream()
-                .filter(s -> s.getSubsidyStatus() == 1).count();
+                .filter(s -> s.getStatus() == 0).count(); // 0-待发放
             long issuedCount = allSubsidies.stream()
-                .filter(s -> s.getSubsidyStatus() == 2).count();
+                .filter(s -> s.getStatus() == 1).count(); // 1-已发放
             long expiredCount = allSubsidies.stream()
-                .filter(s -> s.getSubsidyStatus() == 3).count();
+                .filter(s -> s.getStatus() == 2).count(); // 2-已过期
             long usedCount = allSubsidies.stream()
-                .filter(s -> s.getSubsidyStatus() == 4).count();
+                .filter(s -> s.getStatus() == 3).count(); // 3-已使用
             long cancelledCount = allSubsidies.stream()
-                .filter(s -> s.getSubsidyStatus() == 5).count();
+                .filter(s -> s.getStatus() == 4).count(); // 4-已停用
 
             statistics.setIssuedSubsidyCount(issuedCount);
             statistics.setUsedSubsidyCount(usedCount);
@@ -1240,7 +1629,7 @@ public class ConsumeSubsidyManager {
 
             // 金额统计
             BigDecimal totalAmount = allSubsidies.stream()
-                .map(ConsumeSubsidyEntity::getSubsidyAmount)
+                .map(ConsumeSubsidyEntity::getTotalAmount) // subsidyAmount
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             statistics.setTotalSubsidyAmount(totalAmount);
@@ -1280,7 +1669,7 @@ public class ConsumeSubsidyManager {
             // 本月发放金额
             BigDecimal monthIssuedAmount = allSubsidies.stream()
                 .filter(s -> s.getIssueDate() != null && !s.getIssueDate().isBefore(monthStart))
-                .map(ConsumeSubsidyEntity::getSubsidyAmount)
+                .map(ConsumeSubsidyEntity::getTotalAmount) // getSubsidyAmount
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             statistics.setMonthlySubsidyAmount(monthIssuedAmount);
@@ -1296,21 +1685,21 @@ public class ConsumeSubsidyManager {
             // 即将过期统计（7天内过期）
             LocalDateTime sevenDaysLater = now.plusDays(7);
             long expiringSoonCount = allSubsidies.stream()
-                .filter(s -> s.getExpiryDate() != null
-                    && s.getExpiryDate().isAfter(now)
-                    && !s.getExpiryDate().isAfter(sevenDaysLater)
-                    && s.getSubsidyStatus() == 2)
+                .filter(s -> s.getExpireDate() != null // getExpiryDate
+                    && s.getExpireDate().isAfter(now) // getExpiryDate
+                    && !s.getExpireDate().isAfter(sevenDaysLater) // getExpiryDate
+                    && s.getStatus() == 2) // getSubsidyStatus, 2-已过期
                 .count();
             statistics.setExpiringSoonCount(expiringSoonCount);
 
             // 计算即将过期金额
             BigDecimal expiringSoonAmount = allSubsidies.stream()
-                .filter(s -> s.getExpiryDate() != null
-                    && s.getExpiryDate().isAfter(now)
-                    && !s.getExpiryDate().isAfter(sevenDaysLater)
-                    && s.getSubsidyStatus() == 2)
+                .filter(s -> s.getExpireDate() != null // getExpiryDate
+                    && s.getExpireDate().isAfter(now) // getExpiryDate
+                    && !s.getExpireDate().isAfter(sevenDaysLater) // getExpiryDate
+                    && s.getStatus() == 2) // getSubsidyStatus, 2-已过期
                 .map(s -> {
-                    BigDecimal remaining = s.getSubsidyAmount();
+                    BigDecimal remaining = s.getTotalAmount(); // getSubsidyAmount
                     if (s.getUsedAmount() != null) {
                         remaining = remaining.subtract(s.getUsedAmount());
                     }

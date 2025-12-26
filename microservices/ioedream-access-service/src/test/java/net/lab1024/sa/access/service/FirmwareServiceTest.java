@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.DeviceFirmwareDao;
-import net.lab1024.sa.access.domain.entity.DeviceFirmwareEntity;
+import net.lab1024.sa.common.entity.access.DeviceFirmwareEntity;
 import net.lab1024.sa.access.domain.form.FirmwareQueryForm;
 import net.lab1024.sa.access.domain.form.FirmwareUploadForm;
 import net.lab1024.sa.access.domain.vo.FirmwareDetailVO;

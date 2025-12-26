@@ -20,7 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.attendance.domain.entity.AttendanceTravelEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceTravelEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceTravelForm;
 import net.lab1024.sa.attendance.service.AttendanceTravelService;
 import net.lab1024.sa.common.dto.ResponseDTO;

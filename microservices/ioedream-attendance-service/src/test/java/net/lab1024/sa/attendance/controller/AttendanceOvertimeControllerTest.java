@@ -21,7 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.attendance.domain.entity.AttendanceOvertimeEntity;
+import net.lab1024.sa.common.entity.attendance.AttendanceOvertimeEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceOvertimeForm;
 import net.lab1024.sa.attendance.service.AttendanceOvertimeService;
 import net.lab1024.sa.common.dto.ResponseDTO;

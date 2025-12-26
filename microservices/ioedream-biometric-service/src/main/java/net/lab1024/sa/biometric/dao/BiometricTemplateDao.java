@@ -1,7 +1,7 @@
 package net.lab1024.sa.biometric.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity;
+import net.lab1024.sa.common.entity.biometric.BiometricTemplateEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

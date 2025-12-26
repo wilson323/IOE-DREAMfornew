@@ -3,7 +3,7 @@ package net.lab1024.sa.access.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.access.dao.AntiPassbackConfigDao;
 import net.lab1024.sa.access.dao.AntiPassbackRecordDao;
-import net.lab1024.sa.access.domain.entity.AntiPassbackConfigEntity;
+import net.lab1024.sa.common.entity.access.AntiPassbackConfigEntity;
 import net.lab1024.sa.access.domain.form.AntiPassbackConfigForm;
 import net.lab1024.sa.access.domain.form.AntiPassbackDetectForm;
 import net.lab1024.sa.access.domain.vo.AntiPassbackConfigVO;

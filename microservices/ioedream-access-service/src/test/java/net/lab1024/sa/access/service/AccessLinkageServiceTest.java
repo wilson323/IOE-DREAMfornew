@@ -9,7 +9,7 @@ import net.lab1024.sa.access.domain.form.AccessLinkageRuleAddForm;
 import net.lab1024.sa.access.domain.form.AccessLinkageRuleUpdateForm;
 import net.lab1024.sa.access.domain.form.AccessLinkageRuleQueryForm;
 import net.lab1024.sa.access.domain.vo.AccessLinkageRuleVO;
-import net.lab1024.sa.access.domain.entity.AccessLinkageRuleEntity;
+import net.lab1024.sa.common.entity.access.AccessLinkageRuleEntity;
 import net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.domain.PageResult;

@@ -5,7 +5,7 @@ import net.lab1024.sa.access.domain.form.AccessPersonRestrictionAddForm;
 import net.lab1024.sa.access.domain.form.AccessPersonRestrictionQueryForm;
 import net.lab1024.sa.access.domain.form.AccessPersonRestrictionUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessPersonRestrictionVO;
-import net.lab1024.sa.access.domain.entity.AccessPersonRestrictionEntity;
+import net.lab1024.sa.common.entity.access.AccessPersonRestrictionEntity;
 import net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl;
 import net.lab1024.sa.common.domain.PageResult;
 import org.junit.jupiter.api.BeforeEach;

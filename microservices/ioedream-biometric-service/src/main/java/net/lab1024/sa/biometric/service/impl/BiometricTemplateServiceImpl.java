@@ -22,8 +22,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import jakarta.annotation.Resource;
 import net.lab1024.sa.biometric.dao.BiometricTemplateDao;
-import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity;
-import net.lab1024.sa.biometric.domain.entity.BiometricType;
+import net.lab1024.sa.common.entity.biometric.BiometricTemplateEntity;
+import net.lab1024.sa.common.entity.biometric.BiometricType;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateAddForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateQueryForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateUpdateForm;

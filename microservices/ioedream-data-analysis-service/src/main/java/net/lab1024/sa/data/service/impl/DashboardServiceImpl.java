@@ -10,7 +10,7 @@ import net.lab1024.sa.common.dto.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.data.dao.DashboardDao;
 import net.lab1024.sa.data.domain.DataAnalysisDomain.*;
-import net.lab1024.sa.data.domain.entity.DashboardEntity;
+import net.lab1024.sa.common.entity.data.DashboardEntity;
 import net.lab1024.sa.data.service.DashboardService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;

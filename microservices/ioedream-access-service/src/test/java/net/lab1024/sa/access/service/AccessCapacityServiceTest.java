@@ -7,7 +7,7 @@ import net.lab1024.sa.access.domain.form.AccessCapacityControlAddForm;
 import net.lab1024.sa.access.domain.form.AccessCapacityControlQueryForm;
 import net.lab1024.sa.access.domain.form.AccessCapacityControlUpdateForm;
 import net.lab1024.sa.access.domain.vo.AccessCapacityControlVO;
-import net.lab1024.sa.access.domain.entity.AccessCapacityControlEntity;
+import net.lab1024.sa.common.entity.access.AccessCapacityControlEntity;
 import net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl;
 import net.lab1024.sa.common.domain.PageResult;
 import org.junit.jupiter.api.BeforeEach;

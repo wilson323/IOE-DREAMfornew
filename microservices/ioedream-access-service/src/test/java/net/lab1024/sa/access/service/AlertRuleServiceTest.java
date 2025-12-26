@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.AlertRuleDao;
-import net.lab1024.sa.access.domain.entity.AlertRuleEntity;
+import net.lab1024.sa.common.entity.access.AlertRuleEntity;
 import net.lab1024.sa.access.domain.form.AlertRuleForm;
 import net.lab1024.sa.access.domain.form.AlertRuleQueryForm;
 import net.lab1024.sa.access.domain.vo.AlertRuleVO;
