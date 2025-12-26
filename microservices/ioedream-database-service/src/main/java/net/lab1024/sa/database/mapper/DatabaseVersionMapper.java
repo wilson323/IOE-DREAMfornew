@@ -1,7 +1,7 @@
 package net.lab1024.sa.database.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.database.entity.DatabaseVersionEntity;
+import net.lab1024.sa.common.entity.database.DatabaseVersionEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
