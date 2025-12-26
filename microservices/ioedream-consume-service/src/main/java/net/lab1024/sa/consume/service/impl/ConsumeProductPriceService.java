@@ -211,10 +211,10 @@ public class ConsumeProductPriceService {
             wrapper.eq (ConsumeProductEntity::getProductId, productId);
 
             if (basePrice != null) {
-                wrapper.set (ConsumeProductEntity::getBasePrice, basePrice);
+                wrapper.set (ConsumeProductEntity::getOriginalPrice, basePrice);
             }
             if (salePrice != null) {
-                wrapper.set (ConsumeProductEntity::getSalePrice, salePrice);
+                wrapper.set (ConsumeProductEntity::getPrice, salePrice);
             }
             if (costPrice != null) {
                 wrapper.set (ConsumeProductEntity::getCostPrice, costPrice);

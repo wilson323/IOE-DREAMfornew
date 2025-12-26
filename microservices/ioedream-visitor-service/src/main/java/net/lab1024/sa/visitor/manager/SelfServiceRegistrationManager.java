@@ -3,8 +3,12 @@
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.visitor.dao.*;
-import net.lab1024.sa.visitor.entity.*;
 import net.lab1024.sa.common.entity.visitor.SelfServiceRegistrationEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorBiometricEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorApprovalEntity;
+import net.lab1024.sa.common.entity.visitor.VisitRecordEntity;
+import net.lab1024.sa.common.entity.visitor.TerminalInfoEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorAdditionalInfoEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

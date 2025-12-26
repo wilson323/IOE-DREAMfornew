@@ -119,8 +119,8 @@ public class ConsumeProductStatisticsService {
 
             for (ConsumeProductEntity product : products) {
                 long salesCount = product.getSalesCount() != null ? product.getSalesCount() : 0;
-                BigDecimal salesAmount = product.getSalePrice() != null ?
-                        product.getSalePrice().multiply(BigDecimal.valueOf(salesCount)) : BigDecimal.ZERO;
+                BigDecimal salesAmount = product.getPrice() != null ?
+                        product.getPrice().multiply(BigDecimal.valueOf(salesCount)) : BigDecimal.ZERO;
 
                 totalSalesCount += salesCount;
                 totalSalesAmount = totalSalesAmount.add(salesAmount);
@@ -184,8 +184,8 @@ public class ConsumeProductStatisticsService {
                 stat.put("totalSalesCount", categoryProducts.stream()
                         .mapToLong(p -> p.getSalesCount() != null ? p.getSalesCount() : 0).sum());
                 stat.put("totalSalesAmount", categoryProducts.stream()
-                        .map(p -> p.getSalePrice() != null ?
-                                p.getSalePrice().multiply(BigDecimal.valueOf(p.getSalesCount() != null ? p.getSalesCount() : 0)) : BigDecimal.ZERO)
+                        .map(p -> p.getPrice() != null ?
+                                p.getPrice().multiply(BigDecimal.valueOf(p.getSalesCount() != null ? p.getSalesCount() : 0)) : BigDecimal.ZERO)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
                 categoryStats.add(stat);
@@ -231,8 +231,8 @@ public class ConsumeProductStatisticsService {
             item.put("productName", product.getProductName());
             item.put("productCode", product.getProductCode());
             item.put("salesCount", product.getSalesCount());
-            item.put("salesAmount", product.getSalePrice() != null ?
-                    product.getSalePrice().multiply(BigDecimal.valueOf(product.getSalesCount())) : BigDecimal.ZERO);
+            item.put("salesAmount", product.getPrice() != null ?
+                    product.getPrice().multiply(BigDecimal.valueOf(product.getSalesCount())) : BigDecimal.ZERO);
 
             ranking.add(item);
 

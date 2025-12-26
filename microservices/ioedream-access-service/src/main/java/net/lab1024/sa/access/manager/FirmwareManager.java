@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.dao.DeviceFirmwareDao;
 import net.lab1024.sa.access.dao.FirmwareUpgradeDeviceDao;
 import net.lab1024.sa.access.dao.FirmwareUpgradeTaskDao;
-import net.lab1024.sa.common.entity.access.DeviceFirmwareEntity;
+import net.lab1024.sa.common.entity.device.DeviceFirmwareEntity;
 import net.lab1024.sa.common.entity.access.FirmwareUpgradeDeviceEntity;
 import net.lab1024.sa.common.entity.access.FirmwareUpgradeTaskEntity;
 import net.lab1024.sa.access.domain.form.FirmwareUpgradeTaskForm;

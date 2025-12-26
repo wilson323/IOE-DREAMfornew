@@ -972,17 +972,17 @@ public class ConsumeSubsidyManager {
         // CON-001: 实现Entity到VO的属性映射
         vo.setSubsidyId(entity.getSubsidyId());
         vo.setSubsidyCode(entity.getSubsidyCode());
-        vo.setSubsidyName(entity.getSubsidyName());
+        vo.setSubsidyName(entity.getDescription());
         vo.setSubsidyType(entity.getSubsidyType());
         vo.setSubsidyTypeName(entity.getSubsidyTypeDescription());
         vo.setUserId(entity.getUserId());
         vo.setUserName(entity.getUserName());
         vo.setSubsidyPeriod(entity.getSubsidyPeriod());
         vo.setSubsidyPeriodName(entity.getSubsidyPeriodDescription());
-        vo.setSubsidyAmount(entity.getSubsidyAmount());
+        vo.setSubsidyAmount(entity.getTotalAmount());
         vo.setUsedAmount(entity.getUsedAmount());
         vo.setRemainingAmount(entity.getRemainingAmount());
-        vo.setStatus(entity.getSubsidyStatus());
+        vo.setStatus(entity.getStatus());
         vo.setStatusName(entity.getStatusDescription());
         vo.setEffectiveDate(entity.getEffectiveDate());
         vo.setExpiryDate(entity.getExpiryDate());

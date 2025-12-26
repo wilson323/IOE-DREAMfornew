@@ -136,8 +136,8 @@ public class ConsumeProductValidationService {
             }
 
             // 检查价格
-            if (entity.getSalePrice() == null || entity.getSalePrice().compareTo(BigDecimal.ZERO) <= 0) {
-                log.warn("[产品验证] 产品价格无效: productId={}, salePrice={}", productId, entity.getSalePrice());
+            if (entity.getPrice() == null || entity.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                log.warn("[产品验证] 产品价格无效: productId={}, price={}", productId, entity.getPrice());
                 return false;
             }
 
@@ -175,8 +175,8 @@ public class ConsumeProductValidationService {
             }
 
             // 检查价格
-            BigDecimal basePrice = entity.getBasePrice();
-            BigDecimal salePrice = entity.getSalePrice();
+            BigDecimal basePrice = entity.getOriginalPrice();
+            BigDecimal salePrice = entity.getPrice();
             if (basePrice == null || basePrice.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new ConsumeProductException("产品原价无效，无法计算折扣");
             }

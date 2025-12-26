@@ -1,7 +1,7 @@
 package net.lab1024.sa.visitor.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.visitor.entity.VisitorApprovalEntity;
+import net.lab1024.sa.common.entity.visitor.VisitorApprovalEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
