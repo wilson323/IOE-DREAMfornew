@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.visitor.manager;
+package net.lab1024.sa.visitor.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
