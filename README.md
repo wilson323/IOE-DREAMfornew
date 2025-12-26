@@ -385,9 +385,70 @@ npm install
 .\scripts\quick-start.ps1 -Mobile                   # 仅启动移动端
 ```
 
-**详细使用说明**: 
+**详细使用说明**:
 - [启动脚本使用说明](scripts/README_START.md)
 - [开发环境启动指南](documentation/technical/DEVELOPMENT_STARTUP_GUIDE.md) ⭐ **推荐阅读**
+
+### 集成测试环境（Docker Compose）
+
+对于集成测试和CI/CD环境，项目提供了独立的Docker Compose配置：
+
+**环境配置** (`deployment/test-environment/.env.test`):
+```bash
+# 服务端口配置
+MYSQL_PORT=3307
+REDIS_PORT=6380
+NACOS_PORT=8849
+
+# 数据库配置
+MYSQL_ROOT_PASSWORD=test_root_password
+MYSQL_DATABASE=ioedream_test
+
+# Redis配置
+REDIS_PASSWORD=test_redis_password
+
+# Nacos配置
+NACOS_USERNAME=nacos
+NACOS_PASSWORD=nacos
+NACOS_AUTH_TOKEN=nacos_test_token
+```
+
+**快速启动测试环境**:
+```bash
+# 1. 进入测试环境目录
+cd deployment/test-environment
+
+# 2. 启动测试服务
+docker-compose up -d
+
+# 3. 验证服务状态
+docker-compose ps
+
+# 4. 查看服务日志
+docker-compose logs -f
+
+# 5. 停止测试环境
+docker-compose down
+```
+
+**服务可用性验证**:
+```bash
+# MySQL服务
+mysql -h 127.0.0.1 -P 3307 -u root -p
+
+# Redis服务
+redis-cli -h 127.0.0.1 -p 6380 -a test_redis_password ping
+
+# Nacos控制台
+http://localhost:8849/nacos
+```
+
+**故障排除**:
+- 端口冲突：修改`.env.test`中的端口配置
+- 容器启动失败：`docker-compose logs <service_name>`查看详细日志
+- 数据库连接失败：确认MySQL容器已完全启动（约30秒）
+
+**详细文档**: [测试环境完整指南](deployment/test-environment/README.md)
 
 ---
 
@@ -478,6 +539,58 @@ mypy src
 - **[任务清单](.kiro/specs/global-code-analysis/tasks.md)** - 实施任务和里程碑
 - **[API文档](documentation/api/global-code-analysis-api.md)** - 接口规范和使用示例
 - **[专家技能](.claude/skills/global-code-analysis-expert.md)** - AI专家技能定义
+
+---
+
+## 🤖 AI Skills System
+
+IOE-DREAM 集成了专业的AI辅助开发技能系统，提供30个专业AI技能支持智能开发：
+
+### 技能分类
+
+**P0优先级守护技能**（架构质量保障）:
+- `four-tier-architecture-guardian` - 四层架构守护专家
+- `spring-boot-jakarta-guardian` - Spring Boot 3.5和Jakarta包名规范守护
+- `access-control-business-specialist` - 门禁系统业务逻辑专家
+- `code-quality-protector` - 代码质量和编码规范守护专家
+- `openspec-compliance-specialist` - OpenSpec规范遵循专家
+- `init-architect` - 自适应初始化专家
+
+**核心开发技能**（22个）:
+- 业务模块专家：门禁、考勤、消费、视频、访客、设备通讯
+- 技术专项：数据库迁移、配置安全、异常处理、分布式追踪、Nacos服务发现
+- 架构支持：RESTful API设计、生物识别架构、前端/移动端API开发
+
+**扩展技能**（4个）:
+- 工作流专家、日志规范守护、包结构守护、文档质量管理
+
+### 技能使用方式
+
+```bash
+# 通过Claude Code CLI调用
+claude-code --skill four-tier-architecture-guardian
+claude-code --skill access-service-specialist
+
+# 或通过项目.claude/skills/目录管理
+.claude/skills/
+├── P0-guardians/     # P0优先级守护技能
+├── core/             # 核心开发技能
+└── extended/         # 扩展技能
+```
+
+**详细文档**:
+- **[技能系统总览](.claude/skills/README.md)** - 完整技能列表和使用指南
+- **[技能使用培训](.claude/skills/deployment/training/P0_SKILLS_TRAINING_CURRICULUM.md)** - P0技能培训课程
+- **[技能监控](.claude/skills/deployment/monitoring/SKILLS_USAGE_MONITORING.md)** - 技能使用监控
+
+### 技术栈统一规范
+
+所有AI技能严格遵循统一技术栈规范：
+- **后端**: Spring Boot 3.5.8 + Spring Cloud 2025.0.0 + Java 17
+- **前端**: Vue 3.4 + Ant Design Vue 4.2
+- **移动端**: uni-app 3.0 (Vue 3)
+- **数据库**: MySQL 8.0+ / MyBatis-Plus 3.5.15
+- **规范**: Jakarta EE 9+ / OpenAPI 3.0
 
 ---
 
@@ -757,6 +870,41 @@ IOE-DREAM采用**边缘计算优先**的架构设计，根据不同业务场景�
 - **Vue3规范**: 使用Composition API，遵循Vue3最佳实践
 - **命名规范**: 统一的命名约定和代码风格
 - **注释规范**: 完整的函数级注释和文档
+
+### 开发工作流
+
+**OpenSpec规范驱动开发**（Doc First）:
+- ✅ **文档优先**: 任何架构变更/模块拆分/依赖治理必须先更新文档
+- ✅ **OpenSpec提案**: 必须先创建OpenSpec提案并通过评审，再进入代码实施
+- ✅ **模板自定义**: 支持自定义OpenSpec模板覆盖默认配置
+
+**模板加载优先级**:
+```
+用户自定义模板 (.spec-workflow/user-templates/)
+    ↓ (未找到)
+项目默认模板 (.spec-workflow/templates/)
+    ↓ (未找到)
+系统内置模板
+```
+
+**自定义模板示例**:
+```yaml
+# .spec-workflow/user-templates/custom-proposal.md
+name: 自定义提案模板
+description: 适用于特定类型的提案
+sections:
+  - name: 业务背景
+    required: true
+  - name: 技术方案
+    required: true
+  - name: 验收标准
+    required: true
+```
+
+**详细文档**:
+- **[OpenSpec工作流](.spec-workflow/README.md)** - 完整工作流指南
+- **[模板自定义指南](.spec-workflow/user-templates/README.md)** - 模板配置说明
+- **[OpenSpec Agents文档](.spec-workflow/AGENTS.md)** - Agent使用指南
 
 详细规范请查看: [开发规范文档](documentation/technical/UNIFIED_DEVELOPMENT_STANDARDS.md)
 
