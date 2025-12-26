@@ -32,6 +32,7 @@ import java.util.Map;
  * 2. 区域缓存：10分钟L1，1小时L2
  * 3. 补贴缓存：5分钟L1，30分钟L2
  * 4. 配置缓存：30分钟L1，2小时L2
+ * 5. 产品缓存：10分钟L1，1小时L2
  *
  * @author IOE-DREAM架构团队
  * @since 2025-12-23
@@ -105,6 +106,9 @@ public class MultiLevelCacheConfiguration {
 
         // 统计缓存：1小时
         cacheConfigurations.put("statistics", defaultConfig.entryTtl(Duration.ofHours(1)));
+
+        // 产品缓存：10分钟
+        cacheConfigurations.put("product", defaultConfig.entryTtl(Duration.ofMinutes(10)));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfig)
@@ -188,6 +192,21 @@ public class MultiLevelCacheConfiguration {
                 500,    // L1最大500条
                 30,     // L1过期30分钟
                 7200    // L2过期2小时
+        );
+    }
+
+    /**
+     * 产品缓存管理器
+     */
+    @Bean(name = "productCacheManager")
+    public MultiLevelCacheManager<String, Object> productCacheManager(
+            RedisTemplate<String, Object> redisTemplate) {
+        return new MultiLevelCacheManager<>(
+                "product",
+                redisTemplate,
+                10000,  // L1最大10000条
+                10,     // L1过期10分钟
+                3600    // L2过期1小时
         );
     }
 }

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,6 +114,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Cacheable(value = "account", key = "#accountId", unless = "#result == null")
     public ConsumeAccountVO getAccountDetail(Long accountId) {
         log.info("[账户服务] 获取账户详情: accountId={}", accountId);
 
@@ -124,6 +127,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Cacheable(value = "account", key = "'userId:' + #userId", unless = "#result == null")
     public ConsumeAccountVO getAccountByUserId(Long userId) {
         log.info("[账户服务] 根据用户ID获取账户: userId={}", userId);
 
@@ -137,6 +141,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public Long createAccount(ConsumeAccountAddForm addForm) {
         log.info("[账户服务] 创建账户: userId={}, username={}", addForm.getUserId(), addForm.getUsername());
 
@@ -201,6 +206,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public void updateAccount(Long accountId, ConsumeAccountUpdateForm updateForm) {
         log.info("[账户服务] 更新账户信息: accountId={}", accountId);
 
@@ -231,6 +237,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @GlobalTransactional(name = "recharge-account", rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public Boolean rechargeAccount(Long accountId, ConsumeAccountRechargeForm rechargeForm) {
         log.info("[账户服务] 账户充值: accountId={}, amount={}", accountId, rechargeForm.getAmount());
 
@@ -277,6 +284,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @GlobalTransactional(name = "deduct-amount", rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public Boolean deductAmount(Long accountId, BigDecimal amount, String description) {
         log.info("[账户服务] 扣减账户余额: accountId={}, amount={}, description={}", accountId, amount, description);
 
@@ -327,6 +335,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @GlobalTransactional(name = "refund-amount", rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public Boolean refundAmount(Long accountId, BigDecimal amount, String reason) {
         log.info("[账户服务] 账户退款: accountId={}, amount={}, reason={}", accountId, amount, reason);
 
@@ -376,6 +385,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public void freezeAccount(Long accountId, String reason) {
         log.info("[账户服务] 冻结账户: accountId={}, reason={}", accountId, reason);
 
@@ -400,6 +410,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public void unfreezeAccount(Long accountId, String reason) {
         log.info("[账户服务] 解冻账户: accountId={}, reason={}", accountId, reason);
 
@@ -424,6 +435,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public void closeAccount(Long accountId, String reason) {
         log.info("[账户服务] 注销账户: accountId={}, reason={}", accountId, reason);
 
@@ -452,6 +464,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Cacheable(value = "account", key = "'balance:' + #accountId", unless = "#result == null")
     public BigDecimal getAccountBalance(Long accountId) {
         log.info("[账户服务] 查询账户余额: accountId={}", accountId);
 
@@ -524,6 +537,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
     }
 
     @Override
+    @Cacheable(value = "account", key = "'activeAccounts'")
     public List<ConsumeAccountVO> getActiveAccounts() {
         log.info("[账户服务] 获取活跃账户列表");
 
@@ -561,6 +575,7 @@ public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "account", allEntries = true)
     public Map<String, Object> batchCreateAccounts(List<ConsumeAccountAddForm> addForms) {
         log.info("[账户服务] 批量创建账户: count={}", addForms.size());
 

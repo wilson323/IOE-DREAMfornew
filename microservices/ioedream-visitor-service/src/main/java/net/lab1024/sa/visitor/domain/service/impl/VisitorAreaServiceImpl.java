@@ -46,11 +46,11 @@ import java.util.stream.Collectors;
     @Override
     @Observed(name = "visitor.area.create", contextualName = "visitor-area-create")
     public boolean createVisitorArea(VisitorAreaEntity visitorArea) {
-        log.info("[访客区域管理] 创建访客区域配置, areaId={}", visitorArea.getId());
+        log.info("[访客区域管理] 创建访客区域配置, areaId={}", visitorArea.getAreaId());
 
         // 验证区域存在且支持访客业务
-        if (!areaUnifiedService.isAreaSupportBusiness(visitorArea.getId(), "visitor")) {
-            log.warn("[访客区域管理] 区域不支持访客业务, areaId={}", visitorArea.getId());
+        if (!areaUnifiedService.isAreaSupportBusiness(visitorArea.getAreaId(), "visitor")) {
+            log.warn("[访客区域管理] 区域不支持访客业务, areaId={}", visitorArea.getAreaId());
             return false;
         }
 
@@ -68,29 +68,26 @@ import java.util.stream.Collectors;
         if (visitorArea.getEnabled() == null) {
             visitorArea.setEnabled(true);
         }
-        if (visitorArea.getEffectiveTime() == null) {
-            visitorArea.setEffectiveTime(LocalDateTime.now());
-        }
 
         try {
             int result = visitorAreaDao.insert(visitorArea);
 
             if (result > 0) {
-                evictVisitorAreaCache(visitorArea.getId());
+                evictVisitorAreaCache(visitorArea.getAreaId());
                 log.info("[访客区域管理] 访客区域配置创建成功, visitorAreaId={}", visitorArea.getVisitorAreaId());
                 return true;
             }
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[访客区域管理] 访客区域配置创建参数错误: areaId={}, error={}", visitorArea.getId(), e.getMessage());
+            log.warn("[访客区域管理] 访客区域配置创建参数错误: areaId={}, error={}", visitorArea.getAreaId(), e.getMessage());
             return false; // For boolean return methods, return false on parameter error
         } catch (BusinessException e) {
-            log.warn("[访客区域管理] 访客区域配置创建业务异常: areaId={}, code={}, message={}", visitorArea.getId(), e.getCode(), e.getMessage());
+            log.warn("[访客区域管理] 访客区域配置创建业务异常: areaId={}, code={}, message={}", visitorArea.getAreaId(), e.getCode(), e.getMessage());
             return false; // For boolean return methods, return false on business error
         } catch (SystemException e) {
-            log.error("[访客区域管理] 访客区域配置创建系统异常: areaId={}, code={}, message={}", visitorArea.getId(), e.getCode(), e.getMessage(), e);
+            log.error("[访客区域管理] 访客区域配置创建系统异常: areaId={}, code={}, message={}", visitorArea.getAreaId(), e.getCode(), e.getMessage(), e);
             return false; // For boolean return methods, return false on system error
         } catch (Exception e) {
-            log.error("[访客区域管理] 访客区域配置创建未知异常: areaId={}", visitorArea.getId(), e);
+            log.error("[访客区域管理] 访客区域配置创建未知异常: areaId={}", visitorArea.getAreaId(), e);
             return false; // For boolean return methods, return false on unknown error
         }
 
@@ -113,7 +110,7 @@ import java.util.stream.Collectors;
             int result = visitorAreaDao.updateById(visitorArea);
 
             if (result > 0) {
-                evictVisitorAreaCache(visitorArea.getId());
+                evictVisitorAreaCache(visitorArea.getAreaId());
                 log.info("[访客区域管理] 访客区域配置更新成功, visitorAreaId={}", visitorArea.getVisitorAreaId());
                 return true;
             }
@@ -148,7 +145,7 @@ import java.util.stream.Collectors;
             int result = visitorAreaDao.deleteById(visitorAreaId);
 
             if (result > 0) {
-                evictVisitorAreaCache(visitorArea.getId());
+                evictVisitorAreaCache(visitorArea.getAreaId());
                 log.info("[访客区域管理] 访客区域配置删除成功, visitorAreaId={}", visitorAreaId);
                 return true;
             }
@@ -376,18 +373,8 @@ import java.util.stream.Collectors;
         }
 
         // 验证访问时间限制
-        if (visitorArea.getVisitTimeLimit() != null && visitorArea.getVisitTimeLimit() <= 0) {
-            result.put("status", "error");
-            result.put("message", "访问时间限制必须大于0");
-            return result;
-        }
 
         // 验证预约提前天数限制
-        if (visitorArea.getAppointmentDaysLimit() != null && visitorArea.getAppointmentDaysLimit() <= 0) {
-            result.put("status", "error");
-            result.put("message", "预约提前天数限制必须大于0");
-            return result;
-        }
 
         result.put("status", "valid");
         return result;
@@ -570,71 +557,82 @@ import java.util.stream.Collectors;
     }
 
     @Override
+    @Override
     public Map<String, String> getAreaOpenHours(Long areaId) {
         log.debug("[访客区域管理] 获取区域开放时间配置, areaId={}", areaId);
 
         VisitorAreaEntity visitorArea = getVisitorAreaByAreaId(areaId);
-        if (visitorArea == null || visitorArea.getOpenHours() == null) {
+        if (visitorArea == null) {
             return new HashMap<>();
         }
 
         try {
-            return objectMapper.readValue(visitorArea.getOpenHours(), new TypeReference<Map<String, String>>() {});
+            Map<String, String> openHours = new HashMap<>();
+
+            // 如果Entity中设置了开放时间，添加到返回结果中
+            if (visitorArea.getOpenTimeStart() != null) {
+                openHours.put("start", visitorArea.getOpenTimeStart().toString());
+            }
+            if (visitorArea.getOpenTimeEnd() != null) {
+                openHours.put("end", visitorArea.getOpenTimeEnd().toString());
+            }
+
+            // 如果没有任何开放时间配置，返回空Map
+            if (openHours.isEmpty()) {
+                return new HashMap<>();
+            }
+
+            return openHours;
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[访客区域管理] 解析开放时间配置参数错误: areaId={}, error={}", areaId, e.getMessage());
-            return new HashMap<>(); // For read-only operations, return empty map on parameter error
+            log.warn("[访客区域管理] 获取开放时间配置参数错误: areaId={}, error={}", areaId, e.getMessage());
+            return new HashMap<>();
         } catch (BusinessException e) {
-            log.warn("[访客区域管理] 解析开放时间配置业务异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
-            return new HashMap<>(); // For read-only operations, return empty map on business error
+            log.warn("[访客区域管理] 获取开放时间配置业务异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
+            return new HashMap<>();
         } catch (SystemException e) {
-            log.error("[访客区域管理] 解析开放时间配置系统异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
-            return new HashMap<>(); // For read-only operations, return empty map on system error
+            log.error("[访客区域管理] 获取开放时间配置系统异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
+            return new HashMap<>();
         } catch (Exception e) {
-            log.warn("[访客区域管理] 解析开放时间配置未知异常: areaId={}", areaId, e);
-            return new HashMap<>(); // For read-only operations, return empty map on unknown error
+            log.warn("[访客区域管理] 获取开放时间配置未知异常: areaId={}", areaId, e);
+            return new HashMap<>();
         }
     }
 
     @Override
+    @Override
     public boolean isAreaCurrentlyOpen(Long areaId) {
         log.debug("[访客区域管理] 检查区域当前是否开放, areaId={}", areaId);
 
-        Map<String, String> openHours = getAreaOpenHours(areaId);
-        if (openHours.isEmpty()) {
+        VisitorAreaEntity visitorArea = getVisitorAreaByAreaId(areaId);
+        if (visitorArea == null) {
             return true; // 默认开放
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        String dayKey = getDayKey(now.getDayOfWeek().getValue());
-        String hoursKey = openHours.get(dayKey);
-
-        if (hoursKey == null) {
-            return true; // 默认开放
+        // 如果没有设置开放时间，默认开放
+        if (visitorArea.getOpenTimeStart() == null || visitorArea.getOpenTimeEnd() == null) {
+            return true;
         }
 
         try {
-            LocalTime currentTime = now.toLocalTime();
-            String[] timeRange = hoursKey.split("-");
-            if (timeRange.length == 2) {
-                LocalTime startTime = LocalTime.parse(timeRange[0]);
-                LocalTime endTime = LocalTime.parse(timeRange[1]);
-                return !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime);
-            }
+            LocalTime currentTime = LocalTime.now();
+            LocalTime startTime = visitorArea.getOpenTimeStart();
+            LocalTime endTime = visitorArea.getOpenTimeEnd();
+
+            // 检查当前时间是否在开放时间范围内
+            return !currentTime.isBefore(startTime) && !currentTime.isAfter(endTime);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[访客区域管理] 解析开放时间参数错误: areaId={}, hoursKey={}, error={}", areaId, hoursKey, e.getMessage());
+            log.warn("[访客区域管理] 解析开放时间参数错误: areaId={}, error={}", areaId, e.getMessage());
             return true; // Default to open on parameter error
         } catch (BusinessException e) {
-            log.warn("[访客区域管理] 解析开放时间业务异常: areaId={}, hoursKey={}, code={}, message={}", areaId, hoursKey, e.getCode(), e.getMessage());
+            log.warn("[访客区域管理] 解析开放时间业务异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage());
             return true; // Default to open on business error
         } catch (SystemException e) {
-            log.error("[访客区域管理] 解析开放时间系统异常: areaId={}, hoursKey={}, code={}, message={}", areaId, hoursKey, e.getCode(), e.getMessage(), e);
+            log.error("[访客区域管理] 解析开放时间系统异常: areaId={}, code={}, message={}", areaId, e.getCode(), e.getMessage(), e);
             return true; // Default to open on system error
         } catch (Exception e) {
-            log.warn("[访客区域管理] 解析开放时间未知异常: areaId={}, hoursKey={}", areaId, hoursKey, e);
+            log.warn("[访客区域管理] 解析开放时间未知异常: areaId={}", areaId, e);
             return true; // Default to open on unknown error
         }
-
-        return true; // 默认开放
     }
 
     @Override
